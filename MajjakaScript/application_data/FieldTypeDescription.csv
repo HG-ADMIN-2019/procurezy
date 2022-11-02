@@ -1,0 +1,391 @@
+FIELD_TYPE_ID,FIELD_TYPE_DESC,USED_FLAG,del_ind,FIELD_NAME
+1,Supplier,0,0,split_type
+10,Product Type,0,0,split_type
+2,Currency,0,0,split_type
+3,Ship To address,0,0,split_type
+4,Purchasing Group,0,0,split_type
+5,Call Off,0,0,split_type
+6,Limit Order,0,0,split_type
+7,Purchase Requisition,0,0,split_type
+8,Incoterm,0,0,split_type
+9,Payment Terms,0,0,split_type
+ACC_CAT,ACCOUNT ASSIGNMENT CATEGORY,0,0,attribute_id
+Activate,activate,0,0,activate
+Active,Status Active,0,0,status
+All,All,0,0,user_type
+AS,Asset,0,0,acct_assignment_category
+AS_SET,ASSET,0,0,attribute_id
+ATTACHMENT_EXTENSION,ATTACHMENT EXTENSION,0,0,sys_attr_type
+ATTACHMENT_SIZE,ATTACHMENT SIZE,0,0,sys_attr_type
+AUTH_0001,WORK_OVERVIEW,0,0,auth_obj_id
+AUTH_0002,SHOPPING,0,0,auth_obj_id
+AUTH_0003,SHOPPING_PLUS,0,0,auth_obj_id
+AUTH_0004,GOODS_RECEIPTS,0,0,auth_obj_id
+AUTH_0005,SYSTEM_SETTINGS,0,0,auth_obj_id
+AUTH_0006,APPROVALS,0,0,auth_obj_id
+AUTH_0007,USER_SETTINGS,0,0,auth_obj_id
+AUTH_0008,FORM_BUILDER,0,0,auth_obj_id
+AUTH_0009,PURCHASING,0,0,auth_obj_id
+AUTH_0010,ADMIN_TOOL,0,0,auth_obj_id
+AUTH_0011,ORG_MODEL,0,0,auth_obj_id
+AUTH_0012,APPL_SETTINGS,0,0,auth_obj_id
+AUTH_0013,HOME,0,0,auth_obj_id
+AUTH_0014,LIMIT_ORDER,0,0,auth_obj_id
+AUTH_0015,FREE_TEXT,0,0,auth_obj_id
+AUTH_0016,REQUISITION,0,0,auth_obj_id
+AUTH_0017,CATALOG,0,0,auth_obj_id
+AUTH_0018,MY_ORDER,0,0,auth_obj_id
+AUTH_0019,EMAIL_NOTIF,0,0,auth_obj_id
+AUTH_0020,REPORTS,0,0,auth_obj_id
+AUTH_0021,USER_ADMIN,0,0,auth_obj_id
+AUTH_0022,SUBSTITUTION,0,0,auth_obj_id
+AUTH_0023,SC_COMPLETION,0,0,auth_obj_id
+AUTH_0024,GROUP_CATEGORY,0,0,auth_obj_id
+AUTH_0025,CHANGE_PO,0,0,auth_obj_id
+AUTH_0026,PERSONAL_SETTINGS,0,0,auth_obj_id
+AUTH_0027,PURCHASE_SETTINGS,0,0,auth_obj_id
+AUTH_0028,PASSWORD_POLICY,0,0,auth_obj_id
+AUTH_0029,LOGIN_ATTEMPTS,0,0,auth_obj_id
+AUTH_0030,SESSION_TIMEOUT,0,0,auth_obj_id
+AUTH_0031,DISPLAY TIME,0,0,auth_obj_id
+AUTH_0032,ATTACHMENT_SIZE,0,0,auth_obj_id
+AUTH_0033,ATTACHMENT_EXT,0,0,auth_obj_id
+AUTH_0034,APPROVAL_LIMIT,0,0,auth_obj_id
+AUTH_0035,CONFIRMATION,0,0,auth_obj_id
+AUTH_0036,CANCELLATION,0,0,auth_obj_id
+AUTH_0037,RETURN_DELIVERY,0,0,auth_obj_id
+AUTH_0038,WORK_FLOW_ITEMS,0,0,auth_obj_id
+AUTH_0039,EMPLOYEE_MANAGEMENT,0,0,auth_obj_id
+AUTH_0040,SUPPLIER_MANAGEMENT,0,0,auth_obj_id
+AUTH_0041,SOBO,0,0,auth_obj_id
+AUTH_101,WORK_SCHEMA,0,0,auth_obj_id
+AUTH_GROUP_01,Shopping,0,0,auth_obj_grp
+AUTH_GROUP_02,Shopping plus,0,0,auth_obj_grp
+AUTH_GROUP_03,Approvals,0,0,auth_obj_grp
+AUTH_GROUP_04,Shopper Assist,0,0,auth_obj_grp
+AUTH_GROUP_05,Purchaser,0,0,auth_obj_grp
+AUTH_GROUP_06,Admin,0,0,auth_obj_grp
+AUTH_GROUP_41,Shopping plus,0,0,auth_obj_grp
+Buyer,Buyer,0,0,user_type
+CALENDAR_ID,Calendar description,0,0,attribute_id
+CAT,Category Approver,0,0,approval_type
+CAT_ID,CATALOG ID,0,0,attribute_id
+CC,Cost Center,0,0,acct_assignment_category
+CCODE,Company Code,0,0,org_node_types
+CO_CODE,COMPANY CODE,0,0,attribute_id
+CT_CTR,COST CENTER,0,0,attribute_id
+CUSTOM,CUSTOM,0,0,auth_type
+D,demo,0,0,address_type
+Deactivate,deactivate,0,0,activate
+DEF_DOC_SEARCH,DEFAULT DOCUMENT SEARCH,0,0,attribute_id
+DEL_ADDR,DELIVERY ADDRESS,0,0,attribute_id
+Demo_Acc,Project,0,0,acct_assignment_category
+Demo_role,Test role,0,0,roles
+DOC01,SHOPPING CART,0,0,document_type
+DOC02,PURCHASE ORDER,0,0,document_type
+DOC03,CONFIRMATION,0,0,document_type
+DOC04,FAVORITE CART,0,0,document_type
+DOC07,test,0,0,document_type
+DOC08,demo,0,0,document_type
+ERROR,ERROR MESSAGE,0,0,messages_type
+EXW,Ex Works,0,1,incoterm
+FCA,Free Carrier,0,1,incoterm
+FC_TRANS_TYPE,FAVORITE TRANSACTION TYPE,0,0,attribute_id
+FEATURE,Feature,0,0,auth_level
+FIELD,Field,0,0,auth_level
+FIN,Financial Approver,0,0,approval_type
+FORM,Form,0,0,auth_level
+GEN_ACC,GENERIC ACCOUNT ASSIGNMENT (ST,0,0,attribute_id
+GLACC,General Ledger Account,0,0,acct_assignment_category
+GL_ACC,GENERAL LEDGER ACCOUNT,0,0,attribute_id
+High,High Priority,0,0,Priority
+I,test,0,0,address_type
+Inactive,Status Inactive,0,0,status
+INFORMATION,INFORMATION MESSAGE,0,0,messages_type
+INT_ORD,INTERNAL ORDER,0,0,attribute_id
+INV_ADDR,INVOICE RECIPIENT ADDRESS,0,0,attribute_id
+JMSG001,ERROR,0,0,messages_id
+JMSG002,ERROR,0,0,messages_id
+JMSG003,ERROR,0,0,messages_id
+JMSG004,ERROR,0,0,messages_id
+JMSG005,ERROR,0,0,messages_id
+JMSG006,ERROR,0,0,messages_id
+JMSG007,ERROR,0,0,messages_id
+JMSG008,ERROR,0,0,messages_id
+JMSG009,ERROR,0,0,messages_id
+JMSG010,SUCCESS,0,0,messages_id
+JMSG011,SUCCESS,0,0,messages_id
+JMSG012,SUCCESS,0,0,messages_id
+JMSG013,SUCCESS,0,0,messages_id
+JMSG014,SUCCESS,0,0,messages_id
+JMSG015,ERROR,0,0,messages_id
+JMSG016,ERROR,0,0,messages_id
+JMSG017,ERROR,0,0,messages_id
+JMSG018,ERROR,0,0,messages_id
+JMSG019,SUCCESS,0,0,messages_id
+JMSG020,ERROR,0,0,messages_id
+JMSG021,ERROR,0,0,messages_id
+JMSG022,ERROR,0,0,messages_id
+JMSG023,ERROR,0,0,messages_id
+JMSG024,ERROR,0,0,messages_id
+JMSG025,ERROR,0,0,messages_id
+JMSG026,ERROR,0,0,messages_id
+JMSG027,ERROR,0,0,messages_id
+JMSG028,ERROR,0,0,messages_id
+JMSG029,ERROR,0,0,messages_id
+JMSG030,ERROR,0,0,messages_id
+JMSG031,ERROR,0,0,messages_id
+JMSG032,ERROR,0,0,messages_id
+JMSG033,ERROR,0,0,messages_id
+JMSG034,ERROR,0,0,messages_id
+JMSG035,ERROR,0,0,messages_id
+JMSG036,ERROR,0,0,messages_id
+JMSG037,ERROR,0,0,messages_id
+JMSG038,ERROR,0,0,messages_id
+JMSG039,SUCCESS,0,0,messages_id
+JMSG040,ERROR,0,0,messages_id
+JMSG041,ERROR,0,0,messages_id
+JMSG042,SUCCESS,0,0,messages_id
+JMSG043,ERROR,0,0,messages_id
+JMSG044,ERROR,0,0,messages_id
+JMSG045,ERROR,0,0,messages_id
+JMSG046,ERROR,0,0,messages_id
+JMSG047,ERROR,0,0,messages_id
+JMSG048,ERROR,0,0,messages_id
+JMSG049,ERROR,0,0,messages_id
+JMSG050,SUCCESS,0,0,messages_id
+JMSG051,ERROR,0,0,messages_id
+JMSG052,ERROR,0,0,messages_id
+JMSG053,SUCCESS,0,0,messages_id
+JMSG108,ERROR,0,0,messages_id
+JMSG109,ERROR,0,0,messages_id
+JMSG110,ERROR,0,0,messages_id
+LOGIN_ATTEMPTS,LOGIN ATTEMPTS,0,0,sys_attr_type
+Low,Low Priority,0,0,Priority
+L_CURR,LOCAL CURRENCY,0,0,attribute_id
+MAN,MANAGER,0,0,roles
+Medium,Medium Priority,0,0,Priority
+MSG001,ERROR,0,0,messages_id
+MSG002,SUCCESS,0,0,messages_id
+MSG003,SUCCESS,0,0,messages_id
+MSG004,ERROR,0,0,messages_id
+MSG005,ERROR,0,0,messages_id
+MSG006,ERROR,0,0,messages_id
+MSG007,ERROR,0,0,messages_id
+MSG008,ERROR,0,0,messages_id
+MSG009,ERROR,0,0,messages_id
+MSG010,ERROR,0,0,messages_id
+MSG011,ERROR,0,0,messages_id
+MSG012,ERROR,0,0,messages_id
+MSG013,ERROR,0,0,messages_id
+MSG014,ERROR,0,0,messages_id
+MSG015,ERROR,0,0,messages_id
+MSG016,SUCCESS,0,0,messages_id
+MSG017,SUCCESS,0,0,messages_id
+MSG018,SUCCESS,0,0,messages_id
+MSG019,ERROR,0,0,messages_id
+MSG0199,ERROR,0,0,messages_id
+MSG020,ERROR,0,0,messages_id
+MSG021,ERROR,0,0,messages_id
+MSG022,ERROR,0,0,messages_id
+MSG023,ERROR,0,0,messages_id
+MSG024,ERROR,0,0,messages_id
+MSG025,ERROR,0,0,messages_id
+MSG026,ERROR,0,0,messages_id
+MSG027,ERROR,0,0,messages_id
+MSG028,ERROR,0,0,messages_id
+MSG029,ERROR,0,0,messages_id
+MSG030,ERROR,0,0,messages_id
+MSG031,ERROR,0,0,messages_id
+MSG032,ERROR,0,0,messages_id
+MSG033,ERROR,0,0,messages_id
+MSG034,SUCCESS,0,0,messages_id
+MSG035,SUCCESS,0,0,messages_id
+MSG036,ERROR,0,0,messages_id
+MSG037,ERROR,0,0,messages_id
+MSG038,ERROR,0,0,messages_id
+MSG039,ERROR,0,0,messages_id
+MSG040,ERROR,0,0,messages_id
+MSG041,ERROR,0,0,messages_id
+MSG042,ERROR,0,0,messages_id
+MSG043,ERROR,0,0,messages_id
+MSG044,ERROR,0,0,messages_id
+MSG045,ERROR,0,0,messages_id
+MSG046,ERROR,0,0,messages_id
+MSG047,ERROR,0,0,messages_id
+MSG048,ERROR,0,0,messages_id
+MSG049,ERROR,0,0,messages_id
+MSG050,ERROR,0,0,messages_id
+MSG051,ERROR,0,0,messages_id
+MSG052,ERROR,0,0,messages_id
+MSG053,ERROR,0,0,messages_id
+MSG054,ERROR,0,0,messages_id
+MSG055,ERROR,0,0,messages_id
+MSG056,ERROR,0,0,messages_id
+MSG057,ERROR,0,0,messages_id
+MSG058,ERROR,0,0,messages_id
+MSG059,ERROR,0,0,messages_id
+MSG060,ERROR,0,0,messages_id
+MSG061,ERROR,0,0,messages_id
+MSG062,ERROR,0,0,messages_id
+MSG063,ERROR,0,0,messages_id
+MSG064,ERROR,0,0,messages_id
+MSG065,ERROR,0,0,messages_id
+MSG066,ERROR,0,0,messages_id
+MSG067,ERROR,0,0,messages_id
+MSG068,ERROR,0,0,messages_id
+MSG069,ERROR,0,0,messages_id
+MSG070,ERROR,0,0,messages_id
+MSG071,ERROR,0,0,messages_id
+MSG072,ERROR,0,0,messages_id
+MSG073,ERROR,0,0,messages_id
+MSG074,ERROR,0,0,messages_id
+MSG075,ERROR,0,0,messages_id
+MSG076,ERROR,0,0,messages_id
+MSG077,INFORMATION,0,0,messages_id
+MSG078,INFORMATION,0,0,messages_id
+MSG079,INFORMATION,0,0,messages_id
+MSG080,INFORMATION,0,0,messages_id
+MSG081,ERROR,0,0,messages_id
+MSG082,ERROR,0,0,messages_id
+MSG083,ERROR,0,0,messages_id
+MSG084,ERROR,0,0,messages_id
+MSG085,ERROR,0,0,messages_id
+MSG086,ERROR,0,0,messages_id
+MSG087,ERROR,0,0,messages_id
+MSG088,ERROR,0,0,messages_id
+MSG089,INFORMATION,0,0,messages_id
+MSG090,ERROR,0,0,messages_id
+MSG091,ERROR,0,0,messages_id
+MSG092,ERROR,0,0,messages_id
+MSG093,ERROR,0,0,messages_id
+MSG094,ERROR,0,0,messages_id
+MSG095,ERROR,0,0,messages_id
+MSG096,ERROR,0,0,messages_id
+MSG097,ERROR,0,0,messages_id
+MSG098,ERROR,0,0,messages_id
+MSG099,ERROR,0,0,messages_id
+MSG100,ERROR,0,0,messages_id
+MSG101,ERROR,0,0,messages_id
+MSG102,ERROR,0,0,messages_id
+MSG103,ERROR,0,0,messages_id
+MSG104,ERROR,0,0,messages_id
+MSG105,ERROR,0,0,messages_id
+MSG106,ERROR,0,0,messages_id
+MSG107,ERROR,0,0,messages_id
+MSG108,ERROR,0,0,messages_id
+MSG109,ERROR,0,0,messages_id
+MSG110,ERROR,0,0,messages_id
+MSG111,ERROR,0,0,messages_id
+MSG112,SUCCESS,0,0,messages_id
+MSG113,SUCCESS,0,0,messages_id
+MSG114,ERROR,0,0,messages_id
+MSG115,ERROR,0,0,messages_id
+MSG116,ERROR,0,0,messages_id
+MSG117,ERROR,0,0,messages_id
+MSG118,ERROR,0,0,messages_id
+MSG119,ERROR,0,0,messages_id
+MSG120,SUCCESS,0,0,messages_id
+MSG121,INFORMATION,0,0,messages_id
+MSG122,ERROR,0,0,messages_id
+MSG123,ERROR,0,0,messages_id
+MSG124,ERROR,0,0,messages_id
+MSG125,SUCCESS,0,0,messages_id
+MSG126,SUCCESS,0,0,messages_id
+MSG127,SUCCESS,0,0,messages_id
+MSG128,ERROR,0,0,messages_id
+MSG129,ERROR,0,0,messages_id
+MSG130,SUCCESS,0,0,messages_id
+MSG131,SUCCESS,0,0,messages_id
+MSG132,SUCCESS,0,0,messages_id
+MSG133,ERROR,0,0,messages_id
+MSG134,ERROR,0,0,messages_id
+MSG135,ERROR,0,0,messages_id
+MSG136,ERROR,0,0,messages_id
+MSG137,ERROR,0,0,messages_id
+MSG138,ERROR,0,0,messages_id
+MSG139,ERROR,0,0,messages_id
+MSG140,ERROR,0,0,messages_id
+MSG141,INFORMATION,0,0,messages_id
+MSG142,INFORMATION,0,0,messages_id
+MSG143,ERROR,0,0,messages_id
+MSG144,ERROR,0,0,messages_id
+MSG145,ERROR,0,0,messages_id
+MSG146,ERROR,0,0,messages_id
+MSG147,ERROR,0,0,messages_id
+MSG148,ERROR,0,0,messages_id
+MSG149,ERROR,0,0,messages_id
+MSG150,ERROR,0,0,messages_id
+MSG151,ERROR,0,0,messages_id
+MSG152,ERROR,0,0,messages_id
+MSG153,ERROR,0,0,messages_id
+MSG154,ERROR,0,0,messages_id
+MSG155,SUCCESS,0,0,messages_id
+MSG156,SUCCESS,0,0,messages_id
+MSG157,SUCCESS,0,0,messages_id
+MSG158,ERROR,0,0,messages_id
+MSG159,ERROR,0,0,messages_id
+MSG160,ERROR,0,0,messages_id
+MSG161,ERROR,0,0,messages_id
+MSG162,ERROR,0,0,messages_id
+MSG163,ERROR,0,0,messages_id
+MSG164,ERROR,0,0,messages_id
+MSG165,ERROR,0,0,messages_id
+MSG166,ERROR,0,0,messages_id
+MSG167,ERROR,0,0,messages_id
+MSG168,ERROR,0,0,messages_id
+MSG169,ERROR,0,0,messages_id
+MSG170,ERROR,0,0,messages_id
+MSG171,ERROR,0,0,messages_id
+MSG172,ERROR,0,0,messages_id
+MSG173,ERROR,0,0,messages_id
+MSG174,ERROR,0,0,messages_id
+MSG175,ERROR,0,0,messages_id
+MSG176,ERROR,0,0,messages_id
+MSG177,SUCCESS,0,0,messages_id
+MSG178,SUCCESS,0,0,messages_id
+MSG179,SUCCESS,0,0,messages_id
+MSG180,ERROR,0,0,messages_id
+MSG181,ERROR,0,0,messages_id
+MSG182,ERROR,0,0,messages_id
+MSG183,SUCCESS,0,0,messages_id
+MSG184,SUCCESS,0,0,messages_id
+MSG185,INFORMATION,0,0,messages_id
+MSG186,ERROR,0,0,messages_id
+MSG187,ERROR,0,0,messages_id
+MSG188,ERROR,0,0,messages_id
+MSG189,ERROR,0,0,messages_id
+MSG190,ERROR,0,0,messages_id
+MSG191,ERROR,0,0,messages_id
+MSG192,ERROR,0,0,messages_id
+MSG_DISPLAY,MESSAGE DISPLAY TIME,0,0,sys_attr_type
+NODE,Node,0,0,org_node_types
+Node type,test,0,0,org_node_types
+OR,Internal Order,0,0,acct_assignment_category
+OR test,Internal Order,0,0,acct_assignment_category
+PAGINATION_COUNT,PAGINATION COUNT,0,0,sys_attr_type
+PGRP,Purchasing Group,0,0,org_node_types
+PLANT,Plant,0,0,org_node_types
+PORG,Purchasing Organization,0,0,org_node_types
+PROD_CAT,PRODUCT CATEGORIES,0,0,attribute_id
+PWD_POLICY,PASSWORD POLICY,0,0,sys_attr_type
+RESP_PROD_CAT,RESPONSIBILITY PRODUCT CATEGOR,0,0,attribute_id
+RNODE,Root Node,0,0,org_node_types
+schema,schema test,0,0,workflow_schema
+schemademo,demo,0,0,workflow_schema
+SC_TRANS_TYPE,SC TRANSACTION TYPE,0,0,attribute_id
+SESSION_TIMEOUT,SESSION TIMEOUT,0,0,sys_attr_type
+SGD,AEG,0,0,roles
+SHOP,SHOP USERS,0,0,roles
+SOBO,SHOP ON BEHALF OF,0,0,attribute_id
+STD,STANDARD,0,0,auth_type
+SUCCESS,SUCCESS,0,0,messages_type
+Support,Support,0,0,user_type
+Test,Test approval type,0,0,approval_type
+THEME_COLOUR,THEME COLOUR,0,0,sys_attr_type
+USER,User,0,0,org_node_types
+US_ROLE,USER ROLE,0,0,attribute_id
+US_SUBS,USER SUBSTITUTES,0,0,attribute_id
+WARNING,WARNING MESSAGE,0,0,messages_type
+WBS,Project,0,0,acct_assignment_category
+WBS_ELEM,WBS ELEMENT,0,0,attribute_id

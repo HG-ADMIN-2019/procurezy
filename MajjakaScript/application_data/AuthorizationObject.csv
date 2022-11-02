@@ -1,0 +1,45 @@
+AUTH_OBJ_ID,AUTH_LEVEL,AUTH_LEVEL_ID,AUTH_LEVEL_DESC,del_ind
+AUTH_0003,Feature ,SHOPPING_PLUS,shopping+,0
+AUTH_0002,Feature ,SHOPPING,shopping,0
+AUTH_0001,Feature ,WORK_OVERVIEW,WORK OVERVIEW,0
+AUTH_0004,Feature ,GOODS_RECEIPTS,goods receipts,0
+AUTH_0005,Feature ,SYSTEM_SETTINGS,system settings,0
+AUTH_0006,Feature ,APPROVALS,Approvals,0
+AUTH_0007,Feature ,USER_SETTINGS,user settings,0
+AUTH_0008,Form,FORM_BUILDER,Form Builder,0
+AUTH_0009,Feature ,PURCHASING,Purchasing,0
+AUTH_0010,Feature ,ADMIN_TOOL,Admin Tool,0
+AUTH_0011,Form,ORG_MODEL,Org Model,0
+AUTH_0012,Feature ,APPL_SETTINGS,application settings,0
+AUTH_0013,Form,HOME,Home,0
+AUTH_0014,Form,LIMIT_ORDER,Limit Order,0
+AUTH_0015,Form,FREE_TEXT,Free Text,0
+AUTH_0016,Form,REQUISITION,REQUISITION,0
+AUTH_0017,Form,CATALOG,Catalog,0
+AUTH_0018,Form,MY_ORDER,My Order,0
+AUTH_0019,Form,EMAIL_NOTIF,Email Notifications,0
+AUTH_0020,Form,REPORTS,Reports,0
+AUTH_0021,Form,USER_ADMIN,User Administration,0
+AUTH_0022,Form,SUBSTITUTION,Substitution,0
+AUTH_0023,Form,SC_COMPLETION,SC Completion,0
+AUTH_0024,Form,GROUP_CATEGORY,Group by Product Category,0
+AUTH_0025,Form,CHANGE_PO,Change PO,0
+AUTH_0026,Form,PERSONAL_SETTINGS,Personal settings,0
+AUTH_0027,Form,PURCHASE_SETTINGS,Purchase settings,0
+AUTH_0028,Field,PASSWORD_POLICY,system settings - Password policy,0
+AUTH_0029,Field,LOGIN_ATTEMPTS,system settings - Login Attempts,0
+AUTH_0030,Field,SESSION_TIMEOUT,system settings - Session Timeout,0
+AUTH_0031,Field,DISPLAY TIME,system settings - Message Display time,0
+AUTH_0032,Field,ATTACHMENT_SIZE,system settings - Size of attachment ,0
+AUTH_0033,Field,ATTACHMENT_EXT,system settings - Attachment Extension,0
+AUTH_0034,Field,APPROVAL_LIMIT,Purchase settings - Approver Limit,0
+AUTH_0035,Form,CONFIRMATION,Confirmations,0
+AUTH_0036,Form,CANCELLATION,Cancellations,0
+AUTH_0037,Form,RETURN_DELIVERY,Return Deliveries,0
+AUTH_0038,Form,WORK_FLOW_ITEMS,Manger approval,0
+AUTH_0039,Form,EMPLOYEE_MANAGEMENT,Employee Management,0
+AUTH_0040,Form,SUPPLIER_MANAGEMENT,Supplier Management,0
+AUTH_0042,Feature ,CONTENT_MANAGEMENT,CONTENT MANAGEMENT,0
+AUTH_0043,Form,PRODUCT_AND_SERVICE_CONFIG,PRODUCT AND SERVICE CONFIG,0
+AUTH_0044,Form,CATALOG_CONFIG,CATALOG_CONFIG,0
+AUTH_0048,Form,APPLICATION_MONITOR,Application Monitor,0
