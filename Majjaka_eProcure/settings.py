@@ -153,7 +153,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',  # Database engine
         'HOST': 'sg2plzcpnl489587.prod.sin2.secureserver.net',  # Database host
-        'NAME': 'MAJJAKAPROCURE_DEV',  # Database name MAJJAKA_CLIENT2 MAJJAKAPROCURE_DEV MAJJAKA_DEVLOPMENT
+        'NAME': 'Majjaka_latest',  # Database name MAJJAKA_CLIENT2 MAJJAKAPROCURE_DEV MAJJAKA_DEVLOPMENT
         'USER': 'MajjakaShopEProcure',  # Database user name
         'PASSWORD': 'Project@2019',  # Database credentials
         'PORT': '3306',  # Database port number
