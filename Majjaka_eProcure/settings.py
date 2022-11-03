@@ -108,18 +108,11 @@ MIDDLEWARE = [
     'django.contrib.auth.middleware.AuthenticationMiddleware',
     'django.contrib.messages.middleware.MessageMiddleware',
     'django.middleware.clickjacking.XFrameOptionsMiddleware',
-    # 'django.contrib.sessions.middleware.SessionMiddleware',
-    # 'django_session_timeout.middleware.SessionTimeoutMiddleware',
     # 'dbLayer.cMiddleWare.CustomMiddleware',
 ]
 
 ROOT_URLCONF = 'Majjaka_eProcure.urls'
 
-
-# SESSION_EXPIRE_SECONDS = 120
-# SESSION_EXPIRE_AFTER_LAST_ACTIVITY = True
-# SESSION_EXPIRE_AFTER_LAST_ACTIVITY_GRACE_PERIOD = 60 # group by minute
-# SESSION_TIMEOUT_REDIRECT =  '/login/'
 
 
 
