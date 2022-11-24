@@ -327,8 +327,9 @@
                          }
                         $("#err_msg_app_settings_t").prop("hidden", false)
 						table_sort_filter('id_popup_table');
-                        setTimeout(function() {
-                        $("#err_msg_app_settings_t").prop("hidden", true);}, 5000)
+<!--                        setTimeout(function() {-->
+<!--                        $("#err_msg_app_settings_t").prop("hidden", true);}, 5000)-->
+                        message_display_time();
                         table_sort_filter('id_popup_table');
                         CloseLoaderPopup();
                     }
@@ -383,9 +384,10 @@
                       }
                     $("#err_msg_app_settings_t").prop("hidden", false)
                    table_sort_filter('id_popup_table');
-                    setTimeout(function() {
-                        $("#err_msg_app_settings_t").prop("hidden", true);
-                    }, 5000)
+<!--                    setTimeout(function() {-->
+<!--                        $("#err_msg_app_settings_t").prop("hidden", true);-->
+<!--                    }, 5000)-->
+                    message_display_time();
                     table_sort_filter('id_popup_table');
                     CloseLoaderPopup();
                 }
@@ -508,31 +510,31 @@
                 } else {
                     $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "none");
                 }
-                //******************Checking for UTC Difference value ****************************
-                if (utc_format.test(utc_difference)) {
-                       
-                            var msg = "JMSG008";
-                            var msg_type ;
-                          msg_type = message_config_details(msg);
-                          $("#error_msg_id").prop("hidden", false)
+<!--                //******************Checking for UTC Difference value ****************************-->
+<!--                if (utc_format.test(utc_difference)) {-->
+<!--                       -->
+<!--                            var msg = "JMSG008";-->
+<!--                            var msg_type ;-->
+<!--                          msg_type = message_config_details(msg);-->
+<!--                          $("#error_msg_id").prop("hidden", false)-->
 
-                          if(msg_type.message_type == "ERROR"){
-                                display_message("error_msg_id", msg_type.messages_id_desc)
-                          }
-                          else if(msg_type.message_type == "WARNING"){
-                             display_message("id_warning_msg_id", msg_type.messages_id_desc)
-                          }
-                          else if(msg_type.message_type == "INFORMATION"){
-                             display_message("id_info_msg_id", msg_type.messages_id_desc)
-                          }
-                           var display5 = msg_type.messages_id_desc;
-                          document.getElementById("id_error_msg_timezone_utc").innerHTML = display5;
+<!--                          if(msg_type.message_type == "ERROR"){-->
+<!--                                display_message("error_msg_id", msg_type.messages_id_desc)-->
+<!--                          }-->
+<!--                          else if(msg_type.message_type == "WARNING"){-->
+<!--                             display_message("id_warning_msg_id", msg_type.messages_id_desc)-->
+<!--                          }-->
+<!--                          else if(msg_type.message_type == "INFORMATION"){-->
+<!--                             display_message("id_info_msg_id", msg_type.messages_id_desc)-->
+<!--                          }-->
+<!--                           var display5 = msg_type.messages_id_desc;-->
+<!--                          document.getElementById("id_error_msg_timezone_utc").innerHTML = display5;-->
 
-                    $(row.find("TD").eq(3).find('input[type="text"]')).css("border", "1px solid #FF0000");
-                    count = count + 1;
-                } else {
-                    $(row.find("TD").eq(3).find('input[type="text"]')).css("border", "none");
-                }
+<!--                    $(row.find("TD").eq(3).find('input[type="text"]')).css("border", "1px solid #FF0000");-->
+<!--                    count = count + 1;-->
+<!--                } else {-->
+<!--                    $(row.find("TD").eq(3).find('input[type="text"]')).css("border", "none");-->
+<!--                }-->
                 if (time_zone_check.includes(time_zone)) {
                     $(row).css({
                         "background-color": "#E0FFFF",
@@ -767,47 +769,47 @@ function compare_table_for_duplicate_entries(validate_add_attributes, timezone) 
                         no_duplicate_value = 'N'
                         return [no_duplicate_value,error_message]
                     }
-                    if (item.utc_difference.length == 0) {
-                        //error_message = messageConstants["JMSG002"] + "UTC Difference";
-                        
-                        var msg = "JMSG002";
-                        var msg_type ;
-                      msg_type = message_config_details(msg);
-                      $("#error_msg_id").prop("hidden", false)
+<!--                    if (item.utc_difference.length == 0) {-->
+<!--                        //error_message = messageConstants["JMSG002"] + "UTC Difference";-->
+<!--                        -->
+<!--                        var msg = "JMSG002";-->
+<!--                        var msg_type ;-->
+<!--                      msg_type = message_config_details(msg);-->
+<!--                      $("#error_msg_id").prop("hidden", false)-->
 
-                      if(msg_type.message_type == "ERROR"){
-                            display_message("error_msg_id", msg_type.messages_id_desc)
-                      }
-                      else if(msg_type.message_type == "WARNING"){
-                         display_message("id_warning_msg_id", msg_type.messages_id_desc)
-                      }
-                      else if(msg_type.message_type == "INFORMATION"){
-                         display_message("id_info_msg_id", msg_type.messages_id_desc)
-                      }
-                        no_duplicate_value = 'N'
-                        return [no_duplicate_value,error_message]
-                    }
-                    utc_difference = item.utc_difference.replace(/\s\s+/g, ' ')
-                    if (utc_difference == " ") {
-                    //error_message = messageConstants["JMSG002"] + "UTC Difference Name";
-                      
-                        var msg = "JMSG002";
-                        var msg_type ;
-                      msg_type = message_config_details(msg);
-                      $("#error_msg_id").prop("hidden", false)
+<!--                      if(msg_type.message_type == "ERROR"){-->
+<!--                            display_message("error_msg_id", msg_type.messages_id_desc)-->
+<!--                      }-->
+<!--                      else if(msg_type.message_type == "WARNING"){-->
+<!--                         display_message("id_warning_msg_id", msg_type.messages_id_desc)-->
+<!--                      }-->
+<!--                      else if(msg_type.message_type == "INFORMATION"){-->
+<!--                         display_message("id_info_msg_id", msg_type.messages_id_desc)-->
+<!--                      }-->
+<!--                        no_duplicate_value = 'N'-->
+<!--                        return [no_duplicate_value,error_message]-->
+<!--                    }-->
+<!--                    utc_difference = item.utc_difference.replace(/\s\s+/g, ' ')-->
+<!--                    if (utc_difference == " ") {-->
+<!--                    //error_message = messageConstants["JMSG002"] + "UTC Difference Name";-->
+<!--                      -->
+<!--                        var msg = "JMSG002";-->
+<!--                        var msg_type ;-->
+<!--                      msg_type = message_config_details(msg);-->
+<!--                      $("#error_msg_id").prop("hidden", false)-->
 
-                      if(msg_type.message_type == "ERROR"){
-                            display_message("error_msg_id", msg_type.messages_id_desc)
-                      }
-                      else if(msg_type.message_type == "WARNING"){
-                         display_message("id_warning_msg_id", msg_type.messages_id_desc)
-                      }
-                      else if(msg_type.message_type == "INFORMATION"){
-                         display_message("id_info_msg_id", msg_type.messages_id_desc)
-                      }
-                        no_duplicate_value = 'N'
-                        return [no_duplicate_value,error_message]
-                   }
+<!--                      if(msg_type.message_type == "ERROR"){-->
+<!--                            display_message("error_msg_id", msg_type.messages_id_desc)-->
+<!--                      }-->
+<!--                      else if(msg_type.message_type == "WARNING"){-->
+<!--                         display_message("id_warning_msg_id", msg_type.messages_id_desc)-->
+<!--                      }-->
+<!--                      else if(msg_type.message_type == "INFORMATION"){-->
+<!--                         display_message("id_info_msg_id", msg_type.messages_id_desc)-->
+<!--                      }-->
+<!--                        no_duplicate_value = 'N'-->
+<!--                        return [no_duplicate_value,error_message]-->
+<!--                   }-->
          });
      }
 

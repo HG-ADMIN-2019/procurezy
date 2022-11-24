@@ -534,7 +534,8 @@ function delete_user() {
             $('#success_msg_id').text(Response.success_message)
            // document.getElementById("success_msg_id").text = Response.success_message;
             $("#error_msg_div").prop("hidden",false)
-            setTimeout(function(){$("#error_msg_div").prop("hidden",true);},5000)
+<!--            setTimeout(function(){$("#error_msg_div").prop("hidden",true);},5000)-->
+            message_display_time();
         }
     });
 
@@ -624,7 +625,8 @@ function main_table_delete(){
             $('#success_msg_id').text(Response.success_message)
             //document.getElementById("success_msg_id").text = Response.success_message;
             $("#error_msg_div").prop("hidden",false)
-            setTimeout(function(){$("#error_msg_div").prop("hidden",true);},5000)
+<!--            setTimeout(function(){$("#error_msg_div").prop("hidden",true);},5000)-->
+            message_display_time();
         }
     });
 }
@@ -1011,7 +1013,8 @@ function lock_active_change(){
              $('#id_confirm_popup').modal('hide');
               $('#success_msg_id').text("Changed Successfully");
             $("#error_msg_div").prop("hidden",false)
-            setTimeout(function(){$("#error_msg_div").prop("hidden",true);},5000);
+<!--            setTimeout(function(){$("#error_msg_div").prop("hidden",true);},5000);-->
+            message_display_time();
        },
        error: function(xhr, resp, text) {
        },

@@ -247,12 +247,10 @@ def delete_item(request):
     # If call_off type is free text delete the eform data
     if item_details.call_off == CONST_FREETEXT_CALLOFF:
         if django_query_instance.django_existence_check(EformData, {'cart_guid': guid}):
-            eform_data = django_query_instance.django_get_query(EformData, {'cart_guid': guid})
-            eform_data.delete()
+            eform_data = django_query_instance.django_filter_delete_query(EformFieldData, {'cart_guid': guid})
     if item_details.call_off == CONST_CATALOG_CALLOFF:
         if django_query_instance.django_existence_check(EformFieldData, {'cart_guid': guid}):
-            eform_data = django_query_instance.django_get_query(EformFieldData, {'cart_guid': guid})
-            eform_data.delete()
+            eform_data = django_query_instance.django_filter_delete_query(EformFieldData, {'cart_guid': guid})
     cart_details = django_query_instance.django_filter_query(CartItemDetails,
                                                              {'client': global_variables.GLOBAL_CLIENT,
                                                               'username': global_variables.GLOBAL_LOGIN_USERNAME},
@@ -300,7 +298,7 @@ def update_catalog_item(request):
                                                       {'guid': guid}):
         item_detail = django_query_instance.django_get_query(ScItem,
                                                              {'guid': guid})
-    if item_detail.eform_id:
+    if item_detail.variant_id:
         item_price, discount_percentage, base_price, additional_pricing = calculate_item_price(guid, quantity)
     else:
         item_price = item_detail.price

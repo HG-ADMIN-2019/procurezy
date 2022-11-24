@@ -141,10 +141,9 @@
             {% endif %} {% endfor %} {% endif %}
         </div>
     </div>
-
+{{ upload_acc_assign_categories|json_script:"upload_acc_assign_categories" }}
     <script>
-
-        var rendered_aac_data = {{upload_acc_assign_categories|safe}};
+        var rendered_aac_data = JSON.parse(document.getElementById('upload_acc_assign_categories').textContent);
         var rendered_aac_values = {{dropdown_acct_assmt_values|safe}};
         var rendered_aac_values_onload = {{dropdown_acct_assmt_values_onload|safe}};
         var aac_data_array = {}

@@ -43,6 +43,7 @@ from eProc_Shopping_Cart.models import CartItemDetails, ScHeader, ScItem, ScPote
 from eProc_Registration.models import *
 from eProc_Exchange_Rates.Utilities.exchange_rates_specific import get_currency_by_max_spending_value
 from eProc_Exchange_Rates.Utilities.exchange_rates_generic import convert_currency
+from eProc_System_Settings.Utilities.system_settings_generic import sys_attributes
 from eProc_Workflow.Utilities.work_flow_generic import save_sc_approval
 
 django_query_instance = DjangoQueries()
@@ -1040,6 +1041,47 @@ def save_approver_detail(header_guid):
     save_sc_approval(approval_data[0], header_guid, CONST_SC_HEADER_SAVED, sc_completion_flag)
 
 
+def delete_approver_detail(header_guid):
+    """
+
+    """
+
+    if django_query_instance.django_existence_check(ScPotentialApproval, {'sc_header_guid': header_guid,
+                                                                          'client': global_variables.GLOBAL_CLIENT}):
+        django_query_instance.django_filter_delete_query(ScPotentialApproval, {'sc_header_guid': header_guid,
+                                                                               'client': global_variables.GLOBAL_CLIENT})
+    if django_query_instance.django_existence_check(ScApproval, {'header_guid': header_guid,
+                                                                 'client': global_variables.GLOBAL_CLIENT}):
+        django_query_instance.django_filter_delete_query(ScApproval, {'header_guid': header_guid,
+                                                                      'client': global_variables.GLOBAL_CLIENT})
+
+def get_highest_acc_detail(header_guid):
+    """
+
+    """
+    previous_item_highest_value = django_query_instance.django_filter_only_query(ScItem, {
+        'header_guid': django_query_instance.django_get_query(ScHeader, {'guid': header_guid})
+    }).order_by('-value')[0]
+
+    highest_item_accounting_data = django_query_instance.django_get_query(ScAccounting, {
+        'item_guid': previous_item_highest_value.guid
+    })
+
+    account_assignment_category = highest_item_accounting_data.acc_cat
+    if account_assignment_category == 'CC':
+        account_assignment_value = highest_item_accounting_data.cost_center
+
+    elif account_assignment_category == 'AS':
+        account_assignment_value = highest_item_accounting_data.asset_number
+
+    elif account_assignment_category == 'OR':
+        account_assignment_value = highest_item_accounting_data.internal_order
+
+    else:
+        account_assignment_value = highest_item_accounting_data.wbs_ele
+    return account_assignment_category, account_assignment_value
+
+
 def get_SC_details(sc_header_guid):
     """
 
@@ -1132,4 +1174,3 @@ def get_SC_details(sc_header_guid):
 
                }
     return context
-

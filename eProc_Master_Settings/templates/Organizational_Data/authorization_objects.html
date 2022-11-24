@@ -158,10 +158,10 @@
 {{ auth_type_db_values|json_script:"auth_type_db_values" }}
 {{ auth_obj_id_db_values_onload|json_script:"auth_obj_id_db_values_onload" }}
 
-
+{{ upload_authobj|json_script:"upload_authobj" }}
 
 <script>
-    var rendered_auth_obj_data = {{ upload_authobj| safe}};
+    var rendered_auth_obj_data = JSON.parse(document.getElementById('upload_authobj').textContent);
     var rendered_auth_obj_id = JSON.parse(document.getElementById('auth_obj_id_db_values').textContent);
     var rendered_auth_type = JSON.parse(document.getElementById('auth_type_db_values').textContent);
     var rendered_auth_obj_data_onload = JSON.parse(document.getElementById('auth_obj_id_db_values_onload').textContent);
@@ -257,9 +257,10 @@
                         }
                         $("#err_msg_app_settings_t").prop("hidden", false)
                         table_sort_filter('id_popup_table');
-                        setTimeout(function() {
-                            $("#err_msg_app_settings_t").prop("hidden", true);
-                        }, 5000)
+<!--                        setTimeout(function() {-->
+<!--                            $("#err_msg_app_settings_t").prop("hidden", true);-->
+<!--                        }, 5000)-->
+                        message_display_time();
                         table_sort_filter('id_popup_table');
                         CloseLoaderPopup();
                     }
@@ -312,9 +313,10 @@
                       }
                     $("#err_msg_app_settings_t").prop("hidden", false)
                      table_sort_filter('id_popup_table');
-                    setTimeout(function() {
-                        $("#err_msg_app_settings_t").prop("hidden", true);
-                    }, 5000)
+<!--                    setTimeout(function() {-->
+<!--                        $("#err_msg_app_settings_t").prop("hidden", true);-->
+<!--                    }, 5000)-->
+                    message_display_time();
                      table_sort_filter('id_popup_table');
                      CloseLoaderPopup();
             }

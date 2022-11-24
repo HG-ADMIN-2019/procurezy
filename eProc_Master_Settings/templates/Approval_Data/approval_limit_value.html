@@ -177,8 +177,10 @@
     </div>
 </div>
 
+{{ approval_limit_value|json_script:"approval_limit_value" }}
+
 <script>
-    var rendered_alv_data = {{approval_limit_value|safe}};
+    var rendered_alv_data = JSON.parse(document.getElementById('approval_limit_value').textContent);
     var rendered_approval_type_data = {{upload_data_apptypes|safe}};
     var rendered_currency_data = {{upload_data_currency|safe}};
     var rendered_company_data ={{upload_data_company|safe}};
@@ -417,9 +419,10 @@
                       }
                     $("#err_msg_app_settings_t").prop("hidden", false)
                     table_sort_filter('id_popup_table');
-                    setTimeout(function() {
-                        $("#err_msg_app_settings_t").prop("hidden", true);
-                    }, 5000)
+<!--                    setTimeout(function() {-->
+<!--                        $("#err_msg_app_settings_t").prop("hidden", true);-->
+<!--                    }, 5000)-->
+                    message_display_time();
                     table_sort_filter('id_popup_table');
                     CloseLoaderPopup();
                 }
@@ -472,9 +475,10 @@
                 }
                 $("#err_msg_app_settings_t").prop("hidden", false)
                 table_sort_filter('id_popup_table');
-                setTimeout(function() {
-                    $("#err_msg_app_settings_t").prop("hidden", true);
-                }, 5000)
+<!--                setTimeout(function() {-->
+<!--                    $("#err_msg_app_settings_t").prop("hidden", true);-->
+<!--                }, 5000)-->
+                 message_display_time();
                  table_sort_filter('id_popup_table');
                  CloseLoaderPopup();
             }

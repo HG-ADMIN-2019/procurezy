@@ -39,7 +39,7 @@
 
         <hr>
 
-        <div class="alert alert-success" id="sys_settings_success" role="alert" style="display: none;"></div>
+        <div id="err_msg_app_settings_t" class="alert alert-success" hidden> <span class="msg_display" id="success_msg_id"></span></div>
         <form method="POST" id="SystemSettingform">
             {% csrf_token %}
 
@@ -342,9 +342,8 @@
             url: "{% url 'eProc_System_Settings:system_settings_new' %}",
             data: JSON.stringify(form_data),
             success: function (response) {
-                document.getElementById('sys_settings_success').innerHTML = response.success_message;
-                $('#sys_settings_success').show()
-                setTimeout(function () { $("#sys_settings_success").prop("hidden", true); }, 5000)
+                $('#success_msg_id').text(response.success_message);
+                message_display_time();
                 $("#edit_sys_settings").prop("hidden", false);
                 $("#save_sys_settings").prop("hidden", true);
                 $('.toggle_field').prop('disabled', true);

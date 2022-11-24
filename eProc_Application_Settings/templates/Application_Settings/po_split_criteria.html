@@ -11,13 +11,17 @@
         <div class="elements-space-between">
             <h3>Maintain Purchase Order Split Criteria</h3>
             <div>
-                <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Application_Settings:extract_po_split_criteria_data' %}'" type="button">
-                         <i class="fas fa-download"></i> extract
+                <button class="btn btn-outline-primary" title="Extract"
+                        onclick="location.href='{% url 'eProc_Application_Settings:extract_po_split_criteria_data' %}'"
+                        type="button">
+                    <i class="fas fa-download"></i> extract
                 </button>
-                <button type="button" id="id_add_data" value="ADD" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="onclick_add_button(this)">
+                <button type="button" id="id_add_data" value="ADD" class="btn btn-primary" data-toggle="modal"
+                        data-target="#myModal" onclick="onclick_add_button(this)">
                     <i class="fa fa-plus"></i> add purchase order slit criteria
                 </button>
-                <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"  onclick="GetReferrer();">
+                <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"
+                        onclick="GetReferrer();">
                     <i class="fas fa-times"></i> close
                 </button>
             </div>
@@ -26,7 +30,7 @@
         <hr>
 
         <div class="configuration-table_section">
-            <div id="err_msg_app_settings"> </div>
+            <div id="err_msg_app_settings"></div>
             <div id="err_msg_app_settings_t" class="alert alert-success" hidden><span id="success_msg_id"></span></div>
 
             <div class="table-container tcw-60">
@@ -35,15 +39,18 @@
                         <i class="fas fa-edit"></i> edit
                     </button>
 
-                    <button class="btn btn-outline-danger btn-sm" id="id_delete_data" value="DELETE" style="display:none;" data-toggle="modal" data-target="#id_delete_confirm_popup">
+                    <button class="btn btn-outline-danger btn-sm" id="id_delete_data" value="DELETE"
+                            style="display:none;" data-toggle="modal" data-target="#id_delete_confirm_popup">
                         <i class="fa fa-trash"></i> delete
                     </button>
 
-                    <button class="btn btn-primary btn-sm" id="id_update_data" style="display:none;" value="UPDATE"  type="button" onclick="onclick_update_button()">
-                                <i class="far fa-edit"></i> update
+                    <button class="btn btn-primary btn-sm" id="id_update_data" style="display:none;" value="UPDATE"
+                            type="button" onclick="onclick_update_button()">
+                        <i class="far fa-edit"></i> update
                     </button>
 
-                    <button class="btn btn-secondary btn-sm" id="id_cancel_data" style="display:none;" type="button" onclick="display_basic_db_data()">
+                    <button class="btn btn-secondary btn-sm" id="id_cancel_data" style="display:none;" type="button"
+                            onclick="display_basic_db_data()">
                         <i class="fas fa-times"></i> cancel
                     </button>
                 </div>
@@ -64,11 +71,12 @@
                         <th hidden>del_ind</th>
                     </tr>
                     </thead>
-                    <tbody id="id_aac_tbody">
+                    <tbody id="id_po_sp_cr_tbody">
                     {% for aac in upload_acc_assign_categories %}
                     <tr>
-                        <td class="class_select_checkbox" hidden><input type="checkbox" class="checkbox_check" onclick="valueChanged()" required></td>
-                        <td id = {{aac.po_split_type_desc}}>{{ aac.po_split_type_desc}}</td>
+                        <td class="class_select_checkbox" hidden><input type="checkbox" class="checkbox_check"
+                                                                        onclick="valueChanged()" required></td>
+                        <td id={{aac.po_split_type_desc}}>{{ aac.po_split_type_desc}}</td>
                         <td>{{aac.company_code_id}}</td>
                         <td>
                             {% if aac.activate %}
@@ -77,7 +85,7 @@
                             Deactivate
                             {% endif %}
                         </td>
-                         <td hidden>{{aac.po_split_criteria_guid}}</td>
+                        <td hidden>{{aac.po_split_criteria_guid}}</td>
                         <td hidden>del_ind</td>
 
 
@@ -105,18 +113,25 @@
                 <!-- Modal body -->
                 <div class="modal-body scrollbox">
                     <div id="id_del_add_button" class="mb-4">
-                        <button class="btn btn-primary" type="button" onclick="add_popup_row()"><i class="fa fa-plus"></i> add new row </button>
-                        <button class="btn btn-outline-danger" onclick="application_settings_delete_Row('id_popup_table')"><i class="fa fa-trash"></i> delete</button>
+                        <button class="btn btn-primary" type="button" onclick="add_popup_row()"><i
+                                class="fa fa-plus"></i> add new row
+                        </button>
+                        <button class="btn btn-outline-danger"
+                                onclick="application_settings_delete_Row('id_popup_table')"><i class="fa fa-trash"></i>
+                            delete
+                        </button>
                     </div>
 
                     <div id="id_check_success_messages" class="alert alert-success check_success_message" hidden></div>
                     <div id="id_check_error_messages" class="alert alert-danger check_error_messages" hidden></div>
-                    <div id="id_check_special_character_messages" class="alert alert-danger check_special_character_messages" hidden>
+                    <div id="id_check_special_character_messages"
+                         class="alert alert-danger check_special_character_messages" hidden>
                         <p id="id_error_msg_aac_code"></p>
                         <p id="id_error_msg_aac_name"></p>
                         <p id="id_error_msg_aac_length"></p>
                     </div>
-                    <div id="error_msg_id" class="alert alert-danger display-none" role="alert"><span id="error_message"></span></div>
+                    <div id="error_msg_id" class="alert alert-danger display-none" role="alert"><span
+                            id="error_message"></span></div>
                     <div id="id_warning_msg_id" class="alert alert-warning display-none" role="alert"></div>
                     <div id="id_info_msg_id" class="alert alert-primary display-none" role="alert"></div>
 
@@ -141,7 +156,9 @@
                 <!-- Modal footer -->
                 <div class="modal-footer">
 
-                    <button type="button" class="btn btn-outline-primary remove_upload_data" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
+                    <button type="button" class="btn btn-outline-primary remove_upload_data" data-dismiss="modal"><i
+                            class="fas fa-times"></i> cancel
+                    </button>
                     <button class="btn btn-primary" id="save_id"><i class="fas fa-save"></i> save</button>
 
                 </div>
@@ -159,7 +176,7 @@
         {% endif %} {% if message.tags == 'error' %}
         <div style="color: red; ">{{ message }}</div>
         {% endif %} {% if message.tags == 'info' %}
-        <div style="color: Black bold"><b>{{ message }}</b> </div>
+        <div style="color: Black bold"><b>{{ message }}</b></div>
         {% endif %} {% endfor %} {% endif %}
     </div>
 </div>
@@ -181,12 +198,18 @@
         var appname = uiConstants["CONST_APPNAME01"]
         var db_header_data = uiConstants["CONST_HEADER_DATA_ACC"]
 
+        var aac_dropdown='';
+        function dropdown_value(){
+            aac_dropdown = '';
+            $.each(rendered_po_split_types_data, function(i, item){
+            aac_dropdown += '<option value="' + item.po_split_type + '">' + item.po_split_type_desc + '</option>';
+            });
+        }
+
         var po_split_dropdown = '';
         $.each(rendered_po_split_types_data, function (i, item) {
             po_split_dropdown += '<option value="' + item.po_split_type + '">' + item.po_split_type_desc + '</option>'
         });
-
-
 
         var company_dropdown = '';
         $.each(rendered_company_data, function (i, item) {
@@ -199,13 +222,11 @@
         });
 
 
-
-
 //***********************************
 //onclick of cancel display the table in display mode............
 function display_basic_db_data() {
     $('#display_basic_table').DataTable().destroy();
-    $('#id_aac_tbody').empty();
+    $('#id_po_sp_cr_tbody').empty();
     var edit_basic_data = '';
     $.each(rendered_aac_data, function(i, item) {
          var data = '';
@@ -214,11 +235,9 @@ function display_basic_db_data() {
             } else{
                 data = 'Deactivate'
             }
-
-
-        edit_basic_data += '<tr ><td class="class_select_checkbox"><input class="checkbox_check" onclick="valueChanged()" type="checkbox" required></td><td>' + item.po_split_type_desc + '</td><td>' + item.company_code_id + '</td><td>' + data + '</td><td hidden>' + item.po_split_criteria_guid + '</td><td hidden>' + item.del_ind + '</td></tr>';
+         edit_basic_data += '<tr><td class="class_select_checkbox"><input class="checkbox_check" onclick="valueChanged()" type="checkbox" required></td><td>' + item.po_split_type_desc + '</td><td>' + item.company_code_id + '</td><td>' + data + '</td><td hidden>' + item.po_split_criteria_guid + '</td><td hidden>' + item.del_ind + '</td></tr>';
     });
-    $('#id_aac_tbody').append(edit_basic_data);
+    $('#id_po_sp_cr_tbody').append(edit_basic_data);
     $("#hg_select_checkbox").prop("hidden", true);
     $(".class_select_checkbox").prop("hidden", true);
     $('input:checkbox').removeAttr('checked');
@@ -288,7 +307,7 @@ function display_basic_db_data() {
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
                     success: function(Response) {
-                        rendered_aac_data = Response[0];
+                        rendered_aac_data = Response[0].upload_account_assign_cat;
                         display_basic_db_data();
                         $('#myModal').modal('hide');
 					    //$('#id_error_msg').text(messageConstants["JMSG001"])
@@ -298,9 +317,10 @@ function display_basic_db_data() {
                           }
                         $("#err_msg_app_settings_t").prop("hidden", false)
                         table_sort_filter('id_popup_table');
-                        setTimeout(function() {
-                            $("#err_msg_app_settings_t").prop("hidden", true);
-                        }, 5000)
+<!--                        setTimeout(function() {-->
+<!--                            $("#err_msg_app_settings_t").prop("hidden", true);-->
+<!--                        }, 5000)-->
+                        message_display_time();
 						 table_sort_filter('id_popup_table');
 						 CloseLoaderPopup();
                     }
@@ -354,7 +374,7 @@ function display_basic_db_data() {
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 success: function(Response) {
-                    rendered_aac_data = Response[0];
+                    rendered_aac_data = Response[0].upload_account_assign_cat;
                     display_basic_db_data();
                      $('#success_msg_id').text(Response[1])
                      if(Response[1].message_type== 'SUCCESS'){
@@ -362,9 +382,10 @@ function display_basic_db_data() {
                     }
 					$("#err_msg_app_settings_t").prop("hidden",false)
 					 table_sort_filter('id_popup_table');
-                    setTimeout(function() {
-                        $("#err_msg_app_settings_t").prop("hidden", true);
-                    }, 5000)
+<!--                    setTimeout(function() {-->
+<!--                        $("#err_msg_app_settings_t").prop("hidden", true);-->
+<!--                    }, 5000)-->
+                     message_display_time();
                      table_sort_filter('id_popup_table');
                      CloseLoaderPopup();
                 }
@@ -504,15 +525,15 @@ function display_basic_db_data() {
 //*******************************************************
 // on click add icon display the row in to add the new entries
 function add_popup_row() {
-
+    update_dropdown();
     basic_add_new_html = '';
     var display_db_data = '';
     $('#id_popup_table').DataTable().destroy();
     $(".modal").on("hidden.bs.modal", function () {
-        $("#id_error_msg").html("");
+    $("#id_error_msg").html("");
     });
     basic_add_new_html = '<tr><td><input type="checkbox" required></td>'+
-    '<td><select type="text" class="input form-control">'+ po_split_dropdown +'</select></td>'+
+    '<td><select type="text" class="input form-control">'+ aac_dropdown +'</select></td>'+
     '<td><select type="text" class="input form-control">'+ company_dropdown +'</select></td><td><select type="text" class="input form-control">'+ activate_dropdown +'</select></td><td hidden><input type="text" class= "form-control" name="po_split_criteria_guid"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
     if (GLOBAL_ACTION == "aac_upload") {
@@ -521,17 +542,34 @@ function add_popup_row() {
     table_sort_filter('id_popup_table');
 }
 
+function update_dropdown(){
+    var data = {}
+    $.ajax({
+        type: 'POST',
+        url: "{% url 'eProc_Configuration:update_po_criteria_dropdown' %}",
+        data: JSON.stringify(data),
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: function(Response) {
+            rendered_po_split_types_data = Response.po_split_typ;
+            dropdown_value();
+        }
+    });
+
+}
+
 //onclick of add button display myModal popup and set GLOBAL_ACTION button value
 function onclick_add_button(button) {
-
+    update_dropdown();
     $("#error_msg_id").css("display", "none")
     $( "#header_select").prop( "hidden", false );
     GLOBAL_ACTION = button.value
     $("#id_popup_tbody").empty();
     $('#myModal').modal('show');
-    basic_add_new_html = '<tr><td><input type="checkbox" required></td>'+
-    '<td><select type="text" class="input form-control">'+ po_split_dropdown +'</select></td>'+
-    '<td><select type="text" class="input form-control">'+ company_dropdown +'</select></td><td><select type="text" class="input form-control">'+ activate_dropdown +'</select></td><td hidden><input type="text" class= "form-control" name="po_split_criteria_guid"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+    basic_add_new_html =
+        '<tr><td><input type="checkbox" required></td>'+
+        '<td><select type="text" class="input form-control">'+ aac_dropdown +'</select></td>'+
+        '<td><select type="text" class="input form-control">'+ company_dropdown +'</select></td><td><select type="text" class="input form-control">'+ activate_dropdown +'</select></td><td hidden><input type="text" class= "form-control" name="po_split_criteria_guid"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
     table_sort_filter('id_popup_table');
     $("#header_select").prop("hidden", false);
@@ -621,6 +659,7 @@ function compare_table_for_duplicate_entries(validate_add_attributes, po_spl_cri
     return [no_duplicate_value,error_message]
 }
 
+
 ///validate by comparing  main table values and popup table values
 function maintable_validation(po_split_criteria_data, main_table_low_value) {
      var no_duplicate_entries = 'Y'
@@ -665,7 +704,8 @@ function maintable_validation(po_split_criteria_data, main_table_low_value) {
 
 
 
-    </script>
+
+</script>
 
 <script src="{% static 'scripts/po_split_criteria.js' %}"></script>
 

@@ -681,16 +681,16 @@ function get_price_range(quantity){
     var max_flag = false
     var max_quantity =0
     var price_percentage =0
-    $.each(GLOBAL_QUANTITY.pricing, function (i, item) {
-        if((GLOBAL_QUANTITY.pricing.length)==(i)){
+    $.each(GLOBAL_QUANTITY.variant_data, function (i, item) {
+        if((GLOBAL_QUANTITY.variant_data.length)==(i)){
             max_quantity = parseFloat(9999999999999999999999999)
             max_flag = true
         }
         else{
-            max_quantity = item.pricing_data
+            max_quantity = item.discount_min_quantity
         }
 
-        range_flag = inRange(parseFloat(quantity),min,parseFloat(max_quantity))
+        range_flag = inRange(parseFloat(quantity),min,parseFloat(max_quantity)-1)
         if(range_flag){
 
             var range = min
@@ -699,29 +699,30 @@ function get_price_range(quantity){
             return quantity_range
         }
         else{
-             if((GLOBAL_QUANTITY.pricing.length-1)==(i))
+             if((GLOBAL_QUANTITY.variant_data.length-1)==(i))
             {
                 if(parseFloat(quantity) >= parseFloat(max_quantity))
                 {
                 console.log("retutn 2")
                 quantity_range = max_quantity
-                price_percentage = item.price
+                price_percentage = item.discount_percentage_value
                     return quantity_range
                 }
             }
             else{
-                min =item.pricing_data
+                min =item.discount_min_quantity
             }
         }
     });
     return quantity_range
  }
 
+
 function get_percentage_by_quantity(quantity_range){
     if(GLOBAL_QUANTITY.length != 0){
-         for(var i=0; i<GLOBAL_QUANTITY.pricing.length; i++ ){
-            if (quantity_range == GLOBAL_QUANTITY.pricing[i].pricing_data){
-                return GLOBAL_QUANTITY.pricing[i].price;
+         for(var i=0; i<GLOBAL_QUANTITY.variant_data.length; i++ ){
+            if (quantity_range == GLOBAL_QUANTITY.variant_data[i].discount_min_quantity){
+                return GLOBAL_QUANTITY.variant_data[i].discount_percentage_value;
             }
         }
     }

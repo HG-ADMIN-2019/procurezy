@@ -40,7 +40,7 @@ function onclick_add_button(button) {
     GLOBAL_ACTION = button.value
     $("#id_popup_tbody").empty();
     $('#myModal').modal('show');
-    basic_add_new_html = '<tr ><td><input type="checkbox" required></td><td><input class="input" class="form-control" type="number" name="productcategory" required></td><td><input class="input" class="form-control" type="text" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" name="Description" required"><td><td hidden></td></tr>';
+    basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select class="form-control" type="text">'+prod_cat_id_dropdown+'</select></td><td><select class="form-control"disabled>'+description_dropdown+'</select></td><td hidden>prod_cat_guid</td><td hidden>del_ind</td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
     $("#id_del_ind_checkbox").prop("hidden", true);
     document.getElementById("id_del_add_button").style.display = "block";

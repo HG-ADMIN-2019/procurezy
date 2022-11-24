@@ -31,8 +31,9 @@ def get_product_details_image_eform(product_id):
                                                               None)
         product_eform_data, eform_edit_flag = get_eform_details(product_details.variant_id)
         discount_data = get_discount_data(product_details.discount_id)
-        product_eform_data.append(discount_data)
-        product_specification = get_product_specification(product_details.product_id)
+        if discount_data:
+            product_eform_data.append(discount_data)
+        product_specification = get_product_specification(product_details.product_info_id)
 
     return product_details, prod_img_detail, product_eform_data, product_specification, eform_edit_flag
 
@@ -115,7 +116,8 @@ def get_discount_data(discount_id):
                                'field_type': CONST_QUANTITY_BASED_DISCOUNT}
         for discount_detail in discount_details:
             variant_array.append({'discount_min_quantity': discount_detail['quantity'],
-                                  'discount_percentage_value': discount_detail['discount_percentage']
+                                  'discount_percentage_value': discount_detail['discount_percentage'],
+                                  'discount_data_guid':discount_detail['discount_data_guid']
                                   })
         discount_dictionary['variant_data'] = variant_array
     return discount_dictionary

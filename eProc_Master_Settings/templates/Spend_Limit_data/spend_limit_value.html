@@ -173,10 +173,12 @@
 </div>
 </div>
 
+{{ spend_limit_value|json_script:"spend_limit_value" }}
+
 <script>
     var main_table_spend_limit_value = [];
     var master_data_settings = '{{master_data_settings|safe}}';
-    var rendered_spndlimval_data ={{spend_limit_value|safe}};
+    var rendered_spndlimval_data = JSON.parse(document.getElementById('spend_limit_value').textContent);
     var rendered_company_data ={{upload_data_company|safe}};
     var rendered_currency_data ={{upload_data_currency|safe}};
     var Tablename = uiConstants["CONST_TABLENAME_SPEND_LIMIT_VALUE"]
@@ -722,9 +724,10 @@ function onclick_display_csv_data() {
                 }
                 $("#err_msg_app_settings_t").prop("hidden", false)
                  table_sort_filter('id_popup_table');
-                setTimeout(function() {
-                    $("#err_msg_app_settings_t").prop("hidden", true);
-                }, 5000)
+<!--                setTimeout(function() {-->
+<!--                    $("#err_msg_app_settings_t").prop("hidden", true);-->
+<!--                }, 5000)-->
+                 message_display_time();
                  table_sort_filter('id_popup_table');
                  CloseLoaderPopup();
             }
@@ -785,9 +788,10 @@ function onclick_display_csv_data() {
                          }
                         $("#err_msg_app_settings_t").prop("hidden", false)
                         table_sort_filter('id_popup_table');
-                        setTimeout(function() {
-                            $("#err_msg_app_settings_t").prop("hidden", true);
-                        }, 5000)
+<!--                        setTimeout(function() {-->
+<!--                            $("#err_msg_app_settings_t").prop("hidden", true);-->
+<!--                        }, 5000)-->
+                        message_display_time();
                         table_sort_filter('id_popup_table');
                         CloseLoaderPopup();
                     }

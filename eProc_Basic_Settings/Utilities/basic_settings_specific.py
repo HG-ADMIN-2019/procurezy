@@ -152,7 +152,7 @@ def save_basic_data_into_db(basic_data, Table):
         # msgid = 'MSG113'
         # error_msg1 = get_msg_desc(msgid)
         message_desc1 = get_message_desc('MSG113')[1]
-        return Upload_response, message_desc,message_desc1
+        return Upload_response, message_desc, message_desc1
 
     elif Table == 'upload_currencies':
 
@@ -353,7 +353,6 @@ def save_country_data_into_db(country_data):
     """
 
     """
-    country_db_list = []
     save_country(country_data['data'], global_variables.GLOBAL_LOGIN_USERNAME)
     if country_data['action'] == CONST_ACTION_DELETE:
         msgid = 'MSG113'
@@ -363,6 +362,7 @@ def save_country_data_into_db(country_data):
     upload_response = get_configuration_data(Country, {'del_ind': False}, ['country_code', 'country_name'])
 
     return upload_response, message
+
 
 def save_country(country_data, username):
     """

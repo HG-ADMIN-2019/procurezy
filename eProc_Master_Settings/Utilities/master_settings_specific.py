@@ -1,3 +1,5 @@
+from django.db.models import Q
+
 from eProc_Basic.Utilities.functions.camel_case import convert_to_camel_case
 from eProc_Basic.Utilities.functions.image_type_funtions import get_image_type
 from eProc_Basic.Utilities.functions.log_function import update_log_info
@@ -20,6 +22,8 @@ from eProc_Configuration.models.development_data import ApproverType, Authorizat
 from eProc_Configuration.models.development_data import AccountAssignmentCategory
 
 fieldtypedesc_instance = FieldTypeDescriptionUpdate()
+
+
 def save_auth_group_data_into_db(auth_group_data):
     save_auth_grp(auth_group_data['data'], global_variables.GLOBAL_LOGIN_USERNAME)
     if auth_group_data['action'] == CONST_ACTION_DELETE:
@@ -242,8 +246,9 @@ def save_address_data_into_db(address_data):
                                          'area': convert_to_camel_case(address_detail['area']),
                                          'landmark': convert_to_camel_case(address_detail['landmark']),
                                          'city': convert_to_camel_case(address_detail['city']),
-                                         'address_partner_type': AddressPartnerType.objects.get(address_partner_type=address_detail['address_partner_type']),
-                                         'org_address_source_system':convert_to_camel_case
+                                         'address_partner_type': AddressPartnerType.objects.get(
+                                             address_partner_type=address_detail['address_partner_type']),
+                                         'org_address_source_system': convert_to_camel_case
                                          (address_detail['org_address_source_system']),
                                          'postal_code': address_detail['postal_code'],
                                          'region': convert_to_camel_case(address_detail['region']),
@@ -280,7 +285,8 @@ def save_address_data_into_db(address_data):
                                                                address_detail['landmark']),
                                                            'city': convert_to_camel_case(address_detail['city']),
                                                            'address_partner_type': AddressPartnerType.objects.get
-                                                           (address_partner_type = address_detail['address_partner_type']),
+                                                           (address_partner_type=address_detail[
+                                                               'address_partner_type']),
                                                            'org_address_source_system': convert_to_camel_case
                                                            (address_detail['org_address_source_system']),
                                                            'postal_code': address_detail['postal_code'],
@@ -297,7 +303,7 @@ def save_address_data_into_db(address_data):
                                                                time_zone=address_detail['time_zone']),
                                                            'org_address_changed_at': datetime.today(),
                                                            'org_address_changed_by': global_variables.GLOBAL_LOGIN_USERNAME,
-                                                           'client':  client,
+                                                           'client': client,
                                                            'del_ind': False})
         bulk_create_entry_db(OrgAddress, address_db_list)
         msgid = 'MSG112'
@@ -306,7 +312,7 @@ def save_address_data_into_db(address_data):
                                              ['address_guid', 'address_number', 'title', 'name1', 'name2',
                                               'street', 'area', 'landmark', 'city', 'postal_code', 'region',
                                               'mobile_number', 'telephone_number', 'fax_number', 'email',
-                                              'country_code', 'language_id', 'time_zone','address_partner_type',
+                                              'country_code', 'language_id', 'time_zone', 'address_partner_type',
                                               'org_address_source_system'
                                               ])
 
@@ -585,10 +591,8 @@ def save_app_limit_data_into_db(applim_data):
         for applim_detail in applim_data['data']:
             django_query_instance.django_update_query(ApproverLimit,
                                                       {'approver_username': applim_detail['approver_username'],
-                                                       'app_guid': applim_detail['app_guid'],
                                                        'company_id': applim_detail['company_id'],
-                                                       'app_code_id': applim_detail['app_code_id'],
-                                                       },
+                                                       'client': client},
                                                       {'del_ind': True,
                                                        'approver_limit_changed_at': datetime.today(),
                                                        'approver_limit_changed_by': global_variables.GLOBAL_LOGIN_USERNAME}
@@ -601,9 +605,8 @@ def save_app_limit_data_into_db(applim_data):
             if not django_query_instance.django_existence_check(ApproverLimit,
                                                                 {'approver_username': applim_detail[
                                                                     'approver_username'],
-                                                                 'app_code_id': applim_detail['app_code_id'],
-                                                                 'app_guid': applim_detail['app_guid'],
-                                                                 'company_id': applim_detail['company_id']}):
+                                                                 'company_id': applim_detail['company_id'],
+                                                                 'client': client}):
                 guid = guid_generator()
                 applim_db_dictionary = {'app_guid': guid,
                                         'approver_username': applim_detail['approver_username'],
@@ -622,8 +625,8 @@ def save_app_limit_data_into_db(applim_data):
 
                 django_query_instance.django_update_query(ApproverLimit,
                                                           {'approver_username': applim_detail['approver_username'],
-                                                           'app_code_id': applim_detail['app_code_id'],
-                                                           'company_id': applim_detail['company_id']},
+                                                           'company_id': applim_detail['company_id'],
+                                                           'client': client},
                                                           {'app_guid': applim_detail['app_guid'],
                                                            'approver_username': applim_detail['approver_username'],
                                                            'app_code_id': applim_detail['app_code_id'],
@@ -785,7 +788,7 @@ def save_workflow_acc_data_into_db(wfacc_data):
                                                            })
         bulk_create_entry_db(WorkflowACC, wfacc_db_list)
         msgid = 'MSG112'
-        message = get_message_desc(MSG112)[1]
+        message = get_message_desc(msgid)[1]
     upload_response = get_configuration_data(WorkflowACC, {'del_ind': False},
                                              ['workflow_acc_guid', 'acc_value', 'company_id', 'app_username',
                                               'sup_company_id',
@@ -851,7 +854,7 @@ def save_payment_desc_data_into_db(payment_desc_data):
                                                            })
         bulk_create_entry_db(Payterms_desc, payment_desc_db_list)
         msgid = 'MSG112'
-        message = get_message_desc(MSG112)[1]
+        message = get_message_desc(msgid)[1]
     upload_response = get_configuration_data(Payterms_desc, {'del_ind': False},
                                              ['payment_term_guid', 'payment_term_key', 'day_limit',
                                               'description', 'language_id'])
@@ -901,7 +904,7 @@ def save_incoterms_data_into_db(incoterms_data):
                                                            })
         bulk_create_entry_db(Incoterms, incoterms_db_list)
         msgid = 'MSG112'
-        message = get_message_desc(MSG112)[1]
+        message = get_message_desc(msgid)[1]
     upload_response = get_configuration_data(Incoterms, {'del_ind': False},
                                              ['incoterm_key', 'description'])
     return upload_response, message
@@ -924,7 +927,7 @@ def save_aav_data_into_db(aav_data):
                                                        'accounting_data_changed_by': global_variables.GLOBAL_LOGIN_USERNAME}
                                                       )
         msgid = 'MSG113'
-        message = get_message_desc(msgid)
+        message = get_message_desc(msgid)[1]
     else:
         for aav_detail in aav_data['data']:
             # if entry is not exists in db
@@ -969,7 +972,7 @@ def save_aav_data_into_db(aav_data):
 
         bulk_create_entry_db(AccountingData, aav_db_list)
         msgid = 'MSG112'
-        message = get_message_desc(MSG112)[1]
+        message = get_message_desc(msgid)[1]
     upload_response = get_configuration_data(AccountingData, {'del_ind': False},
                                              ['account_assign_guid', 'account_assign_value',
                                               'account_assign_cat', 'valid_from',
@@ -991,7 +994,8 @@ def save_purgrp_data_into_db(pggrp_data):
                                                        'org_pgroup_changed_by': global_variables.GLOBAL_LOGIN_USERNAME}
                                                       )
         msgid = 'MSG113'
-        message = get_message_desc(msgid)
+        message = get_message_desc(msgid)[1]
+
     else:
         for pggrp_detail in pggrp_data['data']:
             # if entry is not exists in db
@@ -1030,7 +1034,7 @@ def save_purgrp_data_into_db(pggrp_data):
 
         bulk_create_entry_db(OrgPGroup, pggrp_data_db_list)
         msgid = 'MSG112'
-        message = get_message_desc(MSG112)[1]
+        message = get_message_desc(msgid)[1]
     upload_response = get_configuration_data(OrgPGroup, {'del_ind': False},
                                              ['pgroup_guid', 'pgroup_id',
                                               'description', 'porg_id', 'object_id'])
@@ -1050,7 +1054,8 @@ def save_purorg_data_into_db(pgorg_data):
                                                        'org_porg_changed_at': datetime.today(),
                                                        'org_porg_changed_by': global_variables.GLOBAL_LOGIN_USERNAME}
                                                       )
-        message = MSG113
+        msgid = 'MSG113'
+        message = get_message_desc(msgid)[1]
     else:
         for pgorg_detail in pgorg_data['data']:
             # if entry is not exists in db
@@ -1089,11 +1094,8 @@ def save_purorg_data_into_db(pgorg_data):
                                                            'del_ind': pgorg_detail['del_ind']})
 
         bulk_create_entry_db(OrgPorg, pgorg_data_db_list)
-        message = get_message_desc(MSG100)[1]
-        # msgid = 'MSG100'
-        # message = get_msg_desc(msgid)
-        # msg = message['message_desc'][0]
-        # message = msg
+        msgid = 'MSG112'
+        message = get_message_desc(msgid)[1]
     upload_response = get_configuration_data(OrgPorg, {'del_ind': False},
                                              ['porg_guid', 'porg_id',
                                               'description', 'company_id', 'object_id'])
@@ -1113,7 +1115,7 @@ def save_orgnode_types_data_into_db(orgnode_data):
         msgid = 'MSG113'
     else:
         msgid = 'MSG112'
-    message = get_message_desc(MSG112)[1]
+    message = get_message_desc(msgid)[1]
 
     upload_response = get_configuration_data(OrgNodeTypes, {'del_ind': False, 'client': global_variables.GLOBAL_CLIENT},
                                              ['node_type_guid', 'node_type',
@@ -1183,7 +1185,7 @@ def save_orgattributes_data_into_db(attr_data):
         msgid = 'MSG113'
     else:
         msgid = 'MSG112'
-    message = get_message_desc(MSG112)[1]
+    message = get_message_desc(msgid)[1]
     upload_response = get_configuration_data(OrgAttributes, {'del_ind': False},
                                              ['attribute_id', 'attribute_name',
                                               'range_indicator', 'multiple_value',
@@ -1257,7 +1259,7 @@ def save_authorobject_data_into_db(authobj_data):
         msgid = 'MSG113'
     else:
         msgid = 'MSG112'
-    message = get_message_desc(MSG112)[1]
+    message = get_message_desc(msgid)[1]
     upload_response = get_configuration_data(AuthorizationObject, {'del_ind': False},
                                              ['auth_obj_id', 'auth_level_ID',
                                               'auth_level'])
@@ -2758,10 +2760,10 @@ def save_master_data_into_db(master_data, Table, client):
             AuthorizationGroup.objects.filter(del_ind=False).values('auth_grp_guid', 'auth_obj_grp', 'auth_obj_id',
                                                                     'auth_grp_desc', 'auth_level'))
 
-        # msgid = 'MSG112'
-        error_msg = get_message_desc(MSG112)
-        # msgid = 'MSG113'
-        error_msg1 = get_message_desc(MSG113)
+        msgid = 'MSG112'
+        error_msg = get_message_desc(msgid)
+        msgid = 'MSG113'
+        error_msg1 = get_message_desc(msgid)
         return Upload_response, error_msg, error_msg1
 
     if Table == 'upload_auth':
@@ -3707,12 +3709,12 @@ def save_glaccount_data_into_db(glaccount_data):
                                            'gl_acc_num': glaccount_detail['gl_acc_num'],
                                            'gl_acc_default': glaccount_detail['gl_acc_default'],
                                            'account_assign_cat': AccountAssignmentCategory.objects.
-                                               get(account_assign_cat=glaccount_detail['account_assign_cat']),
+                                           get(account_assign_cat=glaccount_detail['account_assign_cat']),
                                            'company_id': glaccount_detail['company_id'],
                                            'item_from_value': glaccount_detail['from_value'],
                                            'item_to_value': glaccount_detail['to_value'],
                                            'currency_id': Currency.objects.
-                                               get(currency_id=glaccount_detail['currency_id']),
+                                           get(currency_id=glaccount_detail['currency_id']),
                                            'determine_gl_account_created_at': datetime.today(),
                                            'determine_gl_account_created_by': global_variables.GLOBAL_LOGIN_USERNAME,
                                            'determine_gl_account_changed_at': datetime.today(),
@@ -3805,7 +3807,7 @@ def save_company_data_into_db(company_data):
                                                        'org_companies_changed_by': global_variables.GLOBAL_LOGIN_USERNAME}
                                                       )
         msgid = 'MSG113'
-        message = get_message_desc(msgid)
+        message = get_message_desc(msgid)[1]
     else:
         for company_detail in company_data['data']:
             # if entry is not exists in db
@@ -3863,6 +3865,7 @@ def save_product_cat_cust_data_into_db(prodcat_data):
                                                       {'del_ind': True,
                                                        'unspsc_categories_cust_changed_at': datetime.today(),
                                                        'unspsc_categories_cust_changed_by': global_variables.GLOBAL_LOGIN_USERNAME})
+
         msgid = 'MSG113'
         message = get_msg_desc(msgid)
     else:
@@ -3898,7 +3901,55 @@ def save_product_cat_cust_data_into_db(prodcat_data):
         message = get_msg_desc(msgid)
     upload_response = get_configuration_data(UnspscCategoriesCust, {'del_ind': False},
                                              ['prod_cat_guid', 'prod_cat_id'])
+    #
+    # upload_cust_prod_catogories = django_query_instance.django_filter_query(UnspscCategoriesCust,
+    #                                                                         {'client': client, 'del_ind': False}, None,
+    #                                                                         ['prod_cat_guid', 'prod_cat_id'])
 
+    product_cat_list = django_query_instance.django_filter_value_list_ordered_by_distinct_query(UnspscCategoriesCust,
+                                                                                                {'client': client,
+                                                                                                 'del_ind': False},
+                                                                                                'prod_cat_id',
+                                                                                                None)
+    prod_cat_desc = django_query_instance.django_filter_query(UnspscCategoriesCustDesc,
+                                                              {'prod_cat_id__in': product_cat_list,
+                                                               'del_ind': False},
+                                                              None,
+                                                              ['prod_cat_id', 'language_id', 'category_desc'])
+    cust_prod_cat_list = []
+    for prod_cat in upload_response:
+        prod_cat['prod_cat_desc'] = ' '
+
+        for product_cat in prod_cat_desc:
+            if prod_cat['prod_cat_id'] == product_cat['prod_cat_id']:
+                if product_cat['language_id'] == global_variables.GLOBAL_USER_LANGUAGE.language_id:
+                    prod_cat['prod_cat_desc'] = product_cat['category_desc']
+                break
+
+    for prod in upload_response:
+        if prod['prod_cat_desc'] is None:
+            prod['prod_cat_desc'] = ' '
+
+        if django_query_instance.django_existence_check(ImagesUpload, {'client': global_variables.GLOBAL_CLIENT,
+                                                                       'image_default': True,
+                                                                       'image_id': prod['prod_cat_id'],
+                                                                       'image_type': CONST_UNSPSC_IMAGE_TYPE,
+                                                                       'del_ind': False}):
+            prod['image_url'] = django_query_instance.django_filter_value_list_ordered_by_distinct_query(ImagesUpload, {
+                'client': global_variables.GLOBAL_CLIENT, 'image_default': True, 'image_id': prod['prod_cat_id'],
+                'image_type': CONST_UNSPSC_IMAGE_TYPE, 'del_ind': False
+            }, 'image_url', None)[0]
+
+        else:
+            prod['image_url'] = ""
+    filter_queue = ~Q(prod_cat_id__in=product_cat_list)
+    upload_ProdCat = django_query_instance.django_queue_query(UnspscCategories, {'del_ind': False},
+                                                              filter_queue, None, ['prod_cat_id', 'prod_cat_desc'])
+
+    for prod_cat_desc in upload_ProdCat:
+        if not prod_cat_desc['prod_cat_desc']:
+            prod_cat_desc['prod_cat_desc'] = ''
+    # data = {'cust_unspsc': upload_response, 'unspsc': upload_ProdCat}
     return upload_response, message
 
 

@@ -129,8 +129,8 @@ def check_spending_limit(request):
     update_user_info(request)
     ui_data_dictionary = JsonParser_obj.get_json_from_req(request)
     ui_data = ui_data_dictionary['data_list']
-    messages = check_spending_limit_data(ui_data)
-    return JsonResponse({'messages': messages}, safe=False)
+    messages,valid_data = check_spending_limit_data(ui_data)
+    return JsonResponse({'messages': messages,'valid_data':valid_data}, safe=False)
 
 
 def check_approvlimit_value(request):

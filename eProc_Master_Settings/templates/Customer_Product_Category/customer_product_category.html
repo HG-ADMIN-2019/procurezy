@@ -244,8 +244,7 @@
 
     var content_managment_settings = '{{content_managment_settings|safe}}';
     var rendered_cust_prod_cat_data ={{upload_cust_prod_cat|safe}};
-<!--        var rendered_UNSPC_data ={{upload_ProdCat|safe}};-->
-    var unspsc_data = {{upload_ProdCat|safe}};
+    var rendered_UNSPC_data ={{upload_ProdCat|safe}}
     var cusprodcat_data_array = {}
     var main_table_cusprodcat_value =[];
     var cusprodcat = '';
@@ -261,7 +260,7 @@
     var prod_cat_array = [];
     prod_cat_val_list = [];
 
-    $.each(unspsc_data, function(i, item){
+    $.each(rendered_UNSPC_data, function(i, item){
          prod_cat_id_dropdown += '<option value="' + item.prod_cat_id + '">' + item.prod_cat_id + '</option>';
            description_dropdown += '<option value="' + item.prod_cat_desc + '">' + item.prod_cat_desc + '</option>';
            prod_cat_val_dict = {};
@@ -868,11 +867,10 @@ function add_popup_row() {
     $(".modal").on("hidden.bs.modal", function () {
     $("#id_error_msg").html(" ");
      });
-        basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select class="form-control">'+prod_cat_id_dropdown+'</select></td><td><select class="form-control"disabled></select></td><td hidden>prod_cat_guid</td><td hidden>del_ind</td></tr>';
+        basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select class="form-control">'+prod_cat_id_dropdown+'</select></td><td id="desc_upload"><select class="form-control"disabled>'+description_dropdown+'</select></td><td hidden>prod_cat_guid</td><td hidden>del_ind</td></tr>';
         $('#id_popup_tbody').append(basic_add_new_html);
-
-     var product_id = '';
-    $("#id_popup_table TBODY TR").each(function () {
+        var product_id = '';
+        $("#id_popup_table TBODY TR").each(function () {
         var row = $(this);
         row.find("TD").eq(2).find("select").empty()
         product_id = row.find("TD").eq(1).find("select option:selected").val();
@@ -890,11 +888,13 @@ function add_popup_row() {
             row.find("TD").eq(2).find("select").append(product_id_val.description_dropdown)
 
         })
-    })
-    if (GLOBAL_ACTION == "cusprodcat_upload") {
-        $(".class_del_checkbox").prop("hidden", false);
-    }
+     })
+
     table_sort_filter_popup('id_popup_table');
+     if (GLOBAL_ACTION == "cusprodcat_upload") {
+            $("#desc_upload").prop("hidden", true);
+            $(".id_del_ind_checkbox").prop("hidden", false);
+     }
 }
 
 //onclick of add button display myModal popup and set GLOBAL_ACTION button value
@@ -904,7 +904,7 @@ function onclick_add_button(button) {
     GLOBAL_ACTION = button.value
     $("#id_popup_tbody").empty();
     $('#myModal').modal('show');
-    basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select class="form-control" type="text">'+prod_cat_id_dropdown+'</select></td><td><select class="form-control"disabled></select></td><td hidden>prod_cat_guid</td><td hidden>del_ind</td></tr>';
+    basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select class="form-control">'+prod_cat_id_dropdown+'</select></td><td><select class="form-control"disabled>'+description_dropdown+'</select></td><td hidden>prod_cat_guid</td><td hidden>del_ind</td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
     table_sort_filter('id_popup_table');
 
@@ -1054,7 +1054,7 @@ function onclick_display_csv_data() {
                               opt = '<option value="' + value[1] + '">' + value[1] + '</option>'
                              }
                              prod_cat_id_list = opt + prod_cat_id_list
-                            edit_basic_data += '<tr ><td><input type="checkbox" required></td><td><select type="text" class="form-control">value ="' + value[0] + '"'+prod_cat_id_list+'</select></td><td hidden></td><td>'+ del_ind +'</td></tr>';
+                            edit_basic_data += '<tr ><td><input type="checkbox" required></td><td><select type="text" class="form-control">value ="' + value[0] + '"'+prod_cat_id_list+'</select></td><td hidden></td><td hidden></td><td>'+ del_ind +'</td></tr>';
                     });
                    $('#id_popup_tbody').append(edit_basic_data);
                         var i =0;
@@ -1070,6 +1070,7 @@ function onclick_display_csv_data() {
                 $( "#id_del_ind_checkbox").prop( "hidden", false );
                 $( "#header_select").prop( "hidden", false );
                 $( ".class_del_checkbox").prop( "hidden", false );
+                $("#desc_upload").prop("hidden", true);
                 $('#myModal').modal('show');
                 $('#id_data_upload').modal('hide');
                 document.getElementById("id_del_add_button").style.display = "block";
@@ -1405,27 +1406,7 @@ function compare_table_for_duplicate_entries(validate_add_attributes, cusprodcat
                 no_duplicate_value = 'N'
                 return [no_duplicate_value,error_message]
             }
-             if (item.prod_cat_desc.length == 0) {
-                //error_message = messageConstants["JMSG002"] +  "Description";
-                no_duplicate_value = 'N'
-             
-                var msg = "JMSG002";
-                var msg_type ;
-              msg_type = message_config_details(msg);
-              $("#error_msg_id").prop("hidden", false)
 
-              if(msg_type.message_type == "ERROR"){
-                    display_message("error_msg_id", msg_type.messages_id_desc)
-              }
-              else if(msg_type.message_type == "WARNING"){
-                 display_message("id_warning_msg_id", msg_type.messages_id_desc)
-              }
-              else if(msg_type.message_type == "INFORMATION"){
-                 display_message("id_info_msg_id", msg_type.messages_id_desc)
-              }
-                no_duplicate_value = 'N'
-                return [no_duplicate_value,error_message]
-            }
 
         });
     }
@@ -1566,8 +1547,8 @@ function product_id_value_find(product_id) {
                 url: "{% url 'eProc_Configuration_Check:check_cust_unspsc_category' %}",
                 data: JSON.stringify(popup_data_dict),
                 success: function(response) {
-<!--                   table_sort_filter_popup_pagination('id_popup_table')-->
-                     var message = ''
+                   table_sort_filter_popup_pagination('id_popup_table')
+                   var message = ''
                    update_check_message(response.messages)
                    CloseLoaderPopup();
 
@@ -1585,6 +1566,6 @@ function update_check_message(messages){
 }
 </script>
 
-<!-- <script src="{% static 'scripts/customer_product_category.js' %}"></script> -->
+<!--<script src="{% static 'scripts/customer_product_category.js' %}"></script>-->
 
 {% endblock %}

@@ -381,8 +381,8 @@
                 //document.getElementById("success_msg_id").text = Response.success_message;
                 $("#error_msg_div").prop("hidden",false);
                 CloseLoaderPopup();
-                setTimeout(function(){$("#error_msg_div").prop("hidden",true);},5000)
-
+<!--                setTimeout(function(){$("#error_msg_div").prop("hidden",true);},5000)-->
+                message_display_time();
             }
         });
     };

@@ -380,6 +380,7 @@ class ProductInfo(models.Model):
     product_info_guid = models.CharField(db_column='PRODUCT_INFO_GUID', primary_key=True, max_length=40, blank=False,
                                          null=False)
     product_info_id = models.CharField(db_column='PRODUCT_INFO_ID', max_length=40, blank=False, null=True)
+    product_id = models.CharField(db_column="PRODUCT_ID", max_length=16, null=True)
     product_info_type = models.CharField(db_column="PRODUCT_INFO_TYPE", max_length=16, null=True)
     product_info_key = models.CharField(db_column='PRODUCT_INFO_KEY', max_length=200, blank=False, null=True)
     product_info_value = models.CharField(db_column='PRODUCT_INFO_VALUE', max_length=200, blank=False, null=True)

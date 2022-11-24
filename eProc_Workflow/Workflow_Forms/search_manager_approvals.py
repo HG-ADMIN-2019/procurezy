@@ -9,9 +9,9 @@ class SearchManagerApprovalsForm(forms.Form):
     document_type = forms.ChoiceField(label='Select Document Type', choices=doc_types,
                                       widget=forms.Select(attrs={'class': 'form-control'}))
     document_number = forms.CharField(label='Document Number', required=False,
-                                      widget=forms.TextInput(attrs={'class': 'form-control check_special_char'}))
+                                      widget=forms.TextInput(attrs={'class': 'form-control check_number_search'}))
     cart_name = forms.CharField(label='Cart Name', required=False,
-                                widget=forms.TextInput(attrs={'class': 'form-control check_special_char'}))
+                                widget=forms.TextInput(attrs={'class': 'form-control check_for_search'}))
     timeframe = (
         ('Today', 'Today'),
         ('7', 'Last 7 Days'),

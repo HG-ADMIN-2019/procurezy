@@ -7,7 +7,7 @@ from eProc_Configuration.models import UnspscCategoriesCustDesc, UnspscCategorie
     AccountingDataDesc, AccountingData, OrgCompanies, OrgPorg, OrgPGroup, WorkflowSchema, ApproverType, SpendLimitValue, \
     SpendLimitId, ApproverLimitValue, ApproverLimit, WorkflowACC, OrgAddressMap, OrgAddress, Incoterms, Payterms_desc, \
     Payterms, ProductsDetail, Country, Currency, Languages, SupplierMaster, UnitOfMeasures, TimeZone, OrgClients, \
-    OrgNodeTypes, OrgAttributes, OrgModelNodetypeConfig
+    OrgNodeTypes, OrgAttributes, OrgModelNodetypeConfig, AuthorizationObject, DetermineGLAccount
 
 django_query_instance = DjangoQueries()
 
@@ -665,6 +665,7 @@ def check_spending_limit_data(ui_data):
     delete_count = 0
     invalid_count = 0
     dependent_count = 0
+    valid_data_list = []
     for spending_limit in ui_data:
         # dependent check
         if django_query_instance.django_existence_check(SpendLimitValue,
@@ -677,10 +678,11 @@ def check_spending_limit_data(ui_data):
                 if django_query_instance.django_existence_check(SpendLimitId,
                                                                 {'del_ind': False,
                                                                  'client': global_variables.GLOBAL_CLIENT,
-                                                                 'spend_code_id': spending_limit['spend_code_id'],
+                                                                 'spender_username': spending_limit['spender_username'],
                                                                  'company_id': spending_limit['company_id']}
                                                                 ):
                     delete_count = delete_count + 1
+                    valid_data_list.append(spending_limit)
                 else:
                     # if del is set but record is not found in db then it is consider as invalid count
                     invalid_count = invalid_count + 1
@@ -698,13 +700,15 @@ def check_spending_limit_data(ui_data):
                 elif django_query_instance.django_existence_check(SpendLimitId,
                                                                   {'del_ind': False,
                                                                    'client': global_variables.GLOBAL_CLIENT,
-                                                                   'spend_code_id': spending_limit['spend_code_id'],
+                                                                   'spender_username': spending_limit['spender_username'],
                                                                    'company_id': spending_limit[
                                                                        'company_id']}):
                     update_count = update_count + 1
+                    valid_data_list.append(spending_limit)
                 else:
                     # insert check
                     insert_count = insert_count + 1
+                    valid_data_list.append(spending_limit)
         else:
             print(spending_limit['spend_code_id'])
             dependent_count = dependent_count + 1
@@ -720,7 +724,7 @@ def check_spending_limit_data(ui_data):
     dependent_count_message = get_message_desc('MSG200')[1] + str(dependent_count)
     message = [db_count_message, file_count_message, insert_count_message, update_count_message,
                duplicate_count_message, delete_count_message, invalid_count_message, dependent_count_message]
-    return message
+    return message,valid_data_list
 
 
 def check_approv_limit_value_data(ui_data):
@@ -899,22 +903,23 @@ def check_workflow_acc_data(ui_data):
             if django_query_instance.django_existence_check(WorkflowACC,
                                                             {'del_ind': False,
                                                              'client': global_variables.GLOBAL_CLIENT,
-                                                             'app_code_id': workflw_acc_value['app_code_id'],
+                                                             'acc_value': workflw_acc_value['acc_value'],
                                                              'company_id': workflw_acc_value['company_id'],
-                                                             'app_types': workflw_acc_value['app_types'],
-                                                             'upper_limit_value': workflw_acc_value[
-                                                                 'upper_limit_value'],
-                                                             'currency_id': workflw_acc_value['currency_id']
+                                                             'app_username': workflw_acc_value['app_username'],
+                                                             'sup_company_id': workflw_acc_value[
+                                                                 'sup_company_id'],
+                                                             'sup_acc_value': workflw_acc_value['sup_acc_value']
                                                              }):
                 duplicate_count = duplicate_count + 1
             elif django_query_instance.django_existence_check(WorkflowACC,
                                                               {'del_ind': False,
                                                                'client': global_variables.GLOBAL_CLIENT,
-                                                               'app_code_id': workflw_acc_value[
-                                                                   'app_code_id'],
+                                                               'acc_value': workflw_acc_value['acc_value'],
                                                                'company_id': workflw_acc_value['company_id'],
-                                                               'app_types': workflw_acc_value['app_types'],
-                                                               'currency_id': workflw_acc_value['currency_id']
+                                                               'app_username': workflw_acc_value['app_username'],
+                                                               'sup_company_id': workflw_acc_value[
+                                                                   'sup_company_id'],
+                                                               'sup_acc_value': workflw_acc_value['sup_acc_value']
                                                                }):
                 update_count = update_count + 1
             else:
@@ -1385,7 +1390,10 @@ def get_valid_unspsc_data(ui_data):
         filter_queue = ~Q(prod_cat_id=data['prod_cat_id'])
         if data['del_ind']:
             if not django_query_instance.django_queue_existence_check(UnspscCategories,
+                                                                      {'del_ind': True,
+                                                                       'client': global_variables.GLOBAL_CLIENT},
                                                                       {'del_ind': True}, filter_queue):
+
                 data_list.append(data)
         else:
             data_list.append(data)
@@ -1413,7 +1421,8 @@ def get_valid_org_attributes_data(ui_data):
         filter_queue = ~Q(attribute_id=data['attribute_id'])
         if data['del_ind']:
             if not django_query_instance.django_queue_existence_check(OrgAttributes,
-                                                                      {'del_ind': True},
+                                                                      {'del_ind': True,
+                                                                       'client': global_variables.GLOBAL_CLIENT},
                                                                       filter_queue):
                 data_list.append(data)
         else:
@@ -1427,9 +1436,345 @@ def get_valid_org_nodetype_config_data(ui_data):
         filter_queue = ~Q(org_model_types=data['org_model_types'])
         if data['del_ind']:
             if not django_query_instance.django_queue_existence_check(OrgModelNodetypeConfig,
-                                                                      {'del_ind': True},
+                                                                      {'del_ind': True,
+                                                                       'client': global_variables.GLOBAL_CLIENT},
                                                                       filter_queue):
                 data_list.append(data)
         else:
             data_list.append(data)
     return data_list
+
+
+def get_valid_org_company_data(ui_data):
+    data_list = []
+    for data in ui_data:
+        filter_queue = ~Q(company_id=data['company_id'])
+        if data['del_ind']:
+            if not django_query_instance.django_queue_existence_check(OrgCompanies,
+                                                                      {'del_ind': True,
+                                                                       'client': global_variables.GLOBAL_CLIENT},
+                                                                      filter_queue):
+                data_list.append(data)
+        else:
+            data_list.append(data)
+    return data_list
+
+
+def get_valid_org_authorization_data(ui_data):
+    data_list = []
+    for data in ui_data:
+        filter_queue = ~Q(auth_obj_id=data['auth_obj_id'])
+        if data['del_ind']:
+            if not django_query_instance.django_queue_existence_check(AuthorizationObject,
+                                                                      {'del_ind': True,
+                                                                       'client': global_variables.GLOBAL_CLIENT},
+                                                                      filter_queue):
+                data_list.append(data)
+        else:
+            data_list.append(data)
+    return data_list
+
+
+def get_valid_SpendLimitValue_data(ui_data):
+    data_list = []
+    for data in ui_data:
+        filter_queue = ~Q(company_id=data['company_id'])
+        if data['del_ind']:
+            if not django_query_instance.django_queue_existence_check(SpendLimitValue,
+                                                                      {'del_ind': True,
+                                                                       'client': global_variables.GLOBAL_CLIENT},
+                                                                      filter_queue):
+                data_list.append(data)
+        else:
+            data_list.append(data)
+    return data_list
+
+
+def get_valid_SpendLimitId_data(ui_data):
+    data_list = []
+    for data in ui_data:
+        filter_queue = ~Q(spender_username=data['spender_username'])
+        if data['del_ind']:
+            if not django_query_instance.django_queue_existence_check(SpendLimitId,
+                                                                      {'del_ind': True,
+                                                                       'client': global_variables.GLOBAL_CLIENT},
+                                                                      filter_queue):
+                data_list.append(data)
+        else:
+            data_list.append(data)
+    return data_list
+
+
+def get_valid_ApprovlLimit_data(ui_data):
+    data_list = []
+    for data in ui_data:
+        filter_queue = ~Q(approver_username=data['approver_username'])
+        if data['del_ind']:
+            if not django_query_instance.django_queue_existence_check(ApproverLimit,
+                                                                      {'del_ind': True,
+                                                                       'client': global_variables.GLOBAL_CLIENT},
+                                                                      filter_queue):
+                data_list.append(data)
+        else:
+            data_list.append(data)
+    return data_list
+
+
+def get_valid_ApprovlLimitValue_data(ui_data):
+    data_list = []
+    for data in ui_data:
+        filter_queue = ~Q(app_code_id=data['app_code_id'])
+        if data['del_ind']:
+            if not django_query_instance.django_queue_existence_check(ApproverLimitValue,
+                                                                      {'del_ind': True,
+                                                                       'client': global_variables.GLOBAL_CLIENT},
+                                                                      filter_queue):
+                data_list.append(data)
+        else:
+            data_list.append(data)
+    return data_list
+
+
+def get_workflows_data(ui_data):
+    data_list = []
+    for data in ui_data:
+        filter_queue = ~Q(acc_value=data['acc_value'])
+        if data['del_ind']:
+            if not django_query_instance.django_queue_existence_check(WorkflowACC,
+                                                                      {'del_ind': True,
+                                                                       'client': global_variables.GLOBAL_CLIENT},
+                                                                      filter_queue):
+                data_list.append(data)
+        else:
+            data_list.append(data)
+    return data_list
+
+
+def get_incoterms_data(ui_data):
+    data_list = []
+    for data in ui_data:
+        filter_queue = ~Q(incoterm_key=data['incoterm_key'])
+        if data['del_ind']:
+            if not django_query_instance.django_queue_existence_check(Incoterms,
+                                                                      {'del_ind': True,
+                                                                       'client': global_variables.GLOBAL_CLIENT},
+                                                                      filter_queue):
+                data_list.append(data)
+        else:
+            data_list.append(data)
+    return data_list
+
+
+def get_payment_desc_data(ui_data):
+    data_list = []
+    for data in ui_data:
+        filter_queue = ~Q(payment_term_key=data['payment_term_key'])
+        if data['del_ind']:
+            if not django_query_instance.django_queue_existence_check(Payterms_desc,
+                                                                      {'del_ind': True,
+                                                                       'client': global_variables.GLOBAL_CLIENT},
+                                                                      filter_queue):
+                data_list.append(data)
+        else:
+            data_list.append(data)
+    return data_list
+
+
+def get_valid_UnspscCategoriesCust_data(ui_data):
+    data_list = []
+    for data in ui_data:
+        filter_queue = ~Q(prod_cat_id=data['prod_cat_id'])
+        if data['del_ind']:
+            if not django_query_instance.django_queue_existence_check(UnspscCategoriesCust,
+                                                                      {'del_ind': True,
+                                                                       'client': global_variables.GLOBAL_CLIENT},
+                                                                      filter_queue):
+                data_list.append(data)
+        else:
+            data_list.append(data)
+    return data_list
+
+
+def get_valid_UnspscCategoriesCustDesc_data(ui_data):
+    data_list = []
+    for data in ui_data:
+        filter_queue = ~Q(prod_cat_id=data['prod_cat_id'])
+        if data['del_ind']:
+            if not django_query_instance.django_queue_existence_check(UnspscCategoriesCustDesc,
+                                                                      {'del_ind': True,
+                                                                       'client': global_variables.GLOBAL_CLIENT},
+                                                                      filter_queue):
+                data_list.append(data)
+        else:
+            data_list.append(data)
+    return data_list
+
+
+def get_valid_org_company_data(ui_data):
+    data_list = []
+    for data in ui_data:
+        filter_queue = ~Q(company_id=data['company_id'])
+        if data['del_ind']:
+            if not django_query_instance.django_queue_existence_check(OrgCompanies,
+                                                                      {'del_ind': True,
+                                                                       'client': global_variables.GLOBAL_CLIENT},
+                                                                      filter_queue):
+                data_list.append(data)
+        else:
+            data_list.append(data)
+    return data_list
+
+
+def get_valid_OrgPGroup_data(ui_data):
+    data_list = []
+    for data in ui_data:
+        filter_queue = ~Q(pgroup_id=data['pgroup_id'])
+        if data['del_ind']:
+            if not django_query_instance.django_queue_existence_check(OrgPGroup,
+                                                                      {'del_ind': True,
+                                                                       'client': global_variables.GLOBAL_CLIENT},
+                                                                      filter_queue):
+                data_list.append(data)
+        else:
+            data_list.append(data)
+    return data_list
+
+
+def get_valid_OrgPorg_data(ui_data):
+    data_list = []
+    for data in ui_data:
+        filter_queue = ~Q(porg_id=data['porg_id'])
+        if data['del_ind']:
+            if not django_query_instance.django_queue_existence_check(OrgPorg,
+                                                                      {'del_ind': True,
+                                                                       'client': global_variables.GLOBAL_CLIENT},
+                                                                      filter_queue):
+                data_list.append(data)
+        else:
+            data_list.append(data)
+    return data_list
+
+
+def get_valid_DetermineGLAccount_data(ui_data):
+    data_list = []
+    for data in ui_data:
+        filter_queue = ~Q(det_gl_acc_guid=data['det_gl_acc_guid'])
+        if data['del_ind']:
+            if not django_query_instance.django_queue_existence_check(DetermineGLAccount,
+                                                                      {'del_ind': True,
+                                                                       'client': global_variables.GLOBAL_CLIENT},
+                                                                      filter_queue):
+                data_list.append(data)
+        else:
+            data_list.append(data)
+    return data_list
+
+
+def get_valid_AccountingData_data(ui_data):
+    data_list = []
+    for data in ui_data:
+        filter_queue = ~Q(account_assign_value=data['account_assign_value'])
+        if data['del_ind']:
+            if not django_query_instance.django_queue_existence_check(AccountingData,
+                                                                      {'del_ind': True,
+                                                                       'client': global_variables.GLOBAL_CLIENT},
+
+                                                                      filter_queue):
+                data_list.append(data)
+        else:
+            data_list.append(data)
+    return data_list
+
+
+def get_valid_AccountingDataDesc_data(ui_data):
+    data_list = []
+    for data in ui_data:
+        filter_queue = ~Q(account_assign_value=data['account_assign_value'])
+        if data['del_ind']:
+            if not django_query_instance.django_queue_existence_check(AccountingDataDesc,
+                                                                      {'del_ind': True,
+                                                                       'client': global_variables.GLOBAL_CLIENT},
+                                                                      filter_queue):
+                data_list.append(data)
+        else:
+            data_list.append(data)
+    return data_list
+
+
+def get_valid_ApproverType_data(ui_data):
+    data_list = []
+    for data in ui_data:
+        filter_queue = ~Q(app_types=data['app_types'])
+        if data['del_ind']:
+            if not django_query_instance.django_queue_existence_check(ApproverType,
+                                                                      {'del_ind': True },
+                                                                      filter_queue):
+
+                data_list.append(data)
+        else:
+            data_list.append(data)
+    return data_list
+
+def get_valid_work_flow_schema_data(ui_data):
+    data_list = []
+    for data in ui_data:
+        filter_queue = ~Q(workflow_schema=data['workflow_schema'])
+        if data['del_ind']:
+            if not django_query_instance.django_queue_existence_check(WorkflowSchema,
+                                                                      {'del_ind': True,
+                                                                       'client': global_variables.GLOBAL_CLIENT},
+                                                                      filter_queue):
+                data_list.append(data)
+        else:
+            data_list.append(data)
+    return data_list
+
+
+def get_valid_AccountingDataDesc_data(ui_data):
+    data_list = []
+    for data in ui_data:
+        filter_queue = ~Q(account_assign_value=data['account_assign_value'])
+        if data['del_ind']:
+            if not django_query_instance.django_queue_existence_check(AccountingDataDesc,
+                                                                      {'del_ind': True,
+                                                                       'client': global_variables.GLOBAL_CLIENT},
+                                                                      filter_queue):
+                data_list.append(data)
+        else:
+            data_list.append(data)
+    return data_list
+
+
+def get_valid_ApproverType_data(ui_data):
+    data_list = []
+    for data in ui_data:
+        filter_queue = ~Q(app_types=data['app_types'])
+        if data['del_ind']:
+            if not django_query_instance.django_queue_existence_check(ApproverType,
+                                                                      {'del_ind': True },
+                                                                      filter_queue):
+
+                data_list.append(data)
+        else:
+            data_list.append(data)
+    return data_list
+
+
+def get_valid_work_flow_schema_data(ui_data):
+    data_list = []
+    for data in ui_data:
+        filter_queue = ~Q(workflow_schema=data['workflow_schema'])
+        if data['del_ind']:
+            if not django_query_instance.django_queue_existence_check(WorkflowSchema,
+                                                                      {'del_ind': True,
+                                                                       'client': global_variables.GLOBAL_CLIENT},
+                                                                      filter_queue):
+                data_list.append(data)
+        else:
+            data_list.append(data)
+
+    return data_list
+
+
+    return data_list
+

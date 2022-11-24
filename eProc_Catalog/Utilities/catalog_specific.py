@@ -709,8 +709,8 @@ def update_product_pricing(prod_details):
 
     """
     for product_detail in prod_details:
-        if product_detail['eform_id']:
-            product_detail['price'] = get_product_price_from_eform(product_detail['eform_id'])
+        if product_detail['variant_id']:
+            product_detail['price'] = get_product_price_from_eform(product_detail['variant_id'])
             print(product_detail['price'])
     return prod_details
 

@@ -8,43 +8,31 @@ Usage:
 Author:
 Soni Vydyula
 """
-import smtplib
-import ssl
-import traceback
-from functools import lru_cache
-from django.core.mail import send_mail, EmailMultiAlternatives, DEFAULT_ATTACHMENT_MIME_TYPE
-import imaplib
 import re
-import time
+import smtplib
+from email.mime.image import MIMEImage
+from functools import lru_cache
 
 from django.conf import settings
+from django.contrib.staticfiles import finders
 from django.core.mail import EmailMessage
-from django.core.mail import send_mail
+from django.core.mail import EmailMultiAlternatives
 from django.http import BadHeaderError
 from django.template.loader import render_to_string
-from pyasn1.compat.octets import null
-from pyasn1.type.univ import Null
-from twisted.web.server import Site
 
 from Majjaka_eProcure import settings
-from eProc_Add_Item.views import JsonParser_obj
 from eProc_Basic.Utilities.constants.constants import *
 from eProc_Basic.Utilities.functions.django_query_set import DjangoQueries
-from eProc_Basic.Utilities.functions.encryption_util import decrypt
 from eProc_Basic.Utilities.functions.guid_generator import guid_generator
 from eProc_Basic.Utilities.global_defination import global_variables
-from eProc_Configuration.models import NotifSettings, EmailContents, AccountAssignmentCategory, UnitOfMeasures, \
+from eProc_Configuration.models import EmailContents, AccountAssignmentCategory, UnitOfMeasures, \
     OrgClients
-from eProc_Doc_Search_and_Display.Utilities.search_display_specific import get_sc_header_app
 from eProc_Emails.models import EmailUserMonitoring, EmailDocumentMonitoring, EmailSupplierMonitoring
 from eProc_Notes_Attachments.models import Notes
 from eProc_Purchase_Order.models import PoHeader
 from eProc_Registration.models import UserData
 from eProc_Shopping_Cart.Utilities.shopping_cart_generic import get_acc_detail
-from eProc_Shopping_Cart.Utilities.shopping_cart_specific import get_manger_detail
-from eProc_Shopping_Cart.models import ScHeader, ScApproval, ScPotentialApproval
-from email.mime.image import MIMEImage
-from django.contrib.staticfiles import finders
+from eProc_Shopping_Cart.models import ScPotentialApproval
 
 django_query_instance = DjangoQueries()
 

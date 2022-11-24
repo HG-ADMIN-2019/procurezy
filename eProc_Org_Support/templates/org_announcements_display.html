@@ -223,7 +223,8 @@
                     document.getElementById("success_msg_id").text = Response.success_message;
                     $("#id_delete_annsmt").hide();
                 }
-                setTimeout(function () { $("#error_msg_div").prop("hidden", true); }, 5000)
+<!--                setTimeout(function () { $("#error_msg_div").prop("hidden", true); }, 5000)-->
+                message_display_time();
             }
         });
     }
@@ -291,7 +292,8 @@
                 //document.getElementById("success_msg_id").text = Response.success_message;
                 $("#id_delete_annsmt").hide();
                 $("#error_msg_div").prop("hidden", false)
-                setTimeout(function () { $("#error_msg_div").prop("hidden", true); }, 5000)
+<!--                setTimeout(function () { $("#error_msg_div").prop("hidden", true); }, 5000)-->
+                message_display_time();
             }
         });
     }

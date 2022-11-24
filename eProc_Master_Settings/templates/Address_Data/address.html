@@ -193,7 +193,7 @@
                             <div class="form-group row">
                                 <label class="col-4 col-form-label">Postal Code:</label>
                                 <div class="col-8">
-                                    <input type="text" class="form-control hg_edit_display_mode"
+                                    <input type="text" class="form-control hg_edit_display_mode check_postal_code"
                                         id="id_addresses_postalcode" disabled>
                                 </div>
                             </div>
@@ -278,7 +278,7 @@
     </div>
     <!--  Delivery address process data details - End -->
 
-    <!--  address popuptable ADD details - Start -->
+    <!--  address popuptable ADD details and upload update and edit in main table- Start -->
     <div class="modal fade" id="address_add_details" tabindex="-1" role="dialog">
         <div class="modal-dialog modal-dialog-centered" style="max-width: 95%;">
             <div class="modal-content">
@@ -323,7 +323,7 @@
                                 <div class="form-group row ">
                                     <label class="col-4 col-form-label">Address Number:</label>
                                     <div class="col-8">
-                                        <input type="text" class="form-control" id="id_add_addresses_address_number">
+                                        <input type="text" class="form-control" id="id_add_addresses_address_number" disabled>
                                     </div>
                                 </div>
                                 <div class="form-group row">
@@ -391,7 +391,7 @@
                                 <div class="form-group row">
                                     <label class="col-4 col-form-label">Postal Code:</label>
                                     <div class="col-8">
-                                        <input type="text" class="form-control" id="id_add_addresses_postalcode">
+                                        <input type="text" class="form-control check_postal_code" id="id_add_addresses_postalcode">
                                     </div>
                                 </div>
                                 <div class="form-group row">
@@ -483,15 +483,16 @@
                     <button type="button" class="btn btn-outline-primary remove_upload_data" data-dismiss="modal"><i
                             class="fas fa-times"></i> cancel</button>
                     <button class="btn btn-primary" id="save_id"><i class="fas fa-save"></i> save</button>
+                    <button class="btn btn-primary" id="save_upload_update" onclick="onclick_upload_save_button(this)"> save</button>
                 </div>
             </div>
         </div>
     </div>
     <!--  Delivery address add process data details - End -->
 
-    <!--modal popup for Add,copy,update and upload-->
+    <!--modal popup for upload-->
     <!-- The Modal -->
-    <div class="modal fade" id="myModal" style="overflow:auto;">
+    <div class="modal fade" id="myModalupload" style="overflow:auto;">
         <div class="modal-dialog modal-dialog-centered modal-xl">
             <div class="modal-content">
 
@@ -505,14 +506,6 @@
                 <!-- Modal body -->
                 <div class="modal-body">
                     <div class="popup-vertical-scroll">
-                    <div id="id_del_add_button" class="mb-4">
-                        <button class="btn btn-primary" type="button" onclick="add_popup_row()">
-                            <i class="fa fa-plus"></i> add new row
-                        </button>
-                        <button class="btn btn-outline-danger" onclick="application_settings_delete_Row('id_popup_table')">
-                            <i class="fa fa-trash"></i> delete
-                        </button>
-                    </div>
 
                     <div id="id_check_success_messages_upload" class="alert alert-success check_success_message" hidden></div>
                     <div id="id_check_error_messages_upload" class="alert alert-danger check_error_messages" hidden></div>
@@ -544,7 +537,6 @@
                         <tr>
                             <th id="header_select">Select</th>
                             <th>Address Number</th>
-                            <th>Title</th>
                             <th>Name 1</th>
                             <th>Name 2</th>
                             <th>City</th>
@@ -617,7 +609,49 @@
     //console.log(rendered_address_data);
     // validate and save for add,copy,update and upload data
 
+    function onclick_upload_save_button(button){
+        address_data = new Array();
 
+        var user_data_dict = {}
+        user_data_dict.title = $('#id_add_addresses_title').val();
+        user_data_dict.name1= $('#id_add_addresses_name1').val();
+        user_data_dict.name2= $('#id_add_addresses_name2').val();
+        user_data_dict.street= $('#id_add_addresses_street').val();
+        user_data_dict.area= $('#id_add_addresses_area').val();
+        user_data_dict.landmark=$('#id_add_addresses_landmark').val();
+        user_data_dict.city= $('#id_add_addresses_city').val();
+        user_data_dict.address_partner_type= $('#id_add_addresses_partnertype').val();
+        user_data_dict.org_address_source_system= $('#id_add_addresses_source').val();
+        user_data_dict.postal_code= $('#id_add_addresses_postalcode').val();
+        user_data_dict.region= $('#id_add_addresses_region').val();
+        user_data_dict.mobile_number= $('#id_add_addresses_mobile_number').val();
+        user_data_dict.telephone_number= $('#id_add_addresses_telephone_number').val();
+        user_data_dict.fax_number= $('#id_add_addresses_fax_number').val();
+        user_data_dict.email= $('#id_add_addresses_email').val();
+        user_data_dict.country_code= $('#id_add_addresses_country_code').val();
+        user_data_dict.language_id= $('#id_add_addresses_language_id').val();
+        user_data_dict.time_zone= $('#id_add_addresses_time_zone').val();
+        user_data_dict.del_ind= $('#id_add_addresses_del_ind_flag').val();
+        user_data_dict.address_guid= $('#id_add_addresses_address_guid').val();
+
+            if (user_data_dict == undefined) {
+                user_data_dict.address_number = $('#id_addresses_address_number').val();
+            }
+            if(user_data_dict.address_guid== undefined) {
+                user_data_dict.address_guid= ''
+            }
+
+            address_data.push(user_data_dict);
+
+          $.each(address_data, function(i, item){
+            edit_basic_data += '<tr ><td class="class_select_checkbox"><input type="checkbox" disabled></td><td><input type="text" class="form-control" value="' + item[0] + '" maxlength="8" onkeypress="return /[a-z]/i.test(event.key)" disabled></td><td><input type="text" class="form-control" value="' + item[2] + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" disabled></td><td><input type="text" class="form-control" value="' + item[3] + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" disabled></td><td><input type="text" class="form-control" value="' + item[7] + '" maxlength="8" onkeypress="return /[a-z]/i.test(event.key)" disabled></td><td><input type="text" class="form-control" value="' + item[15] + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" disabled></td><td><select class="form-control" type = "text" disabled>value ="' + item[16] + '"</select></td><td class="item-action-icon-section"><button class="btn btn-primary btn-sm" title="Update" id="edit-'+item[0]+'"  value="UPDATE" type="button" onclick="onclick_updateaddress_button(this.id)"><i class="far fa-edit"></i> update</button></td><td>' + item[19] + '</td><td hidden></td></tr>';
+          });
+
+         $('#id_popup_tbody').append(edit_basic_data);
+
+         $('#myModalupload').modal('show');
+         $('#address_add_details').modal('hide');
+    }
 
     function onclick_editaddress_button(element) {
         $("#error_msg_id").css("display", "none")
@@ -646,7 +680,43 @@
         $("#id_add_addresses_time_zone").val(address_edit_data.time_zone);
         $("#id_add_addresses_del_ind_flag").val(address_edit_data.del_ind_flag);
         $("#id_add_addresses_address_guid").val(address_edit_data.address_guid);
+        $("#save_upload_update").css("display", "none")
         $('#address_add_details').modal('show');
+        $("#id_add_addresses_address_number").prop("disabled", true);
+    }
+
+    function onclick_updateaddress_button(element) {
+        $("#error_msg_id").css("display", "none")
+        var getindex = element.split("-")[1]
+        var address_number = parseInt(getindex)
+        var address_edit_data = rendered_address_data.find(data => data.address_number === address_number)
+        console.log(address_edit_data);
+        $("#id_add_addresses_address_number").prop("disabled", true);
+        $("#id_add_addresses_address_number").val(address_edit_data.address_number);
+        $("#id_add_addresses_title").val(address_edit_data.title);
+        $("#id_add_addresses_name1").val(address_edit_data.name1);
+        $("#id_add_addresses_name2").val(address_edit_data.name2);
+        $("#id_add_addresses_street").val(address_edit_data.street);
+        $("#id_add_addresses_area").val(address_edit_data.area);
+        $("#id_add_addresses_landmark").val(address_edit_data.landmark);
+        $("#id_add_addresses_city").val(address_edit_data.city);
+        $("#id_add_addresses_partnertype").val(address_edit_data.address_partner_type);
+        $("#id_add_addresses_source").val(address_edit_data.org_address_source_system);
+        $("#id_add_addresses_postalcode").val(address_edit_data.postal_code);
+        $("#id_add_addresses_region").val(address_edit_data.region);
+        $("#id_add_addresses_mobile_number").val(address_edit_data.mobile_number);
+        $("#id_add_addresses_telephone_number").val(address_edit_data.telephone_number);
+        $("#id_add_addresses_fax_number").val(address_edit_data.fax_number);
+        $("#id_add_addresses_email").val(address_edit_data.email);
+        $("#id_add_addresses_country_code").val(address_edit_data.country_code);
+        $("#id_add_addresses_language_id").val(address_edit_data.language_id);
+        $("#id_add_addresses_time_zone").val(address_edit_data.time_zone);
+        $("#id_add_addresses_del_ind_flag").val(address_edit_data.del_ind_flag);
+        $("#id_add_addresses_address_guid").val(address_edit_data.address_guid);
+        $("#save_id").css("display", "none")
+        $("#save_upload_update").css("display", "block")
+        $('#address_add_details').modal('show');
+        $('#myModalupload').modal('hide');
     }
 
 
@@ -773,8 +843,7 @@
                     dataType: "json",
                     success: function (Response) {
                         rendered_address_data = Response[0];
-                        display_basic_db_data();
-                    //    $('#myModal').modal('hide');
+                        display_basic_db_data();                    
                         //$('#id_error_msg').text(messageConstants["JMSG001"])
                         $('#success_msg_id').text(Response[1])
                         if (Response[1].message_type == 'SUCCESS') {
@@ -782,7 +851,8 @@
                         }
                         $("#err_msg_app_settings_t").prop("hidden", false)
                         table_sort_filter('id_popup_table');
-                        setTimeout(function () { $("#err_msg_app_settings_t").prop("hidden", true); }, 5000)
+<!--                        setTimeout(function () { $("#err_msg_app_settings_t").prop("hidden", true); }, 5000)-->
+                        message_display_time();
                         table_sort_filter('id_popup_table');
                         CloseLoaderPopup();
                         }
@@ -858,7 +928,8 @@
                 }
                 $("#err_msg_app_settings_t").prop("hidden", false)
                 // table_sort_filter('id_popup_table');
-                setTimeout(function () { $("#err_msg_app_settings_t").prop("hidden", true); }, 5000)
+<!--                setTimeout(function () { $("#err_msg_app_settings_t").prop("hidden", true); }, 5000)-->
+                message_display_time();
             //    table_sort_filter('id_popup_table');
                 CloseLoaderPopup();
             }
@@ -981,7 +1052,7 @@ function onclick_display_csv_data() {
                                 });
 
 
-                                edit_basic_data += '<tr ><td class="class_select_checkbox"><input type="checkbox" required></td><td><input type="text" class="form-control" value="' + value[0] + '" maxlength="8" onkeypress="return /[a-z]/i.test(event.key)" required></td><td><input type="text" class="form-control" value="' + value[2] + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td><td><input type="text" class="form-control" value="' + value[3] + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td><td><input type="text" class="form-control" value="' + value[4] + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td><td><input type="text" class="form-control" value="' + value[8] + '" maxlength="8" onkeypress="return /[a-z]/i.test(event.key)" required></td><td><input type="text" class="form-control" value="' + value[14] + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required</td><td><select class="form-control" type = "text">value ="' + value[16] + '"'+country_number_id_list+'</select></td><td></td><td>' + del_ind + '</td><td hidden></td></tr>';
+                                edit_basic_data += '<tr ><td class="class_select_checkbox"><input type="checkbox" disabled></td><td><input type="text" class="form-control" value="' + value[0] + '" maxlength="8" onkeypress="return /[a-z]/i.test(event.key)" disabled></td><td><input type="text" class="form-control" value="' + value[3] + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" disabled></td><td><input type="text" class="form-control" value="' + value[4] + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" disabled></td><td><input type="text" class="form-control" value="' + value[8] + '" maxlength="8" onkeypress="return /[a-z]/i.test(event.key)" disabled></td><td><input type="text" class="form-control" value="' + value[14] + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" disabled></td><td><select class="form-control" type = "text" disabled>value ="' + value[16] + '"'+country_number_id_list+'</select></td><td class="item-action-icon-section"><button class="btn btn-primary btn-sm" title="Update" id="edit-'+value[0]+'"  value="UPDATE" type="button" onclick="onclick_updateaddress_button(this.id)"><i class="far fa-edit"></i> update</button></td><td>' + del_ind + '</td><td hidden></td></tr>';
                         });
                     $('#id_popup_tbody').append(edit_basic_data);
 
@@ -999,9 +1070,8 @@ function onclick_display_csv_data() {
                     $("#id_del_ind_checkbox").prop("hidden", false);
                     $(".class_del_checkbox").prop("hidden", false);
                     $( "#header_select").prop( "hidden", false );
-                    $('#myModal').modal('show');
+                    $('#myModalupload').modal('show');
                     $('#id_data_upload').modal('hide');
-                    document.getElementById("id_del_add_button").style.display = "block";
                     $('#id_check_data').show();
                     $("#id_check_data").prop("hidden", false);
                     $("#save_upload_id").prop("hidden", true);
@@ -1449,7 +1519,9 @@ function onclick_display_csv_data() {
         $("#address_clear").trigger('reset');
         $("#error_msg_id").css("display", "none")
         GLOBAL_ACTION = button.value
+        $("#save_upload_update").css("display", "none")
         $('#address_add_details').modal('show');
+        $("#id_add_addresses_address_number").prop("disabled", false);
     }
     
     var address_count = 0;
@@ -1533,7 +1605,7 @@ function onclick_display_csv_data() {
                                 <div class="form-group row">
                                     <label class="col-4 col-form-label">Postal Code:</label>
                                     <div class="col-8">
-                                        <input type="text" class="form-control" id="id_upload_addresses_postalcode-${address_count}">
+                                        <input type="text" class="form-control check_postal_code" id="id_upload_addresses_postalcode-${address_count}">
                                     </div>
                                 </div>
                                 <div class="form-group row">

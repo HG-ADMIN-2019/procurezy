@@ -10,7 +10,7 @@ from eProc_Basic.Utilities.functions.messages_config import get_msg_desc, get_me
 from eProc_Basic.Utilities.functions.range_check import range_check
 from eProc_Basic.Utilities.global_defination import global_variables
 from eProc_Configuration.Utilities.application_settings_generic import get_configuration_data, FieldTypeDescription, \
-    FieldTypeDescriptionUpdate
+    FieldTypeDescriptionUpdate, get_product_criteria
 from eProc_Configuration.models import NumberRanges, \
     Country, CalenderHolidays, Incoterms, \
     SystemSettingsConfig, CalenderConfig, Languages, PoSplitType, PoSplitCriteria, PurchaseControl
@@ -40,10 +40,10 @@ def save_client_data_into_db(client_data):
                                                        'org_clients_changed_at': datetime.datetime.now(),
                                                        'org_clients_changed_by': global_variables.GLOBAL_LOGIN_USERNAME}
                                                       )
-        # msgid = 'MSG113'
-        # message = get_msg_desc(msgid)
+        msgid = 'MSG113'
 
-        message = get_message_desc(MSG113)[1]
+        message = get_message_desc(msgid)[1]
+
     else:
         for client_detail in client_data['data']:
             # if entry is not exists in db
@@ -53,6 +53,8 @@ def save_client_data_into_db(client_data):
                                         'description': convert_to_camel_case(client_detail['description']),
                                         'org_clients_created_at': datetime.datetime.now(),
                                         'org_clients_created_by': global_variables.GLOBAL_LOGIN_USERNAME,
+                                        'org_clients_changed_at': datetime.datetime.now(),
+                                        'org_clients_changed_by': global_variables.GLOBAL_LOGIN_USERNAME,
                                         }
                 client_db_list.append(client_db_dictionary)
             else:
@@ -65,9 +67,9 @@ def save_client_data_into_db(client_data):
                                                            'org_clients_changed_by': global_variables.GLOBAL_LOGIN_USERNAME,
                                                            'del_ind': False})
         bulk_create_entry_db(OrgClients, client_db_list)
-        # msgid = 'MSG112'
-        # message = get_msg_desc(msgid)
-        message = get_message_desc(MSG112)[1]
+
+        msgid = 'MSG112'
+        message = get_message_desc(msgid)[1]
 
     upload_response = get_configuration_data(OrgClients, {'del_ind': False}, ['client', 'description'])
 
@@ -99,10 +101,8 @@ def save_number_range_data_into_db(number_range_data):
                                                            'number_ranges_changed_at': datetime.datetime.now(),
                                                            'number_ranges_changed_by': global_variables.GLOBAL_LOGIN_USERNAME}
                                                           )
-        # msgid = 'MSG113'
-        # message = get_msg_desc(msgid)
-
-        message = get_message_desc(MSG113)[1]
+        msgid = 'MSG113'
+        message = get_message_desc(msgid)[1]
     else:
         for number_range_detail in number_range_data['data']:
             doc_type = number_range_detail['document_type']
@@ -178,9 +178,8 @@ def save_number_range_data_into_db(number_range_data):
                                                                'del_ind': False})
 
         bulk_create_entry_db(NumberRanges, number_range_db_list)
-        # msgid = 'MSG112'
-        # message = get_msg_desc(msgid)
-        message = get_message_desc(MSG112)[1]
+        msgid = 'MSG112'
+        message = get_message_desc(msgid)[1]
 
     upload_response = get_configuration_data(NumberRanges,
                                              {'del_ind': False, 'document_type': doc_type, 'client': client},
@@ -823,10 +822,9 @@ def save_documenttype_data_into_db(documenttype_data):
                                                        'document_type_changed_by': global_variables.GLOBAL_LOGIN_USERNAME})
 
         fieldtypedesc_instance.reset_usedFlag(doc_type_field)
-        # msgid = 'MSG113'
-        # message = get_msg_desc(msgid)
 
-        message = get_message_desc(MSG113)[1]
+        msgid = 'MSG113'
+        message = get_message_desc(msgid)[1]
     else:
         for documenttype_detail in documenttype_data['data']:
             # if entry is not exists in db
@@ -854,9 +852,9 @@ def save_documenttype_data_into_db(documenttype_data):
                                                            'del_ind': False})
         bulk_create_entry_db(DocumentType, documenttype_db_list)
         fieldtypedesc_instance.update_usedFlag(doc_type_field)
-        # msgid = 'MSG112'
-        # message = get_msg_desc(msgid)
-        message = get_message_desc(MSG112)[1]
+
+        msgid = 'MSG112'
+        message = get_message_desc(msgid)[1]
 
     upload_response = get_configuration_data(DocumentType, {'del_ind': False},
                                              ['document_type', 'document_type_desc'])
@@ -891,10 +889,9 @@ def save_transactiontype_data_into_db(transactiontype_data):
                                                            'transaction_types_changed_at': datetime.datetime.now(),
                                                            'transaction_types_changed_by': global_variables.GLOBAL_LOGIN_USERNAME})
                 # fieldtypedesc_instance.reset_usedFlag(active_inactive_field)
-        # msgid = 'MSG113'
-        # message = get_msg_desc(msgid)
 
-        message = get_message_desc(MSG113)[1]
+        msgid = 'MSG113'
+        message = get_message_desc(msgid)[1]
     else:
         for transactiontype_detail in transactiontype_data['data']:
             doc_type = transactiontype_detail['document_type']
@@ -953,9 +950,8 @@ def save_transactiontype_data_into_db(transactiontype_data):
                                                                'del_ind': False})
         bulk_create_entry_db(TransactionTypes, transactiontype_db_list)
         # fieldtypedesc_instance.update_usedFlag(active_inactive_field)
-        # msgid = 'MSG112'
-        # message = get_msg_desc(msgid)
-        message = get_message_desc(MSG112)[1]
+        msgid = 'MSG112'
+        message = get_message_desc(msgid)[1]
 
     upload_response = get_configuration_data(TransactionTypes, {'del_ind': False, 'document_type': doc_type,
                                                                 'client': global_variables.GLOBAL_CLIENT},
@@ -984,10 +980,9 @@ def save_calendar_data_into_db(calendar_data):
                                                       {'del_ind': True,
                                                        'calender_config_changed_at': datetime.datetime.now(),
                                                        'calender_config_changed_by': global_variables.GLOBAL_LOGIN_USERNAME})
-        # msgid = 'MSG113'
-        # message = get_msg_desc(msgid)
 
-        message = get_message_desc(MSG113)[1]
+        msgid = 'MSG113'
+        message = get_message_desc(msgid)[1]
     else:
         for calendar_detail in calendar_data['data']:
             # if entry is not exists in db
@@ -1029,9 +1024,9 @@ def save_calendar_data_into_db(calendar_data):
                                                            'del_ind': False})
 
         bulk_create_entry_db(CalenderConfig, calendar_db_list)
-        # msgid = 'MSG112'
-        # message = get_msg_desc(msgid)
-        message = get_message_desc(MSG112)[1]
+
+        msgid = 'MSG112'
+        message = get_message_desc(msgid)[1]
 
     upload_response = get_configuration_data(CalenderConfig, {'del_ind': False},
                                              ['calender_config_guid', 'calender_id', 'description',
@@ -1053,10 +1048,9 @@ def save_calendarholiday_data_into_db(calendar_data):
                                                       {'del_ind': True,
                                                        'changed_at': datetime.datetime.now(),
                                                        'changed_by': global_variables.GLOBAL_LOGIN_USERNAME})
-        # msgid = 'MSG113'
-        # message = get_msg_desc(msgid)
 
-        message = get_message_desc(MSG113)[1]
+        msgid = 'MSG113'
+        message = get_message_desc(msgid)[1]
     else:
         for calendar_detail in calendar_data['data']:
             # if entry is not exists in db
@@ -1094,9 +1088,9 @@ def save_calendarholiday_data_into_db(calendar_data):
                                                            'client': client,
                                                            'del_ind': False})
         bulk_create_entry_db(CalenderHolidays, calendar_db_list)
-        # msgid = 'MSG112'
-        # message = get_msg_desc(msgid)
-        message = get_message_desc(MSG112)[1]
+
+        msgid = 'MSG112'
+        message = get_message_desc(msgid)[1]
 
     upload_response = get_configuration_data(CalenderHolidays, {'del_ind': False},
                                              ['calender_holiday_guid', 'calender_id', 'holiday_description',
@@ -1120,10 +1114,9 @@ def save_actasmt_data_into_db(accasscat_data):
                                                        'account_assignment_category_changed_at': datetime.datetime.now(),
                                                        'account_assignment_category_changed_by': global_variables.GLOBAL_LOGIN_USERNAME})
             fieldtypedesc_instance.reset_usedFlag(acct_assmt_field)
-        # msgid = 'MSG113'
-        # message = get_msg_desc(msgid)
 
-        message = get_message_desc(MSG113)[1]
+        msgid = 'MSG113'
+        message = get_message_desc(msgid)[1]
     else:
         for accasscat_detail in accasscat_data['data']:
             acct_assmt_field = accasscat_detail['account_assign_cat']
@@ -1153,10 +1146,9 @@ def save_actasmt_data_into_db(accasscat_data):
                                                            'del_ind': False})
         bulk_create_entry_db(AccountAssignmentCategory, accasscat_db_list)
         fieldtypedesc_instance.update_usedFlag(acct_assmt_field)
-        message = get_message_desc(MSG112)[1]
 
-        # msgid = 'MSG112'
-        # message = get_msg_desc(msgid)
+        msgid = 'MSG112'
+        message = get_message_desc(msgid)[1]
     upload_response = get_configuration_data(AccountAssignmentCategory, {'del_ind': False},
                                              ['account_assign_cat', 'description'])
     upload_fieldtypedesc = fieldtypedesc_instance.get_field_type_desc_values(FieldTypeDescription,
@@ -1185,9 +1177,8 @@ def save_po_split_type_into_db(accasscat_data):
                                                        'po_split_type_changed_by': global_variables.GLOBAL_LOGIN_USERNAME})
             fieldtypedesc_instance.reset_used_flag(acct_assmt_field, 'split_type')
 
-            message = get_message_desc(MSG113)[1]
-        # msgid = 'MSG113'
-        # message = get_msg_desc(msgid)
+        msgid = 'MSG113'
+        message = get_message_desc(msgid)[1]
     else:
         for accasscat_detail in accasscat_data['data']:
             acct_assmt_field = accasscat_detail['po_split_type']
@@ -1217,10 +1208,9 @@ def save_po_split_type_into_db(accasscat_data):
                                                            'del_ind': False})
         bulk_create_entry_db(PoSplitType, accasscat_db_list)
         fieldtypedesc_instance.update_used_flag(acct_assmt_field, 'split_type')
-        message = get_message_desc(MSG112)[1]
 
-        # msgid = 'MSG112'
-        # message = get_msg_desc(msgid)
+        msgid = 'MSG112'
+        message = get_message_desc(msgid)[1]
     upload_response = get_configuration_data(PoSplitType,
                                              {'del_ind': False},
                                              ['po_split_type', 'po_split_type_desc'])
@@ -1249,9 +1239,8 @@ def save_po_split_criteria_into_db(accasscat_data):
                                                        'po_split_criteria_changed_at': datetime.datetime.now(),
                                                        'po_split_criteria_changed_by': global_variables.GLOBAL_LOGIN_USERNAME})
 
-            message = get_message_desc(MSG113)[1]
-        # msgid = 'MSG113'
-        # message = get_msg_desc(msgid)
+        msgid = 'MSG113'
+        message = get_message_desc(msgid)[1]
 
     else:
         for accasscat_detail in accasscat_data['data']:
@@ -1299,20 +1288,10 @@ def save_po_split_criteria_into_db(accasscat_data):
                                                               'del_ind': accasscat_detail['del_ind'],
                                                               'client': OrgClients.objects.get(client=client)})
             bulk_create_entry_db(PoSplitCriteria, accasscat_db_list)
-            # msgid = 'MSG112'
-            # message = get_msg_desc(msgid)
-            message = get_message_desc(MSG112)[1]
+            msgid = 'MSG112'
+            message = get_message_desc(msgid)[1]
 
-    upload_response = get_configuration_data(PoSplitCriteria,
-                                             {'del_ind': False},
-                                             ['po_split_criteria_guid', 'po_split_type', 'company_code_id', 'activate'])
-
-    po_split_types = django_query_instance.django_filter_query(PoSplitType, {'del_ind': False}, None, None)
-    for po_criteria in upload_response:
-        for po_split_type in po_split_types:
-            if po_split_type['po_split_type'] == po_criteria['po_split_type']:
-                po_criteria['po_split_type_desc'] = str(po_split_type['po_split_type']) + ' - ' + po_split_type[
-                    'po_split_type_desc']
+    upload_response = get_product_criteria()
 
     return upload_response, message
 
@@ -1389,7 +1368,8 @@ def save_purchase_control_into_db(purhcase_control_data):
 
     upload_response = get_configuration_data(PurchaseControl,
                                              {'del_ind': False},
-                                             ['purchase_control_guid', 'company_code_id', 'call_off', 'purchase_ctrl_flag'])
+                                             ['purchase_control_guid', 'company_code_id', 'call_off',
+                                              'purchase_ctrl_flag'])
 
     # pur_crtl_types = django_query_instance.django_filter_query(PurchaseControl, {'del_ind': False}, None, None)
     # for purchse_ctrl in upload_response:
@@ -1408,14 +1388,13 @@ def save_messageId_data_into_db(messageId_data):
 
     save_message_id(messageId_data['data'], global_variables.GLOBAL_LOGIN_USERNAME, global_variables.GLOBAL_CLIENT)
     if messageId_data['action'] == CONST_ACTION_DELETE:
+        msgid = 'MSG113'
+        message = get_message_desc(msgid)[1]
 
-        message = get_message_desc(MSG113)[1]
-        # msgid = 'MSG113'
     else:
-        message = get_message_desc(MSG112)[1]
+        msgid = 'MSG112'
+        message = get_message_desc(msgid)[1]
 
-    #     msgid = 'MSG112'
-    # message = get_msg_desc(msgid)
     upload_response = get_configuration_data(MessagesId, {'del_ind': False},
                                              ['msg_id_guid', 'messages_id', 'messages_type'])
     return upload_response, message
@@ -1466,12 +1445,13 @@ def save_messageIdDesc_data_into_db(messageIdDesc_data):
                          global_variables.GLOBAL_CLIENT)
     if messageIdDesc_data['action'] == CONST_ACTION_DELETE:
 
-        message = get_message_desc(MSG113)[1]
-        # msgid = 'MSG113'
+        msgid = 'MSG113'
+        message = get_message_desc(msgid)[1]
+
     else:
-        message = get_message_desc(MSG112)[1]
-        # msgid = 'MSG112'
-        # message = get_msg_desc(msgid)
+        msgid = 'MSG112'
+        message = get_message_desc(msgid)[1]
+
     upload_response = get_configuration_data(MessagesIdDesc, {'del_ind': False},
                                              ['msg_id_desc_guid', 'messages_id', 'messages_id_desc', 'language_id'])
     return upload_response, message

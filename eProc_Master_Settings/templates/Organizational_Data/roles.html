@@ -151,10 +151,9 @@
         {% endif %} {% endfor %} {% endif %}
     </div>
 </div>
-
+{{ roles|json_script:"roles" }}
 <script>
-
-    var rendered_roles_data = {{roles|safe}};
+    var rendered_roles_data = JSON.parse(document.getElementById('roles').textContent);
     var rendered_roles_type_values = {{dropdown_db_values|safe}};
     var roles_data_array = {}
     var main_table_roles_value = [];

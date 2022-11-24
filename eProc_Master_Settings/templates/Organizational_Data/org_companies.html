@@ -169,9 +169,11 @@
 
 </div>
 
+{{ org_companies|json_script:"org_companies" }}
+
 <script>
     var basic_settings = '{{basic_settings|safe}}';
-    var rendered_orgcompany_data = {{org_companies| safe}};
+    var rendered_orgcompany_data = JSON.parse(document.getElementById('org_companies').textContent);
     var rendered_orgmodel_data = {{upload_data_Orgmodel| safe}};
     var rendered_company_data = {{upload_data_company| safe}};
     var orgcompany_data_array = {}

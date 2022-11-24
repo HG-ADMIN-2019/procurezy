@@ -129,9 +129,9 @@ $("#error_msg_id").css("display", "none")
         $("#id_error_msg").html("");
     });
     basic_add_new_html = '<tr><td><input type="checkbox" required></td>'+
-    '<td><select class="form-control">'+user_name_dropdown+'</select></td>'+
-    '<td><select class="form-control">'+app_code_id_dropdown+'</select></td>'+
-    '<td><select class="form-control">'+company_id_dropdown+'</select></td>'+
+    '<td><select class="form-control" type="text">'+user_name_dropdown+'</select></td>'+
+    '<td><select class="form-control" type="text">'+app_code_id_dropdown+'</select></td>'+
+    '<td><select class="form-control" type="text">'+company_id_dropdown+'</select></td>'+
     '<td hidden><input type="text" value=""></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
     if (GLOBAL_ACTION == "UPLOAD") {

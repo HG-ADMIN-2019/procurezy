@@ -5,7 +5,7 @@ from eProc_Basic.Utilities.constants.constants import CONST_DOC_TYPE_SC, CONST_D
 from eProc_Basic.Utilities.functions.django_query_set import DjangoQueries
 from eProc_Basic.Utilities.functions.get_db_query import getClients, get_country_data
 from eProc_Basic.Utilities.global_defination import global_variables
-from eProc_Configuration.Utilities.application_settings_generic import get_configuration_data
+from eProc_Configuration.Utilities.application_settings_generic import get_configuration_data, get_product_criteria
 from eProc_Configuration.models import OrgClients, DocumentType, FieldTypeDescription, NumberRanges, \
     AccountAssignmentCategory, \
     CalenderConfig, Country, CalenderHolidays, MessagesId, MessagesIdDesc, Languages, UnspscCategories, OrgNodeTypes, \
@@ -83,40 +83,16 @@ def upload_acc_assign_categories(request):
 def upload_po_split_criteria(request):
     client = getClients(request)
     update_user_info(request)
-    upload_account_assign_cat = get_configuration_data(PoSplitCriteria,
-                                                       {'del_ind': False,
-                                                        'client': global_variables.GLOBAL_CLIENT},
-                                                       ['po_split_criteria_guid', 'company_code_id', 'activate',
-                                                        'po_split_type'])
-    po_split_types = django_query_instance.django_filter_query(PoSplitType, {'del_ind': False}, None, None)
-    for po_criteria in upload_account_assign_cat:
-        for po_split_type in po_split_types:
-            if po_split_type['po_split_type'] == po_criteria['po_split_type']:
-                po_criteria['po_split_type_desc'] = str(po_split_type['po_split_type']) + ' - ' + po_split_type[
-                    'po_split_type_desc']
+    response = get_product_criteria()
 
-    po_split_typ = get_configuration_data(PoSplitType, {'del_ind': False},
-                                          ['po_split_type', 'po_split_type_desc'])
-    for po_dropdown in po_split_typ:
-        po_dropdown['po_split_type_desc'] = str(po_dropdown['po_split_type']) + ' - ' + po_dropdown[
-            'po_split_type_desc']
-
-    dropdown_activate = list(
-        FieldTypeDescription.objects.filter(field_name='activate', del_ind=False,
-                                            client=global_variables.GLOBAL_CLIENT).values(
-            'field_type_id',
-            'field_type_desc'
-        ))
-
-    upload_data_company = list(OrgCompanies.objects.filter(client=client, del_ind=False).values('company_id'))
     # upload_data_company.insert(0,'*')
     # application_settings = 'application_settings'
     return render(request, 'Application_Settings/po_split_criteria.html',
-                  {'upload_acc_assign_categories': upload_account_assign_cat,
+                  {'upload_acc_assign_categories': response['upload_account_assign_cat'],
                    'inc_nav': True,
-                   'po_split_typ': po_split_typ,
-                   'dropdown_activate': dropdown_activate,
-                   'upload_data_company': upload_data_company})
+                   'po_split_typ': response['po_split_typ'],
+                   'dropdown_activate': response['dropdown_activate'],
+                   'upload_data_company': response['upload_data_company']})
 
 
 def upload_po_split_type(request):

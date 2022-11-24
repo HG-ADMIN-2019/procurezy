@@ -348,8 +348,19 @@ class DocumentSearch:
         if document_number is not None and document_number != '':
             if search_type == 'my_order':
                 search_criteria['requester'] = self.requester
-
-            search_criteria['doc_number'] = document_number
+            if '*' in document_number:
+                scname_match = re.search(r'[0-9]+', document_number)
+                if document_number[0] == '*' and document_number[-1] == '*':
+                    search_criteria['doc_number__in'] = document_number
+                    search_criteria['doc_number__icontains'] = scname_match.group(0)
+                elif document_number[0] == '*':
+                    search_criteria['doc_number__in'] = document_number
+                    search_criteria['doc_number__iendswith'] = scname_match.group(0)
+                else:
+                    # search_criteria['doc_number__in'] = document_number
+                    search_criteria['doc_number__istartswith'] = scname_match.group(0)
+            else:
+                search_criteria['doc_number'] = document_number
             return search_criteria
 
         if search_type == 'my_order':
@@ -406,8 +417,8 @@ class DocumentSearch:
                     search_criteria['po_header_created_at__gte'] = minimum_search_date
                     search_criteria['po_header_created_at__lte'] = maximum_search_date
 
-        if 'description__istartswith' in search_criteria:
-            del search_criteria['description__istartswith']
+        if 'description__in' in search_criteria:
+            del search_criteria['description__in']
 
         if 'created_by' in searched_fields:
             created_by = searched_fields['created_by']

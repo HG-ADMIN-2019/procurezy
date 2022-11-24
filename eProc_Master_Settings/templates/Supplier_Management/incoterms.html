@@ -239,8 +239,11 @@
                     }
                     $("#err_msg_app_settings_t").prop("hidden", false)
                      table_sort_filter('id_popup_table');
-                    setTimeout(function () { $("#err_msg_app_settings_t").prop("hidden", true); }, 5000)
+                    setTimeout(function () {
+                        $("#err_msg_app_settings_t").prop("hidden", true);
+                    }, 5000)
                     table_sort_filter('id_popup_table');
+                    CloseLoaderPopup();
                 }
             });
 
@@ -292,6 +295,7 @@
                table_sort_filter('id_popup_table');
                 setTimeout(function(){$("#err_msg_app_settings_t").prop("hidden",true);},5000)
                 table_sort_filter('id_popup_table');
+                CloseLoaderPopup();
             }
         });
     }

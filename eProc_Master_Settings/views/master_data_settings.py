@@ -17,8 +17,11 @@ from eProc_Basic.Utilities.functions.update_del_ind import update_del_ind
 from eProc_Basic_Settings.Utilities.basic_settings_specific import *
 from eProc_Catalog.Utilities.catalog_specific import save_prod_cat_cust_image_to_db
 from eProc_Catalog.views import json_obj
-from eProc_Master_Settings.Utilities.master_settings_specific import *
-from eProc_Configuration.models.development_data import AccountAssignmentCategory
+from eProc_Configuration_Check.Utilities.configuration_check_generic import *
+from eProc_Configuration_Check.Utilities.configuration_check_generic import get_valid_org_company_data
+from eProc_Configuration_Check.Utilities.configuration_check_generic import get_valid_SpendLimitId_data, \
+    get_valid_SpendLimitValue_data, get_valid_ApprovlLimit_data, get_valid_ApprovlLimitValue_data, get_workflows_data, \
+    get_incoterms_data, get_payment_desc_data, get_valid_work_flow_schema_data
 from eProc_Master_Settings.Utilities.master_settings_specific import *
 from eProc_Master_Settings.Utilities.master_settings_specific import save_master_data_into_db, save_aav_data_into_db, \
     save_aad_data_into_db, save_app_limit_data_into_db, save_app_limit_value_data_into_db
@@ -43,14 +46,19 @@ def create_update_master_data(request):
     master_data = JsonParser_obj.get_json_from_req(request)
     if master_data['table_name'] == 'UnspscCategoriesCust':
         display_data = save_product_cat_cust_data_into_db(master_data)
+        master_data['data'] = get_valid_UnspscCategoriesCust_data(master_data['data'])
         return JsonResponse(display_data, safe=False)
     if master_data['table_name'] == 'UnspscCategoriesCustDesc':
         display_data = save_product_cat_cust_desc_data_into_db(master_data)
+        master_data['data'] = get_valid_UnspscCategoriesCustDesc_data(master_data['data'])
         return JsonResponse(display_data, safe=False)
     if master_data['table_name'] == 'WorkflowSchema':
         display_data = save_work_flow_schema_data_into_db(master_data)
+        master_data['data'] = get_valid_work_flow_schema_data(master_data['data'])
         return JsonResponse(display_data, safe=False)
     if master_data['table_name'] == 'SpendLimitId':
+        # check_spending_limit_data
+        master_data['data'] = get_valid_SpendLimitId_data(master_data['data'])
         display_data = save_spend_limit_data_into_db(master_data)
         return JsonResponse(display_data, safe=False)
     if master_data['table_name'] == 'OrgAddressMap':
@@ -58,17 +66,22 @@ def create_update_master_data(request):
         return JsonResponse(display_data, safe=False)
     if master_data['table_name'] == 'DetermineGLAccount':
         display_data = save_glaccount_data_into_db(master_data)
+        master_data['data'] = get_valid_DetermineGLAccount_data(master_data['data'])
         return JsonResponse(display_data, safe=False)
     if master_data['table_name'] == 'AccountingData':
         display_data = save_aav_data_into_db(master_data)
+        master_data['data'] = get_valid_AccountingData_data(master_data['data'])
         return JsonResponse(display_data, safe=False)
     if master_data['table_name'] == 'ApproverLimit':
         display_data = save_app_limit_data_into_db(master_data)
+        master_data['data'] = get_valid_ApprovlLimit_data(master_data['data'])
         return JsonResponse(display_data, safe=False)
     if master_data['table_name'] == 'ApproverLimitValue':
         display_data = save_app_limit_value_data_into_db(master_data)
+        master_data['data'] = get_valid_ApprovlLimitValue_data(master_data['data'])
         return JsonResponse(display_data, safe=False)
     if master_data['table_name'] == 'SpendLimitValue':
+        message,master_data['data'] = check_spending_limit_data(master_data['data'])
         display_data = save_spend_limit_value_data_into_db(master_data)
         return JsonResponse(display_data, safe=False)
     if master_data['table_name'] == 'Payterms':
@@ -79,27 +92,35 @@ def create_update_master_data(request):
         return JsonResponse(display_data, safe=False)
     if master_data['table_name'] == 'ApproverType':
         display_data = save_approval_data_into_db(master_data)
+        master_data['data'] = get_valid_ApproverType_data(master_data['data'])
         return JsonResponse(display_data, safe=False)
     if master_data['table_name'] == 'WorkflowACC':
         display_data = save_workflow_acc_data_into_db(master_data)
+        master_data['data'] = get_workflows_data(master_data['data'])
         return JsonResponse(display_data, safe=False)
     if master_data['table_name'] == 'Incoterms':
         display_data = save_incoterms_data_into_db(master_data)
+        master_data['data'] = get_incoterms_data(master_data['data'])
         return JsonResponse(display_data, safe=False)
     if master_data['table_name'] == 'Payterms_desc':
         display_data = save_payment_desc_data_into_db(master_data)
+        master_data['data'] = get_payment_desc_data(master_data['data'])
         return JsonResponse(display_data, safe=False)
     if master_data['table_name'] == 'OrgPGroup':
+        master_data['data'] = get_valid_OrgPGroup_data(master_data['data'])
         display_data = save_purgrp_data_into_db(master_data)
         return JsonResponse(display_data, safe=False)
     if master_data['table_name'] == 'OrgPorg':
         display_data = save_purorg_data_into_db(master_data)
+        master_data['data'] = get_valid_OrgPorg_data(master_data['data'])
         return JsonResponse(display_data, safe=False)
     if master_data['table_name'] == 'AccountingDataDesc':
         display_data = save_aad_data_into_db(master_data)
+        master_data['data'] = get_valid_AccountingDataDesc_data(master_data['data'])
         return JsonResponse(display_data, safe=False)
     if master_data['table_name'] == 'OrgCompanies':
         display_data = save_company_data_into_db(master_data)
+        master_data['data'] = get_valid_org_company_data(master_data['data'])
         return JsonResponse(display_data, safe=False)
     if master_data['table_name'] == 'OrgNodeTypes':
         display_data = save_orgnode_types_data_into_db(master_data)
@@ -1706,8 +1727,8 @@ def extract_address_data_Template(request):
 
     writer.writerow(
         ['ADDRESS_NUMBER', 'TITLE', 'NAME1', 'NAME2', 'STREET', 'AREA', 'LANDMARK', 'CITY',
-         'ADDRESS_PARTNER_TYPE','postal_code', 'REGION', 'MOBILE_NUMBER', 'TELEPHONE_NUMBER',
-         'FAX_NUMBER', 'EMAIL','COUNTRY_CODE',
+         'ADDRESS_PARTNER_TYPE', 'postal_code', 'REGION', 'MOBILE_NUMBER', 'TELEPHONE_NUMBER',
+         'FAX_NUMBER', 'EMAIL', 'COUNTRY_CODE',
          'LANGUAGE_ID', 'TIME_ZONE', 'del_ind'])
     return response
 

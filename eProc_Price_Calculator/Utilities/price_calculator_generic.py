@@ -9,7 +9,8 @@ from eProc_Basic.Utilities.functions.dictionary_list_functions import rename_dic
 from eProc_Basic.Utilities.functions.django_query_set import DjangoQueries
 from eProc_Basic.Utilities.functions.sort_dictionary import sort_dic_list_by_value
 from eProc_Basic.Utilities.global_defination import global_variables
-from eProc_Configuration.models import EformFieldConfig, ProductEformPricing, ProductsDetail
+from eProc_Configuration.models import EformFieldConfig, ProductEformPricing, ProductsDetail, VariantConfig, \
+    DiscountData
 from eProc_Exchange_Rates.Utilities.exchange_rates_generic import convert_currency
 from eProc_Form_Builder.models import EformFieldData
 from eProc_Shopping_Cart.models import CartItemDetails, ScItem
@@ -136,13 +137,13 @@ def get_product_price_from_eform(form_id):
     return item_price
 
 
-def get_base_price(eform_id):
+def get_base_price(variant_id):
     """
 
     """
     base_price_value = 0
-    base_price_eform_details = django_query_instance.django_get_query(EformFieldConfig,
-                                                                      {'eform_id': eform_id,
+    base_price_eform_details = django_query_instance.django_get_query(VariantConfig,
+                                                                      {'variant_id': variant_id,
                                                                        'client': global_variables.GLOBAL_CLIENT,
                                                                        'del_ind': False,
                                                                        'dropdown_pricetype': CONST_VARIANT_BASE_PRICING},
@@ -150,27 +151,27 @@ def get_base_price(eform_id):
     if base_price_eform_details:
         base_price_value = django_query_instance.django_filter_value_list_ordered_by_distinct_query(
             ProductEformPricing,
-            {'eform_field_config_guid': base_price_eform_details.eform_field_config_guid,
+            {'variant_config_guid': base_price_eform_details.variant_config_guid,
              'pricing_data_default': True,
              'client': global_variables.GLOBAL_CLIENT}, 'price', None)[0]
 
     return float(base_price_value)
 
 
-def get_additional_default_price_details(form_id):
+def get_additional_default_price_details(variant_id):
     """
 
     """
     additional_price_list = []
-    additional_price_eform_details = django_query_instance.django_filter_query(EformFieldConfig,
-                                                                               {'eform_id': form_id,
+    additional_price_eform_details = django_query_instance.django_filter_query(VariantConfig,
+                                                                               {'variant_id': variant_id,
                                                                                 'client': global_variables.GLOBAL_CLIENT,
                                                                                 'del_ind': False,
                                                                                 'dropdown_pricetype': CONST_VARIANT_ADDITIONAL_PRICING},
-                                                                               None, ['default_eform_field_data',
-                                                                                      'eform_field_config_guid'])
+                                                                               None, ['default_variant_data',
+                                                                                      'variant_config_guid'])
     # chage dictionary key from default_eform_field_data to price_data
-    additional_price_eform_detail_list = rename_dictionary_list_key('default_eform_field_data', 'pricing_data',
+    additional_price_eform_detail_list = rename_dictionary_list_key('default_variant_data', 'pricing_data',
                                                                     additional_price_eform_details)
     # query_list = form_q_query_from_list(additional_price_eform_detail_list)
     for additional_price_eform_detail in additional_price_eform_detail_list:
@@ -240,7 +241,7 @@ def get_item_price(base_price, additional_pricing_details):
 #     return price, item_db_total_value, validation_error
 
 
-def validate_price(item_total_value, eform_detail, quantity, eform_id):
+def validate_price(item_total_value, eform_detail, quantity, discount_id):
     """
 
     """
@@ -253,15 +254,15 @@ def validate_price(item_total_value, eform_detail, quantity, eform_id):
     for eform_data in eform_detail:
         if eform_data['pricing_type'] == CONST_VARIANT_BASE_PRICING:
             if django_query_instance.django_existence_check(ProductEformPricing,
-                                                            {'eform_field_config_guid': eform_data[
-                                                                'eform_field_config_guid'],
+                                                            {'variant_config_guid': eform_data[
+                                                                'variant_config_guid'],
                                                              'product_eform_pricing_guid': eform_data[
                                                                  'product_eform_pricing_guid']}):
                 base_price = \
                     django_query_instance.django_filter_value_list_ordered_by_distinct_query(ProductEformPricing,
-                                                                                             {'eform_field_config_guid':
+                                                                                             {'variant_config_guid':
                                                                                                   eform_data[
-                                                                                                      'eform_field_config_guid'],
+                                                                                                      'variant_config_guid'],
                                                                                               'product_eform_pricing_guid':
                                                                                                   eform_data[
                                                                                                       'product_eform_pricing_guid']},
@@ -269,16 +270,16 @@ def validate_price(item_total_value, eform_detail, quantity, eform_id):
                                                                                              None)[0]
                 break
     if base_price:
-        base_price_with_discount, discount_percentage = check_discount_update_base_price(base_price, quantity, eform_id)
+        base_price_with_discount, discount_percentage = check_discount_update_base_price(base_price, quantity, discount_id)
         item_db_total_value = float(base_price_with_discount)
     for eform_data in eform_detail:
         if eform_data['pricing_type'] == CONST_VARIANT_ADDITIONAL_PRICING:
             if django_query_instance.django_existence_check(ProductEformPricing, {
-                'eform_field_config_guid': eform_data['eform_field_config_guid'],
+                'variant_config_guid': eform_data['variant_config_guid'],
                 'product_eform_pricing_guid': eform_data['product_eform_pricing_guid']}):
                 additional_price = django_query_instance.django_filter_value_list_ordered_by_distinct_query(
                     ProductEformPricing,
-                    {'eform_field_config_guid': eform_data['eform_field_config_guid'],
+                    {'variant_config_guid': eform_data['variant_config_guid'],
                      'product_eform_pricing_guid':
                          eform_data[
                              'product_eform_pricing_guid']},
@@ -295,40 +296,38 @@ def validate_price(item_total_value, eform_detail, quantity, eform_id):
     return price, item_db_total_value, validation_error, base_price, discount_percentage, additional_prices
 
 
-def check_discount_update_base_price(base_price, quantity, eform_id):
+def check_discount_update_base_price(base_price, quantity, discount_id):
     """
 
     """
     range_value_percentage = 0
-    if django_query_instance.django_existence_check(ProductEformPricing,
-                                                    {'eform_id': eform_id,
-                                                     'pricing_type': CONST_QUANTITY_BASED_DISCOUNT,
+    if django_query_instance.django_existence_check(DiscountData,
+                                                    {'discount_id': discount_id,
                                                      'client': global_variables.GLOBAL_CLIENT,
                                                      'del_ind': False}):
-        base_price, range_value_percentage = calculate_quantity_based_discount(eform_id, quantity, base_price)
+        base_price, range_value_percentage = calculate_quantity_based_discount(discount_id, quantity, base_price)
     return base_price, range_value_percentage
 
 
-def calculate_quantity_based_discount(eform_id, quantity, base_price):
+def calculate_quantity_based_discount(discount_id, quantity, base_price):
     """
 
     """
     percentage = 0
-    quantity_price_detail = django_query_instance.django_filter_query(ProductEformPricing,
-                                                                      {'eform_id': eform_id,
-                                                                       'pricing_type': CONST_QUANTITY_BASED_DISCOUNT,
+    quantity_price_detail = django_query_instance.django_filter_query(DiscountData,
+                                                                      {'discount_id': discount_id,
                                                                        'client': global_variables.GLOBAL_CLIENT,
                                                                        'del_ind': False},
-                                                                      ['pricing_data'], ['pricing_data', 'price'])
+                                                                      ['quantity'], ['quantity', 'discount_percentage'])
     for quantity_price in quantity_price_detail:
-        quantity_price['pricing_data'] = int(quantity_price['pricing_data'])
+        quantity_price['quantity'] = int(quantity_price['quantity'])
 
-    quantity_price_detail = sort_dic_list_by_value(quantity_price_detail, 'pricing_data')
+    quantity_price_detail = sort_dic_list_by_value(quantity_price_detail, 'quantity')
     range_value_percentage = find_range(quantity_price_detail, quantity)
     if range_value_percentage:
-        percentage = 100 - int(range_value_percentage['price'])
+        percentage = 100 - int(range_value_percentage['discount_percentage'])
         base_price = float(base_price) * percentage / 100
-        percentage = range_value_percentage['price']
+        percentage = range_value_percentage['discount_percentage']
     return base_price, percentage
 
 
@@ -339,15 +338,21 @@ def find_range(quantity_price_details, quantity):
     min_quantity = 0
     range_detail = 0
     quantity = int(quantity)
-    for index, quantity_price_detail in enumerate(quantity_price_details):
-        if quantity in range(min_quantity, int(quantity_price_detail['pricing_data']) - 1):
-            if index != 0:
-                range_detail = quantity_price_details[index - 1]
-            break
-        if len(quantity_price_detail) - 1 == index:
-            if quantity > int(quantity_price_detail['pricing_data']):
-                range_detail = quantity_price_detail
-        min_quantity = int(quantity_price_detail['pricing_data'])
+
+    if len(quantity_price_details) == 1:
+        if quantity >= quantity_price_details[0]['quantity']:
+            range_detail = quantity_price_details[0]
+    else:
+        for index, quantity_price_detail in enumerate(quantity_price_details):
+            if quantity in range(min_quantity, int(quantity_price_detail['quantity']) - 1):
+                if index != 0:
+                    range_detail = quantity_price_details[index - 1]
+                break
+            if len(quantity_price_detail) - 1 == index:
+                if quantity > int(quantity_price_detail['quantity']):
+                    range_detail = quantity_price_detail
+            min_quantity = int(quantity_price_detail['quantity'])
+
     return range_detail
 
 
@@ -382,25 +387,32 @@ def calculate_item_price(guid, quantity):
 
     """
     item_price = 0
-    eform_id = None
+    variant_id = None
     discount_percentage = 0
     additional_pricing = 0
     base_price_value = 0
-    if CartItemDetails.objects.filter(Q(guid=guid), ~Q(eform_id=None)).exists():
-        eform_id = django_query_instance.django_filter_value_list_ordered_by_distinct_query(CartItemDetails,
+    discount_id = None
+    if CartItemDetails.objects.filter(Q(guid=guid), ~Q(variant_id=None)).exists():
+        variant_id = django_query_instance.django_filter_value_list_ordered_by_distinct_query(CartItemDetails,
                                                                                             {'guid': guid},
-                                                                                            'eform_id', None)[0]
-    elif ScItem.objects.filter(Q(guid=guid), ~Q(eform_id=None)).exists():
-        eform_id = django_query_instance.django_filter_value_list_ordered_by_distinct_query(ScItem,
+                                                                                            'variant_id', None)[0]
+        discount_id = django_query_instance.django_filter_value_list_ordered_by_distinct_query(CartItemDetails,
+                                                                                              {'guid': guid},
+                                                                                              'discount_id', None)[0]
+    elif ScItem.objects.filter(Q(guid=guid), ~Q(variant_id=None)).exists():
+        variant_id = django_query_instance.django_filter_value_list_ordered_by_distinct_query(ScItem,
                                                                                             {'guid': guid},
-                                                                                            'eform_id', None)[0]
+                                                                                            'variant_id', None)[0]
+        discount_id = django_query_instance.django_filter_value_list_ordered_by_distinct_query(ScItem,
+                                                                                               {'guid': guid},
+                                                                                               'discount_id', None)[0]
 
-    if eform_id:
+    if variant_id:
         pricing_list = [CONST_VARIANT_BASE_PRICING, CONST_VARIANT_ADDITIONAL_PRICING, CONST_QUANTITY_BASED_DISCOUNT]
-        if django_query_instance.django_existence_check(EformFieldConfig,
+        if django_query_instance.django_existence_check(VariantConfig,
                                                         {'client': global_variables.GLOBAL_CLIENT,
                                                          'del_ind': False,
-                                                         'eform_id': eform_id,
+                                                         'variant_id': variant_id,
                                                          'dropdown_pricetype__in': pricing_list}):
             product_eform_pricing_guid_list = EformFieldData.objects.filter((Q(cart_guid=guid) | Q(item_guid=guid)) &
                                                                             ~Q(product_eform_pricing_guid=None)).values_list(
@@ -421,16 +433,16 @@ def calculate_item_price(guid, quantity):
                                                                                                      'del_ind': False},
                                                                                                  'price', None)[0]
 
-            base_price, discount_percentage = check_discount_update_base_price(base_price_value, quantity, eform_id)
+            base_price, discount_percentage = check_discount_update_base_price(base_price_value, quantity, discount_id)
             print(base_price)
             item_price, additional_pricing = add_additional_price_to_base_price(float(base_price),
                                                                                 product_eform_pricing_guid_list)
         else:
-            if CartItemDetails.objects.filter(Q(guid=guid), ~Q(eform_id=None)).exists():
+            if CartItemDetails.objects.filter(Q(guid=guid), ~Q(variant_id=None)).exists():
                 item_price = django_query_instance.django_filter_value_list_ordered_by_distinct_query(CartItemDetails,
                                                                                                       {'guid': guid},
                                                                                                       'price', None)[0]
-            elif ScItem.objects.filter(Q(guid=guid), ~Q(eform_id=None)).exists():
+            elif ScItem.objects.filter(Q(guid=guid), ~Q(variant_id=None)).exists():
                 item_price = django_query_instance.django_filter_value_list_ordered_by_distinct_query(ScItem,
                                                                                                       {'guid': guid},
                                                                                                       'price', None)[0]

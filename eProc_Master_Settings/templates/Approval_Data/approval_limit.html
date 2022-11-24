@@ -178,19 +178,19 @@
     var Tablename = uiConstants["CONST_TABLENAME_APPROVAL_LIMIT"]
     var appname = uiConstants["CONST_APPNAME01"]
     var db_header_data = uiConstants["CONST_HEADER_DATA_APPROVAL_LIMIT"]
+
     //*********************************************
-<!--    var app_code_id_dropdown = '';-->
-<!--   var company_id_dropdown = '';-->
-<!--    var user_name_dropdown = '';-->
 
     var app_code_id_dropdown = ""
     $.each(rendered_app_code_id_data, function(i, item){
         app_code_id_dropdown += '<option value="' + item.app_code_id + '">' + item.app_code_id + '</option>'
     });
+
      var company_id_dropdown=""
     $.each(rendered_company_data, function(i, item){
         company_id_dropdown += '<option  value="' + item.company_id + '">' + item.company_id + '</option>'
     });
+
     var user_name_dropdown =""
 
     $.each(rendered_user_data, function(i, item){
@@ -230,26 +230,84 @@
                     var del_ind = '';
                     $("#id_popup_tbody").empty();
                     $.each(response.data, function(i, value) {
-
-                        var app_code_id_value = value[1]
-                        var company_type_value = value[2]
-                        dropdown_values.push([app_code_id_value, company_type_value])
                         del_ind = '<td>' + value[3] + '</td>'
-                        if (value[1] == 1) {
-                            del_ind = ' <input type="checkbox" value="' + value[2] + '" checked>'
+                        if (value[3] == 1) {
+                            del_ind = ' <input type="checkbox" value="' + value[3] + '" checked>'
                         } else {
-                            del_ind = '<input type="checkbox" value="' + value[2] + '" required>'
+                            del_ind = '<input type="checkbox" value="' + value[3] + '" required>'
                         }
-                        edit_basic_data += '<tr><td><input type="checkbox" required></td><td><input class="form-control"  type="text" value="'+value[0]+'" maxlength="16" onkeypress="return /[a-z0-9]/i.test(event.key)" name="approver_user" style="text-transform:uppercase;" required></td><td><select class="form-control" type = "text">'+app_code_id_dropdown+'</select></td><td><select class="form-control" type = "text">'+company_id_dropdown+'</select></td><td hidden><input type="text" value=""></td><td>' + del_ind + '</td></tr>';
+
+                               var user_drwn = value[0]
+                               var app_code_id_value = value[1]
+                               var company_type_value = value[2]
+
+                            dropdown_values.push([user_drwn, app_code_id_value, company_type_value])
+
+                                var user = '';
+                                var user_list = '';
+                                var user_id_list = '';
+                        $.each(rendered_user_data, function(i, item){
+                                if( value[0].user_type_value == item){
+
+                                    user = '<option value="' + item.username + '">' + item.username + '</option>';
+
+                                   }else{
+
+                                    user_list += '<option value="' + item.username + '">' + item.username + '</option>';
+
+                                }
+                                    user_id_list = user + user_list
+                        });
+
+                                var appid = '';
+                                var appid_list = '';
+                                var appid_id_list = '';
+                        $.each(rendered_app_code_id_data, function(i, item){
+                                if( value[1].appid_type_value == item){
+
+                                    appid = '<option value="' + item.app_code_id + '">' + item.app_code_id + '</option>';
+
+                                   }else{
+
+                                    appid_list += '<option value="' + item.app_code_id + '">' + item.app_code_id + '</option>';
+
+                                }
+                                    appid_id_list = appid + appid_list
+                        });
+
+                                var company = '';
+                                var company_list = '';
+                                var company_id_list = '';
+                        $.each(rendered_company_data, function(i, item){
+                            if( value[2].company_type_value == item){
+
+                                company = '<option value="' + item.company_id + '">' + item.company_id + '</option>';
+
+                               }else{
+
+                                company_list += '<option value="' + item.company_id + '">' + item.company_id + '</option>';
+
+                            }
+                                company_id_list = company + company_list
+                        });
+
+                        edit_basic_data += '<tr><td><input type="checkbox" required></td>'+
+                        '<td><select type="text" class="form-control">'+ user_id_list +'</select></td>'+
+                        '<td><select class="form-control" type = "text">'+appid_id_list+'</select></td>'+
+                        '<td><select class="form-control" type = "text">'+company_id_list+'</select></td>'+
+                        '<td hidden><input type="text" value=""></td><td>' + del_ind + '</td></tr>';
                     });
                     $('#id_popup_tbody').append(edit_basic_data);
                     var i =0;
                     $("#id_popup_table TBODY TR").each(function() {
                         var row = $(this);
-                        var app_code_id_value = dropdown_values[i][0]
-                        var company_type_value = dropdown_values[i][1]
-                        $(row.find("TD").eq(2).find("select option[value="+app_code_id_value+"]")).attr('selected','selected');
-                        $(row.find("TD").eq(3).find("select option[value="+company_type_value+"]")).attr('selected','selected');
+                        var user_id_list = dropdown_values[i][0]
+                        var appid_id_list = dropdown_values[i][1]
+                        var company_id_list = dropdown_values[i][2]
+
+                        $(row.find("TD").eq(1).find("select option[value="+user_id_list+"]")).attr('selected','selected');
+                        $(row.find("TD").eq(2).find("select option[value="+appid_id_list+"]")).attr('selected','selected');
+                        $(row.find("TD").eq(3).find("select option[value="+company_id_list+"]")).attr('selected','selected');
                         i++;
                     });
                     $("#id_del_ind_checkbox").prop("hidden", false);
@@ -350,9 +408,10 @@
                           }
                         $("#err_msg_app_settings_t").prop("hidden", false)
                         table_sort_filter('id_popup_table');
-                        setTimeout(function() {
-                            $("#err_msg_app_settings_t").prop("hidden", true);
-                        }, 5000)
+<!--                        setTimeout(function() {-->
+<!--                            $("#err_msg_app_settings_t").prop("hidden", true);-->
+<!--                        }, 5000)-->
+                        message_display_time();
                         table_sort_filter('id_popup_table');
                         CloseLoaderPopup();
                     }
@@ -403,9 +462,10 @@
                 }
                 $("#err_msg_app_settings_t").prop("hidden", false)
                  table_sort_filter('id_popup_table');
-                setTimeout(function() {
-                    $("#err_msg_app_settings_t").prop("hidden", true);
-                }, 5000)
+<!--                setTimeout(function() {-->
+<!--                    $("#err_msg_app_settings_t").prop("hidden", true);-->
+<!--                }, 5000)-->
+                 message_display_time();
                  table_sort_filter('id_popup_table');
                   CloseLoaderPopup();
             }
@@ -436,7 +496,7 @@
             var row = $(this);
               approv_limit_dic = {}
             //*************** reading data from the pop-up ***************
-            approv_limit_dic.approver_username = row.find("TD").eq(1).find('input[type="text"]').val();
+            approv_limit_dic.approver_username = row.find("TD").eq(1).find("select option:selected").val();
             approv_limit_dic.app_code_id = row.find("TD").eq(2).find("select option:selected").val();
             approv_limit_dic.company_id = row.find("TD").eq(3).find("select option:selected").val();
             approv_limit_dic.app_guid = row.find("TD").eq(4).find('input[type="text"]').val().toUpperCase()
@@ -550,7 +610,7 @@ function onclick_add_button(button) {
     $('#id_popup_table').DataTable().destroy();
     $("#id_popup_tbody").empty();
     $('#myModal').modal('show');
-    basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select class="form-control">'+user_name_dropdown+'</select></td><td><select class="form-control">'+app_code_id_dropdown+'</select></td><td><select class="form-control">'+company_id_dropdown+'</select></td><td hidden><input type="text" value=""></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+    basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select class="form-control" type="text">'+user_name_dropdown+'</select></td><td><select class="form-control" type="text">'+app_code_id_dropdown+'</select></td><td><select class="form-control" type="text">'+company_id_dropdown+'</select></td><td hidden><input type="text" value=""></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
     table_sort_filter('id_popup_table');
     $("#id_del_ind_checkbox").prop("hidden", true);
@@ -606,30 +666,31 @@ function compare_table_for_duplicate_entries(validate_add_attributes, approval_l
                 return [no_duplicate_value,error_message]
 
     }
-   else{
-        $.each(approval_limit, function (i, item) {
-            if(item.approver_username.length == 0) {
-                //error_message = messageConstants["JMSG002"] + "Approver Username";
-                
-                    var msg = "JMSG002";
-                    var msg_type ;
-                  msg_type = message_config_details(msg);
-                  $("#error_msg_id").prop("hidden", false)
+    else{
+          $.each(approval_limit, function (i, item) {
+              if(item.approver_username.length == 0) {
+                  //error_message = messageConstants["JMSG002"] + "Approver Username";
 
-                  if(msg_type.message_type == "ERROR"){
-                        display_message("error_msg_id", msg_type.messages_id_desc[0])
-                  }
-                  else if(msg_type.message_type == "WARNING"){
-                     display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
-                  }
-                  else if(msg_type.message_type == "INFORMATION"){
-                     display_message("id_info_msg_id", msg_type.messages_id_desc[0])
-                  }
-                    no_duplicate_value = 'N'
-                    return [no_duplicate_value,error_message]
-                  }
-            });
-        }
+                      var msg = "JMSG002";
+                      var msg_type ;
+                    msg_type = message_config_details(msg);
+                    $("#error_msg_id").prop("hidden", false)
+
+                    if(msg_type.message_type == "ERROR"){
+                          display_message("error_msg_id", msg_type.messages_id_desc[0])
+                    }
+                    else if(msg_type.message_type == "WARNING"){
+                       display_message("id_warning_msg_id", msg_type.messages_id_desc[0])
+                    }
+                    else if(msg_type.message_type == "INFORMATION"){
+                       display_message("id_info_msg_id", msg_type.messages_id_desc[0])
+                    }
+                      no_duplicate_value = 'N'
+                      return [no_duplicate_value,error_message]
+                    }
+              });
+         }
+
         return [no_duplicate_value,error_message]
 }
 

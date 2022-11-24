@@ -13,8 +13,26 @@
                 <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Basic_Settings:extract_currency_template' %}'"type="button">
                     <i class="fas fa-download"></i> template
                 </button>
-                <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Basic_Settings:srm_currency_converter' %}'" type="button">
-                    <i class="fas fa-download"></i> extract data
+                <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Basic_Settings:srm_currency_converter_p02' %}'" type="button">
+                    <i class="fas fa-download"></i> P02 Currency Extract
+                </button>
+                <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Basic_Settings:srm_currency_converter_e7p' %}'" type="button">
+                    <i class="fas fa-download"></i> E7P Currency Extract
+                </button>
+                <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Basic_Settings:Scheduling' %}'" type="button">
+                    <i class="fas fa-download"></i> Scheduling
+                </button>
+                <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Basic_Settings:stop_job' %}'" type="button">
+                    <i class="fas fa-download"></i> Stop Job
+                </button>
+                <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Basic_Settings:work_item_extract' %}'" type="button">
+                    <i class="fas fa-download"></i> Work Item
+                </button>
+                <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Basic_Settings:work_item_doc_num_extract' %}'" type="button">
+                    <i class="fas fa-download"></i> Work Item Doc Number
+                </button>
+                <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Basic_Settings:work_item_doc_num_extract' %}'" type="button">
+                    <i class="fas fa-download"></i> Validated Doc
                 </button>
                 <button class="btn btn-outline-primary modal_upload" title="Upload Data" id="id_upload_redirect_data" value="currency_upload" onclick="onclick_upload_button()" type="button">
                     <i class="fas fa-cloud-upload-alt"></i> upload data
@@ -199,7 +217,7 @@
            OpenLoaderPopup();
             $.ajax({
                 type: 'POST',
-                url: "{% url 'eProc_Basic_Settings:srm_currency_converter' %}",
+                url: "{% url 'eProc_Basic_Settings:srm_currency_converter_p02' %}",
                 data: formdata,
                 contentType: "application/json; charset=utf-8",
                 success: function(response) {
@@ -319,9 +337,10 @@
                           }
                         $("#err_msg_app_settings_t").prop("hidden", false)
                         table_sort_filter('id_popup_table');
-                        setTimeout(function() {
-                            $("#err_msg_app_settings_t").prop("hidden", true);
-                        }, 5000)
+<!--                        setTimeout(function() {-->
+<!--                            $("#err_msg_app_settings_t").prop("hidden", true);-->
+<!--                        }, 5000)-->
+                        message_display_time();
                         table_sort_filter('id_popup_table');
                         CloseLoaderPopup();
                     }
@@ -374,9 +393,10 @@
                      }
                     $("#err_msg_app_settings_t").prop("hidden", false)
                     table_sort_filter('id_popup_table');
-                    setTimeout(function() {
-                        $("#err_msg_app_settings_t").prop("hidden", true);
-                    }, 5000)
+<!--                    setTimeout(function() {-->
+<!--                        $("#err_msg_app_settings_t").prop("hidden", true);-->
+<!--                    }, 5000)-->
+                    message_display_time();
                     table_sort_filter('id_popup_table');
                     CloseLoaderPopup();
                 }

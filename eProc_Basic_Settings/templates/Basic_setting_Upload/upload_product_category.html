@@ -284,9 +284,10 @@ function popup_save_data() {
                           }
                         $("#err_msg_app_settings_t").prop("hidden", false)
                         table_sort_filter('id_popup_table');
-                        setTimeout(function() {
-                            $("#err_msg_app_settings_t").prop("hidden", true);
-                        }, 5000)
+<!--                        setTimeout(function() {-->
+<!--                            $("#err_msg_app_settings_t").prop("hidden", true);-->
+<!--                        }, 5000)-->
+                        message_display_time();
                         table_sort_filter('id_popup_table');
                          CloseLoaderPopup();
                     }
@@ -370,9 +371,10 @@ function popup_save_data() {
                                 }
                                 $("#err_msg_app_settings_t").prop("hidden", false)
                                 // table_sort_filter('id_popup_table');
-                                setTimeout(function() {
-                                    $("#err_msg_app_settings_t").prop("hidden", true);
-                                }, 5000)
+<!--                                setTimeout(function() {-->
+<!--                                    $("#err_msg_app_settings_t").prop("hidden", true);-->
+<!--                                }, 5000)-->
+                                message_display_time();
                                // table_sort_filter('id_popup_table');
                                 CloseLoaderPopup();
                             }

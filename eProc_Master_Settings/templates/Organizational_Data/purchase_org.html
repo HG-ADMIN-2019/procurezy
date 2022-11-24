@@ -727,16 +727,10 @@ function onclick_copy_update_button(data) {
         var i =0;
         $("#id_popup_table TBODY TR").each(function() {
         var row = $(this);
-
-         var company_id = dropdown_values[i][0]
-         var object_id = dropdown_values[i][1]
-
-
+        var company_id = dropdown_values[i][0]
         $(row.find("TD").eq(3).find("select option[value="+company_id+"]")).attr('selected','selected');
-        $(row.find("TD").eq(4).find("select option[value="+object_id+"]")).attr('selected','selected');
-
         i++;
-    });
+        });
         $("#id_del_ind_checkbox").prop("hidden", true);
         $('#myModal').modal('show');
         table_sort_filter('id_popup_table');

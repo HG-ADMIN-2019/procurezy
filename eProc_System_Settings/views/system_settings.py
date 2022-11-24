@@ -275,7 +275,7 @@ def system_settings_new(request):
         limit_item = sys_settings_data['limit_item']
         system_setting_config_instance.update_system_attributes(limit_item, 'LIMIT_ITEM')
         # msgid = 'MSG112'
-        error_msg = get_message_desc(MSG112)[1]
+        error_msg = get_message_desc('MSG112')[1]
         return JsonResponse({'success_message': error_msg})
 
     return render(request, 'System_Settings/system_settings_new.html', context)

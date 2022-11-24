@@ -36,7 +36,8 @@ from eProc_Configuration_Check.Utilities.configuration_check_generic import chec
     check_product_detail_data
 from eProc_Form_Builder.Utilities.form_builder_generic import FormBuilder
 from eProc_Form_Builder.models import EformFieldData
-from eProc_Manage_Content.Utilities.manage_content_generic import get_product_details_image_eform, get_eform_details
+from eProc_Manage_Content.Utilities.manage_content_generic import get_product_details_image_eform, get_eform_details, \
+    get_discount_data
 from eProc_Manage_Content.Utilities.manage_content_specific import save_product_details_eform, \
     save_product_specification, save_catalog_to_db, get_assigned_unssigned_product_id_list, save_catalog_mapping, \
     CatalogMappingAction, save_product_detail_images, update_boolean, value_type_caste, save_products_specifications, \
@@ -156,8 +157,7 @@ def save_product_details_spec_images_eform(request):
         form_id = save_product_details_eform(eform_configured_dic_list)
         discount_id = save_discount_data(discount_dic_list)
     if product_specification_data:
-        if product_existence_flag == 0:
-            product_info_id = save_product_specification(product_specification_data, data['product_id'])
+        product_info_id = save_product_specification(product_specification_data, data['product_id'])
     save_product_images(attached_file, data['product_id'])
     # save images
     # if checkKey(converted_dict, 'Prod_cat'):
@@ -270,6 +270,9 @@ def save_product_details_spec_images_eform(request):
 
                                                    })
     eform_configured, eform_edit_flag = get_eform_details(form_id)
+    discount_data = get_discount_data(discount_id)
+    if discount_data:
+        eform_configured.append(discount_data)
     return JsonResponse(eform_configured, safe=False)
 
 
@@ -369,8 +372,17 @@ def save_data_upload(request):
                                                       val)
             response = 1
         # Save Images from image path
-        save_product_detail_images(path, val['product_id'])
-        save_products_specifications(data['product_spec'])
+        if path:
+            save_product_detail_images(path, val['product_id'])
+        product_info_id = save_products_specifications(data['product_spec'])
+        if django_query_instance.django_existence_check(ProductsDetail, {'client': global_variables.GLOBAL_CLIENT,
+                                                                         'product_id': val['product_id']}):
+            # print(val['product_id'])
+
+            django_query_instance.django_update_query(ProductsDetail,
+                                                      {'client': global_variables.GLOBAL_CLIENT,
+                                                       'product_id': val['product_id']},
+                                                      {'product_info_id':product_info_id})
     return JsonResponse(response, safe=False)
 
 

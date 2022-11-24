@@ -91,6 +91,28 @@
         </div>
     </div>
 
+   <!--save confirmation popup-->
+<div class="modal fade" id="id_check_popup">
+    <div class="modal-dialog modal-dialog-centered ">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title">Please Confirm</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <p id="confirmation_p_id">Please remove special characters</p>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-primary" onclick="open_upload()"><i class="fas fa-times"></i> Ok</button>
+            </div>
+        </div>
+    </div>
+</div>
+<!--end of save confirmation popup-->
+
+
     <!--modal popup for Add,copy,update and upload-->
     <!-- The Modal -->
     <div class="modal fade" id="myModal" style="overflow:auto;">
@@ -149,13 +171,12 @@
                 </div>
 
                 <!-- Modal footer -->
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-primary remove_upload_data" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
-                    <button id="id_delete_duplicate" class="btn btn-primary" style="display:none;" type="button" onclick="delete_duplicate()"><i class="fa fa-trash"></i> delete duplicates</button>
-                    <button id="id_check_data" style="display:none;" class="btn btn-primary" type="button" onclick="check_data()"><i class="fas fa-check"></i> check</button>
-                    <button class="btn btn-primary" id="save_id"><i class="fas fa-save"></i> save</button>
-                   
-                </div>
+                 <div class="modal-footer">
+                    <button id="id_delete_duplicate" class="btn btn-primary" style="display:none;" type="button" onclick="delete_duplicate()"><i class="fas fa-check"></i> Delete Duplicates</button>
+                    <button id="id_check_data" style="display:none;" class="btn btn-primary " type="button" onclick="check_data()"><i class="fas fa-check"></i> Check</button>
+                    <button class="btn btn-primary" id="save_id" ><i class="fas fa-save"></i> save</button>
+                    <button type="button" class="btn btn-primary remove_upload_data" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
+                 </div>
             </div>
         </div>
     </div>
@@ -299,16 +320,25 @@ function onclick_display_csv_data() {
                         document.getElementById("id_error_msg_upload").style.color = "Red";
                         $('#id_data_upload').modal('show');
                     }
-                    else {
-                        var pgroup_data_array = response.data;
+                    else {                        
                         var edit_basic_data = '';
                         var del_ind = '';
                         var dropdown_values = [];
                         $("#id_popup_tbody").empty();
+                        var high_light_row_index_list = []
+                        var edit_basic_data = '';
+                        var dropdown_values = [];
+                        var del_ind = '';
+                        $("#id_popup_tbody").empty();
+                        var high_light_row_index_list = []
                             $.each(response.data, function (i, value) {
+                                flag = validate_row(value)
+                                // soecial char row list
+                                if (flag){
+                                    high_light_row_index_list.push(i)
+                                }
+
                             var purorg_id_value = value[2]
-
-
                             dropdown_values.push([purorg_id_value])
                             del_ind = '<td>' + value[4] + '</td>'
                             if (value[1] == 1) {
@@ -339,14 +369,24 @@ function onclick_display_csv_data() {
                  });
                $('#id_popup_tbody').append(edit_basic_data);
                     var i =0;
-
-                    $("#id_popup_table TBODY TR").each(function () {
+                    
+                    $("#id_popup_table TBODY TR").each(function (index, tr) {
                         var row = $(this);
+                        if(high_light_row_index_list.indexOf(index) !== -1) {
+                            row.css("background-color", "1px solid #a3bdca")
+                            $('#myModal').modal('show');
+                            $('#id_check_popup').modal('show');
+
+                        }
+                        else{
+                            row.css("background-color", "")
+                        }
+
                          var Pgrp_data_id_list = dropdown_values[i][0]
 
                              $(row.find("TD").eq(3).find("select option[value=" + Pgrp_data_id_list + "]")).attr('selected', 'selected');
                         i++;
-                    })
+                    });
 
 
                 $( "#id_del_ind_checkbox").prop( "hidden", false );
@@ -513,232 +553,75 @@ function main_table_delete(){
     });
 }
 
-//check function restricting special char and diaplay the data count of csv file
-function check_data() {
+
+function update_popup_data(data){
     $('#id_popup_table').DataTable().destroy();
-    $("#id_check_success_messages").empty()
-    $("#id_check_error_messages").empty()
-    $("#id_check_success_messages").prop("hidden",true)
-    $("#id_check_error_messages").prop("hidden",true)
-    $("#id_check_special_character_messages").prop("hidden",true)
-    document.getElementById("id_error_msg_prod_cat_id").innerHTML = "";
-    document.getElementById("id_error_msg_description").innerHTML = "";
-    document.getElementById("id_error_msg_language_id").innerHTML = "";
-    document.getElementById("id_error_msg_prod_cat_id_length").innerHTML = "";
-    count = 0;
-    var purgrp_array = new Array
-    var DB_array = new Array
-    var purgrp_list = new Array
-    var add_num_check = new Array
-    del_ind = ''
-    $("#id_popup_table TBODY TR").each(function() {
-        var row = $(this);
+    var edit_basic_data = '';
+    var dropdown_values = [];
+    var del_ind = '';
+    $("#id_popup_tbody").empty();
+    var high_light_row_index_list = []
+    $.each(data, function(i, value) {
+        flag = validate_row(value)
+        // soecial char row list
+        if (flag){
+            high_light_row_index_list.push(i)
+        }       
 
-        //*************** reading data from the pop-up ***************
-        language_id = row.find("TD").eq(3).find('input[type="text"]').val();
-        description = row.find("TD").eq(2).find('input[type="text"]').val();
-        prod_cat_id = row.find("TD").eq(1).find('input').val();
-        checked_box = row.find("TD").eq(4).find('input[type="checkbox"]').is(':checked')
-            if (checked_box){
-                del_ind = '1'
-            }
-            else{
-               del_ind = '0'
-            }
-        purgrp_list.push([prod_cat_id, prod_cat_desc,language_id, del_ind])
-
-        var format = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
+        var purorg_id_value = value[2]
+                            dropdown_values.push([purorg_id_value])
+                            del_ind = '<td>' + value[4] + '</td>'
+                            if (value[1] == 1) {
+                                del_ind=' <input type="checkbox" value="' + value[4] + '" checked>'
+                            }
+                            else {
+                                del_ind= '<input type="checkbox" value="' + value[4] + '" required>'
+                            }
 
 
+                                var Pgrp_data = '';
+                                var Pgrp_data_list = '';
+                                var Pgrp_data_id_list = '';
+                         $.each(rendered_orgpgrp_data, function(i, item){
+                               if( value[2].purorg_id_value == item){
 
-             //*************** checking for max length for prod_cat_id (max length = 6) ***************
-             //*************** checking for max length for prod_cat_id (max length = 6) ***************
-                if(prod_cat_id.length>10){
-                           
-                            var msg = "JMSG004";
-                            var msg_type ;
-                          msg_type = message_config_details(msg);
-                          $("#error_msg_id").prop("hidden", false)
+                                    Pgrp_data = '<option value="' + item.porg_id + '">' + item.porg_id + '</option>';
 
-                          if(msg_type.message_type == "ERROR"){
-                                display_message("error_msg_id", msg_type.messages_id_desc)
-                          }
-                          else if(msg_type.message_type == "WARNING"){
-                             display_message("id_warning_msg_id", msg_type.messages_id_desc)
-                          }
-                          else if(msg_type.message_type == "INFORMATION"){
-                             display_message("id_info_msg_id", msg_type.messages_id_desc)
-                          }
+                               }else{
 
-                           var display8 = msg_type.messages_id_desc;
+                                 Pgrp_data_list += '<option value="' + item.porg_id + '">' + item.porg_id + '</option>';
 
+                                }
+                                    Pgrp_data_id_list = Pgrp_data + Pgrp_data_list
+                         });
 
-                         document.getElementById("id_error_msg_prod_cat_id_length").innerHTML = display8 + "Prod Category ID";
+                     edit_basic_data += '<tr ><td class="class_select_checkbox"><input type="checkbox" required></td><td><input type="text" class="form-control" value="' + value[0] + '" maxlength="8" onkeypress="return /[a-z]/i.test(event.key)" required></td><td><input type="text" class="form-control" value="' + value[1] + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td><td><select class="form-control" type = "text">value ="' + value[2] + '"'+Pgrp_data_id_list+'</select></td><td hidden><select class="form-control">value ="' + value[2] + '"'+object_id_dropdwn+'</select></td><td hidden><input type="text" value=""></td><td>' + del_ind + '</td></tr>';
+                 });
+               $('#id_popup_tbody').append(edit_basic_data);
+                    var i =0;
+                    
+                    $("#id_popup_table TBODY TR").each(function () {
+                        var row = $(this);
+                    if(high_light_row_index_list.indexOf(index) !== -1) {
+                            row.css("background-color", "1px solid #a3bdca")
+                            $('#myModal').modal('show');
+                            $('#id_check_popup').modal('show');
 
-
-                    $(row.find("TD").eq(1).find('input')).css("border", "1px solid #FF0000");
-                    count = count +1;
-                }
-
-
-                //*************** checking for special characters for prodcat code ***************
-                if (format.test(prod_cat_id)) {
-                            var url_new = "{% url 'eProc_Basic:get_message_description' %}";
-                            var msg = "JMSG003";
-                            var msg_type ;
-                          msg_type = message_config_details(msg);
-                          $("#error_msg_id").prop("hidden", false)
-
-                          if(msg_type.message_type == "ERROR"){
-                                display_message("error_msg_id", msg_type.messages_id_desc)
-                          }
-                          else if(msg_type.message_type == "WARNING"){
-                             display_message("id_warning_msg_id", msg_type.messages_id_desc)
-                          }
-                          else if(msg_type.message_type == "INFORMATION"){
-                             display_message("id_info_msg_id", msg_type.messages_id_desc)
-                          }
-                          var display =  msg_type.messages_id_desc;
-                       document.getElementById("id_error_msg_prod_cat_id").innerHTML = display + "Product Category Code";
-
-
-                    $(row.find("TD").eq(1).find('input')).css("border", "1px solid #FF0000");
-                    count = count + 1;
-                } else {
-                    $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "none");
-                }
-                if (add_num_check.includes(prod_cat_id)) {
-                    $(row).css({
-                        "background-color": "#E0FFFF",
-                        "border": "1px solid #000000"
-                    });
-                        $(row).css("border", "1px solid #000000");
-                        $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
-                        $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "1px solid #FF0000");
-
-                } else {
-                    $(row).css("background-color", "");
-                }
-                add_num_check.push(prod_cat_id)
-            });
-
-            //*************** shows save button if there are no errors(special characters and max length) ***************
-            if (count == 0) {
-                $("#id_check_special_character_messages").prop("hidden", true)
-                $("#save_id").prop("hidden", false);
-            }
-            popup_data_dict = {
-                'data_list': purgrp_list,
-                'Tablename': Tablename,
-                'appname': appname,
-                'db_header_data': db_header_data
-            }
-            $.ajax({
-                type: 'POST',
-                url: "{% url 'eProc_Basic_Settings:check_data' %}",
-                data: JSON.stringify(popup_data_dict),
-                success: function(response) {
-                    table_sort_filter_popup_pagination('id_popup_table')
-                    $("#id_check_special_character_messages").prop("hidden", false)
-                    if (count == 0) {
-                        $("#id_check_special_character_messages").prop("hidden", true)
-                    }
-
-                    //*************** retrieving data counts from views ***************
-                    check_messages = response
-                    var newArrayDataOfOjbect = Object.values(check_messages)
-                    $("#id_check_success_messages").prop("hidden", false)
-
-                    //*************** if pop-up data count is greater than zero ***************
-                    if (newArrayDataOfOjbect[1] > 0) {
-
-                           
-                             var msg = "JMSG010";
-                             var msg_type ;
-                             msg_type = message_config_details(msg);
-                             $("#error_msg_id").prop("hidden", false)
-                             var display = msg_type.messages_id_desc;
-
-                        $("#id_check_success_messages").append('<p>' + display + newArrayDataOfOjbect[0] + '</p>')
-
-                           
-                             var msg = "JMSG011";
-                             var msg_type ;
-                             msg_type = message_config_details(msg);
-                             $("#error_msg_id").prop("hidden", false)
-                             var display1 = msg_type.messages_id_desc;
-
-                        $("#id_check_success_messages").append('<p>' + display1 + newArrayDataOfOjbect[1] + '</p>')
-
-                           
-                             var msg = "JMSG012";
-                             var msg_type ;
-                             msg_type = message_config_details(msg);
-                             $("#error_msg_id").prop("hidden", false)
-                             var display2 = msg_type.messages_id_desc;
-                        $("#id_check_success_messages").append('<p>' + display2 + newArrayDataOfOjbect[3] + '</p>')
-                               
-                                 var msg = "JMSG013";
-                                 var msg_type ;
-                                 msg_type = message_config_details(msg);
-                                 $("#error_msg_id").prop("hidden", false)
-                                 var display3 = msg_type.messages_id_desc;
-                        $("#id_check_success_messages").append('<p>' + display3 + newArrayDataOfOjbect[4] + '</p>')
-                               
-                                 var msg = "JMSG014";
-                                 var msg_type ;
-                                 msg_type = message_config_details(msg);
-                                 $("#error_msg_id").prop("hidden", false)
-                                 var display4 = msg_type.messages_id_desc;
-                        $("#id_check_success_messages").append('<p>' + display4 + newArrayDataOfOjbect[5] + '</p>')
-                               
-                                 var msg = "JMSG053";
-                                 var msg_type ;
-                                 msg_type = message_config_details(msg);
-                                 $("#error_msg_id").prop("hidden", false)
-                                 var display5 = msg_type.messages_id_desc;
-	   				  $("#id_check_success_messages").append('<p>' + display5 + newArrayDataOfOjbect[6] + '</p>')
-                         //*************** if duplicate data data count is greater than zero ***************
-                        if(newArrayDataOfOjbect[2]>0){
-                            $("#id_check_error_messages").prop("hidden",false)
-                              
-                                 var msg = "JMSG015";
-                                 var msg_type ;
-                                 msg_type = message_config_details(msg);
-                                 $("#error_msg_id").prop("hidden", false)
-                                 var display6 = msg_type.messages_id_desc;
-                            $("#id_check_error_messages").append('<p>' + display6 + newArrayDataOfOjbect[2] + '</p>')
-                               
-                                 var msg = "JMSG001";
-                                 var msg_type ;
-                                 msg_type = message_config_details(msg);
-                                 $("#error_msg_id").prop("hidden", false)
-                                 var display7 = msg_type.messages_id_desc;
-                            $("#id_check_error_messages").append('<p style = "font-weight: bold;">' + display7 + ' </p>')
-                            $("#save_id").prop("hidden", true);
-                            $("#id_delete_duplicate").show()
                         }
                         else{
-                            $("#id_check_error_messages").prop("hidden",true)
-                            $("#id_delete_duplicate").hide()
+                            row.css("background-color", "")
                         }
-                    }
-                    //*************** if pop-up data count is zero ***************
-                    else {
-                        $("#id_check_success_messages").hide()
-                        $("#id_check_error_messages").prop("hidden", false)
-                              
-                                 var msg = "JMSG006";
-                                 var msg_type ;
-                                 msg_type = message_config_details(msg);
-                                 $("#error_msg_id").prop("hidden", false)
-                                 var display8 = msg_type.messages_id_desc;
-                        $("#id_check_error_messages").append('<p>' + display8 + '</p>')
-                        $("#save_id").prop("hidden", true);
-                    }
-                }
-            });
-        }
+
+                         var Pgrp_data_id_list = dropdown_values[i][0]
+
+                             $(row.find("TD").eq(3).find("select option[value=" + Pgrp_data_id_list + "]")).attr('selected', 'selected');
+                        i++;
+                    });
+
+    table_sort_filter_popup_pagination('id_popup_table')
+}
+
+
 
 var pgroup_data = new Array();
 var validate_add_attributes = [];
@@ -1001,21 +884,21 @@ $('#save_id').click(function () {
             pgroup={};
             pgroup.del_ind = row.find("TD").eq(6).find('input[type="checkbox"]').is(':checked');
             pgroup.pgroup_guid = row.find("TD").eq(5).find('input').val();
-            pgroup.pgroup_id = row.find("TD").eq(1).find('input').val().toUpperCase();
+            pgroup.pgroup_id = row.find("TD").eq(1).find('input').val();
             pgroup.description = row.find("TD").eq(2).find('input').val();
-            pgroup.porg_id = row.find("TD").eq(3).find('select').val().toUpperCase();
+            pgroup.porg_id = row.find("TD").eq(3).find('select').val();
              pgroup.object_id = row.find("TD").eq(4).find('select').val();
  
            if (pgroup == undefined){
                 pgroup.pgroup_id = row.find("TD").eq(1).find('input[type="text"]').val();
-             }
+           }
 
-             if(pgroup.pgroup_guid == undefined) {
+           if(pgroup.pgroup_guid == undefined) {
                 pgroup.pgroup_guid = '';
-            }
-            if(pgroup.object_id == undefined) {
+           }
+           if(pgroup.object_id == undefined) {
                 pgroup.object_id = '';
-            }
+           }
 
             validate_add_attributes.push(pgroup.pgroup_id);
                 pgroup_data.push(pgroup);
@@ -1041,7 +924,7 @@ function maintable_validation(validate_add_attributes, main_table_low_value) {
     var no_duplicate_entries = 'Y'
     var error_message =''
     var common = [];
-    jQuery.grep(validate_add_attributesmain_table_low_value, function (el) {
+    jQuery.grep(validate_add_attributes, function (el) {
         if (jQuery.inArray(el, main_table_low_value) != -1) {
         common.push(el);
         }
@@ -1087,6 +970,7 @@ function check_data() {
     var purchasegrp_list = new Array
     var purchasegrp_code_check = new Array
     del_ind = ''
+    ui_validation_flag = true
     $("#id_popup_table TBODY TR").each(function() {
         var row = $(this);
         purchasegrp_dic = {}
@@ -1101,100 +985,17 @@ function check_data() {
             else{
                purchasegrp_dic.del_ind = '0'
             }
-        purchasegrp_list.push(purchasegrp_dic)
-
-        var format = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
-
-
-            //*************** checking for max length for country code (max length = 2) ***************
-            if(purchasegrp_dic.pgroup_id.length >20){
-
-                            var msg = "JMSG004";
-                            var msg_type ;
-                          msg_type = message_config_details(msg);
-                          $("#error_msg_id").prop("hidden", false)
-
-                          if(msg_type.message_type == "ERROR"){
-                                display_message("error_msg_id", msg_type.messages_id_desc)
-                          }
-                          else if(msg_type.message_type == "WARNING"){
-                             display_message("id_warning_msg_id", msg_type.messages_id_desc)
-                          }
-                          else if(msg_type.message_type == "INFORMATION"){
-                             display_message("id_info_msg_id", msg_type.messages_id_desc)
-                          }
-                           var display8 = msg_type.messages_id_desc;
-                        document.getElementById("id_error_msg_prod_cat_id_length").innerHTML = display8  + "Product ID";
-
-                $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
-                count = count +1;
-            }
-
-            //*************** checking for special characters for country code ***************
-            else if(format.test(purchasegrp_dic.pgroup_id)){
-
-                            var msg = "JMSG003";
-                            var msg_type ;
-                          msg_type = message_config_details(msg);
-                          $("#error_msg_id").prop("hidden", false)
-
-                          if(msg_type.message_type == "ERROR"){
-                                display_message("error_msg_id", msg_type.messages_id_desc)
-                          }
-                          else if(msg_type.message_type == "WARNING"){
-                             display_message("id_warning_msg_id", msg_type.messages_id_desc)
-                          }
-                          else if(msg_type.message_type == "INFORMATION"){
-                             display_message("id_info_msg_id", msg_type.messages_id_desc)
-                          }
-                          var display = msg_type.messages_id_desc;
-
-                      document.getElementById("id_error_msg_prod_cat_id").innerHTML = display + "Product ID";
-
-                $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
-                count = count +1;
+            var pgr_data = [purchasegrp_dic.porg_id,purchasegrp_dic.description,purchasegrp_dic.pgroup_id]
+            flag = validate_row(pgr_data)
+            // soecial char row list
+            if(flag) {
+                ui_validation_flag = false
+                row.css("background-color", "1px solid #a3bdca")
             }
             else{
-            $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "none");
+                row.css("background-color", "")
             }
-
-            //*************** checking for special characters for country name ***************
-            if(format.test(purchasegrp_dic.pgroup_id)){
-
-                            var msg = "JMSG003";
-                            var msg_type ;
-                          msg_type = message_config_details(msg);
-                          $("#error_msg_id").prop("hidden", false)
-
-                          if(msg_type.message_type == "ERROR"){
-                                display_message("error_msg_id", msg_type.messages_id_desc)
-                          }
-                          else if(msg_type.message_type == "WARNING"){
-                             display_message("id_warning_msg_id", msg_type.messages_id_desc)
-                          }
-                          else if(msg_type.message_type == "INFORMATION"){
-                             display_message("id_info_msg_id", msg_type.messages_id_desc)
-                          }
-
-                          var display = msg_type.messages_id_desc;
-                   document.getElementById("id_error_msg_description").innerHTML = display + "Description";
-
-                $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "1px solid #FF0000");
-                count = count +1;
-           }
-           else{
-            $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "none");
-            }
-
-           if(purchasegrp_code_check.includes(purchasegrp_dic.pgroup_id)){
-                $(row).css("border", "#f8d7da");
-                //$(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
-                //$(row.find("TD").eq(2).find('input[type="text"]')).css("border", "1px solid #FF0000");
-
-            }
-            else{
-                $(row).css("border", "");
-            }
+                purchasegrp_list.push(purchasegrp_dic)      
 
             purchasegrp_code_check.push(purchasegrp_dic.pgroup_id)
     });
@@ -1205,19 +1006,34 @@ function check_data() {
              $("#save_id").prop("hidden", false);
     }
     popup_data_dict ={'data_list' : purchasegrp_list}
-    OpenLoaderPopup();
-    $.ajax({
-        type: 'POST',
-        url: "{% url 'eProc_Configuration_Check:check_purchasegrp' %}",
-        data: JSON.stringify(popup_data_dict),
-        success: function(response) {
-            table_sort_filter_popup_pagination('id_popup_table')
-            //table_sort_filter('id_popup_table');
-            var message = ''
-            update_check_message(response.messages)
-            CloseLoaderPopup();
-        }
-    });
+    if(ui_validation_flag){
+        OpenLoaderPopup();
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'eProc_Configuration_Check:check_purchasegrp' %}",
+            data: JSON.stringify(popup_data_dict),
+            success: function(response) {
+                table_sort_filter_popup_pagination('id_popup_table')
+                //table_sort_filter('id_popup_table');
+                var message = ''
+                update_check_message(response.messages)
+                CloseLoaderPopup();
+                update_popup_data(response.valid_data)
+                document.getElementById('id_del_add_button').style.visibility='hidden';
+                document.getElementById('id_check_data').style.visibility='hidden';
+            }
+            });
+    }
+    else{
+        $('#myModal').modal('hide');
+        $('#id_check_popup').modal('show');
+    }
+
+}
+
+function open_upload(){
+    $('#myModal').modal('show');
+    $('#id_check_popup').modal('hide');
 }
 
 function update_check_message(messages){

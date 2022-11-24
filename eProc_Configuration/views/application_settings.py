@@ -26,6 +26,7 @@ from eProc_Basic.Utilities.functions.guid_generator import guid_generator
 from eProc_Basic.Utilities.functions.json_parser import JsonParser
 from eProc_Basic.Utilities.functions.messages_config import get_msg_desc, get_message_desc
 from eProc_Basic_Settings.Utilities.basic_settings_specific import save_prodcat_data_into_db
+from eProc_Configuration.Utilities.application_settings_generic import get_product_criteria
 from eProc_Configuration.Utilities.application_settings_specific import save_actasmt_data_into_db, \
     save_messageId_data_into_db, save_messageIdDesc_data_into_db, \
     save_calendarholiday_data_into_db, \
@@ -70,27 +71,27 @@ def create_update_application_data(request):
     update_user_info(request)
     app_data = JsonParser_obj.get_json_from_req(request)
     if app_data['table_name'] == 'OrgClients':
-        app_data['data'] = get_valid_client_data(app_data['data'])
         display_data = save_client_data_into_db(app_data)
         return JsonResponse(display_data, safe=False)
     if app_data['table_name'] == 'UnspscCategories':
-        app_data['data'] = get_valid_unspsc_data(app_data['data'])
         display_data = save_prodcat_data_into_db(app_data)
+        app_data['data'] = get_valid_unspsc_data(app_data['data'])
         return JsonResponse(display_data, safe=False)
     if app_data['table_name'] == 'OrgNodeTypes':
-        app_data['data'] = get_valid_org_node_type_data(app_data['data'])
         display_data = save_orgnode_types_data_into_db(app_data)
+        app_data['data'] = get_valid_org_node_type_data(app_data['data'])
         return JsonResponse(display_data, safe=False)
     if app_data['table_name'] == 'OrgAttributes':
-        app_data['data'] = get_valid_org_attributes_data(app_data['data'])
         display_data = save_orgattributes_data_into_db(app_data)
+        app_data['data'] = get_valid_org_attributes_data(app_data['data'])
         return JsonResponse(display_data, safe=False)
     if app_data['table_name'] == 'OrgModelNodetypeConfig':
-        # app_data['data'] = get_valid_org_nodetype_config_data(app_data['data'])
         display_data = save_orgattributes_level_data_into_db(app_data)
+        app_data['data'] = get_valid_org_nodetype_config_data(app_data['data'])
         return JsonResponse(display_data, safe=False)
     if app_data['table_name'] == 'AuthorizationObject':
         display_data = save_authorobject_data_into_db(app_data)
+        app_data['data'] = get_valid_org_authorization_data(app_data['data'])
         return JsonResponse(display_data, safe=False)
     if app_data['table_name'] == 'AuthorizationGroup':
         display_data = save_auth_group_data_into_db(app_data)
@@ -127,9 +128,6 @@ def create_update_application_data(request):
         return JsonResponse(display_data, safe=False)
     if app_data['table_name'] == 'PoSplitType':
         display_data = save_po_split_type_into_db(app_data)
-        return JsonResponse(display_data, safe=False)
-    if app_data['table_name'] == 'PoSplitCriteria':
-        display_data = save_po_split_criteria_into_db(app_data)
         return JsonResponse(display_data, safe=False)
     if app_data['table_name'] == 'PoSplitCriteria':
         display_data = save_po_split_criteria_into_db(app_data)
@@ -387,6 +385,7 @@ def transaction_data_configuration(request):
     }
     return render(request, 'Transaction_Data_Configuration/transaction_data_configuration.html', context)
 
+
 # def dropdown_document_type(request):
 #   update_user_info(request)
 # client = global_variables.GLOBAL_CLIENT
@@ -398,3 +397,10 @@ def transaction_data_configuration(request):
 #     'shopping_cart': shopping_cart,
 # }
 #  return render(request, 'Application_Settings/upload_document_type.html', context)
+
+def update_po_criteria_dropdown(request):
+    """
+
+    """
+    data = get_product_criteria()
+    return JsonResponse(data,safe=False)

@@ -14,7 +14,14 @@ urlpatterns = [
     path('export_languages', extract_language_data, name='extract_language_data'),
     path('extract_language_template', extract_language_template, name='extract_language_template'),
     path('export_currency', extract_currency_data, name='extract_currency_data'),
-    path('srm_currency_converter', srm_currency_converter, name='srm_currency_converter'),
+    path('srm_currency_converter_p02', srm_currency_converter_p02, name='srm_currency_converter_p02'),
+    path('srm_currency_converter_e7p', srm_currency_converter_e7p, name='srm_currency_converter_e7p'),
+    path('Scheduling', Scheduling, name='Scheduling'),
+    path('stop_job', stop_job, name='stop_job'),
+
+
+    path('work_item_extract', work_item_extract, name='work_item_extract'),
+    path('work_item_doc_num_extract', work_item_doc_num_extract, name='work_item_doc_num_extract'),
 
     path('export_timezone_data', extract_timezone_data, name='extract_timezone_data'),
     path('extract_timezone_template', extract_timezone_template, name='extract_timezone_template'),

@@ -36,6 +36,7 @@ def otp_generator(email):
 
     """
     generate_otp = random_int(4)
+    print(generate_otp)
     django_query_instance.django_update_query(OtpGenerator, {'email': email, 'del_ind': False},
                                               {'otp': generate_otp})
     send_otp(generate_otp, email)

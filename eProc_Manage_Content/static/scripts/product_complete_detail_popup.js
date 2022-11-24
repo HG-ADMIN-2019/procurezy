@@ -33,7 +33,7 @@ function view_detail(prd_detail, prd_catalog_id){
         $("#id_unit").text(response[0].unit);
         $("#id_supp").text(response[0].supplier_id);
         eform_detail = view_detail_response.eform_detail;
-        eform_id = response[0].eform_id;
+        eform_id = response[0].variant_id;
         if (eform_id){
             GLOBAL_EFORM_FLAG = true
         }
@@ -53,7 +53,7 @@ function view_detail(prd_detail, prd_catalog_id){
         create_eform_fields(eform_detail);
 
         if( Object.keys(discount_data_dictionary).length !== 0) {
-            var discount_pricing_data = discount_data_dictionary.pricing
+            var discount_pricing_data = discount_data_dictionary.variant_data
             display_discount_inforrmation(discount_pricing_data);
         }
         if (product_specification.length != 0){
@@ -223,10 +223,10 @@ for(i=0; image_thumbnail.length > i; i++){
 // Funtion to create eform fields
 const create_eform_fields = (eform_detail) => {
     eform_detail.forEach(eform_data => {
-
+        console.log(eform_detail)
         var variant_type = eform_data.dropdown_pricetype;
-        var eform_field_config_guid = eform_data.eform_field_config_guid;
-        var eform_field_variant_options = eform_data.eform_field_data.split('|~#');
+        var eform_field_config_guid = eform_data.variant_config_guid;
+        var eform_field_variant_options = eform_data.variant_data.split('|~#');
        
         if(variant_type == 'VARIANT_WITHOUT_PRICING') {
             
@@ -237,7 +237,7 @@ const create_eform_fields = (eform_detail) => {
                 vwobp_options += '<option value="VARIANT_WITHOUT_PRICING-'+eform_field_config_guid+'-'+variant_options+'">'+variant_options+'</option>'
             })
             data =  '<div class="col-sm-6">'+
-                    '<h5>'+eform_data.eform_field_name+'</h5>'+
+                    '<h5>'+eform_data.variant_name+'</h5>'+
                     '<select class="form-control dummy_eform_class">'+ vwobp_options + '</select>'+
                     '</div>'
             $('#vwobp_dropdown_body').append(data);
@@ -245,7 +245,7 @@ const create_eform_fields = (eform_detail) => {
 
         else if(variant_type == 'VARIANT_BASE_PRICING') {
             $('#product-detail-section__vwbp').show();
-            $('#product-detail-section__vwbp-field-name').html(eform_data.eform_field_name);
+            $('#product-detail-section__vwbp-field-name').html(eform_data.variant_name);
             var vwbp_options_body = ''
             eform_data.pricing.forEach(variant_data_type => {
                 var default_card_class = ''
@@ -296,7 +296,7 @@ const display_discount_inforrmation = (discount_pricing_data) => {
     discount_pricing_data.forEach(dicount_data => {
         discount_info_body += '<div class="discount-label-text">'+
                                     '<i class="material-icons">discount</i>'+
-                                    '<span>'+dicount_data.price+'% off on minimum '+dicount_data.pricing_data+' quantity</span>'+
+                                    '<span>'+dicount_data.discount_percentage_value+'% off on minimum '+dicount_data.discount_min_quantity+' quantity</span>'+
                                '</div>'
     })
     $('#discount_info_body').append(discount_info_body);
@@ -359,7 +359,7 @@ function update_price(price_value){
 function get_price(eform_config_guid,eform_pricing_guid){
     var price = 0
     $.each(eform_detail, function (i, eform_config) {
-        if(eform_config.eform_field_config_guid==eform_config_guid){
+        if(eform_config.variant_config_guid==eform_config_guid){
              $.each(eform_config.pricing, function (i, eform_pricing) {
                 if (eform_pricing.product_eform_pricing_guid == eform_pricing_guid){
                     price = eform_pricing.price
@@ -380,9 +380,9 @@ function remove_base_class(){
 
 function remove_additional_class(eform_config_guid){
     $.each(eform_detail, function (i, eform_config) {
-        if(eform_config.eform_field_config_guid==eform_config_guid){
+        if(eform_config.variant_config_guid==eform_config_guid){
              $.each(eform_config.pricing, function (i, eform_pricing) {
-                var id_value = 'VARIANT_ADDITIONAL_PRICING-'+eform_config.eform_field_config_guid+'-'+eform_pricing.product_eform_pricing_guid+'';
+                var id_value = 'VARIANT_ADDITIONAL_PRICING-'+eform_config.variant_config_guid+'-'+eform_pricing.product_eform_pricing_guid+'';
                 $("#"+id_value ).removeClass("selected-vwap");
                 $("#"+id_value).removeClass("dummy_class_price_data")
              });
@@ -399,16 +399,16 @@ function get_price_range(quantity){
     var max_flag = false
     var max_quantity =0
     var price_percentage =0
-    $.each(GLOBAL_QUANTITY.pricing, function (i, item) {
-        if((GLOBAL_QUANTITY.pricing.length)==(i)){
+    $.each(GLOBAL_QUANTITY.variant_data, function (i, item) {
+        if((GLOBAL_QUANTITY.variant_data.length)==(i)){
             max_quantity = parseFloat(9999999999999999999999999)
             max_flag = true
         }
         else{
-            max_quantity = item.pricing_data
+            max_quantity = item.discount_min_quantity
         }
 
-        range_flag = inRange(parseFloat(quantity),min,parseFloat(max_quantity))
+        range_flag = inRange(parseFloat(quantity),min,parseFloat(max_quantity)-1)
         if(range_flag){
 
             var range = min
@@ -417,29 +417,28 @@ function get_price_range(quantity){
             return quantity_range
         }
         else{
-             if((GLOBAL_QUANTITY.pricing.length-1)==(i))
+             if((GLOBAL_QUANTITY.variant_data.length-1)==(i))
             {
                 if(parseFloat(quantity) >= parseFloat(max_quantity))
                 {
                 console.log("retutn 2")
                 quantity_range = max_quantity
-                price_percentage = item.price
+                price_percentage = item.discount_percentage_value
                     return quantity_range
                 }
             }
             else{
-                min =item.pricing_data
+                min =item.discount_min_quantity
             }
         }
     });
     return quantity_range
  }
-
 function get_percentage_by_quantity(quantity_range){
     if(GLOBAL_QUANTITY.length != 0){
-         for(var i=0; i<GLOBAL_QUANTITY.pricing.length; i++ ){
-            if (quantity_range == GLOBAL_QUANTITY.pricing[i].pricing_data){
-                return GLOBAL_QUANTITY.pricing[i].price;
+         for(var i=0; i<GLOBAL_QUANTITY.variant_data.length; i++ ){
+            if (quantity_range == GLOBAL_QUANTITY.variant_data[i].discount_min_quantity){
+                return GLOBAL_QUANTITY.variant_data[i].discount_percentage_value;
             }
         }
     }

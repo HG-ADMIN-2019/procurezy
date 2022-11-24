@@ -10,9 +10,10 @@ from eProc_Calendar_Settings.Utilities.calender_settings_generic import calculat
 from eProc_Doc_Details.Utilities.details_specific import get_approver_list
 from eProc_Exchange_Rates.Utilities.exchange_rates_generic import convert_currency
 from eProc_Price_Calculator.Utilities.price_calculator_generic import calculate_item_total_value, calculate_item_price
-from eProc_Shopping_Cart.Utilities.shopping_cart_generic import get_prod_by_id, get_highest_acc_detail, \
-    delete_approver_detail, get_price_discount_tax
-from eProc_Shopping_Cart.Utilities.shopping_cart_specific import get_manger_detail
+from eProc_Shopping_Cart.Utilities.shopping_cart_generic import get_prod_by_id, \
+     get_price_discount_tax
+from eProc_Shopping_Cart.Utilities.shopping_cart_specific import get_manger_detail, get_highest_acc_detail, \
+    delete_approver_detail
 from eProc_Shopping_Cart.context_processors import update_user_obj_id_list_info
 from eProc_Shopping_Cart.models import ScItem, ScHeader
 from eProc_User_Settings.Utilities.user_settings_generic import get_object_id_list_user
@@ -233,7 +234,7 @@ class UpdateSavedItem:
         sc_item_instance = django_query_instance.django_get_query(ScItem, {'guid': guid})
         currency = sc_item_instance.currency
         item_value_object = update_item_detail['item_value_object']
-        if sc_item_instance.eform_id:
+        if sc_item_instance.variant_id:
             price, discount_percentage, base_price, additional_pricing = calculate_item_price(guid, quantity)
         else:
             discount_percentage = 0

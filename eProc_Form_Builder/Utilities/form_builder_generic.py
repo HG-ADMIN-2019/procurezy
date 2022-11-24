@@ -7,7 +7,8 @@ from eProc_Basic.Utilities.functions.dict_check_key import checkKey
 from eProc_Basic.Utilities.functions.django_query_set import DjangoQueries, bulk_create_entry_db
 import re
 from django.db.models import Max
-from eProc_Basic.Utilities.constants.constants import CONST_SF01, CONST_CATALOG_ITEM_VARIANT, CONST_VARIANT_BASE_PRICING, \
+from eProc_Basic.Utilities.constants.constants import CONST_SF01, CONST_CATALOG_ITEM_VARIANT, \
+    CONST_VARIANT_BASE_PRICING, \
     CONST_DROPDOWN_DATA_TYPE, CONST_VARIANT_WITHOUT_PRICING, CONST_VARIANT_BASE_PRICING, \
     CONST_VARIANT_ADDITIONAL_PRICING, CONST_QUANTITY_BASED_DISCOUNT, CONST_OPERATOR_PLUS, CONST_OPERATOR_PERCENTAGE, \
     CONST_FT_ITEM_EFORM, CONST_FREETEXT_CALLOFF, CONST_CATALOG_CALLOFF
@@ -20,8 +21,9 @@ from eProc_Basic.Utilities.messages.messages import MSG131, MSG132
 from eProc_Calendar_Settings.Utilities.calender_settings_generic import calculate_delivery_date, \
     calculate_delivery_date_base_on_lead_time
 from eProc_Configuration.models import SupplierMaster, FreeTextForm, Currency, UnitOfMeasures, EformFieldConfig, \
-    ProductEformPricing, ProductInfo, FreeTextDetails, CatalogMapping, ProductsDetail
+    ProductEformPricing, ProductInfo, FreeTextDetails, CatalogMapping, ProductsDetail, VariantConfig
 from eProc_Form_Builder.models import *
+from eProc_Manage_Content.Utilities.manage_content_generic import get_discount_data
 from eProc_Manage_Content.Utilities.manage_content_specific import get_product_detail_config
 from eProc_Price_Calculator.Utilities.price_calculator_generic import get_product_price_from_eform
 from eProc_Shopping_Cart.Utilities.shopping_cart_generic import get_supp_name_by_id, get_prod_by_id
@@ -83,7 +85,6 @@ class FormBuilder:
                                                        })
             msgid = 'MSG131'
             error_msg = get_message_desc(msgid)[1]
-
 
         return True, error_msg
 
@@ -209,8 +210,9 @@ class FormBuilder:
             configured_freetext_form['freetext_id'] = freetext_form['freetext_id']
             configured_freetext_form['currency_id'] = freetext_form['currency_id_id']
             configured_freetext_form['prod_cat_desc'] = get_prod_by_id(freetext_form['prod_cat_id'])
-            configured_freetext_form['delivery_date']= calculate_delivery_date_base_on_lead_time(freetext_form['lead_time'],
-                                                                                                 freetext_form['supplier_id'],None)
+            configured_freetext_form['delivery_date'] = calculate_delivery_date_base_on_lead_time(
+                freetext_form['lead_time'],
+                freetext_form['supplier_id'], None)
             eform_configured = get_freetext_eform_detail(freetext_form['eform_id'])
             if eform_configured:
                 eform_flag = 1
@@ -383,16 +385,14 @@ class FormBuilder:
                                                               {'product_id': product_detail['product_id'],
                                                                'client': global_variables.GLOBAL_CLIENT},
                                                               {'del_ind': True})
-                    django_query_instance.django_update_query(EformFieldConfig,
-                                                              {'eform_id': product_detail['eform_id'],
-                                                               'client': global_variables.GLOBAL_CLIENT,
-                                                               'eform_type': CONST_CATALOG_ITEM_VARIANT},
+                    django_query_instance.django_update_query(VariantConfig,
+                                                              {'variant_id': product_detail['variant_id'],
+                                                               'client': global_variables.GLOBAL_CLIENT},
                                                               {'del_ind': True})
             else:
-                django_query_instance.django_filter_delete_query(EformFieldConfig,
-                                                                 {'eform_id': product_detail['eform_id'],
-                                                                  'client': global_variables.GLOBAL_CLIENT,
-                                                                  'eform_type': CONST_CATALOG_ITEM_VARIANT})
+                django_query_instance.django_filter_delete_query(VariantConfig,
+                                                                 {'variant_id': product_detail['variant_id'],
+                                                                  'client': global_variables.GLOBAL_CLIENT})
                 django_query_instance.django_filter_delete_query(ProductsDetail,
                                                                  {'product_id': product_detail['product_id'],
                                                                   'client': global_variables.GLOBAL_CLIENT})
@@ -502,55 +502,54 @@ def product_eform_into_query_dictionary_list(eform_configured, eform_field_confi
     return converted_model_fields_list, form_id, pricing_list
 
 
+def get_eform_update_price(prod_detail_get_query):
 
-
-
-def get_eform_update_price(form_id):
     """
 
     """
     price = None
     quantity_index = None
     quantity_dictionary = []
-    eform_details = django_query_instance.django_filter_query(EformFieldConfig,
-                                                              {'eform_id': form_id,
+    eform_details = django_query_instance.django_filter_query(VariantConfig,
+                                                              {'variant_id': prod_detail_get_query.variant_id,
                                                                'client': global_variables.GLOBAL_CLIENT,
                                                                'del_ind': False},
                                                               None,
-                                                              ['eform_id', 'eform_field_count', 'eform_field_name',
-                                                               'required_flag', 'eform_field_datatype',
+                                                              ['variant_id', 'variant_count', 'variant_name',
+                                                               'required_flag', 'variant_datatype',
                                                                'specialchar_flag',
-                                                               'eform_field_data', 'display_flag',
-                                                               'eform_field_config_guid', 'price_flag',
+                                                               'variant_data', 'display_flag',
+                                                               'variant_config_guid', 'variant_flag',
                                                                'dropdown_pricetype'])
     for index, eform_detail in enumerate(eform_details):
         ordered_by = ['-pricing_data_default']
         if eform_detail['dropdown_pricetype'] == CONST_QUANTITY_BASED_DISCOUNT:
             quantity_index = index
             ordered_by = ['pricing_data']
-        if eform_detail['price_flag']:
+        if eform_detail['variant_flag']:
             eform_product_pricing = django_query_instance.django_filter_query(ProductEformPricing,
                                                                               {'client': global_variables.GLOBAL_CLIENT,
                                                                                'del_ind': False,
-                                                                               'eform_field_config_guid': eform_detail[
-                                                                                   'eform_field_config_guid']},
+                                                                               'variant_config_guid': eform_detail[
+                                                                                   'variant_config_guid']},
                                                                               ordered_by, None)
 
             eform_detail['pricing'] = eform_product_pricing
-    if quantity_index is not None:
-        if quantity_index >= 0:
-            quantity_dictionary = eform_details.pop(quantity_index)
-    item_price_value = get_product_price_from_eform(form_id)
-
+    # if quantity_index is not None:
+    #     if quantity_index >= 0:
+    #         quantity_dictionary = eform_details.pop(quantity_index)
+    item_price_value = get_product_price_from_eform(prod_detail_get_query.variant_id)
+    quantity_dictionary = get_discount_data(prod_detail_get_query.discount_id)
     return eform_details, item_price_value, quantity_dictionary
 
 
-def get_product_specification_details(product_info_id):
+def get_product_specification_details(product_id, product_info_id):
     """
 
     """
     product_spec_detail = django_query_instance.django_filter_query(ProductInfo,
                                                                     {'product_info_id': product_info_id,
+                                                                     'product_id': product_id,
                                                                      'client': global_variables.GLOBAL_CLIENT,
                                                                      'del_ind': False},
                                                                     None, None)

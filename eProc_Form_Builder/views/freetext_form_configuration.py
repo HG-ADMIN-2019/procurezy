@@ -60,7 +60,7 @@ def create_or_update_freetext_form(request, freetext_id):
         'currency_list': get_currency_data(),
         'country_list': get_country_data(),
         'encrypt_freetext_id': encrypt_freetext_id,
-        'freetext_action':freetext_action
+        'freetext_action': freetext_action
     }
 
     return render(request, 'Form_Builder/create_freetext_form.html', context)
@@ -70,7 +70,7 @@ def create_or_update_freetext_form(request, freetext_id):
 def display_freetext_forms(request):
     update_user_info(request)
     client = getClients(request)
-    freetext_details =[]
+    freetext_details = []
     if request.method == 'GET':
         freetext_details = get_ft_data()
 

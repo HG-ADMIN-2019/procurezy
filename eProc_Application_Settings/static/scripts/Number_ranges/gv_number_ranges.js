@@ -240,9 +240,9 @@ $('#save_id').click(function () {
 
             number_range.del_ind = row.find("TD").eq(6).find('input[type="checkbox"]').is(':checked');
             number_range.sequence = row.find("TD").eq(1).find('input[type="text"]').val();
-            number_range.starting = row.find("TD").eq(2).find('input[type="text"]').val().toUpperCase();
-            number_range.ending = row.find("TD").eq(3).find('input[type="text"]').val().toUpperCase();
-            number_range.current= row.find("TD").eq(4).find('input[type="text"]').val().toUpperCase();
+            number_range.starting = row.find("TD").eq(2).find('input[type="text"]').val();
+            number_range.ending = row.find("TD").eq(3).find('input[type="text"]').val();
+            number_range.current= row.find("TD").eq(4).find('input[type="text"]').val();
             number_range.document_type = "DOC03"
             number_range.guid = row.find("TD").eq(5).find('input[type="text"]').val();
             if (number_range == undefined){

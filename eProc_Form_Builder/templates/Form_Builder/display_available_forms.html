@@ -192,7 +192,8 @@ function delete_form() {
             //document.getElementById("success_msg_id").text = Response.success_message;
             $("#err_msg_app_settings_t").prop("hidden",false);
             CloseLoaderPopup();
-            setTimeout(function(){$("#err_msg_app_settings_t").prop("hidden",true);},5000)
+<!--            setTimeout(function(){$("#err_msg_app_settings_t").prop("hidden",true);},5000)-->
+            message_display_time();
         }
     });
 
@@ -308,7 +309,8 @@ function main_table_delete(){
             $('#success_msg_id').text(Response.success_message)
             //document.getElementById("success_msg_id").text = Response[2];
             $("#err_msg_app_settings_t").prop("hidden",false)
-            setTimeout(function(){$("#err_msg_app_settings_t").prop("hidden",true);},5000)
+<!--            setTimeout(function(){$("#err_msg_app_settings_t").prop("hidden",true);},5000)-->
+            message_display_time();
         }
     });
 }

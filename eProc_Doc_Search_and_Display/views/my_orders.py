@@ -61,21 +61,21 @@ def sc_po_hdr_search(request):
             search_form = ExtSearch(request.POST)
         else:
             search_form = SearchForm(request.POST)
-        if search_form.is_valid():
-            document_type = request.POST.get('doc_type')
-            ui_search_data = {'document_number': request.POST.get('doc_num'),
-                              'document_type': document_type,
-                              'supplier': request.POST.get('supplier'),
-                              'timeframe': request.POST.get('time_frame'),
-                              'sc_name': request.POST.get('SCName'),
-                              'status': inp_status,
-                              'requester': username}
-            search_criteria = document_search_instance.define_search_criteria(ui_search_data, 'my_order')
-            if document_type == CONST_DOC_TYPE_SC:
-                result = document_search_instance.get_header_details(search_criteria)
-            elif document_type == CONST_DOC_TYPE_PO:
-                doc_header_details = document_search_instance.get_po_header_details(search_criteria)
-                result=doc_header_details
+        # if search_form.is_valid():
+        document_type = request.POST.get('doc_type')
+        ui_search_data = {'document_number': request.POST.get('doc_num'),
+                          'document_type': document_type,
+                          'supplier': request.POST.get('supplier'),
+                          'timeframe': request.POST.get('time_frame'),
+                          'sc_name': request.POST.get('SCName'),
+                          'status': inp_status,
+                          'requester': username}
+        search_criteria = document_search_instance.define_search_criteria(ui_search_data, 'my_order')
+        if document_type == CONST_DOC_TYPE_SC:
+            result = document_search_instance.get_header_details(search_criteria)
+        elif document_type == CONST_DOC_TYPE_PO:
+            doc_header_details = document_search_instance.get_po_header_details(search_criteria)
+            result=doc_header_details
     else:
         if settings.SEARCH_FORM == 'X':
             search_form = ExtSearch()

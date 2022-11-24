@@ -58,7 +58,7 @@ def register_page(request):
                                                              'del_ind': False}):
                 error_msg = 'Employee Id exists'
             else:
-                is_created = RegFncts.create_user(request, new_user,global_variables.GLOBAL_CLIENT,password)
+                is_created = RegFncts.create_user(request, new_user, global_variables.GLOBAL_CLIENT, password)
                 if is_created:
                     # msgid = 'MSG017'
                     # error_msg = get_msg_desc(msgid)

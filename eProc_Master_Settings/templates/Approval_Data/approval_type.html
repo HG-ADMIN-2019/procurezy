@@ -154,9 +154,10 @@
     </div>
 </div>
 
-    <script>
+{{ approval_type|json_script:"approval_type" }}
 
-        var rendered_approval_type_data = {{approval_type|safe}};
+    <script>
+        var rendered_approval_type_data = JSON.parse(document.getElementById('approval_type').textContent);
         var rendered_approval_type_values = {{dropdown_db_values|safe}};
         var rendered_approval_type_values_onload = {{dropdown_db_values_onload|safe}};
         var approval_type_data_array = {}
@@ -238,9 +239,10 @@
                          }
                         $("#err_msg_app_settings_t").prop("hidden", false)
                          table_sort_filter('id_popup_table');
-                        setTimeout(function() {
-                            $("#err_msg_app_settings_t").prop("hidden", true);
-                        }, 5000)
+<!--                        setTimeout(function() {-->
+<!--                            $("#err_msg_app_settings_t").prop("hidden", true);-->
+<!--                        }, 5000)-->
+                        message_display_time();
                         table_sort_filter('id_popup_table');
                         CloseLoaderPopup();
                     }
@@ -291,9 +293,10 @@
                       }
                     $("#err_msg_app_settings_t").prop("hidden", false)
                      table_sort_filter('id_popup_table');
-                    setTimeout(function() {
-                        $("#err_msg_app_settings_t").prop("hidden", true);
-                    }, 5000)
+<!--                    setTimeout(function() {-->
+<!--                        $("#err_msg_app_settings_t").prop("hidden", true);-->
+<!--                    }, 5000)-->
+                     message_display_time();
                      table_sort_filter('id_popup_table');
                      CloseLoaderPopup();
                 }

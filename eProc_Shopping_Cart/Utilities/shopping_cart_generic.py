@@ -189,46 +189,7 @@ def update_eform_details_scitem(cart_items):
     return cart_items
 
 
-def get_highest_acc_detail(header_guid):
-    """
 
-    """
-    previous_item_highest_value = django_query_instance.django_filter_only_query(ScItem, {
-        'header_guid': django_query_instance.django_get_query(ScHeader, {'guid': header_guid})
-    }).order_by('-value')[0]
-
-    highest_item_accounting_data = django_query_instance.django_get_query(ScAccounting, {
-        'item_guid': previous_item_highest_value.guid
-    })
-
-    account_assignment_category = highest_item_accounting_data.acc_cat
-    if account_assignment_category == 'CC':
-        account_assignment_value = highest_item_accounting_data.cost_center
-
-    elif account_assignment_category == 'AS':
-        account_assignment_value = highest_item_accounting_data.asset_number
-
-    elif account_assignment_category == 'OR':
-        account_assignment_value = highest_item_accounting_data.internal_order
-
-    else:
-        account_assignment_value = highest_item_accounting_data.wbs_ele
-    return account_assignment_category, account_assignment_value
-
-
-def delete_approver_detail(header_guid):
-    """
-
-    """
-
-    if django_query_instance.django_existence_check(ScPotentialApproval, {'sc_header_guid': header_guid,
-                                                                          'client': global_variables.GLOBAL_CLIENT}):
-        django_query_instance.django_filter_delete_query(ScPotentialApproval, {'sc_header_guid': header_guid,
-                                                                               'client': global_variables.GLOBAL_CLIENT})
-    if django_query_instance.django_existence_check(ScApproval, {'header_guid': header_guid,
-                                                                 'client': global_variables.GLOBAL_CLIENT}):
-        django_query_instance.django_filter_delete_query(ScApproval, {'header_guid': header_guid,
-                                                                      'client': global_variables.GLOBAL_CLIENT})
 
 
 def get_price_discount_tax(price, base_price, additional_price, tax, discount_percentage, quantity):

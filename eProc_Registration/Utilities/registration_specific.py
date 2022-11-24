@@ -16,13 +16,14 @@ from eProc_Basic.Utilities.functions.guid_generator import guid_generator
 from eProc_Basic.Utilities.global_defination import global_variables
 from eProc_Configuration.models import Languages, Country, Currency, SupplierMaster
 from eProc_Emails.Utilities.email_notif_generic import email_notify
+from eProc_System_Settings.Utilities.system_settings_generic import sys_attributes
 
 django_query_instance = DjangoQueries()
 
 
 class RegFncts(ModelForm):
     @staticmethod
-    def create_user(request, new_user,client,password):
+    def create_user(request, new_user, client, password):
         """
         creates the new user and  stores it to DB
         :param request: request data from UI
@@ -41,7 +42,7 @@ class RegFncts(ModelForm):
             'email': email,
             'first_name': first_name,
             'email_user_monitoring_guid': '',
-            'password':password
+            'password': password
         }
         email_notify(email_data, variant_name, client)
         return True
@@ -77,3 +78,4 @@ def save_supplier_registration(request):
         'country_code': django_query_instance.django_get_query(Country, {'country_code': request.POST['country_code']}),
         'currency_id': django_query_instance.django_get_query(Currency, {'currency_id': request.POST['currency_id']})
     })
+

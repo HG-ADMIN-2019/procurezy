@@ -335,9 +335,10 @@ function popup_save_data() {
                     }
                     $("#err_msg_app_settings_t").prop("hidden", false)
                     table_sort_filter('id_popup_table');
-                    setTimeout(function() {
-                        $("#err_msg_app_settings_t").prop("hidden", true);
-                    }, 5000)
+<!--                    setTimeout(function() {-->
+<!--                        $("#err_msg_app_settings_t").prop("hidden", true);-->
+<!--                    }, 5000)-->
+                    message_display_time();
                     table_sort_filter('id_popup_table');
                     CloseLoaderPopup();
                 }
@@ -375,20 +376,20 @@ function main_table_delete(){
     $.ajax({
         type: 'POST',
         url: "{% url 'eProc_Basic_Settings:create_update_basic_data' %}",
-            data:
-                JSON.stringify(data),
+            data:JSON.stringify(data),
             contentType: "application/json; charset=utf-8",
             dataType: "json",
         success: function (Response) {
             rendered_country_data = Response[0];
             display_basic_db_data();
             $('#success_msg_id').text(Response[1])
-              ifss(Response[1].message_type== 'SUCCESS'){
+              if(Response[1].message_type== 'SUCCESS'){
                          $('#success_msg_id').text(Response[1].message_desc)
               }
             $("#err_msg_app_settings_t").prop("hidden",false)
              table_sort_filter('id_popup_table');
-            setTimeout(function(){$("#err_msg_app_settings_t").prop("hidden",true);},5000)
+<!--            setTimeout(function(){$("#err_msg_app_settings_t").prop("hidden",true);},5000)-->
+                message_display_time();
                table_sort_filter('id_popup_table');
                CloseLoaderPopup();
         }

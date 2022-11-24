@@ -18,13 +18,12 @@
 <div class="container-fluid">
 
     <div class="mep-form_wrapper">
-        <form method="POST" id="product_detail_form_id">
             <div>
                 <div class="elements-space-between">
                     <h3>View Products and Services</h3>
                     <div>
                         <button type="reset" class="btn btn-outline-primary dummy_button_class" id="cancel_product_details" data-toggle="modal" onclick=" onclick_cancel_product_details()" hidden><i class="fas fa-times"></i> cancel</button>
-                        <button class="btn btn-primary dummy_button_class" id="save_product_details" type="submit" title="Save" hidden ><i class="fas fa-check"></i> Save</button>
+                        <button class="btn btn-primary dummy_button_class" id="save_product_details" type="button" onclick="onclick_save_product_details()" title="Save" hidden ><i class="fas fa-check"></i> Save</button>
                         <button class="btn btn-primary dummy_button_class" id="edit_product_details" type="button" onclick="onclick_edit_product_details()" ><i class="far fa-edit"></i> Edit</button>
                     </div>
                 </div>
@@ -477,7 +476,6 @@
                     </div>
                 </div>
             </div>
-        </form>
 
     </div>
 
@@ -724,6 +722,8 @@
 {{ product_specification |json_script:"product_specification" }}
 
 <script>
+
+var GLOBAL_VARIANT_INDEX
 var product_specification_data = new Array();
 var eform_configured = []
 var GLOBAL_EFORM_ID = '';
@@ -853,9 +853,11 @@ function onclick_edit_product_details(){
     $('#cancel_product_details').prop('hidden', false);
     $('.input-disable-class').prop('disabled', false);
     //enable all the field
-    if (eform_edit_flag == 0){
+    //if (eform_edit_flag == 0){
+
         $('.eform_button_dummy_class').prop('disabled', false);
-    }
+
+    //}
     $('.input-disable-product-specification-class').prop('disabled', false);
 
     $('.selectpicker').selectpicker('refresh');
@@ -1045,7 +1047,7 @@ function create_prod_variant_table(eform_data_new) {
     $('#variant_table_section').empty();
     $('#prod_discount_table_section').empty();
 
-    $.each(eform_data_new, function(index, variant_option_data){
+    $.each(eform_data_new, function(variant_index, variant_option_data){
 
         var variant_table_headers = []
         var tbody_content = ''
@@ -1122,9 +1124,9 @@ function create_prod_variant_table(eform_data_new) {
         // Create a div to enclose all the elements of a particular variant option
         var variant_option_section = document.createElement("div");
         if(variant_option_data.field_type == "QUANTITY_BASED_DISCOUNT") {
-            variant_option_section.id = "product_discount_section-"+index;
+            variant_option_section.id = "product_discount_section-"+variant_index;
         } else {
-            variant_option_section.id = "variant_option_section-"+index;
+            variant_option_section.id = "variant_option_section-"+variant_index;
         }
 
         // var line_seperator = document.createElement("hr")
@@ -1132,8 +1134,8 @@ function create_prod_variant_table(eform_data_new) {
 
         var edit_button
         var delete_button
-            delete_button =  '<button class="btn btn-outline-danger btn-sm eform_button_dummy_class" id="variant_option_delete-'+index+'" onclick="variant_option_delete(this)" disabled> Delete</button>'
-            edit_button = '<button class="btn btn-outline-primary btn-sm eform_button_dummy_class" disabled> edit</button> ';
+            delete_button =  '<button class="btn btn-outline-danger btn-sm eform_button_dummy_class" id="variant_option_delete-'+variant_index+'" onclick="variant_option_delete(this)" disabled> Delete</button>'
+            edit_button = '<button class="btn btn-outline-danger  btn-sm eform_button_dummy_class" id="variant_option_delete-'+variant_index+'" onclick="edit_popup(this.id)" disabled> Edit</button>'
 
         // Create a div to display variant option name and functional button group
         var table_heading_section = '<hr><div class="new-option-row-button-wrapper"><div> <span style="font-weight: 600;">'+ variant_option_data.field_name+'</span> '+ variant_type_badge +' </div> <div> '+ delete_button +' '+ edit_button +' </div>  </div>'
@@ -1241,8 +1243,7 @@ const create_popup_validations = (variant_type_selected_id) => {
 
 //######################## start of on click of save ###################################################
 // on click of save, save edited data into db
-$('#product_detail_form_id').on('submit', function(e){
-    e.preventDefault();
+function onclick_save_product_details(){
     attachment_data_array = new Array();
     data = new FormData();
 
@@ -1342,7 +1343,7 @@ $('#product_detail_form_id').on('submit', function(e){
 
     console.log(attachment_data_array);
 
-});
+}
 //######################## end of on click of save ###################################################
 
 //################################### Start onclick of data Upload validate and display in popup ##################
@@ -1617,6 +1618,84 @@ const create_product_discounts_validations = () => {
     }
 
     return error_message;
+}
+
+function edit_popup(variant_index){
+    GLOBAL_VARIANT_INDEX = variant_index.split('-')[1]
+    var eform_data = ''
+    $.each(eform_data_new, function (i, item) {
+        if(i == GLOBAL_VARIANT_INDEX){
+            eform_data = item
+        }
+
+    })
+    update_new_field_popup(eform_data)
+}
+
+const update_new_field_popup = (eform_data) => {
+
+    update_table(eform_data)
+}
+
+
+function update_table(eform_data){
+    $('#create_new_fields_popup').modal('show')
+    $('#tbody_vo_wo_iobp').empty();
+    $('#tbody_vo_wi_iobp').empty();
+    $('#tbody_vo_wi_apbp').empty();
+    if(eform_data.field_type == "VARIANT_WITHOUT_PRICING") {
+        $("#table_vo_wo_iobp").show();
+        $("#table_vo_wi_iobp").hide();
+        $("#table_vo_wi_apbp").hide();
+        update_row_vo_wo_iobp(eform_data);
+    } else if (eform_data.field_type == "VARIANT_BASE_PRICING") {
+        $("#table_vo_wo_iobp").hide();
+        $("#table_vo_wi_iobp").show();
+        $("#table_vo_wi_apbp").hide();
+        update_row_vo_wi_iobp(eform_data);
+    } else if (eform_data.field_type == "VARIANT_ADDITIONAL_PRICING") {
+        $("#table_vo_wo_iobp").hide();
+        $("#table_vo_wi_iobp").hide();
+        $("#table_vo_wi_apbp").show();
+        update_row_vo_wi_apbp(eform_data);
+    }
+}
+
+
+function update_row_vo_wo_iobp(eform_data) {
+
+    var add_new_row = "";
+    variant_data
+    $.each(eform_data.variant_data, function (i, item) {
+        add_new_row = '<tr> <td><input type="radio" id="" name="vo_wo_iobp"></td> <td><input type="text" value="'+item.option_value+'" class="form-control" placeholder="Options"></td> <td><button type="button" class="row-delete-btn btn btn-round btn-sm" title="Delete option"><i class="far fa-trash-alt"></i></button></td></tr>'
+    });
+    $('#tbody_vo_wo_iobp').append(add_new_row);
+}
+
+function update_row_vo_wi_iobp(eform_data) {
+
+    var add_new_row = "";
+    $.each(eform_data.variant_data, function (i, item) {
+    add_new_row += '<tr> <td><input type="radio" id="" name="vo_wi_iobp"></td> <td><input type="text" value="'+item.option_value+'" class="form-control" placeholder="Options"></td> <td><input type="number" value="'+item.option_price+'" class="form-control" placeholder="Price"></td> <td><input type="text" value="'+item.option_value+'" class="form-control" placeholder="Description"></td> <td><button type="button" class="row-delete-btn btn btn-round btn-sm"><i class="far fa-trash-alt"></i></button></td></tr>'
+    });
+    $('#tbody_vo_wi_iobp').append(add_new_row);
+}
+
+function update_row_vo_wi_apbp(eform_data) {
+
+    var add_new_row = "";
+    $.each(eform_data.variant_data, function (i, item) {
+        add_new_row = '<tr> <td><input type="radio" id="" name="vo_wi_apbp"></td> <td><input type="text" class="form-control" placeholder="Options"></td> <td><input type="number" class="form-control" placeholder="Price"></td> <td><button type="button" class="row-delete-btn btn btn-round btn-sm"><i class="far fa-trash-alt"></i></button></td></tr>'
+    });
+    $('#tbody_vo_wi_apbp').append(add_new_row);
+}
+
+function AddNewRow_product_discount(eform_data) {
+    var add_new_row = "";
+    $.each(eform_data.variant_data, function (i, item) {
+        add_new_row = '<tr> <td><input type="number" class="form-control" placeholder="Quantity"></td> <td> <div class="input-group"> <input type="number" class="form-control" placeholder="Discount value"> <div class="input-group-append"> <span class="input-group-text">%</span> </div> </div> </td> <td><button type="button" class="row-delete-btn btn btn-round btn-sm" onclick=""><i class="far fa-trash-alt"></i></button></td></tr>'
+    });
+    $('#tbody_product_discount').append(add_new_row);
 }
 </script>
 {% endblock %}

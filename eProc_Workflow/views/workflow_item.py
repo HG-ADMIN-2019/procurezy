@@ -43,7 +43,8 @@ def save_appr_status(request):
     update_user_info(request)
     header_status, sc_header_instance = update_appr_status(appr_status)
     user_details = django_query_instance.django_get_query(UserData, {
-        'username': sc_header_instance.requester
+        'username': sc_header_instance.requester,
+        'client':global_variables.GLOBAL_CLIENT
     })
     email_data = {
         'username': user_details.username,
@@ -89,8 +90,6 @@ def save_appr_status(request):
 
     msgid = 'MSG184'
     error_msg = get_message_desc(msgid)[1]
-    msg = error_msg['message_desc'][0]
-    error_msg = msg
     data['message'] = error_msg
     data['approver_status'] = header_status
     return JsonResponse(data)

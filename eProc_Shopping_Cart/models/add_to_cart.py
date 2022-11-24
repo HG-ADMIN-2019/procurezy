@@ -16,6 +16,7 @@ class CartItemDetails(models.Model):
     eform_id = models.CharField(db_column='EFORM_ID', max_length=40, blank=False, null=True)
     discount_id = models.CharField(db_column='DISCOUNT_ID', max_length=40, blank=False, null=True)
     variant_id = models.CharField(db_column='VARIANT_ID', max_length=40, blank=False, null=True)
+    product_info_id = models.CharField(db_column='PRODUCT_INFO_ID', max_length=40, blank=True, null=True)
     cust_prod_cat_id = models.CharField(db_column='CUST_PROD_CAT_ID', null=True, max_length=20)
     prod_cat_id = models.CharField(db_column='PROD_CAT_ID', max_length=20, null=True,
                                    verbose_name='Product Category')

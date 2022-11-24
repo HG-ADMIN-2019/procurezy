@@ -639,3 +639,14 @@ function validateAddressField(string) {
 function test(){
     alert("function called");
 }
+
+function message_display_time(){
+    if ($('.alert-success').is(":hidden")) {
+      $('.alert-success').prop("hidden", false);
+      setTimeout(function() {
+                    $('.alert-success').prop("hidden", true);
+     }, msg_display_interval*1000);
+    } else {
+    $('.alert-success').prop("hidden", true);
+    }
+}

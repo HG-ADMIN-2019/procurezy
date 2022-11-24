@@ -28,7 +28,7 @@
                     {% csrf_token %}
     
                         {% if error_messages %}
-                        <div class="alert alert-danger" id="err_msg">
+                        <div class="alert alert-danger" id="err_msg" hidden>
                                 {% for  key, value in error_messages.items %}
                                 <span class="fieldWrapper">
                                     {{ value }}

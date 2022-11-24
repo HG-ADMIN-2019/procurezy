@@ -90,6 +90,18 @@
 </body>
 
 <script>
+    var msg_display_interval = {{msg_display_time_value|safe}}; // Success message display time variable
+    var GLOBAL_SPECIAL_CHAR_LIST = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
+    function validate_row(input_data){
+        var special_char_flag = false
+        $.each(input_data, function(i, value) {
+            if (GLOBAL_SPECIAL_CHAR_LIST.test(value)){
+                special_char_flag = true
+                return special_char_flag
+            }
+        });
+        return special_char_flag
+    }
     $(document).ready(function (){
     var chat = localStorage.getItem("chatVisible");
     var chat_content = localStorage.getItem("chatContent");
@@ -101,6 +113,11 @@
      else{
        $("#bot_popup_id").hide();
      }
+
+<!--     setTimeout(function() {-->
+<!--                    $('.alert-success').prop("hidden", true);-->
+<!--         }, msg_display_interval*1000);-->
+
  });
 
  // Validations based on class name
@@ -263,5 +280,20 @@
            return false;
             }
     });
+<!--     $(".alert-success").on('change',function(){-->
+<!--     $('body').on('change', '.alert-success', function() {-->
+<!--         // text change handler-->
+<!--         console.log("text changed");-->
+<!--         if ($('.alert-success').is(":hidden")) {-->
+<!--      $('.alert-success').prop("hidden", false);-->
+<!--      setTimeout(function() {-->
+<!--                    $('.alert-success').prop("hidden", true);-->
+<!--     }, msg_display_interval*1000);-->
+<!--    } else {-->
+<!--    $('.alert-success').prop("hidden", true);-->
+<!--    }-->
+<!--   });-->
+
+
 </script>
 </html>

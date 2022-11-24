@@ -249,10 +249,10 @@ function popup_save_data() {
     $("#id_popup_table TBODY TR").each(function () {
         var row = $(this);
         var number_range = {};
-        number_range.sequence = row.find("TD").eq(1).find('input[type="text"]').val().toUpperCase();
-        number_range.starting = row.find("TD").eq(2).find('input[type="text"]').val().toUpperCase();
-        number_range.ending = row.find("TD").eq(3).find('input[type="text"]').val().toUpperCase();
-        number_range.current = row.find("TD").eq(4).find('input[type="text"]').val().toUpperCase();
+        number_range.sequence = row.find("TD").eq(1).find('input[type="text"]').val();
+        number_range.starting = row.find("TD").eq(2).find('input[type="text"]').val();
+        number_range.ending = row.find("TD").eq(3).find('input[type="text"]').val();
+        number_range.current = row.find("TD").eq(4).find('input[type="text"]').val();
         number_range.del_ind = row.find("TD").eq(6).find('input[type="checkbox"]').is(':checked');
         number_range.guid = row.find("TD").eq(5).find('input').val();
 
@@ -312,9 +312,10 @@ function popup_save_data() {
                  }
                 $("#err_msg_app_settings_t").prop("hidden", false)
                 table_sort_filter('id_popup_table');
-                setTimeout(function () {
-                    $("#err_msg_app_settings_t").prop("hidden", true);
-                }, 5000)
+<!--                setTimeout(function () {-->
+<!--                    $("#err_msg_app_settings_t").prop("hidden", true);-->
+<!--                }, 5000)-->
+                message_display_time();
                 table_sort_filter('id_popup_table');
                 CloseLoaderPopup();
             }
@@ -372,9 +373,10 @@ function popup_save_data() {
                     }
                     $("#err_msg_app_settings_t").prop("hidden", false)
                     table_sort_filter('id_popup_table');
-                    setTimeout(function () {
-                        $("#err_msg_app_settings_t").prop("hidden", true);
-                    }, 5000)
+<!--                    setTimeout(function () {-->
+<!--                        $("#err_msg_app_settings_t").prop("hidden", true);-->
+<!--                    }, 5000)-->
+                    message_display_time();
                     table_sort_filter('id_popup_table');
                     CloseLoaderPopup();
                 }

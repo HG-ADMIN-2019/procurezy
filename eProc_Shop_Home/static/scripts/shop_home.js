@@ -178,12 +178,12 @@ function get_eform_data(){
             drop_down = option_value.split("|")
             if (drop_down.length == 3 ){
                 eform_data_dictionary = {'pricing_type':'WITHOUT_PRICING','eform_field_data':drop_down[1],
-                'eform_field_config_guid':this.id,'eform_id':GLOBAL_FROM_ID,'eform_field_name':drop_down[0],
+                'variant_config_guid':this.id,'eform_id':GLOBAL_FROM_ID,'eform_field_name':drop_down[0],
                 'eform_field_count':drop_down[2]}
             }
             else{
                 eform_data_dictionary = {'pricing_type':drop_down[1],'eform_field_data':drop_down[3],'eform_field_name':drop_down[0],
-                'pricing_data':drop_down[2],'eform_field_config_guid':this.id ,'eform_id':GLOBAL_FROM_ID,'eform_field_count':drop_down[5]}
+                'pricing_data':drop_down[2],'variant_config_guid':this.id ,'eform_id':GLOBAL_FROM_ID,'eform_field_count':drop_down[5]}
             }
 
         }

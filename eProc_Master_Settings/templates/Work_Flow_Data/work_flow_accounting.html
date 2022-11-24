@@ -598,9 +598,10 @@ function popup_save_data() {
                     if(Response[1].message_type== 'SUCCESS'){
                          $('#success_msg_id').text(Response[1].message_desc)
                     }
-                    setTimeout(function() {
-                        $("#err_msg_app_settings_t").prop("hidden", true);
-                    }, 5000)
+<!--                    setTimeout(function() {-->
+<!--                        $("#err_msg_app_settings_t").prop("hidden", true);-->
+<!--                    }, 5000)-->
+                    message_display_time();
                     table_sort_filter('id_popup_table');
                     CloseLoaderPopup();
                 }
@@ -658,7 +659,8 @@ function main_table_delete(){
               }
             $("#err_msg_app_settings_t").prop("hidden",false)
              table_sort_filter('id_popup_table');
-            setTimeout(function(){$("#err_msg_app_settings_t").prop("hidden",true);},5000)
+<!--            setTimeout(function(){$("#err_msg_app_settings_t").prop("hidden",true);},5000)-->
+             message_display_time();
              table_sort_filter('id_popup_table');
              CloseLoaderPopup();
         }
@@ -704,10 +706,10 @@ function add_popup_row() {
     basic_add_new_html = '<tr><td><input type="checkbox" required></td>'+
     '<td><select type="text" class="form-control">'+user_dropdwn+'</select></td>'+
     '<td><select type="text" class="form-control">'+acc_ass_dropdwn+'</select></td>'+
-    '<td><input class="form-control" type="number" maxlength="40"  name="acc_value" required></td>'+
+    '<td><input class="form-control" type="text" maxlength="40"  name="acc_value" required></td>'+
     '<td><select type="text" class="form-control">'+company_id_dropdown+'</select></td>'+
     '<td><select type="text" class="form-control">'+sup_acc_ass_dropdwn+'</select></td>'+
-    '<td><input class="form-control" type="number" maxlength="40"  name="sup_acc_value"  required></td>'+
+    '<td><input class="form-control" type="text" maxlength="40"  name="sup_acc_value"  required></td>'+
     '<td><select type="text" class="form-control">'+supcompany_dropdwn+'</select></td>'+
     '<td><select type="text" class="form-control">'+currency_dropdwn+'</select></td>'+
     '<td class="class_del_checkbox" hidden><input type="checkbox" required></td>'+
@@ -813,28 +815,30 @@ function onclick_copy_update_button(data) {
 
             $("#id_popup_table TBODY TR").each(function() {
                 var row = $(this);
+                   wfacc_dic = {}
 
                 //*************** reading data from the pop-up ***************
-                sup_acc_value = row.find("TD").eq(6).find('select[type="text"]').val();
-                sup_currency_id = row.find("TD").eq(8).find('select[type="text"]').val();
-                sup_company_id = row.find("TD").eq(7).find('select[type="text"]').val();
-                company_id = row.find("TD").eq(4).find('select[type="text"]').val();
-                sup_account_assign_cat = row.find("TD").eq(5).find('select[type="text"]').val();
-                account_assign_cat = row.find("TD").eq(2).find('select[type="text"]').val();
-                sup_acc_value = row.find("TD").eq(6).find('input[type="text"]').val();
-                acc_value = row.find("TD").eq(3).find('input[type="text"]').val();
-                app_username = row.find("TD").eq(1).find('select[type="text"]').val();
+
+                wfacc_dic.sup_currency_id = row.find("TD").eq(8).find('select[type="text"]').val();
+                wfacc_dic.sup_company_id = row.find("TD").eq(7).find('select[type="text"]').val();
+                wfacc_dic.company_id = row.find("TD").eq(4).find('select[type="text"]').val();
+                wfacc_dic.sup_account_assign_cat = row.find("TD").eq(5).find('select[type="text"]').val();
+                wfacc_dic.account_assign_cat = row.find("TD").eq(2).find('select[type="text"]').val();
+                wfacc_dic.sup_acc_value = row.find("TD").eq(6).find('input[type="text"]').val();
+                wfacc_dic.acc_value = row.find("TD").eq(3).find('input[type="text"]').val();
+                wfacc_dic.app_username = row.find("TD").eq(1).find('select[type="text"]').val();
+                wfacc_compare = wfacc_dic.app_username +'-'+ wfacc_dic.acc_value +'-'+ wfacc_dic.sup_acc_value +'-'+ wfacc_dic.sup_account_assign_cat +'-'+ wfacc_dic.company_id +'-'+ wfacc_dic.sup_company_id +'-'+ wfacc_dic.sup_currency_id +'-'+ wfacc_dic.sup_acc_value
                 checked_box = row.find("TD").eq(9).find('input[type="checkbox"]').is(':checked')
                 if (checked_box) {
-                   del_ind = '1'
+                   wfacc_dic.del_ind = '1'
                 } else {
-                    del_ind = '0'
+                    wfacc_dic.del_ind = '0'
                 }
-                wfacc_list.push([app_username, acc_value, sup_acc_value, account_assign_cat, sup_account_assign_cat, company_id, sup_company_id, sup_currency_id, sup_acc_value, del_ind])
+                wfacc_list.push(wfacc_dic)
                 var format = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
 
                 //*************** checking for max length for currency code (max length = 4) ***************
-                if (acc_value.length > 8) {
+                if (wfacc_dic.acc_value.length > 8) {
                          
                             var msg = "JMSG004";
                             var msg_type ;
@@ -860,7 +864,7 @@ function onclick_copy_update_button(data) {
                 }
 
                 //*************** checking for special characters for currency code ***************
-                else if (format.test(acc_value)) {
+                else if (format.test(wfacc_dic.acc_value)) {
                            
                                 var msg = "JMSG003";
                                 var msg_type ;
@@ -896,7 +900,7 @@ function onclick_copy_update_button(data) {
 <!--                }-->
             });
 
-            if(wfacc_id_check.includes(acc_value)){
+            if(wfacc_id_check.includes(wfacc_dic.acc_value)){
                 $(row).css("border", "#f8d7da");
                 //$(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
                 //$(row.find("TD").eq(2).find('input[type="text"]')).css("border", "1px solid #FF0000");
@@ -905,7 +909,7 @@ function onclick_copy_update_button(data) {
             else{
                 //$(row).css("border", "");
             }
-            wfacc_id_check.push(acc_value);
+            wfacc_id_check.push(wfacc_dic.acc_value);
 
 
             //*************** shows save button if there are no errors(special characters and max length) ***************
@@ -1091,6 +1095,13 @@ function maintable_validation(wfacc_data, main_table_low_value) {
 
 }
 
+function update_check_message(messages){
+    $.each(messages, function (i, message) {
+                $("#id_check_success_messages").append('<p>' + message + '</p>')
+            });
+
+            $("#id_check_success_messages").prop("hidden",false)
+}
 </script>
 <script src="{% static 'scripts/workflow_data/workflow_acct.js' %}"></script>
 {% endblock %}

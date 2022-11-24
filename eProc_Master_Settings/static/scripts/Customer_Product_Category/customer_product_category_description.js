@@ -258,7 +258,8 @@ function main_table_delete(){
             display_basic_db_data();
             $("#err_msg_app_settings_t").prop("hidden",false)
             document.getElementById("err_msg_app_settings_t").innerHTML = Response[2];
-            setTimeout(function(){$("#err_msg_app_settings_t").prop("hidden",true);},5000)
+//            setTimeout(function(){$("#err_msg_app_settings_t").prop("hidden",true);},5000)
+             message_display_time();
         }
     });
 }

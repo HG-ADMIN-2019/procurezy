@@ -239,14 +239,15 @@ def update_or_create_item(request, document_number=None):
                 item_value = calculate_item_total_value(CONST_FREETEXT_CALLOFF, item_detail['quantity'], None, 1,
                                                         item_detail['price'], overall_limit=None)
                 if django_query_instance.django_existence_check(CartItemDetails,
-                                                                {'guid':item_detail['guid'],
-                                                                 'client':global_variables.GLOBAL_CLIENT}):
+                                                                {'guid': item_detail['guid'],
+                                                                 'client': global_variables.GLOBAL_CLIENT}):
                     cart_details = django_query_instance.django_get_query(CartItemDetails,
                                                                           {'guid': item_detail['guid'],
                                                                            'client': global_variables.GLOBAL_CLIENT}
                                                                           )
                     if cart_details.currency != global_variables.GLOBAL_USER_CURRENCY:
-                        item_value = convert_currency(float(item_value),str(cart_details.currency),str(global_variables.GLOBAL_USER_CURRENCY))
+                        item_value = convert_currency(float(item_value), str(cart_details.currency),
+                                                      str(global_variables.GLOBAL_USER_CURRENCY))
 
                 # update free text eform data
                 save_eform_data(item_details['eform_data'])
@@ -277,8 +278,8 @@ def update_or_create_item(request, document_number=None):
     # error_msg = get_msg_desc(msgid)
     # msg = error_msg['message_desc'][0]
     # error_msg = msg
-    return JsonResponse({'success': error_msg, 'cart_count': display_cart_counter(global_variables.GLOBAL_LOGIN_USERNAME)})
-
+    return JsonResponse(
+        {'success': error_msg, 'cart_count': display_cart_counter(global_variables.GLOBAL_LOGIN_USERNAME)})
 
 
 def save_eform_data(eform_data):
@@ -326,14 +327,16 @@ def get_product_service_product_details(request, product_id):
             prod_detail = update_unspsc(prod_detail, 'prod_cat_id_id')
             prod_detail = update_country(prod_detail)
 
-        if prod_detail_get_query.eform_id:
-            eform_detail, item_price, quantity_dictionary = get_eform_update_price(prod_detail_get_query.eform_id)
+        if prod_detail_get_query.variant_id:
+
+            eform_detail, item_price, quantity_dictionary = get_eform_update_price(prod_detail_get_query)
 
             for data in eform_detail:
-                data['eform_field_data'] = data['eform_field_data'].split('|~#')
+                data['eform_field_data'] = data['variant_data'].split('|~#')
 
         if prod_detail_get_query.product_info_id:
-            product_specification = get_product_specification_details(prod_detail_get_query.product_id)
+            product_specification = get_product_specification_details(prod_detail_get_query.product_id,
+                                                                      prod_detail_get_query.product_info_id)
         if item_price:
             prod_detail['price'] = item_price
 
@@ -415,7 +418,8 @@ def view_freetext_item_form(request):
         product_detail['country_list'] = get_country_data()
         product_detail['date_today'] = datetime.date.today()
         product_detail['decrypted_doc_number'] = decrypt(document_number.split('doc_number-')[1])
-        product_detail['unit'] = django_query_instance.django_filter_query(UnitOfMeasures, {'del_ind': False}, None, None)
+        product_detail['unit'] = django_query_instance.django_filter_query(UnitOfMeasures, {'del_ind': False}, None,
+                                                                           None)
         configured_free_text_form, eform_configured = form_builder.get_freetext_form(freetext_id)
         product_detail['configured_free_text_form'] = configured_free_text_form
         product_detail['eform_configured'] = eform_configured

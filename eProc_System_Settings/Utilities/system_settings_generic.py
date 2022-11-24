@@ -1,14 +1,10 @@
-"""Copyright (c) 2020 Hiranya Garbha, Inc.
-Name:
-    system_settings_specific.py
-Usage:
-   saves the system settings from UI
-     sys_attributes: gets the respective attribute values for the logged in client and used to integrate them n respective functionality.
-Author:
-    Soni Vydyula
+"""Copyright (c) 2020 Hiranya Garbha, Inc. Name: system_settings_specific.py Usage: saves the system settings from UI
+sys_attributes: gets the respective attribute values for the logged in client and used to integrate them n respective
+functionality.
+
 """
 from eProc_Basic.Utilities.functions.django_query_set import DjangoQueries
-from eProc_Configuration.models import  SystemSettingsConfig
+from eProc_Configuration.models import SystemSettingsConfig
 
 django_query_instance = DjangoQueries()
 
@@ -21,7 +17,7 @@ class sys_attributes:
 
     # Gets the login attempt for logged in client
     def get_login_attempts(self):
-        login_attempts =0
+        login_attempts = 0
         if self.sys_attr:
             sys_attribute = 'LOGIN_ATTEMPTS'
             attributes = self.get_system_settings_list(sys_attribute)
@@ -125,6 +121,15 @@ class sys_attributes:
     def get_add_favourites(self):
         if self.sys_attr:
             sys_attribute = 'ADD_TO_FAVOURITES'
+            add_favourites = ''
+            attributes = self.get_system_settings_list(sys_attribute)
+            for attr in attributes:
+                add_favourites = attr.sys_attr_value
+            return add_favourites
+
+    def get_msg_display_time(self):
+        if self.sys_attr:
+            sys_attribute = 'MSG_DISPLAY'
             add_favourites = ''
             attributes = self.get_system_settings_list(sys_attribute)
             for attr in attributes:

@@ -245,7 +245,6 @@ function display_basic_db_data() {
 //**********************
 // validate and save for add,copy,update and upload data
 function popup_save_data() {
-    OpenLoaderPopup();
     $('#success_msg_id').empty()
     $('#id_popup_table').DataTable().destroy();
 
@@ -291,7 +290,7 @@ function popup_save_data() {
 
             $('#id_save_confirm_popup').modal('hide');
             data = { 'data': purhcase_control_data, 'table_name': 'PurchaseControl', 'action': GLOBAL_ACTION }
-            
+            OpenLoaderPopup();
             $.ajax({
                 type: 'POST',
                 url: "{% url 'eProc_Configuration:create_update_application_data' %}",
@@ -309,9 +308,10 @@ function popup_save_data() {
                     }
                     $("#err_msg_app_settings_t").prop("hidden", false)
                     table_sort_filter('id_popup_table');
-                    setTimeout(function () {
-                        $("#err_msg_app_settings_t").prop("hidden", true);
-                    }, 5000)
+<!--                    setTimeout(function () {-->
+<!--                        $("#err_msg_app_settings_t").prop("hidden", true);-->
+<!--                    }, 5000)-->
+                    message_display_time();
                     table_sort_filter('id_popup_table');
                     CloseLoaderPopup();
                 }
@@ -371,9 +371,10 @@ function popup_save_data() {
                     }
                     $("#err_msg_app_settings_t").prop("hidden", false)
                     table_sort_filter('id_popup_table');
-                    setTimeout(function () {
-                        $("#err_msg_app_settings_t").prop("hidden", true);
-                    }, 5000)
+<!--                    setTimeout(function () {-->
+<!--                        $("#err_msg_app_settings_t").prop("hidden", true);-->
+<!--                    }, 5000)-->
+                     message_display_time();
                     table_sort_filter('id_popup_table');
                     CloseLoaderPopup();;
             }
@@ -512,10 +513,10 @@ function onclick_add_button(button) {
         <td><select class="input form-control" type="text">${pc_company_dropdown}</select></td>
         <td>
             <select class="input form-control" type="text">
-                <option value="1">Catalog</option>
-                <option value="2">Free text</option>
-                <option value="3">PR</option>
-                <option value="4">Limit</option>
+                <option value="Catalog">Catalog</option>
+                <option value="Free text">Free text</option>
+                <option value="PR">PR</option>
+                <option value="Limit">Limit</option>
             </select>
         </td>
         <td><select type="text" class="input form-control">${activate_dropdown}</select></td>

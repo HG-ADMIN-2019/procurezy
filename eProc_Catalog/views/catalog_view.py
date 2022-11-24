@@ -25,7 +25,7 @@ from itertools import chain
 from eProc_Basic.decorators import authorize_view
 from eProc_Catalog.Utilities import catalog_global_variables
 from eProc_Catalog.Utilities.catalog_generic import CatalogGenericMethods, append_image_into_catalog_list, \
-    get_supplier_info, get_prod_cat_info, update_requester_object_id
+    get_supplier_info, get_prod_cat_info, update_requester_object_id, get_item_detail
 from eProc_Catalog.Utilities.catalog_specific import *
 from eProc_Configuration.models import UnspscCategoriesCustDesc, ImagesUpload, Catalogs, ProductsDetail, SupplierMaster, \
     CatalogMapping
@@ -36,7 +36,7 @@ from eProc_Registration.models import UserData
 from eProc_Shop_Home.models import RecentlyViewedProducts
 from eProc_Shopping_Cart.Utilities.shopping_cart_specific import update_supplier_uom, update_unspsc, update_country
 from eProc_Shopping_Cart.context_processors import update_user_info
-from eProc_Shopping_Cart.models import ScHeader
+from eProc_Shopping_Cart.models import ScHeader, CartItemDetails, ScItem
 
 json_obj = JsonParser()
 django_query_instance = DjangoQueries()
@@ -81,7 +81,7 @@ def get_catalog_list(req, catalog_id, document_number=None):
     result['search_type'] = ''
     result['search_id'] = ''
     result['search_type'] = global_variables.GLOBAL_PROD_SEARCH_TYPE
-    print("search type",result['search_type'])
+    print("search type", result['search_type'])
 
     return render(req, 'Catalog/products_services_catalog.html', result)
 
@@ -345,10 +345,11 @@ def get_product_service_prod_details(request):
                                                                                    {'uom_id': product['unit_id']},
                                                                                    'uom_description')[0]
 
-    if prod_detail_get_query.eform_id:
-        eform_detail, item_price, quantity_dictionary = get_eform_update_price(prod_detail_get_query.eform_id)
+    if prod_detail_get_query.variant_id:
+        eform_detail, item_price, quantity_dictionary = get_eform_update_price(prod_detail_get_query)
     if prod_detail_get_query.product_info_id:
-        product_specification = get_product_specification_details(prod_detail_get_query.product_id)
+        product_specification = get_product_specification_details(prod_detail_get_query.product_id,
+                                                                  prod_detail_get_query.product_info_id)
     if item_price:
         for product in prod_detail:
             product['price'] = item_price
@@ -420,6 +421,7 @@ def get_prod_details(request):
     product_specification = []
     product_detail = {}
     prod_id = json_obj.get_json_from_req(request)
+    item_detail = get_item_detail(prod_id['prod_item_guid'])
     if django_query_instance.django_existence_check(ProductsDetail,
                                                     {'client': global_variables.GLOBAL_CLIENT,
                                                      'product_id': prod_id['prod_id']}):
@@ -430,26 +432,29 @@ def get_prod_details(request):
         product_detail['prod_detail'] = [update_unspsc(product_detail['prod_detail'][0], 'prod_cat_id_id')]
         product_detail['prod_detail'] = [update_country(product_detail['prod_detail'][0])]
         product_detail['prod_detail'] = [update_supplier_uom(product_detail['prod_detail'][0])]
-        product_detail['prod_detail'] = update_product_pricing(product_detail['prod_detail'])
+        # product_detail['prod_detail'] = update_product_pricing(product_detail['prod_detail'])
+        product_detail['prod_detail'][0]['price'] = item_detail.price
     prod_detail_get_query = django_query_instance.django_get_query(ProductsDetail,
                                                                    {'client': global_variables.GLOBAL_CLIENT,
                                                                     'product_id': prod_id['prod_id']})
-    if prod_detail_get_query.product_info_id:
-        product_detail['product_specification'] = get_product_specification_details(
-            prod_detail_get_query.product_id)
+    if item_detail.product_info_id:
+        product_detail['product_specification'] = get_product_specification_details(item_detail.int_product_id,
+                                                                                    item_detail.product_info_id)
     product_detail['prod_img_detail'] = django_query_instance.django_filter_query(ImagesUpload, {
         'client': global_variables.GLOBAL_CLIENT,
         'image_id': prod_id['prod_id'],
         'image_type': CONST_CATALOG_IMAGE_TYPE
     }, None, None)
 
-    if prod_detail_get_query.eform_id:
-        filter_queue = Q(cart_guid=prod_id['prod_item_guid']) | Q(item_guid=prod_id['prod_item_guid']) | Q(po_item_guid=prod_id['prod_item_guid'])
-        product_detail['variant_data'] = django_query_instance.django_queue_query(EformFieldData,
-                                                                                  {
-                                                                                      'client': global_variables.GLOBAL_CLIENT},
-                                                                                  filter_queue,
-                                                                                  None, None)
+    if item_detail:
+        if item_detail.variant_id:
+            filter_queue = Q(cart_guid=prod_id['prod_item_guid']) | Q(item_guid=prod_id['prod_item_guid']) | Q(
+                po_item_guid=prod_id['prod_item_guid'])
+            product_detail['variant_data'] = django_query_instance.django_queue_query(EformFieldData,
+                                                                                      {
+                                                                                          'client': global_variables.GLOBAL_CLIENT},
+                                                                                      filter_queue,
+                                                                                      None, None)
 
     # prod_cat_details = list(chain(prod_detail, product_specification, prod_img_detail))
     # Add to recently viewed products

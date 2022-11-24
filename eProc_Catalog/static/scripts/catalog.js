@@ -306,7 +306,7 @@ function get_eform_data(){
         drop_down = selected_price_id.split("-");
         //eform_detail = get_eform_ui_detail(drop_down[1],drop_down[2])
         eform_data_dictionary = {'pricing_type':drop_down[0],
-                                    'eform_field_config_guid':drop_down[1],
+                                    'variant_config_guid':drop_down[1],
                                     'eform_id':GLOBAL_FROM_ID,
                                     'product_eform_pricing_guid':drop_down[2]}
 
@@ -317,7 +317,7 @@ function get_eform_data(){
         var selected_price_id = this.value
         drop_down = selected_price_id.split("-")
         eform_data_dictionary = {'pricing_type':drop_down[0],
-                                 'eform_field_config_guid':drop_down[1],
+                                 'variant_config_guid':drop_down[1],
                                  'eform_id':GLOBAL_FROM_ID,
                                  'data':drop_down[2],
                                  'product_eform_pricing_guid':''}

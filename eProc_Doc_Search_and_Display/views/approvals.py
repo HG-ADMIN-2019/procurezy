@@ -19,6 +19,7 @@ django_query_instance = DjangoQueries()
 @login_required
 @authorize_view(CONST_APPROVALS)
 def get_sc_for_approval(request):
+    sc_header_app_detail1 = ''
     update_user_info(request)
     document_search_instance = DocumentSearch('', '')
     encrypted_guid = []
@@ -74,16 +75,16 @@ def get_sc_for_approval(request):
         search_criteria['guid__in'] = sc_approval_header
         search_criteria['document_type'] = request.POST.get('document_type')
         defined_criteria = document_search_instance.define_search_criteria(search_criteria, 'approvals')
-
-        sc_header_detail = document_search_instance.get_header_details(defined_criteria)
+        search_criteria = defined_criteria
+        sc_header_detail = document_search_instance.get_header_details(search_criteria)
 
         sc_header_app_detail = get_sc_header_app_wf(sc_header_detail, global_variables.GLOBAL_CLIENT)
 
         for header_guid in sc_header_app_detail:
             # encrypted_guid.append(encrypt(header_guid[0]))
             header_guid.append(encrypt(header_guid[0]))
-
         # zipped_content = zip(sc_header_app_detail, encrypted_guid)
+        print('sc_header_app_detail ', sc_header_app_detail)
 
     context = {
         'inc_nav': True,
@@ -94,6 +95,7 @@ def get_sc_for_approval(request):
         'sc_completion_flag': sc_completion_flag,
         'inp_doc_type': inp_doc_type,
         'search_approval': search_approval,
-        'zipped_content': zipped_content
+        'zipped_content': zipped_content,
+        # '':
     }
     return render(request, 'Doc Search and Display/get_sc_for_approval_rejection.html', context)

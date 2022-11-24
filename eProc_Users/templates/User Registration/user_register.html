@@ -42,7 +42,7 @@
                         {% if messages %}
                         <div class="alert alert-success">
                             {% for message in messages %}
-                            <div class="{{ message.tags }}">{{ message }}</div>
+                            <div class="{{ message.tags }} ">{{ message }}</div>
                             {% endfor %}
                         </div>
                         {% endif %}
@@ -61,7 +61,6 @@
                             {% endfor%}
                         </div>
                         {% endif %}
-
                         <div class="d-flex justify-content-end">
                             <div>
                                 <button class="btn btn-primary" type="submit" title="Click here to Register" id="user_registration_submit"><i class="fas fa-check"></i> register</button>

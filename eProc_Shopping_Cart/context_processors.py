@@ -12,6 +12,7 @@ from eProc_Notification.models import Notifications
 from eProc_Basic.Utilities.functions.get_db_query import *
 from eProc_Catalog.Utilities.catalog_generic import CatalogGenericMethods
 from eProc_Shopping_Cart.Utilities.shopping_cart_specific import AuthorizationLevel
+from eProc_System_Settings.Utilities.system_settings_generic import sys_attributes
 from eProc_User_Settings.Utilities import user_settings_generic
 
 
@@ -21,6 +22,8 @@ def globalise_context(request):
     :param request:
     :return:
     """
+    msg_display_time_value = ''
+    attachment_size_val = ''
     encrypt_value = ''
     if request.user.is_authenticated:
         update_user_info(request)
@@ -48,6 +51,8 @@ def globalise_context(request):
         global_variables.CATALOGS_ASSIGNED = CatalogGenericMethods.get_logged_in_user_catalogs(obj_id_list)
 
         # encrypt_value = encrypt(global_variables.CATALOGS_ASSIGNED)
+        sys_attributes_instance = sys_attributes(client)
+        msg_display_time_value = sys_attributes_instance.get_msg_display_time()
     kwargs = {
         'sub_menu': global_variables.GLOBAL_SUB_MENU,
         'shop_purchaser_flag': global_variables.GLOBAL_PURCHASER_FLAG,
@@ -55,7 +60,9 @@ def globalise_context(request):
         'slide_menu': global_variables.GLOBAL_SLIDE_MENU,
         'assigned_catalogs': global_variables.CATALOGS_ASSIGNED,
         # 'encrypt_value':encrypt_value,
-        'notification_count': global_variables.GLOBAL_NOTIFICATION_COUNTER
+        'notification_count': global_variables.GLOBAL_NOTIFICATION_COUNTER,
+        'msg_display_time_value': msg_display_time_value,
+        'attachment_size_val': attachment_size_val,
     }
     return kwargs
 

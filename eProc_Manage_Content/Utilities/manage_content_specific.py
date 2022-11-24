@@ -97,10 +97,10 @@ def save_discount_data(discount_dic_list):
         for discount_dic in discount_dic_list:
             for discount in discount_dic['variant_data']:
                 discount_list = {'discount_data_guid': guid_generator(),
-                                 'discount_id':discount_id,
-                                 'discount_name':discount_dic['field_name'],
-                                 'quantity':discount['discount_min_quantity'],
-                                 'discount_percentage':discount['discount_percentage_value'],
+                                 'discount_id': discount_id,
+                                 'discount_name': discount_dic['field_name'],
+                                 'quantity': discount['discount_min_quantity'],
+                                 'discount_percentage': discount['discount_percentage_value'],
                                  'client': global_variables.GLOBAL_CLIENT}
                 discount_price.append(discount_list)
         create_status = bulk_create_entry_db(DiscountData, discount_price)
@@ -111,17 +111,12 @@ def save_product_specification(product_specification_data, product_id):
     """
 
     """
-    product_info_id = None
-    if ProductInfo.objects.filter(Q(product_info_id=product_id)):
-        DjangoQueries().django_filter_delete_query(ProductInfo,
-                                                   {'product_info_id': product_id,
-                                                    'client': global_variables.GLOBAL_CLIENT,
-                                                    'del_ind': False})
-    if not product_info_id:
-        product_info_id = random_int(8)
+
+    product_info_id = random_int(8)
     for product_specification in product_specification_data:
         product_specification['product_info_guid'] = guid_generator()
-        product_specification['product_info_id'] = product_id
+        product_specification['product_info_id'] = product_info_id
+        product_specification['product_id'] = product_id
         product_specification['product_info_type'] = CONST_PRODUCT_SPECIFICATION
         product_specification['product_info_created_at'] = datetime.date.today()
         product_specification['product_info_created_by'] = global_variables.GLOBAL_LOGIN_USERNAME
@@ -503,16 +498,19 @@ def save_products_specifications(product_specification_data):
     for prod_spec in product_specification_data:
         prod_id_list.append(prod_spec[0])
     prod_id_list = list(set(prod_id_list))
+    product_spec_list = []
+    for prod_id in prod_id_list:
+        product_spec_list.append({'product_id': prod_id, 'product_info_id': random_int(8)})
     product_info_id = None
-    # delete existing product specification
-    django_query_instance.django_filter_delete_query(ProductInfo,
-                                                     {'product_info_id__in': prod_id_list})
     # create product specification
     product_specifications_list = []
+    product_info_id = random_int(8)
     for product_specification in product_specification_data:
         product_specifications = {}
+        # product_info_id = get_product_info_id(product_spec_list,product_specification[0])
         product_specifications['product_info_guid'] = guid_generator()
-        product_specifications['product_info_id'] = product_specification[0]
+        product_specifications['product_id'] = product_specification[0]
+        product_specifications['product_info_id'] = product_info_id
         product_specifications['product_info_key'] = product_specification[1]
         product_specifications['product_info_value'] = product_specification[2]
         product_specifications['product_info_type'] = CONST_PRODUCT_SPECIFICATION
@@ -522,3 +520,16 @@ def save_products_specifications(product_specification_data):
         product_specifications_list.append(product_specifications)
     create_status = bulk_create_entry_db(ProductInfo, product_specifications_list)
     return product_info_id
+
+
+def get_product_info_id(product_spec_list,product_id):
+    """
+
+    """
+    product_info_id = [product_spec['product_info_id'] for product_spec in product_spec_list if product_spec['product_id'] == product_id]
+    if product_info_id:
+        product_info_id = product_info_id[0]
+    else:
+        product_info_id = None
+    return  product_info_id
+

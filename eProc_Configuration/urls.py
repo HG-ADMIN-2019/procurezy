@@ -19,4 +19,6 @@ urlpatterns = [
     path('master_settings', views.master_data_configuration, name='master_data_configuration'),
     path('transaction_data_configuration', views.transaction_data_configuration, name='transaction_data_configuration'),
     # path('dropdown_document_type', views.dropdown_document_type, name='dropdown_document_type'),
+    path('update_po_criteria_dropdown', views.update_po_criteria_dropdown, name='update_po_criteria_dropdown'),
+
 ]

@@ -167,10 +167,10 @@
     </div>
 
 </div>
-
+    {{ payment_term_data|json_script:"payment_term_data" }}
 <script>
     var basic_settings = '{{basic_settings|safe}}';
-    var rendered_payment_term_data = {{ payment_term_data| safe}};
+    var rendered_payment_term_data = JSON.parse(document.getElementById('payment_term_data').textContent);
     var payment_term_data_array = {}
     var main_table_payment_term_value = [];
     var payment_term = '';

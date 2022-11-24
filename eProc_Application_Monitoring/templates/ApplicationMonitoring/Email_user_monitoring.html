@@ -605,7 +605,8 @@ function resend(){
             display_email_data(Response.email_list);
             $("#error_msg_div_resend").prop("hidden",false)
             $("#id_email_resend").hide();
-            setTimeout(function(){$("#error_msg_div_resend").prop("hidden",true);},5000)
+<!--            setTimeout(function(){$("#error_msg_div_resend").prop("hidden",true);},5000)-->
+            message_display_time();
              $("#myModal").modal('hide');
              CloseLoaderPopup();
         }

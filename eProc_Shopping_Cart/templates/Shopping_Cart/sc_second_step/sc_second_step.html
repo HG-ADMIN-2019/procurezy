@@ -48,7 +48,6 @@
                 <button class="btn btn-primary" id="add_approver_note_btn" data-toggle="modal" data-target="#add_approver_note"><i class="fa fa-plus" aria-hidden="true"></i> approver note</button>
                 <button onclick="check_shopping_cart('check', 'sc_data', highest_item_acc_asgn_cat, highest_item_change_acc_value);" class="btn btn-primary"><i class="fa fa-check" aria-hidden="true"></i> check</button>
                 <button id="save_shopping_cart_button" onclick="save_shopping_cart();" class="btn btn-primary"><i class="fa fa-save" aria-hidden="true"></i> save</button>
-
                 {% if manager_details and completion_work_flow %}
                 <button class="btn btn-primary" onclick="order_shopping_cart()"><i class="fas fa-sign-in-alt" aria-hidden="true"></i> send to purchasing team</button>
                 {% endif %}
@@ -271,7 +270,7 @@
                 <div class="row">
                     <div class="col">
                         <div class="input-group">
-                            <input class="form-control py-2 border-right-0 border" type="search" placeholder="Search receiver" id="search_receiver" name="search_receiver" value="">
+                            <input class="form-control py-2 border-right-0 border check_product_name" type="search" placeholder="Search receiver" id="search_receiver" name="search_receiver" value="">
                             <span class="input-group-append">
                                 <div class="input-group-text bg-transparent"><i class="fa fa-search"></i></div>
                             </span>
@@ -331,6 +330,7 @@
     var acc_cat_values = "{{acc_value.0}}";
     var gl_account_values = "{{default_gl_account.0}}";
     var url_new = "{% url 'eProc_Basic:get_message_description' %}";
+    var msg_display_interval = {{msg_display_time_value|safe}};
 
     //cart item guid
     var sc_item_guid = []
@@ -382,6 +382,7 @@ function check_shopping_cart(type, sc_data, acc_default, acc_default_val){
         url: "{% url 'eProc_Shopping_Cart:check_shopping_cart' %}",
         data:JSON.stringify(data),
         success: function (response) {
+            console.log("CHECK RESPONSE ",response)
             manager_detail = response.manager_detail.length
             sc_errors = response.sc_error
             sc_info_messsages_check = response.sc_info
@@ -422,8 +423,8 @@ function check_shopping_cart(type, sc_data, acc_default, acc_default_val){
                   }
                   var display1 = msg_type.messages_id_desc;
                   $('#sc_success_messages').html(display1);
+                   $('#sc_success_messages').show();
 
-                $('#sc_success_messages').show();
                 document.getElementById('sc_error_msg').style.display = 'none';
                 $('#sc_error_msg').html('');
                 if(type == 'order'){

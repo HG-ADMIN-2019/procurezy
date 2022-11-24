@@ -28,7 +28,7 @@ from eProc_Form_Builder.Utilities.form_builder_generic import get_freetext_detai
 from eProc_Manage_Content.Utilities.manage_content_generic import get_catalog_mapping_product_id_list
 from eProc_Price_Calculator.Utilities.price_calculator_generic import get_product_price_from_eform
 from eProc_Registration.models import UserData
-from eProc_Shopping_Cart.models import ScHeader
+from eProc_Shopping_Cart.models import ScHeader, ScItem, CartItemDetails
 from eProc_User_Settings.Utilities.user_settings_generic import get_supp_desc_count, get_prod_cat_desc_count, \
     get_object_id_list_user
 
@@ -317,9 +317,9 @@ def update_requester_object_id(document_number):
 
     """
     print(global_variables.GLOBAL_REQUESTER_OBJECT_ID)
-    if django_query_instance.django_existence_check(ScHeader,{'doc_number': document_number,
-                                                                           'client': global_variables.GLOBAL_CLIENT,
-                                                                           'del_ind': False}):
+    if django_query_instance.django_existence_check(ScHeader, {'doc_number': document_number,
+                                                               'client': global_variables.GLOBAL_CLIENT,
+                                                               'del_ind': False}):
         document_requester = django_query_instance.django_get_query(ScHeader, {'doc_number': document_number,
                                                                                'client': global_variables.GLOBAL_CLIENT,
                                                                                'del_ind': False}).requester
@@ -329,3 +329,22 @@ def update_requester_object_id(document_number):
         global_variables.GLOBAL_REQUESTER_OBJECT_ID = user_object_id
 
     return user_object_id
+
+
+def get_item_detail(item_guid):
+    """
+    """
+    item_detail  = None
+    if django_query_instance.django_existence_check(CartItemDetails,
+                                                    {'guid':item_guid,
+                                                     'client':global_variables.GLOBAL_CLIENT}):
+        item_detail = django_query_instance.django_get_query(CartItemDetails,
+                                                    {'guid':item_guid,
+                                                     'client':global_variables.GLOBAL_CLIENT})
+    elif django_query_instance.django_existence_check(ScItem,
+                                                      {'guid':item_guid,
+                                                       'client': global_variables.GLOBAL_CLIENT}):
+        item_detail = django_query_instance.django_get_query(ScItem,
+                                                             {'guid': item_guid,
+                                                              'client': global_variables.GLOBAL_CLIENT})
+    return item_detail

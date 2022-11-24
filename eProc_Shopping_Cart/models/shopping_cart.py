@@ -164,6 +164,7 @@ class ScItem(models.Model):
     eform_id = models.CharField(db_column='EFORM_ID', max_length=40, blank=False, null=True)
     discount_id = models.CharField(db_column='DISCOUNT_ID', max_length=40, blank=False, null=True)
     variant_id = models.CharField(db_column='VARIANT_ID', max_length=40, blank=False, null=True)
+    product_info_id = models.CharField(db_column='PRODUCT_INFO_ID', max_length=40, blank=True, null=True)
     comp_code = models.CharField(db_column='COMP_CODE', max_length=10, blank=False, null=False,
                                  verbose_name='Company Code')
     purch_grp = models.CharField(db_column='PURCH_GRP', max_length=20, blank=True, null=True,

@@ -320,7 +320,8 @@ function display_basic_db_data() {
                                     $('#success_msg_id').text(Response[1].message_desc)
                              }
                             $("#err_msg_app_settings_t").prop("hidden", false)
-                            setTimeout(function () { $("#err_msg_app_settings_t").prop("hidden", true); }, 5000)
+<!--                            setTimeout(function () { $("#err_msg_app_settings_t").prop("hidden", true); }, 5000)-->
+                            message_display_time();
                             CloseLoaderPopup();
                         }
                     });
@@ -378,7 +379,8 @@ function display_basic_db_data() {
                  }
                 $("#err_msg_app_settings_t").prop("hidden", false)
                 table_sort_filter('id_popup_table');
-                setTimeout(function () { $("#err_msg_app_settings_t").prop("hidden", true); }, 5000)
+<!--                setTimeout(function () { $("#err_msg_app_settings_t").prop("hidden", true); }, 5000)-->
+                message_display_time();
                 table_sort_filter('id_popup_table');
                 CloseLoaderPopup();
             }
@@ -618,7 +620,7 @@ function display_basic_db_data() {
             var row = $(this);
 
             //*************** reading data from the pop-up ***************
-            prod_cat_id = row.find("TD").eq(1).find('input[type="text"]').val().toUpperCase();
+            prod_cat_id = row.find("TD").eq(1).find('input[type="text"]').val();
             gl_acc_num = row.find("TD").eq(2).find("select option:selected").val();
             gl_acc_default = row.find("TD").eq(3).find('input[type="checkbox"]').is(':checked');
             account_assign_cat = row.find("TD").eq(4).find("select option:selected").val();

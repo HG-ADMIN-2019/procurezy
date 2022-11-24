@@ -11,8 +11,8 @@ function onclick_add_button(button) {
     $("#id_popup_tbody").empty();
     $('#myModal').modal('show');
     basic_add_new_html = '<tr ><td><input type="checkbox" required></td>'+
-    '<td><input class="input form-control" type="text" title="Minimum length is 2" minlength="10" maxlength="10" onkeypress="return /[0-9]/i.test(event.key)"  name="prod_cat_id" required></td>'+
-    '<td><input class="input form-control" type="text" maxlength="20" name="prod_cat_desc" required></td>'+
+    '<td><input class="input form-control check_number" type="text" title="Minimum length is 2" minlength="10" maxlength="10"  name="prod_cat_id" required></td>'+
+    '<td><input class="input form-control check_special_char" type="text" maxlength="20" name="prod_cat_desc" required></td>'+
     '<td class="class_del_checkbox" hidden><input type="checkbox" required></td>'+
     '<td class="id_del_ind_checkbox1" hidden><input type="checkbox" name = "del_ind_flag" required></td></tr>'
     $('#id_popup_tbody').append(basic_add_new_html);
@@ -68,13 +68,13 @@ function onclick_copy_update_button(data) {
         if (checkBoxes[i].checked) {
             var row = checkBoxes[i].parentNode.parentNode;
             if(GLOBAL_ACTION == "UPDATE"){
-                unique_input = '<input class="form-control" type="text" value="' + row.cells[1].innerHTML + '" name="prod_cat_id" onkeypress="return /[0-9]/i.test(event.key)" maxlength="20" style="text-transform:uppercase" disabled>'
-                edit_basic_data += '<tr><td hidden><input type="checkbox" required></td><td>'+unique_input+'</td><td><input type="text" class="form-control" value="' + row.cells[2].innerHTML + '" name="prod_cat_desc" onkeypress="return /[a-z ]/i.test(event.key)" maxlength="100" required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td><td class="id_del_ind_checkbox1" hidden><input type="checkbox" name = "del_ind_flag" required></td></tr>';
+                unique_input = '<input class="form-control" type="text" value="' + row.cells[1].innerHTML + '" name="prod_cat_id"  maxlength="20"  disabled>'
+                edit_basic_data += '<tr><td hidden><input type="checkbox" required></td><td>'+unique_input+'</td><td><input type="text" class="form-control check_special_char" value="' + row.cells[2].innerHTML + '" name="prod_cat_desc"  maxlength="100" required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td><td class="id_del_ind_checkbox1" hidden><input type="checkbox" name = "del_ind_flag" required></td></tr>';
                 $("#header_select").prop("hidden", true);
             }
             else if (GLOBAL_ACTION == "COPY"){
-                unique_input = '<input class="form-control" type="text" value="' + row.cells[1].innerHTML + '" name="prod_cat_id" onkeypress="return /[0-9]/i.test(event.key)" maxlength="20" style="text-transform:uppercase" required>'
-                edit_basic_data += '<tr><td><input type="checkbox" required></td><td>'+unique_input+'</td><td><input type="text" class="form-control" value="' + row.cells[2].innerHTML + '" name="prod_cat_desc" onkeypress="return /[a-z ]/i.test(event.key)" maxlength="100" required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td><td class="id_del_ind_checkbox1" hidden><input type="checkbox" name = "del_ind_flag" required></td></tr>';
+                unique_input = '<input class="form-control check_number" type="text" value="' + row.cells[1].innerHTML + '" name="prod_cat_id"  maxlength="20"  required>'
+                edit_basic_data += '<tr><td><input type="checkbox" required></td><td>'+unique_input+'</td><td><input type="text" class="form-control check_special_char" value="' + row.cells[2].innerHTML + '" name="prod_cat_desc"  maxlength="100" required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td><td class="id_del_ind_checkbox1" hidden><input type="checkbox" name = "del_ind_flag" required></td></tr>';
                 $("#header_select").prop("hidden", false);
             }
             else if (GLOBAL_ACTION == "DELETE"){
@@ -165,8 +165,8 @@ function add_popup_row() {
         $("#id_error_msg").html("No records to be saved");
     });
     basic_add_new_html = '<tr><td><input type="checkbox" required></td>'+
-    '<td><input class="input form-control" type="text" title="Minimum length is 2" minlength="3" maxlength="10" onkeypress="return /[0-9]/i.test(event.key)" name="prod_cat_id" required></td>'+
-     '<td><input class="input form-control" type="text" maxlength="20" onkeypress="return /[a-z ]/i.test(event.key)" name="prod_cat_desc"  required></td>'+
+    '<td><input class="input form-control check_number" type="text" title="Minimum length is 2" minlength="3" maxlength="10"  name="prod_cat_id" required></td>'+
+     '<td><input class="input form-control check_special_char" type="text" maxlength="20"  name="prod_cat_desc"  required></td>'+
      '<td class="class_del_checkbox" hidden><input type="checkbox" required></td>'+
      '<td class="id_del_ind_checkbox1" hidden><input type="checkbox" name = "del_ind_flag" required></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);

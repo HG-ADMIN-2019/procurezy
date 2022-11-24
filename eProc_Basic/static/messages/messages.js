@@ -2,7 +2,7 @@ const messageConstants = {
 
     JMSG001: 'Duplicate entry ',
     JMSG002: 'Please enter valid value in',
-    JMSG003: 'Special Characters in ',
+    JMSG003: 'Please remove Special Characters',
     JMSG004: 'Maximum length exceeded for ',
     JMSG005: 'Please select ',
     JMSG006: 'Empty File : Please fill data and try again',

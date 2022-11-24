@@ -94,6 +94,7 @@ class FavouriteCart(models.Model):
     eform_id = models.CharField(db_column='EFORM_ID', max_length=40, blank=False, null=True)
     discount_id = models.CharField(db_column='DISCOUNT_ID', max_length=40, blank=False, null=True)
     variant_id = models.CharField(db_column='VARIANT_ID', max_length=40, blank=False, null=True)
+    product_info_id = models.CharField(db_column='PRODUCT_INFO_ID', max_length=40, blank=True, null=True)
     favourite_cart_created_at = models.DateTimeField(db_column='FAVOURITE_CART_CREATED_AT', blank=True, null=True)
     favourite_cart_created_by = models.CharField(db_column='FAVOURITE_CART_CREATED_BY', max_length=30, null=True)
     favourite_cart_changed_at = models.DateTimeField(db_column='FAVOURITE_CART_CHANGED_AT', blank=True, null=True)

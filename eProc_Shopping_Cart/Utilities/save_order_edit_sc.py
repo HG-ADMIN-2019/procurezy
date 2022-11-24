@@ -12,7 +12,7 @@ from eProc_Exchange_Rates.Utilities.exchange_rates_generic import convert_curren
 from eProc_Form_Builder.models.form_builder import EformData, EformFieldData
 from eProc_Notes_Attachments.models.notes_attachements_model import Attachments, Notes
 from eProc_Shopping_Cart.Utilities.shopping_cart_specific import convert_to_boolean, check_for_eform, get_manger_detail, \
-    get_users_first_name
+    get_users_first_name, delete_approver_detail, get_highest_acc_detail
 from eProc_Suppliers.models.suppliers_model import OrgSuppliers
 from eProc_Workflow.Utilities.work_flow_generic import save_sc_approval
 import datetime
@@ -29,8 +29,7 @@ from eProc_Notes_Attachments.Utilities.notes_attachments_generic import save_att
     save_internal_supplier_note
 from eProc_Price_Calculator.Utilities.price_calculator_generic import calculate_item_total_value, \
     calculate_item_price
-from eProc_Shopping_Cart.Utilities.shopping_cart_generic import get_prod_by_id, get_highest_acc_detail, \
-    delete_approver_detail
+from eProc_Shopping_Cart.Utilities.shopping_cart_generic import get_prod_by_id
 from eProc_Shopping_Cart.models import CartItemDetails, ScHeader, ScItem, ScAccounting, \
     ScAddresses, ScApproval, PurchasingData, ScPotentialApproval
 from eProc_User_Settings.Utilities.user_settings_generic import get_object_id_list_user, get_attr_value
@@ -450,6 +449,7 @@ class SaveShoppingCart:
                 'prod_type': prod_type,
                 # 'catalog_id': catalog_id,
                 'item_del_date': item_del_date,
+                'product_info_id':cart_item_details.product_info_id,
                 'start_date': start_date,
                 'end_date': end_date,
                 'catalog_id': catalog_id,
@@ -485,6 +485,7 @@ class SaveShoppingCart:
                 'value': value,
                 # 'eform': eform,
                 'eform_id': cart_item_details.eform_id,
+                'variant_id':cart_item_details.variant_id,
                 'client': django_query_instance.django_get_query(OrgClients, {'client': self.client, 'del_ind': False}),
                 'description': cart_item_details.description,
                 'silent_po': silent_po,
@@ -512,7 +513,7 @@ class SaveShoppingCart:
             }
             self.save_sc_data_to_db.save_sc_item_details_to_db(guid, sc_item_save_data)
 
-            if cart_item_details.eform_id:
+            if cart_item_details.eform_id or cart_item_details.variant_id:
                 EformFieldData.objects.filter(client=global_variables.GLOBAL_CLIENT,
                                               cart_guid=item['guid']).update(
                     item_guid=django_query_instance.django_get_query(ScItem,
@@ -1424,12 +1425,12 @@ class CheckForScErrors:
         get_product_detail = django_query_instance.django_get_query(ProductsDetail, {
             'product_id': product_id, 'client': self.client, 'del_ind': False
         })
-        if get_product_detail.eform_id:
+        if get_product_detail.variant_id:
             pricing_list = [CONST_VARIANT_BASE_PRICING, CONST_VARIANT_ADDITIONAL_PRICING, CONST_QUANTITY_BASED_DISCOUNT]
-            if django_query_instance.django_existence_check(EformFieldConfig,
+            if django_query_instance.django_existence_check(VariantConfig,
                                                             {'client': global_variables.GLOBAL_CLIENT,
                                                              'del_ind': False,
-                                                             'eform_id': get_product_detail.eform_id,
+                                                             'variant_id': get_product_detail.variant_id,
                                                              'dropdown_pricetype__in': pricing_list}):
                 current_price, discount_percentage, base_price, additional_pricing = calculate_item_price(item_guid,
                                                                                                           quantity)

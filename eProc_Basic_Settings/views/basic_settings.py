@@ -2,6 +2,11 @@ import csv
 import io
 from itertools import chain
 
+from datetime import datetime
+import time
+import os
+
+from apscheduler.schedulers.background import BackgroundScheduler
 from django.db.models import Q
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render
@@ -206,24 +211,24 @@ def create_update_basic_data(request):
     update_user_info(request)
     basic_data = JsonParser_obj.get_json_from_req(request)
     if basic_data['table_name'] == 'Country':
-        basic_data['data'] = get_valid_country_data(basic_data['data'])
         display_data = save_country_data_into_db(basic_data)
+        basic_data['data'] = get_valid_country_data(basic_data['data'])
         return JsonResponse(display_data, safe=False)
     if basic_data['table_name'] == 'Languages':
-        basic_data['data'] = get_valid_language_data(basic_data['data'])
         display_data = save_language_data_into_db(basic_data)
+        basic_data['data'] = get_valid_language_data(basic_data['data'])
         return JsonResponse(display_data, safe=False)
     if basic_data['table_name'] == 'UnitOfMeasures':
-        basic_data['data'] = get_valid_uom_data(basic_data['data'])
         display_data = save_unitofmeasures_data_into_db(basic_data)
+        basic_data['data'] = get_valid_uom_data(basic_data['data'])
         return JsonResponse(display_data, safe=False)
     if basic_data['table_name'] == 'Currency':
-        basic_data['data'] = get_valid_currency_data(basic_data['data'])
         display_data = save_currency_data_into_db(basic_data)
+        basic_data['data'] = get_valid_currency_data(basic_data['data'])
         return JsonResponse(display_data, safe=False)
     if basic_data['table_name'] == 'TimeZone':
-        basic_data['data'] = get_valid_timezone_data(basic_data['data'])
         display_data = save_timezone_data_into_db(basic_data)
+        basic_data['data'] = get_valid_timezone_data(basic_data['data'])
         return JsonResponse(display_data, safe=False)
 
 
@@ -529,10 +534,10 @@ def extract_currency_data(request):
     return response
 
 
-def srm_currency_converter(request):
+def srm_currency_converter_p02(request):
     response = HttpResponse(content_type='text/plain')
     response['Content-Disposition'] = 'attachment; filename="filename.txt"'
-    directory = os.path.join(str(settings.BASE_DIR), 'media', 'srm')
+    directory = os.path.join(str(settings.BASE_DIR), 'media', 'srm', 'currency')
     for root, dirs, files in os.walk(directory):
         for file in files:
             # check for csv file
@@ -544,19 +549,94 @@ def srm_currency_converter(request):
                 csv_to_db_data = []
                 for csv_data in csvreader:
                     actual_data = csv_data[0].split('|')
+
                     # p02
                     currency_list = ['AED', 'AUD', 'BGN', 'BRL', 'CAD', 'CHF', 'CNY', 'CZK', 'DKK', 'DOP', 'EUR', 'GBP',
                                      'HKD', 'HRK', 'HUF', 'INR', 'ISK', 'JPY', 'KRW', 'KWD', 'LTL', 'LVL', 'MKD', 'MXN',
                                      'NOK', 'PLN', 'QAR', 'RON', 'RSD', 'RUB', 'SEK', 'SGD', 'SIT', 'SKK', 'TRY', 'UAH',
                                      'ZAR']
                     # E7P
-                    currency_list = ['AED','AUD','BGN','BRL','CAD','CHF','CNY','CZK','DKK','DOP','EUR','GBP','HKD','HUF',
-                                     'INR','ISK','JPY','KRW','LTL','LVL','MKD','MXN','MYR','NOK','PLN','RMB','RON','RUB',
-                                     'SEK','SGD','SIT','SKK','TRY','UAH','ZAR']
+                    # currency_list = ['AED','AUD','BGN','BRL','CAD','CHF','CNY','CZK','DKK','DOP','EUR','GBP','HKD','HUF',
+                    #                  'INR','ISK','JPY','KRW','LTL','LVL','MKD','MXN','MYR','NOK','PLN','RMB','RON','RUB',
+                    #                  'SEK','SGD','SIT','SKK','TRY','UAH','ZAR']
                     if actual_data[1] in currency_list:
                         usd_price = round(float(actual_data[4]), 5)
                         text = actual_data[1] + '\t' + 'USD' + '\t' + str(usd_price) + '\n'
                         response.write(text)
+    return response
+
+
+def srm_currency_converter_e7p(request):
+    response = HttpResponse(content_type='text/plain')
+    response['Content-Disposition'] = 'attachment; filename="filename.txt"'
+    directory = os.path.join(str(settings.BASE_DIR), 'media', 'srm', 'currency')
+    for root, dirs, files in os.walk(directory):
+        for file in files:
+            # check for csv file
+            if file.endswith(".csv") or file.endswith(".CSV"):
+                file_path = os.path.join(directory, file)  # create path
+                csv_file = open(file_path, 'r')  # open .csv file
+                csvreader = csv.reader(csv_file)  # read file
+                header = next(csvreader)  # skip header
+                csv_to_db_data = []
+                for csv_data in csvreader:
+                    actual_data = csv_data[0].split('|')
+                    # E7P
+                    currency_list = ['AED', 'AUD', 'BGN', 'BRL', 'CAD', 'CHF', 'CNY', 'CZK', 'DKK', 'DOP', 'EUR', 'GBP',
+                                     'HKD', 'HUF',
+                                     'INR', 'ISK', 'JPY', 'KRW', 'LTL', 'LVL', 'MKD', 'MXN', 'MYR', 'NOK', 'PLN', 'RMB',
+                                     'RON', 'RUB',
+                                     'SEK', 'SGD', 'SIT', 'SKK', 'TRY', 'UAH', 'ZAR']
+                    if actual_data[1] in currency_list:
+                        usd_price = round(float(actual_data[4]), 5)
+                        text = actual_data[1] + '\t' + 'USD' + '\t' + str(usd_price) + '\n'
+                        response.write(text)
+    return response
+
+
+def work_item_extract(request):
+    response = HttpResponse(content_type='text/plain')
+    response['Content-Disposition'] = 'attachment; filename="filename.txt"'
+    directory = os.path.join(str(settings.BASE_DIR), 'media', 'srm', 'workflow')
+    for root, dirs, files in os.walk(directory):
+        for file in files:
+            # check for csv file
+            if file.endswith(".csv") or file.endswith(".CSV"):
+                file_path = os.path.join(directory, file)  # create path
+                csv_file = open(file_path, 'r')  # open .csv file
+                csvreader = csv.reader(csv_file)  # read file
+                header = next(csvreader)  # skip header
+                csv_to_db_data = []
+                for csv_data in csvreader:
+                    actual_data = csv_data[0].split('|')
+                    # doc num display
+                    # doc_desc = actual_data[2].split('ID ')
+                    # doc_num = doc_desc[1].split(' (GUID:')
+                    # response.write(doc_num[0]+'\n')
+                    # work item display
+                    response.write(actual_data[0] + '\n')
+    return response
+
+
+def work_item_doc_num_extract(request):
+    response = HttpResponse(content_type='text/plain')
+    response['Content-Disposition'] = 'attachment; filename="filename.txt"'
+    directory = os.path.join(str(settings.BASE_DIR), 'media', 'srm', 'workflow')
+    for root, dirs, files in os.walk(directory):
+        for file in files:
+            # check for csv file
+            if file.endswith(".csv") or file.endswith(".CSV"):
+                file_path = os.path.join(directory, file)  # create path
+                csv_file = open(file_path, 'r')  # open .csv file
+                csvreader = csv.reader(csv_file)  # read file
+                header = next(csvreader)  # skip header
+                csv_to_db_data = []
+                for csv_data in csvreader:
+                    actual_data = csv_data[0].split('|')
+                    # doc num display
+                    doc_desc = actual_data[2].split('ID ')
+                    doc_num = doc_desc[1].split(' (GUID:')
+                    response.write(doc_num[0] + '\n')
     return response
 
 
@@ -962,3 +1042,39 @@ def extract_employee_data(request):
         writer.writerow(emp_info)
 
     return response
+
+
+scheduler = BackgroundScheduler()
+
+def Scheduling(request):
+    """
+
+    """
+
+    scheduler.add_job(train_model, 'interval', seconds=3, id='my_job_id')
+    scheduler.start()
+    print('Press Ctrl+{0} to exit'.format('Break' if os.name == 'nt' else 'C'))
+
+    try:
+        # This is here to simulate application activity (which keeps the main thread alive).
+        while True:
+            time.sleep(2)
+    except (KeyboardInterrupt, SystemExit):
+        # Not strictly necessary if daemonic mode is enabled but should be done if possible
+        scheduler.shutdown()
+    context = {}
+    return render(request, 'Application_Settings/srm_currency.html', context)
+
+
+def train_model():
+    print('dask train_model! The time is: %s' % datetime.now())
+
+
+def stop_job(request):
+    """
+
+    """
+
+    scheduler.remove_job('my_job_id')
+    context = {}
+    return render(request, 'Application_Settings/srm_currency.html', context)

@@ -267,6 +267,7 @@ class PoItem(models.Model):
     eform_id = models.CharField(db_column='EFORM_ID', max_length=40, blank=False, null=True)
     discount_id = models.CharField(db_column='DISCOUNT_ID', max_length=40, blank=False, null=True)
     variant_id = models.CharField(db_column='VARIANT_ID', max_length=40, blank=False, null=True)
+    product_info_id = models.CharField(db_column='PRODUCT_INFO_ID', max_length=40, blank=True, null=True)
     dis_rej_ind = models.BooleanField(default=False, null=True, blank=True, db_column='DIS_REJ_IND')
     goods_marking = models.CharField(max_length=60, db_column='GOODS_MARKING', blank=True, null=True)
     confirmed_qty = models.PositiveIntegerField(db_column='CONFIRMED_QTY', null=True, blank=True,

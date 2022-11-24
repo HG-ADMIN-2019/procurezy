@@ -255,8 +255,6 @@ $('#save_id').click(function () {
         if (transaction_types.guid == undefined){
             transaction_types.guid = ''
         }
-
-
         validate_add_attributes.push(transaction_types.transaction_type);
         transaction_types_data.push(transaction_types);
     });
