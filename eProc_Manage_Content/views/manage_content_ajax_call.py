@@ -371,9 +371,7 @@ def save_data_upload(request):
             django_query_instance.django_create_query(ProductsDetail,
                                                       val)
             response = 1
-        # Save Images from image path
-        if path:
-            save_product_detail_images(path, val['product_id'])
+
         product_info_id = save_products_specifications(data['product_spec'])
         if django_query_instance.django_existence_check(ProductsDetail, {'client': global_variables.GLOBAL_CLIENT,
                                                                          'product_id': val['product_id']}):
@@ -383,6 +381,10 @@ def save_data_upload(request):
                                                       {'client': global_variables.GLOBAL_CLIENT,
                                                        'product_id': val['product_id']},
                                                       {'product_info_id':product_info_id})
+        # Save Images from image path
+        if path:
+            if os.path.exists(path):
+                save_product_detail_images(path, val['product_id'])
     return JsonResponse(response, safe=False)
 
 
