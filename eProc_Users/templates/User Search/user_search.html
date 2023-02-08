@@ -79,7 +79,6 @@
 
 <div class="container-fluid">
     <div class="mep-form_wrapper">
-
         <div class="d-flex justify-content-between">
             <h3>Employee Management</h3>
             <div>
@@ -95,9 +94,7 @@
                 <button class="btn btn-primary" onclick="window.open(href = '{% url 'eProc_Users:register_page' %}')"><i class="fas fa-user-plus"></i> Create Employee</button>
             </div>
         </div>
-
         <hr>
-
         <div class="card card-shadow-1">
             <div class="card-body">
                 <form method="POST" id="search_form" name="search_form">
@@ -498,6 +495,8 @@ var Tablename = uiConstants["CONST_TABLENAME_EMPLOYEE"]
 var appname = uiConstants["CONST_APPNAME03"]
 var db_header_data = uiConstants['EMAIL','USERNAME','PERSON_NO','FORM_OF_ADDRESS','FIRST_NAME','LAST_NAME','PHONE_NUM','PASSWORD','DATE_JOINED','FIRST_LOGIN','LAST_LOGIN','IS_ACTIVE','IS_SUPERUSER','IS_STAFF','DATE_FORMAT','EMPLOYEE_ID','DECIMAL_NOTATION','USER_TYPE','LOGIN_ATTEMPTS','USER_LOCKED','PWD_LOCKED','SSO_USER','VALID_FROM','VALID_TO','del_ind','CURRENCY_ID','LANGUAGE_ID','OBJECT_ID', 'TIME_ZONE']
 var data_delete = '';
+
+
 function reload()
 {
 localStorage.setItem("username", document.getElementById("username").value);
@@ -526,7 +525,7 @@ function delete_user() {
     $.ajax({
         type: 'POST',
         url: "{% url 'eProc_Admin_Tool:delete_user' %}",
-        data:JSON.stringify(data),
+<!--        data:JSON.stringify(data),-->
         contentType: "application/json; charset=utf-8",
         dataType: "json",
         success: function (Response) {
@@ -605,7 +604,6 @@ function main_table_delete(){
     $("#user_tab TBODY TR").each(function () {
         var row = $(this);
         var abc = row.find("TD").eq(5).html();
-        console.log(row.find("TD").eq(5).html());
         var country_arr_obj ={};
         var check_status = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
         if(check_status){

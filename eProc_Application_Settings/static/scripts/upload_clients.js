@@ -1,6 +1,8 @@
 var client_data = new Array();
 var validate_add_attributes = [];
 var client={};
+var main_table_low_value = [];
+
 //**************************************
 //onclick of add button display myModal popup and set GLOBAL_ACTION button value
 function onclick_add_button(button) {
@@ -10,23 +12,13 @@ function onclick_add_button(button) {
     $('#id_popup_table').DataTable().destroy();
     $("#id_popup_tbody").empty();
     $('#myModal').modal('show');
-    basic_add_new_html = '<tr ><td><input type="checkbox" required></td><td><input class="form-control check_special_char" type="text" minlength="3" maxlength="8"  name="client"  required></td><td><input class="form-control check_special_char" type="text" maxlength="30"  name="description" required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
-    $('#id_popup_tbody').append(basic_add_new_html);
-    table_sort_filter('id_popup_table');
+    new_row_data();
     //$("#header_select").prop("hidden", false);
     $("#id_del_ind_checkbox").prop("hidden", true);
     document.getElementById("id_del_add_button").style.display = "block";
     $("#save_id").prop("hidden", false);
 }
 
-//**********************************
-//onclick of upload button display id_data_upload popup and set GLOBAL_ACTION button value
-function onclick_upload_button() {
-    GLOBAL_ACTION = "client_upload"
-    $("#id_popup_tbody").empty();
-    $('#id_data_upload').modal('show');
-    document.getElementById('id_file_data_upload').value = "";
-}
 
 //******************
 // on click copy icon display the selected checkbox data
@@ -68,7 +60,7 @@ function onclick_copy_update_button() {
             else{
                unique_input = '<input class="form-control check_special_char" type="text" value="' + row.cells[1].innerHTML + '" name="client code"  maxlength="8" style="text-transform:uppercase" required>'
 
-               edit_basic_data += '<tr ><td ><input type="checkbox" required></td><td>'+unique_input+'</td><td><input class="form-control check_special_char" value="' + row.cells[2].innerHTML + '" type="text"  name="description"  maxlength="30"  required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+               edit_basic_data += '<tr><td ><input type="checkbox" required></td><td>'+unique_input+'</td><td><input class="form-control check_special_char" value="' + row.cells[2].innerHTML + '" type="text"  name="description"  maxlength="30"  required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
                $("#header_select").prop("hidden", false);
             }
         }
@@ -110,12 +102,7 @@ function add_popup_row() {
     $(".modal").on("hidden.bs.modal", function() {
        $("#id_error_msg").html("");
      });
-    basic_add_new_html = '<tr ><td><input type="checkbox" required></td><td><input class="form-control check_special_char" type="text" minlength="3" maxlength="8"  name="client" required></td><td><input class="form-control check_special_char" type="text" maxlength="30"  name="description"  required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
-    $('#id_popup_tbody').append(basic_add_new_html);
-    if (GLOBAL_ACTION == "client_upload") {
-        $(".class_del_checkbox").prop("hidden", false);
-    }
-    table_sort_filter_popup('id_popup_table');
+     new_row_data();
 }
 
 
@@ -143,60 +130,71 @@ function display_basic_db_data() {
     table_sort_filter('display_basic_table');
 }
 
-
-
-//deletes he duplicate data
-function delete_duplicate() {
-    $('#id_popup_table').DataTable().destroy();
-    var client_check = new Array
-    $("#id_popup_table TBODY TR").each(function() {
-        var row = $(this);
-
-        //*************** reading data from the pop-up ***************
-        client = row.find("TD").eq(1).find('input[type="text"]').val().toUpperCase();
-        description = row.find("TD").eq(2).find('input[type="text"]').val().toUpperCase();
-        checked_box = row.find("TD").eq(3).find('input[type="checkbox"]').is(':checked')
-
-
-        if (client_check.includes(client)) {
-            $(row).remove();
-        }
-
-        client_check.push(client);
-
-
-    })
-    table_sort_filter_popup_pagination('id_popup_table')
-    check_data()
-}
 // Functtion to hide and display save related popups
 $('#save_id').click(function () {
     $('#myModal').modal('hide');
-    clients_data = new Array();
-     validate_add_attributes = [];
-    $("#id_popup_table TBODY TR").each(function () {
-            var row = $(this);
-            client={};
-            client.del_ind = row.find("TD").eq(3).find('input[type="checkbox"]').is(':checked');
-            client.client = row.find("TD").eq(2).find('input[type="text"]').val().toUpperCase();
-            client.description = row.find("TD").eq(1).find('input[type="text"]').val().toUpperCase();
-            if (client == undefined){
-                client.client = row.find("TD").eq(1).find('input[type="text"]').val();
-             }
-            validate_add_attributes.push(client.client);
-            clients_data.push(client);
-        });
+    clients_data = read_popup_data();
     $('#id_save_confirm_popup').modal('show');
 });
+
+//Read popup table data
+function read_popup_data() {
+    clients_data = new Array();
+    validate_add_attributes = [];
+    $("#id_popup_table TBODY TR").each(function () {
+        var row = $(this);
+        client={};
+        client.del_ind = row.find("TD").eq(3).find('input[type="checkbox"]').is(':checked');
+        client.client = row.find("TD").eq(2).find('input[type="text"]').val().toUpperCase();
+        client.description = row.find("TD").eq(1).find('input[type="text"]').val().toUpperCase();
+        if (client == undefined){
+            client.client = row.find("TD").eq(1).find('input[type="text"]').val();
+            }
+        validate_add_attributes.push(client.client);
+        clients_data.push(client);
+    });
+    return clients_data;
+}
+
+// Function to get main table data
+function get_main_table_data(){
+    $('#display_basic_table').DataTable().destroy();
+    $("#display_basic_table TBODY TR").each(function() {
+        var row = $(this);
+        var main_attribute = {};
+        main_attribute.client = row.find("TD").eq(1).html();
+        main_table_low_value.push(main_attribute.client);
+    });
+    table_sort_filter('display_basic_table');
+}
+
+// Function to get the selected row data
+function get_selected_row_data(){
+    $("#display_basic_table TBODY TR").each(function() {
+        var row = $(this);
+        var client_arr_obj = {};
+        client_arr_obj.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
+        if(client_arr_obj.del_ind){
+            client_arr_obj.client = row.find("TD").eq(1).html();
+            client_arr_obj.description = row.find("TD").eq(2).html();
+            main_table_client_checked.push(client_arr_obj);
+        }
+    });
+}
+
 function display_error_message(error_message){
 
         $('#error_message').text(error_message);
-        //$("p").css("color", "red");
-        //document.getElementById("error_message").innerHTML = error_message;
         document.getElementById("error_message").style.color = "Red";
         $("#error_msg_id").css("display", "block")
         $('#id_save_confirm_popup').modal('hide');
         $('#myModal').modal('show');
-
 }
 
+
+// Function for add a new row data
+function new_row_data() {
+    basic_add_new_html = '<tr ><td><input type="checkbox" required></td><td><input class="form-control check_special_char" type="text" minlength="3" maxlength="8"  name="client"  required></td><td><input class="form-control check_special_char" type="text" maxlength="30"  name="description" required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+    $('#id_popup_tbody').append(basic_add_new_html);
+    table_sort_filter('id_popup_table');
+}

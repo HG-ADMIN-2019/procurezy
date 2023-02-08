@@ -239,14 +239,14 @@ $('#save_id').click(function () {
             number_range={};
 
             number_range.del_ind = row.find("TD").eq(6).find('input[type="checkbox"]').is(':checked');
-            number_range.sequence = row.find("TD").eq(1).find('input[type="text"]').val();
-            number_range.starting = row.find("TD").eq(2).find('input[type="text"]').val();
-            number_range.ending = row.find("TD").eq(3).find('input[type="text"]').val();
-            number_range.current= row.find("TD").eq(4).find('input[type="text"]').val();
+            number_range.sequence = row.find("TD").eq(1).find('input[type="number"]').val();
+            number_range.starting = row.find("TD").eq(2).find('input[type="number"]').val();
+            number_range.ending = row.find("TD").eq(3).find('input[type="number"]').val();
+            number_range.current= row.find("TD").eq(4).find('input[type="number"]').val();
             number_range.document_type = "DOC03"
             number_range.guid = row.find("TD").eq(5).find('input[type="text"]').val();
             if (number_range == undefined){
-                number_range.sequence = row.find("TD").eq(1).find('input[type="text"]').val();
+                number_range.sequence = row.find("TD").eq(1).find('input[type="number"]').val();
              }
              if(number_range.guid == undefined) {
                    number_range.guid = ''
@@ -258,18 +258,12 @@ $('#save_id').click(function () {
     $('#id_save_confirm_popup').modal('show');
 });
 function display_error_message(error_message){
-
         $('#error_message').text(error_message);
-        //$("p").css("color", "red");
-        //document.getElementById("error_message").innerHTML = error_message;
         document.getElementById("error_message").style.color = "Red";
         $("#error_msg_id").css("display", "block")
         $('#id_save_confirm_popup').modal('hide');
         $('#myModal').modal('show');
 
 }
-//$('#save_id').click(function () {
-//    $('#myModal').modal('hide');
-//    $('#id_save_confirm_popup').modal('show');
-//});
+
 

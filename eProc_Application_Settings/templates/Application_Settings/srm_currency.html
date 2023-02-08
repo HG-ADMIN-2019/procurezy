@@ -40,7 +40,7 @@
                 <button type="button" id="id_add_data" value="ADD" class="btn btn-primary"  title="Add Currency" data-toggle="modal" data-target="#myModal" onclick="onclick_add_button(this)">
                     <i class="fa fa-plus"></i> add currency
                 </button>
-                <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"  onclick="GetReferrer();">
+                <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"  onclick="window_close();">
                     <i class="fas fa-times"></i> close
                 </button>
             </div>
@@ -242,7 +242,7 @@
                         });
                         $('#id_popup_tbody').append(edit_basic_data);
                         $("#id_del_ind_checkbox").prop("hidden", false);
-						 $( "#header_select").prop( "hidden", false );
+                        $( "#header_select").prop( "hidden", false );
                         $(".class_del_checkbox").prop("hidden", false);
                         $('#myModal').modal('show');
                         $('#id_data_upload').modal('hide');
@@ -650,7 +650,7 @@
             });
         }
         //**********************************************
-        function GetReferrer() {
+        function window_close() {
              window.history.back();
               var preUrl = document.referrer;
               console.log(preUrl);

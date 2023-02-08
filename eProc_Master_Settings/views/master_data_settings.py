@@ -1,36 +1,15 @@
 import json
-from itertools import chain
-from re import sub
-
 from django.core.serializers.json import DjangoJSONEncoder
-from django.db.models import Q
-from django.http import HttpResponse
-from django.http import JsonResponse
+from django.http.response import HttpResponse, JsonResponse
 from django.shortcuts import render
 from django.utils.datastructures import MultiValueDictKeyError
-
 from eProc_Basic.Utilities.functions.dict_check_key import checkKey
-from eProc_Basic.Utilities.functions.get_db_query import get_country_data
 from eProc_Basic.Utilities.functions.json_parser import JsonParser
 from eProc_Basic.Utilities.functions.update_del_ind import query_update_del_ind
-from eProc_Basic.Utilities.functions.update_del_ind import update_del_ind
 from eProc_Basic_Settings.Utilities.basic_settings_specific import *
 from eProc_Catalog.Utilities.catalog_specific import save_prod_cat_cust_image_to_db
-from eProc_Catalog.views import json_obj
 from eProc_Configuration_Check.Utilities.configuration_check_generic import *
-from eProc_Configuration_Check.Utilities.configuration_check_generic import get_valid_org_company_data
-from eProc_Configuration_Check.Utilities.configuration_check_generic import get_valid_SpendLimitId_data, \
-    get_valid_SpendLimitValue_data, get_valid_ApprovlLimit_data, get_valid_ApprovlLimitValue_data, get_workflows_data, \
-    get_incoterms_data, get_payment_desc_data, get_valid_work_flow_schema_data
 from eProc_Master_Settings.Utilities.master_settings_specific import *
-from eProc_Master_Settings.Utilities.master_settings_specific import save_master_data_into_db, save_aav_data_into_db, \
-    save_aad_data_into_db, save_app_limit_data_into_db, save_app_limit_value_data_into_db
-from eProc_Master_Settings.Utilities.master_settings_specific import save_spend_limit_data_into_db, \
-    save_address_type_data_into_db, save_glaccount_data_into_db, save_purorg_data_into_db, save_purgrp_data_into_db, \
-    save_spend_limit_value_data_into_db, save_payterm_data_into_db, save_address_data_into_db, \
-    save_product_cat_cust_data_into_db, save_orgattributes_level_data_into_db
-from eProc_Org_Model.models import OrgModel
-from eProc_Registration.models import UserData
 from eProc_Shopping_Cart.context_processors import update_user_info
 from eProc_Upload.Utilities.upload_data.upload_basic_pk_fk_tables import UploadPkFkTables
 from eProc_Upload.Utilities.upload_data.upload_pk_tables import *
@@ -44,286 +23,98 @@ upload_data_response = ''
 def create_update_master_data(request):
     update_user_info(request)
     master_data = JsonParser_obj.get_json_from_req(request)
+    master_settings_save_instance = MasterSettingsSave()
     if master_data['table_name'] == 'UnspscCategoriesCust':
-        display_data = save_product_cat_cust_data_into_db(master_data)
-        master_data['data'] = get_valid_UnspscCategoriesCust_data(master_data['data'])
+        master_data['data'], message = check_unspsc_category_data(master_data['data'], 'SAVE')
+        display_data = master_settings_save_instance.save_product_cat_cust_data_into_db(master_data)
         return JsonResponse(display_data, safe=False)
     if master_data['table_name'] == 'UnspscCategoriesCustDesc':
-        display_data = save_product_cat_cust_desc_data_into_db(master_data)
-        master_data['data'] = get_valid_UnspscCategoriesCustDesc_data(master_data['data'])
+        master_data['data'], message = check_unspsc_category_desc_data(master_data['data'], 'SAVE')
+        display_data = master_settings_save_instance.save_product_cat_cust_desc_data_into_db(master_data)
         return JsonResponse(display_data, safe=False)
     if master_data['table_name'] == 'WorkflowSchema':
-        display_data = save_work_flow_schema_data_into_db(master_data)
-        master_data['data'] = get_valid_work_flow_schema_data(master_data['data'])
+        master_data['data'], message = check_workflowschema_data(master_data['data'], 'SAVE')
+        display_data = master_settings_save_instance.save_work_flow_schema_data_into_db(master_data)
         return JsonResponse(display_data, safe=False)
     if master_data['table_name'] == 'SpendLimitId':
-        # check_spending_limit_data
-        master_data['data'] = get_valid_SpendLimitId_data(master_data['data'])
-        display_data = save_spend_limit_data_into_db(master_data)
+        master_data['data'], message = check_spending_limit_data(master_data['data'], 'SAVE')
+        display_data = master_settings_save_instance.save_spend_limit_data_into_db(master_data)
         return JsonResponse(display_data, safe=False)
     if master_data['table_name'] == 'OrgAddressMap':
-        display_data = save_address_type_data_into_db(master_data)
+        master_data['data'], message = check_address_types_data(master_data['data'], 'SAVE')
+        display_data = master_settings_save_instance.save_address_type_data_into_db(master_data)
         return JsonResponse(display_data, safe=False)
     if master_data['table_name'] == 'DetermineGLAccount':
-        display_data = save_glaccount_data_into_db(master_data)
-        master_data['data'] = get_valid_DetermineGLAccount_data(master_data['data'])
+        master_data['data'], message = check_determine_gl_acc_data(master_data['data'], 'SAVE')
+        display_data = master_settings_save_instance.save_glaccount_data_into_db(master_data)
         return JsonResponse(display_data, safe=False)
     if master_data['table_name'] == 'AccountingData':
-        display_data = save_aav_data_into_db(master_data)
-        master_data['data'] = get_valid_AccountingData_data(master_data['data'])
-        return JsonResponse(display_data, safe=False)
-    if master_data['table_name'] == 'ApproverLimit':
-        display_data = save_app_limit_data_into_db(master_data)
-        master_data['data'] = get_valid_ApprovlLimit_data(master_data['data'])
-        return JsonResponse(display_data, safe=False)
-    if master_data['table_name'] == 'ApproverLimitValue':
-        display_data = save_app_limit_value_data_into_db(master_data)
-        master_data['data'] = get_valid_ApprovlLimitValue_data(master_data['data'])
-        return JsonResponse(display_data, safe=False)
-    if master_data['table_name'] == 'SpendLimitValue':
-        message,master_data['data'] = check_spending_limit_data(master_data['data'])
-        display_data = save_spend_limit_value_data_into_db(master_data)
-        return JsonResponse(display_data, safe=False)
-    if master_data['table_name'] == 'Payterms':
-        display_data = save_payterm_data_into_db(master_data)
-        return JsonResponse(display_data, safe=False)
-    if master_data['table_name'] == 'OrgAddress':
-        display_data = save_address_data_into_db(master_data)
-        return JsonResponse(display_data, safe=False)
-    if master_data['table_name'] == 'ApproverType':
-        display_data = save_approval_data_into_db(master_data)
-        master_data['data'] = get_valid_ApproverType_data(master_data['data'])
-        return JsonResponse(display_data, safe=False)
-    if master_data['table_name'] == 'WorkflowACC':
-        display_data = save_workflow_acc_data_into_db(master_data)
-        master_data['data'] = get_workflows_data(master_data['data'])
-        return JsonResponse(display_data, safe=False)
-    if master_data['table_name'] == 'Incoterms':
-        display_data = save_incoterms_data_into_db(master_data)
-        master_data['data'] = get_incoterms_data(master_data['data'])
-        return JsonResponse(display_data, safe=False)
-    if master_data['table_name'] == 'Payterms_desc':
-        display_data = save_payment_desc_data_into_db(master_data)
-        master_data['data'] = get_payment_desc_data(master_data['data'])
-        return JsonResponse(display_data, safe=False)
-    if master_data['table_name'] == 'OrgPGroup':
-        master_data['data'] = get_valid_OrgPGroup_data(master_data['data'])
-        display_data = save_purgrp_data_into_db(master_data)
-        return JsonResponse(display_data, safe=False)
-    if master_data['table_name'] == 'OrgPorg':
-        display_data = save_purorg_data_into_db(master_data)
-        master_data['data'] = get_valid_OrgPorg_data(master_data['data'])
+        master_data['data'], message = check_acc_assign_values_data(master_data['data'], 'SAVE')
+        display_data = master_settings_save_instance.save_aav_data_into_db(master_data)
         return JsonResponse(display_data, safe=False)
     if master_data['table_name'] == 'AccountingDataDesc':
-        display_data = save_aad_data_into_db(master_data)
-        master_data['data'] = get_valid_AccountingDataDesc_data(master_data['data'])
+        master_data['data'], message = check_acc_assign_desc_data(master_data['data'], 'SAVE')
+        display_data = master_settings_save_instance.save_aad_data_into_db(master_data)
+        return JsonResponse(display_data, safe=False)
+    if master_data['table_name'] == 'ApproverLimit':
+        master_data['data'], message = check_approv_limit_data(master_data['data'], 'SAVE')
+        display_data = master_settings_save_instance.save_app_limit_data_into_db(master_data)
+        return JsonResponse(display_data, safe=False)
+    if master_data['table_name'] == 'ApproverLimitValue':
+        master_data['data'], message = check_approv_limit_value_data(master_data['data'], 'SAVE')
+        display_data = master_settings_save_instance.save_app_limit_value_data_into_db(master_data)
+        return JsonResponse(display_data, safe=False)
+    if master_data['table_name'] == 'SpendLimitValue':
+        master_data['data'], message = check_spendlimit_value_data(master_data['data'], 'SAVE')
+        display_data = master_settings_save_instance.save_spend_limit_value_data_into_db(master_data)
+        return JsonResponse(display_data, safe=False)
+    if master_data['table_name'] == 'OrgAddress':
+        master_data['data'], message = check_address_data(master_data['data'], 'SAVE')
+        display_data = master_settings_save_instance.save_address_data_into_db(master_data)
+        return JsonResponse(display_data, safe=False)
+    if master_data['table_name'] == 'ApproverType':
+        master_data['data'], message = check_approvaltype_data(master_data['data'], 'SAVE')
+        display_data = master_settings_save_instance.save_approval_data_into_db(master_data)
+        return JsonResponse(display_data, safe=False)
+    if master_data['table_name'] == 'WorkflowACC':
+        master_data['data'], message = check_workflow_acc_data(master_data['data'], 'SAVE')
+        display_data = master_settings_save_instance.save_workflow_acc_data_into_db(master_data)
+        return JsonResponse(display_data, safe=False)
+    if master_data['table_name'] == 'Incoterms':
+        master_data['data'], message = check_inco_terms_data(master_data['data'], 'SAVE')
+        display_data = master_settings_save_instance.save_incoterms_data_into_db(master_data)
+        return JsonResponse(display_data, safe=False)
+    if master_data['table_name'] == 'Payterms':
+        master_data['data'], message = check_paymentterm_data(master_data['data'], 'SAVE')
+        display_data = master_settings_save_instance.save_payterm_data_into_db(master_data)
+        return JsonResponse(display_data, safe=False)
+    if master_data['table_name'] == 'Payterms_desc':
+        master_data['data'], message = check_paymentterm_desc_data(master_data['data'], 'SAVE')
+        display_data = master_settings_save_instance.save_payment_desc_data_into_db(master_data)
+        return JsonResponse(display_data, safe=False)
+    if master_data['table_name'] == 'OrgPGroup':
+        master_data['data'], message = check_purchasegrp_data(master_data['data'], 'SAVE')
+        display_data = master_settings_save_instance.save_purgrp_data_into_db(master_data)
+        return JsonResponse(display_data, safe=False)
+    if master_data['table_name'] == 'OrgPorg':
+        master_data['data'], message = check_purchaseorg_data(master_data['data'], 'SAVE')
+        display_data = master_settings_save_instance.save_purorg_data_into_db(master_data)
         return JsonResponse(display_data, safe=False)
     if master_data['table_name'] == 'OrgCompanies':
-        display_data = save_company_data_into_db(master_data)
-        master_data['data'] = get_valid_org_company_data(master_data['data'])
+        master_data['data'], message = check_company_data(master_data['data'], 'SAVE')
+        display_data = master_settings_save_instance.save_company_data_into_db(master_data)
         return JsonResponse(display_data, safe=False)
-    if master_data['table_name'] == 'OrgNodeTypes':
-        display_data = save_orgnode_types_data_into_db(master_data)
-        return JsonResponse(display_data, safe=False)
-    if master_data['table_name'] == 'OrgAttributes':
-        display_data = save_orgattributes_data_into_db(master_data)
-        return JsonResponse(display_data, safe=False)
-    if master_data['table_name'] == 'OrgModelNodetypeConfig':
-        display_data = save_orgattributes_level_data_into_db(master_data)
-        return JsonResponse(display_data, safe=False)
-    if master_data['table_name'] == 'AuthorizationObject':
-        display_data = save_authorobject_data_into_db(master_data)
-        return JsonResponse(display_data, safe=False)
-    if master_data['table_name'] == 'AuthorizationGroup':
-        display_data = save_auth_group_data_into_db(master_data)
-        return JsonResponse(display_data, safe=False)
-    if master_data['table_name'] == 'UserRoles':
-        display_data = save_roles_data_into_db(master_data)
-        return JsonResponse(display_data, safe=False)
-    if master_data['table_name'] == 'Authorization':
-        display_data = save_auth_data_into_db(master_data)
-        return JsonResponse(display_data, safe=False)
-
-
-def save_master_settings_data(request):
-    """
-
-    :param request:
-    :return:
-    """
-
-    client = getClients(request)
-    basic_data = JsonParser_obj.get_json_from_req(request)
-    Table_nam = basic_data['Dbl_clck_tbl_id']
-    del basic_data['Dbl_clck_tbl_id']
-
-    basic_data_list = []
-
-    for value in basic_data.values():
-        basic_data_list.append(value)
-
-    # FunctionResponse  = save_master_data_into_db ( basic_data_list,Table_name,client )
-    upload_data_response = save_master_data_into_db(basic_data_list, Table_nam, client)
-    return JsonResponse(upload_data_response, safe=False)
-
-    Table_name = ''
-    upload_data_currency = list(Currency.objects.filter(del_ind=False).values('currency_id', 'description'))
-    upload_data_company = list(
-        OrgCompanies.objects.filter(del_ind=False).values('company_guid', 'object_id', 'name1', 'name2', 'company_id'))
-    upload_data_acccat = list(
-        AccountAssignmentCategory.objects.filter(del_ind=False).values('account_assign_cat', 'description'))
-    upload_data_accounting = list(
-        AccountingData.objects.filter(del_ind=False).values('account_assign_guid', 'account_assign_value', 'valid_from',
-                                                            'valid_to', 'account_assign_cat', 'company_id'))
-    upload_data_acc_desc = list(
-        AccountingDataDesc.objects.filter(del_ind=False).values('acc_desc_guid', 'account_assign_value', 'description',
-                                                                'account_assign_cat', 'company_id', 'language_id'))
-    upload_data_language = list(Languages.objects.filter(del_ind=False).values('language_id', 'description'))
-    upload_data_apptypes = list(ApproverType.objects.filter(del_ind=False).values('app_types', 'appr_type_desc'))
-    upload_data_app_lim = list(
-        ApproverLimit.objects.filter(del_ind=False).values('app_guid', 'approver_username', 'app_code_id',
-                                                           'company_id'))
-    upload_data_app_lim_val = list(
-        ApproverLimitValue.objects.filter(del_ind=False).values('app_lim_dec_guid', 'app_types', 'app_code_id',
-                                                                'currency_id', 'upper_limit_value', 'company_id'))
-    ###########
-    upload_data_cust_prod_cat = list(
-        UnspscCategoriesCust.objects.filter(client=client, del_ind=False).values('prod_cat_guid', 'prod_cat_id'))
-    ###########
-    upload_data_spnd_lim_id = SpendLimitId.objects.filter(client=client, del_ind=False)
-    upload_data_spnd_lim_val = SpendLimitValue.objects.filter(client=client, del_ind=False)
-    upload_data_wfschema = WorkflowSchema.objects.filter(client=client, del_ind=False)
-    upload_data_wfacc = WorkflowACC.objects.filter(client=client, del_ind=False)
-    upload_data_OrgPorg = OrgPorg.objects.filter(client=client, del_ind=False)
-    upload_data_OrgPGroup = OrgPGroup.objects.filter(client=client, del_ind=False)
-    upload_data_Orgmodel = OrgModel.objects.filter(client=client, del_ind=False)
-    upload_data_OrgCompanies = OrgCompanies.objects.filter(client=client, del_ind=False)
-    upload_data_UserRoles = UserRoles.objects.filter(del_ind=False)
-    upload_data_AuthorizationObject = AuthorizationObject.objects.filter(del_ind=False)
-    upload_data_AuthorizationGroup = AuthorizationGroup.objects.filter(del_ind=False)
-    upload_data_Authorization = Authorization.objects.filter(client=client, del_ind=False)
-
-    if Table_name == 'upload_accdata':
-        Upload_response = list(chain(upload_data_accounting, upload_data_acccat, upload_data_company))
-
-        accassval_data = {}
-        accassval_data['accassval'] = list(Upload_response)
-        return JsonResponse(accassval_data)
-
-    elif Table_name == 'upload_accdatades':
-        Upload_response = list(
-            chain(upload_data_acc_desc, upload_data_acccat, upload_data_language, upload_data_company))
-    elif Table_name == 'upload_apptypes':
-        Upload_response = list(ApproverType.objects.filter(del_ind=False).values('app_types', 'appr_type_desc'))
-    elif Table_name == 'upload_applimit':
-        Upload_response = list(chain(upload_data_app_lim, upload_data_company))
-    elif Table_name == 'upload_applimval':
-        Upload_response = list(
-            chain(upload_data_app_lim_val, upload_data_apptypes, upload_data_company, upload_data_currency))
-    elif Table_name == 'upload_spndlimid':
-        Upload_response = list(chain(upload_data_spnd_lim_id, upload_data_company))
-    #############
-    elif Table_name == 'upload_custprodcat':
-        Upload_response = list(upload_data_cust_prod_cat)
-        prodcatcust_data = {}
-        prodcatcust_data['prod_cat_cust'] = list(Upload_response)
-        return JsonResponse(prodcatcust_data)
-
-    elif Table_name == 'upload_wfschema':
-        Upload_response = list(upload_data_work_flow_schema)
-        workflowschema_data = {}
-        workflowschema_data['work_flow_schema'] = list(Upload_response)
-        return JsonResponse(workflowschema_data)
-
-    elif Table_name == 'upload_WFACC':
-        Upload_response = list(upload_data_work_flow_schema)
-        workflowaccounting_data = {}
-        workflowaccounting_data['work_flow_accounting'] = list(Upload_response)
-        return JsonResponse(workflowaccounting_data)
-    #############
-    elif Table_name == 'upload_spndlimval':
-        Upload_response = list(chain(upload_data_spnd_lim_val, upload_data_company, upload_data_currency))
-    elif Table_name == 'upload_WFACC':
-        Upload_response = list(chain(upload_data_wfacc, upload_data_acccat, upload_data_currency, upload_data_company))
-    elif Table_name == 'upload_orgnodetypes':
-        Upload_response = OrgNodeTypes.objects.filter(client=client, del_ind=False)
-    elif Table_name == 'upload_orgattributes':
-        Upload_response = OrgAttributes.objects.filter(del_ind=False)
-        return JsonParser_obj.get_json_from_obj(Upload_response)
-    elif Table_name == 'upload_companies':
-        Upload_response = list(chain(upload_data_OrgCompanies, upload_data_Orgmodel))
-        return JsonParser_obj.get_json_from_obj(Upload_response)
-    elif Table_name == 'upload_porg':
-        Upload_response = list(chain(upload_data_OrgPorg, upload_data_Orgmodel, upload_data_company))
-        return JsonParser_obj.get_json_from_obj(Upload_response)
-    elif Table_name == 'upload_pgrp':
-        Upload_response = list(chain(upload_data_OrgPGroup, upload_data_OrgPorg, upload_data_company))
-        return JsonParser_obj.get_json_from_obj(Upload_response)
-    elif Table_name == 'upload_roles':
-        Upload_response = UserRoles.objects.filter(del_ind=False)
-        return JsonParser_obj.get_json_from_obj(Upload_response)
-    elif Table_name == 'upload_authobj':
-        Upload_response = AuthorizationObject.objects.filter(del_ind=False)
-        return JsonParser_obj.get_json_from_obj(Upload_response)
-    elif Table_name == 'upload_authgrp':
-        Upload_response = list(chain(upload_data_AuthorizationGroup, upload_data_AuthorizationObject))
-        return JsonParser_obj.get_json_from_obj(Upload_response)
-    elif Table_name == 'upload_auth':
-        Upload_response = list(chain(upload_data_Authorization, upload_data_UserRoles))
-        return JsonParser_obj.get_json_from_obj(Upload_response)
-
-    # if not upload_data_response[0]:
-    #     return JsonResponse({'errmsg': upload_data_response[1]}, status=400)
-    # else:
-    # return JsonResponse({'successmsg': upload_data_response[1]})
-    # return JsonParser_obj.get_json_from_obj(Upload_response)
-    # display_data = {}
-    # display_data['dataval'] = list(Upload_response)
-    # print(display_data)
-    # return JsonResponse(display_data)
 
 
 def account_ass_values(request):
-    client = getClients(request)
-    upload_data_company = list(
-        OrgCompanies.objects.filter(del_ind=False).values('company_id'))
-    # upload_data_company = list(OrgCompanies.objects.filter(client=client, del_ind=False).values('company_id'))
-    upload_data_acccat = list(
-        AccountAssignmentCategory.objects.filter(del_ind=False).values('account_assign_cat'))
-    upload_data_accounting = list(
-        AccountingData.objects.filter(del_ind=False).values('account_assign_guid', 'account_assign_value', 'valid_from',
-                                                            'valid_to', 'account_assign_cat', 'company_id'))
+    update_user_info(request)
 
-    Upload_response = list(upload_data_accounting)
+    # get table data
+    data = {'upload_account_assignment_value': get_account_assignment_value(),
+            'inc_nav': True}
 
-    rendered_account_assignment_data = []
-
-    for data in upload_data_accounting:
-        data_dict = {
-            'account_assign_guid': data['account_assign_guid'],
-            'account_assign_value': data['account_assign_value'],
-            'valid_from': data['valid_from'].strftime("%Y-%m-%d"),
-            'valid_to': data['valid_to'].strftime("%Y-%m-%d"),
-            'account_assign_cat': data['account_assign_cat'],
-            'company_id': data['company_id']
-        }
-        for acc_value_fd in upload_data_accounting:
-            if django_query_instance.django_existence_check(AccountingDataDesc,
-                                                            {'del_ind': False,
-                                                             'account_assign_value': acc_value_fd[
-                                                                 'account_assign_value']}):
-                acc_value_fd["del_ind_flag"] = False
-            else:
-                acc_value_fd["del_ind_flag"] = True
-        rendered_account_assignment_data.append(data_dict)
-
-    accassval_data = {}
-    accassval_data['accassval'] = list(Upload_response)
     return render(request, 'Accounting_Data/account_assignment_values.html',
-                  {'upload_account_assignment_value': Upload_response, 'upload_company_data': upload_data_company,
-                   'upload_data_acccat': upload_data_acccat,
-                   'rendered_account_assignment_data': rendered_account_assignment_data,
-                   'inc_nav': True})
+                  data)
 
 
 def render_aav_data(request):
@@ -463,19 +254,19 @@ def extract_workflowschema_data(request):
 
     writer = csv.writer(response)
 
-    writer.writerow(['WORKFLOW_SCHEMA', 'APP_TYPES', 'COMPANY_ID', 'del_ind'])
+    writer.writerow(['WORKFLOW_SCHEMA', 'COMPANY_ID', 'APP_TYPES', 'del_ind'])
 
     workflowschema = django_query_instance.django_filter_query(WorkflowSchema,
                                                                {'del_ind': False}, None,
-                                                               ['workflow_schema', 'app_types', 'company_id',
+                                                               ['workflow_schema', 'company_id', 'app_types',
                                                                 'del_ind'])
 
     workflowschema_data = query_update_del_ind(workflowschema)
 
     for workflowschemaData in workflowschema_data:
         workflowschema_info = [workflowschemaData['workflow_schema'],
-                               workflowschemaData['app_types'],
                                workflowschemaData['company_id'],
+                               workflowschemaData['app_types'],
                                workflowschemaData['del_ind']]
         writer.writerow(workflowschema_info)
 
@@ -488,7 +279,7 @@ def extract_workflowschema_template(request):
 
     writer = csv.writer(response)
 
-    writer.writerow(['WORKFLOW_SCHEMA', 'APP_TYPES', 'COMPANY_ID', 'del_ind'])
+    writer.writerow(['WORKFLOW_SCHEMA', 'COMPANY_ID', 'APP_TYPES', 'del_ind'])
 
     return response
 
@@ -500,27 +291,27 @@ def extract_workflowaccount_data(request):
     writer = csv.writer(response)
 
     writer.writerow(
-        ['ACC_VALUE', 'COMPANY_ID', 'APP_USERNAME', 'SUP_COMPANY_ID', 'SUP_ACC_VALUE',
-         'del_ind', 'ACCOUNT_ASSIGN_CAT', 'CURRENCY_ID', 'SUP_ACCOUNT_ASSIGN_CAT'])
+        ['APP_USERNAME', 'ACCOUNT_ASSIGN_CAT', 'ACC_VALUE', 'COMPANY_ID', 'SUP_ACCOUNT_ASSIGN_CAT', 'SUP_ACC_VALUE',
+         'SUP_COMPANY_ID', 'CURRENCY_ID', 'del_ind'])
 
     # get only active records
     workflow_acct = django_query_instance.django_filter_query(WorkflowACC,
                                                               {'del_ind': False}, None,
-                                                              ['acc_value', 'company_id', 'app_username',
-                                                               'sup_company_id', 'sup_acc_value',
-                                                               'del_ind',
-                                                               'account_assign_cat', 'currency_id',
-                                                               'sup_account_assign_cat'])
+                                                              ['app_username', 'account_assign_cat',
+                                                               'acc_value', 'company_id', 'sup_account_assign_cat',
+                                                               'sup_acc_value', 'sup_company_id', 'currency_id',
+                                                               'del_ind'])
+
     workflow_acct_data = query_update_del_ind(workflow_acct)
 
     for workflowacct in workflow_acct_data:
-        workflowacct_info = [workflowacct['acc_value'], workflowacct['company_id'], workflowacct['app_username'],
-                             workflowacct['sup_company_id'], workflowacct['sup_acc_value'],
-                             workflowacct['del_ind'],
-                             workflowacct['account_assign_cat'],
-                             workflowacct['currency_id'],
+        workflowacct_info = [workflowacct['app_username'], workflowacct['account_assign_cat'],
+                             workflowacct['acc_value'], workflowacct['company_id'],
                              workflowacct['sup_account_assign_cat'],
+                             workflowacct['sup_acc_value'], workflowacct['sup_company_id'], workflowacct['currency_id'],
+                             workflowacct['del_ind']
                              ]
+
         writer.writerow(workflowacct_info)
 
     return response
@@ -533,8 +324,8 @@ def extract_workflowacct_template(request):
     writer = csv.writer(response)
 
     writer.writerow(
-        ['ACC_VALUE', 'COMPANY_ID', 'APP_USERNAME', 'SUP_COMPANY_ID', 'SUP_ACC_VALUE',
-         'del_ind', 'ACCOUNT_ASSIGN_CAT', 'CURRENCY_ID', 'SUP_ACCOUNT_ASSIGN_CAT'])
+        ['APP_USERNAME', 'ACCOUNT_ASSIGN_CAT', 'ACC_VALUE', 'COMPANY_ID', 'SUP_ACCOUNT_ASSIGN_CAT', 'SUP_ACC_VALUE',
+         'SUP_COMPANY_ID', 'CURRENCY_ID', 'del_ind'])
 
     return response
 
@@ -608,12 +399,12 @@ def get_prod_cat_image_detail(request):
     :return:
     """
     update_user_info(request)
-    prod_cat_id = json_obj.get_json_from_req(request)
+    prod_cat_id = JsonParser().get_json_from_req(request)
     prod_cat_img_detail = ImagesUpload.objects.filter(client=global_variables.GLOBAL_CLIENT,
                                                       image_id=str(prod_cat_id),
                                                       image_type=CONST_UNSPSC_IMAGE_TYPE)
 
-    return json_obj.get_json_from_obj(prod_cat_img_detail)
+    return JsonParser().get_json_from_obj(prod_cat_img_detail)
 
 
 def data_upload_fk(request):
@@ -653,7 +444,6 @@ def check_data_acct_asst_val(request):
     if request.is_ajax():
         # retrieving data_list, Tablename, appname,db_header_data from UI
         table_data__array = JsonParser_obj.get_json_from_req(request)
-        table_data__array = JsonParser_obj.get_json_from_req(request)
         popup_data_list = table_data__array['data_list']
         db_header_data = table_data__array['db_header_data']
         client = getClients(request)
@@ -669,8 +459,8 @@ def check_data_acct_asst_val(request):
 
 
 def display_incoterms(request):
-    incoterms_data = get_configuration_data(
-        Incoterms, {'del_ind': False}, ['incoterm_key', 'description'])
+    incoterms_data = django_query_instance.django_filter_query(
+        Incoterms, {'del_ind': False}, None, ['incoterm_key', 'description'])
     # incoterms_data = list(
     #     Incoterms.objects.filter(del_ind=False).values('incoterm_key', 'description'))
     dropdown_db_values = list(
@@ -678,8 +468,10 @@ def display_incoterms(request):
                                             client=global_variables.GLOBAL_CLIENT).values('field_type_id',
                                                                                           'field_type_desc'
                                                                                           ))
+    messages_list = get_ui_messages(CONST_COFIG_UI_MESSAGE_LIST)
     return render(request, 'Supplier_Management/incoterms.html',
                   {'incoterms_data': incoterms_data, 'dropdown_db_values': dropdown_db_values,
+                   'messages_list': messages_list,
                    'inc_nav': True})
 
 
@@ -693,8 +485,11 @@ def payment_terms(request):
             payment_terms_fd["del_ind_flag"] = False
         else:
             payment_terms_fd["del_ind_flag"] = True
+
+    messages_list = get_ui_messages(CONST_COFIG_UI_MESSAGE_LIST)
     return render(request, 'Supplier_Management/payment_terms.html',
                   {'payment_term_data': payment_term_data,
+                   'messages_list': messages_list,
                    'inc_nav': True})
 
 
@@ -708,9 +503,10 @@ def payment_terms_desc(request):
     payment_desc_data = get_configuration_data(
         Payterms_desc, {'client': client, 'del_ind': False}, ['payment_term_guid', 'payment_term_key', 'day_limit',
                                                               'description', 'language_id'])
+    messages_list = get_ui_messages(CONST_COFIG_UI_MESSAGE_LIST)
     return render(request, 'Supplier_Management/payment_term_desc.html',
                   {'payment_desc_data': payment_desc_data, 'payterm_key_list': payterm_key_list,
-                   'language_list': language_list, 'inc_nav': True})
+                   'language_list': language_list, 'messages_list': messages_list, 'inc_nav': True})
 
 
 def upload_supplier(request):
@@ -790,11 +586,13 @@ def address_type(request):
                                                         'language_id', 'time_zone'))
 
     upload_data_OrgCompanies = list(OrgCompanies.objects.filter(client=client, del_ind=False).values('company_id'))
+    messages_list = get_ui_messages(CONST_COFIG_UI_MESSAGE_LIST)
     return render(request, 'Address_Data/address_type.html',
                   {'address_type_data': address_type_data,
                    'dropdown_db_values': dropdown_db_values,
                    'upload_data_OrgCompanies': upload_data_OrgCompanies,
                    'address_data': address_data,
+                   'messages_list': messages_list,
                    'inc_nav': True})
 
 
@@ -826,11 +624,13 @@ def address(request):
             address_data_fd["del_ind_flag"] = False
         else:
             address_data_fd["del_ind_flag"] = True
+    messages_list = get_ui_messages(CONST_COFIG_UI_MESSAGE_LIST)
 
     return render(request, 'Address_Data/address.html',
                   {'address_data': address_data, 'language_list': language_list, 'country_list': country_list,
                    'time_zone_data': time_zone_data,
                    'add_partner_type_data': add_partner_type_data,
+                   'messages_list': messages_list,
                    'inc_nav': True})
 
 
@@ -862,21 +662,18 @@ def extract_approverlimitval_data(request):
 
     writer = csv.writer(response)
 
-    writer.writerow(['APP_CODE_ID', 'COMPANY_ID', 'APP_TYPES', 'UPPER_LIMIT_VALUE', 'CURRENCY_ID', 'del_ind'])
+    writer.writerow(['APP_CODE_ID', 'COMPANY_ID', 'APP_TYPES', 'CURRENCY_ID', 'UPPER_LIMIT_VALUE', 'del_ind'])
 
     approverlimitval = django_query_instance.django_filter_query(ApproverLimitValue,
                                                                  {'del_ind': False}, None,
                                                                  ['app_code_id', 'company_id', 'app_types',
-                                                                  'upper_limit_value',
-                                                                  'currency_id', 'del_ind'])
+                                                                  'currency_id', 'upper_limit_value', 'del_ind'])
     approverlim_data = query_update_del_ind(approverlimitval)
 
     for approverlimitvaldata in approverlim_data:
         approverlimitvaldata_info = [approverlimitvaldata['app_code_id'], approverlimitvaldata['company_id'],
-                                     approverlimitvaldata['app_types'], approverlimitvaldata['upper_limit_value'],
-                                     approverlimitvaldata['currency_id'],
-                                     approverlimitvaldata['del_ind']]
-
+                                     approverlimitvaldata['app_types'], approverlimitvaldata['currency_id'],
+                                     approverlimitvaldata['upper_limit_value'], approverlimitvaldata['del_ind']]
         writer.writerow(approverlimitvaldata_info)
 
     return response
@@ -888,18 +685,18 @@ def extract_spendlimit_data(request):
 
     writer = csv.writer(response)
 
-    writer.writerow(['SPEND_CODE_ID', 'SPENDER_USERNAME', 'COMPANY_ID', 'del_ind'])
+    writer.writerow(['SPENDER_USERNAME', 'COMPANY_ID', 'SPEND_CODE_ID', 'del_ind'])
     # get only active record
 
     spendlimitvals = django_query_instance.django_filter_query(SpendLimitId,
                                                                {'del_ind': False}, None,
-                                                               ['spend_code_id', 'spender_username',
-                                                                'company_id', 'del_ind'])
+                                                               ['spender_username', 'company_id',
+                                                                'spend_code_id', 'del_ind'])
     spendlim_data = query_update_del_ind(spendlimitvals)
 
     for spendlimitval in spendlim_data:
-        spendlimitval_info = [spendlimitval['spend_code_id'], spendlimitval['spender_username'],
-                              spendlimitval['company_id'], spendlimitval['del_ind']]
+        spendlimitval_info = [spendlimitval['spender_username'], spendlimitval['company_id'],
+                              spendlimitval['spend_code_id'], spendlimitval['del_ind']]
         writer.writerow(spendlimitval_info)
 
     return response
@@ -911,17 +708,17 @@ def extract_spendlimitval_data(request):
 
     writer = csv.writer(response)
 
-    writer.writerow(['SPEND_CODE_ID', 'COMPANY_ID', 'UPPER_LIMIT_VALUE', 'CURRENCY_ID', 'del_ind'])
+    writer.writerow(['SPEND_CODE_ID', 'COMPANY_ID', 'CURRENCY_ID', 'UPPER_LIMIT_VALUE', 'del_ind'])
 
     spendlimitvalues = django_query_instance.django_filter_query(SpendLimitValue, {'del_ind': False}, None,
-                                                                 ['spend_code_id', 'company_id', 'upper_limit_value',
-                                                                  'currency_id', 'del_ind'])
+                                                                 ['spend_code_id', 'company_id', 'currency_id',
+                                                                  'upper_limit_value', 'del_ind'])
     spendlim_data = query_update_del_ind(spendlimitvalues)
 
     for spendlimitvaluedata in spendlim_data:
         spendlimitvaluedata_info = [spendlimitvaluedata['spend_code_id'], spendlimitvaluedata['company_id'],
-                                    spendlimitvaluedata['upper_limit_value'],
-                                    spendlimitvaluedata['currency_id'], spendlimitvaluedata['del_ind']]
+                                    spendlimitvaluedata['currency_id'], spendlimitvaluedata['upper_limit_value'],
+                                    spendlimitvaluedata['del_ind']]
         writer.writerow(spendlimitvaluedata_info)
 
     return response
@@ -933,7 +730,7 @@ def extract_spendlimit_template(request):
 
     writer = csv.writer(response)
 
-    writer.writerow(['SPEND_CODE_ID', 'SPENDER_USERNAME', 'COMPANY_ID', 'del_ind'])
+    writer.writerow(['SPENDER_USERNAME', 'COMPANY_ID', 'SPEND_CODE_ID', 'del_ind'])
 
     return response
 
@@ -1057,18 +854,17 @@ def extract_pgrp_data(request):
 
     writer = csv.writer(response)
 
-    writer.writerow(['PGROUP_ID', 'DESCRIPTION', 'PORG_ID', 'del_ind'])
+    writer.writerow(['PGROUP_ID', 'DESCRIPTION', 'del_ind'])
 
     purgrp = django_query_instance.django_filter_query(OrgPGroup,
                                                        {'del_ind': False}, None,
-                                                       ['pgroup_id', 'description', 'porg_id',
-                                                        'del_ind'])
+                                                       ['pgroup_id', 'description', 'del_ind'])
 
     purgrp_data = query_update_del_ind(purgrp)
 
     for purgrpdata in purgrp_data:
         purgrp_info = [purgrpdata['pgroup_id'], purgrpdata['description'],
-                       purgrpdata['porg_id'], purgrpdata['del_ind']]
+                       purgrpdata['del_ind']]
 
         writer.writerow(purgrp_info)
 
@@ -1081,7 +877,7 @@ def extract_pgrp_template(request):
 
     writer = csv.writer(response)
 
-    writer.writerow(['PGROUP_ID', 'DESCRIPTION', 'PORG ID', 'del_ind'])
+    writer.writerow(['PGROUP_ID', 'DESCRIPTION', 'del_ind'])
 
     return response
 
@@ -1092,18 +888,18 @@ def extract_porg_data(request):
 
     writer = csv.writer(response)
 
-    writer.writerow(['PORG_ID', 'DESCRIPTION', 'COMPANY_ID', 'del_ind'])
+    writer.writerow(['PORG_ID', 'DESCRIPTION', 'del_ind'])
 
     purorg = django_query_instance.django_filter_query(OrgPorg,
                                                        {'del_ind': False}, None,
-                                                       ['porg_id', 'description', 'company_id',
+                                                       ['porg_id', 'description',
                                                         'del_ind'])
 
     purorg_data = query_update_del_ind(purorg)
 
     for purorgdata in purorg_data:
         purorg_info = [purorgdata['porg_id'], purorgdata['description'],
-                       purorgdata['company_id'], purorgdata['del_ind']]
+                       purorgdata['del_ind']]
 
         writer.writerow(purorg_info)
 
@@ -1116,7 +912,7 @@ def extract_porg_template(request):
 
     writer = csv.writer(response)
 
-    writer.writerow(['PORG_ID', 'DESCRIPTION', 'COMPANY ID', 'del_ind'])
+    writer.writerow(['PORG_ID', 'DESCRIPTION', 'Object id', 'del_ind'])
 
     return response
 
@@ -1215,60 +1011,18 @@ def extract_address_data(request):
 def upload_cust_prod_cat(request):
     update_user_info(request)
     client = global_variables.GLOBAL_CLIENT
-    upload_cust_prod_catogories = django_query_instance.django_filter_query(UnspscCategoriesCust,
-                                                                            {'client': client, 'del_ind': False}, None,
-                                                                            ['prod_cat_guid', 'prod_cat_id'])
-
-    product_cat_list = django_query_instance.django_filter_value_list_ordered_by_distinct_query(UnspscCategoriesCust,
-                                                                                                {'client': client,
-                                                                                                 'del_ind': False},
-                                                                                                'prod_cat_id',
-                                                                                                None)
-    prod_cat_desc = django_query_instance.django_filter_query(UnspscCategoriesCustDesc,
-                                                              {'prod_cat_id__in': product_cat_list,
-                                                               'del_ind': False},
-                                                              None,
-                                                              ['prod_cat_id', 'language_id', 'category_desc'])
-    for prod_cat in upload_cust_prod_catogories:
-        prod_cat['prod_cat_desc'] = ' '
-        for product_cat in prod_cat_desc:
-            if prod_cat['prod_cat_id'] == product_cat['prod_cat_id']:
-                if product_cat['language_id'] == global_variables.GLOBAL_USER_LANGUAGE.language_id:
-                    prod_cat['prod_cat_desc'] = product_cat['category_desc']
-                break
-
-    for prod in upload_cust_prod_catogories:
-        if prod['prod_cat_desc'] is None:
-            prod['prod_cat_desc'] = ' '
-
-        if django_query_instance.django_existence_check(ImagesUpload, {'client': global_variables.GLOBAL_CLIENT,
-                                                                       'image_default': True,
-                                                                       'image_id': prod['prod_cat_id'],
-                                                                       'image_type': CONST_UNSPSC_IMAGE_TYPE,
-                                                                       'del_ind': False}):
-            prod['image_url'] = django_query_instance.django_filter_value_list_ordered_by_distinct_query(ImagesUpload, {
-                'client': global_variables.GLOBAL_CLIENT, 'image_default': True, 'image_id': prod['prod_cat_id'],
-                'image_type': CONST_UNSPSC_IMAGE_TYPE, 'del_ind': False
-            }, 'image_url', None)[0]
-
-        else:
-            prod['image_url'] = ""
-    filter_queue = ~Q(prod_cat_id__in=product_cat_list)
-    upload_ProdCat = django_query_instance.django_queue_query(UnspscCategories, {'del_ind': False},
-                                                              filter_queue, None, ['prod_cat_id', 'prod_cat_desc'])
-
-    for prod_cat_desc in upload_ProdCat:
-        if not prod_cat_desc['prod_cat_desc']:
-            prod_cat_desc['prod_cat_desc'] = ''
-
-    content_managment_settings = 'content_managment_settings'
+    upload_cust_prod_catogories, product_cat_list = get_unspsc_cat_cust_data()
+    dependent_dropdown = get_unspsc_drop_down()
+    messages_list = get_ui_messages(CONST_COFIG_UI_MESSAGE_LIST)
+    data = {'content_managment_settings': 'content_managment_settings',
+            'inc_nav': True,
+            'upload_cust_prod_cat': upload_cust_prod_catogories, 'messages_list': messages_list,
+            'upload_ProdCat': dependent_dropdown
+            }
 
     return render(request,
                   'Customer_Product_Category/customer_product_category.html',
-                  {'upload_cust_prod_cat': upload_cust_prod_catogories,
-                   'upload_ProdCat': upload_ProdCat,
-                   'content_managment_settings': content_managment_settings,
-                   'inc_nav': True})
+                  data)
 
 
 def upload_cust_prod_cat_desc(request):
@@ -1314,59 +1068,34 @@ def upload_cust_prod_cat_desc(request):
             prod_cat_desc['prod_cat_desc'] = ''
 
     content_managment_settings = 'content_managment_settings'
+    messages_list = get_ui_messages(CONST_COFIG_UI_MESSAGE_LIST)
 
     return render(request,
                   'Customer_Product_Category/customer_product_category_description.html',
                   {'upload_cust_prod_cat_desc': upload_cust_prod_desc_catogories,
                    'upload_languages': upload_language,
-                   'upload_ProdCat': upload_ProdCat,
+                   'upload_ProdCat': upload_ProdCat, 'messages_list': messages_list,
                    'content_managment_settings': content_managment_settings,
                    'inc_nav': True})
 
 
 def org_companies(request):
-    client = getClients(request)
-    upload_orgcompany = list(
-        OrgCompanies.objects.filter(client=client, del_ind=False).values('company_guid', 'object_id', 'name1', 'name2',
-                                                                         'company_id'))
-    for company_id_fd in upload_orgcompany:
-        if django_query_instance.django_existence_check(OrgPorg,
-                                                        {'del_ind': False,
-                                                         'company_id': company_id_fd['company_id']}):
-            company_id_fd["del_ind_flag"] = False
-        else:
-            company_id_fd["del_ind_flag"] = True
-    upload_data_Orgmodel = list(OrgModel.objects.filter(client=client, del_ind=False).values('object_id'))
-    upload_data_company = list(OrgCompanies.objects.filter(client=client, del_ind=False).values('company_id'))
-    upload_data_company.insert(0, '*')
-    master_data_settings = 'master_data_settings'
-
-    for object_id in upload_orgcompany:
-        if object_id['object_id'] == None:
-            object_id['object_id'] = ''
-
+    update_user_info(request)
+    org_companies = get_org_companies_data()
+    messages_list = get_ui_messages(CONST_COFIG_UI_MESSAGE_LIST)
     return render(request, 'Organizational_Data/org_companies.html',
-                  {'org_companies': upload_orgcompany, 'upload_data_Orgmodel': upload_data_Orgmodel,
-                   'upload_data_company': upload_data_company,
-                   'master_data_settings': master_data_settings, 'inc_nav': True})
+                  {'org_companies': org_companies,
+                   'messages_list': messages_list,
+                   'inc_nav': True})
 
 
 def purchasing_org(request):
-    client = getClients(request)
-    upload_porg = list(
-        OrgPorg.objects.filter(client=client, del_ind=False).values('porg_guid', 'porg_id', 'object_id', 'description',
-                                                                    'company_id'))
-    upload_data_Orgmodel = list(OrgModel.objects.filter(client=client, del_ind=False).values('object_id'))
-    upload_data_OrgCompanies = list(OrgCompanies.objects.filter(client=client, del_ind=False).values('company_id'))
-    master_data_settings = 'master_data_settings'
-
-    for object_id in upload_porg:
-        if object_id['object_id'] == None:
-            object_id['object_id'] = ''
-
+    update_user_info(request)
+    upload_porg = get_org_porg_data()
+    messages_list = get_ui_messages(CONST_COFIG_UI_MESSAGE_LIST)
     return render(request, 'Organizational_Data/purchase_org.html',
-                  {'purchasing_org': upload_porg, 'upload_data_Orgmodel': upload_data_Orgmodel,
-                   'upload_data_OrgCompanies': upload_data_OrgCompanies, 'master_data_settings': master_data_settings,
+                  {'purchasing_org': upload_porg,
+                   'messages_list': messages_list,
                    'inc_nav': True})
 
 
@@ -1389,9 +1118,11 @@ def purchasing_grp(request):
     for object_id in upload_pgrp:
         if object_id['object_id'] == None:
             object_id['object_id'] = ''
+    messages_list = get_ui_messages(CONST_COFIG_UI_MESSAGE_LIST)
 
     return render(request, 'Organizational_Data/purchase_grp.html',
                   {'purchasing_grp': upload_pgrp, 'upload_data_Orgmodel': upload_data_Orgmodel,
+                   'messages_list': messages_list,
                    'upload_data_OrgPGroup': upload_data_OrgPGroup, 'master_data_settings': master_data_settings,
                    'inc_nav': True})
 
@@ -1409,12 +1140,13 @@ def account_assignment(request):
     upload_data_acccat = get_configuration_data(AccountAssignmentCategory, {'del_ind': False}, ['account_assign_cat'])
     upload_data_company = get_configuration_data(OrgCompanies, {'del_ind': False}, ['company_id'])
     upload_data_language = get_configuration_data(Languages, {'del_ind': False}, ['language_id'])
+    messages_list = get_ui_messages(CONST_COFIG_UI_MESSAGE_LIST)
     master_data_settings = 'master_data_settings'
     return render(request, 'Accounting_Data/account_assignment_description.html',
                   {'account_assignment': upload_accassignment, 'upload_data_company': upload_data_company,
                    'upload_data_acccat': upload_data_acccat, 'upload_data_language': upload_data_language,
                    'upload_accassvalues': upload_accassvalues, 'master_data_settings': master_data_settings,
-                   'inc_nav': True})
+                   'messages_list': messages_list, 'inc_nav': True})
 
 
 def det_gl_acc(request):
@@ -1455,11 +1187,12 @@ def det_gl_acc(request):
             'account_assign_cat'))
     upload_value_currency = list(Currency.objects.filter(del_ind=False).values('currency_id'))
     upload_value_company = list(OrgCompanies.objects.filter(client=client, del_ind=False).values('company_id'))
+    messages_list = get_ui_messages(CONST_COFIG_UI_MESSAGE_LIST)
 
     return render(request, 'GL_Account/determine_gl_account.html',
                   {'upload_gl_acc': upload_gl_acc, 'upload_value_glacc': upload_value_glacc,
                    'upload_value_accasscat': upload_value_accasscat,
-                   'upload_value_currency': upload_value_currency,
+                   'upload_value_currency': upload_value_currency, 'messages_list': messages_list,
                    'upload_value_company': upload_value_company, 'prod_catogories': prod_catogories,
                    'inc_nav': True})
 
@@ -1485,11 +1218,12 @@ def approval_type(request):
                                             client=global_variables.GLOBAL_CLIENT).values('field_type_id',
                                                                                           'field_type_desc'
                                                                                           ))
+    messages_list = get_ui_messages(CONST_COFIG_UI_MESSAGE_LIST)
     master_data_settings = 'master_data_settings'
     return render(request, 'Approval_Data/approval_type.html',
                   {'approval_type': upload_apptype, 'master_data_settings': master_data_settings,
                    'inc_nav': True,
-                   'dropdown_db_values': dropdown_db_values,
+                   'dropdown_db_values': dropdown_db_values, 'messages_list': messages_list,
                    'dropdown_db_values_onload': dropdown_db_values_onload})
 
 
@@ -1506,11 +1240,12 @@ def work_flow_schema(request):
             'field_type_id',
             'field_type_desc'
         ))
+    messages_list = get_ui_messages(CONST_COFIG_UI_MESSAGE_LIST)
     master_data_settings = 'master_data_settings'
     return render(request, 'Work_Flow_Data/work_flow_schema.html',
                   {'work_flow_schema': upload_wfschema, 'upload_data_company': upload_data_company,
                    'upload_data_apptypes': upload_data_apptypes,
-                   'dropdown_db_values': dropdown_db_values,
+                   'dropdown_db_values': dropdown_db_values, 'messages_list': messages_list,
                    'master_data_settings': master_data_settings,
                    'inc_nav': True})
 
@@ -1530,10 +1265,12 @@ def spend_limit_value(request):
             spend_code_fd["del_ind_flag"] = True
     upload_data_company = list(OrgCompanies.objects.filter(client=client, del_ind=False).values('company_id'))
     upload_data_currency = list(Currency.objects.filter(del_ind=False).values('currency_id'))
+    messages_list = get_ui_messages(CONST_COFIG_UI_MESSAGE_LIST)
     master_data_settings = 'master_data_settings'
     return render(request, 'Spend_Limit_data/spend_limit_value.html',
                   {'spend_limit_value': upload_spndlimval, 'upload_data_company': upload_data_company,
-                   'upload_data_currency': upload_data_currency, 'master_data_settings': master_data_settings,
+                   'upload_data_currency': upload_data_currency, 'messages_list': messages_list,
+                   'master_data_settings': master_data_settings,
                    'inc_nav': True})
 
 
@@ -1548,12 +1285,12 @@ def approval_limit(request):
         ApproverLimitValue.objects.filter(client=client, del_ind=False).values('app_code_id'))
 
     user_details = list(UserData.objects.filter(is_active=True, client=client, del_ind=False).values('username'))
-
+    messages_list = get_ui_messages(CONST_COFIG_UI_MESSAGE_LIST)
     master_data_settings = 'master_data_settings'
     return render(request, 'Approval_Data/approval_limit.html',
                   {'approval_limit': upload_applimit, 'upload_data_company': upload_data_company,
                    'upload_data_app_code_id': upload_data_app_code_id,
-                   'master_data_settings': master_data_settings,
+                   'master_data_settings': master_data_settings, 'messages_list': messages_list,
                    'user_details': user_details,
                    'inc_nav': True})
 
@@ -1575,12 +1312,13 @@ def approval_limit_value(request):
     upload_data_currency = list(Currency.objects.filter(del_ind=False).values('currency_id'))
     # upload_data_company = list(OrgCompanies.objects.filter(del_ind=False).values('company_id'))
     upload_data_company = list(OrgCompanies.objects.filter(client=client, del_ind=False).values('company_id'))
-
+    messages_list = get_ui_messages(CONST_COFIG_UI_MESSAGE_LIST)
     master_data_settings = 'master_data_settings'
     return render(request, 'Approval_Data/approval_limit_value.html',
                   {'approval_limit_value': upload_applimval, 'upload_data_apptypes': upload_data_apptypes,
                    'upload_data_currency': upload_data_currency, 'upload_data_company': upload_data_company,
-                   'master_data_settings': master_data_settings, 'inc_nav': True})
+                   'master_data_settings': master_data_settings, 'messages_list': messages_list,
+                   'inc_nav': True})
 
 
 def spend_limit_id(request):
@@ -1595,11 +1333,13 @@ def spend_limit_id(request):
                                                                             'company_id'))
     upload_data_company = list(OrgCompanies.objects.filter(client=client, del_ind=False).values('company_id'))
     user_details = list(UserData.objects.filter(is_active=True, client=client, del_ind=False).values('username'))
+    messages_list = get_ui_messages(CONST_COFIG_UI_MESSAGE_LIST)
     master_data_settings = 'master_data_settings'
     return render(request, 'Spend_Limit_data/spend_limit_id.html',
                   {'spend_limit_id': upload_spndlimid, 'upload_data_company': upload_data_company,
                    'spend_limit_value': upload_spndlimval,
-                   'master_data_settings': master_data_settings, 'user_details': user_details, 'inc_nav': True})
+                   'master_data_settings': master_data_settings, 'messages_list': messages_list,
+                   'user_details': user_details, 'inc_nav': True})
 
 
 def work_flow_accounting(request):
@@ -1614,12 +1354,13 @@ def work_flow_accounting(request):
     upload_data_company = list(OrgCompanies.objects.filter(client=client, del_ind=False).values('company_id'))
     upload_data_OrgCompanies = list(OrgCompanies.objects.filter(client=client, del_ind=False).values('company_id'))
     user_details = list(UserData.objects.filter(is_active=True, client=client, del_ind=False).values('username'))
+    messages_list = get_ui_messages(CONST_COFIG_UI_MESSAGE_LIST)
     master_data_settings = 'master_data_settings'
     return render(request, 'Work_Flow_Data/work_flow_accounting.html',
                   {'work_flow_accounting': upload_wfacc, 'upload_data_acccat': upload_data_acccat,
                    'upload_data_currency': upload_data_currency, 'upload_data_company': upload_data_company,
                    'upload_data_OrgCompanies': upload_data_OrgCompanies, 'master_data_settings': master_data_settings
-                      , 'user_details': user_details, 'inc_nav': True})
+                      , 'user_details': user_details, 'messages_list': messages_list, 'inc_nav': True})
 
 
 def extract_incoterms_data(request):
@@ -1659,19 +1400,19 @@ def extract_payterms_data(request):
 
     writer = csv.writer(response)
 
-    writer.writerow(['PAYMENT_TERM_KEY', 'DESCRIPTION', 'DAY_LIMIT', 'del_ind', 'LANGUAGE_ID'])
+    writer.writerow(['LANGUAGE_ID', 'PAYMENT_TERM_KEY', 'DESCRIPTION', 'DAY_LIMIT', 'del_ind'])
 
     payment_term = django_query_instance.django_filter_query(Payterms_desc,
                                                              {'del_ind': False}, None,
-                                                             ['payment_term_key', 'description', 'day_limit',
-                                                              'del_ind', 'language_id'
-                                                              ])
+                                                             ['language_id', 'payment_term_key', 'description',
+                                                              'day_limit', 'del_ind'])
+
     payterm_data = query_update_del_ind(payment_term)
 
     for paytem_desc_data in payterm_data:
-        paytermdata_info = [paytem_desc_data['payment_term_key'], paytem_desc_data['description'],
-                            paytem_desc_data['day_limit'], paytem_desc_data['del_ind'],
-                            paytem_desc_data['language_id']]
+        paytermdata_info = [paytem_desc_data['language_id'], paytem_desc_data['payment_term_key'],
+                            paytem_desc_data['description'],
+                            paytem_desc_data['day_limit'], paytem_desc_data['del_ind']]
         writer.writerow(paytermdata_info)
 
     return response
@@ -1683,7 +1424,7 @@ def extract_payterm_template(request):
 
     writer = csv.writer(response)
 
-    writer.writerow(['PAYMENT_TERM_KEY', 'DESCRIPTION', 'DAY_LIMIT', 'DEL_IND', 'LANGUAGE_ID'])
+    writer.writerow(['LANGUAGE_ID', 'PAYMENT_TERM_KEY', 'DESCRIPTION', 'DAY_LIMIT', 'DEL_IND'])
 
     return response
 
@@ -1694,7 +1435,7 @@ def extract_spendlimitval_data_template(request):
 
     writer = csv.writer(response)
 
-    writer.writerow(['SPEND_CODE_ID', 'COMPANY_ID', 'UPPER_LIMIT_VALUE', 'CURRENCY_ID', 'del_ind'])
+    writer.writerow(['SPEND_CODE_ID', 'COMPANY_ID', 'CURRENCY_ID', 'UPPER_LIMIT_VALUE', 'del_ind'])
     return response
 
 
@@ -1749,7 +1490,7 @@ def extract_approverlimitval_data_template(request):
 
     writer = csv.writer(response)
 
-    writer.writerow(['APP_CODE_ID', 'COMPANY_ID', 'APP_TYPES', 'UPPER_LIMIT_VALUE', 'CURRENCY_ID', 'del_ind'])
+    writer.writerow(['APP_CODE_ID', 'COMPANY_ID', 'APP_TYPES', 'CURRENCY_ID', 'UPPER_LIMIT_VALUE', 'del_ind'])
     return response
 
 

@@ -16,20 +16,6 @@ function corresponding_auth_group(auth_type_val) {
     return corresponding_values
 }
 
-//onclick of add button display myModal popup and set GLOBAL_ACTION button value
-function onclick_add_button(button) {
-   dropdown_value();
-    $("#error_msg_id").css("display", "none")
-    $("#header_select").prop( "hidden", false );
-    GLOBAL_ACTION = button.value
-    $("#id_popup_tbody").empty();
-    $('#myModal').modal('show');
-    basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select class="form-control">' + roles_dropdown + '</select></td><td><select class="form-control">' + auth_type_dropdown + '</select></td><td><select class="form-control">' + auth_group_dropdown + '</select></td><td hidden><input class="input" type="text"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
-    $('#id_popup_tbody').append(basic_add_new_html);
-    table_sort_filter('id_popup_table');
-    $("#id_del_ind_checkbox").prop("hidden", true);
-    document.getElementById("id_del_add_button").style.display = "block";
-    $("#save_id").prop("hidden", false);
 //    var auth_type_val = '';
 //    $("#id_popup_table TBODY TR").each(function () {
 //        var row = $(this);
@@ -47,7 +33,7 @@ function onclick_add_button(button) {
 //            row.find("TD").eq(2).find("select").append(assign_val.auth_group_dropdown)
 //        })
 //    })
-}
+//}
 //**********************************
 //onclick of upload button display id_data_upload popup and set GLOBAL_ACTION button value
 function onclick_upload_button() {
@@ -71,6 +57,17 @@ function onclick_update_button() {
 }
 
 //function onclick_copy_update_button() {
+//  OpenLoaderPopup();
+//    var data = {'table_name':'Authorization'}
+//    $.ajax({
+//        type: 'POST',
+//        url: "{% url 'eProc_Configuration:get_dropdown_data' %}",
+//        data: JSON.stringify(data),
+//        success: function(response) {
+//            rendered_roles_data = response.upload_data_roles
+//            rendered_auth_group_data = response.upload_data_auth_grp_obj
+//            rendered_auth_type = response.auth_type_values
+//            dropdown_value();
 //    $("#id_popup_tbody").empty();
 //    $('#display_basic_table').DataTable().destroy();
 //    //Reference the Table.
@@ -128,6 +125,12 @@ function onclick_update_button() {
 //    $('#myModal').modal('show');
 //    table_sort_filter('display_basic_table');
 //    table_sort_filter('id_popup_table');
+//$('#myModal').modal('show');
+//  CloseLoaderPopup();
+//
+//        }
+//    });
+//
 //}
 
 //onclick of cancel empty the popup table body and error messages

@@ -14,36 +14,19 @@ import csv
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core import serializers
-from django.http import HttpResponse
-from django.http import JsonResponse
+from django.http.response import JsonResponse, HttpResponse
 from django.shortcuts import render
 from django.utils.datastructures import MultiValueDictKeyError
-
-from eProc_Attributes.views import JsonParser_obj
-from eProc_Basic.Utilities.functions.django_query_set import DjangoQueries
-from eProc_Basic.Utilities.functions.get_db_query import getClients
-from eProc_Basic.Utilities.functions.guid_generator import guid_generator
 from eProc_Basic.Utilities.functions.json_parser import JsonParser
-from eProc_Basic.Utilities.functions.messages_config import get_msg_desc, get_message_desc
-from eProc_Basic_Settings.Utilities.basic_settings_specific import save_prodcat_data_into_db
-from eProc_Configuration.Utilities.application_settings_generic import get_product_criteria
-from eProc_Configuration.Utilities.application_settings_specific import save_actasmt_data_into_db, \
-    save_messageId_data_into_db, save_messageIdDesc_data_into_db, \
-    save_calendarholiday_data_into_db, \
-    save_calendar_data_into_db, \
-    save_documenttype_data_into_db, save_transactiontype_data_into_db, save_po_split_type_into_db, \
-    save_po_split_criteria_into_db, save_purchase_control_into_db
-from eProc_Configuration.Utilities.application_settings_specific import save_app_data_into_db, save_client_data_into_db, \
-    save_number_range_data_into_db
+from eProc_Basic_Settings.Utilities.basic_settings_specific import *
+from eProc_Configuration.Utilities.application_settings_specific import *
 from eProc_Configuration.models import *
 from eProc_Configuration_Check.Utilities.configuration_check_generic import *
-from eProc_Master_Settings.Utilities.master_settings_specific import save_orgnode_types_data_into_db, \
-    save_orgattributes_data_into_db, save_authorobject_data_into_db, save_auth_group_data_into_db, \
-    save_roles_data_into_db, save_auth_data_into_db, save_orgattributes_level_data_into_db
+from eProc_Master_Settings.Utilities.master_settings_specific import *
 from eProc_Shopping_Cart.context_processors import update_user_info
 from eProc_Upload.Utilities.upload_data.upload_basic_pk_fk_tables import UploadPkFkTables
 from eProc_Upload.Utilities.upload_data.upload_pk_tables import CompareTableHeader, MSG048
-
+JsonParser_obj = JsonParser()
 django_query_instance = DjangoQueries()
 
 
@@ -70,70 +53,83 @@ def create_update_application_data(request):
     """
     update_user_info(request)
     app_data = JsonParser_obj.get_json_from_req(request)
+    application_settings_save_instance = ApplicationSettingsSave()
     if app_data['table_name'] == 'OrgClients':
-        display_data = save_client_data_into_db(app_data)
+        app_data['data'] = check_org_client_data(app_data['data'], 'SAVE')[0]
+        display_data = application_settings_save_instance.save_client_data_into_db(app_data)
         return JsonResponse(display_data, safe=False)
     if app_data['table_name'] == 'UnspscCategories':
-        display_data = save_prodcat_data_into_db(app_data)
-        app_data['data'] = get_valid_unspsc_data(app_data['data'])
+        app_data['data'] = check_unspsc_data(app_data['data'], 'SAVE')[0]
+        display_data = application_settings_save_instance.save_prodcat_data_into_db(app_data)
         return JsonResponse(display_data, safe=False)
     if app_data['table_name'] == 'OrgNodeTypes':
-        display_data = save_orgnode_types_data_into_db(app_data)
-        app_data['data'] = get_valid_org_node_type_data(app_data['data'])
+        app_data['data'] = check_node_type_data(app_data['data'], 'SAVE')[0]
+        display_data = application_settings_save_instance.save_orgnode_types_data_into_db(app_data)
         return JsonResponse(display_data, safe=False)
     if app_data['table_name'] == 'OrgAttributes':
-        display_data = save_orgattributes_data_into_db(app_data)
-        app_data['data'] = get_valid_org_attributes_data(app_data['data'])
+        app_data['data'] = check_orgattributes_data(app_data['data'], 'SAVE')[0]
+        display_data = application_settings_save_instance.save_orgattributes_data_into_db(app_data)
         return JsonResponse(display_data, safe=False)
     if app_data['table_name'] == 'OrgModelNodetypeConfig':
-        display_data = save_orgattributes_level_data_into_db(app_data)
-        app_data['data'] = get_valid_org_nodetype_config_data(app_data['data'])
+        app_data['data'] = check_nodetype_config_data(app_data['data'], 'SAVE')[0]
+        display_data = application_settings_save_instance.save_orgattributes_level_data_into_db(app_data)
         return JsonResponse(display_data, safe=False)
     if app_data['table_name'] == 'AuthorizationObject':
-        display_data = save_authorobject_data_into_db(app_data)
-        app_data['data'] = get_valid_org_authorization_data(app_data['data'])
+        app_data['data'] = check_authorization_object_data(app_data['data'], 'SAVE')[0]
+        display_data = application_settings_save_instance.save_authorobject_data_into_db(app_data)
         return JsonResponse(display_data, safe=False)
     if app_data['table_name'] == 'AuthorizationGroup':
-        display_data = save_auth_group_data_into_db(app_data)
+        app_data['data'] = check_authorization_grp_data(app_data['data'], 'SAVE')[0]
+        display_data = application_settings_save_instance.save_auth_group_data_into_db(app_data)
         return JsonResponse(display_data, safe=False)
     if app_data['table_name'] == 'UserRoles':
-        display_data = save_roles_data_into_db(app_data)
+        app_data['data'] = check_user_role_data(app_data['data'], 'SAVE')[0]
+        display_data = application_settings_save_instance.save_roles_data_into_db(app_data)
         return JsonResponse(display_data, safe=False)
     if app_data['table_name'] == 'Authorization':
-        display_data = save_auth_data_into_db(app_data)
+        app_data['data'] = check_authorization_data(app_data['data'], 'SAVE')[0]
+        display_data = application_settings_save_instance.save_auth_data_into_db(app_data)
         return JsonResponse(display_data, safe=False)
     if app_data['table_name'] == 'DocumentType':
-        display_data = save_documenttype_data_into_db(app_data)
+        app_data['data'] = check_document_type_data(app_data['data'], 'SAVE')[0]
+        display_data = application_settings_save_instance.save_documenttype_data_into_db(app_data)
         return JsonResponse(display_data, safe=False)
     if app_data['table_name'] == 'NumberRanges':
-        display_data = save_number_range_data_into_db(app_data)
+        display_data = application_settings_save_instance.save_number_range_data_into_db(app_data)
         return JsonResponse(display_data, safe=False)
     if app_data['table_name'] == 'TransactionTypes':
-        display_data = save_transactiontype_data_into_db(app_data)
+        display_data = application_settings_save_instance.save_transactiontype_data_into_db(app_data)
         return JsonResponse(display_data, safe=False)
     if app_data['table_name'] == 'AccountAssignmentCategory':
-        display_data = save_actasmt_data_into_db(app_data)
+        app_data['data'] = check_acc_data(app_data['data'], 'SAVE')[0]
+        display_data = application_settings_save_instance.save_actasmt_data_into_db(app_data)
         return JsonResponse(display_data, safe=False)
     if app_data['table_name'] == 'CalenderConfig':
-        display_data = save_calendar_data_into_db(app_data)
+        app_data['data'] = check_calendar_config_data(app_data['data'], 'SAVE')[0]
+        display_data = application_settings_save_instance.save_calendar_data_into_db(app_data)
         return JsonResponse(display_data, safe=False)
     if app_data['table_name'] == 'CalenderHolidays':
-        display_data = save_calendarholiday_data_into_db(app_data)
+        display_data = application_settings_save_instance.save_calendarholiday_data_into_db(app_data)
         return JsonResponse(display_data, safe=False)
     if app_data['table_name'] == 'MessagesId':
-        display_data = save_messageId_data_into_db(app_data)
+        app_data['data'] = check_message_id_data(app_data['data'], 'SAVE')[0]
+        display_data = application_settings_save_instance.save_messageId_data_into_db(app_data)
         return JsonResponse(display_data, safe=False)
     if app_data['table_name'] == 'MessagesIdDesc':
-        display_data = save_messageIdDesc_data_into_db(app_data)
+        app_data['data'] = check_message_id_desc_data(app_data['data'], 'SAVE')[0]
+        display_data = application_settings_save_instance.save_messageIdDesc_data_into_db(app_data)
         return JsonResponse(display_data, safe=False)
     if app_data['table_name'] == 'PoSplitType':
-        display_data = save_po_split_type_into_db(app_data)
+        app_data['data'] = check_po_split_type_data(app_data['data'], 'SAVE')[0]
+        display_data = application_settings_save_instance.save_po_split_type_into_db(app_data)
         return JsonResponse(display_data, safe=False)
     if app_data['table_name'] == 'PoSplitCriteria':
-        display_data = save_po_split_criteria_into_db(app_data)
+        app_data['data'] = check_po_split_creteria_data(app_data['data'], 'SAVE')[0]
+        display_data = application_settings_save_instance.save_po_split_criteria_into_db(app_data)
         return JsonResponse(display_data, safe=False)
     if app_data['table_name'] == 'PurchaseControl':
-        display_data = save_purchase_control_into_db(app_data)
+        app_data['data'] = check_purchase_control_data(app_data['data'], 'SAVE')[0]
+        display_data = application_settings_save_instance.save_purchase_control_into_db(app_data)
         return JsonResponse(display_data, safe=False)
 
 
@@ -145,7 +141,6 @@ def save_app_settings_data(request):
     """
 
     update_user_info(request)
-    client = getClients(request)
     basic_data = JsonParser().get_json_from_req(request)
     Table_name = basic_data['Dbl_clck_tbl_id']
     del basic_data['Dbl_clck_tbl_id']
@@ -154,8 +149,8 @@ def save_app_settings_data(request):
 
     for value in basic_data.values():
         basic_data_list.append(value)
-
-    upload_data_response = save_app_data_into_db(basic_data_list, Table_name, client)
+    upload_data_response = {}
+    # upload_data_response = save_app_data_into_db(basic_data_list, Table_name, client)
     return JsonResponse(upload_data_response, safe=False)
 
 
@@ -207,7 +202,7 @@ def save_catalog_data(request):
                 Catalogs.objects.filter(catalog_id=data['catalog_id'], name=data['name'],
                                         description=data['description'],
                                         product_type=data['product_type']).exists()):
-            obj, created = Catalogs.objects.update_or_create(client=OrgClients.objects.get(client=getClients(request)),
+            obj, created = Catalogs.objects.update_or_create(client=OrgClients.objects.get(client=global_variables.GLOBAL_CLIENT),
                                                              catalog_guid=guid_generator(),
                                                              catalog_id=data['catalog_id'],
                                                              name=data['name'],
@@ -223,7 +218,7 @@ def save_productservice_data(request):
     :param request:
     :return:
     """
-    client = getClients(request)
+    client = global_variables.GLOBAL_CLIENT
     product_data = JsonParser_obj.get_json_from_req(request)
     product_not_exist: object = ProductsDetail.objects.filter(del_ind=False).exclude(
         product_id__in=[product['product_id'] for product in product_data])
@@ -273,7 +268,7 @@ def check_data_fk(request):
         table_data__array = JsonParser_obj.get_json_from_req(request)
         popup_data_list = table_data__array['data_list']
         db_header_data = table_data__array['db_header_data']
-        client = getClients(request)
+        client = global_variables.GLOBAL_CLIENT
         print(client)
         check_data_class = UploadPkFkTables()
         check_data_class.app_name = table_data__array['appname']
@@ -403,4 +398,111 @@ def update_po_criteria_dropdown(request):
 
     """
     data = get_product_criteria()
-    return JsonResponse(data,safe=False)
+    return JsonResponse(data, safe=False)
+
+
+def get_dropdown_data(request):
+    update_user_info(request)
+    master_data = JsonParser_obj.get_json_from_req(request)
+    if master_data['table_name'] == 'UnspscCategoriesCust':
+        data = get_unspsc_drop_down()
+        return JsonResponse(data, safe=False)
+    if master_data['table_name'] == 'UnspscCategoriesCustDesc':
+        data = get_unspscdesc_drop_down()
+        return JsonResponse(data, safe=False)
+    if master_data['table_name'] == 'AccountingData':
+        data = get_acc_value_dropdown()
+        return JsonResponse(data, safe=False)
+    if master_data['table_name'] == 'AccountingDataDesc':
+        data = get_acc_value_desc_dropdown()
+        return JsonResponse(data, safe=False)
+    if master_data['table_name'] == 'DetermineGLAccount':
+        data = get_gl_acc_dropdown()
+        return JsonResponse(data, safe=False)
+    if master_data['table_name'] == 'WorkflowSchema':
+        data = get_workflowschema_drop_down()
+        return JsonResponse(data, safe=False)
+    if master_data['table_name'] == 'ApproverType':
+        data = get_approver_type_drop_down()
+        return JsonResponse(data, safe=False)
+    if master_data['table_name'] == 'SpendLimitId':
+        data = get_spendlimitid_dropdown()
+        return JsonResponse(data, safe=False)
+    if master_data['table_name'] == 'SpendLimitValue':
+        data = get_spendlimitvalue_dropdown()
+        return JsonResponse(data, safe=False)
+    if master_data['table_name'] == 'ApproverLimit':
+        data = get_approverid_dropdown()
+        return JsonResponse(data, safe=False)
+    if master_data['table_name'] == 'ApproverLimitValue':
+        data = get_approvervalue_dropdown()
+        return JsonResponse(data, safe=False)
+    if master_data['table_name'] == 'WorkflowACC':
+        data = get_workflowacc_dropdown()
+        return JsonResponse(data, safe=False)
+    if master_data['table_name'] == 'OrgAddress':
+        data = get_orgaddress_dropdown()
+        return JsonResponse(data, safe=False)
+    if master_data['table_name'] == 'OrgAddressMap':
+        data = get_orgaddtype_dropdown()
+        return JsonResponse(data, safe=False)
+    if master_data['table_name'] == 'Payterms_desc':
+        data = get_paymentdesc_dropdown()
+        return JsonResponse(data, safe=False)
+    if master_data['table_name'] == 'OrgNodeTypes':
+        data = node_type_dropdown()
+        return JsonResponse(data, safe=False)
+    if master_data['table_name'] == 'OrgAttributes':
+        data = org_attr_dropdown()
+        return JsonResponse(data, safe=False)
+    if master_data['table_name'] == 'OrgModelNodetypeConfig':
+        data = orgattr_level_dropdown()
+        return JsonResponse(data, safe=False)
+    if master_data['table_name'] == 'AuthorizationObject':
+        data = auth_object_dropdown()
+        return JsonResponse(data, safe=False)
+    if master_data['table_name'] == 'AuthorizationGroup':
+        data = auth_grp_dropdown()
+        return JsonResponse(data, safe=False)
+    if master_data['table_name'] == 'UserRoles':
+        data = user_roles_dropdown()
+        return JsonResponse(data, safe=False)
+    if master_data['table_name'] == 'Authorization':
+        data = authorization_dropdown()
+        return JsonResponse(data, safe=False)
+    if master_data['table_name'] == 'DocumentType':
+        data = document_dropdown()
+        return JsonResponse(data, safe=False)
+    if master_data['table_name'] == 'TransactionTypesFC':
+        data = transaction_fc_dropdown()
+        return JsonResponse(data, safe=False)
+    if master_data['table_name'] == 'TransactionTypesSC':
+        data = transaction_sc_dropdown()
+        return JsonResponse(data, safe=False)
+    if master_data['table_name'] == 'TransactionTypesPO':
+        data = transaction_po_dropdown()
+        return JsonResponse(data, safe=False)
+    if master_data['table_name'] == 'TransactionTypesGV':
+        data = transaction_gv_dropdown()
+        return JsonResponse(data, safe=False)
+    if master_data['table_name'] == 'AccountAssignmentCategory':
+        data = accasscat_dropdown()
+        return JsonResponse(data, safe=False)
+    if master_data['table_name'] == 'CalenderConfig':
+        data = calendar_dropdown()
+        return JsonResponse(data, safe=False)
+    if master_data['table_name'] == 'MessagesId':
+        data = msgid_dropdown()
+        return JsonResponse(data, safe=False)
+    if master_data['table_name'] == 'MessagesIdDesc':
+        data = msgdesc_dropdown()
+        return JsonResponse(data, safe=False)
+    if master_data['table_name'] == 'PoSplitType':
+        data = po_split_type_dropdown()
+        return JsonResponse(data, safe=False)
+    if master_data['table_name'] == 'PoSplitCriteria':
+        data = posplit_criteria_dropdown()
+        return JsonResponse(data, safe=False)
+    if master_data['table_name'] == 'PurchaseControl':
+        data = purchase_control_dropdown()
+        return JsonResponse(data, safe=False)

@@ -30,8 +30,10 @@ from eProc_Basic.Utilities.functions.django_query_set import DjangoQueries
 from eProc_Basic.Utilities.functions.messages_config import get_msg_desc, get_message_desc
 from eProc_Basic.Utilities.global_defination import global_variables
 from eProc_Basic.Utilities.messages.messages import MSG172, MSG173, MSG174, MSG175, MSG176, MSG188
+from eProc_Configuration.models.application_data import WorkflowSchema
 from eProc_Configuration.models.development_data import AuthorizationObject, AccountAssignmentCategory, Authorization, \
     AuthorizationGroup
+from eProc_Configuration.models.master_data import WorkflowACC
 from eProc_Form_Builder.models.form_builder import EformData
 from eProc_Configuration.models import *
 from django.core.exceptions import ObjectDoesNotExist
@@ -119,7 +121,7 @@ class AuthorizationLevel:
         """
         slide_menu = dict.fromkeys([CONST_WORK_OVERVIEW, CONST_USER_SETTINGS, CONST_APPL_SETTINGS, CONST_SHOPPING,
                                     CONST_SHOPPING_PLUS, CONST_GOODS_RECEIPTS, CONST_APPROVALS, CONST_PURCHASING,
-                                    CONST_ADMIN_TOOL, CONST_SYSTEM_SETTINGS, CONST_CONTENT_MANAGEMENT], False)
+                                    CONST_ADMIN_TOOL, CONST_SYSTEM_SETTINGS, CONST_CONTENT_MANAGEMENT,CONST_TIME_SHEET], False)
 
         auth_feature = self.get_auth_level_id(auth_level)
         for auth_feature_value in auth_feature:
@@ -134,7 +136,7 @@ class AuthorizationLevel:
              CONST_GROUP_CATEGORY, CONST_CHANGE_PO, CONST_PERSONAL_SETTINGS, CONST_PURCHASE_SETTINGS,
              CONST_FORM_BUILDER, CONST_ORG_MODEL, CONST_CONFIRMATION, CONST_CANCELLATION, CONST_RETURN_DELIVERY,
              CONST_WORK_FLOW_ITEMS, CONST_PRODUCT_AND_SERVICE_CONFIG, CONST_CATALOG_CONFIG, CONST_BASIC_SETTINGS,
-             CONST_CONFIG_HOME, CONST_APPLICATION_MONITOR], False)
+             CONST_CONFIG_HOME, CONST_APPLICATION_MONITOR,CONST_PROJECTS,CONST_EFFORTS], False)
         auth_feature = self.get_auth_level_id(auth_level)
         for auth_feature_value in auth_feature:
             sub_menu[auth_feature_value] = True
@@ -152,15 +154,15 @@ class AuthorizationLevel:
             global_variables.GLOBAL_PURCHASER_FLAG = True
 
         auth_grp = django_query_instance.django_filter_value_list_query(Authorization, {
-            'role__in': user_role, 'client': global_variables.GLOBAL_CLIENT
+            'role__in': user_role, 'client': global_variables.GLOBAL_CLIENT,'del_ind':False
         }, 'auth_obj_grp')
 
         auth_obj_id = django_query_instance.django_filter_value_list_query(AuthorizationGroup, {
-            'auth_obj_grp__in': auth_grp, 'auth_level': auth_level
+            'auth_obj_grp__in': auth_grp, 'auth_level': auth_level,'del_ind':False
         }, 'auth_obj_id')
 
         auth_feature = django_query_instance.django_filter_value_list_query(AuthorizationObject, {
-            'auth_obj_id__in': auth_obj_id, 'auth_level': auth_level
+            'auth_obj_id__in': auth_obj_id, 'auth_level': auth_level,'del_ind':False
         }, 'auth_level_ID')
 
         return auth_feature

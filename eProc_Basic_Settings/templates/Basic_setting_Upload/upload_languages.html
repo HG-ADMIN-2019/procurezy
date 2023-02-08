@@ -19,10 +19,10 @@
                     <i class="fas fa-cloud-upload-alt"></i> upload data
                 </button>
 
-                <button type="button" id="id_add_data" value="ADD" class="btn btn-primary"  title="Add Language" data-toggle="modal" data-target="#myModal" onclick="onclick_add_button(this)">
+                <button type="button" id="id_add_data" value="ADD" class="btn btn-primary"  title="Add Language" data-toggle="modal" data-target="#languageModal" onclick="onclick_add_button(this)">
                     <i class="fa fa-plus"></i> add language
                 </button>
-                 <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"  onclick="GetReferrer();">
+                 <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"  onclick="window_close();">
                     <i class="fas fa-times"></i> close
                 </button>
             </div>
@@ -84,7 +84,7 @@
 
     <!--modal popup for Add,copy,update and upload-->  
     <!-- The Modal -->
-    <div class="modal fade" id="myModal" style="overflow:auto;">
+    <div class="modal fade" id="languageModal" style="overflow:auto;">
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content">
 
@@ -162,606 +162,357 @@
     </div>
 </div>
 
+<script>
+    var basic_settings = '{{basic_settings|safe}}';
+    var rendered_language_data = {{upload_languages|safe}};
+    var language_data_array = {}
+    var main_table_language_value = [];
+    var language = '';
+    var edit_basic_data = '';
+    var GLOBAL_ACTION = '';
+    var no_duplicate_entries = 'Y'
+    var Tablename = uiConstants["CONST_TABLENAME_LANGUAGE"]
+    var appname = uiConstants["CONST_APPNAME01"]
+    var db_header_data = uiConstants["LANGUAGE_ID", "DESCRIPTION", "del_ind"]
 
-    <script>
-
-        var basic_settings = '{{basic_settings|safe}}';
-        var rendered_language_data = {{upload_languages|safe}};
-        var language_data_array = {}
-        var main_table_language_value = [];
-        var language = '';
-        var edit_basic_data = '';
-        var GLOBAL_ACTION = '';
-        var no_duplicate_entries = 'Y'
-        var Tablename = uiConstants["CONST_TABLENAME_LANGUAGE"]
-        var appname = uiConstants["CONST_APPNAME01"]
-        var db_header_data = uiConstants["LANGUAGE_ID", "DESCRIPTION", "del_ind"]
-
-
-        //onclick of data Upload copy data to modal pop-up
-        function onclick_display_csv_data() {
-           $("#error_msg_id").css("display", "none")
-            $('#id_popup_table').DataTable().destroy();
-            formdata = new FormData();
-            attached_file = $('#id_file_data_upload').prop('files')[0]
+    //onclick of data Upload copy data to modal pop-up
+    function onclick_display_csv_data() {
+        $("#error_msg_id").css("display", "none")
+        $('#id_popup_table').DataTable().destroy();
+        formdata = new FormData();
+        attached_file = $('#id_file_data_upload').prop('files')[0]
+        if(attached_file == undefined){
+           display_file_select_error(); // Display error message if no file is selected
+        }
+        else {
             file_extension = (attached_file.name).split(".")[1]
             file_extension = file_extension.toUpperCase();
-
             if(file_extension == 'CSV'){
                 formdata.append("file_attach", attached_file);
                 formdata.append("Tablename",Tablename);
                 formdata.append("appname",appname);
-            $('#id_data_upload').modal('hide');
-            $('#id_popup_tbody').empty();
-            OpenLoaderPopup();
-            $.ajax({
-                type: 'POST',
-                url: "{% url 'eProc_Basic_Settings:data_upload' %}",
-                data: formdata,
-                contentType: "application/json; charset=utf-8",
-                success: function(response) {
-                    if(response.error_message){
-                        $("#id_error_msg_upload").prop("hidden",false)
-                        document.getElementById("id_error_msg_upload").innerHTML = response.error_message;
-                        document.getElementById("id_error_msg_upload").style.color = "Red";
-                        $('#id_data_upload').modal('show');
-                    } 
-                    else {
-                        language_data_array = response.data;
-                        var edit_basic_data = '';
-                        var del_ind = '';
-                        $("#id_popup_tbody").empty();
-                        $.each(response.data, function(i, value) {
-                            del_ind = '<td>' + value[2] + '</td>'
-                            if (value[2] == 1) {
-                                del_ind = ' <input type="checkbox" value="' + value[2] + '" checked>'
-                            } else {
-                                del_ind = '<input type="checkbox" value="' + value[2] + '" required>'
-                            }
-                            edit_basic_data += '<tr ><td class="class_select_checkbox"><input type="checkbox" required></td><td><input class="form-control" type="text" value="' + value[0] + '" maxlength="2" onkeypress="return /[a-z]/i.test(event.key)" required></td><td><input type="text" class="form-control" value="' + value[1] + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td><td>' + del_ind + '</td></tr>';
-                        });
-                        $('#id_popup_tbody').append(edit_basic_data);
-                        $("#id_del_ind_checkbox").prop("hidden", false);
-                        $(".class_del_checkbox").prop("hidden", false);
-                        $( "#header_select").prop( "hidden", false );
-                        $('#myModal').modal('show');
-                        $('#id_data_upload').modal('hide');
-                        document.getElementById("id_del_add_button").style.display = "block";
-                        $('#id_check_data').show();
-                        $("#id_check_data").prop("hidden", false);
-                        $("#save_id").prop("hidden", true);
-                        table_sort_filter('id_popup_table')
-                    }
-                     CloseLoaderPopup();
-                  
-                },
-                cache: false,
-                processData: false,
-                contentType: false,
+                $('#id_data_upload').modal('hide');
+                $('#id_popup_tbody').empty();
+                OpenLoaderPopup();
+                $.ajax({
+                    type: 'POST',
+                    url: "{% url 'eProc_Basic_Settings:data_upload' %}",
+                    data: formdata,
+                    contentType: "application/json; charset=utf-8",
+                    success: function(response) {
+                        if(response.error_message){
+                            $("#id_error_msg_upload").prop("hidden",false)
+                            document.getElementById("id_error_msg_upload").innerHTML = response.error_message;
+                            document.getElementById("id_error_msg_upload").style.color = "Red";
+                            $('#id_data_upload').modal('show');
+                        }
+                        else {
+                            language_data_array = response.data;
+                            var edit_basic_data = '';
+                            var del_ind = '';
+                            $("#id_popup_tbody").empty();
+                            $.each(response.data, function(i, value) {
+                                del_ind = '<td>' + value[2] + '</td>'
+                                if (value[2] == 1) {
+                                    del_ind = ' <input type="checkbox" value="' + value[2] + '" checked>'
+                                } else {
+                                    del_ind = '<input type="checkbox" value="' + value[2] + '" required>'
+                                }
+                                edit_basic_data += '<tr ><td class="class_select_checkbox"><input type="checkbox" required></td><td><input class="form-control" type="text" value="' + value[0] + '" maxlength="2" onkeypress="return /[a-z]/i.test(event.key)" required></td><td><input type="text" class="form-control" value="' + value[1] + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td><td>' + del_ind + '</td></tr>';
+                            });
+                            $('#id_popup_tbody').append(edit_basic_data);
+                            $("#id_del_ind_checkbox").prop("hidden", false);
+                            $(".class_del_checkbox").prop("hidden", false);
+                            $( "#header_select").prop( "hidden", false );
+                            $('#languageModal').modal('show');
+                            $('#id_data_upload').modal('hide');
+                            document.getElementById("id_del_add_button").style.display = "block";
+                            $('#id_check_data').show();
+                            $("#id_check_data").prop("hidden", false);
+                            $("#save_id").prop("hidden", true);
+                            table_sort_filter('id_popup_table')
+                        }
+                        CloseLoaderPopup();
 
-            });
-        }
-        else{
-        $("#id_error_msg_upload").prop("hidden",false)
+                    },
+                    cache: false,
+                    processData: false,
+                    contentType: false,
 
-                    var msg = "JMSG110";
-                    var msg_type ;
-                  msg_type = message_config_details(msg);
-                  $("#error_msg_id").prop("hidden", false)
-
-                  if(msg_type.message_type == "ERROR"){
-                        display_message("error_msg_id", msg_type.messages_id_desc)
-                  }
-                  else if(msg_type.message_type == "WARNING"){
-                     display_message("id_warning_msg_id", msg_type.messages_id_desc)
-                  }
-                  else if(msg_type.message_type == "INFORMATION"){
-                     display_message("id_info_msg_id", msg_type.messages_id_desc)
-                  }
-                  var display = msg_type.messages_id_desc;
-                 document.getElementById("id_error_msg_upload").innerHTML = display;
-
-        document.getElementById("id_error_msg_upload").style.color = "Red";
-        $('#id_data_upload').modal('show');
-    }
-}
-        
-
-        // validate and save for add,copy,update and upload data
-        function popup_save_data() {
-            $('#success_msg_id').empty()
-            $('#id_popup_table').DataTable().destroy();
-            var main_table_low_value = [];
-            no_duplicate_entries = 'Y'
-            no_duplicate_value = 'Y'
-            var error_message = '';
-            $('#display_basic_table').DataTable().destroy();
-            $("#display_basic_table TBODY TR").each(function() {
-                var row = $(this);
-                var main_attribute = {};
-                main_attribute.language_id = row.find("TD").eq(1).html();
-                main_table_low_value.push(main_attribute.language_id);
-            });
-            table_sort_filter('display_basic_table');
-            [no_duplicate_value,error_message] = compare_table_for_duplicate_entries(validate_add_attributes,language_data)
-            if (error_message){
-                display_error_message(error_message)
+                });
             }
             else{
-                if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
-                    [no_duplicate_entries,error_message]  = maintable_validation(validate_add_attributes,main_table_low_value)
-                }
-                if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
-                    var add_basic_data = '';
-                    var language_data_array = language_data;
-                    $('#id_save_confirm_popup').modal('hide');
-                    data = {'data':language_data,'table_name':'Languages','action':GLOBAL_ACTION}
-                     OpenLoaderPopup();
-                    $.ajax({
-                        type: 'POST',
-                        url: "{% url 'eProc_Basic_Settings:create_update_basic_data' %}",
-                        data: JSON.stringify(data),
-                        contentType: "application/json; charset=utf-8",
-                        dataType: "json",
-                        success: function(Response) {
-                            console.log(Response)
-                            console.log(Response[0])
-                            rendered_language_data = Response[0];
-                            display_basic_db_data();
-                            $('#success_msg_id').text(Response[1])
-                            if(Response[1].message_type== 'SUCCESS'){
-                                     $('#success_msg_id').text(Response[1].message_desc)
-                            }
-                            $("#err_msg_app_settings_t").prop("hidden", false)
-                            table_sort_filter('id_popup_table');
-<!--                            setTimeout(function() {-->
-<!--                                $("#err_msg_app_settings_t").prop("hidden", true);-->
-<!--                            }, 5000)-->
-                            message_display_time();
-                            table_sort_filter('id_popup_table');
-                            CloseLoaderPopup();
-                        }
-
-                    });
-
-                }
-                else if (error_message){
-                    display_error_message(error_message)
-
-                }
+               display_file_select_error(); // Display error message for file selection except .csv
             }
-        }    
-        
-
-        //***************************
-        //delete the selected row in db................
-        var main_table_language_checked = [];
-        
-        function main_table_delete() {
-            $('#success_msg_id').empty()
-            GLOBAL_ACTION = 'DELETE'
-            main_table_language_checked = [];
-            $('#display_basic_table').DataTable().destroy();
-            $("#display_basic_table TBODY TR").each(function() {
-                var row = $(this);
-                var language_arr_obj = {};
-                language_arr_obj.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
-                if(language_arr_obj.del_ind){
-                    language_arr_obj.language_id = row.find("TD").eq(1).html();
-                    language_arr_obj.description = row.find("TD").eq(2).html();
-                    main_table_language_checked.push(language_arr_obj);
-                }
-            });
-            $('#id_delete_confirm_popup').modal('hide');
-            data = {'data':main_table_language_checked,'table_name':'Languages','action':GLOBAL_ACTION}
-             OpenLoaderPopup();
-            $.ajax({
-                type: 'POST',
-                url: "{% url 'eProc_Basic_Settings:create_update_basic_data' %}",
-                data: JSON.stringify(data),
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                success: function(Response) {
-                    rendered_language_data = Response[0];
-                    display_basic_db_data();
-                    $('#success_msg_id').text(Response[1])
-                     if(Response[1].message_type== 'SUCCESS'){
-                         $('#success_msg_id').text(Response[1].message_desc)
-                     }
-                    $("#err_msg_app_settings_t").prop("hidden",false)
-                    table_sort_filter('id_popup_table');
-<!--                    setTimeout(function(){$("#err_msg_app_settings_t").prop("hidden",true);},5000)-->
-                    message_display_time();
-                    table_sort_filter('id_popup_table');
-                    CloseLoaderPopup();
-                 }
-
-            });
         }
-        
-        //check function restricting special char and diaplay the data count of csv file
-        //var DB_count = {{DB_count|safe}};
-        function check_data() {
-            $('#id_popup_table').DataTable().destroy();
-            $("#id_check_success_messages").empty()
-            $("#id_check_error_messages").empty()
-            $("#id_check_success_messages").prop("hidden", true)
-            $("#id_check_error_messages").prop("hidden", true)
-            $("#id_check_special_character_messages").prop("hidden", true)
-            document.getElementById("id_error_msg_language_id").innerHTML = "";
-            document.getElementById("id_error_msg_description").innerHTML = "";
-            document.getElementById("id_error_msg_language_length").innerHTML = "";
-            count = 0;
-            var language_array = new Array
-            var DB_array = new Array
-            var language_list = new Array
-            var language_id_check = new Array
-            del_ind = ''
-
-            $("#id_popup_table TBODY TR").each(function() {
-                var row = $(this);
-
-                //*************** reading data from the pop-up ***************
-                description = row.find("TD").eq(2).find('input[type="text"]').val().toUpperCase();
-                language_id = row.find("TD").eq(1).find('input[type="text"]').val().toUpperCase();
-                checked_box = row.find("TD").eq(3).find('input[type="checkbox"]').is(':checked')
-                if (checked_box){
-                    del_ind = '1'
-                } else {
-                    del_ind = '0'
-                }
-                language_list.push([language_id, description, del_ind])
-                var format = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
-
-                //*************** checking for max length for language code (max length = 2) ***************
-                if (language_id.length > 2) {
-                         
-                            var msg = "JMSG004";
-                            var msg_type ;
-                          msg_type = message_config_details(msg);
-                          $("#error_msg_id").prop("hidden", false)
-
-                          if(msg_type.message_type == "ERROR"){
-                                display_message("error_msg_id", msg_type.messages_id_desc)
-                          }
-                          else if(msg_type.message_type == "WARNING"){
-                             display_message("id_warning_msg_id", msg_type.messages_id_desc)
-                          }
-                          else if(msg_type.message_type == "INFORMATION"){
-                             display_message("id_info_msg_id", msg_type.messages_id_desc)
-                          }
-                           var display8 = msg_type.messages_id_desc;
-                          document.getElementById("id_error_msg_language_length").innerHTML = display8+ "Language Id";
-
-                    $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
-                    count = count + 1;
-                }
-
-                //*************** checking for special characters for language id ***************
-                else if (format.test(language_id)) {
-                        
-                            var msg = "JMSG003";
-                            var msg_type ;
-                          msg_type = message_config_details(msg);
-                          $("#error_msg_id").prop("hidden", false)
-
-                          if(msg_type.message_type == "ERROR"){
-                                display_message("error_msg_id", msg_type.messages_id_desc)
-                          }
-                          else if(msg_type.message_type == "WARNING"){
-                             display_message("id_warning_msg_id", msg_type.messages_id_desc)
-                          }
-                          else if(msg_type.message_type == "INFORMATION"){
-                             display_message("id_info_msg_id", msg_type.messages_id_desc)
-                          }
-                          var display8 = msg_type.messages_id_desc;
-                           document.getElementById("id_error_msg_language_id").innerHTML = display8+ "Language Id";
-
-                    $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
-                    count = count + 1;
-                } else {
-                    $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "none");
-                }
-
-                //*************** checking for special characters for description  ***************
-                if (format.test(description)) {
-                          
-                            var msg = "JMSG003";
-                            var msg_type ;
-                          msg_type = message_config_details(msg);
-                          $("#error_msg_id").prop("hidden", false)
-
-                          if(msg_type.message_type == "ERROR"){
-                                display_message("error_msg_id", msg_type.messages_id_desc)
-                          }
-                          else if(msg_type.message_type == "WARNING"){
-                             display_message("id_warning_msg_id", msg_type.messages_id_desc)
-                          }
-                          else if(msg_type.message_type == "INFORMATION"){
-                             display_message("id_info_msg_id", msg_type.messages_id_desc)
-                          }
-                          var display8 = msg_type.messages_id_desc;
-                          document.getElementById("id_error_msg_description").innerHTML = display8+ "Language Id";
-
-                    $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "1px solid #FF0000");
-                    count = count + 1;
-                } else {
-                    $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "none");
-                }
-                //********************************************
-                if (language_id_check.includes(language_id)) {
-                   $(row).css("border", "#f8d7da");
-                        // "background-color": "#E0FFFF",
-                        // "border": "1px solid #000000"
-                   
-
-
-                } else {
-                    $(row).css("border", "");
-                }
-                language_id_check.push(language_id)
-            });
-
-            //*************** shows save button if there are no errors(special characters and max length) ***************
-            if (count == 0) {
-                $("#id_check_special_character_messages").prop("hidden", true)
-                $("#save_id").prop("hidden", false);
-            }
-            popup_data_dict = {
-                'data_list': language_list,
-                'Tablename': Tablename,
-                'appname': appname,
-                'db_header_data': ["LANGUAGE_ID", "DESCRIPTION", "del_ind"]
-            }
-             OpenLoaderPopup();
-            $.ajax({
-                type: 'POST',
-                url: "{% url 'eProc_Basic_Settings:check_data' %}",
-                data: JSON.stringify(popup_data_dict),
-                success: function(response) {
-                    table_sort_filter_popup_pagination('id_popup_table')
-                    $("#id_check_special_character_messages").prop("hidden", false)
-                    if (count == 0) {
-                        $("#id_check_special_character_messages").prop("hidden", true)
-                    }
-
-                    //*************** retrieving data counts from views ***************
-                    check_messages = response
-                    var newArrayDataOfOjbect = Object.values(check_messages)
-                    $("#id_check_success_messages").prop("hidden", false)
-                  //*************** if pop-up data count is greater than zero ***************
-                    if (newArrayDataOfOjbect[1] > 0) {
-
-                            
-                             var msg = "JMSG010";
-                             var msg_type ;
-                             msg_type = message_config_details(msg);
-                             $("#error_msg_id").prop("hidden", false)
-                             var display = msg_type.messages_id_desc;
-
-                        $("#id_check_success_messages").append('<p>' + display + newArrayDataOfOjbect[0] + '</p>')
-
-                            
-                             var msg = "JMSG011";
-                             var msg_type ;
-                             msg_type = message_config_details(msg);
-                             $("#error_msg_id").prop("hidden", false)
-                             var display1 = msg_type.messages_id_desc;
-
-                        $("#id_check_success_messages").append('<p>' + display1 + newArrayDataOfOjbect[1] + '</p>')
-
-                            
-                             var msg = "JMSG012";
-                             var msg_type ;
-                             msg_type = message_config_details(msg);
-                             $("#error_msg_id").prop("hidden", false)
-                             var display2 = msg_type.messages_id_desc;
-                        $("#id_check_success_messages").append('<p>' + display2 + newArrayDataOfOjbect[3] + '</p>')
-                                
-                                 var msg = "JMSG013";
-                                 var msg_type ;
-                                 msg_type = message_config_details(msg);
-                                 $("#error_msg_id").prop("hidden", false)
-                                 var display3 = msg_type.messages_id_desc;
-                        $("#id_check_success_messages").append('<p>' + display3 + newArrayDataOfOjbect[4] + '</p>')
-                                
-                                 var msg = "JMSG014";
-                                 var msg_type ;
-                                 msg_type = message_config_details(msg);
-                                 $("#error_msg_id").prop("hidden", false)
-                                 var display4 = msg_type.messages_id_desc;
-                        $("#id_check_success_messages").append('<p>' + display4 + newArrayDataOfOjbect[5] + '</p>')
-                                
-                                 var msg = "JMSG053";
-                                 var msg_type ;
-                                 msg_type = message_config_details(msg);
-                                 $("#error_msg_id").prop("hidden", false)
-                                 var display5 = msg_type.messages_id_desc;
-	   				  $("#id_check_success_messages").append('<p>' + display5 + newArrayDataOfOjbect[6] + '</p>')
-                         //*************** if duplicate data data count is greater than zero ***************
-                        if(newArrayDataOfOjbect[2]>0){
-                            $("#id_check_error_messages").prop("hidden",false)
-                               
-                                 var msg = "JMSG015";
-                                 var msg_type ;
-                                 msg_type = message_config_details(msg);
-                                 $("#error_msg_id").prop("hidden", false)
-                                 var display6 = msg_type.messages_id_desc;
-                            $("#id_check_error_messages").append('<p>' + display6 + newArrayDataOfOjbect[2] + '</p>')
-                                
-                                 var msg = "JMSG001";
-                                 var msg_type ;
-                                 msg_type = message_config_details(msg);
-                                 $("#error_msg_id").prop("hidden", false)
-                                 var display7 = msg_type.messages_id_desc;
-                            $("#id_check_error_messages").append('<p style = "font-weight: bold;">' + display7 + ' </p>')
-                            $("#save_id").prop("hidden", true);
-                            $("#id_delete_duplicate").show()
-                        }
-                        else{
-                            $("#id_check_error_messages").prop("hidden",true)
-                            $("#id_delete_duplicate").hide()
-                        }
-                    }
-                    //*************** if pop-up data count is zero ***************
-                    else {
-                        $("#id_check_success_messages").hide()
-                        $("#id_check_error_messages").prop("hidden", false)
-                               
-                                 var msg = "JMSG006";
-                                 var msg_type ;
-                                 msg_type = message_config_details(msg);
-                                 $("#error_msg_id").prop("hidden", false)
-                                 var display8 = msg_type.messages_id_desc;
-                        $("#id_check_error_messages").append('<p>' + display8 + '</p>')
-                        $("#save_id").prop("hidden", true);
-                    }
-                     CloseLoaderPopup();
-
-                }
-            });
-        }
-
-        //**********************************************
-        function GetReferrer() {
-             window.history.back();
-              var preUrl = document.referrer;
-              console.log(preUrl);
-              window.open('', '_self', '').close();
-<!--               var win = window.open(preUrl);-->
-<!--                win.focus();-->
-              if (preUrl == null)
-                     return "The previous page url is empty";
-               else
-                     return preUrl;
-       }
-
-// validating the  popup table for duplicate entries
-function compare_table_for_duplicate_entries(validate_add_attributes, language) {
-    add_attr_duplicates = false;
-    var error_message = ''
-    var add_attr_duplicates_list = [];
-    var add_attr_unique_list = [];
-    var no_duplicate_value = 'Y'
-    $.each(validate_add_attributes, function(index, value) {
-        if ($.inArray(value, add_attr_unique_list) == -1) {
-            add_attr_unique_list.push(value);
-        } else {
-                if ($.inArray(value, add_attr_duplicates_list) == -1) {
-                    add_attr_duplicates_list.push(value);
-                }
-        }
-    });
-    if (add_attr_duplicates_list.length != 0) {
-        //error_message = messageConstants["JMSG001"];
-        
-                var msg = "JMSG001";
-                var msg_type ;
-              msg_type = message_config_details(msg);
-              $("#error_msg_id").prop("hidden", false)
-
-              if(msg_type.message_type == "ERROR"){
-                    display_message("error_msg_id", msg_type.messages_id_desc)
-              }
-              else if(msg_type.message_type == "WARNING"){
-                 display_message("id_warning_msg_id", msg_type.messages_id_desc)
-              }
-              else if(msg_type.message_type == "INFORMATION"){
-                 display_message("id_info_msg_id", msg_type.messages_id_desc)
-              }
-                no_duplicate_value = 'N'
-                return [no_duplicate_value,error_message]
-
     }
-    else{
-        $.each(language, function (i, item) {
-            if (item.language_id.length == 0) {
-               
-                var msg = "JMSG002";
-                var msg_type ;
-              msg_type = message_config_details(msg);
-              $("#error_msg_id").prop("hidden", false)
-
-              if(msg_type.message_type == "ERROR"){
-                    display_message("error_msg_id", msg_type.messages_id_desc)
-              }
-              else if(msg_type.message_type == "WARNING"){
-                 display_message("id_warning_msg_id", msg_type.messages_id_desc)
-              }
-              else if(msg_type.message_type == "INFORMATION"){
-                 display_message("id_info_msg_id", msg_type.messages_id_desc)
-              }
-
-              error_message = messageConstants["JMSG002"]+ "Language ID";
-
-                no_duplicate_value = 'N'
-                return [no_duplicate_value,error_message]
-
+        
+    // validate and save for add,copy,update and upload data
+    function popup_save_data() {
+        $('#success_msg_id').empty();
+        $('#id_popup_table').DataTable().destroy();
+        no_duplicate_entries = 'Y'
+        no_duplicate_value = 'Y'
+        var error_message = '';
+        get_main_table_data(); //Read data from main table
+        // compare for duplicates in popup
+        [no_duplicate_value,error_message] = compare_table_for_duplicate_entries(validate_add_attributes,language_data)
+        if (error_message){
+            display_error_message(error_message)
+        }
+        else{
+            if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
+                // compare main table and pop up for duplicate values
+                [no_duplicate_entries,error_message]  = maintable_validation(validate_add_attributes,main_table_low_value)
+                if(no_duplicate_entries == 'N'){
+                    $('#languageModal').modal('show');
+                }
             }
-            if (item.description.length == 0) {
-                //error_message = messageConstants["JMSG002"]+ "Language Name";
-                    
-                var msg = "JMSG002";
-                var msg_type ;
-              msg_type = message_config_details(msg);
-              $("#error_msg_id").prop("hidden", false)
+            if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
+                var add_basic_data = '';
+                var language_data_array = language_data;
+                $('#id_save_confirm_popup').modal('hide');
+                data = {'data':language_data,'table_name':'Languages','action':GLOBAL_ACTION}
+                OpenLoaderPopup();
+                $.ajax({
+                    type: 'POST',
+                    url: "{% url 'eProc_Basic_Settings:create_update_basic_data' %}",
+                    data: JSON.stringify(data),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function(Response) {
+                        rendered_language_data = Response[0];
+                        display_basic_db_data();
+                        $('#languageModal').modal('hide');
+                        success_response(Response); // Function call to display response data
+                        $("#id_check_data").prop("hidden", true);
+                        CloseLoaderPopup();
+                    }
+                });
+            }
+            else if (error_message){
+                display_error_message(error_message)
+            }
+        }
+    }    
+        
+    //delete the selected row in db................
+    var main_table_language_checked = [];
+    function main_table_delete() {
+        $('#success_msg_id').empty()
+        GLOBAL_ACTION = 'DELETE'
+        main_table_language_checked = [];
+        $('#display_basic_table').DataTable().destroy();
+        get_selected_row_data(); // Function call to get the selected row data
+        $('#id_delete_confirm_popup').modal('hide');
+        data = {'data':main_table_language_checked,'table_name':'Languages','action':GLOBAL_ACTION}
+        OpenLoaderPopup();
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'eProc_Basic_Settings:create_update_basic_data' %}",
+            data: JSON.stringify(data),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function(Response) {
+                rendered_language_data = Response[0];
+                display_basic_db_data();
+                success_response(Response);  // Display Response data
+                CloseLoaderPopup();
+            }
+        });
+    }
+        
+    //check function restricting special char and diaplay the data count of csv file
+    //var DB_count = {{DB_count|safe}};
+    function check_data() {
+        $('#id_popup_table').DataTable().destroy();
+        $("#id_check_success_messages").empty()
+        $("#id_check_error_messages").empty()
+        $("#id_check_success_messages").prop("hidden", true)
+        $("#id_check_error_messages").prop("hidden", true)
+        $("#id_check_special_character_messages").prop("hidden", true)
+        document.getElementById("id_error_msg_language_id").innerHTML = "";
+        document.getElementById("id_error_msg_description").innerHTML = "";
+        document.getElementById("id_error_msg_language_length").innerHTML = "";
+        count = 0;
+        var language_array = new Array
+        var DB_array = new Array
+        var language_list = new Array
+        var language_id_check = new Array
+        del_ind = ''
 
-              if(msg_type.message_type == "ERROR"){
-                    display_message("error_msg_id", msg_type.messages_id_desc)
-              }
-              else if(msg_type.message_type == "WARNING"){
-                 display_message("id_warning_msg_id", msg_type.messages_id_desc)
-              }
-              else if(msg_type.message_type == "INFORMATION"){
-                 display_message("id_info_msg_id", msg_type.messages_id_desc)
-              }
+        $("#id_popup_table TBODY TR").each(function() {
+            var row = $(this);
+            //*************** reading data from the pop-up ***************
+            description = row.find("TD").eq(2).find('input[type="text"]').val().toUpperCase();
+            language_id = row.find("TD").eq(1).find('input[type="text"]').val().toUpperCase();
+            checked_box = row.find("TD").eq(3).find('input[type="checkbox"]').is(':checked')
+            if (checked_box){
+                del_ind = '1'
+            } else {
+                del_ind = '0'
+            }
+            language_list.push([language_id, description, del_ind])
+            var format = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
 
-                no_duplicate_value = 'N'
-                return [no_duplicate_value,error_message]
+            //*************** checking for max length for language code (max length = 2) ***************
+            if (language_id.length > 2) {
+                error_message = ui_messeges("JMSG004")// Get message details
+                var display8 = error_message;
+                document.getElementById("id_error_msg_language_length").innerHTML = display8+ "Language Id";
+                $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
+                count = count + 1;
+            }
+
+            //*************** checking for special characters for language id ***************
+            else if (format.test(language_id)) {
+                error_message = ui_messeges("JMSG003")// Get message details
+                var display8 = error_message;
+                document.getElementById("id_error_msg_language_id").innerHTML = display8+ "Language Id";
+                $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
+                count = count + 1;
+            } else {
+                $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "none");
+            }
+
+            //*************** checking for special characters for description  ***************
+            if (format.test(description)) {
+                 error_message = ui_messeges("JMSG003")// Get message details
+                var display8 = error_message;
+                document.getElementById("id_error_msg_description").innerHTML = display8+ "Language Id";
+                $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "1px solid #FF0000");
+                count = count + 1;
+            } else {
+                $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "none");
+            }
+            //********************************************
+            if (language_id_check.includes(language_id)) {
+                $(row).css("border", "#f8d7da");
+            } else {
+                $(row).css("border", "");
+            }
+            language_id_check.push(language_id)
+        });
+        //*************** shows save button if there are no errors(special characters and max length) ***************
+        if (count == 0) {
+            $("#id_check_special_character_messages").prop("hidden", true)
+            $("#save_id").prop("hidden", false);
+        }
+        popup_data_dict = {
+            'data_list': language_list,
+            'Tablename': Tablename,
+            'appname': appname,
+            'db_header_data': ["LANGUAGE_ID", "DESCRIPTION", "del_ind"]
+        }
+        OpenLoaderPopup();
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'eProc_Basic_Settings:check_data' %}",
+            data: JSON.stringify(popup_data_dict),
+            success: function(response) {
+                table_sort_filter_popup_pagination('id_popup_table')
+                $("#id_check_special_character_messages").prop("hidden", false)
+                if (count == 0) {
+                    $("#id_check_special_character_messages").prop("hidden", true)
+                }
+                //*************** retrieving data counts from views ***************
+                check_messages = response
+                var newArrayDataOfOjbect = Object.values(check_messages)
+                $("#id_check_success_messages").prop("hidden", false)
+                //*************** if pop-up data count is greater than zero ***************
+                if (newArrayDataOfOjbect[1] > 0) {        
+                    $.each(response['messages'], function(i, item) {
+                        $("#id_check_success_messages").append('<p>' + item + '</p>');
+                    });
+                    //*************** if duplicate data data count is greater than zero ***************
+                    if(newArrayDataOfOjbect[2]>0){
+                        $("#id_check_error_messages").prop("hidden",false)
+                        var display6 = get_msg_desc_check_data("JMSG015");
+                        $("#id_check_error_messages").append('<p>' + display6 + newArrayDataOfOjbect[2] + '</p>')
+                        var display7 = get_msg_desc_check_data("JMSG001");
+                        $("#id_check_error_messages").append('<p style = "font-weight: bold;">' + display7 + ' </p>')
+                        $("#save_id").prop("hidden", true);
+                        $("#id_delete_duplicate").show()
+                    }
+                    else{
+                        $("#id_check_error_messages").prop("hidden",true)
+                        $("#id_delete_duplicate").hide()
+                    }
+                }
+                //*************** if pop-up data count is zero ***************
+                else {
+                    $("#id_check_success_messages").hide()
+                    $("#id_check_error_messages").prop("hidden", false)
+                    var display8 = get_msg_desc_check_data("JMSG006");
+                    $("#id_check_error_messages").append('<p>' + display8 + '</p>')
+                    $("#save_id").prop("hidden", true);
+                }
+                CloseLoaderPopup();
             }
         });
     }
 
-    return [no_duplicate_value,error_message]
-}
-
-//validate by comparing  main table values and popup table values
-function maintable_validation(validate_add_attributes, main_table_low_value) {
-    var no_duplicate_entries = 'Y'
-    var common = [];
-    var error_message = ''
-    jQuery.grep(validate_add_attributes, function(el) {
-        if (jQuery.inArray(el, main_table_low_value) != -1) {
-            common.push(el);
+    // validating the  popup table for duplicate entries
+    function compare_table_for_duplicate_entries(validate_add_attributes, language) {
+        add_attr_duplicates = false;
+        var error_message = ''
+        var add_attr_duplicates_list = [];
+        var add_attr_unique_list = [];
+        var no_duplicate_value = 'Y'
+        $.each(validate_add_attributes, function(index, value) {
+            if ($.inArray(value, add_attr_unique_list) == -1) {
+                add_attr_unique_list.push(value);
+            } else {
+                if ($.inArray(value, add_attr_duplicates_list) == -1) {
+                    add_attr_duplicates_list.push(value);
+                }
+            }
+        });
+        if (add_attr_duplicates_list.length != 0) {    
+            $('#languageModal').modal('show');
+             error_message = ui_messeges("JMSG001")// Get message details
+            no_duplicate_value = 'N'
+            return [no_duplicate_value,error_message]
         }
-    });
-    if (common.length != 0) {
-        //error_message = messageConstants["JMSG001"]
-
-           
-                var msg = "JMSG001";
-                var msg_type ;
-              msg_type = message_config_details(msg);
-              $("#error_msg_id").prop("hidden", false)
-
-              if(msg_type.message_type == "ERROR"){
-                    display_message("error_msg_id", msg_type.messages_id_desc)
-              }
-              else if(msg_type.message_type == "WARNING"){
-                 display_message("id_warning_msg_id", msg_type.messages_id_desc)
-              }
-              else if(msg_type.message_type == "INFORMATION"){
-                 display_message("id_info_msg_id", msg_type.messages_id_desc)
-              }
-                no_duplicate_value = 'N'
-                return [no_duplicate_value,error_message]
-
+        else{
+            $.each(language, function (i, item) {
+                if ((item.language_id.length == 0) || (item.description.length == 0)) { 
+                    $('#languageModal').modal('show');
+                    error_message = ui_messeges("JMSG002")// Get message details
+                    no_duplicate_value = 'N'
+                    return [no_duplicate_value,error_message]
+                }
+                if(item.language_id.length<2){
+                    $('#languageModal').modal('show');
+                    error_message = ui_messeges("JMSG113")// Get message details
+                    no_duplicate_value = 'N'
+                    return [no_duplicate_value,error_message]
+                }
+            });
+        }
+        return [no_duplicate_value,error_message]
     }
-    return [no_duplicate_entries,error_message]
-}
 
-    </script>
+    //validate by comparing  main table values and popup table values
+    function maintable_validation(validate_add_attributes, main_table_low_value) {
+        var no_duplicate_entries = 'Y'
+        var common = [];
+        var error_message = ''
+        jQuery.grep(validate_add_attributes, function(el) {
+            if (jQuery.inArray(el, main_table_low_value) != -1) {
+                common.push(el);
+            }
+        });
+        if (common.length != 0) {
+             error_message = ui_messeges("JMSG001")// Get message details
+            no_duplicate_value = 'N'
+            return [no_duplicate_value,error_message]
+        }
+        return [no_duplicate_entries,error_message]
+    }
 
-    <script src="{% static 'scripts/upload_languages.js' %}"></script>
+</script>
+
+<script src="{% static 'scripts/upload_languages.js' %}"></script>
 
 {% endblock %}

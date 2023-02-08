@@ -24,10 +24,10 @@
                     <i class="fas fa-cloud-upload-alt"></i> upload data
                 </button>
                 <button class="btn btn-primary" type="button" id="id_add_data" value="ADD"
-                    data-toggle="modal" data-target="#myModal" onclick="onclick_add_button(this)">
+                    data-toggle="modal" data-target="#Paytrm_desc_Modal" onclick="onclick_add_button(this)">
                     <i class="fa fa-plus"></i> add payment term description
                 </button>
-                  <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"  onclick="GetReferrer();">
+                  <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"  onclick="window_close();">
                     <i class="fas fa-times"></i> close
                 </button>
             </div>
@@ -69,10 +69,10 @@
                                     <INPUT type="checkbox" onchange="checkAll(this)" name="chk[]">
                                 </div>
                             </th>
+                            <th>Language</th>
                             <th>Payment Term</th>
                             <th>Description</th>
                             <th>Day Limit</th>
-                            <th>Language</th>
                             <th  hidden>Del Indicator</th>
                             <th hidden>Guid</th>
                         </tr>
@@ -80,17 +80,15 @@
                     <tbody id="id_payment_term_tbody">
                         {% for data in payment_desc_data %}
                         <tr>
-                            <td class="class_select_checkbox" hidden><input type="checkbox" class="checkbox_check"
-                                    onclick="valueChanged()" required></td>
+                            <td class="class_select_checkbox" hidden><input type="checkbox" class="checkbox_check"  onclick="valueChanged()" required></td>
+                            {% for lang in language_list %}
+                                {% if data.language_id == lang.language_id %}
+                                    <td>{{lang.description}}</td>
+                                {% endif %}
+                            {% endfor %}
                             <td>{{ data.payment_term_key}}</td>
                             <td>{{ data.description}}</td>
                             <td>{{ data.day_limit}}</td>
-                            {% for lang in language_list %}
-                            {% if data.language_id == lang.language_id %}
-                            <td>{{lang.description}}</td>
-                            {% endif %}
-                            {% endfor %}
-
                             <td hidden>{{ data.del_ind}}</td>
                             <td hidden>{{ data.payment_term_guid}}</td>
                         </tr>
@@ -104,7 +102,7 @@
     </div>
 
     <!--modal popup for Add,copy,update and upload-->
-    <div class="modal fade" id="myModal" style="overflow:auto;">
+    <div class="modal fade" id="Paytrm_desc_Modal" style="overflow:auto;">
         <div class="modal-dialog modal-dialog-centered modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
@@ -115,67 +113,60 @@
                 </div>
                 <!-- Modal body -->
                 <div class="modal-body">
-                     <div class="popup-vertical-scroll">
+                    <div class="popup-vertical-scroll">
+                        <div id="id_del_add_button" class="mb-4">
+                            <button class="btn btn-primary" type="button" onclick="add_popup_row()"><i
+                                    class="fa fa-plus"></i> add new row </button>
+                            <button class="btn btn-outline-danger"
+                                onclick="application_settings_delete_Row('id_popup_table')"><i class="fa fa-trash"
+                                    aria-hidden="true" title="Delete Line"></i> delete</button>
+                        </div>
 
-                    <div id="id_del_add_button" class="mb-4">
-                        <button class="btn btn-primary" type="button" onclick="add_popup_row()"><i
-                                class="fa fa-plus"></i> add new row </button>
-                        <button class="btn btn-outline-danger"
-                            onclick="application_settings_delete_Row('id_popup_table')"><i class="fa fa-trash"
-                                aria-hidden="true" title="Delete Line"></i> delete</button>
+                        <div id="id_check_success_messages" class="alert alert-success check_success_message" hidden></div>
+                        <div id="id_check_error_messages" class="alert alert-danger check_error_messages" hidden></div>
+                        <div id="id_check_special_character_messages"
+                            class="alert alert-danger check_special_character_messages" hidden>
+                            <p id="id_error_msg_payment_term_key"></p>
+                            <p id="id_error_msg_description"></p>
+                            <p id="id_error_msg_description_length"></p>
+                        </div>
+
+                        <div id="error_msg_id" class="alert alert-danger display-none" role="alert"><span id="error_message"></span></div>
+                        <div id="id_warning_msg_id" class="alert alert-warning display-none" role="alert"></div>
+                        <div id="id_info_msg_id" class="alert alert-primary display-none" role="alert"></div>
+
+                        <table class="class_popup_table table table-bordered mt-2" id="id_popup_table" >
+                            <thead>
+                                <tr>
+                                    <th id="header_select">Select</th>
+                                    <th>Language</th>
+                                    <th>Payment Term </th>
+                                    <th>Description</th>
+                                    <th>Day Limit</th>
+                                    <th id="id_del_ind_checkbox" hidden>Del Indicator</th>
+                                    <th hidden>Guid</th>
+                                </tr>
+                            </thead>
+                            <tbody id=id_popup_tbody>
+
+                            </tbody>
+                        </table>
                     </div>
-
-                    <div id="id_check_success_messages" class="alert alert-success check_success_message" hidden></div>
-                    <div id="id_check_error_messages" class="alert alert-danger check_error_messages" hidden></div>
-                    <div id="id_check_special_character_messages"
-                        class="alert alert-danger check_special_character_messages" hidden>
-                        <p id="id_error_msg_payment_term_key"></p>
-                        <p id="id_error_msg_description"></p>
-                        <p id="id_error_msg_description_length"></p>
-                    </div>
-
-                    <div id="error_msg_id" class="alert alert-danger display-none" role="alert"><span id="error_message"></span></div>
-                    <div id="id_warning_msg_id" class="alert alert-warning display-none" role="alert"></div>
-                    <div id="id_info_msg_id" class="alert alert-primary display-none" role="alert"></div>
-
-
-                    <table class="class_popup_table table table-bordered mt-2" id="id_popup_table" >
-                        <thead>
-                            <tr>
-                                <th id="header_select">Select</th>
-                                <th>Payment Term </th>
-                                <th>Description</th>
-                                <th>Day Limit</th>
-                                <th>Language</th>
-                                <th id="id_del_ind_checkbox" hidden>Del Indicator</th>
-                                <th hidden>Guid</th>
-                            </tr>
-                        </thead>
-                        <tbody id=id_popup_tbody>
-
-                        </tbody>
-                    </table>
-                     </div>
-
                 </div>
 
                 <!-- Modal footer -->
-                <div class="modal-footer">
-                    
+                <div class="modal-footer"> 
                      <button type="button" class="btn btn-outline-primary remove_upload_data" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
                     <button id="id_delete_duplicate" class="btn btn-primary" style="display:none;" type="button" onclick="delete_duplicate()"><i class="fa fa-trash"></i> delete duplicates</button>
                     <button id="id_check_data" style="display:none;" class="btn btn-primary" type="button" onclick="check_data()"><i class="fas fa-check"></i> check</button>
                     <button class="btn btn-primary" id="save_id"><i class="fas fa-save"></i> save</button>
-                   
                 </div>
             </div>
         </div>
     </div>
     <!--end of modal popup for Add,copy,update and upload-->
-
     <!-- modal popup to upload the csv file; save confirmation popup; delete confirmation popup -->
     {% include 'configuration_common_pop_up.html' %}
-
     <div>
         {% if messages %}
         {% for message in messages %}
@@ -196,6 +187,7 @@
 <script>
 
     var rendered_payment_term_data = {{ payment_desc_data| safe}};
+    var messages_list = {{messages_list|safe}};
     var rendered_payment_key_list = {{ payterm_key_list| safe}};
     var render_language_data = {{ language_list| safe}};
     var payment_term_data_array = {};
@@ -207,234 +199,45 @@
     var Tablename = uiConstants["CONST_TABLENAME_PAYMENT_TERM_DESC"]
     var appname = uiConstants["CONST_APPNAME01"]
     var db_header_data = uiConstants['PAYMENT_TERM_KEY', 'DAY_LIMIT', 'DESCRIPTION', 'del_ind', 'LANGUAGE_ID']
+    var payment_term_dropdown;
+    var language_dropdown;
 
+    function paytermdesc_drop() {
+        payment_term_dropdown='';
+        $.each(rendered_payment_key_list, function(i, item){
+            payment_term_dropdown += '<option value="' + item.payment_term_key + '">' + item.payment_term_key + '</option>';
+        });
+        language_dropdown= '';
+        $.each(render_language_data, function(i, item){
+            language_dropdown += '<option value="' + item.language_id + '">' + item.description + '</option>';
+        });
+    }
 
-    var payment_term_dropdown='';
-    var language_dropdown= '';
-    $.each(rendered_payment_key_list, function(i, item){
-        payment_term_dropdown += '<option value="' + item.payment_term_key + '">' + item.payment_term_key + '</option>';
-    });
-
-    $.each(render_language_data, function(i, item){
-        language_dropdown += '<option value="' + item.language_id + '">' + item.description + '</option>';
-    });
-
-    //onclick of add button display myModal popup and set GLOBAL_ACTION button value
+    //onclick of add button display Paytrm_desc_Modal popup and set GLOBAL_ACTION button value
     function onclick_add_button(button) {
-        $("#error_msg_id").css("display", "none");
-        GLOBAL_ACTION = button.value
-        $("#id_popup_tbody").empty();
-        $('#myModal').modal('show');
-        basic_add_new_html = '<tr><td><input type="checkbox" required></td>' +
-                    '<td><select id="payterm_key" name="payterm_key" class="form-control"  type="text">' + payment_term_dropdown +'</select></td>' +
-                    '<td><input  type="text"  name="description" class="form-control check_special_char" maxlength="50"></td>' +
-                    '<td><input  type="number"  name="day_limit" class="form-control check_number" maxlength="10"></td>' +
-                    '<td><select id="language" name="language" class="form-control"  type="text">' + language_dropdown +'</select></td>' +
-                    '<td class="class_del_checkbox" hidden><input type="checkbox" required></td>' +
-                    '<td hidden><input  type="text"  name="guid"></td></tr>';
-        $('#id_popup_tbody').append(basic_add_new_html);
-        table_sort_filter('id_popup_table');
-        $("#id_del_ind_checkbox").prop("hidden", true);
-        document.getElementById("id_del_add_button").style.display = "block";
-        $("#save_id").prop("hidden", false);
-    }
-
-    // validate and save for add,copy,update and upload data
-    function popup_save_data() {
-		$('#success_msg_id').empty()
-        $('#id_popup_table').DataTable().destroy();
-        var Tabledata = { "Dbl_clck_tbl_id": 'Payterms_desc' };
-
-        var main_table_low_value = [];
-        var main_table_low_value_lang = [];
-        var payment_term = {};
-
-		    no_duplicate_entries = 'Y'
-    		no_duplicate_value = 'Y'
-	    var error_message = '';
-        $('#display_basic_table').DataTable().destroy();
-        $("#display_basic_table TBODY TR").each(function () {
-            var row = $(this);
-            var main_attribute = {};
-            main_attribute.payment_term_key = row.find("TD").eq(1).html();
-            main_attribute.language_id = row.find("TD").eq(4).html();
-            main_table_low_value.push(main_attribute);
-           // main_table_low_value_lang.push(main_attribute.language_id);
-        });
-        table_sort_filter('display_basic_table');
-        $("#error_msg_id").empty();
-        [no_duplicate_value,error_message] = compare_table_for_duplicate_entries(validate_add_attributes, payment_term_data)
-
-		if (error_message){
-        display_error_message(error_message)
-
-    	}
-    	else{
-        if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
-            [no_duplicate_entries,error_message] = maintable_validation(duplicate_entry, main_table_low_value)
-        }
-        if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
-            var add_basic_data = '';
-            var payment_term_data_array = payment_term_data;
-            $('#id_save_confirm_popup').modal('hide');;
-			data = {'data':payment_term_data,'table_name':'Payterms_desc','action':GLOBAL_ACTION}
-			OpenLoaderPopup();
-            $.ajax({
-                type: 'POST',
-                url: "{% url 'eProc_Master_Settings:create_update_master_data' %}",
-                data:
-                    JSON.stringify(data),
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                success: function (Response) {
-                    rendered_payment_term_data = Response[0];
-                    display_basic_db_data();
-                    $('#myModal').modal('hide');
-                    //$('#error_msg_id').text(messageConstants["JMSG001"])
-                    $('#success_msg_id').text(Response[1])
-                    if(Response[1].message_type== 'SUCCESS'){
-                         $('#success_msg_id').text(Response[1].message_desc)
-                    }
-                    $("#err_msg_app_settings_t").prop("hidden", false)
-                     table_sort_filter('id_popup_table');
-                    setTimeout(function () { $("#err_msg_app_settings_t").prop("hidden", true); }, 5000)
-                    table_sort_filter('id_popup_table');
-                    CloseLoaderPopup();
-                }
-            });
-
-        }
-        else if (error_message){
-            display_error_message(error_message)
-
-        }
-    }
-}
-
-    //delete the selected row in db................
-    var main_table_payment_term_checked = [];
-    function main_table_delete() {
-		$('#success_msg_id').empty()
-    	GLOBAL_ACTION = 'DELETE'
-	    main_table_country_checked = [];
-        var Tabledata = { "Dbl_clck_tbl_id": 'Payterms_desc' };
-        $('#display_basic_table').DataTable().destroy();
-        $("#display_basic_table TBODY TR").each(function () {
-            var row = $(this);
-            var payment_term_arr_obj = {};
-            var lang_desc;
-            var lang_code;
-            lang_desc = row.find("TD").eq(4).html();
-            for (i = 0; i < render_language_data.length; i++) {
-                if (lang_desc == render_language_data[i].description)
-                    lang_code = render_language_data[i].language_id
-            }
-
-            payment_term_arr_obj.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
-			if(payment_term_arr_obj.del_ind){
-		    payment_term_arr_obj.payment_term_guid = row.find("TD").eq(6).html();
-            payment_term_arr_obj.payment_term_key = row.find("TD").eq(1).html();
-            payment_term_arr_obj.day_limit = row.find("TD").eq(3).html();
-            payment_term_arr_obj.description = row.find("TD").eq(2).html();
-            payment_term_arr_obj.language_id = lang_code;           
-            main_table_payment_term_checked.push(payment_term_arr_obj);
-			}
-        });
-        $('#id_delete_confirm_popup').modal('hide');
-		data = {'data':main_table_payment_term_checked,'table_name':'Payterms_desc','action':GLOBAL_ACTION}
-		OpenLoaderPopup();
+        OpenLoaderPopup();
+        var data = {'table_name':'Payterms_desc'}
         $.ajax({
             type: 'POST',
-            url: "{% url 'eProc_Master_Settings:create_update_master_data' %}",
-            data:
-                JSON.stringify(data),
-            contentType: "application/json; charset=utf-8",
-            dataType: "json",
-            success: function (Response) {
-                rendered_payment_term_data = Response[0];
-                display_basic_db_data();
-                $('#success_msg_id').text(Response[1])
-                  if(Response[1].message_type== 'SUCCESS'){
-                         $('#success_msg_id').text(Response[1].message_desc)
-                 }
-                $("#err_msg_app_settings_t").prop("hidden", false)
-                table_sort_filter('id_popup_table');
-                 setTimeout(function () { $("#err_msg_app_settings_t").prop("hidden", true); }, 5000)
-                 table_sort_filter('id_popup_table');
-                 CloseLoaderPopup();
+            url: "{% url 'eProc_Configuration:get_dropdown_data' %}",
+            data: JSON.stringify(data),
+            success: function(response) {
+                rendered_payment_key_list = response.payterm_key_list
+                render_language_data = response.language_list
+                paytermdesc_drop()
+                $("#error_msg_id").css("display", "none");
+                GLOBAL_ACTION = button.value
+                $("#id_popup_tbody").empty();
+                $('#Paytrm_desc_Modal').modal('show');
+                new_row_data();   // Add a new row in popup
+                $("#id_del_ind_checkbox").prop("hidden", true);
+                $("#header_select").prop("hidden", false);
+                document.getElementById("id_del_add_button").style.display = "block";
+                $("#save_id").prop("hidden", false);
+                CloseLoaderPopup();
             }
         });
     }
-
-    function onclick_copy_update_button(data) {
-        $("#error_msg_id").css("display", "none");
-        $("#id_popup_tbody").empty();
-        $('#display_basic_table').DataTable().destroy();
-        //Reference the Table.
-        var grid = document.getElementById("display_basic_table");
-
-        //Reference the CheckBoxes in Table.
-        var checkBoxes = grid.getElementsByTagName("INPUT");
-        var edit_basic_data = "";
-        var dropdown_values = [];
-        //Loop through the CheckBoxes.
-        for (var i = 1; i < checkBoxes.length; i++) {
-            if (checkBoxes[i].checked) {
-                var row = checkBoxes[i].parentNode.parentNode;
-                if(GLOBAL_ACTION == "UPDATE"){
-                 unique_input = '<select id="payterm_key" name="payterm_key" value="' + row.cells[1].innerHTML + '" class="form-control"  type="text" disabled>'+ payment_term_dropdown +' </select>';
-                edit_basic_data += '<tr><td hidden><input type="checkbox" required></td>' +
-                    '<td>'+ unique_input +'</td>' +
-                     '<td><input  type="text" maxlength="50" name="description" value="' + row.cells[2].innerHTML + '" class="form-control check_special_char"></td>' +
-                    '<td><input  type="number" maxlength="10"  name="day_limit" value="' + row.cells[3].innerHTML + '" class="form-control check_number"></td>' +
-                     '<td><select id="language" name="language" class="form-control"   type="text">'+ language_dropdown +'</select></td>' +
-                    '<td class="class_del_checkbox" hidden><input type="checkbox" required></td>' +
-                    '<td hidden><input  type="text" value="' + row.cells[6].innerHTML + '"  name="guid"></td></tr>';
-                    $("#header_select").prop("hidden", true);
-                    }
-                    else {
-                    unique_input = '<select id="payterm_key" name="payterm_key" value="' + row.cells[1].innerHTML + '" class="form-control"  type="text">'+ payment_term_dropdown +' </select>';
-                    edit_basic_data += '<tr><td><input type="checkbox" required></td>' +
-                    '<td>'+ unique_input +'</td>' +
-                    '<td><input  type="text" maxlength="50"  name="description" value="' + row.cells[2].innerHTML + '" class="form-control check_special_char"></td>' +
-                    '<td><input  type="number" maxlength="10"  name="day_limit" value="' + row.cells[3].innerHTML + '" class="form-control check_number"></td>' +
-                     '<td><select id="language" name="language" class="form-control"   type="text">'+ language_dropdown +'</select></td>' +
-                    '<td class="class_del_checkbox" hidden><input type="checkbox" required></td>' +
-                    '<td hidden><input  type="text" value="' + row.cells[6].innerHTML + '"  name="guid"></td></tr>';
-                    $("#header_select").prop("hidden", false);
-                    }
-                    var payment_term_value = row.cells[1].innerHTML;
-                var language_value = row.cells[4].innerHTML;
-                dropdown_values.push([payment_term_value, language_value])
-            }
-        }
-        $('#id_popup_tbody').append(edit_basic_data);
-
-          var i =0;
-        $("#id_popup_table TBODY TR").each(function() {
-        var row = $(this);
-         var payment_value = dropdown_values[i][0]
-        var lang_value = dropdown_values[i][1]
-        console.log(lang_value);
-         var lang_id;
-
-         for (i = 0; i < render_language_data.length; i++) {
-             if (lang_value == render_language_data[i].description)
-                 lang_id = render_language_data[i].language_id;
-             }
-        console.log(row.find("TD").eq(4).html());
-        $(row.find("TD").eq(1).find("select option[value="+payment_value+"]")).attr('selected','selected');
-        $(row.find("TD").eq(4).find("select option[value="+lang_id+"]")).attr('selected','selected');
-
-        i++;
-    });
-
-        $("#id_del_ind_checkbox").prop("hidden", true);
-        $('#myModal').modal('show');
-        table_sort_filter('display_basic_table');
-        table_sort_filter('id_popup_table');
-    }
-
 
     // on click add icon display the row in to add the new entries
     function add_popup_row(){
@@ -446,35 +249,201 @@
             $(".modal").on("hidden.bs.modal", function(){
             $("#error_msg_id").html("");
         });
-        basic_add_new_html = '<tr><td><input type="checkbox" required></td>'+
-        '<td><select id="payterm_key" name="payterm_key" class="form-control"  type="text">'+ payment_term_dropdown +'</select></td>'+
-        '<td><input  type="text" maxlength="50"  name="description" class="form-control check_special_char"></td>'+
-        '<td><input  type="number" maxlength="10"  name="day_limit" class="form-control check_number"></td>'+
-        '<td><select id="language" name="language" class="form-control"  type="text">'+ language_dropdown +'</select></td>'+
-        '<td class="class_del_checkbox" hidden><input type="checkbox" required></td>'+
-        '<td hidden><input  type="text"  name="guid"></td></tr>';
-        $('#id_popup_tbody').append(basic_add_new_html);
+        new_row_data();   // Add a new row in popup
         if(GLOBAL_ACTION=="payment_term_upload"){
             $( ".class_del_checkbox").prop( "hidden", false );
         }
-        table_sort_filter_popup_pagination('id_popup_table');
+    }
+
+    // validate and save for add,copy,update and upload data
+    function popup_save_data() {
+		$('#success_msg_id').empty()
+        $('#id_popup_table').DataTable().destroy();
+        var Tabledata = { "Dbl_clck_tbl_id": 'Payterms_desc' };
+        no_duplicate_entries = 'Y'
+        no_duplicate_value = 'Y'
+	    var error_message = '';
+        var payment_term = {};
+        $('#display_basic_table').DataTable().destroy();
+        get_main_table_data(); //Read data from main table
+        // compare for duplicates in popup
+        $("#error_msg_id").empty();
+        [no_duplicate_value,error_message] = compare_table_for_duplicate_entries(validate_add_attributes, payment_term_data)
+		if (error_message){
+            display_error_message(error_message)
+    	}
+    	else {
+            if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
+                // compare main table and pop up for duplicate values
+                [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
+            }
+            if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
+                var add_basic_data = '';
+                var payment_term_data_array = payment_term_data;
+                $('#id_save_confirm_popup').modal('hide');;
+                data = {'data':payment_term_data,'table_name':'Payterms_desc','action':GLOBAL_ACTION}
+                OpenLoaderPopup();
+                $.ajax({
+                    type: 'POST',
+                    url: "{% url 'eProc_Master_Settings:create_update_master_data' %}",
+                    data: JSON.stringify(data),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (Response) {
+                        rendered_payment_term_data = Response[0];
+                        display_basic_db_data();
+                        $('#Paytrm_desc_Modal').modal('hide');
+                        success_response(Response); // Function call to display response data
+                        CloseLoaderPopup();
+                    }
+                });
+            }
+            else if (error_message){
+                display_error_message(error_message)
+            }
+        }
+    }
+
+    //delete the selected row in db................
+    var main_table_payment_term_checked = [];
+    function main_table_delete() {
+		$('#success_msg_id').empty()
+    	GLOBAL_ACTION = 'DELETE'
+	    main_table_country_checked = [];
+        var Tabledata = { "Dbl_clck_tbl_id": 'Payterms_desc' };
+        $('#display_basic_table').DataTable().destroy();
+        get_selected_row_data(); // Function call to get the selected row data
+        $('#id_delete_confirm_popup').modal('hide');
+		data = {'data':main_table_payment_term_checked,'table_name':'Payterms_desc','action':GLOBAL_ACTION}
+		OpenLoaderPopup();
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'eProc_Master_Settings:create_update_master_data' %}",
+            data: JSON.stringify(data),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (Response) {
+                rendered_payment_term_data = Response[0];
+                display_basic_db_data();
+                success_response(Response); // Function call to display response data
+                CloseLoaderPopup();
+            }
+        });
+    }
+
+    //*********************************************
+    function onclick_copy_update_button(data) {
+        OpenLoaderPopup();
+        var data = {'table_name':'Payterms_desc'}
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'eProc_Configuration:get_dropdown_data' %}",
+            data: JSON.stringify(data),
+            success: function(response) {
+                rendered_payment_key_list = response.payterm_key_list
+                render_language_data = response.language_list
+                paytermdesc_drop();
+                $("#error_msg_id").css("display", "none");
+                $("#id_popup_tbody").empty();
+                $('#display_basic_table').DataTable().destroy();
+                //Reference the Table.
+                var grid = document.getElementById("display_basic_table");
+
+                //Reference the CheckBoxes in Table.
+                var checkBoxes = grid.getElementsByTagName("INPUT");
+                var edit_basic_data = "";
+                 var lang_id;
+                var dropdown_values = [];
+                //Loop through the CheckBoxes.
+                for (var i = 1; i < checkBoxes.length; i++) {
+                    if (checkBoxes[i].checked) {
+                        var row = checkBoxes[i].parentNode.parentNode;
+                        var lang_val = row.cells[1].innerHTML;
+                        if(GLOBAL_ACTION == "UPDATE") {
+                            lang_id = get_language(render_language_data,lang_val);
+                            unique_input = '<select id="payterm_key" name="payterm_key"  class="form-control"  type="text" disabled><option>'+row.cells[2].innerHTML+'</option> </select>';
+                            edit_basic_data += '<tr><td hidden><input type="checkbox" required></td>' +
+                                '<td><select id="language" name="language" class="form-control"   type="text" disabled><option value="'+lang_id+'">'+row.cells[1].innerHTML+'</option></select></td>' +
+                                '<td>'+ unique_input +'</td>' +
+                                '<td><input  type="text" maxlength="50" name="description" value="' + row.cells[3].innerHTML + '" class="form-control check_special_char"></td>' +
+                                '<td><input  type="number" maxlength="10"  name="day_limit" value="' + row.cells[4].innerHTML + '" class="form-control check_number"></td>' +
+                                '<td class="class_del_checkbox" hidden><input type="checkbox" required></td>' +
+                                '<td hidden><input  type="text" value="' + row.cells[6].innerHTML + '"  name="guid"></td></tr>';
+                                $("#header_select").prop("hidden", true);
+                        }
+                        else {                                                                                                          
+                            unique_input = '<select  class="form-control"  type="text">'+ language_dropdown +'</select>';
+                            edit_basic_data += '<tr><td><input type="checkbox" required></td>' +
+                                '<td>'+ unique_input +'</td>' +
+                                '<td><select class="form-control"  type="text">'+  payment_term_dropdown  +'</select></td>' +
+                                '<td><input  type="text" maxlength="50"  name="description" value="' + row.cells[3].innerHTML + '" class="form-control check_special_char"></td>' +
+                                '<td><input  type="number" maxlength="10"  name="day_limit" value="' + row.cells[4].innerHTML + '" class="form-control check_number"></td>' +
+                                '<td class="class_del_checkbox" hidden><input type="checkbox" required></td>' +
+                                '<td hidden><input  type="text" value="' + row.cells[6].innerHTML + '"  name="guid"></td></tr>';
+                            $("#header_select").prop("hidden", false);
+                        }
+                        var language_value = row.cells[1].innerHTML;
+                        var payment_term_value = row.cells[2].innerHTML;
+                        dropdown_values.push([language_value, payment_term_value])
+                    }
+                }
+                $('#id_popup_tbody').append(edit_basic_data);
+                var j=0;
+                $("#id_popup_table TBODY TR").each(function() {
+                    var row = $(this);
+                    var lang_value = dropdown_values[j][0];
+                    var payment_value = dropdown_values[j][1];
+                    var  dropdown_flag;
+                    $('#payterm_key option').each(function(i, v){
+                        if(v.value==payment_value){
+                            dropdown_flag = 1;
+                            return false;
+                        }
+                        else{ dropdown_flag = 0; }
+                    });
+                    if(dropdown_flag == 1){
+                        $(row.find("TD").eq(2).find("select option[value="+payment_value+"]")).attr('selected','selected');
+                    }
+                    else
+                    {
+                        $(row.find("TD").eq(2).find("select")).prepend("<option value='" + payment_value + "'>" + payment_value + "</option>").val(payment_value);
+                    }
+                    $(row.find("TD").eq(1).find("select option[value="+lang_id+"]")).attr('selected','selected');
+                    j++;
+                });
+                $("#id_del_ind_checkbox").prop("hidden", true);
+                $('#Paytrm_desc_Modal').modal('show');
+                table_sort_filter('display_basic_table');
+                table_sort_filter('id_popup_table');
+                $('#Paytrm_desc_Modal').modal('show');
+                CloseLoaderPopup();
+            }
+        });
+    }
+
+    //******************************************************
+    function get_language(render_language_data, lang_value) {
+        for (i = 0; i < render_language_data.length; i++) {
+            if (lang_value == render_language_data[i].description)
+            var lang_id = render_language_data[i].language_id;
+        }
+        return lang_id;
     }
 
     //onclick of data Upload copy data to modal pop-up
-        function onclick_display_csv_data() {
-               $("#error_msg_id").css("display", "none")
-            $('#id_popup_table').DataTable().destroy();
-            formdata = new FormData();
-             attached_file = $('#id_file_data_upload').prop('files')[0]
-			file_extension = (attached_file.name).split(".")[1]
-    		file_extension = file_extension.toUpperCase();
-		    if(file_extension == 'CSV'){
-        	formdata.append("file_attach", attached_file);
+    function onclick_display_csv_data() {
+        $("#error_msg_id").css("display", "none")
+        $('#id_popup_table').DataTable().destroy();
+        formdata = new FormData();
+        attached_file = $('#id_file_data_upload').prop('files')[0]
+        file_extension = (attached_file.name).split(".")[1]
+        file_extension = file_extension.toUpperCase();
+        if(file_extension == 'CSV'){
+            formdata.append("file_attach", attached_file);
             formdata.append("Tablename", Tablename);
             formdata.append("appname", appname);
             $('#id_data_upload').modal('hide');
-        //$('#myModal').modal('show');$('#myModal').modal('show');
-        $('#id_popup_tbody').empty();
+            $('#id_popup_tbody').empty();
             OpenLoaderPopup();
             $.ajax({
                 type: 'POST',
@@ -482,442 +451,319 @@
                 data: formdata,
                 contentType: "application/json; charset=utf-8",
                 success: function(response) {
-                    console.log(response);
                     if (response.data.error_message) {
                         $("#id_error_msg_upload").prop("hidden", false)
                         document.getElementById("id_error_msg_upload").innerHTML = response.error_message;
                         document.getElementById("id_error_msg_upload").style.color = "Red";
                         $('#id_data_upload').modal('show')
                     } else {
-                            paymentdesc_data_array  = response.data;
-                            var edit_basic_data = '';
-                            var del_ind = '';
-                            var dropdown_values = [];
-                            $("#id_popup_tbody").empty();
-                            $.each(response.data, function(i, value) {
-                                var paymentdesc_type_value = value[0]
-                                var language_type_value = value[4]
-                                dropdown_values.push([paymentdesc_type_value,language_type_value])
+                        paymentdesc_data_array  = response.data;
+                        var edit_basic_data = '';
+                        var del_ind = '';
+                        var dropdown_values = [];
+                        $("#id_popup_tbody").empty();
+                        $.each(response.data, function(i, value) {
+                            var language_type_value = value[4]
+                            var paymentdesc_type_value = value[0]  
+                            dropdown_values.push([paymentdesc_type_value,language_type_value])
+                            del_ind = '<td>' + value[4] + '</td>'
+                            if (value[4] == 1) {
+                                del_ind = '<input type="checkbox" value="' + value[4] + '" checked>'
+                            } else {
+                                del_ind = '<input type="checkbox" value="' + value[4] + '" required>'
+                            }
+                            var payment = '';
+                            var payment_list = '';
+                            var payment_id_list = '';
+                            $.each(rendered_payment_key_list, function(i, item){
+                                if( value[0].payment_type_value == item){
+                                    payment = '<option value="' + item.payment_term_key + '">' + item.payment_term_key + '</option>';
+                                }else{
+                                    payment_list += '<option value="' + item.payment_term_key + '">' + item.payment_term_key + '</option>';
+                                }   
+                                payment_id_list = payment + payment_list
+                            });
 
-                                del_ind = '<td>' + value[4] + '</td>'
-                                if (value[4] == 1) {
-                                    del_ind = '<input type="checkbox" value="' + value[4] + '" checked>'
-                                } else {
-                                    del_ind = '<input type="checkbox" value="' + value[4] + '" required>'
+                            var language = '';
+                            var language_list = '';
+                            var language_id_list = '';
+                            $.each(render_language_data, function(i, item){
+                                if( value[4].payment_type_value == item){
+                                    language = '<option value="' + item.language_id + '">' + item.description + '</option>';
+                                }else{
+                                    language_list += '<option value="' + item.language_id + '">' + item.description + '</option>';
                                 }
-                                    var payment = '';
-                                    var payment_list = '';
-                                    var payment_id_list = '';
-
-
-                                  $.each(rendered_payment_key_list, function(i, item){
-                                        if( value[0].payment_type_value == item){
-
-                                            payment = '<option value="' + item.payment_term_key + '">' + item.payment_term_key + '</option>';
-
-                                        }else{
-
-                                            payment_list += '<option value="' + item.payment_term_key + '">' + item.payment_term_key + '</option>';
-
-                                        }
-                                            payment_id_list = payment + payment_list
-                                  });
-
-
-                                    var language = '';
-                                    var language_list = '';
-                                    var language_id_list = '';
-
-
-                                  $.each(render_language_data, function(i, item){
-                                        if( value[4].payment_type_value == item){
-
-                                            language = '<option value="' + item.language_id + '">' + item.description + '</option>';
-
-                                        }else{
-
-                                            language_list += '<option value="' + item.language_id + '">' + item.description + '</option>';
-
-                                        }
-                                            language_id_list = language + language_list
-                                  });
-
-                                    edit_basic_data += '<tr><td><input type="checkbox" required></td><td><select class="form-control" type = "text">'+payment_id_list+'</select></td><td><input  type="text" value="'+value[2]+'"  maxlength="50"  name="description" class="form-control"></td><td><input  type="number" value="'+value[1]+'" maxlength="10"  name="day_limit" class="form-control"></td><td><select class="form-control" type="text">'+language_id_list+'</select></td><td hidden><input type="text" value=""></td><td>' + del_ind + '</td></tr>';
+                                language_id_list = language + language_list
                             });
-
-                            $('#id_popup_tbody').append(edit_basic_data);
-                             var i =0;
-                            $("#id_popup_table TBODY TR").each(function() {
-                                var row = $(this);
-                                var payment_id_list = dropdown_values[i][0]
-                                var language_id_list = dropdown_values[i][1]
-
-                                $(row.find("TD").eq(1).find("select option[value="+payment_id_list+"]")).attr('selected','selected');
-                                $(row.find("TD").eq(4).find("select option[value="+language_id_list+"]")).attr('selected','selected');
-                                i++;
-                            });
-                            $("#id_del_ind_checkbox").prop("hidden", false);
-                            $( "#header_select").prop( "hidden", false );
-                            $(".class_del_checkbox").prop("hidden", false);
-                            $('#myModal').modal('show');
-                            $('#id_data_upload').modal('hide');
-                            document.getElementById("id_del_add_button").style.display = "block";
-                            $('#id_check_data').modal('show');
-                            $("#id_check_data").prop("hidden", false);
-                            $("#save_id").prop("hidden", true);
-                            table_sort_filter('id_popup_table');
-                        }
+                            edit_basic_data += '<tr><td><input type="checkbox" required></td><td><select class="form-control" type="text">'+language_id_list+'</select></td><td><select class="form-control" type = "text">'+payment_id_list+'</select></td><td><input  type="text" value="'+value[2]+'"  maxlength="50"  name="description" class="form-control"></td><td><input  type="number" value="'+value[1]+'" maxlength="10"  name="day_limit" class="form-control"></td><td hidden><input type="text" value=""></td><td>' + del_ind + '</td></tr>';
+                        });
+                        $('#id_popup_tbody').append(edit_basic_data);
+                        var i =0;
+                        $("#id_popup_table TBODY TR").each(function() {
+                            var row = $(this);
+                            var language_id_list = dropdown_values[i][1]
+                            var payment_id_list = dropdown_values[i][0]
+                            $(row.find("TD").eq(1).find("select option[value="+language_id_list+"]")).attr('selected','selected');
+                            $(row.find("TD").eq(2).find("select option[value="+payment_id_list+"]")).attr('selected','selected');
+                            i++;
+                        });
+                        $("#id_del_ind_checkbox").prop("hidden", false);
+                        $( "#header_select").prop( "hidden", false );
+                        $(".class_del_checkbox").prop("hidden", false);
+                        $('#Paytrm_desc_Modal').modal('show');
+                        $('#id_data_upload').modal('hide');
+                        document.getElementById("id_del_add_button").style.display = "block";
+                        $('#id_check_data').modal('show');
+                        $("#id_check_data").prop("hidden", false);
+                        $("#save_id").prop("hidden", true);
+                        table_sort_filter('id_popup_table');
+                    }
                     CloseLoaderPopup();
-               },
+                },
                 cache: false,
                 processData: false,
                 contentType: false,
-
             });
         }
         else{
             $("#id_error_msg_upload").prop("hidden",false)
-                   
-                    var msg = "JMSG110";
-                    var msg_type ;
-                  msg_type = message_config_details(msg);
-                  $("#error_msg_id").prop("hidden", false)
-
-                  if(msg_type.message_type == "ERROR"){
-                        display_message("error_msg_id", msg_type.messages_id_desc)
-                  }
-                  else if(msg_type.message_type == "WARNING"){
-                     display_message("id_warning_msg_id", msg_type.messages_id_desc)
-                  }
-                  else if(msg_type.message_type == "INFORMATION"){
-                     display_message("id_info_msg_id", msg_type.messages_id_desc)
-                  }
-                  var display = msg_type.messages_id_desc;
-                  document.getElementById("id_error_msg_upload").innerHTML = display;
-
-
+            get_message_details("JMSG110"); // Get message details
+            var display = msg_type.messages_id_desc;
+            document.getElementById("id_error_msg_upload").innerHTML = display;
             document.getElementById("id_error_msg_upload").style.color = "Red";
             $('#id_data_upload').modal('show');
+        }
     }
-}
-   //check function restricting special char and diaplay the data count of csv file
 
-        function check_data() {
-             $('#id_popup_table').DataTable().destroy();
-            $("#id_check_success_messages").empty()
-            $("#id_check_error_messages").empty()
-            $("#id_check_success_messages").prop("hidden", true)
-            $("#id_check_error_messages").prop("hidden", true)
-            $("#id_check_special_character_messages").prop("hidden", true)
-            document.getElementById("id_error_msg_payment_term_key").innerHTML = "";
-            document.getElementById("id_error_msg_description").innerHTML = "";
-            document.getElementById("id_error_msg_description_length").innerHTML = "";
-            count = 0;
-            //var currency_array = new Array
-            var DB_array = new Array
-            var incoterm_list = new Array
-            del_ind = ''
-            var incotem_key_check = new Array
-
-            $("#id_popup_table TBODY TR").each(function() {
-                var row = $(this);
-                 payter_desc_dic = {}
-                //*************** reading data from the pop-up ***************
-                payter_desc_dic.language_id = row.find("TD").eq(4).find('select[type="text"]').val();
-                payter_desc_dic.description = row.find("TD").eq(2).find('input[type="text"]').val();
-                payter_desc_dic.day_limit = row.find("TD").eq(3).find('input[type="number"]').val();
-                payter_desc_dic.payment_term_key = row.find("TD").eq(1).find('select[type="text"]').val();
-                checked_box = row.find("TD").eq(5).find('input[type="checkbox"]').is(':checked')
-                if (checked_box) {
-                    payter_desc_dic.del_ind = '1'
-                } else {
-                    payter_desc_dic.del_ind = '0'
-                }
-                incoterm_list.push(payter_desc_dic)
-                var format = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
-
-
-            //*************** checking for max length for country code (max length = 2) ***************
-<!--            if(payter_desc_dic.payment_term_key.length = 4){-->
-<!--             -->
-<!--                var msg = "JMSG004";-->
-<!--                var msg_type ;-->
-<!--              msg_type = message_config_details(msg);-->
-<!--              $("#error_msg_id").prop("hidden", false)-->
-
-<!--              if(msg_type.message_type == "ERROR"){-->
-<!--                    display_message("error_msg_id", msg_type.messages_id_desc)-->
-<!--              }-->
-<!--              else if(msg_type.message_type == "WARNING"){-->
-<!--                 display_message("id_warning_msg_id", msg_type.messages_id_desc)-->
-<!--              }-->
-<!--              else if(msg_type.message_type == "INFORMATION"){-->
-<!--                 display_message("id_info_msg_id", msg_type.messages_id_desc)-->
-<!--              }-->
-<!--                var display7 = msg_type.messages_id_desc;-->
-<!--                document.getElementById("id_error_msg_description_length").innerHTML = display7  + "Incoterm Key";-->
-
-<!--                $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");-->
-<!--                count = count +1;-->
-<!--            }-->
+    //check function restricting special char and diaplay the data count of csv file
+    function check_data() {
+        $('#id_popup_table').DataTable().destroy();
+        $("#id_check_success_messages").empty()
+        $("#id_check_error_messages").empty()
+        $("#id_check_success_messages").prop("hidden", true)
+        $("#id_check_error_messages").prop("hidden", true)
+        $("#id_check_special_character_messages").prop("hidden", true)
+        document.getElementById("id_error_msg_payment_term_key").innerHTML = "";
+        document.getElementById("id_error_msg_description").innerHTML = "";
+        document.getElementById("id_error_msg_description_length").innerHTML = "";
+        count = 0;
+        //var currency_array = new Array
+        var DB_array = new Array
+        var incoterm_list = new Array
+        del_ind = ''
+        var incotem_key_check = new Array
+        $("#id_popup_table TBODY TR").each(function() {
+            var row = $(this);
+            payter_desc_dic = {}
+            //*************** reading data from the pop-up ***************
+            payter_desc_dic.language_id = row.find("TD").eq(1).find('select[type="text"]').val();
+            payter_desc_dic.payment_term_key = row.find("TD").eq(1).find('select[type="text"]').val();
+            payter_desc_dic.description = row.find("TD").eq(3).find('input[type="text"]').val();
+            payter_desc_dic.day_limit = row.find("TD").eq(4).find('input[type="number"]').val();
+            checked_box = row.find("TD").eq(5).find('input[type="checkbox"]').is(':checked')
+            if (checked_box) {
+                payter_desc_dic.del_ind = '1'
+            } else {
+                payter_desc_dic.del_ind = '0'
+            }
+            incoterm_list.push(payter_desc_dic)
+            var format = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
 
             //*************** checking for special characters for country code ***************
-             if(format.test(payter_desc_dic.payment_term_key)){
-                      
-                            var msg = "JMSG003";
-                            var msg_type ;
-                          msg_type = message_config_details(msg);
-                          $("#error_msg_id").prop("hidden", false)
-
-                          if(msg_type.message_type == "ERROR"){
-                                display_message("error_msg_id", msg_type.messages_id_desc)
-                          }
-                          else if(msg_type.message_type == "WARNING"){
-                             display_message("id_warning_msg_id", msg_type.messages_id_desc)
-                          }
-                          else if(msg_type.message_type == "INFORMATION"){
-                             display_message("id_info_msg_id", msg_type.messages_id_desc)
-                          }
-                          var display2 = msg_type.messages_id_desc;
-                       document.getElementById("id_error_msg_incoterm_key").innerHTML = display2 + "Incoterm Key";
-
-
+            if(format.test(payter_desc_dic.payment_term_key)) {
+                error_message = ui_messeges("JMSG003")// Get message details
+                var display2 = msg_type.messages_id_desc;
+                document.getElementById("id_error_msg_incoterm_key").innerHTML = display2 + "Incoterm Key";
                 $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
                 count = count +1;
             }
-            else{
-            $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "none");
+            else {
+                $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "none");
             }
 
             //*************** checking for special characters for Description ***************
             if(format.test(payter_desc_dic.description)){
-               
-                var msg = "JMSG003";
-                var msg_type ;
-              msg_type = message_config_details(msg);
-              $("#error_msg_id").prop("hidden", false)
-
-              if(msg_type.message_type == "ERROR"){
-                    display_message("error_msg_id", msg_type.messages_id_desc)
-              }
-              else if(msg_type.message_type == "WARNING"){
-                 display_message("id_warning_msg_id", msg_type.messages_id_desc)
-              }
-              else if(msg_type.message_type == "INFORMATION"){
-                 display_message("id_info_msg_id", msg_type.messages_id_desc)
-              }
-              var display = msg_type.messages_id_desc;
-
-            document.getElementById("id_error_msg_description").innerHTML = display + "Description";
-
-
+                error_message = ui_messeges("JMSG003")// Get message details
+                var display = msg_type.messages_id_desc;
+                document.getElementById("id_error_msg_description").innerHTML = display + "Description";
                 $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "1px solid #FF0000");
                 count = count +1;
-           }
-           else{
-            $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "none");
             }
-
+            else{
+                $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "none");
+            }
             if(incotem_key_check.includes(payter_desc_dic.incoterm_key)){
                 $(row).css("border", "#f8d7da");
-                //$(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
-                //$(row.find("TD").eq(2).find('input[type="text"]')).css("border", "1px solid #FF0000");
-
             }
             else{
                 //$(row).css("border", "");
             }
             incotem_key_check.push(payter_desc_dic.payment_term_key);
-    });
+        });
 
-            //*************** shows save button if there are no errors(special characters and max length) ***************
-            if (count == 0) {
-                $("#id_check_special_character_messages").prop("hidden", true)
-                $("#save_id").prop("hidden", false);
+        //*************** shows save button if there are no errors(special characters and max length) ***************
+        if (count == 0) {
+            $("#id_check_special_character_messages").prop("hidden", true)
+            $("#save_id").prop("hidden", false);
+        }
+        popup_data_dict = {
+            'data_list': incoterm_list
+        }
+        OpenLoaderPopup();
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'eProc_Configuration_Check:check_paymentterm_desc' %}",
+            data: JSON.stringify(popup_data_dict),
+            success: function(response) {
+                table_sort_filter_popup_pagination('id_popup_table')
+                var message = ''
+                update_check_message(response.messages)
+                CloseLoaderPopup();
             }
-            popup_data_dict = {
-                'data_list': incoterm_list
+        });
+    }
+
+    // validating the  popup table for duplicate entries
+    function compare_table_for_duplicate_entries(validate_add_attributes, payment_term) {
+        add_attr_duplicates = false;
+        var error_message = ''
+        var add_attr_duplicates_list = [];
+        var add_attr_unique_list = [];
+        var no_duplicate_value = 'Y'
+        $.each(validate_add_attributes, function (index, value) {
+            if ($.inArray(value, add_attr_unique_list) == -1) {
+                add_attr_unique_list.push(value);
             }
-            OpenLoaderPopup();
-            $.ajax({
-                type: 'POST',
-                url: "{% url 'eProc_Configuration_Check:check_paymentterm_desc' %}",
-                data: JSON.stringify(popup_data_dict),
-                success: function(response) {
-                      table_sort_filter_popup_pagination('id_popup_table')
-                    //table_sort_filter('id_popup_table');
-                    var message = ''
-                    update_check_message(response.messages)
-                    CloseLoaderPopup();
+            else {
+                if ($.inArray(value, add_attr_duplicates_list) == -1) {
+                    add_attr_duplicates_list.push(value);
+                }
+            }
+        });
+        if (add_attr_duplicates_list.length != 0) {
+            error_message = ui_messeges("JMSG001")// Get message details
+            no_duplicate_value = 'N'
+            return [no_duplicate_value,error_message]
+        }
+        else {
+            $.each(payment_term, function (i, item) {
+                if (item.payment_term_key.length == 0) {
+                    error_message = ui_messeges("JMSG002")// Get message details
+                    no_duplicate_value = 'N'
+                    return [no_duplicate_value,error_message]
+                }
+                if (item.day_limit.length == 0) {
+                    error_message = ui_messeges("JMSG002")// Get message details
+                    no_duplicate_value = 'N'
+                    return [no_duplicate_value,error_message]
+                }
+                if (item.description.length == 0) {
+                    error_message = ui_messeges("JMSG002")// Get message details
+                    no_duplicate_value = 'N'
+                    return [no_duplicate_value,error_message]
                 }
             });
         }
-        //**********************************************
-
-       function GetReferrer() {
-             window.history.back();
-              var preUrl = document.referrer;
-              console.log(preUrl);
-              window.open('', '_self', '').close();
-<!--               var win = window.open(preUrl);-->
-<!--                win.focus();-->
-              if (preUrl == null)
-                     return "The previous page url is empty";
-               else
-                     return preUrl;
-       }
-
-// validating the  popup table for duplicate entries
-function compare_table_for_duplicate_entries(validate_add_attributes, payment_term) {
-    add_attr_duplicates = false;
-    var error_message = ''
-    var add_attr_duplicates_list = [];
-    var add_attr_unique_list = [];
-    var no_duplicate_value = 'Y'
-    $.each(validate_add_attributes, function (index, value) {
-        if ($.inArray(value, add_attr_unique_list) == -1) {
-            add_attr_unique_list.push(value);
-        }
-        else {
-            if ($.inArray(value, add_attr_duplicates_list) == -1) {
-                add_attr_duplicates_list.push(value);
-            }
-        }
-    });
-    if (add_attr_duplicates_list.length != 0) {
-        //error_message = messageConstants["JMSG001"];
-              
-                var msg = "JMSG001";
-                var msg_type ;
-              msg_type = message_config_details(msg);
-              $("#error_msg_id").prop("hidden", false)
-
-              if(msg_type.message_type == "ERROR"){
-                    display_message("error_msg_id", msg_type.messages_id_desc)
-              }
-              else if(msg_type.message_type == "WARNING"){
-                 display_message("id_warning_msg_id", msg_type.messages_id_desc)
-              }
-              else if(msg_type.message_type == "INFORMATION"){
-                 display_message("id_info_msg_id", msg_type.messages_id_desc)
-              }
-                no_duplicate_value = 'N'
-                return [no_duplicate_value,error_message]
-
+        return [no_duplicate_value,error_message]
     }
-    else {
-         $.each(payment_term, function (i, item) {
-         if (item.payment_term_key.length == 0) {
-                //error_message = messageConstants["JMSG002"] + "Payment Term Key";
-              
-                var msg = "JMSG002";
-                var msg_type ;
-              msg_type = message_config_details(msg);
-              $("#error_msg_id").prop("hidden", false)
 
-              if(msg_type.message_type == "ERROR"){
-                    display_message("error_msg_id", msg_type.messages_id_desc)
-              }
-              else if(msg_type.message_type == "WARNING"){
-                 display_message("id_warning_msg_id", msg_type.messages_id_desc)
-              }
-              else if(msg_type.message_type == "INFORMATION"){
-                 display_message("id_info_msg_id", msg_type.messages_id_desc)
-              }
-                no_duplicate_value = 'N'
-                return [no_duplicate_value,error_message]
-            }
-        if (item.day_limit.length == 0) {
-                //error_message = messageConstants["JMSG002"] + " Day Limit";
-              
-                var msg = "JMSG002";
-                var msg_type ;
-              msg_type = message_config_details(msg);
-              $("#error_msg_id").prop("hidden", false)
+    // //validate by comparing  main table values and popup table values
+    // function maintable_validation(payment_term_data, main_table_low_value){
+    //     var no_duplicate_entries = 'Y'
+    //     var error_message =''
+    //     var dup_entry = "";
+    //     $.each(payment_term_data, function (i, item) {
+    //         $.each(main_table_low_value, function (j, item1) {
+    //             if((item.payment_term_key == item1.payment_term_key) && (item.language_id == item1.language_id)){
+    //                 dup_entry = "1"
+    //             }
+    //         });
+    //     });
+    //     if((dup_entry == "1"))
+    //     {
+    //         error_message = ui_messeges("JMSG001")// Get message details
+    //         no_duplicate_value = 'N'
+    //         return [no_duplicate_value,error_message]
+    //     }
+    //     return [no_duplicate_entries,error_message]
+    // }
 
-              if(msg_type.message_type == "ERROR"){
-                    display_message("error_msg_id", msg_type.messages_id_desc)
-              }
-              else if(msg_type.message_type == "WARNING"){
-                 display_message("id_warning_msg_id", msg_type.messages_id_desc)
-              }
-              else if(msg_type.message_type == "INFORMATION"){
-                 display_message("id_info_msg_id", msg_type.messages_id_desc)
-              }
-                no_duplicate_value = 'N'
-                return [no_duplicate_value,error_message]
-            }
-        if (item.description.length == 0) {
-                //error_message = messageConstants["JMSG002"] + " Description";
-              
-                var msg = "JMSG002";
-                var msg_type ;
-              msg_type = message_config_details(msg);
-              $("#error_msg_id").prop("hidden", false)
-
-              if(msg_type.message_type == "ERROR"){
-                    display_message("error_msg_id", msg_type.messages_id_desc)
-              }
-              else if(msg_type.message_type == "WARNING"){
-                 display_message("id_warning_msg_id", msg_type.messages_id_desc)
-              }
-              else if(msg_type.message_type == "INFORMATION"){
-                 display_message("id_info_msg_id", msg_type.messages_id_desc)
-              }
-                no_duplicate_value = 'N'
-                return [no_duplicate_value,error_message]
-            }
-         });
+    //********************************************
+    function update_check_message(messages) {
+        $.each(messages, function (i, message) {
+            $("#id_check_success_messages").append('<p>' + message + '</p>')
+        });
+        $("#id_check_success_messages").prop("hidden",false)
     }
-    return [no_duplicate_value,error_message]
-}
 
-//validate by comparing  main table values and popup table values
-function maintable_validation(payment_term_data, main_table_low_value){
-    var no_duplicate_entries = 'Y'
-    var error_message =''
-
-    var dup_entry = "";
-
-     $.each(payment_term_data, function (i, item) {
-        $.each(main_table_low_value, function (j, item1) {
-            if((item.payment_term_key == item1.payment_term_key) && (item.language_id == item1.language_id)){
-                dup_entry = "1"
+    //onclick of cancel display the table in display mode............
+    function display_basic_db_data() {
+        var data = {'table_name':'Payterms_desc'}
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'eProc_Configuration:get_dropdown_data' %}",
+            data: JSON.stringify(data),
+            success: function(response) {
+                rendered_payment_key_list = response.payterm_key_list
+                render_language_data = response.language_list
+                paytermdesc_drop();
+                $('#display_basic_table').DataTable().destroy();
+                $('#id_payment_term_tbody').empty();
+                var edit_basic_data = '';
+                var desc = ''; var lang_code;
+                $.each(rendered_payment_term_data, function (i, item) {
+                    lang_code = item.language_id;
+                    for (i = 0; i < render_language_data.length; i++) {
+                        if (lang_code == render_language_data[i].language_id)
+                            desc = render_language_data[i].description
+                    }
+                    edit_basic_data += '<tr><td class="class_select_checkbox"><input class="checkbox_check" onclick="valueChanged()" type="checkbox" required></td>'+
+                    '<td>' + desc + '</td>' +
+                    '<td>' + item.payment_term_key + '</td>' +
+                    '<td>' + item.description + '</td>' +
+                    '<td>' + item.day_limit + '</td>' +
+                    '<td hidden> <input type="checkbox"</td>' +
+                    '<td hidden>' + item.payment_term_guid + '</td></tr>';
+                });
+                $('#id_payment_term_tbody').append(edit_basic_data);
+                $("#hg_select_checkbox").prop("hidden", true);
+                $(".class_select_checkbox").prop("hidden", true);
+                $('input:checkbox').removeAttr('checked');
+                $('#id_edit_data').show();
+                $('#id_cancel_data').hide();
+                $('#id_delete_data').hide();
+                $('#id_copy_data').hide();
+                $('#id_update_data').hide();
+                $('#id_save_confirm_popup').modal('hide');
+                $('#id_delete_confirm_popup').modal('hide');
+                $('#id_check_all').hide();
+                table_sort_filter('display_basic_table');
             }
         });
-     });
-         if((dup_entry == "1"))
-        {
-        //error_message = messageConstants["JMSG001"]
-              
-                var msg = "JMSG001";
-                var msg_type ;
-              msg_type = message_config_details(msg);
-              $("#error_msg_id").prop("hidden", false)
+    }
 
-              if(msg_type.message_type == "ERROR"){
-                    display_message("error_msg_id", msg_type.messages_id_desc)
-              }
-              else if(msg_type.message_type == "WARNING"){
-                 display_message("id_warning_msg_id", msg_type.messages_id_desc)
-              }
-              else if(msg_type.message_type == "INFORMATION"){
-                 display_message("id_info_msg_id", msg_type.messages_id_desc)
-              }
-                no_duplicate_value = 'N'
-                return [no_duplicate_value,error_message]
-        }
-    return [no_duplicate_entries,error_message]
-
-}
-
-function update_check_message(messages){
-    $.each(messages, function (i, message) {
-                $("#id_check_success_messages").append('<p>' + message + '</p>')
+    //Function to highlight duplicate records
+    function display_duplicate_entry(common) {
+        var paytrm_desc_check = new Array;
+        $("#id_popup_table TBODY TR").each(function() {
+            var row = $(this);
+            paytrm_desc_dic = {}
+            paytrm_desc_dic.workflow_schema = row.find("TD").eq(1).find('select[type="text"]').val();
+            paytrm_desc_dic.company_id = row.find("TD").eq(2).find('select').val();
+            var compare = workflw_schm_dic.workflow_schema +'-'+ workflw_schm_dic.company_id 
+            paytrm_desc_check.push(compare);
+            jQuery.grep(paytrm_desc_check, function(el) {
+                if (jQuery.inArray(el, common) != -1) {
+                    row_color_highlight(row);
+                }
+                else {
+                    row_color_no_highlight(row);
+                }
             });
 
-            $("#id_check_success_messages").prop("hidden",false)
-}
+        });
+    }
+
 </script>
 <script src="{% static 'scripts/supplier_managment/payment_term_desc.js' %}"></script>
 {% endblock %}

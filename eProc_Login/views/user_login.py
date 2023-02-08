@@ -16,7 +16,8 @@ from django.http import HttpResponse, JsonResponse
 
 from eProc_Add_Item.views import JsonParser_obj
 from eProc_Basic.Utilities.functions.get_db_query import *
-from eProc_Basic.Utilities.functions.messages_config import get_msg_desc, get_message_desc_without_client, get_message_desc
+from eProc_Basic.Utilities.functions.messages_config import get_msg_desc, get_message_desc_without_client, \
+    get_message_desc
 from eProc_Basic.Utilities.global_defination import global_variables
 from eProc_Basic.Utilities.messages.messages import MSG029, MSG055, MSG056, MSG057, MSG122
 from eProc_Emails.Utilities.email_notif_generic import email_notify
@@ -172,7 +173,8 @@ def generate_otp(request):
     #     if generate_otp == otp:
     #         return redirect('eProc_Login:login_page')
 
-    return render(request, 'Client_Set_up/otp.html',context)
+    return render(request, 'Client_Set_up/otp.html', context)
+
 
 # user logout function
 def logout_page(request):

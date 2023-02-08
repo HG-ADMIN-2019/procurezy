@@ -19,7 +19,7 @@
                 <button class="btn btn-primary" type="button" id="id_add_data" value="ADD" data-toggle="modal" data-target="#myModal" onclick="onclick_add_button(this)">
                     <i class="fa fa-plus"></i> add number ranges
                 </button>
-                 <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"  onclick="GetReferrer();">
+                 <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"  onclick="window_close();">
                     <i class="fas fa-times"></i> close
                 </button>
             </div>
@@ -115,8 +115,6 @@
                     <div id="error_msg_id" class="alert alert-danger display-none" role="alert"><span id="error_message"></span></div>
                     <div id="id_warning_msg_id" class="alert alert-warning display-none" role="alert"></div>
                     <div id="id_info_msg_id" class="alert alert-primary display-none" role="alert"></div>
-
-
                     <table class="class_popup_table table table-bordered mt-2" id="id_popup_table">
                         <thead>
                             <tr>
@@ -144,7 +142,6 @@
             </div>
         </div>
     </div>
-
 
     <!-- modal popup to upload the csv file; save confirmation popup; delete confirmation popup -->
         {% include 'configuration_common_pop_up.html' %}
@@ -248,15 +245,15 @@
         $("#id_popup_table TBODY TR").each(function () {
             var row = $(this);
             number_range = {};
-            number_range.sequence = row.find("TD").eq(1).find('input[type="text"]').val();
-            number_range.starting = row.find("TD").eq(2).find('input[type="text"]').val().toUpperCase();
-            number_range.ending = row.find("TD").eq(3).find('input[type="text"]').val().toUpperCase();
-            number_range.current = row.find("TD").eq(4).find('input[type="text"]').val().toUpperCase();
+            number_range.sequence = row.find("TD").eq(1).find('input[type="number"]').val();
+            number_range.starting = row.find("TD").eq(2).find('input[type="number"]').val();
+            number_range.ending = row.find("TD").eq(3).find('input[type="number"]').val();
+            number_range.current = row.find("TD").eq(4).find('input[type="number"]').val();
             number_range.del_ind = row.find("TD").eq(6).find('input[type="checkbox"]').is(':checked');
             number_range.guid = row.find("td:eq(5) input[type='text']").val();
 
             if (number_range == undefined) {
-                number_range.sequence = row.find("TD").eq(1).find('input[type="text"]').val();
+                number_range.sequence = row.find("TD").eq(1).find('input[type="number"]').val();
             }
             validate_add_attributes.push(number_range.sequence);
             number_range_data.push(number_range);
@@ -696,7 +693,6 @@
                     else {
                         $("#id_check_success_messages").hide()
                         $("#id_check_error_messages").prop("hidden", false)
-                              
                                  var msg = "JMSG006";
                                  var msg_type ;
                                  msg_type = message_config_details(msg);
@@ -709,13 +705,11 @@
         });
     }
 
-     function GetReferrer() {
+     function window_close() {
              window.history.back();
               var preUrl = document.referrer;
               console.log(preUrl);
               window.open('', '_self', '').close();
-<!--               var win = window.open(preUrl);-->
-<!--                win.focus();-->
               if (preUrl == null)
                      return "The previous page url is empty";
                else

@@ -589,5 +589,5 @@ def check_product_detail(request):
     update_user_info(request)
     ui_data_dictionary = JsonParser_obj.get_json_from_req(request)
     ui_data = ui_data_dictionary['data_list']
-    messages = check_product_detail_data(ui_data)
+    messages = check_product_detail_data(ui_data,'UPLOAD')
     return JsonResponse({'messages': messages}, safe=False)

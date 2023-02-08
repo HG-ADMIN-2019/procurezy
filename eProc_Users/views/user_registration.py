@@ -65,10 +65,10 @@ def register_page(request):
                     # msg = error_msg['message_desc'][0]
                     # error_msg = msg
                     message_desc = get_message_desc('MSG017')[1]
-            messages.success(request, message_desc)
+                messages.success(request, message_desc)
 
             # messages.success(request, MSG017)
-            return redirect('eProc_Users:register_page')
+                return redirect('eProc_Users:register_page')
 
     context = {
         'inc_nav': True,

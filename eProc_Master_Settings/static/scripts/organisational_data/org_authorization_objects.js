@@ -2,25 +2,6 @@ var authobj_data = new Array();
 var validate_add_attributes = [];
 var auth_obj={};
 
-//onclick of add button display myModal popup and set GLOBAL_ACTION button value
-function onclick_add_button(button) {
-      dropdown_value();
-    $("#error_msg_id").css("display", "none")
-    $( "#header_select").prop( "hidden", false );
-    GLOBAL_ACTION = button.value
-    $('#id_popup_table').DataTable().destroy();
-    $("#id_popup_tbody").empty();
-    $('#myModal').modal('show');
-  basic_add_new_html = '<tr><td><input type="checkbox" required></td>'+
-    '<td><select type="text" class="input form-control authobject" id="authobject-1"  name="authobject" onchange="GetSelectedTextValue(this)"><option value="" disabled selected>Select your option</option>'+ auth_obj_id_dropdown +'</select></td>'+
-   '<td><input class="form-control description" type="text"  name="description"  id="description-1" disabled></td>'+'<td><select id="authobject_type" name="authobject_type"  class="input form-control">'+auth_type_dropdown+'</select></td>'+
-   '<td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
-   $('#id_popup_tbody').append(basic_add_new_html);
-    table_sort_filter('id_popup_table');
-    $("#id_del_ind_checkbox").prop("hidden", true);
-    document.getElementById("id_del_add_button").style.display = "block";
-    $("#save_id").prop("hidden", false);
-}
 
 /// on click copy icon display the selected checkbox data
 function onclick_copy_button() {
@@ -36,55 +17,6 @@ function onclick_update_button() {
     document.getElementById("id_del_add_button").style.display = "none";
 }
 
-function onclick_copy_update_button() {
-    $("#error_msg_id").css("display", "none")
-    $("#id_popup_tbody").empty();
-    $('#display_basic_table').DataTable().destroy();
-    $('#id_popup_table').DataTable().destroy();
-    $("#id_popup_tbody").empty();
-    //Reference the Table.
-    var grid = document.getElementById("display_basic_table");
-
-    //Reference the CheckBoxes in Table.
-    var checkBoxes = grid.getElementsByTagName("INPUT");
-    var edit_basic_data = "";
-    var dropdown_values = [];
-    //Loop through the CheckBoxes.
-    for (var i = 1; i < checkBoxes.length; i++) {
-        if (checkBoxes[i].checked) {
-            var row = checkBoxes[i].parentNode.parentNode;
-            var auth_obj_id = row.cells[1].innerHTML;
-            var auth_level= row.cells[3].innerHTML;
-            dropdown_values.push([auth_obj_id, auth_level])
-            if (GLOBAL_ACTION == "UPDATE") {
-                edit_basic_data += '<tr><td hidden><input type="checkbox" required></td><td><select type="text" class="input form-control" id="authobjectid"  name="authobjectid" disabled>'+ auth_obj_id_db_values_onload +'</select></td><td><input class="input form-control description" id="description-1" value="' + row.cells[2].innerHTML + '" type="text"  name="description" disabled></td><td><select id="authobject_type" name="authobject_type" class="input form-control" value="' + row.cells[3].innerHTML + '">' + auth_type_dropdown + '</select></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
-                $("#header_select").prop("hidden", true);
-            }
-            else{
-               
-                unique_input = '<select class="form-control">' + auth_obj_id_add_dropdown + '</select>'
-                edit_basic_data += '<tr ><td><input type="checkbox" required></td><td><select class="form-control">' + auth_obj_id_dropdown + '</select></td><td><select class="form-control">' + auth_obj_level_dropdown + '</select></td><td><select class="form-control">' + auth_obj_level_id_dropdown + '</select></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
-                $("#header_select").prop("hidden", false);
-            }
-        }
-    }
-    $('#id_popup_table').append(edit_basic_data);
-    var i = 0;
-    $("#id_popup_table TBODY TR").each(function () {
-        var row = $(this);
-        var auth_obj_id = dropdown_values[i][0]
-        var auth_level= dropdown_values[i][1]
-
-        $(row.find("TD").eq(3).find("select option[value=" + auth_level + "]")).attr('selected', 'selected');
-        $(row.find("TD").eq(1).find("select option[value=" + auth_obj_id + "]")).attr('selected', 'selected');
-        i++;
-    });
-    $("#id_del_ind_checkbox").prop("hidden", true);
-
-    $('#myModal').modal('show');
-    table_sort_filter('display_basic_table');
-    table_sort_filter('id_popup_table');
-}
 
 //onclick of cancel empty the popup table body and error messages
 $(".remove_upload_data").click(() => {

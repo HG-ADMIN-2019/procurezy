@@ -6,8 +6,8 @@ from eProc_Basic.Utilities.functions.django_query_set import DjangoQueries
 from eProc_Basic.Utilities.functions.update_del_ind import query_update_del_ind
 from eProc_Basic.Utilities.global_defination import global_variables
 from eProc_Configuration.models import OrgNodeTypes, OrgAttributes, UserRoles, AuthorizationObject, Authorization, \
-    AuthorizationGroup, MessagesId, MessagesIdDesc, OrgModelNodetypeConfig, AccountAssignmentCategoryCust, NumberRanges, \
-    PoSplitType, PoSplitCriteria, TransactionTypes, PurchaseControl
+    AuthorizationGroup, MessagesId, MessagesIdDesc, OrgModelNodetypeConfig, NumberRanges, \
+    PoSplitType, PoSplitCriteria, TransactionTypes, PurchaseControl, AccountAssignmentCategory
 
 django_query_instance = DjangoQueries()
 
@@ -111,19 +111,18 @@ def extract_account_assignment_category_data(request):
     response['Content-Disposition'] = 'attachment; filename=' + CONST_ACCOUNT_ASSIGNMENT_CATEGORY_CSV
 
     writer = csv.writer(response)
-    writer.writerow(['ACCOUNT_ASSIGN_CAT', 'ACC_CAT_CUST_DESCRIPTION', 'del_ind'])
+    writer.writerow(['ACCOUNT_ASSIGN_CAT', 'DESCRIPTION', 'del_ind'])
 
-    account_assignment_category_data = django_query_instance.django_filter_query(AccountAssignmentCategoryCust,
-                                                                                 {'del_ind': False
-                                                                                  }, None,
+    account_assignment_category_data = django_query_instance.django_filter_query(AccountAssignmentCategory,
+                                                                                 {'del_ind': False}, None,
                                                                                  ['account_assign_cat',
-                                                                                  'acc_cat_cust_description',
+                                                                                  'description',
                                                                                   'del_ind'])
-    account_assignment_category_data = query_update_del_ind(account_assignment_category_data)
+    account_assignment_category_types = query_update_del_ind(account_assignment_category_data)
 
-    for account_assignment_category_type in account_assignment_category_data:
+    for account_assignment_category_type in account_assignment_category_types:
         account_assignment_category_info = [account_assignment_category_type['account_assign_cat'],
-                                            account_assignment_category_type['acc_cat_cust_description'],
+                                            account_assignment_category_type['description'],
                                             account_assignment_category_type['del_ind']]
         writer.writerow(account_assignment_category_info)
 

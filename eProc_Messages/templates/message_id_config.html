@@ -17,7 +17,7 @@
                 <button type="button" id="id_add_data" value="ADD" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="onclick_add_button(this)">
                     <i class="fa fa-plus"></i> add message number
                 </button>
-                <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"  onclick="GetReferrer();">
+                <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"  onclick="window_close();">
                     <i class="fas fa-times"></i> close
                 </button>
             </div>
@@ -178,39 +178,114 @@
     var Tablename = uiConstants["CONST_TABLENAME_CALENDERCONFIG"]
     var appname = uiConstants["CONST_APPNAME01"]
     var db_header_data = uiConstants["CONST_HEADER_DATA_COUNTRY"]
-
-    var msg_type_dropdown='';
+    var msg_id_dropdown,msg_type_dropdown;
+    function drop_down(){
+        msg_type_dropdown='';
         $.each(rendered_msgtype_values, function(i, item){
         msg_type_dropdown += '<option value="' + item.field_type_id + '">' + item.field_type_id + '</option>';
         });
-
-    var msg_id_dropdown='';
+        msg_id_dropdown='';
         $.each(rendered_msgid_values, function(i, item){
         msg_id_dropdown += '<option value="' + item.field_type_id + '">' + item.field_type_id + '</option>';
         });
+    }
 
     //**************************************
     //onclick of add button display myModal popup and set GLOBAL_ACTION button value
     function onclick_add_button(button){
-         $("#error_msg_id").css("display", "none")
-        $( "#header_select").prop( "hidden", false );
-        GLOBAL_ACTION=button.value
-        $("#id_popup_tbody").empty();
-        $('#myModal').modal('show');
-        basic_add_new_html = '<tr><td><input type="checkbox" required></td>'+
-        '<td><select class="form-control" type="text" name="message_id">'+ msg_id_dropdown +'</select></td>'+
-        '<td><select id="message_type" name="message_type" class="form-control" type="text" >'+ msg_type_dropdown +'</select> </td>'+
-        '<td class="class_del_checkbox" hidden><input type="checkbox" required></td>'+
-        '<td hidden></td>'+
-        '</tr>';
-        $('#id_popup_tbody').append(basic_add_new_html);
-        table_sort_filter('id_popup_table');
-        $("#id_del_ind_checkbox").prop( "hidden", true );
-        document.getElementById("id_del_add_button").style.display = "block";
-        $("#save_id").prop("hidden", false);
+         OpenLoaderPopup();
+        var data = {'table_name':'MessagesId'}
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'eProc_Configuration:get_dropdown_data' %}",
+            data: JSON.stringify(data),
+            success: function(response) {
+            rendered_msgtype_values = response.dropdown_msg_type_values
+            rendered_msgid_values = response.dropdown_msg_id_values
+            drop_down()
+                $("#error_msg_id").css("display", "none")
+                $( "#header_select").prop( "hidden", false );
+                GLOBAL_ACTION=button.value
+                $("#id_popup_tbody").empty();
+                basic_add_new_html = '<tr><td><input type="checkbox" required></td>'+
+                '<td><select class="form-control" type="text" name="message_id">'+ msg_id_dropdown +'</select></td>'+
+                '<td><select id="message_type" name="message_type" class="form-control" type="text" >'+ msg_type_dropdown +'</select> </td>'+
+                '<td class="class_del_checkbox" hidden><input type="checkbox" required></td>'+
+                '<td hidden></td>'+
+                '</tr>';
+                $('#id_popup_tbody').append(basic_add_new_html);
+                table_sort_filter('id_popup_table');
+                $("#id_del_ind_checkbox").prop( "hidden", true );
+                document.getElementById("id_del_add_button").style.display = "block";
+                $("#save_id").prop("hidden", false);
+                $('#myModal').modal('show');
+                CloseLoaderPopup();
+            }
+        });
 
     }
 
+
+    //**********************************************************
+    function onclick_copy_update_button() {
+         OpenLoaderPopup();
+         var data = {'table_name':'MessagesId'}
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'eProc_Configuration:get_dropdown_data' %}",
+            data: JSON.stringify(data),
+            success: function(response) {
+            rendered_msgtype_values = response.dropdown_msg_type_values
+            rendered_msgid_values = response.dropdown_msg_id_values
+            drop_down()
+                $("#error_msg_id").css("display", "none")
+                $("#id_popup_tbody").empty();
+                $('#display_basic_table').DataTable().destroy();
+                //Reference the Table.
+                var grid = document.getElementById("display_basic_table");
+
+                //Reference the CheckBoxes in Table.
+                var checkBoxes = grid.getElementsByTagName("INPUT");
+                var edit_basic_data = "";
+                var dropdown_values = [];
+                //Loop through the CheckBoxes.
+                for (var i = 1; i < checkBoxes.length; i++) {
+                    if (checkBoxes[i].checked) {
+                        var row = checkBoxes[i].parentNode.parentNode;
+                         if(GLOBAL_ACTION == "UPDATE"){
+                        unique_input = '<select class="form-control" type="text" value="' + row.cells[1].innerHTML + '" name="message_id"  disabled>'+ msg_id_dropdown +'</select>'
+                        edit_basic_data += '<tr><td hidden><input type="checkbox" required></td>' +
+                                            '<td>'+ unique_input +'</td>' +
+                                            '<td><select id="message_type" class="input form-control" type="text" name="message_type">'+ msg_type_dropdown +'</select></td>'+
+                                            '<td class="class_del_checkbox" hidden><input type="checkbox" required></td> <td hidden><input class="form-control" type="text" value="' + row.cells[3].innerHTML + '"></td></tr>';
+                                            $("#header_select").prop("hidden", true);
+                                            }
+
+                             var message_id_value = row.cells[1].innerHTML
+                             var message_type_value = row.cells[2].innerHTML
+                            dropdown_values.push([message_type_value, message_id_value])
+                    }
+                }
+                $('#id_popup_table').append(edit_basic_data);
+                 var i =0;
+                $("#id_popup_table TBODY TR").each(function() {
+                var row = $(this);
+                 var messagetype_value = dropdown_values[i][0]
+                 var messageid_value = dropdown_values[i][1]
+                 $(row.find("TD").eq(1).find("select option[value="+messageid_value+"]")).attr('selected','selected');
+                 $(row.find("TD").eq(2).find("select option[value="+messagetype_value+"]")).attr('selected','selected');
+                     i++;
+                });
+
+                $("#id_del_ind_checkbox").prop("hidden", true);
+                $('#myModal').modal('show');
+                table_sort_filter('id_popup_table');
+                table_sort_filter('display_basic_table');
+                $('#myModal').modal('show');
+                CloseLoaderPopup();
+            }
+        });
+    }
     //**********************
     // validate and save for add,copy,update and upload data
     function popup_save_data() {
@@ -291,7 +366,7 @@
 
             message_id_arr_obj.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
             if(message_id_arr_obj.del_ind){
-                message_id_arr_obj.messages_id = row.find("TD").eq(1).html();
+                message_id_arr_obj.message_id = row.find("TD").eq(1).html();
                 message_id_arr_obj.messages_type = row.find("TD").eq(2).html();
                 message_id_arr_obj.msg_id_guid = row.find("TD").eq(3).html();
                 main_table_message_id_checked.push(message_id_arr_obj);
@@ -598,7 +673,7 @@ function compare_duplicate(validate_add_attributes,main_table_low_value, main_ta
   return [no_duplicate_value,error_message];
 }
 
-       function GetReferrer() {
+       function window_close() {
              window.history.back();
               var preUrl = document.referrer;
               console.log(preUrl);
@@ -651,7 +726,7 @@ function compare_table_for_duplicate_entries(validate_add_attributes, message) {
     }
     else {
          $.each(message, function (i, item) {
-            if (item.messages_id.length == 0) {
+            if (item.message_id.length == 0) {
                //error_message = messageConstants["JMSG002"] + "Message Id";
                var url_new = "{% url 'eProc_Basic:get_message_description' %}";
                 var msg = "JMSG002";

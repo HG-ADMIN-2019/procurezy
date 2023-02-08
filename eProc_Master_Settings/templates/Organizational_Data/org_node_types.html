@@ -16,7 +16,7 @@
                 <button class="btn btn-primary" type="button" id="id_add_data" value="ADD" data-toggle="modal" data-target="#myModal" onclick="onclick_add_button(this)">
                     <i class="fa fa-plus"></i> add org node type
                 </button>
-                 <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"  onclick="GetReferrer();">
+                 <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"  onclick="window_close();">
                     <i class="fas fa-times"></i> close
                 </button>
             </div>
@@ -136,10 +136,9 @@
                     <button id="id_delete_duplicate" class="btn btn-primary" style="display:none;" type="button" onclick="delete_duplicate()"><i class="fa fa-trash"></i> delete duplicates</button>
                     <button id="id_check_data" style="display:none;" class="btn btn-primary" type="button" onclick="check_data()"><i class="fas fa-check"></i> check</button>
                     <button class="btn btn-primary" id="save_id"><i class="fas fa-save"></i> save</button>
-                    <button class="btn btn-primary btn-sm" id="delete_data" value="DELETE" data-toggle="modal" data-target="#id_delete_confirm_popup">
+                   <button class="btn btn-primary btn-sm" id="delete_data" value="DELETE" data-toggle="modal" data-target="#id_delete_confirm_popup">
                         <i class="fa fa-trash"></i> Delete
                     </button>
-                   
                 </div>
             </div>
         </div>
@@ -163,7 +162,6 @@
 {{ org_node_types|json_script:"org_node_types" }}
 
     <script>
-
         var rendered_dropdown_values = JSON.parse(document.getElementById('upload_dropdown_db_values').textContent);
         var rendered_org_node_type_data = JSON.parse(document.getElementById('org_node_types').textContent);
         var main_table_org_node_type_value = [];
@@ -172,9 +170,6 @@
         var GLOBAL_ACTION = '';
         var orgnodetype_data_array = {}
         var no_duplicate_entries = 'Y'
-        var Tablename = uiConstants["CONST_TABLENAME_ORG_NODE_TYPE"]
-        var appname = uiConstants["CONST_APPNAME01"]
-        var db_header_data = uiConstants["CONST_HEADER_DATA_ORG_NODE_TYPE"]
         //**************************************
         var node_type_dropdown = '';
      
@@ -182,7 +177,6 @@
             node_type_dropdown = '';
             $.each(rendered_dropdown_values, function(i, item){
                 node_type_dropdown += '<option value="' + item.field_type_id + '">' + item.field_type_id +'</option>';
-
             });
         }
 
@@ -191,7 +185,6 @@
         
 // validate and save for add,copy,update and upload data
     function popup_save_data() {
-
         $('#success_msg_id').empty()
         $('#id_popup_table').DataTable().destroy();
         var main_table_low_value = [];
@@ -208,7 +201,6 @@
             main_table_low_value.push(main_attribute.node_type);
         });
         table_sort_filter('display_basic_table');
-
         [no_duplicate_value,error_message] = compare_table_for_duplicate_entries(validate_add_attributes, orgnodetyp_data)
         if (error_message){
             display_error_message(error_message)
@@ -227,7 +219,7 @@
                     OpenLoaderPopup();
                     $.ajax({
                         type: 'POST',
-                        url: "{% url 'eProc_Master_Settings:create_update_master_data' %}",
+                        url: "{% url 'eProc_Configuration:create_update_application_data' %}",
                         data: JSON.stringify(data),
                         contentType: "application/json; charset=utf-8",
                         dataType: "json",
@@ -265,20 +257,18 @@
         var main_table_org_node_type_checked = [];
        
         function main_table_delete() {
-
-            $('#myModal').modal('hide');
-            $('#success_msg_id').empty()           
-            GLOBAL_ACTION = 'DELETE'
-           
+            GLOBAL_ACTION = 'DELETE';
+             document.getElementById('delete_data').style.visibility = 'visible';
+            $('#success_msg_id').empty();
             main_table_org_node_type_checked = [];
-
-            $('#display_basic_table').DataTable().destroy();           
-           
+            $('#display_basic_table').DataTable().destroy();
+            var disable_check = '';
             $("#id_popup_table TBODY TR").each(function() {
                 var row = $(this);
                 var org_node_type_arr_obj = {};
 
                 var checked_box = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked')
+                disable_check = row.find("TD").eq(0).find('input[type="checkbox"]').is(':disabled');
                 if(checked_box)
                 {
                     org_node_type_arr_obj.del_ind_flag = row.find("TD").eq(5).find('input[type="checkbox"]').is(':checked');
@@ -286,17 +276,15 @@
                     org_node_type_arr_obj.description = row.find("TD").eq(2).find('input[type="text"]').val().toUpperCase();
                     org_node_type_arr_obj.node_type = row.find("TD").eq(1).find('input[type="text"]').val();
                     org_node_type_arr_obj.node_type_guid = row.find("TD").eq(3).find('input[type="text"]').val();
-
-
-                
-            main_table_org_node_type_checked.push(org_node_type_arr_obj);
+                    main_table_org_node_type_checked.push(org_node_type_arr_obj);
                 }
                 });
-                if (main_table_org_node_type_checked.length == "0"){
-                        var msg = "JMSG005";
+                if(disable_check){
+                    $('#delete_data').prop('disabled', true);
+                    var msg = "JMSG112";
                         var msg_type ;
                       msg_type = message_config_details(msg);
-                      $("#error_msg_id").prop("hidden", false)
+                      $("#error_msg_id").prop("hidden", false);
 
                       if(msg_type.message_type == "ERROR"){
                             display_message("error_msg_id", msg_type.messages_id_desc)
@@ -309,10 +297,28 @@
                       }
                        var display4 = msg_type.messages_id_desc;
                       document.getElementById("id_error_msg_checkbox").innerHTML = display4+ "Checkbox";
+                         $('#id_delete_confirm_popup').modal('hide');
+                }
+                else if (main_table_org_node_type_checked.length == "0"){
+                        var msg = "JMSG005";
+                        var msg_type ;
+                      msg_type = message_config_details(msg);
+                      $("#error_msg_id").prop("hidden", false);
 
+                      if(msg_type.message_type == "ERROR"){
+                            display_message("error_msg_id", msg_type.messages_id_desc)
+                      }
+                      else if(msg_type.message_type == "WARNING"){
+                         display_message("id_warning_msg_id", msg_type.messages_id_desc)
+                      }
+                      else if(msg_type.message_type == "INFORMATION"){
+                         display_message("id_info_msg_id", msg_type.messages_id_desc)
+                      }
+                       var display4 = msg_type.messages_id_desc;
+                      document.getElementById("id_error_msg_checkbox").innerHTML = display4+ "Checkbox";
+                         $('#id_delete_confirm_popup').modal('hide');
                 }
                 else{
-               
                    $('#id_save_confirm_popup').modal('hide');
                     data = {'data':main_table_org_node_type_checked,'table_name':'OrgNodeTypes','action':GLOBAL_ACTION}
                     OpenLoaderPopup();
@@ -323,18 +329,17 @@
                             contentType: "application/json; charset=utf-8",
                             dataType: "json",
                             success: function(Response) {
-                                rendered_prodcat_data = Response[0];
+                                rendered_org_node_type_data = Response[0];
                                 display_basic_db_data();
                                 $('#success_msg_id').text(Response[1])
                                 if(Response[1].message_type== 'SUCCESS'){
                                         $('#success_msg_id').text(Response[1].message_desc)
                                 }
-                                $("#err_msg_app_settings_t").prop("hidden", false)
-                                // table_sort_filter('id_popup_table');
+                                $("#err_msg_app_settings_t").prop("hidden", false);
+                                $('#myModal').modal('hide');
                                 setTimeout(function() {
                                     $("#err_msg_app_settings_t").prop("hidden", true);
                                 }, 5000)
-                               // table_sort_filter('id_popup_table');
                                 CloseLoaderPopup();
                             }
                         });
@@ -362,6 +367,7 @@ function display_basic_db_data() {
     $('#id_save_confirm_popup').modal('hide');
     $('#id_delete_confirm_popup').modal('hide');
     $('#id_check_all').hide();
+    $('#save_id').show();
     table_sort_filter('display_basic_table');
 }
 
@@ -370,20 +376,33 @@ function display_basic_db_data() {
 
 //onclick of add button display myModal popup and set GLOBAL_ACTION button value
 function onclick_add_button(button) {
-    dropdown_value();
-    $("#error_msg_id").css("display", "none")
-    $( "#header_select").prop( "hidden", false );
-    GLOBAL_ACTION = button.value
-    $('#id_popup_table').DataTable().destroy();
-    $("#id_popup_tbody").empty();
-    $('#myModal').modal('show');
-    basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select type="text" class="input form-control nodetype" id="nodetype-1"  name="nodetype" onchange="GetSelectedTextValue(this)"><option value="" disabled selected>Select your option</option>'+ node_type_dropdown +'</select></td><td><input class="form-control description" type="text"  name="description"  id="description-1" disabled></td><td hidden>guid</td><td class="class_del_checkbox" hidden><input type="checkbox" required></td><td class="id_del_ind_checkbox1" hidden><input type="checkbox" name = "del_ind_flag" required></td></tr>';
-    $('#id_popup_tbody').append(basic_add_new_html);
-    table_sort_filter('id_popup_table');
-    $("#id_del_ind_checkbox").prop("hidden", true);
-    document.getElementById('delete_data').style.visibility='hidden';
-    document.getElementById("id_del_add_button").style.display = "block";
-    $("#save_id").prop("hidden", false);
+    OpenLoaderPopup();
+    $('#save_id').show();
+    var data = {'table_name':'OrgNodeTypes'}
+    $.ajax({
+        type: 'POST',
+        url: "{% url 'eProc_Configuration:get_dropdown_data' %}",
+        data: JSON.stringify(data),
+        success: function(response) {
+            rendered_dropdown_values = response.upload_dropdown_db_values
+            dropdown_value();
+            $("#error_msg_id").css("display", "none")
+            $( "#header_select").prop( "hidden", false );
+            GLOBAL_ACTION = button.value
+            $('#id_popup_table').DataTable().destroy();
+            $("#id_popup_tbody").empty();
+            $('#myModal').modal('show');
+            basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select type="text" class="input form-control nodetype" id="nodetype-1"  name="nodetype" onchange="GetSelectedTextValue(this)"><option value="" disabled selected>Select your option</option>'+ node_type_dropdown +'</select></td><td><input class="form-control description" type="text"  name="description"  id="description-1" disabled></td><td hidden>guid</td><td class="class_del_checkbox" hidden><input type="checkbox" required></td><td class="id_del_ind_checkbox1" hidden><input type="checkbox" name = "del_ind_flag" required></td></tr>';
+            $('#id_popup_tbody').append(basic_add_new_html);
+            table_sort_filter('id_popup_table');
+            $("#id_del_ind_checkbox").prop("hidden", true);
+            document.getElementById('delete_data').style.visibility='hidden';
+            document.getElementById("id_del_add_button").style.display = "block";
+             CloseLoaderPopup();
+
+        }
+    });
+
 }
 
 // on click add icon display the row in to add the new entries
@@ -393,12 +412,12 @@ function add_popup_row() {
     var display_db_data = '';
     var getid = $(".nodetype:last").attr("id");
     var getindex = getid.split("-")[1]
-    var inc_index = Number(getindex)+1
+    var inc_index = Number(getindex)+1;
     $('#id_popup_table').DataTable().destroy();
     $(".modal").on("hidden.bs.modal", function () {
         $("#id_error_msg").html("");
     });
-    basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select type="text" class="input form-control nodetype" id="nodetype-1"  name="nodetype" onchange="GetSelectedTextValue(this)"><option value="" disabled selected>Select your option</option>'+ node_type_dropdown +'</select></td><td><input class="form-control description" type="text"  name="description"  id="description-1" disabled></td>'+'<td hidden>guid</td><td class="class_del_checkbox" hidden><input type="checkbox" required></td><td class="id_del_ind_checkbox1" hidden><input type="checkbox" name = "del_ind_flag" required></td></tr>';
+    basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select type="text" class="input form-control nodetype" id="nodetype-'+inc_index+'"  name="nodetype" onchange="GetSelectedTextValue(this)"><option value="" disabled selected>Select your option</option>'+ node_type_dropdown +'</select></td><td><input class="form-control description" type="text"  name="description"  id="description-'+inc_index+'" disabled></td>'+'<td hidden>guid</td><td class="class_del_checkbox" hidden><input type="checkbox" required></td><td class="id_del_ind_checkbox1" hidden><input type="checkbox" name = "del_ind_flag" required></td></tr>';
 
      $('#id_popup_tbody').append(basic_add_new_html);
      document.getElementById('delete_data').style.visibility='hidden';
@@ -408,6 +427,11 @@ function add_popup_row() {
     table_sort_filter_popup_pagination('id_popup_table');
 }
 
+function get_inc_val(){
+    var getid = $(".nodetype:last").attr("id");
+    var getindex = getid.split("-")[1];
+    var inc_index = Number(getindex)+1
+}
 
     function GetSelectedTextValue(nodetype) {
         var selectedText = nodetype.options[nodetype.selectedIndex].innerHTML;
@@ -422,7 +446,7 @@ function add_popup_row() {
 
     }
 
-         function GetReferrer() {
+         function window_close() {
              window.history.back();
               var preUrl = document.referrer;
               console.log(preUrl);

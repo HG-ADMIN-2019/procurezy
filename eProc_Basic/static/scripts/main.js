@@ -267,6 +267,7 @@ function nav_bar_user_settings() {
     document.getElementById("approvals_sub_menu").style.display = 'none';
     document.getElementById("content_management_sub_menu").style.display = 'none';
     document.getElementById("configuration_sub_menu").style.display = 'none';
+    document.getElementById("time_sheet_sub_menu").style.display = 'none';
 }
 
 function nav_bar_shop() {
@@ -278,6 +279,7 @@ function nav_bar_shop() {
     document.getElementById("approvals_sub_menu").style.display = 'none';
     document.getElementById("content_management_sub_menu").style.display = 'none';
     document.getElementById("configuration_sub_menu").style.display = 'none';
+    document.getElementById("time_sheet_sub_menu").style.display = 'none';
 }
 function nav_bar_goods_receipts() {
     document.getElementById("shop_shop_plus_submenu").style.display = 'none';
@@ -288,6 +290,7 @@ function nav_bar_goods_receipts() {
     document.getElementById("approvals_sub_menu").style.display = 'none';
     document.getElementById("content_management_sub_menu").style.display = 'none';
     document.getElementById("configuration_sub_menu").style.display = 'none';
+    document.getElementById("time_sheet_sub_menu").style.display = 'none';
 }
 function nav_bar_admin() {
     document.getElementById("shop_shop_plus_submenu").style.display = 'none';
@@ -298,6 +301,7 @@ function nav_bar_admin() {
     document.getElementById("approvals_sub_menu").style.display = 'none';
     document.getElementById("content_management_sub_menu").style.display = 'none';
     document.getElementById("configuration_sub_menu").style.display = 'none';
+    document.getElementById("time_sheet_sub_menu").style.display = 'none';
 }
 
 function nav_bar_purchaser() {
@@ -309,6 +313,7 @@ function nav_bar_purchaser() {
     document.getElementById("approvals_sub_menu").style.display = 'none';
     document.getElementById("content_management_sub_menu").style.display = 'none';
     document.getElementById("configuration_sub_menu").style.display = 'none';
+    document.getElementById("time_sheet_sub_menu").style.display = 'none';
 }
 function nav_bar_approvals() {
     document.getElementById("shop_shop_plus_submenu").style.display = 'none';
@@ -319,6 +324,7 @@ function nav_bar_approvals() {
     document.getElementById("approvals_sub_menu").style.display = 'block';
     document.getElementById("content_management_sub_menu").style.display = 'none';
     document.getElementById("configuration_sub_menu").style.display = 'none';
+    document.getElementById("time_sheet_sub_menu").style.display = 'none';
 }
 
 function nav_bar_content_management() {
@@ -330,6 +336,7 @@ function nav_bar_content_management() {
     document.getElementById("approvals_sub_menu").style.display = 'none';
     document.getElementById("content_management_sub_menu").style.display = 'block';
     document.getElementById("configuration_sub_menu").style.display = 'none';
+    document.getElementById("time_sheet_sub_menu").style.display = 'none';
 }
 
 function nav_bar_configuration() {
@@ -340,7 +347,21 @@ function nav_bar_configuration() {
     document.getElementById("goods_receipts_sub_menu").style.display = 'none';
     document.getElementById("approvals_sub_menu").style.display = 'none';
     document.getElementById("content_management_sub_menu").style.display = 'none';
+    document.getElementById("time_sheet_sub_menu").style.display = 'none';
     document.getElementById("configuration_sub_menu").style.display = 'block';
+}
+function nav_bar_timesheet() {
+    document.getElementById("shop_shop_plus_submenu").style.display = 'none';
+    document.getElementById("user_settings_sub_menu").style.display = 'none';
+    document.getElementById("admin_sub_menu").style.display = 'none';
+    document.getElementById("purchaser_sub_menu").style.display = 'none';
+    document.getElementById("goods_receipts_sub_menu").style.display = 'none';
+    document.getElementById("approvals_sub_menu").style.display = 'none';
+    document.getElementById("content_management_sub_menu").style.display = 'none';
+    document.getElementById("configuration_sub_menu").style.display = 'none';
+    document.getElementById("user_settings_sub_menu").style.display = 'none';
+    document.getElementById("time_sheet_sub_menu").style.display = 'block';
+
 }
 
 function hide_nav_and_leftpanel(parent_url) {
@@ -650,3 +671,45 @@ function message_display_time(){
     $('.alert-success').prop("hidden", true);
     }
 }
+function message_display_time_specific(){
+      setTimeout(function() {
+                    $('.msg-display-class').prop("hidden", true);
+     }, msg_display_interval*1000);
+}
+
+//validate by comparing  main table values and popup table values
+function maintable_validation(validate_add_attributes, main_table_low_value) {
+    var no_duplicate_entries = 'Y'
+    var error_message =''
+    var common = [];
+    jQuery.grep(validate_add_attributes, function(el) {
+        if (jQuery.inArray(el, main_table_low_value) != -1) {
+            common.push(el);
+        }
+    });
+    if (common.length != 0) {
+             display_duplicate_entry(common);  //Function to highlight the rows in popup
+             error_message = ui_messeges("JMSG001")
+             no_duplicate_value = 'N'
+             return [no_duplicate_value,error_message]
+    }
+    return [no_duplicate_entries,error_message]
+}
+// Function to fetch ui messages from backend
+function ui_messeges(messages_id){
+     $.each(messages_list, function (i, item){
+        if (item.messages_id == messages_id){
+            error_message = item.messages_id_desc
+            return error_message
+        }
+     });
+       return error_message
+}
+
+function row_color_highlight(row){
+     $(row).css('background-color', '#ff6633');
+}
+function row_color_no_highlight(row){
+     $(row).css('background-color', '');
+}
+

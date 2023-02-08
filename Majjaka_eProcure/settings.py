@@ -27,8 +27,8 @@ SECRET_KEY = '-p^#04gmm3jl$93p3jx9rm+t1nj4$xl9b_#%192&e_usmw*&nr'
 
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
-
-ALLOWED_HOSTS = ['*']
+ALLOWED_HOSTS = ['www.majjaka-eprocure.com', 'majjaka-eprocure.com'] # for deployment
+# ALLOWED_HOSTS = ['*']
 
 # Application definition
 
@@ -92,7 +92,9 @@ INSTALLED_APPS = [
     'eProc_Related_Documents',
     'eProc_Configuration_Check',
     'eProc_Generate_OTP',
-    'eProc_New_Client_Setup'
+    'eProc_New_Client_Setup',
+    'eProc_Time_Sheet',
+    'eProc_Projects',
 ]
 
 AUTHENTICATION_BACKENDS = [
@@ -113,6 +115,11 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'Majjaka_eProcure.urls'
 
+
+# SESSION_EXPIRE_SECONDS = 120
+# SESSION_EXPIRE_AFTER_LAST_ACTIVITY = True
+# SESSION_EXPIRE_AFTER_LAST_ACTIVITY_GRACE_PERIOD = 60 # group by minute
+# SESSION_TIMEOUT_REDIRECT =  '/login/'
 
 
 
@@ -153,7 +160,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',  # Database engine
         'HOST': 'sg2plzcpnl489587.prod.sin2.secureserver.net',  # Database host
-        'NAME': 'MEP_DEPLOYED',  # Database name MAJJAKA_CLIENT2 MAJJAKAPROCURE_DEV MAJJAKA_DEVLOPMENT
+        'NAME': 'MEP_FIXING',  # Database name MAJJAKA_CLIENT2 MAJJAKAPROCURE_DEV MAJJAKA_DEVLOPMENT
         'USER': 'MajjakaShopEProcure',  # Database user name
         'PASSWORD': 'Project@2019',  # Database credentials
         'PORT': '3306',  # Database port number
@@ -212,8 +219,10 @@ PHONE_NUM = '9845648568'
 # https://docs.djangoproject.com/en/2.1/howto/static-files/
 
 STATIC_URL = '/static/'  # Path for static files
+################################# Deployment ###########################
 STATIC_ROOT = 'staticfiles' # for deployment
 STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),) # for deployment
+################################# Deployment ###########################
 
 LOGIN_URL = '/'  # Login URL
 AUTH_USER_MODEL = 'eProc_Registration.UserData'  # Custom User Model for authentication

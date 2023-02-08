@@ -1,27 +1,21 @@
 import os
 import csv
 
-from django.db.models import ProtectedError
-
+from Majjaka_eProcure import *
 from Majjaka_eProcure import settings
 from eProc_Basic.Utilities.constants.constants import *
-from eProc_Basic.Utilities.functions.django_query_set import DjangoQueries, bulk_create_entry_db
-from eProc_Basic_Settings.Utilities.basic_settings_specific import save_country_data_into_db, save_country, \
-    save_currency, save_time_zone, save_languages, save_uom, save_unspsc
-from eProc_Configuration.Utilities.application_settings_specific import save_message_id, save_message_id_desc
+from eProc_Basic_Settings.Utilities.basic_settings_specific import *
+from eProc_Configuration.Utilities.application_settings_specific import *
 from eProc_Configuration.models import *
-from eProc_Master_Settings.Utilities.master_settings_specific import save_org_node_type, save_attributes, \
-    save_user_roles, save_auth_obj, save_auth, save_auth_grp, save_field_desc, save_field_type_desc
+from eProc_Master_Settings.Utilities.master_settings_specific import *
 from eProc_Org_Model.Utilities.apiHandler import ApiHandler
-from eProc_Org_Model.Utilities.client import OrgClient
-from eProc_Org_Model.models import OrgModel, OrgNames
-from eProc_Registration.models import UserData
 
 django_query_instance = DjangoQueries()
 
 
-class InitialSetupClient:
+class InitialSetupClient(BasicSettingsSave):
     def __init__(self, client):
+        super().__init__()
         self.client = django_query_instance.django_get_query(OrgClients,
                                                              {'client': client})
         self.username = CONST_SYSTEM_USER
@@ -46,13 +40,13 @@ class InitialSetupClient:
                             csv_to_db_data.append({'country_code': csv_data[0],
                                                    'country_name': csv_data[1],
                                                    'del_ind': csv_data[2]})
-                        save_country(csv_to_db_data, self.username)
+                        self.save_country(csv_to_db_data)
                     if file == CONST_CURRENCY_CSV:
                         for csv_data in csvreader:
                             csv_to_db_data.append({'currency_id': csv_data[0],
                                                    'description': csv_data[1],
                                                    'del_ind': csv_data[2]})
-                        save_currency(csv_to_db_data, self.username)
+                        self.save_currency(csv_to_db_data)
                     if file == CONST_TIMEZONE_CSV:
                         for csv_data in csvreader:
                             csv_to_db_data.append({'time_zone': csv_data[0],
@@ -61,14 +55,14 @@ class InitialSetupClient:
                                                    'daylight_save_rule': csv_data[3],
                                                    'del_ind': csv_data[4],
                                                    })
-                        save_time_zone(csv_to_db_data, self.username)
+                        self.save_time_zone(csv_to_db_data)
                     if file == CONST_LANGUAGES_CSV:
                         for csv_data in csvreader:
                             csv_to_db_data.append({'language_id': csv_data[0],
                                                    'description': csv_data[1],
                                                    'del_ind': csv_data[2],
                                                    })
-                        save_languages(csv_to_db_data, self.username)
+                        self.save_languages(csv_to_db_data)
                     if file == CONST_UOM_CSV:
                         for csv_data in csvreader:
                             csv_to_db_data.append({'uom_id': csv_data[0],
@@ -76,14 +70,14 @@ class InitialSetupClient:
                                                    'iso_code_id': csv_data[2],
                                                    'del_ind': csv_data[3],
                                                    })
-                        save_uom(csv_to_db_data, self.username)
+                        self.save_uom(csv_to_db_data)
                     if file == CONST_PRODUCT_CATEGORY_CSV:
                         for csv_data in csvreader:
                             csv_to_db_data.append({'prod_cat_id': csv_data[0],
                                                    'prod_cat_desc': csv_data[1],
                                                    'del_ind': csv_data[2],
                                                    })
-                        save_unspsc(csv_to_db_data, self.username)
+                        self.save_unspsc(csv_to_db_data)
                     csv_file.close()
 
     def initial_save_application_data(self):

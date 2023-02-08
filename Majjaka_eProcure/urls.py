@@ -67,6 +67,8 @@ urlpatterns = [
     path('configuration_check/', include('eProc_Configuration_Check.urls')),
     path('generate_otp/', include('eProc_Generate_OTP.urls')),
     path('setup_new_client/', include('eProc_New_Client_Setup.urls')),
+    path('timesheet/', include('eProc_Time_Sheet.urls')),
+    path('projects/', include('eProc_Projects.urls')),
 
 ]
 

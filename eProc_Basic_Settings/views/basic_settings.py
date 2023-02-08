@@ -7,7 +7,7 @@ import time
 import os
 
 from apscheduler.schedulers.background import BackgroundScheduler
-from django.db.models import Q
+from django.db.models.query_utils import Q
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render
 from django.utils.datastructures import MultiValueDictKeyError
@@ -21,16 +21,18 @@ from eProc_Basic.Utilities.functions.json_parser import JsonParser
 from eProc_Basic.Utilities.functions.update_del_ind import update_del_ind, query_update_del_ind
 from eProc_Basic.Utilities.messages import messages
 from eProc_Basic.Utilities.messages.messages import MSG048
-from eProc_Basic_Settings.Utilities.basic_settings_specific import save_basic_data_into_db, csv_data_arrangement, \
-    save_language_data_into_db, save_unitofmeasures_data_into_db, save_country_data_into_db, save_currency_data_into_db, \
-    save_timezone_data_into_db, save_prodcat_data_into_db, csv_preview_data
+from eProc_Basic_Settings.Utilities.basic_settings_specific import *
 from eProc_Catalog.Utilities.catalog_generic import CatalogGenericMethods
 from eProc_Catalog.Utilities.catalog_specific import CatalogManagement
-from eProc_Configuration.Utilities.application_settings_generic import get_configuration_data
-from eProc_Configuration.models import *
+from eProc_Configuration.Utilities.application_settings_generic import get_configuration_data, get_ui_messages
+from eProc_Configuration.models.application_data import *
+from eProc_Configuration.models.basic_data import *
+from eProc_Configuration.models.development_data import *
+from eProc_Configuration.models.master_data import *
 from eProc_Configuration_Check.Utilities.configuration_check_generic import *
-from eProc_Org_Model.models import OrgModel
-from eProc_Registration.models import UserData
+from eProc_Org_Model.models.org_model import OrgModel
+from eProc_Registration.models.registration_model import UserData
+
 from eProc_Shopping_Cart.context_processors import update_user_info
 from eProc_Upload.Utilities.upload_data.upload_pk_tables import UploadBasicTables, CompareTableHeader
 
@@ -210,25 +212,26 @@ def create_update_basic_data(request):
     """
     update_user_info(request)
     basic_data = JsonParser_obj.get_json_from_req(request)
+    basic_settings_save_instance = BasicSettingsSave()
     if basic_data['table_name'] == 'Country':
-        display_data = save_country_data_into_db(basic_data)
-        basic_data['data'] = get_valid_country_data(basic_data['data'])
+        basic_data['data'], message = get_valid_country_data(basic_data['data'], 'SAVE')
+        display_data = basic_settings_save_instance.save_country_data_into_db(basic_data)
         return JsonResponse(display_data, safe=False)
     if basic_data['table_name'] == 'Languages':
-        display_data = save_language_data_into_db(basic_data)
-        basic_data['data'] = get_valid_language_data(basic_data['data'])
+        basic_data['data'], message = get_valid_language_data(basic_data['data'], 'SAVE')
+        display_data = basic_settings_save_instance.save_language_data_into_db(basic_data)
         return JsonResponse(display_data, safe=False)
     if basic_data['table_name'] == 'UnitOfMeasures':
-        display_data = save_unitofmeasures_data_into_db(basic_data)
-        basic_data['data'] = get_valid_uom_data(basic_data['data'])
+        basic_data['data'], message = get_valid_uom_data(basic_data['data'], 'SAVE')
+        display_data = basic_settings_save_instance.save_unitofmeasures_data_into_db(basic_data)
         return JsonResponse(display_data, safe=False)
     if basic_data['table_name'] == 'Currency':
-        display_data = save_currency_data_into_db(basic_data)
-        basic_data['data'] = get_valid_currency_data(basic_data['data'])
+        basic_data['data'], message = get_valid_currency_data(basic_data['data'], 'SAVE')
+        display_data = basic_settings_save_instance.save_currency_data_into_db(basic_data)
         return JsonResponse(display_data, safe=False)
     if basic_data['table_name'] == 'TimeZone':
-        display_data = save_timezone_data_into_db(basic_data)
-        basic_data['data'] = get_valid_timezone_data(basic_data['data'])
+        basic_data['data'], message = get_valid_timezone_data(basic_data['data'], 'SAVE')
+        display_data = basic_settings_save_instance.save_timezone_data_into_db(basic_data)
         return JsonResponse(display_data, safe=False)
 
 
@@ -252,26 +255,75 @@ def save_basic_data(request):
 
 
 def upload_countries(request):
-    upload_country = get_configuration_data(Country, {'del_ind': False}, ['country_code', 'country_name'])
-    # str = 'hello'
-    # print(str.upper())
+    """
+
+    """
+    # Fetch Country data
+    update_user_info(request)
+    upload_country = django_query_instance.django_filter_query(Country, {'del_ind': False}, None,
+                                                               ['country_code', 'country_name'])
+
+    messages_list = get_ui_messages(CONST_COFIG_UI_MESSAGE_LIST)
     return render(request, 'Basic_setting_Upload/upload_countries.html',
                   {'upload_countries': upload_country,
+                   'messages_list': messages_list,
                    'inc_nav': True})
 
 
 def upload_languages(request):
-    upload_language = get_configuration_data(Languages, {'del_ind': False}, ['language_id', 'description'])
+    """
+
+     """
+    # Fetch Country data
+    upload_language = django_query_instance.django_filter_query(Languages, {'del_ind': False}, None,
+                                                                ['language_id', 'description'])
+    messages_list = get_ui_messages(CONST_COFIG_UI_MESSAGE_LIST)
     return render(request, 'Basic_setting_Upload/upload_languages.html',
                   {'upload_languages': upload_language,
+                   'messages_list': messages_list,
+                   'inc_nav': True})
+
+
+def upload_currencies(request):
+    """
+
+    """
+    # Fetch Country data
+    upload_currency = django_query_instance.django_filter_query(Currency, {'del_ind': False}, None,
+                                                                ['currency_id', 'description'])
+    messages_list = get_ui_messages(CONST_COFIG_UI_MESSAGE_LIST)
+    return render(request, 'Basic_setting_Upload/upload_currencies.html',
+                  {'upload_currencies': upload_currency,
+                   'messages_list': messages_list,
                    'inc_nav': True})
 
 
 def upload_unit_of_measure(request):
-    upload_unitofmeasures = get_configuration_data(UnitOfMeasures, {'del_ind': False},
-                                                   ['uom_id', 'uom_description', 'iso_code_id'])
+    """
+
+     """
+    # Fetch Country data
+    upload_unitofmeasures = django_query_instance.django_filter_query(UnitOfMeasures, {'del_ind': False}, None,
+                                                                      ['uom_id', 'uom_description', 'iso_code_id'])
+    messages_list = get_ui_messages(CONST_COFIG_UI_MESSAGE_LIST)
     return render(request, 'Basic_setting_Upload/upload_unit_of_measure.html',
                   {'upload_unit_of_measure': upload_unitofmeasures,
+                   'messages_list': messages_list,
+                   'inc_nav': True})
+
+
+def upload_timezone(request):
+    """
+
+     """
+    # Fetch Country data
+    upload_timezones = django_query_instance.django_filter_query(TimeZone, {'del_ind': False}, None,
+                                                                 ['time_zone', 'description', 'utc_difference',
+                                                                  'daylight_save_rule'])
+    messages_list = get_ui_messages(CONST_COFIG_UI_MESSAGE_LIST)
+    return render(request, 'Basic_setting_Upload/upload_timezone.html',
+                  {'upload_timezone': upload_timezones,
+                   'messages_list': messages_list,
                    'inc_nav': True})
 
 
@@ -317,12 +369,6 @@ def data_upload(request):
 
 class DB_count:
     pass
-
-
-def upload_currencies(request):
-    upload_currency = get_configuration_data(Currency, {'del_ind': False}, ['currency_id', 'description'])
-    return render(request, 'Basic_setting_Upload/upload_currencies.html',
-                  {'upload_currencies': upload_currency, 'inc_nav': True})
 
 
 def srm_currency(request):
@@ -417,6 +463,8 @@ def extract_client_data(request):
         client_detail_info = [client_detail['client'], client_detail['description'],
                               client_detail['del_ind']]
         writer.writerow(client_detail_info)
+
+    return response
 
 
 def extract_document_data(request):
@@ -536,7 +584,7 @@ def extract_currency_data(request):
 
 def srm_currency_converter_p02(request):
     response = HttpResponse(content_type='text/plain')
-    response['Content-Disposition'] = 'attachment; filename="filename.txt"'
+    response['Content-Disposition'] = 'attachment; filename="P02.txt"'
     directory = os.path.join(str(settings.BASE_DIR), 'media', 'srm', 'currency')
     for root, dirs, files in os.walk(directory):
         for file in files:
@@ -553,8 +601,9 @@ def srm_currency_converter_p02(request):
                     # p02
                     currency_list = ['AED', 'AUD', 'BGN', 'BRL', 'CAD', 'CHF', 'CNY', 'CZK', 'DKK', 'DOP', 'EUR', 'GBP',
                                      'HKD', 'HRK', 'HUF', 'INR', 'ISK', 'JPY', 'KRW', 'KWD', 'LTL', 'LVL', 'MKD', 'MXN',
-                                     'NOK', 'PLN', 'QAR', 'RON', 'RSD', 'RUB', 'SEK', 'SGD', 'SIT', 'SKK', 'TRY', 'UAH',
-                                     'ZAR']
+                                     'NOK', 'OMR', 'PLN', 'QAR', 'RON', 'RSD', 'RUB', 'SEK', 'SGD', 'SIT', 'SKK', 'TRY',
+                                     'UAH',
+                                     'ZAR', ]
                     # E7P
                     # currency_list = ['AED','AUD','BGN','BRL','CAD','CHF','CNY','CZK','DKK','DOP','EUR','GBP','HKD','HUF',
                     #                  'INR','ISK','JPY','KRW','LTL','LVL','MKD','MXN','MYR','NOK','PLN','RMB','RON','RUB',
@@ -568,7 +617,7 @@ def srm_currency_converter_p02(request):
 
 def srm_currency_converter_e7p(request):
     response = HttpResponse(content_type='text/plain')
-    response['Content-Disposition'] = 'attachment; filename="filename.txt"'
+    response['Content-Disposition'] = 'attachment; filename="e7p.txt"'
     directory = os.path.join(str(settings.BASE_DIR), 'media', 'srm', 'currency')
     for root, dirs, files in os.walk(directory):
         for file in files:
@@ -883,15 +932,6 @@ def upload_cust_prod_cat_desc(request):
 #             'inc_nav': True})
 
 
-def upload_timezone(request):
-    upload_timezones = get_configuration_data(TimeZone, {'del_ind': False},
-                                              ['time_zone', 'description', 'utc_difference',
-                                               'daylight_save_rule'])
-    return render(request, 'Basic_setting_Upload/upload_timezone.html',
-                  {'upload_timezone': upload_timezones,
-                   'inc_nav': True})
-
-
 def account_ass_values(request):
     upload_accassvalues = get_configuration_data(AccountingData, {'del_ind': False},
                                                  ['account_assign_guid', 'account_assign_value', 'valid_from',
@@ -999,7 +1039,7 @@ def check_data(request):
         check_data_class.table_name = table_data__array['Tablename']
         # gets he count from basic_table_new_conditions() - upload_pk_tables.py
         check_variable = check_data_class.basic_table_new_conditions(popup_data_list, db_header_data)
-        print("check", check_variable)
+        print("check ", check_variable)
         return JsonResponse(check_variable, safe=False)
 
     return render(request, 'Basic_setting_Upload/upload_countries.html')
@@ -1045,6 +1085,7 @@ def extract_employee_data(request):
 
 
 scheduler = BackgroundScheduler()
+
 
 def Scheduling(request):
     """

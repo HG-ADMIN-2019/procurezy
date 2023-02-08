@@ -198,6 +198,7 @@ class FieldTypeDescription(models.Model):
     """
 
     """
+    objects = None
     field_type_description_guid = models.CharField(db_column='FIELD_TYPE_DESCRIPTION_GUID', primary_key=True,
                                                    max_length=32, null=False)
     field_type_id = models.CharField(db_column='FIELD_TYPE_ID',max_length=30, null=False)

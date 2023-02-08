@@ -16,7 +16,7 @@
                     value="supplier_upload" onclick="onclick_upload_button()" type="button">
                     <i class="fas fa-cloud-upload-alt"></i> UPLOAD DATA
                 </button>
-                  <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"  onclick="GetReferrer();">
+                  <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"  onclick="window_close();">
                     <i class="fas fa-times"></i> close
                 </button>
             </div>
@@ -691,7 +691,7 @@ function check_data() {
     });
 }
 
-       function GetReferrer() {
+       function window_close() {
              window.history.back();
               var preUrl = document.referrer;
               console.log(preUrl);

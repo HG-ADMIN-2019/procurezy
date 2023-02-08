@@ -25,7 +25,7 @@
 
                     <i class="fa fa-plus"></i> add spending limit
                 </button>
-                <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"  onclick="GetReferrer();">
+                <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"  onclick="window_close();">
                     <i class="fas fa-times"></i> close
                 </button>
             </div>
@@ -65,9 +65,9 @@
                             <input type="checkbox" onchange="checkAll(this)" name="chk[]">
                         </div>
                     </th>
-                    <th>Spending Limit </th>
                     <th>User Name </th>
-                    <th>Company Number</th>
+                    <th>Company Number </th>
+                    <th>Spending Limit</th>
                     <th hidden>guid</th>
                     <th hidden>del_ind</th>
 
@@ -77,9 +77,9 @@
                 {% for spndlimid in spend_limit_id %}
                 <tr>
                     <td class="class_select_checkbox" hidden><input type="checkbox" class="checkbox_check" onclick="valueChanged()" required></td>
-                    <td>{{spndlimid.spend_code_id}}</td>
                     <td>{{spndlimid.spender_username}}</td>
                     <td>{{spndlimid.company_id}}</td>
+                    <td>{{spndlimid.spend_code_id}}</td>
                     <td hidden>{{spndlimid.spend_guid}}</td>
                     <td hidden>del_ind</td>
                 </tr>
@@ -113,7 +113,7 @@
 
 
 <!--iliyaz added -->
-<div class="modal fade" id="myModal" style="overflow:auto;">
+<div class="modal fade" id="Spend_id_Modal" style="overflow:auto;">
     <div class="modal-dialog modal-dialog-centered modal-xl">
         <div class="modal-content">
             <div class="modal-header">
@@ -127,8 +127,12 @@
 
                 <div class="popup-vertical-scroll">
                     <div id="id_del_add_button" class="mb-2">
-                        <button class="btn btn-outline-primary" type="button" onclick="add_popup_row()"><i class="fa fa-plus"></i> add new row</button>
-                        <button class="btn btn-outline-primary" onclick="application_settings_delete_Row('id_popup_table')"><i class="fa fa-trash"></i> delete</button>
+                        <button class="btn btn-primary" type="button" onclick="add_popup_row()">
+                            <i class="fa fa-plus"></i> add new row
+                        </button>
+                        <button class="btn btn-outline-danger" onclick="application_settings_delete_Row('id_popup_table')">
+                            <i class="fa fa-trash"></i> delete
+                        </button>
                     </div>
 
                     <div id="id_check_success_messages" class="alert alert-success check_success_message" hidden></div>
@@ -147,9 +151,9 @@
                         <thead>
                         <tr>
                             <th id="header_select">Select</th>
-                            <th>Spending Limit </th>
                             <th>User Name </th>
-                            <th>Company Number</th>
+                            <th>Company Number </th>
+                            <th>Spending Limit</th>
                             <th hidden>guid</th>
                             <th id="id_del_ind_checkbox" hidden>Del Indicator</th>
                         </tr>
@@ -160,11 +164,13 @@
                     </table>
                 </div>
             </div>
+
+            <!-- Modal footer -->
             <div class="modal-footer">
+                <button type="button" class="btn btn-outline-primary remove_upload_data" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
                 <button id="id_delete_duplicate" class="btn btn-primary" style="display:none;" type="button" onclick="delete_duplicate()"><i class="fas fa-check"></i> Delete Duplicates</button>
                 <button id="id_check_data" style="display:none;" class="btn btn-primary " type="button" onclick="check_data()"><i class="fas fa-check"></i> Check</button>
                 <button class="btn btn-primary" id="save_id" ><i class="fas fa-save"></i> save</button>
-                <button type="button" class="btn btn-primary remove_upload_data" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
             </div>
         </div>
     </div>
@@ -201,8 +207,9 @@
    var main_table_spendlimitid = [];
     var master_data_settings = '{{master_data_settings|safe}}';
     var rendered_spendlimitid_data ={{spend_limit_id|safe}};
-    var rendered_company_data ={{upload_data_company|safe}};
-    var rendered_spndlimval_data ={{spend_limit_value|safe}};
+    var rendered_company_data = {{upload_data_company|safe}};
+    var rendered_spndlimval_data 
+    var messages_list = {{messages_list|safe}};
     var Tablename = uiConstants["CONST_TABLENAME_SPEND_LIMIT_ID"]
     var appname = uiConstants["CONST_APPNAME01"]
     var db_header_data = uiConstants["CONST_HEADER_DATA_SPEND_LIMIT_ID"]
@@ -215,59 +222,34 @@
     var spend_limit_id_data = new Array();
     var validate_add_attributes = [];
     var  spend_limit={};
+    var spendcodeid_dropdwn = ""
+    var company_dropdwn = ""
 
-
-
-     var company_dropdwn = ""
-    $.each(rendered_company_data, function (i, item) {
-
+    // *******************************
+    function spend_limlt_id_drp(){
+        company_dropdwn = "";
+        $.each(rendered_company_data, function (i, item) {
             company_dropdwn += '<option  value="' + item.company_id + '">' + item.company_id + '</option>'
-       });
+        });
 
-        var spendcodeid_dropdwn = ""
-    $.each(rendered_spndlimval_data, function (i, item) {
-
+        spendcodeid_dropdwn = "";
+        $.each(rendered_spndlimval_data, function (i, item) {
             spendcodeid_dropdwn += '<option value="' + item.spend_code_id + '">' + item.spend_code_id + '</option>'
-       });
+        });
+    }
 
-
-
-//***************************
-//onclick of delete,delete the row.
-  function application_settings_delete_Row(myTable) {
-            try {
-                var table = document.getElementById(myTable);
-                var rowCount = table.rows.length;
-
-                for (var i = 0; i < rowCount; i++) {
-                    var row = table.rows[i];
-                    var chkbox = row.cells[0].childNodes[0];
-                    if (null != chkbox && true == chkbox.checked) {
-                        table.deleteRow(i);
-                        rowCount--;
-                        i--;
-                    }
-                }
-                return rowCount;
-            } catch (e) {
-                alert(e);
-            }
-        }
-
-
-
-function onclick_display_csv_data() {
-           $("#error_msg_id").css("display", "none")
+    //onclick of data Upload copy data to modal pop-up
+    function onclick_display_csv_data() {
+        $("#error_msg_id").css("display", "none")
         $('#id_popup_table').DataTable().destroy();
         formdata = new FormData();
-          attached_file = $('#id_file_data_upload').prop('files')[0]
-            file_extension = (attached_file.name).split(".")[1]
-            file_extension = file_extension.toUpperCase();
-
-            if(file_extension == 'CSV'){
-                formdata.append("file_attach", attached_file);
-                formdata.append("Tablename",Tablename);
-                formdata.append("appname",appname);
+        attached_file = $('#id_file_data_upload').prop('files')[0]
+        file_extension = (attached_file.name).split(".")[1]
+        file_extension = file_extension.toUpperCase();
+        if(file_extension == 'CSV'){
+            formdata.append("file_attach", attached_file);
+            formdata.append("Tablename",Tablename);
+            formdata.append("appname",appname);
             $('#id_data_upload').modal('hide');
             $('#id_popup_tbody').empty();
             OpenLoaderPopup();
@@ -277,203 +259,150 @@ function onclick_display_csv_data() {
                 data: formdata,
                 contentType: "application/json; charset=utf-8",
                 success: function(response) {
-                    if(response.error_message){
+                    if(response.error_message){     
                         $("#id_error_msg_upload").prop("hidden",false)
                         document.getElementById("id_error_msg_upload").innerHTML = response.error_message;
                         document.getElementById("id_error_msg_upload").style.color = "Red";
                         $('#id_data_upload').modal('show');
                     }
                     else {
-                    var edit_basic_data = '';
-                    var dropdown_values = [];
-                    var del_ind = '';
-                    $("#id_popup_tbody").empty();
-                    var high_light_row_index_list = []
-                    var edit_basic_data = '';
-                    var dropdown_values = [];
-                    var del_ind = '';
-                    $("#id_popup_tbody").empty();
-                    var high_light_row_index_list = []
-                    $.each(response.data, function(i, value) {
-                        flag = validate_row(value)
-                        // soecial char row list
-                        if (flag){
-                            high_light_row_index_list.push(i)
-                        }
-                        var spend_limit_id = value[0]
-                        var company_type_value = value[2]
-                        dropdown_values.push([spend_limit_id,company_type_value])
-
-                        del_ind = '<td>' + value[3] + '</td>'
-                        if (value[1] == 1) {
-                            del_ind = ' <input type="checkbox" value="' + value[3] + '" checked>'
-                        } else {
-                            del_ind = '<input type="checkbox" value="' + value[3] + '" required>'
-                        }
-
-
-                                var spendcode = '';
-                                var spendcode_list = '';
-                                var spendcode_id_list = '';
-                          $.each(rendered_spndlimval_data, function(i, item){
-                                if( value[0].spndlimval_value == item){
-
-                                    spendcode = '<option value="' + item.spend_code_id + '">' + item.spend_code_id + '</option>';
-
-                                   }else{
-
-                                    spendcode_list += '<option value="' + item.spend_code_id + '">' + item.spend_code_id + '</option>';
-
-                                }
-                                    spendcode_id_list = spendcode + spendcode_list
-                          });
-                                var company = '';
-                                var company_list = '';
-                                var company_id_list = '';
-                          $.each(rendered_company_data, function(i, item){
-                                if( value[2].company_type_value == item){
-
+                        var edit_basic_data = '';
+                        var dropdown_values = [];
+                        var del_ind = '';
+                        $("#id_popup_tbody").empty();
+                        var high_light_row_index_list = []
+                        var edit_basic_data = '';
+                        var dropdown_values = [];
+                        var del_ind = '';
+                        $("#id_popup_tbody").empty();
+                        var high_light_row_index_list = []
+                        $.each(response.data, function(i, value) {
+                            flag = validate_row(value)
+                            // special char row list
+                            if (flag){
+                                high_light_row_index_list.push(i)
+                            }
+                            var company_type_value = value[2]
+                            var spend_limit_id = value[0] 
+                            dropdown_values.push([company_type_value, spend_limit_id])
+                            del_ind = '<td>' + value[3] + '</td>'
+                            if (value[1] == 1) {
+                                del_ind = ' <input type="checkbox" value="' + value[3] + '" checked>'
+                            } else {
+                                del_ind = '<input type="checkbox" value="' + value[3] + '" required>'
+                            }
+                            var company = '';
+                            var company_list = '';
+                            var company_id_list = '';
+                            $.each(rendered_company_data, function(i, item){
+                                if( value[2].company_type_value == item){   
                                     company = '<option value="' + item.company_id + '">' + item.company_id + '</option>';
-
-                                   }else{
-
+                                }else{
                                     company_list += '<option value="' + item.company_id + '">' + item.company_id + '</option>';
-
                                 }
-                                    company_id_list = company + company_list
-                          });
-
-
-
-                        edit_basic_data += '<tr><td><input type="checkbox" required></td><td><select class="form-control" type = "text">'+spendcode_id_list+'</select></td><td><input class="form-control"  type="text" value="'+value[1]+'" maxlength="16" onkeypress="return /[a-z0-9]/i.test(event.key)" name="spender_username" style="text-transform:uppercase;" required></td><td><select class="form-control" type = "text">'+company_id_list+'</select></td><td hidden><input type="text" value=""></td><td>' + del_ind + '</td></tr>';
-                    });
-
-                    $('#id_popup_tbody').append(edit_basic_data);
-                    var i =0;
-                    $("#id_popup_table TBODY TR").each(function(index, tr) {
-                        var row = $(this);
-                        if(high_light_row_index_list.indexOf(index) !== -1) {
-                            row.css("background-color", "1px solid #a3bdca")
-                            $('#myModal').modal('show');
-                            $('#id_check_popup').modal('show');
-
-                        }
-                        else{
-                            row.css("background-color", "")
-                        }
-                         var spendcode_id_list= dropdown_values[i][0]
-                        var company_id_list= dropdown_values[i][1]
-
-                           $(row.find("TD").eq(1).find("select option[value="+spendcode_id_list+"]")).attr('selected','selected');
-
-                        $(row.find("TD").eq(3).find("select option[value="+company_id_list+"]")).attr('selected','selected');
-                        i = i + 1;
-                    });
-                    $("#id_del_ind_checkbox").prop("hidden", false);
-                    $(".class_del_checkbox").prop("hidden", false);
-                    $('#myModal').modal('show');
-                    $('#id_data_upload').modal('hide');
-                    //$('#id_data_upload').modal('show');
-                    document.getElementById("id_check_data").style.display = "block";
-                    document.getElementById("id_del_add_button").style.display = "block";
-                    $("#id_check_data").prop("hidden", false);
-                    $("#save_id").prop("hidden", true);
-                    table_sort_filter_popup_pagination('id_popup_table')
-                }
-                CloseLoaderPopup();
-            },
-                    cache: false,
-                    processData: false,
-                    contentType: false,
-
+                                company_id_list = company + company_list
+                            });
+                            var spendcode = '';
+                            var spendcode_list = '';
+                            var spendcode_id_list = '';
+                            $.each(rendered_spendlimitid_data, function(i, item) {
+                                if( value[0].spndlimval_value == item) {
+                                    spendcode = '<option value="' + item.spend_code_id + '">' + item.spend_code_id + '</option>';
+                                }else {
+                                    spendcode_list += '<option value="' + item.spend_code_id + '">' + item.spend_code_id + '</option>';
+                                }
+                                spendcode_id_list = spendcode + spendcode_list
+                            });
+                            edit_basic_data += '<tr><td><input type="checkbox" required></td><td><input class="form-control"  type="text" value="'+value[1]+'" maxlength="16" onkeypress="return /[a-z0-9]/i.test(event.key)" name="spender_username" style="text-transform:uppercase;" required></td><td><select class="form-control" type = "text">'+company_id_list+'</select></td><td><select class="form-control" type = "text">'+spendcode_id_list+'</select></td><td hidden><input type="text" value=""></td><td>' + del_ind + '</td></tr>';
+                        });
+                        $('#id_popup_tbody').append(edit_basic_data);
+                        var i =0;
+                        $("#id_popup_table TBODY TR").each(function(index, tr) {
+                            var row = $(this);
+                            if(high_light_row_index_list.indexOf(index) !== -1) {
+                                row.css("background-color", "1px solid #a3bdca")
+                                $('#Spend_id_Modal').modal('show');
+                                $('#id_check_popup').modal('show');
+                            }
+                            else{
+                                row.css("background-color", "")
+                            }
+                            var company_id_list= dropdown_values[i][0]
+                            var spendcode_id_list= dropdown_values[i][1]
+                            $(row.find("TD").eq(2).find("select option[value="+company_id_list+"]")).attr('selected','selected');
+                            $(row.find("TD").eq(3).find("select option[value="+spendcode_id_list+"]")).attr('selected','selected');
+                            i = i + 1;
+                        });
+                        $("#id_del_ind_checkbox").prop("hidden", false);
+                        $( "#header_select").prop( "hidden", false );
+                        $(".class_del_checkbox").prop("hidden", true);
+                        $('#Spend_id_Modal').modal('show');
+                        $('#id_data_upload').modal('hide');
+                        document.getElementById("id_del_add_button").style.display = "block";
+                        $('#id_check_data').modal('show');
+                        $("#id_check_data").prop("hidden", false);
+                        $("#save_id").prop("hidden", true);
+                        table_sort_filter_popup_pagination('id_popup_table')
+                    }
+                    CloseLoaderPopup();
+                },
+                cache: false,
+                processData: false,
+                contentType: false, 
             });
-            }
-            else{
-                $("#id_error_msg_upload").prop("hidden",false)
-
-                            var msg = "JMSG110";
-                            var msg_type ;
-                          msg_type = message_config_details(msg);
-                          $("#error_msg_id").prop("hidden", false)
-
-                          if(msg_type.message_type == "ERROR"){
-                                display_message("error_msg_id", msg_type.messages_id_desc)
-                          }
-                          else if(msg_type.message_type == "WARNING"){
-                             display_message("id_warning_msg_id", msg_type.messages_id_desc)
-                          }
-                          else if(msg_type.message_type == "INFORMATION"){
-                             display_message("id_info_msg_id", msg_type.messages_id_desc)
-                          }
-                          var display = msg_type.messages_id_desc;
-                        document.getElementById("id_error_msg_upload").innerHTML = display;
-
-                document.getElementById("id_error_msg_upload").style.color = "Red";
-                $('#id_data_upload').modal('show');
+        }
+        else{
+            display_file_select_error(); // Display error message for file selection except .csv
         }
     }
 
-function update_popup_data(data){
-    $('#id_popup_table').DataTable().destroy();
-    var edit_basic_data = '';
-    var dropdown_values = [];
-    var del_ind = '';
-    $("#id_popup_tbody").empty();
-    var high_light_row_index_list = []
-    $.each(data, function(i, value) {
-        flag = validate_row(value)
-        // soecial char row list
-        if (flag){
-            high_light_row_index_list.push(i)
-        }
-        var spend_limit_id = value.spend_code_id
-        var company_type_value = value.company_id
-        dropdown_values.push([spend_limit_id,company_type_value])
-
-        del_ind = '<td>' + value[3] + '</td>'
-        if (value.del_ind == 1) {
-            del_ind = ' <input type="checkbox" value="' + value.del_ind + '" checked>'
-        } else {
-            del_ind = '<input type="checkbox" value="' + value.del_ind + '" required>'
-        }
-
-
-        var spendcode = '';
-        var spendcode_list = '';
-        var spendcode_id_list = '';
-        $.each(rendered_spndlimval_data, function(i, item){
-            if( value.spend_code_id == item.spend_code_id){
-
-                spendcode = '<option value="' + item.spend_code_id + '">' + item.spend_code_id + '</option>';
-
-               }else{
-
-                spendcode_list += '<option value="' + item.spend_code_id + '">' + item.spend_code_id + '</option>';
-
+    // *********************************
+    function update_popup_data(data){
+        $('#id_popup_table').DataTable().destroy();
+        var edit_basic_data = '';
+        var dropdown_values = [];
+        var del_ind = '';
+        $("#id_popup_tbody").empty();
+        var high_light_row_index_list = []
+        $.each(data, function(i, value) {
+            flag = validate_row(value)
+            // special char row list
+            if (flag){
+                high_light_row_index_list.push(i)
             }
-                spendcode_id_list = spendcode + spendcode_list
-        });
-                var company = '';
-                var company_list = '';
-                var company_id_list = '';
-        $.each(rendered_company_data, function(i, item){
-            if( value.company_id == item.company_id){
-
-                company = '<option value="' + item.company_id + '">' + item.company_id + '</option>';
-
-               }else{
-
-                company_list += '<option value="' + item.company_id + '">' + item.company_id + '</option>';
-
+            var spend_limit_id = value.spend_code_id
+            var company_type_value = value.company_id
+            dropdown_values.push([spend_limit_id,company_type_value])
+            del_ind = '<td>' + value[3] + '</td>'
+            if (value.del_ind == 1) {
+                del_ind = ' <input type="checkbox" value="' + value.del_ind + '" checked>'
+            } else {
+                del_ind = '<input type="checkbox" value="' + value.del_ind + '" required>'
             }
+            var spendcode = '';
+            var spendcode_list = '';
+            var spendcode_id_list = '';
+            $.each(rendered_spndlimval_data, function(i, item){
+                if( value.spend_code_id == item.spend_code_id){
+                    spendcode = '<option value="' + item.spend_code_id + '">' + item.spend_code_id + '</option>';
+                }else{
+                    spendcode_list += '<option value="' + item.spend_code_id + '">' + item.spend_code_id + '</option>';
+                }
+                    spendcode_id_list = spendcode + spendcode_list
+            });
+            var company = '';
+            var company_list = '';
+            var company_id_list = '';
+            $.each(rendered_company_data, function(i, item){
+                if( value.company_id == item.company_id){
+                    company = '<option value="' + item.company_id + '">' + item.company_id + '</option>';
+                }else{
+                    company_list += '<option value="' + item.company_id + '">' + item.company_id + '</option>';
+                }
                 company_id_list = company + company_list
+            });
+            edit_basic_data += '<tr><td><input type="checkbox" required></td><td><select class="form-control" type = "text">'+spendcode_id_list+'</select></td><td><input class="form-control"  type="text" value="'+value.spender_username+'" maxlength="16" onkeypress="return /[a-z0-9]/i.test(event.key)" name="spender_username" style="text-transform:uppercase;" required></td><td><select class="form-control" type = "text">'+company_id_list+'</select></td><td hidden><input type="text" value=""></td><td>' + del_ind + '</td></tr>';
         });
-
-
-
-        edit_basic_data += '<tr><td><input type="checkbox" required></td><td><select class="form-control" type = "text">'+spendcode_id_list+'</select></td><td><input class="form-control"  type="text" value="'+value.spender_username+'" maxlength="16" onkeypress="return /[a-z0-9]/i.test(event.key)" name="spender_username" style="text-transform:uppercase;" required></td><td><select class="form-control" type = "text">'+company_id_list+'</select></td><td hidden><input type="text" value=""></td><td>' + del_ind + '</td></tr>';
-    });
-
         $('#id_popup_tbody').append(edit_basic_data);
         var i =0;
         $("#id_popup_table TBODY TR").each(function(index, tr) {
@@ -484,469 +413,128 @@ function update_popup_data(data){
             else{
                 row.css("background-color", "")
             }
-             var spendcode_id_list= dropdown_values[i][0]
+            var spendcode_id_list= dropdown_values[i][0]
             var company_id_list= dropdown_values[i][1]
-
-               $(row.find("TD").eq(1).find("select option[value="+spendcode_id_list+"]")).attr('selected','selected');
-
+            $(row.find("TD").eq(1).find("select option[value="+spendcode_id_list+"]")).attr('selected','selected');
             $(row.find("TD").eq(3).find("select option[value="+company_id_list+"]")).attr('selected','selected');
             i = i + 1;
         });
-    table_sort_filter_popup_pagination('id_popup_table')
-}
+        table_sort_filter_popup_pagination('id_popup_table')
+    }
 
-//check function restricting special char and diaplay the data count of csv file
-function check_data() {
-    $('#id_popup_table').DataTable().destroy();
-    $("#id_check_success_messages").empty()
-    $("#id_check_error_messages").empty()
-    $("#id_check_success_messages").prop("hidden",true)
-    $("#id_check_error_messages").prop("hidden",true)
-    $("#id_check_special_character_messages").prop("hidden",true)
-    document.getElementById("id_error_msg_spend_code_id").innerHTML = "";
-    document.getElementById("id_error_msg_spender_username").innerHTML = "";
-    document.getElementById("id_error_msg_company_id").innerHTML = "";
-    document.getElementById("id_error_msg_spendlimitid_length").innerHTML = "";
-    count = 0;
-    var spendlimitid_array = new Array
-    var DB_array = new Array
-    var spendlimitid_list = new Array
-    var spendlimitid_code_check = new Array
-    del_ind = ''
-    ui_validation_flag = true
-    $("#id_popup_table TBODY TR").each(function() {
-        var row = $(this);
-        spending_limit_dic = {}
-        //*************** reading data from the pop-up ***************
-        spending_limit_dic.company_id = row.find("TD").eq(3).find('select[type="text"]').val();
-        spending_limit_dic.spender_username = row.find("TD").eq(2).find('input[type="text"]').val();
-        spending_limit_dic.spend_code_id = row.find("TD").eq(1).find('select[type="text"]').val();
-        checked_box = row.find("TD").eq(5).find('input[type="checkbox"]').is(':checked')
+    //check function restricting special char and diaplay the data count of csv file
+    function check_data() {
+        $('#id_popup_table').DataTable().destroy();
+        $("#id_check_success_messages").empty()
+        $("#id_check_error_messages").empty()
+        $("#id_check_success_messages").prop("hidden",true)
+        $("#id_check_error_messages").prop("hidden",true)
+        $("#id_check_special_character_messages").prop("hidden",true)
+        document.getElementById("id_error_msg_spend_code_id").innerHTML = "";
+        document.getElementById("id_error_msg_spender_username").innerHTML = "";
+        document.getElementById("id_error_msg_company_id").innerHTML = "";
+        document.getElementById("id_error_msg_spendlimitid_length").innerHTML = "";
+        count = 0;
+        var spendlimitid_array = new Array
+        var DB_array = new Array
+        var spendlimitid_list = new Array
+        var spendlimitid_code_check = new Array
+        del_ind = ''
+        ui_validation_flag = true
+        $("#id_popup_table TBODY TR").each(function() {
+            var row = $(this);
+            spending_limit_dic = {}
+            //*************** reading data from the pop-up ***************
+            spending_limit_dic.company_id = row.find("TD").eq(2).find('select[type="text"]').val();
+            spending_limit_dic.spender_username = row.find("TD").eq(1).find('input[type="text"]').val();
+            spending_limit_dic.spend_code_id = row.find("TD").eq(3).find('select[type="text"]').val();
+            checked_box = row.find("TD").eq(5).find('input[type="checkbox"]').is(':checked')
             if (checked_box){
                 spending_limit_dic.del_ind = '1'
             }
             else{
-               spending_limit_dic.del_ind = '0'
-            }
-            var spend_data = [spending_limit_dic.company_id,spending_limit_dic.spender_username,spending_limit_dic.spend_code_id]
-            flag = validate_row(spend_data)
-            // soecial char row list
-            if(flag) {
-                ui_validation_flag = false
-                row.css("background-color", "1px solid #a3bdca")
-            }
-            else{
-                row.css("background-color", "")
+            spending_limit_dic.del_ind = '0'
             }
             spendlimitid_list.push(spending_limit_dic)
+            
+            var format = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
 
+             //*************** checking for max length for country code (max length = 2) ***************
+            if(spending_limit_dic.spend_code_id.length >20){
+                error_message = ui_messeges("JMSG004") // Get message details
+                var display8 = msg_type.messages_id_desc;
+                document.getElementById("id_error_msg_spendlimitid_length").innerHTML = display8  + "Product ID";
+                $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
+                count = count +1;
+            }
+       
+            //*************** checking for special characters for country code ***************
+            else if(format.test(spending_limit_dic.spend_code_id)){
+                error_message = ui_messeges("JMSG003") // Get message details
+                var display = msg_type.messages_id_desc;
+                document.getElementById("id_error_msg_spend_code_id").innerHTML = display + "Product ID";
+                $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
+                count = count +1;
+            }
+
+            //*************** checking for special characters for country code ***************
+            else if(format.test(spending_limit_dic.spend_code_id)){
+                error_message = ui_messeges("JMSG003") // Get message details
+                var display = msg_type.messages_id_desc;
+                document.getElementById("id_error_msg_spender_username").innerHTML = display + "Product ID";
+                $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
+                count = count +1;
+            }
+            else{
+            $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "none");
+            }
+            if(spendlimitid_code_check.includes(spending_limit_dic.spend_code_id)){
+                $(row).css("border", "#f8d7da");
+            }
+            else{
+                $(row).css("border", "");
+            }
             spendlimitid_code_check.push(spending_limit_dic.spend_code_id)
-    });
+        });        
 
-    //*************** shows save button if there are no errors(special characters and max length) ***************
-    if(count == 0){
+        //*************** shows save button if there are no errors(special characters and max length) ***************
+        if(count == 0){
             $("#id_check_special_character_messages").prop("hidden",true)
-             $("#save_id").prop("hidden", false);
-    }
-    popup_data_dict ={'data_list' : spendlimitid_list }
-    if(ui_validation_flag){
-            OpenLoaderPopup();
-            $.ajax({
-                type: 'POST',
-                url: "{% url 'eProc_Configuration_Check:check_spending_limit' %}",
-                data: JSON.stringify(popup_data_dict),
-                success: function(response) {
-                    table_sort_filter_popup_pagination('id_popup_table')
-                    //table_sort_filter('id_popup_table');
-                    var message = ''
-                    update_check_message(response.messages)
-                    CloseLoaderPopup();
-                    update_popup_data(response.valid_data)
-                    document.getElementById('id_del_add_button').style.visibility='hidden';
-                    document.getElementById('id_check_data').style.visibility='hidden';
-
-                }
-           });
-    }
-    else{
-        $('#myModal').modal('hide');
-        $('#id_check_popup').modal('show');
-    }
-
-}
-
-function open_upload(){
-    $('#myModal').modal('show');
-    $('#id_check_popup').modal('hide');
-}
-
-
-var spend_limit_id_data = new Array();
-var validate_add_attributes = [];
-var spend_limit={};
-var duplicate_entry = [];
-
-//onclick of upload button display id_data_upload popup and set GLOBAL_ACTION button value
-function onclick_upload_button() {
-     GLOBAL_ACTION = "spendlimid_upload"
-     $("#id_popup_tbody").empty();
-     $('#id_data_upload').modal('show');
-     document.getElementById('id_file_data_upload').value = "";
-}
-//******************
-// on click copy icon display the selected checkbox data
-function onclick_copy_button() {
-    GLOBAL_ACTION = "COPY"
-    onclick_copy_update_button("copy")
-    document.getElementById("id_del_add_button").style.display = "block";
-}
-//***********************************
-// on click update icon display the selected checkbox data to update
-function onclick_update_button() {
-    GLOBAL_ACTION = "UPDATE"
-    onclick_copy_update_button("update")
-    document.getElementById("id_del_add_button").style.display = "none";
-}
-
-function onclick_copy_update_button() {
-
-     $("#error_msg_id").css("display", "none")
-     $('#display_basic_table').DataTable().destroy();
-     $("#id_popup_tbody").empty();
-    $('#display_basic_table').DataTable().destroy();
-    //Reference the Table.
-    var grid = document.getElementById("display_basic_table");
-
-    //Reference the CheckBoxes in Table.
-    var checkBoxes = grid.getElementsByTagName("INPUT");
-    var edit_basic_data = "";
-    var guid = '';
-    var unique_input = '';
-    var dropdown_values = [];
-    //Loop through the CheckBoxes.
-    for (var i = 1; i < checkBoxes.length; i++) {
-        if (checkBoxes[i].checked) {
-        var row = checkBoxes[i].parentNode.parentNode;
-            if(GLOBAL_ACTION == "UPDATE"){
-
-                guid = row.cells[4].innerHTML;
-                unique_input ='<select class="form-control">'+spendcodeid_dropdwn+' </select>'
-                edit_basic_data += '<tr><td hidden><input type="checkbox" required></td><td>'+unique_input+'</td><td><input class="form-control check_special_char" type="text" value="'+row.cells[2].innerHTML+'" maxlength="16"  name="spend_username" style="text-transform:uppercase;" disabled></td><td><select class="form-control" value="' + row.cells[3].innerHTML + '"disabled>'+company_dropdwn+'</select></td><td hidden><input type="text"  value="' + row.cells[4].innerHTML + '"  hidden></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
-                $("#header_select").prop("hidden", true);
-
-            } else{
-
-                guid = 'GUID';
-                unique_input ='<select class="form-control">'+spendcodeid_dropdwn+' </select>'
-               edit_basic_data += '<tr><td><input type="checkbox" required></td><td>'+unique_input+'</td><td><input class="form-control check_special_char" type="text" value="'+row.cells[2].innerHTML+'" maxlength="16"  name="spender_username" style="text-transform:uppercase;" required></td><td><select class="form-control" value="' + row.cells[3].innerHTML + '">'+company_dropdwn+'</select></td><td hidden><input type="text"  value="' + row.cells[4].innerHTML + '"  hidden></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
-                $("#header_select").prop("hidden", false);
-
-            }
-            var row = checkBoxes[i].parentNode.parentNode;
-            var spendid_type_value = row.cells[1].innerHTML
-            var company_type_value = row.cells[3].innerHTML
-            dropdown_values.push([spendid_type_value,company_type_value])
-
+            $("#save_id").prop("hidden", false);
         }
-    }
-   $('#id_popup_table').append(edit_basic_data);
-    var i =0;
-    $("#id_popup_table TBODY TR").each(function() {
-        var row = $(this);
-         var spendid_type_value = dropdown_values[i][0]
-        var company_type_value = dropdown_values[i][1]
-        $(row.find("TD").eq(1).find("select option[value="+spendid_type_value+"]")).attr('selected','selected');
-
-        $(row.find("TD").eq(3).find("select option[value="+company_type_value+"]")).attr('selected','selected');
-         i++;
-    });
-    $("#id_del_ind_checkbox").prop("hidden", true);
-    $('#myModal').modal('show');
-
-    table_sort_filter('id_popup_table');
-    table_sort_filter('display_basic_table');
-}
-
-
-//onclick of cancel empty the popup table body and error messages
-$(".remove_upload_data").click(() => {
-    $("#id_error_msg").html("");
-    $("#id_popup_tbody").empty();
-    $("#id_error_msg").empty();
-    $('#myModal').modal('hide');
-    $("#id_error_msg").prop("hidden", true);
-    $("#id_error_msg_spend_limit_code").prop("hidden", true);
-    $("#id_error_msg_spend_limit_name").prop("hidden", true);
-    $("#id_error_msg_spend_limit_length").prop("hidden", true);
-    $("#id_check_error_messages").prop("hidden", true);
-    $("#id_check_success_messages").prop("hidden", true);
-    $("#id_check_special_character_messages").prop("hidden", true)
-    $("#id_check_data").prop("hidden", true);
-    $('#id_popup_table').DataTable().destroy();
-});
-
-
-//validate by comparing  main table values and popup table values
-function maintable_validation(validate_add_attributes, main_table_low_value) {
-    var no_duplicate_entries = 'Y'
-    var error_message =''
-    var common = [];
-    jQuery.grep(validate_add_attributes, function (el) {
-        if (jQuery.inArray(el, main_table_low_value) != -1) {
-        common.push(el);
-        }
-    });
-    if (common.length != 0) {
-        //error_message = messageConstants["JMSG001"]
-              
-                var msg = "JMSG001";
-                var msg_type ;
-              msg_type = message_config_details(msg);
-              $("#error_msg_id").prop("hidden", false)
-
-              if(msg_type.message_type == "ERROR"){
-                    display_message("error_msg_id", msg_type.messages_id_desc)
-              }
-              else if(msg_type.message_type == "WARNING"){
-                 display_message("id_warning_msg_id", msg_type.messages_id_desc)
-              }
-              else if(msg_type.message_type == "INFORMATION"){
-                 display_message("id_info_msg_id", msg_type.messages_id_desc)
-              }
-                no_duplicate_value = 'N'
-                return [no_duplicate_value,error_message]
-
-        }
-        return [no_duplicate_entries,error_message]
-}
-
-
-
-// validating the  popup table for duplicate entries
-function compare_table_for_duplicate_entries(validate_add_attributes, spend_limit) {
-    add_attr_duplicates = false;
-    var add_attr_duplicates_list = [];
-    var add_attr_unique_list = [];
-    var no_duplicate_value = 'Y'
-    var error_message = ''
-    $.each(validate_add_attributes, function(index, value) {
-        if ($.inArray(value, add_attr_unique_list) == -1) {
-            add_attr_unique_list.push(value);
-        } else {
-            if ($.inArray(value, add_attr_duplicates_list) == -1) {
-                add_attr_duplicates_list.push(value);
-            }
-        }
-    });
-    if (add_attr_duplicates_list.length != 0) {
-        //error_message = messageConstants["JMSG001"];
-              
-                var msg = "JMSG001";
-                var msg_type ;
-              msg_type = message_config_details(msg);
-              $("#error_msg_id").prop("hidden", false)
-
-              if(msg_type.message_type == "ERROR"){
-                    display_message("error_msg_id", msg_type.messages_id_desc)
-              }
-              else if(msg_type.message_type == "WARNING"){
-                 display_message("id_warning_msg_id", msg_type.messages_id_desc)
-              }
-              else if(msg_type.message_type == "INFORMATION"){
-                 display_message("id_info_msg_id", msg_type.messages_id_desc)
-              }
-                no_duplicate_value = 'N'
-                return [no_duplicate_value,error_message]
-
-    }
-    else {
-            $.each(spend_limit, function (i, item) {
-                if (item.spend_code_id.length == 0) {
-                    //error_message = messageConstants["JMSG002"] + "Spend Code ID";
-                
-                        var msg = "JMSG002";
-                        var msg_type ;
-                      msg_type = message_config_details(msg);
-                      $("#error_msg_id").prop("hidden", false)
-
-                      if(msg_type.message_type == "ERROR"){
-                            display_message("error_msg_id", msg_type.messages_id_desc)
-                      }
-                      else if(msg_type.message_type == "WARNING"){
-                         display_message("id_warning_msg_id", msg_type.messages_id_desc)
-                      }
-                      else if(msg_type.message_type == "INFORMATION"){
-                         display_message("id_info_msg_id", msg_type.messages_id_desc)
-                      }
-                        no_duplicate_value = 'N'
-                        return [no_duplicate_value,error_message]
-                    }
-                if (item.spender_username.length == 0) {
-                    //error_message = messageConstants["JMSG002"] + "Spend User Name";
-                       
-                        var msg = "JMSG002";
-                        var msg_type ;
-                      msg_type = message_config_details(msg);
-                      $("#error_msg_id").prop("hidden", false)
-
-                      if(msg_type.message_type == "ERROR"){
-                            display_message("error_msg_id", msg_type.messages_id_desc)
-                      }
-                      else if(msg_type.message_type == "WARNING"){
-                         display_message("id_warning_msg_id", msg_type.messages_id_desc)
-                      }
-                      else if(msg_type.message_type == "INFORMATION"){
-                         display_message("id_info_msg_id", msg_type.messages_id_desc)
-                      }
-                no_duplicate_value = 'N'
-                return [no_duplicate_value,error_message]
-              }
-                if (item.company_id.length == 0) {
-                    //error_message = messageConstants["JMSG002"] + "Company Code";
-                     
-                        var msg = "JMSG002";
-                        var msg_type ;
-                      msg_type = message_config_details(msg);
-                      $("#error_msg_id").prop("hidden", false)
-
-                      if(msg_type.message_type == "ERROR"){
-                            display_message("error_msg_id", msg_type.messages_id_desc)
-                      }
-                      else if(msg_type.message_type == "WARNING"){
-                         display_message("id_warning_msg_id", msg_type.messages_id_desc)
-                      }
-                      else if(msg_type.message_type == "INFORMATION"){
-                         display_message("id_info_msg_id", msg_type.messages_id_desc)
-                      }
-                no_duplicate_value = 'N'
-                return [no_duplicate_value,error_message]
+        popup_data_dict ={'data_list' : spendlimitid_list }
+        OpenLoaderPopup();
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'eProc_Configuration_Check:check_spending_limit' %}",
+            data: JSON.stringify(popup_data_dict),
+            success: function(response) {
+                table_sort_filter_popup_pagination('id_popup_table')
+                //table_sort_filter('id_popup_table');
+                var message = ''
+                update_check_message(response.messages)
+                CloseLoaderPopup();
+                // update_popup_data(response.valid_data)
+                document.getElementById('id_del_add_button').style.visibility='hidden';
+                document.getElementById('id_check_data').style.visibility='hidden';
             }
         });
+    }       
+
+    // *********************
+    function open_upload(){
+        $('#Spend_id_Modal').modal('show');
+        $('#id_check_popup').modal('hide');
     }
-        return [no_duplicate_value,error_message]
-}
-function display_error_message(error_message){
 
-    $('#error_message').text(error_message);
-
-    document.getElementById("error_message").style.color = "Red";
-    $("#error_msg_id").css("display", "block")
-    $('#id_save_confirm_popup').modal('hide');
-    $('#myModal').modal('show');
-
-}
-
-//*******************************************************
-
-// on click add icon display the row in to add the new entries
-function add_popup_row() {
-    $("#error_msg_id").css("display", "none")
-    basic_add_new_html = '';
-    var display_db_data = '';
-    $('#id_popup_table').DataTable().destroy();
-    $(".modal").on("hidden.bs.modal", function() {
-        $("#id_error_msg").html("");
-    });
-    //$('#id_popup_table').DataTable().destroy();
-    $(".modal").on("hidden.bs.modal", function () {
-        $("#id_error_msg").html(" ");
-    });
-    basic_add_new_html = '<tr ><td><input type="checkbox" required></td><td><select class="form-control" type="text">'+spendcodeid_dropdwn+'</select></td><td><input class="input form-control check_special_char" type="text"  maxlength="16" style="text-transform:uppercase"</td><td ><select class = "input form-control" type="text"> ' + company_dropdwn + '</select></td><td hidden><input  type="text" class="form-control"  name="guid"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
-
-   $('#id_popup_tbody').append(basic_add_new_html);
-   if (GLOBAL_ACTION == "spendlimitid_upload") {
-       $(".class_del_checkbox").prop("hidden", false);
-    }
-    table_sort_filter_popup('id_popup_table');
-}
-
-//onclick of cancel display the table in display mode............
-function display_basic_db_data() {
-    $('#display_basic_table').DataTable().destroy();
-    $('#id_spendlimitid_tbody').empty();
-    var edit_basic_data = '';
-    $.each(rendered_spendlimitid_data, function(i, item) {
-        edit_basic_data += '<tr ><td class="class_select_checkbox"><input class="checkbox_check" onclick="valueChanged()" type="checkbox" required></td><td>' + item.spend_code_id + '</td><td>' + item.spender_username + '</td><td>' + item.company_id + '</td><td hidden>' + item.guid + '</td>><td hidden>' + item.del_ind + '</td></tr>';
-    });
-    $('#id_spendlimitid_tbody').append(edit_basic_data);
-    $("#hg_select_checkbox").prop("hidden", true);
-    $(".class_select_checkbox").prop("hidden", true);
-    $('input:checkbox').removeAttr('checked');
-    $('#id_edit_data').show();
-    $('#id_cancel_data').hide();
-    $('#id_delete_data').hide();
-    $('#id_copy_data').hide();
-    $('#id_update_data').hide();
-    $('#id_save_confirm_popup').modal('hide');
-    $('#id_delete_confirm_popup').modal('hide');
-    $('#id_check_all').hide();
-    table_sort_filter('display_basic_table');
-}
-
-
-function delete_duplicate() {
-    $('#id_popup_table').DataTable().destroy();
-    var spend_limit_code_check = new Array
-    $("#id_popup_table TBODY TR").each(function() {
-        var row = $(this);
-
-        //*************** reading data from the pop-up ***************
-        spend_code_id = row.find("TD").eq(1).find('input[type="text"]').val().toUpperCase();
-        spender_username = row.find("TD").eq(2).find("select option:selected").val();
-        company_id = row.find("TD").eq(3).find("select option:selected").val();
-        spendlimid_guid = row.find("TD").eq(4).find('input[type="text"]').val().toUpperCase()
-        spend_limit_compare = spend_code_id +'-'+ spender_username +'-'+ company_id
-
-
-        if (spend_limit_code_check.includes(spend_limit_compare)) {
-            $(row).remove();
-        }
-
-        spend_limit_code_check.push(spend_limit_compare);
-
-    })
-    table_sort_filter_popup('id_popup_table')
-    check_data()
-}
-
-
-
-//onclick of add button display myModal popup and set GLOBAL_ACTION button value
-function onclick_add_button(button) {
-    $("#error_msg_id").css("display", "none")
-    $( "#header_select").prop( "hidden", false );
-    GLOBAL_ACTION = button.value
-    $('#id_popup_table').DataTable().destroy();
-    $("#id_popup_tbody").empty();
-    $('#myModal').modal('show');
-    basic_add_new_html = '<tr ><td><input type="checkbox" required></td><td><select class="form-control" type="text" >'+spendcodeid_dropdwn+'</select></td><td><input class="input form-control check_special_char" type="text"  maxlength="16" style="text-transform:uppercase"</td><td ><select class = "input form-control" type="text"> ' + company_dropdwn + '</select></td><td hidden><input  type="text" class="form-control"  name="guid"></td><td hidden><del_ind></td></tr>';
-
-    $('#id_popup_tbody').append(basic_add_new_html);
-    table_sort_filter('id_popup_table');
-    $("#id_del_ind_checkbox").prop("hidden", true);
-    document.getElementById("id_del_add_button").style.display = "block";
-    $("#save_id").prop("hidden", false);
-}
-
-var main_table_spendlimitid_checked = [];
-
+    //****************************************
+    var main_table_spendlimitid_checked = [];
     function main_table_delete() {
         $('#success_msg_id').empty()
-            GLOBAL_ACTION = 'DELETE'
-            main_table_spendlimitid_checked = [];
-         $('#display_basic_table').DataTable().destroy();
-        $("#display_basic_table TBODY TR").each(function() {
-            var row = $(this);
-            var spendlimitid_arr_obj = {};
-            spendlimitid_arr_obj.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
-            if(spendlimitid_arr_obj.del_ind){
-                 spendlimitid_arr_obj.spend_code_id = row.find("TD").eq(1).html();
-                spendlimitid_arr_obj.spender_username = row.find("TD").eq(2).html();
-                spendlimitid_arr_obj.company_id = row.find("TD").eq(3).html();
-                spendlimitid_arr_obj.spend_guid = row.find("TD").eq(4).html();
-                main_table_spendlimitid_checked.push(spendlimitid_arr_obj);
-            }
-        });
+        GLOBAL_ACTION = 'DELETE'
+        main_table_spendlimitid_checked = [];
+        $('#display_basic_table').DataTable().destroy();
+        get_selected_row_data(); // Function call to get the selected row data
         $('#id_delete_confirm_popup').modal('hide');
         data = {'data':main_table_spendlimitid_checked,'table_name':'SpendLimitId','action':GLOBAL_ACTION}
         OpenLoaderPopup();
@@ -959,92 +547,64 @@ var main_table_spendlimitid_checked = [];
             success: function(Response) {
                 rendered_spendlimitid_data = Response[0];
                 display_basic_db_data();
-                        $('#success_msg_id').text(Response[1])
-                         if(Response[1].message_type== 'SUCCESS'){
-                            $('#success_msg_id').text(Response[1].message_desc)
-                         }
-                        $("#err_msg_app_settings_t").prop("hidden", false)
-                        table_sort_filter('id_popup_table');
-                        setTimeout(function(){$("#err_msg_app_settings_t").prop("hidden",true);},5000)
-                        table_sort_filter('id_popup_table');
-                        CloseLoaderPopup();
-                        }
+                success_response(Response);  // Display Response data
+                CloseLoaderPopup();
+            }
         });
     }
 
-
-// Functtion to hide and display save related popups
-
-$('#save_id').click(function () {
-    $('#myModal').modal('hide');
-    spend_limit_id_data = new Array();
-    validate_add_attributes = [];
-    duplicate_entry = [];
-   
-            $("#id_popup_table tbody tr").each(function() {
-                var row = $(this);
-                spend_limit ={};
-                spend_limit.del_ind = row.find("TD").eq(5).find('input[type="checkbox"]').is(':checked');
-                spend_limit.spender_username = row.find("TD").eq(2).find('input').val();
-                spend_limit.spend_code_id = row.find("TD").eq(1).find('select').val();
-                spend_limit.company_id = row.find("TD").eq(3).find('select').val();
-                spend_limit.spend_guid = row.find("TD").eq(4).find('input').val();
-             if (spend_limit == undefined){
-                    spend_limit.spend_code_id = row.find("TD").eq(1).find('select').val();
-                 }
-                 if(spend_limit.spend_guid == undefined) {
-                    spend_limit.spend_guid = '';
-                }
-                var attribute_dup = {};
-                attribute_dup.spender_username = spend_limit.spender_username;
-                attribute_dup.company_id = spend_limit.company_id;
-                duplicate_entry.push(attribute_dup);
-                validate_add_attributes.push( spend_limit.spender_username);
-                spend_limit_id_data.push(spend_limit);
-            });
-
-    $('#id_save_confirm_popup').modal('show');
-
-});
-
-function popup_save_data() {
+    // validate and save for add,copy,update and upload data
+    function popup_save_data() {
         $('#success_msg_id').empty()
         $('#id_popup_table').DataTable().destroy();
+        var spend_id_data = new Array();
         var main_table_low_value = [];
         no_duplicate_entries = 'Y'
-         no_duplicate_value = 'Y'
+        no_duplicate_value = 'Y'
         var validate_add_attributes = [];
         var error_message = '';
-        var spend_limit = {};
-
+        var aad = {};
+        $('#display_basic_table').DataTable().destroy();
+        $("#id_popup_table TBODY TR").each(function() {
+            var row = $(this);
+            aad = {};
+            aad.spender_username = row.find("TD").eq(1).find('input[type="text"]').val().toUpperCase();
+            aad.company_id = row.find("TD").eq(2).find("select option:selected").val();
+            aad.spend_code_id = row.find("TD").eq(3).find("select option:selected").val();
+            aad.spend_guid = (row.find("TD").eq(4).find('input').val());
+            aad.del_ind = row.find("TD").eq(5).find('input[type="checkbox"]').is(':checked');
+            if (aad == undefined) {
+                aad.spender_username = row.find("TD").eq(1).find('input[type="text"]').val();
+            }
+            var compare = aad.spender_username + '-' + aad.company_id
+            validate_add_attributes.push(compare);
+            spend_id_data.push(aad);
+        });
         $('#display_basic_table').DataTable().destroy();
         $("#display_basic_table TBODY TR").each(function() {
             var row = $(this);
             var main_attribute = {};
-            main_attribute.spend_code_id = row.find("TD").eq(1).html();
-            main_attribute.spender_username = row.find("TD").eq(2).html();
-            main_attribute.company_id = row.find("TD").eq(3).html();
-            main_table_low_value.push(main_attribute);
-
-       });
+            main_attribute.spend_code_id = row.find("TD").eq(3).html();
+            main_attribute.spender_username = row.find("TD").eq(1).html();
+            main_attribute.company_id = row.find("TD").eq(2).html();
+            compare_maintable = main_attribute.spender_username + '-' + main_attribute.company_id;
+            main_table_low_value.push(compare_maintable);
+        });
         table_sort_filter('display_basic_table');
-        $("#id_error_msg").empty();
-        [no_duplicate_value,error_message] = compare_table_for_duplicate_entries(validate_add_attributes, spend_limit_id_data)
-         if (error_message){
-               display_error_message(error_message)
-
-         }
-         else{
+        [no_duplicate_value,error_message] = compare_table_for_duplicate_entries(validate_add_attributes, aad)
+        if (error_message){
+            display_error_message(error_message)
+        }
+        else{
             if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
-                [no_duplicate_value,error_message] = maintable_validation(duplicate_entry, main_table_low_value)
+                [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
             }
             if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
                 var add_basic_data = '';
                 var spend_limit_id_data_array = spend_limit_id_data;
-
                 $('#id_save_confirm_popup').modal('hide');
-            data = {'data':spend_limit_id_data,'table_name':'SpendLimitId','action':GLOBAL_ACTION}
-            OpenLoaderPopup();
+                data = {'data':spend_limit_id_data,'table_name':'SpendLimitId','action':GLOBAL_ACTION}
+                OpenLoaderPopup();
                 $.ajax({
                     type: 'POST',
                     url: "{% url 'eProc_Master_Settings:create_update_master_data' %}",
@@ -1054,18 +614,8 @@ function popup_save_data() {
                     success: function(Response) {
                         rendered_spendlimitid_data = Response[0];
                         display_basic_db_data();
-                        $('#myModal').modal('hide');
-                        //$('#id_error_msg').text(messageConstants["JMSG001"])
-                        $('#success_msg_id').text(Response[1])
-                         if(Response[1].message_type== 'SUCCESS'){
-                                $('#success_msg_id').text(Response[1].message_desc)
-                         }
-                        $("#err_msg_app_settings_t").prop("hidden", false)
-                        table_sort_filter('id_popup_table');
-                        setTimeout(function() {
-                            $("#err_msg_app_settings_t").prop("hidden", true);
-                        }, 5000)
-                        table_sort_filter('id_popup_table');
+                        $('#Spend_id_Modal').modal('hide');
+                        success_response(Response);  // Display Response data
                         CloseLoaderPopup();
                     }
                 });
@@ -1073,70 +623,344 @@ function popup_save_data() {
             else if (error_message){
                 display_error_message(error_message)
             }
-
         }
     }
 
-
-function maintable_validation(spend_limit_id_data, main_table_low_value) {
-    var no_duplicate_entries = 'Y'
-    var error_message =''
-
-    var dup_entry = "";
-
-     $.each(spend_limit_id_data, function (i, item) {
-        $.each(main_table_low_value, function (j, item1) {
-            if((item.spender_username == item1.spender_username) && (item.company_id == item1.company_id)){
-                dup_entry = "1"
+    // validating the  popup table for duplicate entries
+    function compare_table_for_duplicate_entries(validate_add_attributes, aad) {
+        add_attr_duplicates = false;
+        var add_attr_duplicates_list = [];
+        var add_attr_unique_list = [];
+        var no_duplicate_value = 'Y'
+        var error_message = ''
+        $.each(validate_add_attributes, function(index, value) {
+            if ($.inArray(value, add_attr_unique_list) == -1) {
+                add_attr_unique_list.push(value);
+            } else {
+                if ($.inArray(value, add_attr_duplicates_list) == -1) {
+                    add_attr_duplicates_list.push(value);
+                }
             }
         });
-     });
-         if((dup_entry == "1"))
-        {
-        //error_message = messageConstants["JMSG001"]
-             
-                var msg = "JMSG001";
-                var msg_type ;
-              msg_type = message_config_details(msg);
-              $("#error_msg_id").prop("hidden", false)
-
-              if(msg_type.message_type == "ERROR"){
-                    display_message("error_msg_id", msg_type.messages_id_desc)
-              }
-              else if(msg_type.message_type == "WARNING"){
-                 display_message("id_warning_msg_id", msg_type.messages_id_desc)
-              }
-              else if(msg_type.message_type == "INFORMATION"){
-                 display_message("id_info_msg_id", msg_type.messages_id_desc)
-              }
-                no_duplicate_value = 'N'
-                return [no_duplicate_value,error_message]
-            }
-    return [no_duplicate_entries,error_message]
-
-}
-
-       function GetReferrer() {
-             window.history.back();
-              var preUrl = document.referrer;
-              console.log(preUrl);
-              window.open('', '_self', '').close();
-<!--               var win = window.open(preUrl);-->
-<!--                win.focus();-->
-              if (preUrl == null)
-                     return "The previous page url is empty";
-               else
-                     return preUrl;
-       }
-
-function update_check_message(messages){
-    $.each(messages, function (i, message) {
-                $("#id_check_success_messages").append('<p>' + message + '</p>')
+        if (add_attr_duplicates_list.length != 0) {
+            $('#Spend_id_Modal').modal('show');
+            error_message = ui_messeges("JMSG001") // Get message details}
+            no_duplicate_value = 'N'
+            return [no_duplicate_value,error_message]
+        }
+        else {
+            $.each(aad, function (i, item) {
+                $('#Spend_id_Modal').modal('show');
+                if (aad.spend_code_id.length == 0) {
+                    error_message = ui_messeges("JMSG002") // Get message details
+                    no_duplicate_value = 'N'
+                    return [no_duplicate_value,error_message]
+                }
+                if (aad.spender_username.length == 0) {
+                    $('#Spend_id_Modal').modal('show');
+                    error_message = ui_messeges("JMSG002") // Get message details
+                    no_duplicate_value = 'N'
+                    return [no_duplicate_value,error_message]
+                }
+                if (aad.company_id.length == 0) { 
+                    $('#Spend_id_Modal').modal('show');
+                    error_message = ui_messeges("JMSG002") // Get message details
+                    no_duplicate_value = 'N'
+                    return [no_duplicate_value,error_message]
+                }
             });
+        }
+        return [no_duplicate_value,error_message]
+    }
 
-            $("#id_check_success_messages").prop("hidden",false)
-}
+    var spend_limit_id_data = new Array();
+    var validate_add_attributes = [];
+    var spend_limit={};
+    var duplicate_entry = [];
 
+    //onclick of upload button display id_data_upload popup and set GLOBAL_ACTION button value
+    function onclick_upload_button() {
+        GLOBAL_ACTION = "spendlimid_upload"
+        $("#id_popup_tbody").empty();
+        $('#id_data_upload').modal('show');
+        document.getElementById('id_file_data_upload').value = "";
+    }
+
+    // on click copy icon display the selected checkbox data
+    function onclick_copy_button() {
+        GLOBAL_ACTION = "COPY"
+        onclick_copy_update_button("copy")
+        document.getElementById("id_del_add_button").style.display = "block";
+    }
+
+    // on click update icon display the selected checkbox data to update
+    function onclick_update_button() {
+        GLOBAL_ACTION = "UPDATE"
+        onclick_copy_update_button("update")
+        document.getElementById("id_del_add_button").style.display = "none";
+    }
+
+    //*****************************************
+    function onclick_copy_update_button() {
+        OpenLoaderPopup();
+        var data = {'table_name':'SpendLimitId'}
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'eProc_Configuration:get_dropdown_data' %}",
+            data: JSON.stringify(data),
+            success: function(response) {
+                rendered_spndlimval_data = response.upload_spndlimval
+                rendered_company_data = response.upload_data_company
+                spend_limlt_id_drp()
+                $("#error_msg_id").css("display", "none")
+                $('#display_basic_table').DataTable().destroy();
+                $("#id_popup_tbody").empty();
+                $('#display_basic_table').DataTable().destroy();
+                //Reference the Table.
+                var grid = document.getElementById("display_basic_table");
+
+                //Reference the CheckBoxes in Table.
+                var checkBoxes = grid.getElementsByTagName("INPUT");
+                var edit_basic_data = "";
+                var guid = '';
+                var unique_input = '';
+                var dropdown_values = [];
+                //Loop through the CheckBoxes.
+                for (var i = 1; i < checkBoxes.length; i++) {
+                    if (checkBoxes[i].checked) {
+                        var row = checkBoxes[i].parentNode.parentNode;
+                        if(GLOBAL_ACTION == "UPDATE"){
+                            guid = row.cells[4].innerHTML;
+                            unique_input ='<select class="form-control" value="' + row.cells[3].innerHTML + '">'+spendcodeid_dropdwn+' </select>'
+                            edit_basic_data += '<tr><td hidden><input type="checkbox" required></td><td><input class="form-control check_special_char" type="text" value="'+row.cells[1].innerHTML+'" maxlength="16"  name="spend_username" style="text-transform:uppercase;" disabled></td><td><select class="form-control" value="' + row.cells[2].innerHTML + '"disabled>'+company_dropdwn+'</select></td><td>'+unique_input+'</td><td hidden><input type="text" value="'+guid+'" hidden></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+                            $("#header_select").prop("hidden", true);
+                        } else{
+                            guid = 'GUID';
+                            unique_input ='<select class="form-control" value="' + row.cells[3].innerHTML + '">'+spendcodeid_dropdwn+' </select>'
+                            edit_basic_data += '<tr><td><input type="checkbox" required></td><td><input class="form-control check_special_char" type="text" value="'+row.cells[1].innerHTML+'" maxlength="16"  name="spender_username" style="text-transform:uppercase;" required></td><td><select class="form-control" value="' + row.cells[2].innerHTML + '">'+company_dropdwn+'</select></td><td>'+unique_input+'</td><td hidden><input type="text" value="'+guid+'" hidden></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+                            $("#header_select").prop("hidden", false);
+                        }
+                        var row = checkBoxes[i].parentNode.parentNode;
+                        var company_type_value = row.cells[2].innerHTML
+                        var spendid_type_value = row.cells[3].innerHTML
+                        dropdown_values.push([company_type_value, spendid_type_value])
+                    }
+                }
+                $('#id_popup_table').append(edit_basic_data);
+                var i =0;
+                $("#id_popup_table TBODY TR").each(function() {
+                    var row = $(this);
+                    var company_type_value = dropdown_values[i][0]
+                    var spendid_type_value = dropdown_values[i][1]
+                    $(row.find("TD").eq(2).find("select option[value="+company_type_value+"]")).attr('selected','selected');
+                    $(row.find("TD").eq(3).find("select option[value="+spendid_type_value+"]")).attr('selected','selected');  
+                    i++;
+                });
+                $("#id_del_ind_checkbox").prop("hidden", true);
+                $('#Spend_id_Modal').modal('show');
+                table_sort_filter('id_popup_table');
+                table_sort_filter('display_basic_table');
+                $('#Spend_id_Modal').modal('show');
+                CloseLoaderPopup();
+            }
+        });
+    }
+
+    //onclick of cancel empty the popup table body and error messages
+    $(".remove_upload_data").click(() => {
+        $("#id_error_msg").html("");
+        $("#id_popup_tbody").empty();
+        $("#id_error_msg").empty();
+        $('#Spend_id_Modal').modal('hide');
+        $("#id_error_msg").prop("hidden", true);
+        $("#id_error_msg_spend_limit_code").prop("hidden", true);
+        $("#id_error_msg_spend_limit_name").prop("hidden", true);
+        $("#id_error_msg_spend_limit_length").prop("hidden", true);
+        $("#id_check_error_messages").prop("hidden", true);
+        $("#id_check_success_messages").prop("hidden", true);
+        $("#id_check_special_character_messages").prop("hidden", true)
+        $("#id_check_data").prop("hidden", true);
+        $('#id_popup_table').DataTable().destroy();
+    });
+
+    //onclick of add button display Spend_id_Modal popup and set GLOBAL_ACTION button value
+    function onclick_add_button(button) {
+        OpenLoaderPopup();
+        var data = {'table_name':'SpendLimitId'}
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'eProc_Configuration:get_dropdown_data' %}",
+            data: JSON.stringify(data),
+            success: function(response) {
+                rendered_spndlimval_data = response.upload_spndlimval
+                rendered_company_data = response.upload_data_company
+                spend_limlt_id_drp()
+                $("#error_msg_id").css("display", "none")
+                $( "#header_select").prop( "hidden", false );
+                GLOBAL_ACTION = button.value
+                $('#id_popup_table').DataTable().destroy();
+                $("#id_popup_tbody").empty();
+                $('#Spend_id_Modal').modal('show');
+                new_row_data();  // Add a new row in popup
+                $("#id_del_ind_checkbox").prop("hidden", true);
+                document.getElementById("id_del_add_button").style.display = "block";
+                $("#save_id").prop("hidden", false);
+                CloseLoaderPopup();
+            }
+        });
+    }
+
+    // on click add icon display the row in to add the new entries
+    function add_popup_row() {
+        $("#error_msg_id").css("display", "none")
+        basic_add_new_html = '';
+        var display_db_data = '';
+        $('#id_popup_table').DataTable().destroy();
+        $(".modal").on("hidden.bs.modal", function() {
+            $("#id_error_msg").html("");
+        });
+        new_row_data();   // Add a new row in popup
+        if (GLOBAL_ACTION == "spendlimitid_upload") {
+            $(".class_del_checkbox").prop("hidden", false);
+        }
+    }
+
+    //onclick of cancel display the table in display mode............
+    function display_basic_db_data() {
+        $('#display_basic_table').DataTable().destroy();
+        $('#id_spendlimitid_tbody').empty();
+        var edit_basic_data = '';
+        $.each(rendered_spendlimitid_data, function(i, item) {
+            edit_basic_data += '<tr ><td class="class_select_checkbox"><input class="checkbox_check" onclick="valueChanged()" type="checkbox" required></td><td>' + item.spender_username + '</td><td>' + item.company_id + '</td><td>' + item.spend_code_id + '</td><td hidden>' + item.guid + '</td>><td hidden>' + item.del_ind + '</td></tr>';
+        });
+        $('#id_spendlimitid_tbody').append(edit_basic_data);
+        $("#hg_select_checkbox").prop("hidden", true);
+        $(".class_select_checkbox").prop("hidden", true);
+        $('input:checkbox').removeAttr('checked');
+        $('#id_edit_data').show();
+        $('#id_cancel_data').hide();
+        $('#id_delete_data').hide();
+        $('#id_copy_data').hide();
+        $('#id_update_data').hide();
+        $('#id_save_confirm_popup').modal('hide');
+        $('#id_delete_confirm_popup').modal('hide');
+        $('#id_check_all').hide();
+        table_sort_filter('display_basic_table');
+    }
+
+    // ***********************************************
+    function display_error_message(error_message){
+        $('#error_message').text(error_message);
+        document.getElementById("error_message").style.color = "Red";
+        $("#error_msg_id").css("display", "block")
+        $('#id_save_confirm_popup').modal('hide');
+        $('#Spend_id_Modal').modal('show');
+    }
+
+    //*****************************
+    function delete_duplicate() {
+        $('#id_popup_table').DataTable().destroy();
+        var spend_limit_code_check = new Array
+        $("#id_popup_table TBODY TR").each(function() {
+            var row = $(this);
+            //*************** reading data from the pop-up ***************
+            spend_code_id = row.find("TD").eq(1).find('input[type="text"]').val().toUpperCase();
+            spender_username = row.find("TD").eq(2).find("select option:selected").val();
+            company_id = row.find("TD").eq(3).find("select option:selected").val();
+            spendlimid_guid = row.find("TD").eq(4).find('input[type="text"]').val().toUpperCase()
+            spend_limit_compare = spend_code_id +'-'+ spender_username +'-'+ company_id
+            if (spend_limit_code_check.includes(spend_limit_compare)) {
+                $(row).remove();
+            }
+            spend_limit_code_check.push(spend_limit_compare);
+        })
+        table_sort_filter_popup('id_popup_table')
+        check_data()
+    }
+
+    // Functtion to hide and display save related popups
+    $('#save_id').click(function () {
+        $('#Spend_id_Modal').modal('hide');
+        spend_limit_id_data = new Array();
+        var spend_limit = {};
+        validate_add_attributes = [];
+        // duplicate_entry = [];
+        $("#id_popup_table tbody tr").each(function() {
+            var row = $(this);
+            spend_limit ={};
+            spend_limit.del_ind = row.find("TD").eq(5).find('input[type="checkbox"]').is(':checked');
+            spend_limit.spender_username = row.find("TD").eq(1).find('input').val();
+            spend_limit.company_id = row.find("TD").eq(2).find('select').val();
+            spend_limit.spend_code_id = row.find("TD").eq(3).find('select').val();
+
+            spend_limit.spend_guid = row.find("TD").eq(4).find('input').val();
+            if (spend_limit == undefined){
+                spend_limit.spend_code_id = row.find("TD").eq(1).find('select').val();
+                }
+                if(spend_limit.spend_guid == undefined) {
+                spend_limit.spend_guid = '';
+            }
+            // var attribute_dup = {};
+            // attribute_dup.spender_username = spend_limit.spender_username;
+            // attribute_dup.company_id = spend_limit.company_id;
+            // duplicate_entry.push(attribute_dup);
+            validate_add_attributes.push( spend_limit.spender_username);
+            spend_limit_id_data.push(spend_limit);
+        });
+        $('#id_save_confirm_popup').modal('show');
+    });
+
+    // ****************************************
+    function update_check_message(messages){
+        $.each(messages, function (i, message) {
+            $("#id_check_success_messages").append('<p>' + message + '</p>')
+        });
+        $("#id_check_success_messages").prop("hidden",false)
+    }
+
+    // Function for add a new row data
+    function new_row_data(){
+        basic_add_new_html = '<tr ><td><input type="checkbox" required></td><td><input class="input form-control check_special_char" type="text"  maxlength="16" style="text-transform:uppercase"</td><td ><select class = "input form-control" type="text"> ' + company_dropdwn + '</select></td><td><select class="form-control" type="text">'+spendcodeid_dropdwn+'</select></td> <td hidden><input  type="text" class="form-control"  name="guid"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+        $('#id_popup_tbody').append(basic_add_new_html);
+        table_sort_filter('id_popup_table');
+    }
+
+    // Function to get the selected row data
+    function get_selected_row_data() {
+        $("#display_basic_table TBODY TR").each(function() {
+            var row = $(this);
+            var spendlimitid_arr_obj = {};
+            spendlimitid_arr_obj.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
+            if(spendlimitid_arr_obj.del_ind){
+                spendlimitid_arr_obj.spend_code_id = row.find("TD").eq(3).html();
+                spendlimitid_arr_obj.spender_username = row.find("TD").eq(1).html();
+                spendlimitid_arr_obj.company_id = row.find("TD").eq(2).html();
+                spendlimitid_arr_obj.spend_guid = row.find("TD").eq(4).html();
+                main_table_spendlimitid_checked.push(spendlimitid_arr_obj);
+            }
+        });
+    }
+
+    //Function to highlight duplicate records
+    function display_duplicate_entry(common) {
+        var spend_id_check = new Array;
+        $("#id_popup_table TBODY TR").each(function() {
+            var row = $(this);
+            spend_id_dic = {}
+            spend_id_dic.spender_username = row.find("TD").eq(1).find('input[type="text"]').val().toUpperCase();
+            spend_id_dic.company_id = row.find("TD").eq(2).find("select option:selected").val();
+            var compare = spend_id_dic.spender_username + '-' + spend_id_dic.company_id
+            spend_id_check.push(compare);
+            jQuery.grep(spend_id_check, function(el) {
+                if (jQuery.inArray(el, common) != -1) {
+                    row_color_highlight(row);
+                }
+                else {
+                    row_color_no_highlight(row);
+                }
+            });
+        });
+    }
+    
 </script>
-<!--<script src="{% static 'scripts/spendlimit/spend_limit_id.js' %}"></script>-->
 {% endblock %}

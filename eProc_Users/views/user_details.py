@@ -28,9 +28,6 @@ from eProc_Shopping_Cart.context_processors import update_user_info
 django_query_instance = DjangoQueries()
 
 
-
-
-
 @login_required()
 @transaction.atomic
 def update_user_basic_details(request):
@@ -58,3 +55,4 @@ def update_user_basic_details(request):
         error_msg = get_message_desc(msgid)[1]
 
         return JsonResponse({'message': error_msg})
+

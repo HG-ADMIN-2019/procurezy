@@ -3,6 +3,8 @@
 {% block title %} Holiday Calendar (Application Settings) {% endblock %}
 {% block maincontent %}
 
+{% include 'root/loader.html' %}
+
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css" integrity="sha512-mSYUmp1HYZDFaVKK//63EcZq4iFWFjxSL+Z3T/aCt4IO9Cejm03q3NKKYN6pFQzY0SBOr8h+eCIAZHPXcpZaNw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 
@@ -22,7 +24,7 @@
                   <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Basic_Settings:extract_calendar_holiday_data' %}'" type="button">
                        <i class="fas fa-download"></i> extract
                   </button>
-                  <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"  onclick="GetReferrer();">
+                  <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"  onclick="window_close();">
                     <i class="fas fa-times"></i> close
                 </button>
             </div>
@@ -65,21 +67,19 @@
     
                     {% for calendar in calendar_data %}
                     <tr>
-                        <!-- <td class="class_calendar_checkbox" hidden><input type="checkbox" class="checkbox_check" onclick="valueChanged()" required></td> -->
                         <td>{{calendar.calender_id}}</td>
                         <td>{{calendar.description}}</td>
                         {% for ct in country_list %}
-                         {% if calendar.country_code == ct.country_code  %}
-                            <td>{{ct.country_name}}</td>
-                         {% endif %}
-                         {% endfor %}
+                            {% if calendar.country_code == ct.country_code  %}
+                                <td>{{ct.country_name}}</td>
+                            {% endif %}
+                        {% endfor %}
                         <td>{{calendar.year}}</td>
-
-                        <!-- <td>{{calendar.working_days}}</td> -->
                         <td hidden></td>
                         <td hidden></td>
-                        <td><span class="badge badge-pill badge-button-blue calendar-holiday-config btn-disable"><a href="#" id="{{calendar.calender_id}}" data-target="#myModal" data-toggle="modal" onclick="onclick_create(this.id)"> Create</a></span>
-                        <span class="badge badge-pill badge-button-blue calendar-holiday-config btn-disable"><a href="#" id="{{calendar.calender_id}}-Delete" data-toggle="modal" data-target="#myModal" onclick="onclick_delete(this.id)"> Delete</a></span>
+                        <td>
+                            <button class="badge badge-pill badge-button-blue maintain-calendar-holiday-config" id="maintain_holiday" hidden><a href="#" id="{{calendar.calender_id}}"  onclick="onclick_create(this.id)">Maintain Holidays</a></button>
+                            <button class="badge badge-pill badge-button-blue view-calendar-holiday-config"><a href="#" id="{{calendar.calender_id}}-Delete"  onclick="onclick_View(this.id)"> View Holidays</a></button>
                         </td>
                         <td hidden></td>
     
@@ -94,11 +94,11 @@
     
 
     <!--modal popup for Add,copy,update and upload-->
-    <div class="modal fade" id="myModal" style="overflow:auto;">
+    <div class="modal fade" id="holidayModal" style="overflow:auto;">
         <div class="modal-dialog modal-dialog-centered modal-xl" >
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title"> Maintain Holiday</h5>
+                    <h5 class="modal-title"> View Holiday</h5>
                     <button type="button" class="close remove_upload_data" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
@@ -107,10 +107,9 @@
                 <div class="modal-body scrollbox">
 
                     <div id="id_del_add_button" class="mb-4">
-                        <button type="button" class="btn btn-primary" onclick="add_popup_row()"> add new row</button>
+                        <button type="button" class="btn btn-primary" id="new-row" onclick="add_popup_row()"> add new row</button>
                         <button class="btn btn-outline-danger" onclick="application_settings_delete_Row1('id_popup_table')"><i class="fa fa-trash"></i> delete
-                            </button>
-
+                        </button>
                     </div>
 
                     <div id="id_check_success_messages" class="alert alert-success check_success_message" hidden></div>
@@ -145,9 +144,9 @@
 
                 <!-- Modal footer -->
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-primary remove_upload_data" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
+                    <button type="button" class="btn btn-outline-primary remove_upload_data" data-dismiss="modal"><i class="fas fa-times"></i> Close</button>
                     <button class="btn btn-primary" id="save_id"><i class="fas fa-save"></i> save</button>
-                    <button class="btn btn-primary" style="display:none;" id="id_delete" data-toggle="modal" data-target="#id_delete_confirm_popup"><i class="fas fa-save"></i> delete</button>
+                    <!-- <button class="btn btn-primary" style="display:none;" id="id_delete" data-toggle="modal" data-target="#id_delete_confirm_popup"><i class="fas fa-save"></i> delete</button> -->
                 </div>
             </div>
         </div>
@@ -175,7 +174,6 @@
 </div>
 
 <script>
-
     var rendered_calendar_data = {{calendar_data|safe}};
     var render_country_data = {{country_list|safe}};
     var render_holiday_data = "{{holidays_data|safe}}"
@@ -191,13 +189,19 @@
     var table_content='';
 
     // Onclick of Config Holiday link, display or add the rows
-    function onclick_copy_update_button(calender_id) {
+    function onclick_Maintain_holiday_button(calender_id) {
         $("#error_msg_id").css("display", "none")
         GLOBAL_CALENDER_ID = calender_id.split('-')[0];
         $("#hg_select_checkbox").prop("hidden", false);
-        $(".class_calendar_checkbox").prop("hidden", false);
-        $("#id_popup_tbody").empty();
+        $('#id_popup_table').DataTable().destroy();
         $('#display_basic_table').DataTable().destroy();
+
+        //Reference the Table.
+        var grid = document.getElementById("display_basic_table");
+        
+        //Reference the CheckBoxes in Table.
+         var checkBoxes = grid.getElementsByTagName("INPUT");
+        $("#id_popup_tbody").empty();       
         var edit_basic_data = "";
         $.ajax({
             type: 'POST',
@@ -207,7 +211,6 @@
             },
             success: function (response) {
                 if (response.length == 0) {
-
                     empty_resp = '';
                     empty_resp += '<tr>';
                     empty_resp += '<td><input type="checkbox" name="hg_checkbox" required></td>';
@@ -220,51 +223,63 @@
                     table_content = empty_resp;
                     $('#id_popup_table tbody').html(empty_resp);
                     HolidayDatePicker();
-
                 } else {
-
                     var i = 0;
                     content = ''
                     $.each(response, function (key, value) {
-
-                        i = i + 1;
-                        content += '<tr>';
-                        content += '<td><input type="checkbox" name="hg_checkbox" required></td>';
-                        content += '<td><input class="holiday_description input" id="holiday_description2" required  type="text"  +  name="holiday_description" + value="' + value.fields.holiday_description + '" onkeypress="return /[A-Z 0-9]/i.test(event.key)"  /></td>';
-                        content += '<td><input  class="from_date input" type="text"  + name="from_date" + value="' + value.fields.from_date + '" /></td>';
-                        content += '<td><input  class="to_date input" type="text" + name="to_date"  + value="' + value.fields.to_date + '" /></td>';
-                        content += '<td hidden><input type="checkbox" name="del_ind"></td>';
-                        content += '<td hidden><input class="input"  type="text"  name="calender_holiday_guid"  value="' + value.pk + '" /></td>';
-                        content += '</tr>';
-                        $('#id_popup_tbody').html(content);
-                        table_content = content;
-                        HolidayDatePicker();
+                        var from_date =  value.fields.from_date;
+                        if(from_date < currentDate){
+                            i = i + 1;
+                            content += '<tr>';
+                            content += '<td><input type="checkbox" name="hg_checkbox" required></td>';
+                            content += '<td><input class="holiday_description input" id="holiday_description2" required  type="text"  +  name="holiday_description" + value="' + value.fields.holiday_description + '" onkeypress="return /[A-Z 0-9]/i.test(event.key)"  / disabled></td>';
+                            content += '<td><input  class="from_date input" type="text"  + name="from_date" + value="' + value.fields.from_date + '" / disabled></td>';
+                            content += '<td><input  class="to_date input" type="text" + name="to_date"  + value="' + value.fields.to_date + '" / disabled></td>';
+                            content += '<td hidden><input type="checkbox" name="del_ind"></td>';
+                            content += '<td hidden><input class="input"  type="text"  name="calender_holiday_guid"  value="' + value.pk + '" / disabled></td>';
+                            content += '</tr>';
+                            $('#id_popup_tbody').html(content);
+                            table_content = content;
+                            HolidayDatePicker();
+                        }
+                        else {
+                            i = i + 1;
+                            content += '<tr>';
+                            content += '<td><input type="checkbox" name="hg_checkbox" required></td>';
+                            content += '<td><input class="holiday_description input" id="holiday_description2" required  type="text"  +  name="holiday_description" + value="' + value.fields.holiday_description + '" onkeypress="return /[A-Z 0-9]/i.test(event.key)"  /></td>';
+                            content += '<td><input  class="from_date input" type="text"  + name="from_date" + value="' + value.fields.from_date + '" /></td>';
+                            content += '<td><input  class="to_date input" type="text" + name="to_date"  + value="' + value.fields.to_date + '" /></td>';
+                            content += '<td hidden><input type="checkbox" name="del_ind"></td>';
+                            content += '<td hidden><input class="input"  type="text"  name="calender_holiday_guid"  value="' + value.pk + '" /></td>';
+                            content += '</tr>';
+                            $('#id_popup_tbody').html(content);
+                            table_content = content;
+                            HolidayDatePicker();
+                        }
                     });
-                }
+                } 
             },
             error: function (error) {
                 error_msg.innerHTML = error.responseText
             }
         })
-        table_sort_filter('display_basic_table');
+        $('#id_popup_tbody').append(edit_basic_data);
+        $("#id_del_ind_checkbox").prop("hidden", true);
         table_sort_filter('id_popup_table');
+        table_sort_filter('display_basic_table');
     }
-
 
     // validate and save for add,copy,update and upload data
     function popup_save_data() {
-          $('#success_msg_id').empty();
-
+        $('#success_msg_id').empty();
         $('#id_popup_table').DataTable().destroy();
         var calendar_data = new Array();
         var main_table_low_value = [];
-
         no_duplicate_entries = 'Y'
         no_duplicate_value = 'Y'
         var error_message = '';
         $('#display_basic_table').DataTable().destroy();
         var calendar = {};
-
         $('#display_basic_table').DataTable().destroy();
         $("#display_basic_table TBODY TR").each(function () {
             var row = $(this);
@@ -283,45 +298,42 @@
             display_error_message(error_message)
         }
         else{
-        if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y') && (dateValid == 'Y') ) {
-            var add_basic_data = '';
-            var calendar_data = calendar_data_array;
-
-            $('#id_save_confirm_popup').modal('hide');
-            data = {'data':calendar_data,'table_name':'CalenderHolidays','action':GLOBAL_ACTION}
-            OpenLoaderPopup();
-            $.ajax({
-                type: 'POST',
-                url: "{% url 'eProc_Configuration:create_update_application_data' %}",
-                data:
-                    JSON.stringify(data),
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                success: function (Response) {
-                    render_holiday_data = Response[0];
-                    display_basic_db_data();
-                    $('#myModal').modal('hide');
-                    //$('#id_error_msg').text(messageConstants["JMSG001"])
-                    $('#success_msg_id').text(Response[1])
-                    if(Response[1].message_type== 'SUCCESS'){
-                         $('#success_msg_id').text(Response[1].message_desc)
+            if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y') && (dateValid == 'Y') ) {
+                var add_basic_data = '';
+                var calendar_data = calendar_data_array;
+                $('#id_save_confirm_popup').modal('hide');
+                data = {'data':calendar_data,'table_name':'CalenderHolidays','action':GLOBAL_ACTION}
+                OpenLoaderPopup();
+                $.ajax({
+                    type: 'POST',
+                    url: "{% url 'eProc_Configuration:create_update_application_data' %}",
+                    data:
+                        JSON.stringify(data),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (Response) {
+                        render_holiday_data = Response[0];
+                        display_basic_db_data();
+                        $('#holidayModal').modal('hide');
+                        //$('#id_error_msg').text(messageConstants["JMSG001"])
+                        $('#success_msg_id').text(Response[1])
+                        if(Response[1].message_type== 'SUCCESS'){
+                            $('#success_msg_id').text(Response[1].message_desc)
+                        }
+                        $("#err_msg_app_settings_t").prop("hidden", false)
+                        setTimeout(function () { $("#err_msg_app_settings_t").prop("hidden", true); }, 5000)
+                        table_sort_filter('render_holiday_data');
+                        DatePicker();
+                        MultipleSelect();
+                        HolidayDatePicker();
+                        CloseLoaderPopup();
                     }
-                     $("#err_msg_app_settings_t").prop("hidden", false)
-                    setTimeout(function () { $("#err_msg_app_settings_t").prop("hidden", true); }, 5000)
-                    table_sort_filter('render_holiday_data');
-                    DatePicker();
-                    MultipleSelect();
-                    HolidayDatePicker();
-                    CloseLoaderPopup();
-                }
-            });
-
-        }
+                });
+            }
             else if (error_message){
-            display_error_message(error_message)
-
+                display_error_message(error_message)
+            }
         }
-       }
     }
 
     //delete the selected row in db
@@ -331,20 +343,19 @@
         GLOBAL_ACTION = 'DELETE';
         main_table_calendar_checked = [];
         var Tabledata = { "Dbl_clck_tbl_id": 'CalenderHolidays' };
-        $('#display_basic_table').DataTable().destroy();
+         $('#display_basic_table').DataTable().destroy();
         $("#id_popup_table TBODY TR").each(function () {
             var row = $(this);
             var calendar_arr_obj = {};
-
             var isSelect = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
             if(isSelect){
-            calendar_arr_obj.holiday_description = row.find("TD").eq(1).find('input[type="text"]').val();
-            calendar_arr_obj.from_date = row.find("TD").eq(2).find('input[type="text"]').val();
-            calendar_arr_obj.to_date = row.find("TD").eq(3).find('input[type="text"]').val();
-            calendar_arr_obj.del_ind = isSelect;
-            calendar_arr_obj.calender_holiday_guid = row.find("TD").eq(5).find('input[type="text"]').val();
-            calendar_arr_obj.calender_id = GLOBAL_CALENDER_ID;
-            main_table_calendar_checked.push(calendar_arr_obj);
+                calendar_arr_obj.holiday_description = row.find("TD").eq(1).find('input[type="text"]').val();
+                calendar_arr_obj.from_date = row.find("TD").eq(2).find('input[type="text"]').val();
+                calendar_arr_obj.to_date = row.find("TD").eq(3).find('input[type="text"]').val();
+                calendar_arr_obj.del_ind = isSelect;
+                calendar_arr_obj.calender_holiday_guid = row.find("TD").eq(5).find('input[type="text"]').val();
+                calendar_arr_obj.calender_id = GLOBAL_CALENDER_ID;
+                main_table_calendar_checked.push(calendar_arr_obj);
             }
         }); 
         $('#id_delete_confirm_popup').modal('hide');
@@ -353,19 +364,17 @@
         $.ajax({
             type: 'POST',
             url: "{% url 'eProc_Configuration:create_update_application_data' %}",
-            data:
-                JSON.stringify(data),
+            data : JSON.stringify(data),
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             success: function (Response) {
-
                 render_holiday_data = Response[0];
-                 display_basic_db_data();
-                   $('#success_msg_id').text(Response[1])
-                     if(Response[1].message_type== 'SUCCESS'){
-                         $('#success_msg_id').text(Response[1].message_desc)
-                    }
-                $('#myModal').modal('hide');
+                display_basic_db_data();
+                $('#success_msg_id').text(Response[1])
+                if(Response[1].message_type== 'SUCCESS'){
+                    $('#success_msg_id').text(Response[1].message_desc)
+                }
+                $('#holidayModal').modal('hide');
                 $("#err_msg_app_settings_t").prop("hidden", false)
                 setTimeout(function () { $("#err_msg_app_settings_t").prop("hidden", true); }, 5000)
                 table_sort_filter('render_holiday_data');
@@ -374,136 +383,119 @@
         });
     }
 
- function onclick_delete(calender_id){
-    onclick_copy_update_button(calender_id);
-    $("#save_id").prop("hidden", true);
-    $("#id_delete").prop("hidden", false);
-    document.getElementById("id_delete").style.display = "block";
-    document.getElementById("id_del_add_button").style.display = "none";
+    function onclick_View(calender_id){
+        $('#new-row').hide();
+        $('.btn-outline-danger').hide();
+        $("#save_id").prop("hidden", true);
+        onclick_copy_update_button(calender_id);
+        document.getElementById("id_del_add_button").style.display = "none";
+    }
 
- }
- function onclick_create(calender_id){
-    onclick_copy_update_button(calender_id);
-    $("#save_id").prop("hidden", false);
-    $("#id_delete").prop("hidden", true);
-    document.getElementById("id_del_add_button").style.display = "block";
-    document.getElementById("id_delete").style.display = "none";
+    // Onclick of Config Holiday link, display or add the rows
+    function onclick_copy_update_button(calender_id) {
+        $("#error_msg_id").css("display", "none")
+        GLOBAL_CALENDER_ID = calender_id.split('-')[0];
+        $("#hg_select_checkbox").prop("hidden", true);
+<!--        $('#display_basic_table').DataTable().destroy();-->
+        $('#id_popup_table').DataTable().destroy();
+        $("#id_popup_tbody").empty();   
+        //Reference the Table.
+        var grid = document.getElementById("display_basic_table");
+        //Reference the CheckBoxes in Table.
+        var checkBoxes = grid.getElementsByTagName("INPUT");
+        var edit_basic_data = "";
+        OpenLoaderPopup();
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'eProc_Configuration:get_holiday_from_calenderid' %}",
+            data: {
+                calender_id: GLOBAL_CALENDER_ID
+            },
+            success: function (response) {
+                if (response.length == 0) {
+                    empty_resp = '';
+                    empty_resp += '<tr>';
+                    empty_resp += '<td><input type="checkbox" name="hg_checkbox" required></td>';
+                    empty_resp += '<td><input class="holiday_description input" type="text" id="holiday_description1"  name="holiday_description"  required></td>';
+                    empty_resp += '<td><input  type="text" class="from_date input"   name="from_date"></td>';
+                    empty_resp += '<td><input type="text"  class="to_date input" name="to_date"></td>';
+                    empty_resp += '<td hidden><input type="checkbox" name="del_ind"></td>';
+                    empty_resp += '<td hidden><input type="text" class="input" name="calender_holiday_guid"></td>';
+                    empty_resp += '</tr>';
+                    table_content = empty_resp;
+                    $('#id_popup_table tbody').html(empty_resp);
+                    HolidayDatePicker();
+                } else {
+                    var i = 0;
+                    content = ''
+                    $.each(response, function (key, value) { 
+                        i = i + 1;
+                        content += '<tr>';
+                        content += '<td><input class="holiday_description input" id="holiday_description2" required  type="text"  +  name="holiday_description" + value="' + value.fields.holiday_description + '" onkeypress="return /[A-Z 0-9]/i.test(event.key)"  / disabled></td>';
+                        content += '<td><input  class="from_date input" type="text"  + name="from_date" + value="' + value.fields.from_date + '" / disabled></td>';
+                        content += '<td><input  class="to_date input" type="text" + name="to_date"  + value="' + value.fields.to_date + '" / disabled></td>';
+                        content += '<td hidden><input type="checkbox" name="del_ind"></td>';
+                        content += '<td hidden><input class="input"  type="text"  name="calender_holiday_guid"  value="' + value.pk + '" / disabled></td>';
+                        content += '</tr>';
+                        $('#id_popup_tbody').html(content);
+                        table_content = content;
+                        HolidayDatePicker();      
+                    });
+                }
+                table_sort_filter('display_basic_table');
+                CloseLoaderPopup();
+            },
+            error: function (error) {
+                error_msg.innerHTML = error.responseText
+            }
+        })
+        $("#id_del_ind_checkbox").prop("hidden", true);
+        table_sort_filter('id_popup_table');
+       setTimeout(function () {  $('#holidayModal').modal('show'); }, 400);
+    }
 
- }
+    function onclick_create(calender_id){
+        $('#new-row').show();
+        $('.btn-outline-danger').show();
+        onclick_Maintain_holiday_button(calender_id);
+        $("#save_id").prop("hidden", false);
+        document.getElementById("id_del_add_button").style.display = "block";
+    }
 
-       function GetReferrer() {
-             window.history.back();
-              var preUrl = document.referrer;
-              console.log(preUrl);
-              window.open('', '_self', '').close();
-<!--               var win = window.open(preUrl);-->
-<!--                win.focus();-->
-              if (preUrl == null)
-                     return "The previous page url is empty";
-               else
-                     return preUrl;
-       }
-
- // validating the  popup table for duplicate entries
-function compare_table_for_duplicate_entries(validate_add_attributes, calendar) {
-    add_attr_duplicates = false;
-    var error_message = ''
-    var add_attr_duplicates_list = [];
-    var add_attr_unique_list = [];
-    var no_duplicate_value = 'Y'
-    var validDate = 'Y';
-    $.each(validate_add_attributes, function (index, value) {
-        if ($.inArray(value, add_attr_unique_list) == -1) {
-            add_attr_unique_list.push(value);
+    // validating the  popup table for duplicate entries
+    function compare_table_for_duplicate_entries(validate_add_attributes, calendar) {
+        add_attr_duplicates = false;
+        var error_message = ''
+        var add_attr_duplicates_list = [];
+        var add_attr_unique_list = [];
+        var no_duplicate_value = 'Y'
+        var validDate = 'Y';
+        $.each(validate_add_attributes, function (index, value) {
+            if ($.inArray(value, add_attr_unique_list) == -1) {
+                add_attr_unique_list.push(value);
+            }
+            else {
+                if ($.inArray(value, add_attr_duplicates_list) == -1) {
+                    add_attr_duplicates_list.push(value);
+                }
+            }
+        });
+        if (add_attr_duplicates_list.length != 0) {
+            get_message_details("JMSG001"); // Get message details  
+            no_duplicate_value = 'N'
+            return [no_duplicate_value,error_message]
         }
         else {
-            if ($.inArray(value, add_attr_duplicates_list) == -1) {
-                add_attr_duplicates_list.push(value);
-            }
-        }
-    });
-    if (add_attr_duplicates_list.length != 0) {
-          //error_message = messageConstants["JMSG001"];
-
-            
-                var msg = "JMSG001";
-                var msg_type ;
-              msg_type = message_config_details(msg);
-              $("#error_msg_id").prop("hidden", false)
-
-              if(msg_type.message_type == "ERROR"){
-                    display_message("error_msg_id", msg_type.messages_id_desc)
-              }
-              else if(msg_type.message_type == "WARNING"){
-                 display_message("id_warning_msg_id", msg_type.messages_id_desc)
-              }
-              else if(msg_type.message_type == "INFORMATION"){
-                 display_message("id_info_msg_id", msg_type.messages_id_desc)
-              }
-                no_duplicate_value = 'N'
-                return [no_duplicate_value,error_message]
-    }
-    else {
             $.each(calendar, function (i, item) {
-             if (item.holiday_description.length == 0) {
-                //error_message  = messageConstants["JMSG002"] + "Description";
-
-                  
-                    var msg = "JMSG002";
-                    var msg_type ;
-                  msg_type = message_config_details(msg);
-                  $("#error_msg_id").prop("hidden", false)
-
-                  if(msg_type.message_type == "ERROR"){
-                        display_message("error_msg_id", msg_type.messages_id_desc)
-                  }
-                  else if(msg_type.message_type == "WARNING"){
-                     display_message("id_warning_msg_id", msg_type.messages_id_desc)
-                  }
-                  else if(msg_type.message_type == "INFORMATION"){
-                     display_message("id_info_msg_id", msg_type.messages_id_desc)
-                  }
-                no_duplicate_value = 'N'
-                return [no_duplicate_value,error_message]
-             }
-
-           });
+                if (item.holiday_description.length == 0) { 
+                    get_message_details("JMSG002"); // Get message details 
+                    no_duplicate_value = 'N'
+                    return [no_duplicate_value,error_message]
+                }
+            });
+        }
+        return [no_duplicate_value,error_message]
     }
-
-    return [no_duplicate_value,error_message]
-}
-
-//validate by comparing  main table values and popup table values
-function maintable_validation(validate_add_attributes, main_table_low_value) {
-    var no_duplicate_entries = 'Y'
-    var common = [];
-     var error_message =''
-    jQuery.grep(validate_add_attributes, function (el) {
-        if (jQuery.inArray(el, main_table_low_value) != -1) { common.push(el); }
-    });
-    if (common.length != 0) {
-       //error_message = messageConstants["JMSG001"]
-      
-                var msg = "JMSG001";
-                var msg_type ;
-              msg_type = message_config_details(msg);
-              $("#error_msg_id").prop("hidden", false)
-
-              if(msg_type.message_type == "ERROR"){
-                    display_message("error_msg_id", msg_type.messages_id_desc)
-              }
-              else if(msg_type.message_type == "WARNING"){
-                 display_message("id_warning_msg_id", msg_type.messages_id_desc)
-              }
-              else if(msg_type.message_type == "INFORMATION"){
-                 display_message("id_info_msg_id", msg_type.messages_id_desc)
-              }
-                no_duplicate_value = 'N'
-                return [no_duplicate_value,error_message]
-
-    }
-    return [no_duplicate_entries,error_message]
-}
 
 </script>
 <script src="{% static 'scripts/holiday_calendar.js' %}"></script>

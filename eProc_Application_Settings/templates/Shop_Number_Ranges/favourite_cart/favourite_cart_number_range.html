@@ -20,7 +20,7 @@
                        <i class="fa fa-plus"></i> Add Favourite Cart Number Range
                     </button>
 
-                    <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"  onclick="GetReferrer();">
+                    <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"  onclick="window_close();">
                         <i class="fas fa-times"></i> close
                     </button>
             </div>
@@ -715,7 +715,7 @@ function popup_save_data() {
     }
 
 
-     function GetReferrer() {
+     function window_close() {
              window.history.back();
               var preUrl = document.referrer;
               console.log(preUrl);

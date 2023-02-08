@@ -514,6 +514,86 @@ class PurchaseControl(models.Model):
         managed = True
 
 
+class ProjectDetails(models.Model):
+    project_detail_guid = models.CharField(db_column='PROJECT_DETAIL_GUID', primary_key=True, max_length=32)
+    project_id = models.CharField(db_column='PROJECT_ID', max_length=20)
+    project_name = models.CharField(db_column='PROJECT_NAME', max_length=30, null=False, blank=False)
+    project_desc = models.CharField(db_column='PROJECT_DESC', max_length=255, null=False)
+    start_date = models.DateField(db_column='START_DATE', null=False)
+    end_date = models.DateField(db_column='END_DATE', null=False)
+    del_ind = models.BooleanField(db_column='DEL_IND', default=False)
+    project_details_created_by = models.CharField(db_column='PROJECT_DETAILS_CREATED_BY', max_length=30,
+                                                  null=True)
+    project_details_created_at = models.DateTimeField(db_column='PROJECT_DETAILS_CREATED_AT', max_length=50,
+                                                      null=True)
+    project_details_changed_by = models.CharField(db_column='PROJECT_DETAILS_CHANGED_BY', max_length=30,
+                                                  null=True)
+    project_details_changed_at = models.DateTimeField(db_column='PROJECT_DETAILS_CHANGED_AT', max_length=50,
+                                                      null=True)
+    client = models.ForeignKey('eProc_Configuration.OrgClients', on_delete=models.PROTECT, null=False)
+
+    class Meta:
+        managed = True
+        db_table = 'MAD_PROJECT_DETAILS'
+        unique_together = ('client', 'project_id')
+
+    def get_project_fields(self, client, project_id_query, project_desc_query, project_name_query, search_count):
+        return list(
+            ProjectDetails.objects.filter(project_id_query, project_desc_query, project_name_query,
+                                          client=client,
+                                          del_ind=False).values().order_by('project_id')[:int(search_count)])
+
+
+class ProjectsCategories(models.Model):
+    project_categories_guid = models.CharField(db_column='PROJECT_CATEGORIES_GUID', primary_key=True, max_length=32)
+    project_category_id = models.CharField(db_column='PROJECT_CATEGORY_ID', max_length=255, null=False)
+    project_category_description = models.CharField(db_column='PROJECT_CATEGORY_DESCRIPTION', max_length=255,
+                                                    null=False)
+    projects_categories_created_by = models.CharField(db_column='PROJECTS_CATEGORIES_CREATED_BY', max_length=30,
+                                                      null=True)
+    projects_categories_created_at = models.DateTimeField(db_column='PROJECTS_CATEGORIES_CREATED_AT', max_length=50,
+                                                          null=True)
+    projects_categories_changed_by = models.CharField(db_column='PROJECTS_CATEGORIES_CHANGED_BY', max_length=30,
+                                                      null=True)
+    projects_categories_changed_at = models.DateTimeField(db_column='PROJECTS_CATEGORIES_CHANGED_AT', max_length=50,
+                                                          null=True)
+    del_ind = models.BooleanField(db_column='DEL_IND', default=False)
+    client = models.ForeignKey('eProc_Configuration.OrgClients', on_delete=models.PROTECT, null=False,
+                               db_column='CLIENT')
+
+    class Meta:
+        managed = True
+        db_table = 'MAD_PROJECTS_CATEGORIES'
+        unique_together = ('client', 'project_category_id')
+
+
+class ProjectCategoriesMapping(models.Model):
+    project_categories_mapping_guid = models.CharField(db_column='PROJECT_CATEGORIES_MAPPING_GUID', primary_key=True,
+                                                       max_length=32)
+    project_id = models.CharField(db_column='PROJECT_ID', max_length=20)
+    project_category_id = models.CharField(db_column='PROJECT_CATEGORY_ID', max_length=255, null=False)
+    project_categories_mapping_created_by = models.CharField(db_column='PROJECT_CATEGORIES_MAPPING_CREATED_BY',
+                                                             max_length=30,
+                                                             null=True)
+    project_categories_mapping_created_at = models.DateTimeField(db_column='PROJECT_CATEGORIES_MAPPING_CREATED_AT',
+                                                                 max_length=50,
+                                                                 null=True)
+    project_categories_mapping_changed_by = models.CharField(db_column='PROJECT_CATEGORIES_MAPPING_CHANGED_BY',
+                                                             max_length=30,
+                                                             null=True)
+    project_categories_mapping_changed_at = models.DateTimeField(db_column='PROJECT_CATEGORIES_MAPPING_CHANGED_AT',
+                                                                 max_length=50,
+                                                                 null=True)
+    del_ind = models.BooleanField(db_column='DEL_IND', default=False)
+    client = models.ForeignKey('eProc_Configuration.OrgClients', on_delete=models.PROTECT, null=False,
+                               db_column='CLIENT')
+
+    class Meta:
+        db_table = 'MAD_PROJECT_CATEGORIES_MAPPING'
+        unique_together = ('client', 'project_category_id', 'project_id')
+        managed = True
+
+
 class FreeTextDetails(models.Model):
     freetext_details_guid = models.CharField(db_column='FREETEXT_DETAILS_GUID', primary_key=True, max_length=40,
                                              blank=False,

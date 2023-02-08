@@ -3,9 +3,6 @@
 {% block title %} Authorization Objects (Application Settings) {% endblock %}
 {% block maincontent %}
 
-
-
-
 <div class="container-fluid">
     <div class="configuration-table_wrapper">
 
@@ -18,7 +15,7 @@
                 <button class="btn btn-primary" type="button" id="id_add_data" value="ADD"  data-toggle="modal" data-target="#myModal" onclick="onclick_add_button(this)">
                     <i class="fa fa-plus"></i> add authorization object
                 </button>
-                  <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"  onclick="GetReferrer();">
+                  <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"  onclick="window_close();">
                     <i class="fas fa-times"></i> close
                 </button>
             </div>
@@ -175,35 +172,24 @@
     var appname = uiConstants["CONST_APPNAME01"]
     var db_header_data = uiConstants["CONST_HEADER_DATA_AUTH_OBJ"]
     //**************************************
+    var auth_type_dropdown,auth_obj_id_dropdown,auth_obj_id_db_values_onload;
 
-
-  
-     var auth_obj_id_dropdown = '';
     function dropdown_value(){
         auth_obj_id_dropdown = '';
-    $.each(rendered_auth_obj_id, function(i, item){
-        auth_obj_id_dropdown += '<option value="' + item.field_type_id + '">' + item.field_type_id +'</option>';
-       
-    })
+        $.each(rendered_auth_obj_id, function(i, item){
+            auth_obj_id_dropdown += '<option value="' + item.field_type_id + '">' + item.field_type_id +'</option>';
+        })
+        auth_obj_id_db_values_onload = '';
+         $.each(rendered_auth_obj_data_onload, function(i, item){
+            auth_obj_id_db_values_onload += '<option value="' + item.field_type_id + '">' + item.field_type_id +'</option>';
+        })
+        auth_type_dropdown = '';
+        $.each(rendered_auth_type, function(i, item){
+           auth_type_dropdown += '<option value="' + item.field_type_id + '">' + item.field_type_id +'</option>';
+        })
     }
 
-    var auth_obj_id_db_values_onload = '';
-     $.each(rendered_auth_obj_data_onload, function(i, item){
-        auth_obj_id_db_values_onload += '<option value="' + item.field_type_id + '">' + item.field_type_id +'</option>';
 
-    })
-
-
-    var auth_type_dropdown = '';
-
-      $.each(rendered_auth_type, function(i, item){
-       auth_type_dropdown += '<option value="' + item.field_type_id + '">' + item.field_type_id +'</option>';
-
-    })
-
-    
-
-    
     // validate and save for add,copy,update and upload data
     function popup_save_data() {
         $('#success_msg_id').empty()
@@ -240,7 +226,7 @@
                 OpenLoaderPopup();
                 $.ajax({
                     type: 'POST',
-                    url: "{% url 'eProc_Master_Settings:create_update_master_data' %}",
+                    url: "{% url 'eProc_Configuration:create_update_application_data' %}",
                     data: JSON.stringify(data),
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
@@ -299,7 +285,7 @@
          OpenLoaderPopup();
         $.ajax({
             type: 'POST',
-            url: "{% url 'eProc_Master_Settings:create_update_master_data' %}",
+            url: "{% url 'eProc_Configuration:create_update_application_data' %}",
             data: JSON.stringify(data),
             contentType: "application/json; charset=utf-8",
             dataType: "json",
@@ -335,7 +321,7 @@
 
     }
     
-         function GetReferrer() {
+         function window_close() {
              window.history.back();
               var preUrl = document.referrer;
               console.log(preUrl);
@@ -466,7 +452,107 @@ function maintable_validation(validate_add_attributes, main_table_low_value) {
     }
     return [no_duplicate_entries,error_message]
 }
-    
+
+
+//onclick of add button display myModal popup and set GLOBAL_ACTION button value
+function onclick_add_button(button) {
+     OpenLoaderPopup();
+    var data = {'table_name':'AuthorizationObject'}
+    $.ajax({
+        type: 'POST',
+        url: "{% url 'eProc_Configuration:get_dropdown_data' %}",
+        data: JSON.stringify(data),
+        success: function(response) {
+            rendered_auth_obj_id = response.auth_obj_id_db_values
+            rendered_auth_obj_data_onload = response.auth_obj_id_db_values_onload
+            rendered_auth_type = response.auth_type_db_values
+            dropdown_value();
+            $("#error_msg_id").css("display", "none")
+            $( "#header_select").prop( "hidden", false );
+            GLOBAL_ACTION = button.value
+            $('#id_popup_table').DataTable().destroy();
+            $("#id_popup_tbody").empty();
+            basic_add_new_html = '<tr><td><input type="checkbox" required></td>'+
+            '<td><select type="text" class="input form-control authobject" id="authobject-1"  name="authobject" onchange="GetSelectedTextValue(this)"><option value="" disabled selected>Select your option</option>'+ auth_obj_id_dropdown +'</select></td>'+
+           '<td><input class="form-control description" type="text"  name="description"  id="description-1" disabled></td>'+'<td><select id="authobject_type" name="authobject_type"  class="input form-control">'+auth_type_dropdown+'</select></td>'+
+           '<td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+           $('#id_popup_tbody').append(basic_add_new_html);
+            table_sort_filter('id_popup_table');
+            $("#id_del_ind_checkbox").prop("hidden", true);
+            document.getElementById("id_del_add_button").style.display = "block";
+            $("#save_id").prop("hidden", false);
+            CloseLoaderPopup();
+            $('#myModal').modal('show');
+        }
+    });
+
+}
+
+function onclick_copy_update_button() {
+     OpenLoaderPopup();
+    var data = {'table_name':'AuthorizationObject'}
+    $.ajax({
+        type: 'POST',
+        url: "{% url 'eProc_Configuration:get_dropdown_data' %}",
+        data: JSON.stringify(data),
+        success: function(response) {
+            rendered_auth_obj_id = response.auth_obj_id_db_values
+            rendered_auth_obj_data_onload = response.auth_obj_id_db_values_onload
+            rendered_auth_type = response.auth_type_db_values
+            dropdown_value();
+                $("#error_msg_id").css("display", "none")
+                $("#id_popup_tbody").empty();
+                $('#display_basic_table').DataTable().destroy();
+                $('#id_popup_table').DataTable().destroy();
+                $("#id_popup_tbody").empty();
+                //Reference the Table.
+                var grid = document.getElementById("display_basic_table");
+
+                //Reference the CheckBoxes in Table.
+                var checkBoxes = grid.getElementsByTagName("INPUT");
+                var edit_basic_data = "";
+                var dropdown_values = [];
+                //Loop through the CheckBoxes.
+                for (var i = 1; i < checkBoxes.length; i++) {
+                    if (checkBoxes[i].checked) {
+                        var row = checkBoxes[i].parentNode.parentNode;
+                        var auth_obj_id = row.cells[1].innerHTML;
+                        var auth_level= row.cells[3].innerHTML;
+                        dropdown_values.push([auth_obj_id, auth_level])
+                        if (GLOBAL_ACTION == "UPDATE") {
+                            edit_basic_data += '<tr><td hidden><input type="checkbox" required></td><td><select type="text" class="input form-control" id="authobjectid"  name="authobjectid" disabled>'+ auth_obj_id_db_values_onload +'</select></td><td><input class="input form-control description" id="description-1" value="' + row.cells[2].innerHTML + '" type="text"  name="description" disabled></td><td><select id="authobject_type" name="authobject_type" class="input form-control" value="' + row.cells[3].innerHTML + '">' + auth_type_dropdown + '</select></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+                            $("#header_select").prop("hidden", true);
+                        }
+                        else{
+
+                            unique_input = '<select class="form-control">' + auth_obj_id_add_dropdown + '</select>'
+                            edit_basic_data += '<tr ><td><input type="checkbox" required></td><td><select class="form-control">' + auth_obj_id_dropdown + '</select></td><td><select class="form-control">' + auth_obj_level_dropdown + '</select></td><td><select class="form-control">' + auth_obj_level_id_dropdown + '</select></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+                            $("#header_select").prop("hidden", false);
+                        }
+                    }
+                }
+                $('#id_popup_table').append(edit_basic_data);
+                var i = 0;
+                $("#id_popup_table TBODY TR").each(function () {
+                    var row = $(this);
+                    var auth_obj_id = dropdown_values[i][0]
+                    var auth_level= dropdown_values[i][1]
+
+                    $(row.find("TD").eq(3).find("select option[value=" + auth_level + "]")).attr('selected', 'selected');
+                    $(row.find("TD").eq(1).find("select option[value=" + auth_obj_id + "]")).attr('selected', 'selected');
+                    i++;
+                });
+                $("#id_del_ind_checkbox").prop("hidden", true);
+
+                $('#myModal').modal('show');
+                table_sort_filter('display_basic_table');
+                table_sort_filter('id_popup_table');
+                $('#myModal').modal('show');
+                CloseLoaderPopup();
+        }
+    });
+
+}
 </script>
 
 <script src="{% static 'scripts/organisational_data/org_authorization_objects.js' %}"></script>

@@ -57,5 +57,6 @@ const messageConstants = {
     JMSG109: 'Duplicate range entry ',
     JMSG110: 'Please Attach CSV file ',
     JMSG111: 'No delete record in table without dependent table',
-
+    JMSG112: 'Cannot Delete the selected row',
+    JMSG113: 'Please check minimum characters to enter for ',
 }

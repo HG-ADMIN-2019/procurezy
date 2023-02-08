@@ -150,6 +150,29 @@
 
             </ul>
         </div>
+
+        <div id="time_sheet_sub_menu" style="display:none">
+            <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+                <li class="nav-item active" id="nav-item__project">
+                    {% if sub_menu.PROJECTS %}
+                    {% url 'eProc_Projects:proj_user_search'  as project_url %}
+                    <div class="nav-link" id="project_btn">
+                        <a href="{{project_url}}" {% if request.path == project_url %} class="active"{% endif %} > Projects</a>
+                    </div>
+                    {% endif %}
+                </li>
+                <li class="nav-item" id="nav-item__effort">
+                    {% if sub_menu.EFFORTS %}
+                    {% url 'eProc_Time_Sheet:get_project_details'  as time_sheet_url %}
+                    <div class="nav-link" id="effort_btn">
+                        <a href="{{time_sheet_url}}" {% if request.path == time_sheet_url %} class="active"{% endif %} >Efforts</a>
+                    </div>
+                    {% endif %}
+                </li>
+
+            </ul>
+        </div>
+
         <div id="content_management_sub_menu" style="display:none">
             <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
                 <li class="nav-item active" id="nav-item__product_and_service">
@@ -182,6 +205,7 @@
                 
             </ul>
         </div>
+
 
         <div id="goods_receipts_sub_menu" style="display:none">
             <ul class="navbar-nav mr-auto mt-2 mt-lg-0">

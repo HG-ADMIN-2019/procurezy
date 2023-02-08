@@ -1,20 +1,8 @@
 var numberranges_data = new Array();
 var validate_add_attributes = [];
-var number_range={};//onclick of add button display myModal popup and set GLOBAL_ACTION button value
+var number_range={};
+//onclick of add button display myModal popup and set GLOBAL_ACTION button value
 function onclick_add_button(button) {
-//    $("#error_msg_id").css("display", "none")
-//    $("#header_select").prop( "hidden", false );
-//    GLOBAL_ACTION = button.value
-//    $('#id_popup_table').DataTable().destroy();
-//    $("#id_popup_tbody").empty();
-//    $('#myModal').modal('show');
-//    basic_add_new_html = '<tr ><td><input type="checkbox" required></td><td><input class="form-control" type="text" maxlength="2" onkeypress="return /[0-9]/i.test(event.key)" name="sequence" style="text-transform:uppercase;" required></td><td><input class="form-control" type="text" maxlength="100000000" onkeypress="return /[0-9]/i.test(event.key)" name="starting" style="text-transform:uppercase;" required></td><td><input class="form-control" type="text" maxlength="100000000" onkeypress="return /[0-9]/i.test(event.key)" name="ending" style="text-transform:uppercase;" required></td><td><input class="form-control" type="text" maxlength="100000000" onkeypress="return /[0-9]/i.test(event.key)" name="current" style="text-transform:uppercase;" required></td>><td hidden><input class="form-control" type="text" value=""></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
-//    $('#id_popup_tbody').append(basic_add_new_html);
-//    table_sort_filter('id_popup_table');
-//    $("#id_del_ind_checkbox").prop("hidden", true);
-//    document.getElementById("id_del_add_button").style.display = "block";
-//    $("#save_id").prop("hidden", false);
-//}
   $("#error_msg_id").css("display", "none")
     $("#header_select").prop( "hidden", false );
     GLOBAL_ACTION = button.value
@@ -182,34 +170,6 @@ function add_popup_row() {
     table_sort_filter('id_popup_table');
 }
 
-////onclick of delete,delete the row.
-//function application_settings_delete_Row(myTable) {
-//    $('#id_popup_table').DataTable().destroy();
-//    try {
-//        var table = document.getElementById(myTable);
-//        var rowCount = table.rows.length;
-//
-//        for (var i = 0; i < rowCount; i++) {
-//            var row = table.rows[i];
-//            var chkbox = row.cells[0].childNodes[0];
-//            if (null != chkbox && true == chkbox.checked) {
-//                table.deleteRow(i);
-//                rowCount--;
-//                i--;
-//            }
-//        }
-//
-//        $("#id_delete_number_range").hide();
-//        $("#id_copy_number_range").hide();
-//        $("#id_update_number_range").hide();
-//        table_sort_filter_popup_pagination('id_popup_table');
-//        return rowCount;
-//    } catch (e) {
-//        alert(e);
-//    }
-//}
-
-
 //onclick of cancel display the table in display mode............
 function display_basic_db_data() {
     $('#display_basic_table').DataTable().destroy();
@@ -242,7 +202,7 @@ function delete_duplicate() {
         var row = $(this);
 
         //*************** reading data from the pop-up ***************
-        sequence = row.find("TD").eq(1).find('input[type="text"]').val().toUpperCase();
+        sequence = row.find("TD").eq(1).find('input[type="number"]').val().toUpperCase();
 
         if (sequence_check.includes(sequence)) {
             $(row).remove();
@@ -264,14 +224,14 @@ $('#save_id').click(function () {
             number_range={};
 
             number_range.del_ind = row.find("TD").eq(6).find('input[type="checkbox"]').is(':checked');
-            number_range.sequence = row.find("TD").eq(1).find('input[type="text"]').val();
-            number_range.starting = row.find("TD").eq(2).find('input[type="text"]').val();
-            number_range.ending = row.find("TD").eq(3).find('input[type="text"]').val();
-            number_range.current= row.find("TD").eq(4).find('input[type="text"]').val();
+            number_range.sequence = row.find("TD").eq(1).find('input[type="number"]').val();
+            number_range.starting = row.find("TD").eq(2).find('input[type="number"]').val();
+            number_range.ending = row.find("TD").eq(3).find('input[type="number"]').val();
+            number_range.current= row.find("TD").eq(4).find('input[type="number"]').val();
             number_range.document_type = "DOC02"
             number_range.guid = row.find("TD").eq(5).find('input[type="text"]').val();
             if (number_range == undefined){
-                number_range.sequence = row.find("TD").eq(1).find('input[type="text"]').val();
+                number_range.sequence = row.find("TD").eq(1).find('input[type="number"]').val();
              }
              if(number_range.guid == undefined) {
                    number_range.guid = ''
@@ -284,11 +244,8 @@ $('#save_id').click(function () {
 function display_error_message(error_message){
 
         $('#error_message').text(error_message);
-        //$("p").css("color", "red");
-        //document.getElementById("error_message").innerHTML = error_message;
         document.getElementById("error_message").style.color = "Red";
         $("#error_msg_id").css("display", "block")
         $('#id_save_confirm_popup').modal('hide');
         $('#myModal').modal('show');
-
 }

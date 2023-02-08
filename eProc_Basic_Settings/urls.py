@@ -1,5 +1,6 @@
 from django.urls import path
 from .views import *
+from .views.basic_settings import check_data, upload_countries
 
 app_name = 'eProc_Basic_Settings'
 

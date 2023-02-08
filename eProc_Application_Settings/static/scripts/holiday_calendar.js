@@ -1,6 +1,13 @@
 var calendar_data_array = new Array();
 var validate_add_attributes = [];
 
+// to fetch current date
+const date = new Date();
+let day = date.getDate();
+let month = date.getMonth() + 1;
+let year = date.getFullYear();
+let currentDate = `${year}-${month}-${day}`; 
+
 var GLOBAL_CALENDER_ID = '';
 function DatePicker() {
     $('#yearPicker').datepicker({
@@ -9,9 +16,9 @@ function DatePicker() {
         minViewMode: "years"
     });
 }
+
 function MultipleSelect() {
     $('#working_days').selectpicker();
-
 }
 
 var dateToday = new Date();
@@ -20,17 +27,17 @@ function HolidayDatePicker() {
         format: "yyyy-mm-dd",
         startDate: new Date()
     });
-
 }
 
 // on click edit icon display the data in edit mode
-function onclick_holiday_edit_button() {
+ function onclick_holiday_edit_button() {
     //display the add,cancel and upload buttons and select all checkbox,select heading and checkboxes for each row
     $('#display_basic_table').DataTable().destroy();
-    //hide the edit,delete,copy and update buttons
     $('#id_cancel_data').show();
     $('#id_edit_data').hide();
-    $('.calendar-holiday-config').removeClass("btn-disable");
+    // Onclick of edit display maintain holiday button
+    $("#maintain_holiday").prop("hidden", false);
+    $('.view-calendar-holiday-config').hide();
     table_sort_filter('display_basic_table');
 }
 
@@ -39,7 +46,7 @@ $(".remove_upload_data").click(() => {
     $("#id_error_msg").html("");
     $("#id_popup_tbody").empty();
     $("#id_error_msg").empty();
-    $('#myModal').modal('hide');
+    $('#holidayModal').modal('hide');
     $("#id_error_msg").prop("hidden", true);
     $("#id_error_msg_calendar_code").prop("hidden", true);
     $("#id_error_msg_calendar_name").prop("hidden", true);
@@ -51,56 +58,35 @@ $(".remove_upload_data").click(() => {
     $('#id_popup_table').DataTable().destroy();
 });
 
-
-
 function check_date(calendar) {
     var validDate = 'Y';
     var error_message = ''
-     $.each(calendar, function (i, item) {
+    $.each(calendar, function (i, item) { 
         if ((Date.parse(item.to_date) < Date.parse(item.from_date)) == true) {
-        $("#id_error_msg").prop("hidden", false)
-        //error_message = messageConstants["JMSG017"];
-
-                    var msg = "JMSG017";
-                    var msg_type ;
-                  msg_type = message_config_details(msg);
-                  $("#error_msg_id").prop("hidden", false)
-
-                  if(msg_type.message_type == "ERROR"){
-                        display_message("error_msg_id", msg_type.messages_id_desc)
-                  }
-                  else if(msg_type.message_type == "WARNING"){
-                     display_message("id_warning_msg_id", msg_type.messages_id_desc)
-                  }
-                  else if(msg_type.message_type == "INFORMATION"){
-                     display_message("id_info_msg_id", msg_type.messages_id_desc)
-                  }
-        $('#id_save_confirm_popup').modal('hide');
-        onclick_copy_update_button(item.calender_id);
-        $('#myModal').modal('show');
-        validDate = 'N'
-    }
+            $("#id_error_msg").prop("hidden", false)
+            get_message_details("JMSG017"); // Get message details
+            $('#id_save_confirm_popup').modal('hide');
+            onclick_copy_update_button(item.calender_id);
+            $('#holidayModal').modal('show');
+            validDate = 'N'
+        }
     });
     return [validDate,error_message]
 }
 
-
 function display_error_message(error_message){
-        //$('#id_popup_table').DataTable().destroy();
-       table_sort_filter('render_holiday_data');
-       $("#error_msg_id").css("display", "none")
-        $('#error_message').text(error_message);
-        document.getElementById("error_msg_id").style.color = "Red";
-        $("#error_msg_id").css("display", "block")
-        $('#id_save_confirm_popup').modal('hide');
-        $('#myModal').modal('show');
-
+    //$('#id_popup_table').DataTable().destroy();
+    table_sort_filter('render_holiday_data');
+    $("#error_msg_id").css("display", "none")
+    $('#error_message').text(error_message);
+    document.getElementById("error_msg_id").style.color = "Red";
+    $("#error_msg_id").css("display", "block")
+    $('#id_save_confirm_popup').modal('hide');
+    $('#holidayModal').modal('show');
 }
-
 
 // on click add icon display the row in to add the new entries
 function add_popup_row() {
-
     basic_add_new_html = '';
     var display_db_data = '';
     $("#error_msg_id").prop("hidden", true)
@@ -119,18 +105,17 @@ function add_popup_row() {
     if (GLOBAL_ACTION == "calendar_upload") {
         $(".class_del_checkbox").prop("hidden", false);
     }
-    //table_sort_filter_popup('id_popup_table');
-
+    // table_sort_filter_popup('id_popup_table');
     MultipleSelect();
-
 }
 
 //onclick of cancel display the table in display mode............
-function display_basic_db_data() {
+ function display_basic_db_data() {
     $('#display_basic_table').DataTable().destroy();
     $('#id_cancel_data').hide();
     $('#id_edit_data').show();
-    $('.calendar-holiday-config').addClass("btn-disable");
+    $("#maintain_holiday").prop("hidden", true);
+    $('.view-calendar-holiday-config').show();
     $('#id_save_confirm_popup').modal('hide');
     $('#id_delete_confirm_popup').modal('hide');
     table_sort_filter('display_basic_table');
@@ -139,36 +124,32 @@ function display_basic_db_data() {
 // Function to hide and display save related popups
 $('#save_id').click(function () {
     calendar_data_array = new Array();
-    $('#myModal').modal('hide');
-        $("#id_popup_table tbody tr").each(function (index) {
-                var row = $(this);
-                var calendar_object = {};
-                //calendar_object.calender_id = (row.find("TD").eq(1).find('input[type="text"]').val())
-                guid = row.find("TD").eq(5).find('input[type="text"]').val()
-                calendar_object.calender_holiday_guid = row.find("TD").eq(5).find('input[type="text"]').val();
-                calendar_object.del_ind = row.find("TD").eq(4).find('input[type="checkbox"]').is(':checked');
-                calendar_object.holiday_description = row.find("TD").eq(1).find('input[type="text"]').val();
-                calendar_object.from_date = row.find("TD").eq(2).find('input[type="text"]').val();
-                calendar_object.to_date = row.find("TD").eq(3).find('input[type="text"]').val();
-                calendar_object.calender_id = GLOBAL_CALENDER_ID;
+    $('#holidayModal').modal('hide');
+    $("#id_popup_table tbody tr").each(function (index) {
+        var row = $(this);
+        var calendar_object = {};
+        guid = row.find("TD").eq(5).find('input[type="text"]').val()
+        calendar_object.calender_holiday_guid = row.find("TD").eq(5).find('input[type="text"]').val();
+        calendar_object.del_ind = row.find("TD").eq(4).find('input[type="checkbox"]').is(':checked');
+        calendar_object.holiday_description = row.find("TD").eq(1).find('input[type="text"]').val();
+        calendar_object.from_date = row.find("TD").eq(2).find('input[type="text"]').val();
+        calendar_object.to_date = row.find("TD").eq(3).find('input[type="text"]').val();
+        calendar_object.calender_id = GLOBAL_CALENDER_ID;
+        if (calendar_object.calender_holiday_guid == undefined) {
+            calendar_object.calender_holiday_guid = '';
+        }
+        if (calendar_object == undefined) {
+            calendar.holiday_description = row.find("TD").eq(1).find('input[type="text"]').val();
+        }
+        validate_add_attributes.push(calendar_object.holiday_description);
 
-                if (calendar_object.calender_holiday_guid == undefined) {
-                  calendar_object.calender_holiday_guid = '';
-                }
-                if (calendar_object == undefined) {
-                    calendar.holiday_description = row.find("TD").eq(1).find('input[type="text"]').val();
-                }
-                validate_add_attributes.push(calendar_object.holiday_description);
-
-                calendar_data_array.push(calendar_object);
-            });
+        calendar_data_array.push(calendar_object);
+    });
     $('#id_save_confirm_popup').modal('show');
 });
 
 //onclick of delete,delete the row.
 function application_settings_delete_Row1(myTable) {
-  //  $('#id_popup_table').DataTable().destroy();
-
     try {
         var table = document.getElementById(myTable);
         var rowCount = table.rows.length;

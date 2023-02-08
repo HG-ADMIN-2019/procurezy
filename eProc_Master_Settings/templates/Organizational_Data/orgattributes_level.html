@@ -3,8 +3,6 @@
 {% block title %} Org Node Level Attributes (Application Settings) {% endblock %}
 {% block maincontent %}
 
-
-
 <div class="container-fluid">
     <div class="configuration-table_wrapper">
 
@@ -18,7 +16,7 @@
                 <button class="btn btn-primary" type="button" id="id_add_data" value="ADD" data-toggle="modal" data-target="#myModal" onclick="onclick_add_button(this)">
                     <i class="fa fa-plus" ></i> Add New Org Node Level Attribute
                 </button>
-                 <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"  onclick="GetReferrer();">
+                 <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"  onclick="window_close();">
                     <i class="fas fa-times"></i> close
                 </button>
             </div>
@@ -155,8 +153,8 @@
 
 <script>
     var rendered_org_attrlevel_data ={{org_attributes_level|safe}};
-    var rendered_nodetypedropdown_values={{upload_orgnodetypes_dropdown|safe}};
-    var rendered_attiddropdown_values ={{upload_attributesid_dropdown|safe}};
+    var rendered_nodetypedropdown_values
+    var rendered_attiddropdown_values
     var org_attr_level_data_array = {}
     var main_table_org_attr_level_value = [];
     var org_attr_level = '';
@@ -165,29 +163,25 @@
     var no_duplicate_entries = 'Y'
 
     //**************************************
-    var attributelevel_id_dropdown = '';
-
-    var nodetype_dropdown = '';
-
-    $.each(rendered_nodetypedropdown_values, function(i, item){
-     nodetype_dropdown += '<option value="' + item.node_type + '">' + item.node_type + '</option>';
-
-    })
-
-
-     $.each(rendered_attiddropdown_values, function(i, item){
-        attributelevel_id_dropdown  += '<option value="' + item.attribute_id + '">' + item.attribute_id + '</option>';
-
-    })
+    var attributelevel_id_dropdown ;
+    var nodetype_dropdown;
+    function orgatt_level_drpdown(){
+        nodetype_dropdown = '';
+        $.each(rendered_nodetypedropdown_values, function(i, item){
+         nodetype_dropdown += '<option value="' + item.node_type + '">' + item.node_type + '</option>';
+        })
+        attributelevel_id_dropdown = '';
+         $.each(rendered_attiddropdown_values, function(i, item){
+            attributelevel_id_dropdown  += '<option value="' + item.attribute_id + '">' + item.attribute_id + '</option>';
+        })
+    }
 
  //onclick of cancel display the table in display mode............
 function display_basic_db_data() {
     $('#display_basic_table').DataTable().destroy();
     $('#id_org_attr_tbody').empty();
     var edit_basic_data = '';
-
     $.each(rendered_org_attrlevel_data, function (i, item) {
-
         edit_basic_data += '<tr ><td class="class_select_checkbox"><input class="checkbox_check" onclick="valueChanged()" type="checkbox" required></td><td>' + item.node_type + '</td><td>' + item.node_values + '</td>'+
         '<td hidden>' + item.org_model_nodetype_config_guid + '</td>' +
         '<td hidden> '+ item.del_ind+'</td></tr>';
@@ -223,7 +217,8 @@ function popup_save_data() {
         var main_attribute = {};
 
         main_attribute.node_type = row.find("TD").eq(1).html();
-        main_table_low_value.push(main_attribute.node_type);
+        main_attribute.node_values = row.find("TD").eq(2).html();
+        main_table_low_value.push(main_attribute);
     });
     table_sort_filter('display_basic_table');
 
@@ -234,7 +229,7 @@ function popup_save_data() {
         }
         else{
             if (GLOBAL_ACTION == "ADD"){
-                [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
+                [no_duplicate_entries,error_message] = maintable_validation(duplicate_entry, main_table_low_value)
             }
             if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
                 var add_basic_data = '';
@@ -245,7 +240,7 @@ function popup_save_data() {
             OpenLoaderPopup();
                 $.ajax({
                     type: 'POST',
-                    url: "{% url 'eProc_Master_Settings:create_update_master_data' %}",
+                    url: "{% url 'eProc_Configuration:create_update_application_data' %}",
                     data: JSON.stringify(data),
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
@@ -260,9 +255,6 @@ function popup_save_data() {
                         }
                         $("#err_msg_app_settings_t").prop("hidden", false)
                         table_sort_filter('id_popup_table');
-<!--                        setTimeout(function() {-->
-<!--                            $("#err_msg_app_settings_t").prop("hidden", true);-->
-<!--                        }, 5000)-->
                         message_display_time();
                         table_sort_filter('id_popup_table');
                         CloseLoaderPopup();
@@ -302,7 +294,7 @@ function popup_save_data() {
         OpenLoaderPopup();
         $.ajax({
             type: 'POST',
-            url: "{% url 'eProc_Master_Settings:create_update_master_data' %}",
+            url: "{% url 'eProc_Configuration:create_update_application_data' %}",
             data: JSON.stringify(data),
             contentType: "application/json; charset=utf-8",
             dataType: "json",
@@ -317,16 +309,13 @@ function popup_save_data() {
                     }
                 $("#err_msg_app_settings_t").prop("hidden",false)
                  table_sort_filter('id_popup_table');
-<!--                setTimeout(function() {-->
-<!--                    $("#err_msg_app_settings_t").prop("hidden", true);-->
-<!--                }, 5000)-->
                  message_display_time();
                 CloseLoaderPopup();
             }
         });
     }
     
- function GetReferrer() {
+ function window_close() {
              window.history.back();
               var preUrl = document.referrer;
               console.log(preUrl);
@@ -423,16 +412,19 @@ function compare_table_for_duplicate_entries(validate_add_attributes, org_attr_l
 }
 
 //validate by comparing  main table values and popup table values
-function maintable_validation(validate_add_attributes, main_table_low_value) {
+function maintable_validation(attr_level_data, main_table_low_value) {
     var no_duplicate_entries = 'Y'
     var error_message =''
-    var common = [];
-    jQuery.grep(validate_add_attributes, function (el) {
-        if (jQuery.inArray(el, main_table_low_value) != -1) {
-            common.push(el);
-        }
-    });
-    if (common.length != 0) {
+    var dup_entry = "";
+
+     $.each(attr_level_data, function (i, item) {
+        $.each(main_table_low_value, function (j, item1) {
+            if((item.node_type == item1.node_type) && (item.node_values == item1.node_values)){
+                dup_entry = "1"
+            }
+        });
+     });
+    if((dup_entry == "1")){
         //error_message = messageConstants["JMSG001"]
               
                 var msg = "JMSG001";
@@ -455,7 +447,35 @@ function maintable_validation(validate_add_attributes, main_table_low_value) {
     return  [no_duplicate_entries,error_message]
 }
 
+//onclick of add button display myModal popup and set GLOBAL_ACTION button value
+function onclick_add_button(button) {
+ OpenLoaderPopup();
+    var data = {'table_name':'OrgModelNodetypeConfig'}
+    $.ajax({
+        type: 'POST',
+        url: "{% url 'eProc_Configuration:get_dropdown_data' %}",
+        data: JSON.stringify(data),
+        success: function(response) {
+            rendered_attiddropdown_values = response.upload_attributesid_dropdown
+            rendered_nodetypedropdown_values = response.upload_orgnodetypes_dropdown
+            orgatt_level_drpdown()
+            $("#error_msg_id").css("display", "none")
+            $( "#header_select").prop( "hidden", false );
+            GLOBAL_ACTION = button.value
+            $('#id_popup_table').DataTable().destroy();
+            $("#id_popup_tbody").empty();
+            basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select class="form-control">'+nodetype_dropdown+'</select></td><td><select class="form-control">'+attributelevel_id_dropdown+'</select></td><td hidden>pgroup_guid</td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+            $('#id_popup_tbody').append(basic_add_new_html);
+            table_sort_filter('id_popup_table');
+            $("#id_del_ind_checkbox").prop("hidden", true);
+            document.getElementById("id_del_add_button").style.display = "block";
+            $("#save_id").prop("hidden", false);
+            CloseLoaderPopup();
+            $('#myModal').modal('show');
+        }
+    });
 
+}
 </script>
 <script src="{% static 'scripts/organisational_data/org_attributes_level.js' %}"></script>
 

@@ -18,10 +18,10 @@
                 <!--                    <i class="fas fa-cloud-upload-alt"></i> data upload-->
                 <!--                </button>-->
 
-                <button class="btn btn-primary" type="button" id="id_add_data" value="ADD"  data-toggle="modal" data-target="#myModal" onclick="onclick_add_button(this)">
+                <button class="btn btn-primary" type="button" id="id_add_data" value="ADD"  data-toggle="modal" onclick="onclick_add_button(this)">
                     <i class="fa fa-plus"></i> add Authorization
                 </button>
-                <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"  onclick="GetReferrer();">
+                <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"  onclick="window_close();">
                     <i class="fas fa-times"></i> close
                 </button>
             </div>
@@ -157,9 +157,9 @@
 //{{ auth_type_values|json_script:"auth_type_values" }}
 <script>
     var rendered_auth_data = {{auth|safe}};
-    var rendered_auth_group_data = {{upload_data_auth_grp_obj|safe}};
-    var rendered_roles_data = {{upload_data_roles|safe}};
-    var rendered_auth_type = {{auth_type_values|safe}};
+    var rendered_auth_group_data
+    var rendered_roles_data
+    var rendered_auth_type
     //var rendered_auth_type = JSON.parse(document.getElementById('auth_type_values').textContent);
     table_sort_filter('display_basic_table');
     var auth_data_array = {}
@@ -173,25 +173,24 @@
     var db_header_data = uiConstants["CONST_HEADER_DATA_AUTH"]
     //**************************************
 
-    var roles_dropdown = '';
-    var auth_type_dropdown = '';
+    var roles_dropdown;
+    var auth_type_dropdown;
     var auth_val_list = [];
-    var auth_group_dropdown = '';
+    var auth_group_dropdown;
      function dropdown_value(){
-     auth_group_dropdown = '';
-     $.each(rendered_auth_group_data, function(i, item){
-        auth_group_dropdown += '<option value="' + item.field_type_id + '">' + item.field_type_id +'</option>';
-    });
-    }
-
-    $.each(rendered_roles_data, function(i, item){
-        roles_dropdown += '<option value="' + item.field_type_id + '">' + item.field_type_id +'</option>';
-    })
-
-    $.each(rendered_auth_type, function(i, item){
-      auth_type_dropdown += '<option value="' + item.field_type_id + '">' + item.field_type_id +'</option>';
-
-    })
+        auth_group_dropdown = '';
+         $.each(rendered_auth_group_data, function(i, item){
+            auth_group_dropdown += '<option value="' + item.field_type_id + '">' + item.field_type_id +'</option>';
+        });
+        roles_dropdown = '';
+        $.each(rendered_roles_data, function(i, item){
+            roles_dropdown += '<option value="' + item.field_type_id + '">' + item.field_type_id +'</option>';
+        })
+        auth_type_dropdown = '';
+        $.each(rendered_auth_type, function(i, item){
+          auth_type_dropdown += '<option value="' + item.field_type_id + '">' + item.field_type_id +'</option>';
+        })
+      }
 
     $.each(rendered_auth_data, function (i, item) {
         auth_val_dict = {};
@@ -633,7 +632,7 @@
             }
         });
     }
-     function GetReferrer() {
+     function window_close() {
              window.history.back();
               var preUrl = document.referrer;
               console.log(preUrl);
@@ -754,6 +753,36 @@ function maintable_validation(validate_add_attributes, main_table_low_value) {
     return [no_duplicate_entries,error_message]
 }
 
+//onclick of add button display myModal popup and set GLOBAL_ACTION button value
+function onclick_add_button(button) {
+OpenLoaderPopup();
+    var data = {'table_name':'Authorization'}
+    $.ajax({
+        type: 'POST',
+        url: "{% url 'eProc_Configuration:get_dropdown_data' %}",
+        data: JSON.stringify(data),
+        success: function(response) {
+            rendered_roles_data = response.upload_data_roles
+            rendered_auth_group_data = response.upload_data_auth_grp_obj
+            rendered_auth_type = response.auth_type_values
+            dropdown_value();
+            $("#error_msg_id").css("display", "none")
+            $("#header_select").prop( "hidden", false );
+            GLOBAL_ACTION = button.value
+            $("#id_popup_tbody").empty();
+            $('#myModal').modal('show');
+            basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select class="form-control">' + roles_dropdown + '</select></td><td><select class="form-control">' + auth_type_dropdown + '</select></td><td><select class="form-control">' + auth_group_dropdown + '</select></td><td hidden><input class="input" type="text"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+            $('#id_popup_tbody').append(basic_add_new_html);
+            table_sort_filter('id_popup_table');
+            $("#id_del_ind_checkbox").prop("hidden", true);
+            document.getElementById("id_del_add_button").style.display = "block";
+            $("#save_id").prop("hidden", false);
+              CloseLoaderPopup();
+
+        }
+    });
+
+}
 
     
 </script>

@@ -43,6 +43,13 @@ class CompareTableHeader:
         # Gets the respective field names of the model for the csv headers
         err_msg = ''
         exclude_list = ['CREATED_BY','CREATED_AT','CHANGED_BY','CHANGED_AT','created_by','created_at','changed_by','changed_at','GUID','SOURCE_SYSTEM','client_id','CLIENT_ID','source_system','CATALOG_ITEM']
+        if self.table_name == 'OrgPorg':
+            porg_exclude = ['COMPANY_ID','OBJECT_ID']
+            exclude_list.append('COMPANY_ID')
+            exclude_list.append('OBJECT_ID')
+        if self.table_name == 'OrgPGroup':
+            exclude_list.append('COMPANY_ID')
+            exclude_list.append('PORG_ID')
         field_details = []
         for field in self.model_name._meta.fields:
             tmp = field.get_attname_column()
@@ -472,7 +479,7 @@ class UploadBasicTables:
                 # If the Deletion indicator in the pop-up = "1" and record  exist on the DB - Delete Count
                 if (self.del_column[self.del_field] == '1') and check_query:
                     for test in new_data:
-                        if not test.del_ind:
+                        if not test['del_ind']:
                             self.Delete_Count = self.Delete_Count + 1
 
                 self.number_list.append(column_data[0])
@@ -484,6 +491,17 @@ class UploadBasicTables:
             check_messages['update_count'] = self.Update_Count
             check_messages['delete_count'] = self.Delete_Count
             check_messages['invalid_count'] = self.invalid_count
+
+            db_count_message = get_message_desc('MSG193')[1] + str(self.DB_count)
+            file_count_message = get_message_desc('MSG194')[1] + str(self.File_Count)
+            delete_count_message = get_message_desc('MSG197')[1] + str(self.Delete_Count)
+            invalid_count_message = get_message_desc('MSG199')[1] + str(self.invalid_count)
+            duplicate_count_message = get_message_desc('MSG198')[1] + str(self.Duplicate_Count)
+            update_count_message = get_message_desc('MSG196')[1] + str(self.Update_Count)
+            insert_count_message = get_message_desc('MSG195')[1] + str(self.Insert_Count)
+            message = [db_count_message, file_count_message, insert_count_message, update_count_message,
+                       duplicate_count_message, delete_count_message, invalid_count_message]
+            check_messages['messages'] = message
 
             return check_messages
 

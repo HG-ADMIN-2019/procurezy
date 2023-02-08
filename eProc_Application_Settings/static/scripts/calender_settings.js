@@ -3,29 +3,12 @@ var country_list = new Array();
 var validate_add_attributes = [];
 var calendar={};
 
-
-//onclick of upload button display id_data_upload popup and set GLOBAL_ACTION button value
-function onclick_upload_button() {
-    GLOBAL_ACTION = "calendar_upload"
-    $("#id_popup_tbody").empty();
-    $('#id_data_upload').modal('show');
-}
-
-// on click copy icon display the selected checkbox data
-function onclick_copy_button() {
-    GLOBAL_ACTION = "COPY"
-    onclick_copy_update_button("copy")
-    document.getElementById("id_del_add_button").style.display = "block";
-}
-
-
 // on click update icon display the selected checkbox data to update
 function onclick_update_button() {
     GLOBAL_ACTION = "UPDATE"
     onclick_copy_update_button("update")
     document.getElementById("id_del_add_button").style.display = "none";
 }
-
 
 //onclick of cancel empty the popup table body and error messages
 $(".remove_upload_data").click(() => {
@@ -44,16 +27,13 @@ $(".remove_upload_data").click(() => {
     $('#id_popup_table').DataTable().destroy();
 });
 
-
 function display_error_message(error_message){
-
-        $('#error_message').text(error_message);
-        document.getElementById("error_message").style.color = "Red";
-        $("#error_msg_id").css("display", "block");
-        $('#id_save_confirm_popup').modal('hide');
-        $('#myModal').modal('show');
-    }
-
+    $('#error_message').text(error_message);
+    document.getElementById("error_message").style.color = "Red";
+    $("#error_msg_id").css("display", "block");
+    $('#id_save_confirm_popup').modal('hide');
+    $('#myModal').modal('show');
+}
 
 //onclick of cancel display the table in display mode............
 function display_basic_db_data() {
@@ -64,31 +44,28 @@ function display_basic_db_data() {
     var wdays = [];
     var wday_array = [];
     var wd_value = '';
-
     $.each(rendered_calendar_data, function (i, item) {
         wdays = []
         country_code = item.country_code
         for (i = 0; i < render_country_data.length; i++) {
-                if (country_code == render_country_data[i].country_code)
-                    desc = render_country_data[i].country_name
-            }
+            if (country_code == render_country_data[i].country_code)
+                desc = render_country_data[i].country_name
+        }
         wday_array = item.working_days.split(",");
-        for(j=0; j<wday_array.length; j++)
-        {
+        for(j=0; j<wday_array.length; j++) {
             wdays[j] = get_days(wday_array[j]);
-         }
-
+        }
         wday_array = [];
         wd_value = '';
         for(i=0; i<wdays.length;i++){
             wd_value += ' <span  class="badge badge-primary wdays_copy"> '+ wdays[i] +'</span>' + '';
         }
-
-        edit_basic_data += '<tr> <td class="class_select_checkbox"><input class="checkbox_check" onclick="valueChanged()" type="checkbox" required> </td> <td>' + item.calender_id + '</td>'+
-         '<td>' + item.description + '</td>'+
-         '<td>' + desc + '</td> <td>' + item.year + '</td>'+
-          '<td>'+ wd_value +'</td>'+
-           '<td hidden>' + item.calendar_config_guid + '</td></tr>';
+        edit_basic_data += 
+            '<tr> <td class="class_select_checkbox"><input class="checkbox_check" onclick="valueChanged()" type="checkbox" required> </td> <td>' + item.calender_id + '</td>'+
+            '<td>' + item.description + '</td>'+
+            '<td>' + desc + '</td> <td>' + item.year + '</td>'+
+            '<td>'+ wd_value +'</td>'+
+            '<td hidden>' + item.calendar_config_guid + '</td></tr>';
     });
     $('#id_calendar_tbody').append(edit_basic_data);
     $("#hg_select_checkbox").prop("hidden", true);
@@ -108,87 +85,29 @@ function display_basic_db_data() {
 // Function to hide and display save related popups
 $('#save_id').click(function () {
     $('#myModal').modal('hide');
-     $("#id_popup_table TBODY TR").each(function () {
-            var row = $(this);
-            calendar = {};
-
-                var workingDay;
-                var guid;
-                calendar.calender_id = (row.find("TD").eq(1).find('input[type="text"]').val())
-                calendar.country = (row.find("TD").eq(3).find('select[type="text"]').val())
-                calendar.description = (row.find("TD").eq(2).find('input[type="text"]').val())
-                calendar.year = (row.find("TD").eq(4).find('input[type="text"]').val())
-                workingDay = (row.find("TD").eq(5).find('select[type="text"]').val())
-                calendar.working_days = workingDay.join()
-                calendar.del_ind = row.find("TD").eq(6).find('input[type="checkbox"]').is(':checked')
-                calendar.calendar_config_guid = row.find("TD").eq(7).find('input[type="text"]').val()
-
-                if(calendar.calendar_config_guid == undefined) {
-                   calendar.calendar_config_guid = ''
-                }
-                if(calendar.calender_id == undefined) {
-                   calendar.calender_id = ''
-                }
-                validate_add_attributes.push(calendar.calender_id);
-                calendarconfig_data.push(calendar);
-
-        });
+    $("#id_popup_table TBODY TR").each(function () {
+        var row = $(this);
+        calendar = {};
+        var workingDay;
+        var guid;
+        calendar.calender_id = (row.find("TD").eq(1).find('input[type="text"]').val())
+        calendar.country = (row.find("TD").eq(3).find('select[type="text"]').val())
+        calendar.description = (row.find("TD").eq(2).find('input[type="text"]').val())
+        calendar.year = (row.find("TD").eq(4).find('input[type="text"]').val())
+        workingDay = (row.find("TD").eq(5).find('select[type="text"]').val())
+        calendar.working_days = workingDay.join()
+        calendar.del_ind = row.find("TD").eq(6).find('input[type="checkbox"]').is(':checked')
+        calendar.calendar_config_guid = row.find("TD").eq(7).find('input[type="text"]').val()
+        if(calendar.calendar_config_guid == undefined) {
+            calendar.calendar_config_guid = ''
+        }
+        if(calendar.calender_id == undefined) {
+            calendar.calender_id = ''
+        }
+        validate_add_attributes.push(calendar.calender_id);
+        calendarconfig_data.push(calendar);
+    });
     $('#id_save_confirm_popup').modal('show');
 });
 
 
-//onclick of delete,delete the row.
-function application_settings_delete_Row1(myTable) {
-    $('#id_popup_table').DataTable().destroy();
-
-    try {
-        var table = document.getElementById(myTable);
-        var rowCount = table.rows.length;
-
-        for (var i = 0; i < rowCount; i++) {
-            var row = table.rows[i];
-            var chkbox = row.cells[0].childNodes[0];
-            console.log(chkbox);
-            if ( true == chkbox.checked) {
-                table.deleteRow(i);
-                rowCount--;
-                i--;
-            }
-        }
-        $("#id_delete_currency").hide();
-        $("#id_copy_currency").hide();
-        $("#id_update_currency").hide();
-        $("#error_msg_id").css("display", "none");
-        table_sort_filter_popup('id_popup_table');
-        return rowCount;
-    } catch (e) {
-        alert(e);
-    }
-}
-$('#deleteBtn').click(function(){
-     $('#id_popup_table').DataTable().destroy();
-    try {
-        var myTable = 'id_popup_table'
-        var table = document.getElementById(myTable);
-        var rowCount = table.rows.length;
-
-        for (var i = 0; i < rowCount; i++) {
-            var row = table.rows[i];
-            var chkbox = row.cells[0].childNodes[0];
-            console.log(chkbox);
-            if ( true == chkbox.checked) {
-                table.deleteRow(i);
-                rowCount--;
-                i--;
-            }
-        }
-        $("#id_delete_currency").hide();
-        $("#id_copy_currency").hide();
-        $("#id_update_currency").hide();
-        $("#error_msg_id").css("display", "none");
-        table_sort_filter_popup('id_popup_table');
-        return rowCount;
-    } catch (e) {
-        alert(e);
-    }
-        });

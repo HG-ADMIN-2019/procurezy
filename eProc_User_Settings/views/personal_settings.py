@@ -18,7 +18,7 @@ from eProc_Basic.Utilities.functions.messages_config import get_msg_desc, get_me
 from eProc_Basic.Utilities.messages.messages import *
 from django.contrib.auth.decorators import login_required
 from eProc_Basic.decorators import authorize_view
-from eProc_Registration.models import UserData
+from eProc_Registration.models.registration_model import UserData
 from eProc_Shopping_Cart.context_processors import clear_user_info, update_user_info_from_db
 from eProc_User_Settings.User_Settings_Forms.personal_settings_forms import PersonalSettingsDisplayForm, \
     PersonalSettingsForm

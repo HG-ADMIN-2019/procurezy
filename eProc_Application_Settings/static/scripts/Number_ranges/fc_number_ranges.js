@@ -11,7 +11,7 @@ function onclick_add_button(button) {
     $('#id_popup_table').DataTable().destroy();
     $("#id_popup_tbody").empty();
     $('#myModal').modal('show');
-    basic_add_new_html = '<tr ><td class="number_range_checkbox"><input type="checkbox" required></td><td><input class="form-control" value="' + max_sequence + '" type="text"  name="sequence" style="text-transform:uppercase;" disabled></td><td><input class="form-control" type="number" maxlength="10"  name="starting" style="text-transform:uppercase;" required></td><td><input class="form-control" type="number" maxlength="10"  name="ending" style="text-transform:uppercase;" required></td><td><input class="form-control" type="number" maxlength="10"  name="current" style="text-transform:uppercase;" required></td>><td hidden><input type="text" value=""></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+    basic_add_new_html = '<tr ><td class="number_range_checkbox"><input type="checkbox" required></td><td><input class="form-control" value="' + max_sequence + '" type="number"  name="sequence" style="text-transform:uppercase;" disabled></td><td><input class="form-control" type="number" maxlength="10"  name="starting" style="text-transform:uppercase;" required></td><td><input class="form-control" type="number" maxlength="10"  name="ending" style="text-transform:uppercase;" required></td><td><input class="form-control" type="number" maxlength="10"  name="current" style="text-transform:uppercase;" required></td>><td hidden><input type="text" value=""></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
     table_sort_filter('id_popup_table');
     $("#id_del_ind_checkbox").prop("hidden", true);
@@ -225,7 +225,7 @@ function delete_duplicate() {
 
     })
     table_sort_filter_popup('id_popup_table')
-    check_data()
+    check_data();
 }
 
 // Functtion to hide and display save related popups
@@ -237,16 +237,15 @@ $('#save_id').click(function () {
     $("#id_popup_table TBODY TR").each(function () {
             var row = $(this);
             number_range={};
-
             number_range.del_ind = row.find("TD").eq(6).find('input[type="checkbox"]').is(':checked');
-            number_range.sequence = row.find("TD").eq(1).find('input[type="text"]').val();
-            number_range.starting = row.find("TD").eq(2).find('input[type="text"]').val();
-            number_range.ending = row.find("TD").eq(3).find('input[type="text"]').val();
-            number_range.current= row.find("TD").eq(4).find('input[type="text"]').val();
+            number_range.sequence = row.find("TD").eq(1).find('input[type="number"]').val();
+            number_range.starting = row.find("TD").eq(2).find('input[type="number"]').val();
+            number_range.ending = row.find("TD").eq(3).find('input[type="number"]').val();
+            number_range.current= row.find("TD").eq(4).find('input[type="number"]').val();
             number_range.document_type = "DOC04"
             number_range.guid = row.find("TD").eq(5).find('input[type="text"]').val();
             if (number_range == undefined){
-                number_range.sequence = row.find("TD").eq(1).find('input[type="text"]').val();
+                number_range.sequence = row.find("TD").eq(1).find('input[type="number"]').val();
              }
              if(number_range.guid == undefined) {
                    number_range.guid = ''
@@ -258,18 +257,11 @@ $('#save_id').click(function () {
     $('#id_save_confirm_popup').modal('show');
 });
 function display_error_message(error_message){
-
         $('#error_message').text(error_message);
-        //$("p").css("color", "red");
-        //document.getElementById("error_message").innerHTML = error_message;
         document.getElementById("error_message").style.color = "Red";
         $("#error_msg_id").css("display", "block")
         $('#id_save_confirm_popup').modal('hide');
         $('#myModal').modal('show');
-
 }
-//$('#save_id').click(function () {
-//    $('#myModal').modal('hide');
-//    $('#id_save_confirm_popup').modal('show');
-//});
+
 

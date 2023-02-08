@@ -22,7 +22,7 @@
                     <i class="fa fa-plus"></i> add customer UNSPSC code
                 </button>
 
-                <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"  onclick="GetReferrer();">
+                <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"  onclick="window_close();">
                     <i class="fas fa-times"></i> close
                 </button>
            </div>
@@ -244,7 +244,6 @@
 
     var content_managment_settings = '{{content_managment_settings|safe}}';
     var rendered_cust_prod_cat_data ={{upload_cust_prod_cat|safe}};
-    var rendered_UNSPC_data ={{upload_ProdCat|safe}}
     var cusprodcat_data_array = {}
     var main_table_cusprodcat_value =[];
     var cusprodcat = '';
@@ -259,16 +258,18 @@
     var prod_cat_id_dropdown = '';
     var prod_cat_array = [];
     prod_cat_val_list = [];
-
-    $.each(rendered_UNSPC_data, function(i, item){
-         prod_cat_id_dropdown += '<option value="' + item.prod_cat_id + '">' + item.prod_cat_id + '</option>';
-           description_dropdown += '<option value="' + item.prod_cat_desc + '">' + item.prod_cat_desc + '</option>';
-           prod_cat_val_dict = {};
-            prod_cat_val_dict.prod_cat_id =item.prod_cat_id
-            prod_cat_val_dict.prod_cat_desc=item.prod_cat_desc
-             prod_cat_val_list.push(prod_cat_val_dict)
-           prod_cat_array.push(item.prod_cat_id)
-    })
+    function unspsc_dropdown(){
+        prod_cat_id_dropdown = '';
+        $.each(rendered_UNSPC_data, function(i, item){
+             prod_cat_id_dropdown += '<option value="' + item.prod_cat_id + '">' + item.prod_cat_id + '</option>';
+               description_dropdown += '<option value="' + item.prod_cat_desc + '">' + item.prod_cat_desc + '</option>';
+               prod_cat_val_dict = {};
+                prod_cat_val_dict.prod_cat_id =item.prod_cat_id
+                prod_cat_val_dict.prod_cat_desc=item.prod_cat_desc
+                 prod_cat_val_list.push(prod_cat_val_dict)
+               prod_cat_array.push(item.prod_cat_id)
+        })
+    }
 
 
 
@@ -904,6 +905,12 @@ function onclick_add_button(button) {
     GLOBAL_ACTION = button.value
     $("#id_popup_tbody").empty();
     $('#myModal').modal('show');
+    var data = {'table_name':'UnspscCategoriesCust'}
+    OpenLoaderPopup();
+    result = ajax_dropdown_data(data)
+    CloseLoaderPopup();
+    rendered_UNSPC_data = response.upload_ProdCat
+    unspsc_dropdown();
     basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select class="form-control">'+prod_cat_id_dropdown+'</select></td><td><select class="form-control"disabled>'+description_dropdown+'</select></td><td hidden>prod_cat_guid</td><td hidden>del_ind</td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
     table_sort_filter('id_popup_table');
@@ -1123,16 +1130,14 @@ function main_table_delete(){
 
     $('#display_basic_table').DataTable().destroy();
     $("#display_basic_table TBODY TR").each(function () {
-        var row = $(this);
-
-
-        cusprodcat_arr_obj.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
-            if(cusprodcat_arr_obj.del_ind){
-                cusprodcat_arr_obj.prod_cat_id = row.find("TD").eq(2).html();
-                cusprodcat_arr_obj.prod_cat_desc = row.find("TD").eq(1).html();
-                cusprodcat_arr_obj.prod_cat_guid = row.find("TD").eq(3).html();
-                main_table_cusprodcat_checked.push(cusprodcat_arr_obj);
-            }
+    var row = $(this);
+    checked = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
+    if(checked){
+        cusprodcat_arr_obj.prod_cat_id = row.find("TD").eq(2).html();
+        cusprodcat_arr_obj.prod_cat_guid = row.find("TD").eq(4).html();
+        cusprodcat_arr_obj.del_ind = checked
+        main_table_cusprodcat_checked.push(cusprodcat_arr_obj);
+    }
     });
     $('#id_delete_confirm_popup').modal('hide');
     data = {'data':main_table_cusprodcat_checked,'table_name':'UnspscCategoriesCust','action':GLOBAL_ACTION}
@@ -1145,12 +1150,9 @@ function main_table_delete(){
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             success: function (Response) {
-            rendered_cust_prod_cat_data = Response[0];
+            rendered_cust_prod_cat_data = Response.upload_cust_prod_cat;
             display_basic_db_data();
-            $('#success_msg_id').text(Response[1])
-             if(Response[1].message_type== 'SUCCESS'){
-                         $('#success_msg_id').text(Response[1].message_desc)
-              }
+            $('#success_msg_id').text(Response.message)
             $("#err_msg_app_settings_t").prop("hidden",false)
              table_sort_filter('id_popup_table');
             setTimeout(function(){$("#err_msg_app_settings_t").prop("hidden",true);},5000)
@@ -1209,14 +1211,12 @@ function main_table_delete(){
                         contentType: "application/json; charset=utf-8",
                         dataType: "json",
                         success: function(Response) {
-                            rendered_cust_prod_cat_data = Response[0];
+                             rendered_cust_prod_cat_data = Response.upload_cust_prod_cat;
+                             rendered_UNSPC_data = Response.upload_ProdCat
                             display_basic_db_data();
+                         $('#success_msg_id').text(Response.message)
                             $('#myModal').modal('hide');
-                            //$('#id_error_msg').text(messageConstants["JMSG001"])
-                            $('#success_msg_id').text(Response[1])
-                            if(Response[1].message_type== 'SUCCESS'){
-                                $('#success_msg_id').text(Response[1].message_desc)
-                            }
+
                             $("#err_msg_app_settings_t").prop("hidden", false)
                             table_sort_filter('id_popup_table');
                             setTimeout(function() {
@@ -1240,7 +1240,7 @@ function main_table_delete(){
 $('#save_id').click(function () {
     $('#myModal').modal('hide');
     validate_add_attributes = [];
-
+    cust_prod_cat_data = [];
     $("#id_popup_table TBODY TR").each(function() {
             var row = $(this);
              cusprodcat = {};
@@ -1426,7 +1426,7 @@ function display_error_message(error_message){
 
 }
 
-       function GetReferrer() {
+       function window_close() {
              window.history.back();
               var preUrl = document.referrer;
               console.log(preUrl);
@@ -1564,6 +1564,39 @@ function update_check_message(messages){
 
             $("#id_check_success_messages").prop("hidden",false)
 }
+
+// ajax Function to add catalog product
+function ajax_dropdown_data(data) {
+    urlLink = "{% url 'eProc_Configuration:get_dropdown_data' %}";
+    let result = AjaxCallAPI(urlLink, data);
+    return result;
+}
+
+function AjaxCallAPI(urlLink, data){
+   jQuery.ajax({
+       async : false,
+       type: 'POST',
+       url: urlLink,
+       beforeSend: function(){
+             OpenLoaderPopup();
+        },
+        complete: function(){
+            CloseLoaderPopup();
+        },
+       dataType :'json',
+       data: JSON.stringify(data),
+       success: function(result){
+           response = result;
+       },
+       error: function(xhr, resp, text) {
+       },
+       cache: false,
+       processData: false,
+       contentType: false,
+   });
+   return response;
+};
+
 </script>
 
 <!--<script src="{% static 'scripts/customer_product_category.js' %}"></script>-->

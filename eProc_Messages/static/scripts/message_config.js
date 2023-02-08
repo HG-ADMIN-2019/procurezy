@@ -24,54 +24,6 @@ function onclick_update_button() {
 }
 
 
-//**********************************************************
-    function onclick_copy_update_button() {
-   $("#error_msg_id").css("display", "none")
-        $("#id_popup_tbody").empty();
-        $('#display_basic_table').DataTable().destroy();
-        //Reference the Table.
-        var grid = document.getElementById("display_basic_table");
-
-        //Reference the CheckBoxes in Table.
-        var checkBoxes = grid.getElementsByTagName("INPUT");
-        var edit_basic_data = "";
-        var dropdown_values = [];
-        //Loop through the CheckBoxes.
-        for (var i = 1; i < checkBoxes.length; i++) {
-            if (checkBoxes[i].checked) {
-                var row = checkBoxes[i].parentNode.parentNode;
-                 if(GLOBAL_ACTION == "UPDATE"){
-                unique_input = '<select class="form-control" type="text" value="' + row.cells[1].innerHTML + '" name="message_id"  disabled>'+ msg_id_dropdown +'</select>'
-                edit_basic_data += '<tr><td hidden><input type="checkbox" required></td>' +
-                                    '<td>'+ unique_input +'</td>' +
-                                    '<td><select id="message_type" class="input form-control" type="text" name="message_type">'+ msg_type_dropdown +'</select></td>'+
-                                    '<td class="class_del_checkbox" hidden><input type="checkbox" required></td> <td hidden><input class="form-control" type="text" value="' + row.cells[3].innerHTML + '"></td></tr>';
-                                    $("#header_select").prop("hidden", true);
-                                    }
-
-                     var message_id_value = row.cells[1].innerHTML
-                     var message_type_value = row.cells[2].innerHTML
-                    dropdown_values.push([message_type_value, message_id_value])
-            }
-        }
-        $('#id_popup_table').append(edit_basic_data);
-         var i =0;
-        $("#id_popup_table TBODY TR").each(function() {
-        var row = $(this);
-         var messagetype_value = dropdown_values[i][0]
-         var messageid_value = dropdown_values[i][1]
-         $(row.find("TD").eq(1).find("select option[value="+messageid_value+"]")).attr('selected','selected');
-         $(row.find("TD").eq(2).find("select option[value="+messagetype_value+"]")).attr('selected','selected');
-             i++;
-    });
-
-        $("#id_del_ind_checkbox").prop("hidden", true);
-        $('#myModal').modal('show');
-        table_sort_filter('id_popup_table');
-        table_sort_filter('display_basic_table');
-
-    }
-
 //************************
 //onclick of cancel empty the popup table body and error messages
 $(".remove_upload_data").click(() => {

@@ -17,10 +17,10 @@
 <!--                <button class="btn btn-outline-primary modal_upload" id="id_upload_redirect_data" value="roles_upload" onclick="onclick_upload_button()" type="button">-->
 <!--                    <i class="fas fa-cloud-upload-alt"></i> upload data-->
 <!--                </button> -->
-                <button class="btn btn-primary" type="button" id="id_add_data" value="ADD" data-toggle="modal" data-target="#myModal" onclick="onclick_add_button(this)">
+                <button class="btn btn-primary" type="button" id="id_add_data" value="ADD" data-toggle="modal" onclick="onclick_add_button(this)">
                     <i class="fa fa-plus"></i> add role
                 </button>
-                 <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"  onclick="GetReferrer();">
+                 <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"  onclick="window_close();">
                     <i class="fas fa-times"></i> close
                 </button>
             </div>
@@ -154,7 +154,7 @@
 {{ roles|json_script:"roles" }}
 <script>
     var rendered_roles_data = JSON.parse(document.getElementById('roles').textContent);
-    var rendered_roles_type_values = {{dropdown_db_values|safe}};
+    var rendered_roles_type_values
     var roles_data_array = {}
     var main_table_roles_value = [];
     var roles = '';
@@ -164,16 +164,13 @@
     var Tablename = uiConstants["CONST_TABLENAME_ROLES"]
     var appname = uiConstants["CONST_APPNAME01"]
     var db_header_data = uiConstants["CONST_HEADER_DATA_ROLES"]
-<!--    var roles_dropdown='';-->
-<!--    $.each(rendered_roles_data, function(i, item){-->
-<!--         roles_dropdown += '<option value="' + item.role + '">' + item.role +'</option>';-->
-<!--    })-->
- var roles_type_dropdown= '';
+
+    var roles_type_dropdown= '';
         function dropdown_value(){
-        roles_type_dropdown = '';
-        $.each(rendered_roles_type_values, function(i, item){
-        roles_type_dropdown += '<option value="' + item.field_type_id + '">' + item.field_type_id + '</option>';
-        });
+            roles_type_dropdown = '';
+            $.each(rendered_roles_type_values, function(i, item){
+            roles_type_dropdown += '<option value="' + item.field_type_id + '">' + item.field_type_id + '</option>';
+            });
         }
 
 
@@ -268,7 +265,7 @@
             OpenLoaderPopup();
             $.ajax({
                 type: 'POST',
-                url: "{% url 'eProc_Master_Settings:create_update_master_data' %}",
+                url: "{% url 'eProc_Configuration:create_update_application_data' %}",
                 data: JSON.stringify(data),
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
@@ -325,7 +322,7 @@
         OpenLoaderPopup();
         $.ajax({
             type: 'POST',
-            url: "{% url 'eProc_Master_Settings:create_update_master_data' %}",
+            url: "{% url 'eProc_Configuration:create_update_application_data' %}",
             data: JSON.stringify(data),
             contentType: "application/json; charset=utf-8",
             dataType: "json",
@@ -600,7 +597,7 @@
 
     }
 
-         function GetReferrer() {
+         function window_close() {
              window.history.back();
               var preUrl = document.referrer;
               console.log(preUrl);
@@ -733,7 +730,37 @@ function maintable_validation(validate_add_attributes, main_table_low_value) {
     }
       return [no_duplicate_entries,error_message]
 }
+//onclick of add button display myModal popup and set GLOBAL_ACTION button value
+function onclick_add_button(button) {
+    OpenLoaderPopup();
+    var data = {'table_name':'UserRoles'}
+    $.ajax({
+        type: 'POST',
+        url: "{% url 'eProc_Configuration:get_dropdown_data' %}",
+        data: JSON.stringify(data),
+        success: function(response) {
+            rendered_roles_type_values = response.dropdown_db_values
+            dropdown_value();
+            $("#error_msg_id").css("display", "none")
+            $("#header_select").prop( "hidden", false );
+            GLOBAL_ACTION = button.value
+            $("#id_popup_tbody").empty();
+            $('#myModal').modal('show');
+          //  basic_add_new_html = '<tr ><td><input type="checkbox" required></td><td><select class="form-control">' + roles_id_dropdown + '</select></td><td><select class="form-control">' + roles_desc_dropdown + '</select></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+            basic_add_new_html='<tr><td><input type="checkbox" required></td>'+
+                 '<td><select type="text" class="input form-control roles" id="roles-1"  name="role" onchange="GetSelectedTextValue(this)"><option value="" disabled selected>Select your option</option>'+ roles_type_dropdown +'</select></td>'+
+                '<td><input class="form-control description" type="text"  name="role_desc"  id="description-1" disabled></td>'+
+                '<td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+            $('#id_popup_tbody').append(basic_add_new_html);
+            table_sort_filter('id_popup_table');
+            $("#id_del_ind_checkbox").prop("hidden", true);
+            document.getElementById("id_del_add_button").style.display = "block";
+            $("#save_id").prop("hidden", false);
+            CloseLoaderPopup();
+        }
+    });
 
+}
 </script>
 <script src="{% static 'scripts/organisational_data/org_roles.js' %}"></script>
 

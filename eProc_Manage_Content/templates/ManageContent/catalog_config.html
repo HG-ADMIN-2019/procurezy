@@ -89,37 +89,36 @@
             </div>
         </div>
 
-        <hr>
+            <hr>
+            <div class="card card-shadow-1">
+                 <div class="card-body">
+                    <div>
+                        <form method="POST" >
+                            {% csrf_token %}
+                            <div class="row">
+                                <div class="col-md">
+                                    <label for="">Catalog ID</label>
+                                    <input type="text" class="form-control check_for_search" id="catalog_id" name="catalog_id">
+                                </div>
+                                <div class="col-md">
+                                    <label for="">Catalog Description</label>
+                                    <input type="text" class="form-control check_for_search" id="catalog_desc" name="catalog_desc">
+                                </div>
+                                <div class="col-md">
+                                    <label for="">Catalog Name</label>
+                                    <input type="text" class="form-control check_for_search" id="catalog_name" name="catalog_name">
+                                </div>
+                                <div class="col-md">
+                                    <label for="">Product type</label>
+                                    <input type="text" class="form-control check_for_search" id='product_type' name='product_type'>
+                                </div>
+                                <div class="col-md">
+                                    <label for="">Search Count</label>
+                                    <input name="search_count" type = "number" value="10" id="search_count"  class="form-control">
+                                </div>
 
-        <div class="card card-shadow-1">
-             <div class="card-body">
-                <div>
-                    <form method="POST">
-                        {% csrf_token %}
-                        <div class="row">
-                            <div class="col-md">
-                                <label for="">Catalog ID</label>
-                                <input type="text" class="form-control check_for_search" id="catalog_id" name="catalog_id">
-                            </div>
-                            <div class="col-md">
-                                <label for="">Catalog Description</label>
-                                <input type="text" class="form-control check_for_search" id="catalog_desc" name="catalog_desc">
-                            </div>
-                            <div class="col-md">
-                                <label for="">Catalog Name</label>
-                                <input type="text" class="form-control check_for_search" id="catalog_name" name="catalog_name">
-                            </div>
-                            <div class="col-md">
-                                <label for="">Product type</label>
-                                <input type="text" class="form-control check_for_search" id='product_type' name='product_type'>
-                            </div>
-                            <div class="col-md">
-                                <label for="">Search Count</label>
-                                <input name="search_count" type = "number" value="10" id="search_count"  class="form-control">
-                            </div>
 
-
-                        </div>
+                            </div>
 
                         <div class="elements-space-between mt-4">
                             <div>
@@ -309,7 +308,7 @@
             <!-- Modal footer -->
             <div class="modal-footer">
                 <button class="btn btn-outline-primary" type="button" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
-                <button class="btn btn-primary" onclick="save_catalog()" ><i class="fas fa-save"></i> save</button>
+                            <button class="btn btn-primary" onclick="save_catalog()" ><i class="fas fa-save"></i> save</button>
 
             </div>
         </div>
@@ -441,7 +440,7 @@ var update_catalog = function(catalog_id) {
         urlLink = "{% url 'eProc_Manage_Content:generate_guid' %}"
         var guid_generator = AjaxCallAPI(urlLink, data)
         $('#add_update_modal_title').html('Add New Catalog')
-        document.getElementById('add_update_catalog_id').innerHTML = guid_generator.catalog_id;
+            document.getElementById('add_update_catalog_id').innerHTML = guid_generator.catalog_id;
     }
     $("#add_update_modal").modal("show");
 
@@ -552,7 +551,7 @@ $('#submit_catalog').click(function(e){
 });
 function update_main_table(data){
     if(data.length!==0){
-        $('#'+GLOBAL_CATALOG_GUID).find("TD").eq(0).text(data[0].catalog_id);
+        $('#'+GLOBAL_CATALOG_GUID6).find("TD").eq(0).text(data[0].catalog_id);
         $('#'+GLOBAL_CATALOG_GUID).find("TD").eq(1).text(data[0].description);
         $('#'+GLOBAL_CATALOG_GUID).find("TD").eq(2).text(data[0].name);
         $('#'+GLOBAL_CATALOG_GUID).find("TD").eq(3).text(data[0].product_type);

@@ -20,7 +20,7 @@
                     <i class="fa fa-plus"></i> Add Confirmation Number Range
                 </button>
 
-                <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"  onclick="GetReferrer();">
+                <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"  onclick="window_close();">
                     <i class="fas fa-times"></i> close
                 </button>
             </div>
@@ -40,9 +40,6 @@
                      <button class="btn btn-outline-danger btn-sm" id="id_delete_data" value="number_range_delete" style="display:none;" data-toggle="modal" data-target="#id_delete_confirm_popup">
                         <i class="fa fa-trash"></i> delete
                     </button>
-<!--                    <button class="btn btn-primary btn-sm" id="id_copy_number_range" style="display:none;" value="number_range_copy"  type="button" onclick="onclick_copy_button()">-->
-<!--                        <i class="fa fa-copy"></i> copy-->
-<!--                    </button>-->
                     <button class="btn btn-primary btn-sm" id="id_update_data" style="display:none;" value="UPDATE" type="button" onclick="onclick_update_button()">
                         <i class="far fa-edit"></i> update
                     </button>
@@ -249,15 +246,15 @@ function popup_save_data() {
     $("#id_popup_table TBODY TR").each(function () {
         var row = $(this);
         var number_range = {};
-        number_range.sequence = row.find("TD").eq(1).find('input[type="text"]').val().toUpperCase();
-        number_range.starting = row.find("TD").eq(2).find('input[type="text"]').val().toUpperCase();
-        number_range.ending = row.find("TD").eq(3).find('input[type="text"]').val().toUpperCase();
-        number_range.current = row.find("TD").eq(4).find('input[type="text"]').val().toUpperCase();
+        number_range.sequence = row.find("TD").eq(1).find('input[type="number"]').val();
+        number_range.starting = row.find("TD").eq(2).find('input[type="number"]').val();
+        number_range.ending = row.find("TD").eq(3).find('input[type="number"]').val();
+        number_range.current = row.find("TD").eq(4).find('input[type="number"]').val();
         number_range.del_ind = row.find("TD").eq(6).find('input[type="checkbox"]').is(':checked');
         number_range.guid = row.find("TD").eq(5).find('input').val();
 
         if (number_range == undefined) {
-            number_range.sequence = row.find("TD").eq(1).find('input[type="text"]').val();
+            number_range.sequence = row.find("TD").eq(1).find('input[type="number"]').val();
         }
         validate_add_attributes.push(number_range.sequence);
         number_range_data.push(number_range);
@@ -713,7 +710,7 @@ function popup_save_data() {
     }
 
 
-     function GetReferrer() {
+     function window_close() {
              window.history.back();
               var preUrl = document.referrer;
               console.log(preUrl);

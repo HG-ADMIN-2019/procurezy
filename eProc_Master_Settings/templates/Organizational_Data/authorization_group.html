@@ -18,7 +18,7 @@
 
                 <button class="btn btn-primary" type="button" id="id_add_data" value="ADD" data-toggle="modal" data-target="#myModal" onclick="onclick_add_button(this)">
                     <i class="fa fa-plus"></i> add authorization group</button>
-                <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"  onclick="GetReferrer();">
+                <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"  onclick="window_close();">
                     <i class="fas fa-times"></i> close
                 </button>
             </div>
@@ -157,13 +157,12 @@
     </div>
 </div>
 {{ auth_level_value|json_script:"auth_type_db_values" }}
-
+{{ auth_grp|json_script:"auth_grp_data" }}
 <script>
     var rendered_auth_type = JSON.parse(document.getElementById('auth_type_db_values').textContent);
-    var rendered_auth_group_data = {{auth_grp|safe}};
-    var rendered_auth_obj_data = {{upload_data_AuthorizationGroup|safe}};
-    var rendered_auth_group_field_data = {{auth_group_values|safe}};
-  //  var rendered_auth_type={{auth_level_value|safe}};
+    var rendered_auth_group_data = JSON.parse(document.getElementById('auth_grp_data').textContent);
+    var rendered_auth_obj_data
+    var rendered_auth_group_field_data
     var auth_group_data_array = {}
 
     var main_table_auth_group_value = [];
@@ -175,33 +174,29 @@
     var appname = uiConstants["CONST_APPNAME02"]
     var db_header_data = uiConstants["CONST_HEADER_DATA_AUTH_GROUP"]
     //**************************************
-    var auth_obj_id_dropdown = '';
-    var auth_level_dropdown ='';
-    var auth_group_id_dropdown = '';
+    var auth_obj_id_dropdown ;
+    var auth_level_dropdown ;
+    var auth_group_id_dropdown;
     var auth_group_desc_dropdown ='';
     var auth_group_id_add_dropdown = '';
     var auth_group_desc_add_dropdown ='';
 
-
+function dropdown_value(){
+    auth_obj_id_dropdown = '';
     $.each(rendered_auth_obj_data, function(i, item){
         auth_obj_id_dropdown += '<option value="' + item.auth_obj_id + '">' + item.auth_obj_id +'</option>';
     })
-
-     function dropdown_value(){
-       auth_group_id_dropdown='';
+    auth_group_id_dropdown='';
     $.each(rendered_auth_group_field_data, function(i, item){
         auth_group_id_dropdown += '<option value="' + item.field_type_id + '">' + item.field_type_id +'</option>';
 
     })
-    }
-
-
-
-     $.each(rendered_auth_type, function(i, item){
+    auth_level_dropdown ='';
+       $.each(rendered_auth_type, function(i, item){
         auth_level_dropdown += '<option value="' + item.field_type_id + '">' + item.field_type_id +'</option>';
 
     })
-
+}
 
     //onclick of data Upload copy data to modal pop-up
     function onclick_display_csv_data() {
@@ -648,24 +643,38 @@
 
  //onclick of add button display myModal popup and set GLOBAL_ACTION button value
 function onclick_add_button(button) {
-    dropdown_value();
-    $("#error_msg_id").css("display", "none")
-    $("#header_select").prop( "hidden", false );
-    GLOBAL_ACTION = button.value
-    $('#id_popup_table').DataTable().destroy();
-    $("#id_popup_tbody").empty();
-    $('#myModal').modal('show');
-    basic_add_new_html = '<tr><td><input type="checkbox" required></td>'+
-    '<td><select type="text" class="input form-control authgroup"  id="authgroup-1" onchange="GetSelectedTextValue(this)"><option value="" disabled selected>Select your option</option>'+ auth_group_id_dropdown+'</select></td>'+
-    '<td><input class="form-control description" type="text"  name="description"  id="description-1" disabled></td>'+
-    '<td><select class="form-control">'+auth_level_dropdown+'</select></td>'+
-    '<td><select class="form-control">'+auth_obj_id_dropdown+'</select></td>'+
-    '<td hidden><input type="text" value="GUID"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
-    $('#id_popup_tbody').append(basic_add_new_html);
-    table_sort_filter('id_popup_table');
-    $("#id_del_ind_checkbox").prop("hidden", true);
-    document.getElementById("id_del_add_button").style.display = "block";
-    $("#save_id").prop("hidden", false);
+    OpenLoaderPopup();
+    var data = {'table_name':'AuthorizationGroup'}
+    $.ajax({
+        type: 'POST',
+        url: "{% url 'eProc_Configuration:get_dropdown_data' %}",
+        data: JSON.stringify(data),
+        success: function(response) {
+            rendered_auth_obj_data = response.upload_data_AuthorizationGroup
+            rendered_auth_group_field_data = response.auth_group_db_values
+            rendered_auth_type = response.auth_type_db_values
+            dropdown_value();
+            $("#error_msg_id").css("display", "none")
+            $("#header_select").prop( "hidden", false );
+            GLOBAL_ACTION = button.value
+            $('#id_popup_table').DataTable().destroy();
+            $("#id_popup_tbody").empty();
+            $('#myModal').modal('show');
+            basic_add_new_html = '<tr><td><input type="checkbox" required></td>'+
+            '<td><select type="text" class="input form-control authgroup"  id="authgroup-1" onchange="GetSelectedTextValue(this)"><option value="" disabled selected>Select your option</option>'+ auth_group_id_dropdown+'</select></td>'+
+            '<td><input class="form-control description" type="text"  name="description"  id="description-1" disabled></td>'+
+            '<td><select class="form-control">'+auth_level_dropdown+'</select></td>'+
+            '<td><select class="form-control">'+auth_obj_id_dropdown+'</select></td>'+
+            '<td hidden><input type="text" value="GUID"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+            $('#id_popup_tbody').append(basic_add_new_html);
+            table_sort_filter('id_popup_table');
+            $("#id_del_ind_checkbox").prop("hidden", true);
+            document.getElementById("id_del_add_button").style.display = "block";
+            $("#save_id").prop("hidden", false);
+             CloseLoaderPopup();
+        }
+    });
+
 }
 
 // on click add icon display the row in to add the new entries
@@ -707,7 +716,7 @@ function add_popup_row() {
 
     }
 
-         function GetReferrer() {
+         function window_close() {
              window.history.back();
               var preUrl = document.referrer;
               console.log(preUrl);

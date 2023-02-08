@@ -2,25 +2,25 @@ var roles_data = new Array();
 var validate_add_attributes = [];
 var roles={};
 
-//onclick of add button display myModal popup and set GLOBAL_ACTION button value
-function onclick_add_button(button) {
-    dropdown_value();
-    $("#error_msg_id").css("display", "none")
-    $("#header_select").prop( "hidden", false );
-    GLOBAL_ACTION = button.value
-    $("#id_popup_tbody").empty();
-    $('#myModal').modal('show');
-  //  basic_add_new_html = '<tr ><td><input type="checkbox" required></td><td><select class="form-control">' + roles_id_dropdown + '</select></td><td><select class="form-control">' + roles_desc_dropdown + '</select></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
-    basic_add_new_html='<tr><td><input type="checkbox" required></td>'+
-         '<td><select type="text" class="input form-control roles" id="roles-1"  name="role" onchange="GetSelectedTextValue(this)"><option value="" disabled selected>Select your option</option>'+ roles_type_dropdown +'</select></td>'+
-        '<td><input class="form-control description" type="text"  name="role_desc"  id="description-1" disabled></td>'+
-        '<td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
-    $('#id_popup_tbody').append(basic_add_new_html);
-    table_sort_filter('id_popup_table');
-    $("#id_del_ind_checkbox").prop("hidden", true);
-    document.getElementById("id_del_add_button").style.display = "block";
-    $("#save_id").prop("hidden", false);
-}
+////onclick of add button display myModal popup and set GLOBAL_ACTION button value
+//function onclick_add_button(button) {
+//    dropdown_value();
+//    $("#error_msg_id").css("display", "none")
+//    $("#header_select").prop( "hidden", false );
+//    GLOBAL_ACTION = button.value
+//    $("#id_popup_tbody").empty();
+//    $('#myModal').modal('show');
+//  //  basic_add_new_html = '<tr ><td><input type="checkbox" required></td><td><select class="form-control">' + roles_id_dropdown + '</select></td><td><select class="form-control">' + roles_desc_dropdown + '</select></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+//    basic_add_new_html='<tr><td><input type="checkbox" required></td>'+
+//         '<td><select type="text" class="input form-control roles" id="roles-1"  name="role" onchange="GetSelectedTextValue(this)"><option value="" disabled selected>Select your option</option>'+ roles_type_dropdown +'</select></td>'+
+//        '<td><input class="form-control description check_special_char" type="text"  name="role_desc"  id="description-1" disabled></td>'+
+//        '<td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+//    $('#id_popup_tbody').append(basic_add_new_html);
+//    table_sort_filter('id_popup_table');
+//    $("#id_del_ind_checkbox").prop("hidden", true);
+//    document.getElementById("id_del_add_button").style.display = "block";
+//    $("#save_id").prop("hidden", false);
+//}
 
 //onclick of upload button display id_data_upload popup and set GLOBAL_ACTION button value role_desc
 function onclick_upload_button() {

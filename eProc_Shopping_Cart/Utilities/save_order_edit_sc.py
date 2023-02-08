@@ -8,6 +8,7 @@ from eProc_Basic.Utilities.global_defination import global_variables
 from eProc_Basic.Utilities.messages.messages import MSG161, MSG162, MSG163, MSG164, MSG165, MSG166, MSG167, MSG168, \
     MSG169, MSG170, MSG171, MSG192
 from eProc_Chat.models import ChatContent
+from eProc_Configuration.models.master_data import OrgAddress
 from eProc_Exchange_Rates.Utilities.exchange_rates_generic import convert_currency
 from eProc_Form_Builder.models.form_builder import EformData, EformFieldData
 from eProc_Notes_Attachments.models.notes_attachements_model import Attachments, Notes

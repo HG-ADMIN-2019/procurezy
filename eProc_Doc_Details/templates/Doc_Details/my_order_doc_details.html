@@ -120,9 +120,9 @@
             </div>
         
             <div class="mo-doc-header__alerts-wrapper">
-                <div id="sc_warning_messages" class="alert alert-warning"  style="display: none;" role="alert"></div>
-                <div id="sc_error_msg" class="alert alert-danger" style="display: none;" role="alert"></div>
-                <div id="sc_success_messages" class="alert alert-success"  style="display: none;" role="alert"></div>    
+                <div id="sc_warning_messages" class="alert alert-warning display-none"   role="alert"></div>
+                <div id="sc_error_msg" class="alert alert-danger display-none"  role="alert"></div>
+                <div id="sc_success_messages" class="alert alert-success display-none" ></div>
             </div>
         </div>
         <!-- General Data card section -->
@@ -160,7 +160,7 @@
                 {% if items.call_off != '04' %}
                 <div class="btn-group" id="add_id" hidden>
                     <div class="dropdown">
-                        <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                        <button class="btn btn-outline-primary btn-sm dropdown-toggle" type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false" disabled>
                             <i class="fa fa-plus" aria-hidden="true"></i> add new item 
                         </button>
                         <div class="dropdown-menu" aria-labelledby="dropdownMenuButton">

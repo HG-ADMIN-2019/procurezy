@@ -20,7 +20,7 @@
                  <button class="btn btn-primary" id="id_add_data"  title="Add Product Category Description" value="ADD" data-toggle="modal" onclick="onclick_add_button(this);">
                     <i class="fa fa-plus"></i> add customer UNSPSC code description
                 </button>
-                   <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"  onclick="GetReferrer();">
+                   <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"  onclick="window_close();">
                     <i class="fas fa-times"></i> close
                 </button>
 
@@ -195,7 +195,7 @@
     var rendered_UNSPC_data = {{upload_ProdCat|safe}};
     var content_managment_settings = '{{content_managment_settings|safe}}';
     var rendered_cust_prod_cat_desc_data ={{upload_cust_prod_cat_desc|safe}};
-    var cusprodcatdesc_data_array = {}
+    var cusprodcatdesc_data_array = {};
     var main_table_cusprodcatdesc_value =[];
     var cusprodcatdesc = {};
     var edit_basic_data ='';
@@ -213,20 +213,22 @@
     var prod_cat_array = [];
     prod_cat_val_list = [];
 
+    function unspcdesc_dropdown(){
+         $.each(render_language_data, function(i, item){
+          language_id_dropdown += '<option value="' + item.language_id + '">' + item.description + '</option>';
+         })
 
-     $.each(render_language_data, function(i, item){
-      language_id_dropdown += '<option value="' + item.language_id + '">' + item.description + '</option>';
-    })
+        $.each(rendered_UNSPCDESC_data, function(i, item){
+            prod_cat_id_dropdown += '<option value="' + item.prod_cat_id + '">' + item.prod_cat_id + '</option>';
+    <!--        description_dropdown += '<option value="' + item.prod_cat_desc + '">' + item.prod_cat_desc + '</option>';-->
+            prod_cat_val_dict = {};
+            prod_cat_val_dict.prod_cat_id =item.prod_cat_id
+            prod_cat_val_dict.prod_cat_desc=item.prod_cat_desc
+            prod_cat_val_list.push(prod_cat_val_dict)
+            prod_cat_array.push(item.prod_cat_id)
+         })
 
-    $.each(rendered_UNSPC_data, function(i, item){
-        prod_cat_id_dropdown += '<option value="' + item.prod_cat_id + '">' + item.prod_cat_id + '</option>';
-<!--        description_dropdown += '<option value="' + item.prod_cat_desc + '">' + item.prod_cat_desc + '</option>';-->
-        prod_cat_val_dict = {};
-        prod_cat_val_dict.prod_cat_id =item.prod_cat_id
-        prod_cat_val_dict.prod_cat_desc=item.prod_cat_desc
-        prod_cat_val_list.push(prod_cat_val_dict)
-        prod_cat_array.push(item.prod_cat_id)
-     })
+    }
 
 //onclick of data Upload copy data to modal pop-up
 
@@ -417,6 +419,7 @@ function onclick_display_csv_data() {
                         dataType: "json",
                         success: function(Response) {
                             rendered_cust_prod_cat_desc_data = Response[0];
+                            rendered_UNSPCDESC_data = Response.upload_ProdCat
                             display_basic_db_data();
                             $('#myModal').modal('hide');
                             //$('#id_error_msg').text(messageConstants["JMSG001"])
@@ -451,40 +454,54 @@ var duplicate_entry = [];
 
 //onclick of add button display myModal popup and set GLOBAL_ACTION button value
 function onclick_add_button(button) {
-    $("#error_msg_id").css("display", "none")
-    $( "#header_select").prop( "hidden", false );
-    GLOBAL_ACTION = button.value
-    $('#id_popup_table').DataTable().destroy();
-    $("#id_popup_tbody").empty();
-    $('#myModal').modal('show');
-    basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select class="form-control" type ="number" maxlength="20">'+prod_cat_id_dropdown+'</select></td><td><input class="form-control" type="text" onkeypress="return /[a-z ]/i.test(event.key)" max_length=200 name="description"></td><td><select class="form-control">'+language_id_dropdown+'</select></td><td hidden>prod_cat_desc_guid</td><td hidden> del_ind</td></tr>';
-    $('#id_popup_tbody').append(basic_add_new_html);
-    table_sort_filter('id_popup_table');
-         var product_id = '';
-    $("#id_popup_table TBODY TR").each(function () {
-        var row = $(this);
-        row.find("TD").eq(2).find("select").empty()
-        product_id = row.find("TD").eq(1).find("select option:selected").val();
-        var product_id_val = product_id_value_find(product_id)
-        row.find("TD").eq(2).find("select").append(product_id_val.description_dropdown)
+    OpenLoaderPopup();
+    var data = {'table_name':'UnspscCategoriesCustDesc'}
+    $.ajax({
+        type: 'POST',
+        url: "{% url 'eProc_Configuration:get_dropdown_data' %}",
+        data: JSON.stringify(data),
+        success: function(response) {
+                rendered_UNSPCDESC_data = response.upload_ProdCat
+                render_language_data = response.upload_language
+                unspcdesc_dropdown()
+                $("#error_msg_id").css("display", "none")
+                $("#header_select").prop( "hidden", false );
+                GLOBAL_ACTION = button.value
+                $('#id_popup_table').DataTable().destroy();
+                $("#id_popup_tbody").empty();
+                $('#myModal').modal('show');
+                basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select class="form-control" type ="number" maxlength="20">'+prod_cat_id_dropdown+'</select></td><td><input class="form-control" type="text" onkeypress="return /[a-z ]/i.test(event.key)" max_length=200 name="description"></td><td><select class="form-control">'+language_id_dropdown+'</select></td><td hidden>prod_cat_desc_guid</td><td hidden> del_ind</td></tr>';
+                $('#id_popup_tbody').append(basic_add_new_html);
+                table_sort_filter('id_popup_table');
+                     var product_id = '';
+                $("#id_popup_table TBODY TR").each(function () {
+                    var row = $(this);
+                    row.find("TD").eq(2).find("select").empty()
+                    product_id = row.find("TD").eq(1).find("select option:selected").val();
+                    var product_id_val = product_id_value_find(product_id)
+                    row.find("TD").eq(2).find("select").append(product_id_val.description_dropdown)
 
 
-        $(row.find("TD").eq(1).find("select")).change(function () {
-            row.find("TD").eq(2).find("select").empty()
+                    $(row.find("TD").eq(1).find("select")).change(function () {
+                        row.find("TD").eq(2).find("select").empty()
 
 
-            product_id = row.find("TD").eq(1).find("select option:selected").val();
+                        product_id = row.find("TD").eq(1).find("select option:selected").val();
 
-            var product_id_val = product_id_value_find(product_id)
-            row.find("TD").eq(2).find("select").append(product_id_val.description_dropdown)
+                        var product_id_val = product_id_value_find(product_id)
+                        row.find("TD").eq(2).find("select").append(product_id_val.description_dropdown)
 
-        })
-    })
-    $("#id_del_ind_checkbox").prop("hidden", true);
-    document.getElementById("id_del_add_button").style.display = "block";
-    $("#save_id").prop("hidden", false);
+                    })
+                })
+                $("#id_del_ind_checkbox").prop("hidden", true);
+                document.getElementById("id_del_add_button").style.display = "block";
+                $("#save_id").prop("hidden", false);
+              CloseLoaderPopup();
+
+        }
+    });
+
 }
-
 
 //onclick of upload button display id_data_upload popup and set GLOBAL_ACTION button value
 function onclick_upload_button() {
@@ -509,68 +526,6 @@ function onclick_update_button() {
     document.getElementById("id_del_add_button").style.display = "none";
 }
 
-//**********************************************************
-function onclick_copy_update_button(data){
-        $("#error_msg_id").css("display", "none")
-        $('#display_basic_table').DataTable().destroy();
-        $("#id_popup_tbody").empty();
-
-        //Reference the Table.
-        var grid = document.getElementById("display_basic_table");
-
-        //Reference the CheckBoxes in Table.
-        var checkBoxes = grid.getElementsByTagName("INPUT");
-        var edit_basic_data = "";
-        var unique_input = '';
-        var prod_cat_desc_guid= '';
-        var dropdown_values = [];
-        var guid ='';
-        //Loop through the CheckBoxes.
-        for (var i = 1; i < checkBoxes.length; i++){
-            if (checkBoxes[i].checked){
-                var row = checkBoxes[i].parentNode.parentNode;
-                if(GLOBAL_ACTION == "UPDATE"){
-
-                    prod_cat_desc_guid = row.cells[4].innerHTML
-                    unique_input = '<select class="form-control"  maxlength="20"disabled>' + prod_cat_id_dropdown + '</select>'
-                    edit_basic_data += '<tr><td hidden><input type="checkbox"></td><td>'+unique_input+' </td><td><input class="form-control" value="' + row.cells[2].innerHTML + '" type="text" onkeypress="return /[a-z ]/i.test(event.key)"  name="description"  maxlength="200"  required></td><td><select class="form-control" disabled>' +language_id_dropdown + ' </select></td><td hidden><input value="' + prod_cat_desc_guid + '"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
-                    $("#header_select").prop("hidden", true);
-                }
-                else{
-                    prod_cat_desc_guid = 'GUID';
-                    unique_input = '<select class="form-control" maxlength="20">' + prod_cat_id_dropdown + '</select>'
-                    edit_basic_data += '<tr><td><input type="checkbox" required></td><td>'+unique_input+'</td><td><input class="form-control" value="' + row.cells[2].innerHTML + '" type="text" onkeypress="return /[a-z ]/i.test(event.key)" name="description"  maxlength="200"  required></td><td><select class="form-control">' +language_id_dropdown + ' </select></td><td hidden><input value="' + prod_cat_desc_guid + '"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
-                    $("#header_select").prop("hidden", false);
-                }
-                var row = checkBoxes[i].parentNode.parentNode;
-                var prod_cat_id_value = row.cells[1].innerHTML
-                var language_id_value = row.cells[3].innerHTML
-                dropdown_values.push([prod_cat_id_value, language_id_value])
-            }
-        }
-        $('#id_popup_table').append(edit_basic_data);
-        var i =0;
-        $("#id_popup_table TBODY TR").each(function() {
-        var row = $(this);
-        var prod_cat_id_value = dropdown_values[i][0]
-        var language_id_value = dropdown_values[i][1]
-         var lang_id;
-
-         for (i = 0; i < render_language_data.length; i++) {
-             if (language_id_value == render_language_data[i].description)
-                 lang_id = render_language_data[i].language_id;
-             }
-        $(row.find("TD").eq(1).find("select option[value="+prod_cat_id_value+"]")).attr('selected','selected');
-        $(row.find("TD").eq(3).find("select option[value="+lang_id+"]")).attr('selected','selected');
-        i++;
-        });
-
-        $("#id_del_ind_checkbox").prop("hidden", true);
-        $('#myModal').modal('show');
-        table_sort_filter('id_popup_table');
-        table_sort_filter('display_basic_table');
-
-  }
 
  //************************currency code
 //onclick of cancel empty the popup table body and error messages
@@ -974,7 +929,7 @@ function check_data() {
         unspsc_desc_dic = {}
         //*************** reading data from the pop-up ***************
         unspsc_desc_dic.language_id = row.find("TD").eq(3).find('select[type="text"]').val()
-        unspsc_desc_dic.prod_cat_desc = row.find("TD").eq(2).find('input[type="text"]').val()
+        unspsc_desc_dic.description = row.find("TD").eq(2).find('input[type="text"]').val()
         unspsc_desc_dic.prod_cat_id = row.find("TD").eq(1).find('select[type="text"]').val()
         checked_box = row.find("TD").eq(5).find('input[type="checkbox"]').is(':checked')
             if (checked_box){
@@ -1041,7 +996,7 @@ function check_data() {
             }
 
             //*************** checking for special characters for country name ***************
-            if(format.test(unspsc_desc_dic.prod_cat_desc)){
+            if(format.test(unspsc_desc_dic.description)){
                  
                             var msg = "JMSG003";
                             var msg_type ;
@@ -1102,7 +1057,7 @@ function check_data() {
     });
 }
 
-       function GetReferrer() {
+       function window_close() {
              window.history.back();
               var preUrl = document.referrer;
               console.log(preUrl);
@@ -1138,6 +1093,112 @@ function update_check_message(messages){
             });
 
             $("#id_check_success_messages").prop("hidden",false)
+}
+
+
+// ajax Function to add catalog product
+function ajax_dropdown_data(data) {
+    urlLink = "{% url 'eProc_Configuration:get_dropdown_data' %}";
+    let result = AjaxCallAPI(urlLink, data);
+    return result;
+}
+
+function AjaxCallAPI(urlLink, data){
+   jQuery.ajax({
+       async : false,
+       type: 'POST',
+       url: urlLink,
+       dataType :'json',
+       data: JSON.stringify(data),
+       success: function(result){
+           response = result;
+       },
+       error: function(xhr, resp, text) {
+       },
+       cache: false,
+       processData: false,
+       contentType: false,
+   });
+   return response;
+};
+
+
+
+//**********************************************************
+function onclick_copy_update_button(data){
+    OpenLoaderPopup();
+    var data = {'table_name':'UnspscCategoriesCustDesc'}
+    $.ajax({
+        type: 'POST',
+        url: "{% url 'eProc_Configuration:get_dropdown_data' %}",
+        data: JSON.stringify(data),
+        success: function(response) {
+                rendered_UNSPCDESC_data = response.upload_ProdCat
+                render_language_data = response.upload_language
+                unspcdesc_dropdown()
+                $("#error_msg_id").css("display", "none")
+                $('#display_basic_table').DataTable().destroy();
+                $("#id_popup_tbody").empty();
+
+                //Reference the Table.
+                var grid = document.getElementById("display_basic_table");
+
+                //Reference the CheckBoxes in Table.
+                var checkBoxes = grid.getElementsByTagName("INPUT");
+                var edit_basic_data = "";
+                var unique_input = '';
+                var prod_cat_desc_guid= '';
+                var dropdown_values = [];
+                var guid ='';
+                //Loop through the CheckBoxes.
+                for (var i = 1; i < checkBoxes.length; i++){
+                    if (checkBoxes[i].checked){
+                        var row = checkBoxes[i].parentNode.parentNode;
+                        if(GLOBAL_ACTION == "UPDATE"){
+
+                            prod_cat_desc_guid = row.cells[4].innerHTML
+                            unique_input = '<select class="form-control"  maxlength="20"disabled>' + prod_cat_id_dropdown + '</select>'
+                            edit_basic_data += '<tr><td hidden><input type="checkbox"></td><td>'+unique_input+' </td><td><input class="form-control" value="' + row.cells[2].innerHTML + '" type="text" onkeypress="return /[a-z ]/i.test(event.key)"  name="description"  maxlength="200"  required></td><td><select class="form-control" disabled>' +language_id_dropdown + ' </select></td><td hidden><input value="' + prod_cat_desc_guid + '"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+                            $("#header_select").prop("hidden", true);
+                        }
+                        else{
+                            prod_cat_desc_guid = 'GUID';
+                            unique_input = '<select class="form-control" maxlength="20">' + prod_cat_id_dropdown + '</select>'
+                            edit_basic_data += '<tr><td><input type="checkbox" required></td><td>'+unique_input+'</td><td><input class="form-control" value="' + row.cells[2].innerHTML + '" type="text" onkeypress="return /[a-z ]/i.test(event.key)" name="description"  maxlength="200"  required></td><td><select class="form-control">' +language_id_dropdown + ' </select></td><td hidden><input value="' + prod_cat_desc_guid + '"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+                            $("#header_select").prop("hidden", false);
+                        }
+                        var row = checkBoxes[i].parentNode.parentNode;
+                        var prod_cat_id_value = row.cells[1].innerHTML
+                        var language_id_value = row.cells[3].innerHTML
+                        dropdown_values.push([prod_cat_id_value, language_id_value])
+                    }
+                }
+                $('#id_popup_table').append(edit_basic_data);
+                var i =0;
+                $("#id_popup_table TBODY TR").each(function() {
+                var row = $(this);
+                var prod_cat_id_value = dropdown_values[i][0]
+                var language_id_value = dropdown_values[i][1]
+                 var lang_id;
+
+                 for (i = 0; i < render_language_data.length; i++) {
+                     if (language_id_value == render_language_data[i].description)
+                         lang_id = render_language_data[i].language_id;
+                     }
+                $(row.find("TD").eq(1).find("select option[value="+prod_cat_id_value+"]")).attr('selected','selected');
+                $(row.find("TD").eq(3).find("select option[value="+lang_id+"]")).attr('selected','selected');
+                i++;
+                });
+
+                $("#id_del_ind_checkbox").prop("hidden", true);
+                $('#myModal').modal('show');
+                table_sort_filter('id_popup_table');
+                table_sort_filter('display_basic_table');
+                CloseLoaderPopup();
+
+        }
+    });
+
 }
     </script>
 

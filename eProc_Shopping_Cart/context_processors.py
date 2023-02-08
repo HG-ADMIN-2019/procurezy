@@ -53,6 +53,8 @@ def globalise_context(request):
         # encrypt_value = encrypt(global_variables.CATALOGS_ASSIGNED)
         sys_attributes_instance = sys_attributes(client)
         msg_display_time_value = sys_attributes_instance.get_msg_display_time()
+    else:
+        msg_display_time_value = "1"
     kwargs = {
         'sub_menu': global_variables.GLOBAL_SUB_MENU,
         'shop_purchaser_flag': global_variables.GLOBAL_PURCHASER_FLAG,

@@ -17,7 +17,6 @@ urlpatterns = [
     path('extract_workflowschema_template', views.extract_workflowschema_template, name='extract_workflowschema_template'),
     path('extract_workflowaccount_data', views.extract_workflowaccount_data, name='extract_workflowaccount_data'),
     path('ACC_values', views.account_ass_values, name='account_ass_values'),
-    path('save_master_settings_data', views.save_master_settings_data, name='save_master_settings_data'),
     path('save_product_cat_cust', views.save_product_cat_cust, name='save_product_cat_cust'),
     path('get_prod_cat_image_detail', views.get_prod_cat_image_detail, name='get_prod_cat_image_detail'),
     path('upload_prod_cat_images', views.upload_prod_cat_images, name='upload_prod_cat_images'),

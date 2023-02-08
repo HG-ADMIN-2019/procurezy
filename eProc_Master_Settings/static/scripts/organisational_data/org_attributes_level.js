@@ -1,7 +1,7 @@
 var org_attr_level_data = new Array();
 var validate_add_attributes = [];
 var org_attr_level = {};
-
+var duplicate_entry = [];
 
 
 //onclick of cancel empty the popup table body and error messages
@@ -57,6 +57,7 @@ function delete_duplicate() {
 $('#save_id').click(function () {
     $('#myModal').modal('hide');
     validate_add_attributes = [];
+    duplicate_entry = [];
     $("#id_popup_table TBODY TR").each(function() {
         var row = $(this);
         org_attr_level.del_ind = row.find("TD").eq(4).find('input[type="checkbox"]').is(':checked');
@@ -71,6 +72,10 @@ $('#save_id').click(function () {
          if(org_attr_level.org_model_nodetype_config_guid == undefined) {
                 org_attr_level.org_model_nodetype_config_guid = '';
             }
+           var org_attr_level_dup = {};
+            org_attr_level_dup.node_type = org_attr_level.node_type;
+            org_attr_level_dup.node_values = org_attr_level.node_values;
+            duplicate_entry.push(org_attr_level_dup);
 
         validate_add_attributes.push(org_attr_level.node_type);
         org_attr_level_data.push(org_attr_level);
@@ -79,24 +84,6 @@ $('#save_id').click(function () {
 
     $('#id_save_confirm_popup').modal('show');
 });
-
-
-//onclick of add button display myModal popup and set GLOBAL_ACTION button value
-function onclick_add_button(button) {    
-    $("#error_msg_id").css("display", "none")
-    $( "#header_select").prop( "hidden", false );
-    GLOBAL_ACTION = button.value
-    $('#id_popup_table').DataTable().destroy();
-    $('#myModal').modal('show');
-    $("#id_popup_tbody").empty();
-    $('#myModal').modal('show');
-    basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select class="form-control">'+nodetype_dropdown+'</select></td><td><select class="form-control">'+attributelevel_id_dropdown+'</select></td><td hidden>pgroup_guid</td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
-	$('#id_popup_tbody').append(basic_add_new_html);
-    table_sort_filter('id_popup_table');
-    $("#id_del_ind_checkbox").prop("hidden", true);
-    document.getElementById("id_del_add_button").style.display = "block";
-    $("#save_id").prop("hidden", false);
-}
 
 
 

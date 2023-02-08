@@ -6,6 +6,19 @@
 
 
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
+ <script type="text/javascript" src=
+"https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment.min.js">
+    </script>
+
+    <!-- Include Bootstrap DateTimePicker CDN -->
+    <link
+        href=
+"https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/css/bootstrap-datetimepicker.min.css"
+        rel="stylesheet">
+
+    <script src=
+"https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datetimepicker/4.17.37/js/bootstrap-datetimepicker.min.js">
+        </script>
 
 <div class="container-fluid">
     <div class="configuration-table_wrapper">
@@ -24,7 +37,7 @@
                  <button class="btn btn-primary" type="button" title="Address type" id="id_add_data" value="ADD" data-toggle="modal" data-target="#myModal" onclick="onclick_add_button(this)">
                     <i class="fa fa-plus" aria-hidden="true"></i> add address type
                 </button>
-                   <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"  onclick="GetReferrer();">
+                   <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"  onclick="window_close();">
                     <i class="fas fa-times"></i> close
                 </button>
             </div>
@@ -62,7 +75,7 @@
                 <table id="display_basic_table" class="class_basic_country_table table table-bordered custom-table">
                     <thead id="id_address_type_table_header">
                         <tr>
-                            <th id="hg_select_checkbox" hidden>
+                            <th id="hg_select_checkbox" class="checkall" hidden>
                                 <div id="id_check_all" style="display:none;">
                                     <INPUT type="checkbox" onchange="checkAll(this)" name="chk[]">
                                 </div>
@@ -185,13 +198,13 @@
         {% endif %}
     </div>
 </div>
-
+{{ address_type_data|json_script:"address_type_data" }}
 <script>
 
-    var rendered_address_type_data = {{ address_type_data| safe}};
-    var rendered_address_data = {{ address_data| safe}};
-    var rendered_company_data = {{ upload_data_OrgCompanies| safe}};
-    var rendered_address_type_values = {{dropdown_db_values|safe}};
+    var rendered_address_type_data =  JSON.parse(document.getElementById('address_type_data').textContent);
+    var rendered_address_data
+    var rendered_company_data
+    var rendered_address_type_values
     var address_type_data_array = {}
     var main_table_address_type_value = [];
     var address_type = '';
@@ -202,36 +215,172 @@
     var appname = uiConstants["CONST_APPNAME01"]
     var db_header_data = uiConstants["CONST_HEADER_DATA_ADDRESSTYPE"]
 
-
-      var address_number_dropdwn = ""
-        $.each(rendered_address_data, function (i, item) {
-
-            address_number_dropdwn += '<option value="' + item.address_number + '">' + item.address_number + '</option>'
-
-        });
-
-
-    var company_dropdwn = ""
-        $.each(rendered_company_data, function (i, item) {
-
-            company_dropdwn += '<option value="' + item.company_id + '">' + item.company_id + '</option>'
-
-        });
-
-        var address_type_dropdown= '';
+         var address_type_dropdown= '';
          var address_type_dropdown_onload= '';
-        function dropdown_value(){
-            address_type_dropdown = '';
+         var company_dropdwn = "";
+        var address_number_dropdwn;
+        var address_type_dropdown;
+         var address_type_dropdown_onload;
+
+    function addtype_drp(){
+        address_number_dropdwn = "";
+        $.each(rendered_address_data, function (i, item) {
+            address_number_dropdwn += '<option value="' + item.address_number + '">' + item.address_number + '</option>'
+        });
+        company_dropdwn = "";
+         $.each(rendered_company_data, function (i, item) {
+            company_dropdwn += '<option value="' + item.company_id + '">' + item.company_id + '</option>'
+        });
+        address_type_dropdown = '';
         $.each(rendered_address_type_values, function(i, item){
             address_type_dropdown += '<option value="' + item.field_type_id + '">' + item.field_type_id + '</option>';
         });
-        }
-
-        $.each(rendered_address_type_values, function(i, item){
+        address_type_dropdown_onload= '';
+          $.each(rendered_address_type_values, function(i, item){
             address_type_dropdown_onload += '<option value="' + item.field_type_id + '">' + item.field_type_id + '</option>';
         });
+    }
+    function DateFormat() {
+      $(".from_to_date").datepicker({
+            format: 'dd-mm-yyyy',
+        });
+    }
 
+//onclick of add button display myModal popup and set GLOBAL_ACTION button value
+function onclick_add_button(button) {
+    OpenLoaderPopup();
+    var data = {'table_name':'OrgAddressMap'}
+    $.ajax({
+        type: 'POST',
+        url: "{% url 'eProc_Configuration:get_dropdown_data' %}",
+        data: JSON.stringify(data),
+        success: function(response) {
+            rendered_address_data = response.address_data
+            rendered_company_data = response.upload_data_OrgCompanies
+             rendered_address_type_values = response.dropdown_db_values
+             addtype_drp();
+            $("#error_msg_id").css("display", "none")
+            $( "#header_select").prop( "hidden", false );
+            GLOBAL_ACTION = button.value
+            $('#id_popup_table').DataTable().destroy();
+            $("#id_popup_tbody").empty();
+            $('#myModal').modal('show');
+           basic_add_new_html = '<tr><td><input type="checkbox" required></td>' +
+                '<td><select class="form-control">'+address_number_dropdwn+'</select></td>' +
+                '<td><select class="form-control">'+address_type_dropdown+'</select></td>' +
+                '<td><select class="form-control">'+company_dropdwn+'</select></td>' +
+                '<td><input  type="text" name = "valid_from" class="form-control from_to_date"></td>' +
+                '<td><input type="text" name = "valid_to"  class="form-control from_to_date"></td>' +
+                '<td class="class_del_checkbox" hidden><input type="checkbox" required></td>' +
+                '<td hidden><input  type="text" class="form-control"  name="guid"></td></tr>';
+            $('#id_popup_tbody').append(basic_add_new_html);
+            DateFormat();
+            table_sort_filter('id_popup_table');
+            $("#id_del_ind_checkbox").prop("hidden", true);
+            document.getElementById("id_del_add_button").style.display = "block";
+            $("#save_id").prop("hidden", false);
+            CloseLoaderPopup();
+        }
+    });
 
+}
+
+ function onclick_copy_update_button() {
+    OpenLoaderPopup();
+    var data = {'table_name':'OrgAddressMap'}
+    $.ajax({
+        type: 'POST',
+        url: "{% url 'eProc_Configuration:get_dropdown_data' %}",
+        data: JSON.stringify(data),
+        success: function(response) {
+            rendered_address_data = response.address_data
+            rendered_company_data = response.upload_data_OrgCompanies
+             rendered_address_type_values = response.dropdown_db_values
+             addtype_drp();
+            $("#error_msg_id").css("display", "none")
+            $('#display_basic_table').DataTable().destroy();
+            $("#id_popup_tbody").empty();
+            $('#display_basic_table').DataTable().destroy();
+            //Reference the Table.
+            var grid = document.getElementById("display_basic_table");
+
+            //Reference the CheckBoxes in Table.
+            var checkBoxes = grid.getElementsByTagName("INPUT");
+            var edit_basic_data = "";
+            var unique_input = '';
+            var address_guid= '';
+            var dropdown_array = [];
+
+            //Loop through the CheckBoxes.
+            for (var i = 1; i < checkBoxes.length; i++) {
+                if (checkBoxes[i].checked) {
+                    var row = checkBoxes[i].parentNode.parentNode;
+                     if(GLOBAL_ACTION == "UPDATE"){
+                        address_guid = 'GUID';
+                       unique_input = '<select class="form-control" value="' + row.cells[1].innerHTML + '">'+address_number_dropdwn+'</select>'
+                        edit_basic_data += '<tr><td><input type="checkbox" required></td>' +
+                        '<td>'+unique_input+'</td>' +
+                        '<td><select class="form-control" value="' + row.cells[2].innerHTML + '">'+address_type_dropdown_onload+'</select></td>' +
+                        '<td><select class="form-control" value="' + row.cells[3].innerHTML + '">'+company_dropdwn+'</select></td>'+
+                        '<td><input  type="text" name = "valid_from" value="' + row.cells[4].innerHTML + '"class="form-control from_to_date"></td>'
+                        '<td><input  type="text" name = "valid_to" value="' + row.cells[5].innerHTML + '"class="form-control from_to_date"></td>'
+                        '<td class="class_del_checkbox" hidden><input type="checkbox" required></td>' +
+                        '<td hidden><input  type="text" class="form-control"  value="' + row.cells[7].innerHTML + '"  name="guid"></td></tr>';
+                        $("#header_select").prop("hidden", true);
+                    }
+                    else{
+                        address_guid = 'GUID';
+                        unique_input = '<select class="form-control">'+address_number_dropdwn+'</select>'
+                        edit_basic_data += '<tr><td><input type="checkbox" required></td>' +
+                        '<td>'+unique_input+'</td>' +
+                        '<td><select class="form-control" >'+address_type_dropdown_onload+'</select></td>' +
+                        '<td><select class="form-control">'+company_dropdwn+'</select></td>' +
+                         '<td><input  type="text" name = "valid_from" value="' + row.cells[4].innerHTML + '"class="form-control from_to_date"></td>'+
+                        '<td><input  type="text" name = "valid_to" value="' + row.cells[5].innerHTML + '"class="form-control from_to_date"></td>'+
+                        '<td class="class_del_checkbox" hidden><input type="checkbox" ></td>' +
+                        '<td hidden><input  type="text" class="form-control"  value="' + row.cells[7].innerHTML + '"  name="guid"></td></tr>';
+                         $("#header_select").prop("hidden", false);
+
+                    }
+
+                    var address_number = row.cells[1].innerHTML
+                    var address_type = row.cells[2].innerHTML
+                    var company_id = row.cells[3].innerHTML
+
+                    dropdown_array.push([address_number, address_type, company_id])
+
+                }
+            }
+             $('#id_popup_table').append(edit_basic_data);
+             DateFormat();
+             var i = 0;
+            $("#id_popup_table TBODY TR").each(function () {
+                var row = $(this);
+                var address_number = dropdown_array[i][0]
+                var address_type = dropdown_array[i][1]
+                var company_id = dropdown_array[i][2]
+
+                $(row.find("TD").eq(1).find("select option[value=" + address_number + "]")).attr('selected', 'selected');
+                $(row.find("TD").eq(2).find("select option[value=" + address_type + "]")).attr('selected', 'selected');
+                $(row.find("TD").eq(3).find("select option[value=" + company_id + "]")).attr('selected', 'selected');
+
+                $(row.find("TD").eq(1).find("select")).change(function () {
+                    row.find("TD").eq(2).find("select").empty()
+                    row.find("TD").eq(3).find("select").empty()
+
+                })
+                i = i + 1;
+            });
+
+            $("#id_del_ind_checkbox").prop("hidden", true);
+            table_sort_filter('id_popup_table');
+            table_sort_filter('display_basic_table');
+            $('#myModal').modal('show');
+           CloseLoaderPopup();
+        }
+    });
+
+}
 
     // validate and save for add,copy,update and upload data
     function popup_save_data() {
@@ -244,15 +393,14 @@
         var addresstype = {};
         var error_message = '';
 
-       
-       
         $('#display_basic_table').DataTable().destroy();
         $("#display_basic_table TBODY TR").each(function () {
             var row = $(this);
             var main_attribute = {};
             main_attribute.address_number = row.find("TD").eq(1).html();
             main_attribute.address_type = row.find("TD").eq(2).html();
-            main_table_low_value.push(main_attribute);
+            var address_compare_maintable = main_attribute.address_number +'-'+ main_attribute.address_type
+            main_table_low_value.push(address_compare_maintable);
         });
         table_sort_filter('display_basic_table');
         $("#id_error_msg").empty();
@@ -284,7 +432,7 @@
                             rendered_address_type_data = Response[0];
                             rendered_address_type_values = Response[2];
                             display_basic_db_data();
-                            dropdown_value();
+                            addtype_drp();
                             $('#myModal').modal('hide');
                             //$('#id_error_msg').text(messageConstants["JMSG001"])
                             $('#success_msg_id').text(Response[1])
@@ -545,8 +693,8 @@ function check_data() {
         var row = $(this);
             address_type_dic = {}
         //*************** reading data from the pop-up ***************
-        address_type_dic.valid_to = row.find("TD").eq(5).find('input[type="number"]').val();
-        address_type_dic.valid_from = row.find("TD").eq(4).find('input[type="number"]').val();
+        address_type_dic.valid_to = row.find("TD").eq(5).find('input[type="text"]').val();
+        address_type_dic.valid_from = row.find("TD").eq(4).find('input[type="text"]').val();
         address_type_dic.company_id = row.find("TD").eq(3).find('select[type="text"]').val();
         address_type_dic.address_number = row.find("TD").eq(1).find('select[type="text"]').val();
         address_type_dic.address_type = row.find("TD").eq(2).find('select[type="text"]').val();
@@ -660,7 +808,7 @@ function check_data() {
     });
 }
 
-       function GetReferrer() {
+       function window_close() {
              window.history.back();
               var preUrl = document.referrer;
               console.log(preUrl);
@@ -741,7 +889,7 @@ function compare_table_for_duplicate_entries(validate_add_attributes, address_ty
 }
 
 //validate by comparing  main table values and popup table values
-function maintable_validation(addresstype_data, main_table_low_value) {
+function maintable_validation1(addresstype_data, main_table_low_value) {
     var no_duplicate_entries = 'Y'
     var error_message =''
     var dup_entry = " ";

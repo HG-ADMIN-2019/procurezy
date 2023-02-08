@@ -25,6 +25,7 @@ from eProc_Basic.Utilities.global_defination import global_variables
 from eProc_Configuration.models import OrgClients, \
      OrgAddressMap, AccountingData, SpendLimitId, OrgAddress, OrgPorg, OrgPGroup, OrgCompanies, \
     ApproverLimit,  CalenderConfig, Catalogs
+from eProc_Configuration.models.application_data import ProjectDetails
 from eProc_Configuration.models.development_data import *
 from eProc_Configuration.models.development_data import *
 from eProc_Org_Model.models import OrgModel
@@ -330,6 +331,16 @@ def get_dropdown_value(client, attr_value):
         attribute_values_list = append_attribute_value_description(attr_val_desc_list,
                                                                    'calender_id',
                                                                    'description')[0]
+        return attribute_values_list
+    if attr_value == CONST_PROJECT_ID:
+        attr_val_desc_list = DjangoQueries.django_filter_query(ProjectDetails,
+                                                               {'client': client,
+                                                                'del_ind': False},
+                                                               None,
+                                                               ['project_id', 'project_name'])
+        attribute_values_list = append_attribute_value_description(attr_val_desc_list,
+                                                                   'project_id',
+                                                                   'project_name')[0]
         return attribute_values_list
 
 

@@ -1,6 +1,6 @@
 from django.shortcuts import get_object_or_404
 
-from eProc_Configuration.models import OrgClients
+from eProc_Configuration.models.development_data import OrgClients
 
 
 class OrgClient:

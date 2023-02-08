@@ -34,7 +34,7 @@
         <div class="alert alert-warning display-none" id="sc_warning_messages" role="alert"></div>
         <div class="alert alert-info display-none" id="sc_info_messages" role="alert"></div>
         <div id="sc_error_msg" class="alert alert-danger display-none"></div>
-        <div id="sc_success_messages" class="alert alert-success display-none"></div>
+        <div id="sc_success_messages" class="alert alert-success msg-display-class display-none"></div>
 
         <div class="elements-space-between sc-button-group">
             <div class="sc_name_style">
@@ -355,7 +355,7 @@ function check_shopping_cart(type, sc_data, acc_default, acc_default_val){
     var error_messages = ''
     $('#sc_error_msg').hide();
     $('#sc_warning_messages').hide();
-    $('#sc_success_messages').hide();
+<!--    $('#sc_success_messages').hide();-->
     $('#sc_info_messages').hide();
     var default_address = "{{addr_val_desc|safe}}";
     var default_account_asignment_category = "{{acc_default|safe}}";
@@ -424,6 +424,7 @@ function check_shopping_cart(type, sc_data, acc_default, acc_default_val){
                   var display1 = msg_type.messages_id_desc;
                   $('#sc_success_messages').html(display1);
                    $('#sc_success_messages').show();
+                    // message_display_time_specific();
 
                 document.getElementById('sc_error_msg').style.display = 'none';
                 $('#sc_error_msg').html('');
@@ -463,9 +464,8 @@ function check_shopping_cart(type, sc_data, acc_default, acc_default_val){
                         }
                     }
                 }
-                document.getElementById('sc_success_messages').style.display = 'none';
-                document.getElementById('sc_error_msg').style.display = 'block';
                 CloseLoaderPopup();
+
             }
             if(type == 'save'){
                 save_shopping_cart_ajax(sc_data)
@@ -544,6 +544,7 @@ function save_shopping_cart(){
     {
         data = get_sc_data()
         check_shopping_cart('save', data, highest_item_acc_asgn_cat, highest_item_change_acc_value)
+        $('#sc_success_messages').show();
     }
 }
 
@@ -739,8 +740,6 @@ window.onload = function () {
         }
     }
 }
-
-
 
 function get_message_desc(msgId){
 var msg_type, result;

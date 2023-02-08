@@ -32,7 +32,7 @@ from eProc_Emails.models import EmailUserMonitoring, EmailDocumentMonitoring, Em
 from eProc_Org_Model.Utilities import client
 from eProc_Org_Model.models import OrgModel
 from eProc_Org_Support.models import OrgAnnouncements
-from eProc_Org_Support.views import org_announcement_search
+# from eProc_Org_Support.views import org_announcement_search
 from eProc_Purchase_Order.Utilities.purchase_order_generic import CreatePurchaseOrder, retrigger_po, check_po
 from eProc_Registration.models import UserData
 from eProc_Reports.Report_Forms.SearchDoc_forms import DocumentSearchForm, ApplicationMonitoringForm, \

@@ -51,7 +51,6 @@
 
     // Function to get SC number ranges from DB
     function get_sc_num_ranges() {
-
         $.ajax({
             type: "POST",
             url: "{% url 'eProc_Configuration:get_number_ranges' %}",
@@ -229,7 +228,7 @@
                 starting = sc_number_ranges[i]['starting']
                 ending = sc_number_ranges[i]['ending']
                 current = sc_number_ranges[i]['current']
-
+               
                 if (parseInt(ending) < parseInt(starting)) {
                     
                             var msg = "JMSG035";

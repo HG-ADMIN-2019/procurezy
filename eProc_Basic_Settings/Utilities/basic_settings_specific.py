@@ -18,6 +18,240 @@ from eProc_Basic.Utilities.functions.log_function import update_log_info
 django_query_instance = DjangoQueries()
 
 
+class BasicSettingsSave:
+    def __init__(self):
+        self.current_date_time = datetime.datetime.now()
+        self.username = global_variables.GLOBAL_LOGIN_USERNAME
+        self.client = global_variables.GLOBAL_CLIENT
+
+    def save_country(self, country_data):
+        """
+
+        """
+        country_db_list = []
+        for country_detail in country_data:
+            # if entry is not exists in db
+            if not django_query_instance.django_existence_check(Country,
+                                                                {'country_code': country_detail['country_code']}):
+                country_db_dictionary = {'country_code': (country_detail['country_code']).upper(),
+                                         'country_name': convert_to_camel_case(country_detail['country_name']),
+                                         'country_created_at': self.current_date_time,
+                                         'country_created_by': self.username,
+                                         'country_changed_at': self.current_date_time,
+                                         'country_changed_by': self.username
+                                         }
+                country_db_list.append(country_db_dictionary)
+            else:
+                django_query_instance.django_update_query(Country,
+                                                          {'country_code': country_detail['country_code']},
+                                                          {'country_code': country_detail['country_code'],
+                                                           'country_name': convert_to_camel_case(
+                                                               country_detail['country_name']),
+                                                           'country_changed_at': self.current_date_time,
+                                                           'country_changed_by': self.username,
+                                                           'del_ind': country_detail['del_ind']})
+            bulk_create_entry_db(Country, country_db_list)
+
+    def save_country_data_into_db(self, country_data):
+        """
+
+        """
+        self.save_country(country_data['data'])
+        if country_data['action'] == CONST_ACTION_DELETE:
+            msgid = 'MSG113'
+        else:
+            msgid = 'MSG112'
+        message = get_message_desc(msgid)[1]
+
+        upload_response = django_query_instance.django_filter_query(Country, {'del_ind': False}, None,
+                                                                    ['country_code', 'country_name'])
+
+        return upload_response, message
+
+    def save_languages(self, language_data):
+        """
+
+        """
+        language_db_list = []
+        for language_detail in language_data:
+            # if entry is not exists in db
+            if not django_query_instance.django_existence_check(Languages,
+                                                                {'language_id': language_detail['language_id']}):
+                language_db_dictionary = {'language_id': (language_detail['language_id']).upper(),
+                                          'description': convert_to_camel_case(language_detail['description']),
+                                          'languages_created_at': self.current_date_time,
+                                          'languages_created_by': self.username,
+                                          'languages_changed_at': self.current_date_time,
+                                          'languages_changed_by': self.username,
+                                          }
+                language_db_list.append(language_db_dictionary)
+            else:
+                django_query_instance.django_update_query(Languages,
+                                                          {'language_id': language_detail['language_id']},
+                                                          {'language_id': language_detail['language_id'],
+                                                           'description': convert_to_camel_case(language_detail['description']),
+                                                           'languages_changed_at': self.current_date_time,
+                                                           'languages_changed_by': self.username,
+                                                           'del_ind': language_detail['del_ind']})
+        bulk_create_entry_db(Languages, language_db_list)
+
+    def save_language_data_into_db(self, language_data):
+        """
+
+        """
+        self.save_languages(language_data['data'])
+        if language_data['action'] == CONST_ACTION_DELETE:
+            msgid = 'MSG113'
+        else:
+            msgid = 'MSG112'
+        message = get_message_desc(msgid)[1]
+        upload_response = get_configuration_data(Languages, {'del_ind': False}, ['language_id', 'description'])
+
+        return upload_response, message
+
+    def save_time_zone(self, timezone_data):
+        """
+
+        """
+        timezone_db_list = []
+        for timezone_detail in timezone_data:
+            # if entry is not exists in db
+            if not django_query_instance.django_existence_check(TimeZone,
+                                                                {'time_zone': timezone_detail['time_zone']}):
+                timezone_db_dictionary = {'time_zone': (timezone_detail['time_zone']).upper(),
+                                          'description': convert_to_camel_case(timezone_detail['description']),
+                                          'utc_difference': timezone_detail[
+                                              'utc_difference'],
+                                          'daylight_save_rule': timezone_detail[
+                                              'daylight_save_rule'],
+                                          'time_zone_created_at': self.current_date_time,
+                                          'time_zone_created_by': self.username,
+                                          'time_zone_changed_at': self.current_date_time,
+                                          'time_zone_changed_by': self.username,
+                                          'del_ind': timezone_detail['del_ind'],
+                                          }
+                timezone_db_list.append(timezone_db_dictionary)
+            else:
+                django_query_instance.django_update_query(TimeZone,
+                                                          {'time_zone': timezone_detail['time_zone']},
+                                                          {'time_zone': timezone_detail['time_zone'],
+                                                           'description': convert_to_camel_case(
+                                                               timezone_detail['description']),
+                                                           'utc_difference': timezone_detail[
+                                                               'utc_difference'],
+                                                           'daylight_save_rule': timezone_detail[
+                                                               'daylight_save_rule'],
+                                                           'time_zone_changed_at': self.current_date_time,
+                                                           'time_zone_changed_by': self.username,
+                                                           'del_ind': timezone_detail['del_ind']})
+        bulk_create_entry_db(TimeZone, timezone_db_list)
+
+    def save_timezone_data_into_db(self, timezone_data):
+        """
+
+        """
+        self.save_time_zone(timezone_data['data'])
+        if timezone_data['action'] == CONST_ACTION_DELETE:
+            msgid = 'MSG113'
+        else:
+            msgid = 'MSG112'
+        message = get_message_desc(msgid)[1]
+
+        upload_response = get_configuration_data(TimeZone, {'del_ind': False},
+                                                 ['time_zone', 'description', 'utc_difference', 'daylight_save_rule'])
+
+        return upload_response, message
+
+    def save_uom(self, unitofmeasures_data):
+        """
+
+        """
+        unitofmeasures_db_list = []
+        for unitofmeasures_detail in unitofmeasures_data:
+            # if entry is not exists in db
+            if not django_query_instance.django_existence_check(UnitOfMeasures,
+                                                                {'uom_id': unitofmeasures_detail['uom_id']}):
+                unitofmeasures_db_dictionary = {'uom_id': (unitofmeasures_detail['uom_id']).upper(),
+                                                'uom_description': convert_to_camel_case(
+                                                    unitofmeasures_detail['uom_description']),
+                                                'iso_code_id': (unitofmeasures_detail['iso_code_id']).upper(),
+                                                'unit_of_measures_created_at': self.current_date_time,
+                                                'unit_of_measures_created_by': self.username,
+                                                'unit_of_measures_changed_at': self.current_date_time,
+                                                'unit_of_measures_changed_by': self.username}
+                unitofmeasures_db_list.append(unitofmeasures_db_dictionary)
+            else:
+                django_query_instance.django_update_query(UnitOfMeasures,
+                                                          {'uom_id': unitofmeasures_detail['uom_id']},
+                                                          {'uom_id': unitofmeasures_detail['uom_id'],
+                                                           'uom_description': convert_to_camel_case(
+                                                               unitofmeasures_detail['uom_description']),
+                                                           'iso_code_id': (
+                                                               unitofmeasures_detail['iso_code_id']).upper(),
+                                                           'unit_of_measures_changed_at': self.current_date_time,
+                                                           'unit_of_measures_changed_by': self.username,
+                                                           'del_ind': unitofmeasures_detail['del_ind']})
+        bulk_create_entry_db(UnitOfMeasures, unitofmeasures_db_list)
+
+
+
+    def save_unitofmeasures_data_into_db(self, unitofmeasures_data):
+        # save uom data
+        self.save_uom(unitofmeasures_data['data'])
+        if unitofmeasures_data['action'] == CONST_ACTION_DELETE:
+            msgid = 'MSG113'
+        else:
+            msgid = 'MSG112'
+        message = get_message_desc(msgid)[1]
+        upload_response = get_configuration_data(UnitOfMeasures, {'del_ind': False},
+                                                 ['uom_id', 'uom_description', 'iso_code_id'])
+
+        return upload_response, message
+
+    def save_currency(self, currency_data):
+        """
+
+        """
+        currency_db_list = []
+        for currency_detail in currency_data:
+            # if entry is not exists in db
+            if not django_query_instance.django_existence_check(Currency,
+                                                                {'currency_id': currency_detail['currency_id']}):
+                currency_db_dictionary = {'currency_id': (currency_detail['currency_id']).upper(),
+                                          'description': convert_to_camel_case(currency_detail['description']),
+                                          'currency_created_at': self.current_date_time,
+                                          'currency_created_by': self.username,
+                                          'currency_changed_at': self.current_date_time,
+                                          'currency_changed_by': self.username,
+                                          'del_ind': currency_detail['del_ind']
+                                          }
+                currency_db_list.append(currency_db_dictionary)
+            else:
+                django_query_instance.django_update_query(Currency,
+                                                          {'currency_id': currency_detail['currency_id']},
+                                                          {'currency_id': currency_detail['currency_id'],
+                                                           'description': convert_to_camel_case(
+                                                               currency_detail['description']),
+                                                           'currency_changed_at': self.current_date_time,
+                                                           'currency_changed_by': self.username,
+                                                           'del_ind': currency_detail['del_ind']})
+        bulk_create_entry_db(Currency, currency_db_list)
+
+    def save_currency_data_into_db(self, currency_data):
+        """
+
+        """
+        self.save_currency(currency_data['data'])
+        if currency_data['action'] == CONST_ACTION_DELETE:
+            msgid = 'MSG113'
+        else:
+            msgid = 'MSG112'
+        message = get_message_desc(msgid)[1]
+        upload_response = get_configuration_data(Currency, {'del_ind': False}, ['currency_id', 'description'])
+
+        return upload_response, message
+
+
 def csv_data_arrangement(db_header, data_set_val):
     """
         rearranging the jumbled data from csv
@@ -349,284 +583,7 @@ def save_basic_data_into_db(basic_data, Table):
         return Upload_response, error_msg, error_msg1
 
 
-def save_country_data_into_db(country_data):
-    """
-
-    """
-    save_country(country_data['data'], global_variables.GLOBAL_LOGIN_USERNAME)
-    if country_data['action'] == CONST_ACTION_DELETE:
-        msgid = 'MSG113'
-    else:
-        msgid = 'MSG112'
-    message = get_message_desc(msgid)[1]
-    upload_response = get_configuration_data(Country, {'del_ind': False}, ['country_code', 'country_name'])
-
-    return upload_response, message
 
 
-def save_country(country_data, username):
-    """
-
-    """
-    country_db_list = []
-    for country_detail in country_data:
-        # if entry is not exists in db
-        if not django_query_instance.django_existence_check(Country,
-                                                            {'country_code': country_detail['country_code']}):
-            country_db_dictionary = {'country_code': (country_detail['country_code']).upper(),
-                                     'country_name': convert_to_camel_case(country_detail['country_name']),
-                                     'country_created_at': datetime.datetime.now(),
-                                     'country_created_by': username,
-                                     'country_changed_at': datetime.datetime.now(),
-                                     'country_changed_by': username
-                                     }
-            country_db_list.append(country_db_dictionary)
-        else:
-            django_query_instance.django_update_query(Country,
-                                                      {'country_code': country_detail['country_code']},
-                                                      {'country_code': country_detail['country_code'],
-                                                       'country_name': convert_to_camel_case(
-                                                           country_detail['country_name']),
-                                                       'country_changed_at': datetime.datetime.now(),
-                                                       'country_changed_by': username,
-                                                       'del_ind': country_detail['del_ind']})
-    bulk_create_entry_db(Country, country_db_list)
 
 
-def save_language_data_into_db(language_data):
-    save_languages(language_data['data'], global_variables.GLOBAL_LOGIN_USERNAME)
-    if language_data['action'] == CONST_ACTION_DELETE:
-        msgid = 'MSG113'
-    else:
-        msgid = 'MSG112'
-    message = get_message_desc(msgid)[1]
-    upload_response = get_configuration_data(Languages, {'del_ind': False}, ['language_id', 'description'])
-
-    return upload_response, message
-
-
-def save_languages(language_data, username):
-    """
-
-    """
-    language_db_list = []
-    for language_detail in language_data:
-        # if entry is not exists in db
-        if not django_query_instance.django_existence_check(Languages,
-                                                            {'language_id': language_detail['language_id']}):
-            language_db_dictionary = {'language_id': (language_detail['language_id']).upper(),
-                                      'description': convert_to_camel_case(language_detail['description']),
-                                      'languages_created_at': datetime.datetime.now(),
-                                      'languages_created_by': username,
-                                      'languages_changed_at': datetime.datetime.now(),
-                                      'languages_changed_by': username,
-                                      }
-            language_db_list.append(language_db_dictionary)
-        else:
-            django_query_instance.django_update_query(Languages,
-                                                      {'language_id': language_detail['language_id']},
-                                                      {'language_id': language_detail['language_id'],
-                                                       'description': convert_to_camel_case(
-                                                           language_detail['description']),
-                                                       'languages_changed_at': datetime.datetime.now(),
-                                                       'languages_changed_by': username,
-                                                       'del_ind': language_detail['del_ind']})
-    bulk_create_entry_db(Languages, language_db_list)
-
-
-def save_unitofmeasures_data_into_db(unitofmeasures_data):
-    # save uom data
-    save_uom(unitofmeasures_data['data'], global_variables.GLOBAL_LOGIN_USERNAME)
-    if unitofmeasures_data['action'] == CONST_ACTION_DELETE:
-        msgid = 'MSG113'
-    else:
-        msgid = 'MSG112'
-    message = get_message_desc(msgid)[1]
-    upload_response = get_configuration_data(UnitOfMeasures, {'del_ind': False},
-                                             ['uom_id', 'uom_description', 'iso_code_id'])
-
-    return upload_response, message
-
-
-def save_uom(unitofmeasures_data, user_name):
-    """
-
-    """
-    unitofmeasures_db_list = []
-    for unitofmeasures_detail in unitofmeasures_data:
-        # if entry is not exists in db
-        if not django_query_instance.django_existence_check(UnitOfMeasures,
-                                                            {'uom_id': unitofmeasures_detail['uom_id']}):
-            unitofmeasures_db_dictionary = {'uom_id': (unitofmeasures_detail['uom_id']).upper(),
-                                            'uom_description': convert_to_camel_case(
-                                                unitofmeasures_detail['uom_description']),
-                                            'iso_code_id': (unitofmeasures_detail['iso_code_id']).upper(),
-                                            'unit_of_measures_created_at': datetime.datetime.now(),
-                                            'unit_of_measures_created_by': user_name,
-                                            'unit_of_measures_changed_at': datetime.datetime.now(),
-                                            'unit_of_measures_changed_by': user_name}
-            unitofmeasures_db_list.append(unitofmeasures_db_dictionary)
-        else:
-            django_query_instance.django_update_query(UnitOfMeasures,
-                                                      {'uom_id': unitofmeasures_detail['uom_id']},
-                                                      {'uom_id': unitofmeasures_detail['uom_id'],
-                                                       'uom_description': convert_to_camel_case(
-                                                           unitofmeasures_detail['uom_description']),
-                                                       'iso_code_id': (
-                                                           unitofmeasures_detail['iso_code_id']).upper(),
-                                                       'unit_of_measures_changed_at': datetime.datetime.now(),
-                                                       'unit_of_measures_changed_by': user_name,
-                                                       'del_ind': unitofmeasures_detail['del_ind']})
-    bulk_create_entry_db(UnitOfMeasures, unitofmeasures_db_list)
-
-
-def save_currency_data_into_db(currency_data):
-    """
-
-    """
-    currency_db_list = []
-    save_currency(currency_data['data'], global_variables.GLOBAL_LOGIN_USERNAME)
-    if currency_data['action'] == CONST_ACTION_DELETE:
-        msgid = 'MSG113'
-    else:
-        msgid = 'MSG112'
-    message = get_message_desc(msgid)[1]
-    upload_response = get_configuration_data(Currency, {'del_ind': False}, ['currency_id', 'description'])
-
-    return upload_response, message
-
-
-def save_currency(currency_data, user_name):
-    """
-
-    """
-    currency_db_list = []
-    for currency_detail in currency_data:
-        # if entry is not exists in db
-        if not django_query_instance.django_existence_check(Currency,
-                                                            {'currency_id': currency_detail['currency_id']}):
-            currency_db_dictionary = {'currency_id': (currency_detail['currency_id']).upper(),
-                                      'description': convert_to_camel_case(currency_detail['description']),
-                                      'currency_created_at': datetime.datetime.now(),
-                                      'currency_created_by': user_name,
-                                      'currency_changed_at': datetime.datetime.now(),
-                                      'currency_changed_by': user_name,
-                                      'del_ind': currency_detail['del_ind']
-                                      }
-            currency_db_list.append(currency_db_dictionary)
-        else:
-            django_query_instance.django_update_query(Currency,
-                                                      {'currency_id': currency_detail['currency_id']},
-                                                      {'currency_id': currency_detail['currency_id'],
-                                                       'description': convert_to_camel_case(
-                                                           currency_detail['description']),
-                                                       'currency_changed_at': datetime.datetime.now(),
-                                                       'currency_changed_by': user_name,
-                                                       'del_ind': currency_detail['del_ind']})
-    bulk_create_entry_db(Currency, currency_db_list)
-
-
-def save_timezone_data_into_db(timezone_data):
-    """
-
-    """
-    save_time_zone(timezone_data['data'], global_variables.GLOBAL_LOGIN_USERNAME)
-    if timezone_data['action'] == CONST_ACTION_DELETE:
-        msgid = 'MSG113'
-    else:
-        msgid = 'MSG112'
-    message = get_message_desc(msgid)[1]
-
-    upload_response = get_configuration_data(TimeZone, {'del_ind': False},
-                                             ['time_zone', 'description', 'utc_difference', 'daylight_save_rule'])
-
-    return upload_response, message
-
-
-def save_time_zone(timezone_data, username):
-    """
-
-    """
-    timezone_db_list = []
-    for timezone_detail in timezone_data:
-        # if entry is not exists in db
-        if not django_query_instance.django_existence_check(TimeZone,
-                                                            {'time_zone': timezone_detail['time_zone']}):
-            timezone_db_dictionary = {'time_zone': (timezone_detail['time_zone']).upper(),
-                                      'description': convert_to_camel_case(timezone_detail['description']),
-                                      'utc_difference': timezone_detail[
-                                          'utc_difference'],
-                                      'daylight_save_rule': timezone_detail[
-                                          'daylight_save_rule'],
-                                      'time_zone_created_at': datetime.datetime.now(),
-                                      'time_zone_created_by': username,
-                                      'time_zone_changed_at': datetime.datetime.now(),
-                                      'time_zone_changed_by': username,
-                                      'del_ind': timezone_detail['del_ind'],
-                                      }
-            timezone_db_list.append(timezone_db_dictionary)
-        else:
-            django_query_instance.django_update_query(TimeZone,
-                                                      {'time_zone': timezone_detail['time_zone']},
-                                                      {'time_zone': timezone_detail['time_zone'],
-                                                       'description': convert_to_camel_case(
-                                                           timezone_detail['description']),
-                                                       'utc_difference': timezone_detail[
-                                                           'utc_difference'],
-                                                       'daylight_save_rule': timezone_detail[
-                                                           'daylight_save_rule'],
-                                                       'time_zone_changed_at': datetime.datetime.now(),
-                                                       'time_zone_changed_by': username,
-                                                       'del_ind': timezone_detail['del_ind']})
-    bulk_create_entry_db(TimeZone, timezone_db_list)
-
-
-def save_prodcat_data_into_db(prodcat_data):
-    """
-    """
-
-    save_unspsc(prodcat_data['data'], global_variables.GLOBAL_LOGIN_USERNAME)
-    if prodcat_data['action'] == CONST_ACTION_DELETE:
-        msgid = 'MSG113'
-    else:
-        msgid = 'MSG112'
-    message = get_message_desc(msgid)[1]
-    upload_response = get_configuration_data(UnspscCategories, {'del_ind': False}, ['prod_cat_id', 'prod_cat_desc'])
-    for prod_cat_desc in upload_response:
-        if django_query_instance.django_existence_check(UnspscCategoriesCust,
-                                                        {'del_ind': False,
-                                                         'prod_cat_id': prod_cat_desc['prod_cat_id']}):
-            prod_cat_desc["del_ind_flag"] = False
-        else:
-            prod_cat_desc["del_ind_flag"] = True
-
-        if prod_cat_desc['prod_cat_desc'] == None:
-            prod_cat_desc['prod_cat_desc'] = ''
-    return upload_response, message
-
-
-def save_unspsc(prodcat_data, username):
-    """
-
-    """
-    prodcat_db_list = []
-    for prodcat_detail in prodcat_data:
-        # if entry is not exists in db
-        if not django_query_instance.django_existence_check(UnspscCategories,
-                                                            {'prod_cat_id': prodcat_detail['prod_cat_id']}):
-            prodcat_db_dictionary = {'prod_cat_id': prodcat_detail['prod_cat_id'],
-                                     'prod_cat_desc': convert_to_camel_case(prodcat_detail['prod_cat_desc']),
-                                     'unspsc_categories_created_at': datetime.datetime.now(),
-                                     'unspsc_categories_created_by': username,
-                                     }
-            prodcat_db_list.append(prodcat_db_dictionary)
-        else:
-            django_query_instance.django_update_query(UnspscCategories,
-                                                      {'prod_cat_id': prodcat_detail['prod_cat_id']},
-                                                      {'prod_cat_id': prodcat_detail['prod_cat_id'],
-                                                       'prod_cat_desc': convert_to_camel_case(
-                                                           prodcat_detail['prod_cat_desc']),
-                                                       'unspsc_categories_changed_at': datetime.datetime.now(),
-                                                       'unspsc_categories_changed_by': username,
-                                                       'del_ind': prodcat_detail['del_ind']})
-    bulk_create_entry_db(UnspscCategories, prodcat_db_list)

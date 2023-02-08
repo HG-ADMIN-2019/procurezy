@@ -17,7 +17,7 @@
                 <button type="button" id="id_add_data" value="ADD" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="onclick_add_button(this)">
                     <i class="fa fa-plus"></i> Add Shopping Cart Number Range
                 </button>
-                 <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"  onclick="GetReferrer();">
+                 <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"  onclick="window_close();">
                     <i class="fas fa-times"></i> close
                 </button>
             </div>
@@ -249,10 +249,10 @@ function popup_save_data() {
     $("#id_popup_table TBODY TR").each(function () {
         var row = $(this);
         var number_range = {};
-        number_range.sequence = row.find("TD").eq(1).find('input[type="text"]').val().toUpperCase();
-        number_range.starting = row.find("TD").eq(2).find('input[type="text"]').val().toUpperCase();
-        number_range.ending = row.find("TD").eq(3).find('input[type="text"]').val().toUpperCase();
-        number_range.current = row.find("TD").eq(4).find('input[type="text"]').val().toUpperCase();
+        number_range.sequence = row.find("TD").eq(1).find('input[type="text"]').val();
+        number_range.starting = row.find("TD").eq(2).find('input[type="text"]').val();
+        number_range.ending = row.find("TD").eq(3).find('input[type="text"]').val();
+        number_range.current = row.find("TD").eq(4).find('input[type="text"]').val();
         number_range.del_ind = row.find("TD").eq(6).find('input[type="checkbox"]').is(':checked');
         number_range.guid = row.find("TD").eq(5).find('input').val();
 
@@ -406,10 +406,10 @@ function popup_save_data() {
                 var row = $(this);
 
                 //*************** reading data from the pop-up ***************
-                sequence = row.find("TD").eq(1).find('input[type="text"]').val().toUpperCase();
-                starting = row.find("TD").eq(2).find('input[type="text"]').val().toUpperCase();
-                ending = row.find("TD").eq(3).find('input[type="text"]').val().toUpperCase();
-                current = row.find("TD").eq(4).find('input[type="text"]').val().toUpperCase();
+                sequence = row.find("TD").eq(1).find('input[type="text"]').val();
+                starting = row.find("TD").eq(2).find('input[type="text"]').val();
+                ending = row.find("TD").eq(3).find('input[type="text"]').val();
+                current = row.find("TD").eq(4).find('input[type="text"]').val();
                 document_type = "DOC01"
                 checked_box = row.find("TD").eq(5).find('input[type="checkbox"]').is(':checked')
                 if (checked_box) {
@@ -716,13 +716,11 @@ function popup_save_data() {
             });
         }
 
-             function GetReferrer() {
+             function window_close() {
              window.history.back();
               var preUrl = document.referrer;
               console.log(preUrl);
               window.open('', '_self', '').close();
-<!--               var win = window.open(preUrl);-->
-<!--                win.focus();-->
               if (preUrl == null)
                      return "The previous page url is empty";
                else

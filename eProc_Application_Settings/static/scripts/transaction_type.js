@@ -2,26 +2,6 @@ var transaction_types_data = new Array();
 var validate_add_attributes = [];
 var TransactionTypes={};
 
-
-//onclick of add button display myModal popup and set GLOBAL_ACTION button value
-function onclick_add_button(button) {
-     dropdown_value();
-    $("#error_msg_id").css("display", "none")
-    $( "#header_select").prop( "hidden", false );
-    GLOBAL_ACTION = button.value
-    $('#id_popup_table').DataTable().destroy();
-    $('#myModal').modal('show');
-    $("#id_popup_tbody").empty();
-    $('#myModal').modal('show');
-    eliminate_used_sequence()
-    basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><input class="input form-control check_special_char" type="text" maxlength="15"  name="transaction type" style="text-transform:uppercase;" required></td><td><input type="text" class="form-control check_special_char" maxlength="10"  name="transaction description"  required></td><td><select class="input form-control" disabled>'+ document_type_dropdown +'</select></td><td><select class="input form-control">' + sequence_dropdown + '</select></td><td><input type="checkbox"  name="active_inactive" required></td><td hidden><input type="text" class= "form-control" name=" guid "></td><td hidden><input type="checkbox" required></td></tr>';
-    $('#id_popup_tbody').append(basic_add_new_html);
-    table_sort_filter('id_popup_table');
-    $("#id_del_ind_checkbox").prop("hidden", true);
-    document.getElementById("id_del_add_button").style.display = "block";
-    $("#save_id").prop("hidden", false);
-}
-
 // on click add icon display the row in to add the new entries
 function add_popup_row() {
     dropdown_value();
@@ -106,72 +86,6 @@ function onclick_update_button() {
     onclick_copy_update_button("update")
     document.getElementById("id_del_add_button").style.display = "none";
 }
-//**********************************************************
-
-function onclick_copy_update_button() {
-
-    $("#error_msg_id").css("display", "none")
-     $('#display_basic_table').DataTable().destroy();
-    $("#id_popup_tbody").empty();
-    $('#display_basic_table').DataTable().destroy();
-    //Reference the Table.
-    var grid = document.getElementById("display_basic_table");
-
-    //Reference the CheckBoxes in Table.
-    var checkBoxes = document.getElementsByClassName("checkbox_check");
-    var edit_basic_data = "";
-    var dropdown_val = [];
-    //Loop through the CheckBoxes.
-    for (var i = 0; i < checkBoxes.length; i++) {
-        if (checkBoxes[i].checked) {
-            var row = checkBoxes[i].parentNode.parentNode;
-            var document_type = row.cells[3].innerHTML
-            var sequence = row.cells[4].innerHTML
-            var active_inactive = row.cells[5].children.active_inactive.checked
-            dropdown_val.push([document_type, sequence, active_inactive])
-
-            sequence_remove_array = $.grep(sequence_remove_array, function (value) {
-                return value != sequence;
-            });
-            rendered_sequence_array.push(sequence)
-
-
-            guid = ''
-            if (GLOBAL_ACTION == "UPDATE") {
-                guid = row.cells[6].innerHTML
-
-            eliminate_used_sequence()
-            edit_basic_data += '<tr ><td><input type="checkbox" required></td><td><input class="input form-control check_special_char" type="text" maxlength="15" value="' + row.cells[1].innerHTML + '"  name="transaction type" style="text-transform:uppercase;" disabled></td><td><input type="text" class= "form-control check_special_char" maxlength="100" value="' + row.cells[2].innerHTML + '"  name="transaction description"  required></td><td><select class="input form-control" disabled>' + document_type_dropdown + '</select></td><td><select class="input form-control" disabled>' + sequence_dropdown + '</select></td><td><input type="checkbox"  name="active_inactive" required></td><td hidden><input type="text" class= "form-control" value="' + guid + '"></td><td hidden><input type="checkbox" required></td></tr>';
-            }
-            else{
-            eliminate_used_sequence()
-            edit_basic_data += '<tr ><td><input type="checkbox" required></td><td><input class="input form-control check_special_char" type="text" maxlength="15" value="' + row.cells[1].innerHTML + '"  name="transaction type" style="text-transform:uppercase;"></td><td><input type="text" class= "form-control check_special_char" maxlength="100" value="' + row.cells[2].innerHTML + '"  name="transaction description"  required></td><td><select class="input form-control" disabled>' + document_type_dropdown + '</select></td><td><select class="input form-control">' + sequence_dropdown + '</select></td><td><input type="checkbox"  name="active_inactive" required></td><td hidden><input type="text" class= "form-control" value="' + guid + '"></td><td hidden><input type="checkbox" required></td></tr>';
-            }
-
-        }
-    }
-    $('#id_popup_table').append(edit_basic_data);
-    var i = 0;
-    $("#id_popup_table TBODY TR").each(function () {
-        var row = $(this);
-        var document_type = dropdown_val[i][0]
-        var sequence = dropdown_val[i][1]
-        var active_inactive = dropdown_val[i][2]
-
-        $(row.find("TD").eq(1).find("select option[value=" + document_type + "]")).attr('selected', 'selected');
-        $(row.find("TD").eq(4).find("select option[value=" + sequence + "]")).attr('selected', 'selected');
-        if(active_inactive) {
-            $(row.find("TD").eq(5).find('input[name="active_inactive"]').attr('checked', 'checked'));
-        }
-       
-        i++;
-    })
-    $("#id_del_ind_checkbox").prop("hidden", true);
-    $('#myModal').modal('show');
-    table_sort_filter('display_basic_table');
-    table_sort_filter('id_popup_table');
-}
-//********************************************************
 
 //onclick of cancel empty the popup table body and error messages
 $(".remove_upload_data").click(() => {

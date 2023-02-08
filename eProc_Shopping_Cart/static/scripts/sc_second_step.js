@@ -900,7 +900,8 @@ function order_shopping_cart_ajax(sc_data) {
         success_message = 'Shopping cart ' + response.sc_details[1] + ' with number <a>' + response.sc_details[0] + '</a> ordered successfully'
         $('#sc_success_messages').html(success_message);
         document.getElementById('sc_success_messages').style.display = 'block';
-
+        $('#sc_success_messages').show();
+        $("#id_del_ind_checkbox").prop("hidden", false);
     }
 }
 
@@ -915,6 +916,7 @@ function save_shopping_cart_ajax(sc_data) {
         success_message = 'Shopping cart ' + response.sc_details[1] + ' with number ' + response.sc_details[0] + ' saved successfully';
         $('#sc_success_messages').html(success_message);
         document.getElementById('sc_success_messages').style.display = 'block';
+        $('#sc_success_messages').show();
         clear_session_data();
         window.indexedDB.deleteDatabase('store_attachments');
         display_third_step("SAVE_SC");

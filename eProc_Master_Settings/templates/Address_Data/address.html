@@ -31,7 +31,7 @@
                     <i class="fa fa-plus"></i> add address
                 </button>
                 <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"
-                    onclick="GetReferrer();">
+                    onclick="window_close();">
                     <i class="fas fa-times"></i> close
                 </button>
             </div>
@@ -881,32 +881,42 @@
         $('#success_msg_id').empty()
         GLOBAL_ACTION = 'DELETE'
         main_table_address_checked = [];
-        $('#display_basic_table').DataTable().destroy();
-        $("#display_basic_table TBODY TR").each(function () {
-            var row = $(this);
-            var address_arr_obj = {};
-            var cntry_name = '';
-            var cntry_code = '';
-            var lang_desc;
-            var lang_code;
+        var address_arr_obj = {};
+<!--        $('#display_basic_table').DataTable().destroy();-->
+<!--        $("#display_basic_table TBODY TR").each(function () {-->
+<!--            var row = $(this);-->
+<!--            var address_arr_obj = {};-->
+<!--            var cntry_name = '';-->
+<!--            var cntry_code = '';-->
+<!--            var lang_desc;-->
+<!--            var lang_code;-->
+<!--            var delInd = '';-->
 
-            cntry_name = row.find("TD").eq(5).html();
-            for (i = 0; i < render_country_data.length; i++) {
-                if (cntry_name == render_country_data[i].country_name)
-                    cntry_code = render_country_data[i].country_code;
-            }
-
+<!--            cntry_name = row.find("TD").eq(5).html();-->
+<!--            for (i = 0; i < render_country_data.length; i++) {-->
+<!--                if (cntry_name == render_country_data[i].country_name)-->
+<!--                    cntry_code = render_country_data[i].country_code;-->
+<!--            }-->
+<!--            delInd = row.find("TD").eq(8).html();-->
+<!--            if((delInd == 'False')||(delInd == 'false')){-->
+<!--                address_arr_obj.del_ind = 0;-->
+<!--            }-->
+<!--            else-->
+<!--            {-->
+<!--                address_arr_obj.del_ind = 1;-->
+<!--            }-->
             address_arr_obj.address_number = GLOBAL_ADDRESS_NO;
-            address_arr_obj.name1 = row.find("TD").eq(2).html();
-            address_arr_obj.name2 = row.find("TD").eq(3).html();
-            address_arr_obj.city = row.find("TD").eq(4).html();
-            address_arr_obj.email = row.find("TD").eq(5).html();
-            address_arr_obj.country_code = cntry_code;
-            address_arr_obj.del_ind = row.find("TD").eq(8).html();
-            address_arr_obj.address_guid = row.find("TD").eq(9).html();
+            address_arr_obj.del_ind = 1;
             main_table_address_checked.push(address_arr_obj);
+<!--            address_arr_obj.title = row.find("TD").eq(1).html();-->
+<!--            address_arr_obj.name1 = row.find("TD").eq(2).html();-->
+<!--            address_arr_obj.name2 = row.find("TD").eq(3).html();-->
+<!--            address_arr_obj.city = row.find("TD").eq(4).html();-->
+<!--            address_arr_obj.email = row.find("TD").eq(5).html();-->
+<!--            address_arr_obj.country_code = cntry_code;-->
+<!--            address_arr_obj.address_guid = row.find("TD").eq(9).html();-->
 
-        });
+<!--        });-->
 
         $('#id_delete_confirm_popup').modal('hide');
         data = { 'data': main_table_address_checked, 'table_name': 'OrgAddress', 'action': GLOBAL_ACTION }
@@ -1124,7 +1134,7 @@ function onclick_display_csv_data() {
         document.getElementById("id_del_add_button").style.display = "none";
     }
 
-    function GetReferrer() {
+    function window_close() {
         window.history.back();
         var preUrl = document.referrer;
         console.log(preUrl);

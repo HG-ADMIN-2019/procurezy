@@ -1,4 +1,4 @@
-from aioredis.commands import transaction
+# from aioredis.commands import transaction
 from django.contrib.auth.decorators import login_required
 from django.core import serializers
 from django.db.models import Q

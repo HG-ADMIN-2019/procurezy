@@ -111,3 +111,7 @@ def catalog_config(request):
     }
     return render(request,
                   'ManageContent/catalog_config.html', context)
+
+
+
+
