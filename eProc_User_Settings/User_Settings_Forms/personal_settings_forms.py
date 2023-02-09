@@ -23,8 +23,6 @@ class PersonalSettingsForm(forms.ModelForm):
     currency_id = forms.ModelChoiceField(queryset=Currency.objects.filter(del_ind=False), label='Currency')
     time_zone = forms.ModelChoiceField(queryset=TimeZone.objects.filter(del_ind=False))
 
-    language_data = django_query_instance.django_filter_value_list_query(Languages, {'del_ind': False}, 'language_id')
-
     # def clean(self):
     #     cleaned_data = super().clean()
     #     first_name = cleaned_data.get('first_name')
