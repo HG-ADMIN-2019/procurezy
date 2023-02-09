@@ -30,6 +30,8 @@ from eProc_Doc_Search_and_Display.Utilities.search_display_specific import get_o
 from eProc_Emails.Utilities.email_notif_generic import appr_notify, send_po_attachment_email
 from eProc_Price_Calculator.Utilities.price_calculator_generic import calculate_item_total_value
 # from eProc_Purchase_Order.Utilities.purchase_order_generic import CreatePurchaseOrder
+from eProc_Purchase_Order.Utilities.purchase_order_generic import CreatePurchaseOrder
+from eProc_Registration.models.registration_model import UserData
 from eProc_Ship_To_Bill_To_Address.Utilites.ship_to_bill_to_generic import ShipToBillToAddress
 from eProc_Shopping_Cart.Shopping_Cart_Forms.call_off_forms.limit_form import UpdateLimitItem
 from eProc_Shopping_Cart.Utilities.save_order_edit_sc import SaveShoppingCart, CheckForScErrors
@@ -45,6 +47,7 @@ from eProc_Notes_Attachments.Notes_Attachments.Attachment_Form import CreateAtta
 from eProc_Notes_Attachments.Notes_Attachments.Notes_Form import NotesForm
 from eProc_Shopping_Cart.context_processors import update_user_info, update_user_obj_id_list_info
 from eProc_Shopping_Cart.models import CartItemDetails
+from eProc_Shopping_Cart.models.shopping_cart import ScHeader
 from eProc_System_Settings.Utilities.system_settings_generic import sys_attributes
 from eProc_User_Settings.Utilities.user_settings_generic import get_object_id_list_user, get_attr_value
 from eProc_User_Settings.Utilities.user_settings_specific import UserSettings
