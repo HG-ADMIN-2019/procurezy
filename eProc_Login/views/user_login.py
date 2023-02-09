@@ -77,7 +77,7 @@ def login_page(request):
 
         if user_details.login_attempts == login_attempts and user_details.pwd_locked is True:
             msgid = 'MSG056'
-            error_msg = get_message_desc(msgid)[0]
+            error_msg = get_message_desc_without_client(msgid)[0]
             messages.error(request, error_msg)
             # messages.error(request, MSG056)
 
