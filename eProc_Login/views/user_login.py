@@ -55,7 +55,7 @@ def login_page(request):
 
             client = user_details.client_id
         else:
-            error_msg = get_message_desc_without_client(MSG055)[1]
+            error_msg = get_message_desc_without_client('MSG055')[1]
             # msgid = 'MSG055'
             #
             # msg = error_msg['message_desc'][0]
@@ -118,7 +118,7 @@ def login_page(request):
 
             # If Login Credentials are invalid display error message and increase login_attempts by 1
             else:
-                error_msg = get_message_desc_without_client(MSG029)[1]
+                error_msg = get_message_desc_without_client('MSG029')[1]
                 # msgid = 'MSG029'
                 # error_msg = get_message_desc_without_client(msgid)
                 # msg = error_msg['message_desc'][0]
@@ -130,7 +130,7 @@ def login_page(request):
                     user_details.login_attempts = user_details.login_attempts + 1
                     user_details.save()
                     attempts = int(login_attempts) - user_details.login_attempts
-                    error_msg = get_message_desc_without_client(MSG057)
+                    error_msg = get_message_desc_without_client('MSG057')
                     # msgid = 'MSG057'
                     # msg = error_msg['message_desc'][0]
                     # error_msg = msg
