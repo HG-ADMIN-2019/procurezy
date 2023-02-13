@@ -30,7 +30,7 @@ from eProc_Basic.Utilities.functions.django_query_set import DjangoQueries
 from eProc_Basic.Utilities.functions.messages_config import get_msg_desc, get_message_desc
 from eProc_Basic.Utilities.global_defination import global_variables
 from eProc_Basic.Utilities.messages.messages import MSG172, MSG173, MSG174, MSG175, MSG176, MSG188
-from eProc_Configuration.models.application_data import WorkflowSchema
+from eProc_Configuration.models.application_data import WorkflowSchema, FreeTextForm
 from eProc_Configuration.models.development_data import AuthorizationObject, AccountAssignmentCategory, Authorization, \
     AuthorizationGroup
 from eProc_Configuration.models.master_data import WorkflowACC
@@ -566,7 +566,7 @@ def get_manger_detail(client, login_username, acc_default, total_value, default_
                     if schema_step_type == 'FIN':
                         app_limit = list(django_query_instance.django_filter_only_query(WorkflowACC, {
                             'company_id': default_cmp_code, 'account_assign_cat': acc_default,
-                            'acc_value': acc_value, 'client': client
+                            'acc_value': acc_value, 'client': client,'del_ind':False
                         }).values_list('app_username', 'sup_acc_value', 'sup_company_id', 'currency_id',
                                        'sup_account_assign_cat', 'company_id'))
                         count = 1
@@ -621,7 +621,7 @@ def get_manger_detail(client, login_username, acc_default, total_value, default_
                                             django_query_instance.django_filter_only_query(WorkflowACC, {
                                                 'company_id': approver_detail[2],
                                                 'account_assign_cat': approver_detail[4],
-                                                'acc_value': approver_detail[1], 'client': client
+                                                'acc_value': approver_detail[1], 'client': client,'del_ind':False
                                             }).values_list('app_username', 'sup_acc_value', 'sup_company_id',
                                                            'currency_id',
                                                            'sup_account_assign_cat', 'company_id'))

@@ -34,6 +34,7 @@ from eProc_Shopping_Cart.context_processors import update_user_info
 from eProc_Shopping_Cart.models import *
 from eProc_Basic.Utilities.functions.get_db_query import get_user_currency
 from eProc_Exchange_Rates.Utilities.exchange_rates_generic import convert_currency
+from eProc_Shopping_Cart.models.add_to_cart import CartItemDetails
 from eProc_System_Settings.Utilities.system_settings_generic import sys_attributes
 from eProc_User_Settings.Utilities.user_settings_generic import get_object_id_list_user
 
@@ -85,7 +86,6 @@ def sc_first_step(request):
     cart_items_guid_list = []
     for items in cart_items:
         cart_items_guid_list.append(items['guid'])
-        requester_currency = global_variables.GLOBAL_REQUESTER_CURRENCY
         item_currency = items['currency']
         if not item_currency:
             item_currency = get_requester_currency(items['username'])
@@ -230,6 +230,162 @@ def sc_first_step(request):
 
     return render(request, 'Shopping_Cart/sc_first_step/sc_first_step.html', context)
 
+
+def shopping_cart_first_step(request):
+    """
+    :param request: Gets the items from the database w.r.t the user and display all items in the cart
+    :return: sc_first_step.html
+    """
+    is_limit_item = False
+    update_user_info(request)
+    org_attr_value_instance = OrgAttributeValues()
+    total_value = 0
+    supplier_id = None
+    actual_price_list = []
+    discount_value_list = []
+    tax_value_list = []
+    gross_price_list = []
+    catalog_qty = None
+    total_item_value = []
+    holiday_list = []
+    limit_item_details = {}
+    prod_desc = ''
+    form_id = ''
+    requester_user_id = ''
+    cart_items = list(
+        django_query_instance.django_filter_query(CartItemDetails, {
+            'username': global_variables.GLOBAL_LOGIN_USERNAME,
+            'client': global_variables.GLOBAL_CLIENT
+        }, ['item_num'], None)
+    )
+
+    if len(cart_items) == 0:
+        return HttpResponseRedirect('/shop/products_services/All/create')
+
+    object_id_list = get_object_id_list_user(global_variables.GLOBAL_CLIENT, global_variables.GLOBAL_LOGIN_USER_OBJ_ID)
+    default_calendar_id = org_attr_value_instance.get_user_default_attr_value_list_by_attr_id(object_id_list,
+                                                                                              CONST_CALENDAR_ID)[1]
+    i = 0
+    cart_items_guid_list = []
+    for items in cart_items:
+        cart_items_guid_list.append(items['guid'])
+        item_currency = items['currency']
+        if not item_currency:
+            item_currency = global_variables.GLOBAL_USER_CURRENCY
+
+        call_off = items['call_off']
+
+        requester_user_id = items['username']
+        if item_currency != global_variables.GLOBAL_USER_CURRENCY:
+            actual_price_list.append(
+                convert_currency(float(items['actual_price']) * items['quantity'], str(item_currency),
+                                 str(global_variables.GLOBAL_USER_CURRENCY)))
+            discount_value_list.append(
+                convert_currency(items['discount_value'], str(item_currency), str(global_variables.GLOBAL_USER_CURRENCY)))
+            tax_value_list.append(convert_currency(items['tax_value'], str(item_currency), str(global_variables.GLOBAL_USER_CURRENCY)))
+            # gross_price_list.append(convert_currency(float(items['gross_price'])*items['quantity'], str(item_currency), str(user_currency)))
+        else:
+            actual_price_list.append(float(items['actual_price']) * items['quantity'])
+            discount_value_list.append(items['discount_value'])
+            tax_value_list.append(items['tax_value'])
+            # gross_price_list.append(float(items['gross_price'])*items['quantity'])
+
+        if call_off == CONST_LIMIT_ORDER_CALLOFF:
+            is_limit_item = True
+            limit_item_details = get_limit_item_details(items['guid'])
+            overall_limit = items['overall_limit']
+            quantity = 0
+            price_unit = 1
+            prod_id = items['prod_cat']
+            price = 0
+            prod_desc = get_prod_by_id(prod_id=prod_id)
+            value = calculate_item_total_value(call_off, quantity, catalog_qty, price_unit, price, overall_limit)
+            if item_currency != global_variables.GLOBAL_USER_CURRENCY:
+                value = convert_currency(value, str(item_currency), str(global_variables.GLOBAL_USER_CURRENCY))
+            if value:
+                total_item_value.append(float(format(value, '2f')))
+            else:
+                total_item_value.append(0)
+            items['item_value'] = value
+
+            total_value = round(sum(total_item_value), 2)
+
+        else:
+            overall_limit = None
+            quantity = items['quantity']
+            price = items['price']
+            price_unit = items['price_unit']
+            value = calculate_item_total_value(call_off, quantity, catalog_qty, price_unit, price, overall_limit)
+            value = convert_currency(value, str(item_currency), str(global_variables.GLOBAL_USER_CURRENCY))
+            if value:
+                total_item_value.append(float(format(value, '2f')))
+            else:
+                total_item_value.append(0)
+
+            total_value = round(sum(total_item_value), 2)
+            i += 1
+
+    cart_length = django_query_instance.django_filter_count_query(CartItemDetails, {
+        'username': global_variables.GLOBAL_LOGIN_USERNAME,
+        'client': global_variables.GLOBAL_CLIENT
+    })
+    # total price detail
+    actual_price = round(sum(actual_price_list), 2)
+    discount_value = round(sum(discount_value_list), 2)
+    tax_value = round(sum(tax_value_list), 2)
+    # gross_price = round(sum(gross_price_list), 2)
+
+    product_category = get_prod_cat(request, prod_det=None)
+    requester_currency = get_requester_currency(requester_user_id)
+
+    cart_items = list(django_query_instance.django_filter_query(CartItemDetails,
+                                                                {'username': global_variables.GLOBAL_LOGIN_USERNAME,
+                                                                 'client': global_variables.GLOBAL_CLIENT},
+                                                                ['item_num'], None))
+    for items in cart_items:
+        if items['call_off'] == CONST_CATALOG_CALLOFF:
+            items['image_url'] = get_image_url(items['int_product_id'])
+        else:
+            items['image_url'] = ''
+    cart_items = update_eform_details_scitem(cart_items)
+
+    cart_items = zip(cart_items, total_item_value)
+
+    sys_attributes_instance = sys_attributes(global_variables.GLOBAL_CLIENT)
+
+    context = {
+        'product_category': product_category,
+        'limit_form': UpdateLimitItem(),
+        'cart_items': cart_items,
+        'cart_length': cart_length,
+        'cart_items_guid_list': cart_items_guid_list,
+        'requester_currency': requester_currency,
+        'inc_nav': True,
+        'shopping': True,
+        'prod_desc': prod_desc,
+        'form_id': form_id,
+        'currency': django_query_instance.django_filter_only_query(Currency, {'del_ind': False}),
+        'unit': django_query_instance.django_filter_only_query(UnitOfMeasures, {'del_ind': False}),
+        'total_item_value': total_item_value,
+        # total price detail
+        'total_value': format(total_value, '.2f'),
+        'actual_price': format(actual_price, '.2f'),
+        'discount_value': format(discount_value, '.2f'),
+        'tax_value': format(tax_value, '.2f'),
+        # 'gross_price': gross_price,
+        'supplier_details': get_supplier_first_second_name(global_variables.GLOBAL_CLIENT),
+        'date_today': datetime.datetime.today(),
+        'display_update_delete': True,
+        'currency_list': get_currency_list(),
+        'country_list': get_country_data(),
+        'is_first_step': True,
+        'add_favourites_flag': sys_attributes_instance.get_add_favourites(),
+    }
+
+    if is_limit_item:
+        context['limit_item_details'] = limit_item_details
+
+    return render(request, 'Shopping_Cart/sc_first_step/sc_first_step.html', context)
 
 # Function display eform data in first step of shopping cart wizard
 def display_eform_data(request):

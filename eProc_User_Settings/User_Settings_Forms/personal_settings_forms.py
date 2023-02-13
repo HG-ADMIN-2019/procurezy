@@ -15,6 +15,7 @@ from eProc_Basic.Utilities.functions.get_db_query import django_query_instance
 from eProc_Basic.Utilities.messages.messages import MSG020, MSG026
 from eProc_Basic.models import *
 from eProc_Configuration.models import *
+from eProc_Configuration.models.basic_data import Languages
 from eProc_Registration.models import UserData
 
 

@@ -163,7 +163,7 @@ class ApplicationSettingsSave:
 
             else:
                 if number_range_detail['del_ind']:
-                    if django_query_instance.django_existence_check(NumberRanges,
+                    if django_query_instance.django_existence_check(TransactionTypes,
                                                                     {'sequence': number_range_detail['sequence'],
                                                                      'client': self.client,
                                                                      'document_type':
