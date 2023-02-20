@@ -19,6 +19,7 @@ from eProc_Org_Model.Utilities.client import OrgClient
 from eProc_Org_Model.Utilities.node import Node
 
 from eProc_Org_Model.Utilities.organization import Organization
+from eProc_Org_Model.models.org_model import OrgModel
 
 from eProc_Registration.models import UserData
 from eProc_Shopping_Cart.context_processors import update_user_info
@@ -117,8 +118,12 @@ class ApiHandler:
     @staticmethod
     def save_node(client, name, node_type, parent_node, root_node_object_id):
         try:
+            org_name_count = django_query_instance.django_filter_count_query(OrgModel,
+                                                                             {'client': client,
+                                                                              'name': name,
+                                                                              'del_ind': False})
             # if OrgModel.objects.filter(client=client, name=name, del_ind = None).exists():
-            if OrgModel.objects.filter(client=client, name=name, del_ind=False).count() > 0:
+            if org_name_count > 0:
                 return ['{"error": "Node already exists"}']
             else:
                 new_node = Node(client, None)
