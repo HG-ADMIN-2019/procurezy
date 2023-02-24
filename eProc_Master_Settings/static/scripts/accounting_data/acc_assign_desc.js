@@ -40,7 +40,6 @@ function account_assignment_value_find(company_num) {
      for (var i = 0; i < assmtValDistinct.length; i++) {
         corresponding_values.acc_ass_val_dropdwn += '<option value="'+assmtValDistinct[i]+'">' + assmtValDistinct[i] + '</option>'
      }
-
     return corresponding_values
 }
 
@@ -164,7 +163,7 @@ function delete_duplicate() {
         aad_code_check.push(compare);
     })
     table_sort_filter_popup_pagination('id_popup_table')
-    check_data()
+    check_data();
 }
 
 //********************************************
