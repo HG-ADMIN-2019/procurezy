@@ -2,21 +2,16 @@
 {% load static %}
 {% block title %} Roles (Application Settings) {% endblock %}
 {% block maincontent %}
-
 {% include 'root/loader.html' %}
 
 <div class="container-fluid">
     <div class="configuration-table_wrapper">
-
         <div class="elements-space-between">
             <h3>Maintain Roles</h3>
             <div>
                 <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Application_Settings:extract_user_role_data' %}'"type="button">
                     <i class="fas fa-download"></i> extract data
                 </button>
-<!--                <button class="btn btn-outline-primary modal_upload" id="id_upload_redirect_data" value="roles_upload" onclick="onclick_upload_button()" type="button">-->
-<!--                    <i class="fas fa-cloud-upload-alt"></i> upload data-->
-<!--                </button> -->
                 <button class="btn btn-primary" type="button" id="id_add_data" value="ADD" data-toggle="modal" onclick="onclick_add_button(this)">
                     <i class="fa fa-plus"></i> add role
                 </button>
@@ -25,13 +20,10 @@
                 </button>
             </div>
         </div>
-
         <hr>
-
         <div class="configuration-table_section">
             <div id="err_msg_app_settings"> </div>
             <div id="err_msg_app_settings_t" class="alert alert-success" hidden><span id="success_msg_id"></span></div>
-
             <div class="table-container tcw-60">
                 <div class="edit-button-section mb-4">
                     <button class="btn btn-secondary btn-sm" id="id_edit_data" onclick="onclick_edit_button()">
@@ -40,17 +32,10 @@
                     <button class="btn btn-outline-danger btn-sm" id="id_delete_data" value="roles_delete" data-toggle="modal" data-target="#id_delete_confirm_popup" style="display:none;">
                         <i class="fa fa-trash"></i> Delete
                     </button>
-<!--                    <button class="btn btn-primary btn-sm" id="id_copy_data" style="display:none;" value="COPY" type="button" onclick="onclick_copy_button()">-->
-<!--                        <i class="fa fa-copy"></i> Copy-->
-<!--                    </button>-->
-<!--                    <button class="btn btn-primary btn-sm"  id="id_update_data" style="display:none;" value="UPDATE" type="button" onclick="onclick_update_button()">-->
-<!--                        <i class="far fa-edit"></i> Update-->
-<!--                    </button>-->
                     <button class="btn btn-secondary btn-sm" id="id_cancel_data" style="display:none;" type="button"  onclick="display_basic_db_data()">
                         <i class="fas fa-times"></i> cancel
                     </button>
                 </div>
-
                 <table id="display_basic_table" class="class_basic_roles_table table table-bordered custom-table">
                     <thead id="id_roles_table_header">
                         <tr>
@@ -78,7 +63,6 @@
         </div>
     </div>
     <!--end of display basic roles table-->
-
     <!--modal popup for Add,copy,update and upload-->
     <div class="modal fade" id="myModal">
         <div class="modal-dialog modal-dialog-centered modal-lg">
@@ -91,12 +75,10 @@
                 </div>
                 <!-- Modal body -->
                 <div class="modal-body scrollbox">
-                
                     <div id="id_del_add_button">
                         <button class="btn btn-primary" type="button" onclick="add_popup_row()"><i class="fa fa-plus"></i> add new row </button>
                         <button class="btn btn-outline-danger" onclick="application_settings_delete_Row('id_popup_table')"><i class="fa fa-trash" aria-hidden="true" title="Delete Line"></i> delete</button>
                     </div>
-                    
                     <div id="id_check_success_messages" class="alert alert-success check_success_message" hidden></div>
                     <div id="id_check_error_messages" class="alert alert-danger check_error_messages" hidden></div>
                     <div id="id_check_special_character_messages" class="alert alert-danger check_special_character_messages" hidden>
@@ -107,9 +89,6 @@
                      <div id="error_msg_id" class="alert alert-danger display-none" role="alert"><span id="error_message"></span></div>
                     <div id="id_warning_msg_id" class="alert alert-warning display-none" role="alert"></div>
                     <div id="id_info_msg_id" class="alert alert-primary display-none" role="alert"></div>
-
-
-
                     <table class="class_popup_table table table-bordered mt-2" id="id_popup_table">
                         <thead>
                             <tr>
@@ -120,12 +99,9 @@
                             </tr>
                         </thead>
                         <tbody id=id_popup_tbody>
-
                         </tbody>
                     </table>
-
                     </div>
-
                 <!-- Modal footer -->
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-primary remove_upload_data" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
@@ -165,15 +141,15 @@
     var appname = uiConstants["CONST_APPNAME01"]
     var db_header_data = uiConstants["CONST_HEADER_DATA_ROLES"]
 
+
+    //**************************
     var roles_type_dropdown= '';
         function dropdown_value(){
             roles_type_dropdown = '';
             $.each(rendered_roles_type_values, function(i, item){
             roles_type_dropdown += '<option value="' + item.field_type_id + '">' + item.field_type_id + '</option>';
-            });
-        }
-
-
+        });
+    }
 
     //onclick of data Upload copy data to modal pop-up
     function onclick_display_csv_data() {
@@ -191,54 +167,50 @@
             contentType: "application/json; charset=utf-8",
             success: function(response) {
                 if (response == "Please check the uploaded csv file") {
-                    $("#id_error_msg_upload").prop("hidden", false)
-                    document.getElementById("id_error_msg_upload").innerHTML = response;
-                    document.getElementById("id_error_msg_upload").style.color = "Red";
-                    $('#id_data_upload').modal('show');
-                } else {
-                    roles_data_array = response;
-                    var edit_basic_data = '';
-                    var del_ind = '';
-                    $("#id_popup_tbody").empty();
-                    $.each(response, function(i, value) {
-                        del_ind = '<td>' + value[2] + '</td>'
-                        if (value[2] == 1) {
-                            del_ind = ' <input type="checkbox" value="' + value[2] + '" checked>'
-                        } else {
-                            del_ind = '<input type="checkbox" value="' + value[2] + '" required>'
-                        }
-                        edit_basic_data += '<tr ><td class="class_select_checkbox"><input type="checkbox" required></td><td><input type="text" value="' + value[0] + '" maxlength="40" onkeypress="return /[A-Z]/i.test(event.key)" required></td><td><input class="form-control" type="text" value="' + value[1] + '" maxlength="60" onkeypress="return /[A-Z]/i.test(event.key)" required></td><td>' + del_ind + '</td></tr>';
-                    });
-                    $('#id_popup_tbody').append(edit_basic_data);
-                    $("#id_del_ind_checkbox").prop("hidden", false);
-                    $(".class_del_checkbox").prop("hidden", false);
-                    $('#myModal').modal('show');
-                    $('#id_data_upload').modal('hide');
-                    document.getElementById("id_del_add_button").style.display = "block";
-                    document.getElementById("id_check_data").style.display = "block";
-                    $("#id_check_data").prop("hidden", false);
-                    $("#save_id").prop("hidden", true);
-                    table_sort_filter_popup_pagination('id_popup_table')
-                }
-            },
-            cache: false,
-            processData: false,
-            contentType: false,
+                $("#id_error_msg_upload").prop("hidden", false)
+                document.getElementById("id_error_msg_upload").innerHTML = response;
+                document.getElementById("id_error_msg_upload").style.color = "Red";
+                $('#id_data_upload').modal('show');
+            } else {
+                roles_data_array = response;
+                var edit_basic_data = '';
+                var del_ind = '';
+                $("#id_popup_tbody").empty();
+                $.each(response, function(i, value) {
+                    del_ind = '<td>' + value[2] + '</td>'
+                    if (value[2] == 1) {
+                        del_ind = ' <input type="checkbox" value="' + value[2] + '" checked>'
+                    } else {
+                        del_ind = '<input type="checkbox" value="' + value[2] + '" required>'
+                    }
+                    edit_basic_data += '<tr ><td class="class_select_checkbox"><input type="checkbox" required></td><td><input type="text" value="' + value[0] + '" maxlength="40" onkeypress="return /[A-Z]/i.test(event.key)" required></td><td><input class="form-control" type="text" value="' + value[1] + '" maxlength="60" onkeypress="return /[A-Z]/i.test(event.key)" required></td><td>' + del_ind + '</td></tr>';
+                });
+                $('#id_popup_tbody').append(edit_basic_data);
+                $("#id_del_ind_checkbox").prop("hidden", false);
+                $(".class_del_checkbox").prop("hidden", false);
+                $('#myModal').modal('show');
+                $('#id_data_upload').modal('hide');
+                document.getElementById("id_del_add_button").style.display = "block";
+                document.getElementById("id_check_data").style.display = "block";
+                $("#id_check_data").prop("hidden", false);
+                $("#save_id").prop("hidden", true);
+                table_sort_filter_popup_pagination('id_popup_table')
+            }
+        },
+        cache: false,
+        processData: false,
+        contentType: false,
+    });
+}
 
-        });
-    }
-    
-   
     // validate and save for add,copy,update and upload data
     function popup_save_data() {
-         $('#success_msg_id').empty()
+        $('#success_msg_id').empty()
         $('#id_popup_table').DataTable().destroy();
         var main_table_low_value = [];
-         no_duplicate_entries = 'Y'
-         no_duplicate_value = 'Y'
-         var error_message = '';
-
-
+        no_duplicate_entries = 'Y'
+        no_duplicate_value = 'Y'
+        var error_message = '';
         $('#display_basic_table').DataTable().destroy();
         $("#display_basic_table TBODY TR").each(function() {
             var row = $(this);
@@ -248,75 +220,50 @@
         });
         table_sort_filter('display_basic_table');
         [no_duplicate_value,error_message] = compare_table_for_duplicate_entries(validate_add_attributes, roles_data)
-    if (error_message){
-        display_error_message(error_message)
-
-    }
-    else{
-            if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
-                [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
-        }
-        if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
-            var add_basic_data = '';
-            var roles_data_array = roles_data;
-
-            $('#id_save_confirm_popup').modal('hide');
-           data  = {'data':roles_data,'table_name':'UserRoles','action':GLOBAL_ACTION}
-            OpenLoaderPopup();
-            $.ajax({
-                type: 'POST',
-                url: "{% url 'eProc_Configuration:create_update_application_data' %}",
-                data: JSON.stringify(data),
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                success: function(Response) {
-                    rendered_roles_data = Response[0];
-                    rendered_roles_type_values = Response[2];
-                    display_basic_db_data();
-                    dropdown_value();
-                    $('#myModal').modal('hide');
-                   // $('#id_error_msg').text(messageConstants["JMSG001"])
-                    $('#success_msg_id').text(Response[1])
-                     if(Response[1].message_type== 'SUCCESS'){
-                         $('#success_msg_id').text(Response[1].message_desc)
-                    }
-                    $("#err_msg_app_settings_t").prop("hidden", false)
-                    table_sort_filter('id_popup_table');
-                    setTimeout(function() {
-                        $("#err_msg_app_settings_t").prop("hidden", true);
-                    }, 5000)
-                    table_sort_filter('id_popup_table');
-                    CloseLoaderPopup();
-                }
-            });
-
-        }
-        else if (error_message){
+        if (error_message){
             display_error_message(error_message)
         }
-
+        else{
+            if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
+                [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
+            }
+            if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
+                var add_basic_data = '';
+                var roles_data_array = roles_data;
+                $('#id_save_confirm_popup').modal('hide');
+                data  = {'data':roles_data,'table_name':'UserRoles','action':GLOBAL_ACTION}
+                OpenLoaderPopup();
+                $.ajax({
+                    type: 'POST',
+                    url: "{% url 'eProc_Configuration:create_update_application_data' %}",
+                    data: JSON.stringify(data),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function(Response) {
+                        rendered_roles_data = Response[0];
+                        rendered_roles_type_values = Response[2];
+                        display_basic_db_data();
+                        dropdown_value();
+                        $('#myModal').modal('hide');
+                        success_response(Response); // Function call to display response data
+                        CloseLoaderPopup();
+                    }
+                });
+            }
+            else if (error_message){
+                display_error_message(error_message)
+            }
         }
     }
-    
-    
+
     //delete the selected row in db................
     var main_table_roles_checked = [];
-
     function main_table_delete() {
         $('#success_msg_id').empty()
-         GLOBAL_ACTION = 'DELETE'
+        GLOBAL_ACTION = 'DELETE'
         main_table_roles_checked = [];
         $('#display_basic_table').DataTable().destroy();
-        $("#display_basic_table TBODY TR").each(function() {
-            var row = $(this);
-            var roles_arr_obj = {};
-            roles_arr_obj.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
-            if(roles_arr_obj.del_ind){
-            roles_arr_obj.role = row.find("TD").eq(1).html();
-            roles_arr_obj.role_desc = row.find("TD").eq(2).html();
-             main_table_roles_checked.push(roles_arr_obj);
-             }
-        });
+        get_selected_row_data(); // Function call to get the selected row data
         $('#id_delete_confirm_popup').modal('hide');
         data  = {'data':main_table_roles_checked,'table_name':'UserRoles','action':GLOBAL_ACTION}
         OpenLoaderPopup();
@@ -329,17 +276,8 @@
             success: function(Response) {
                 rendered_roles_data = Response[0];
                 display_basic_db_data();
-                 $('#success_msg_id').text(Response[1])
-                  if(Response[1].message_type== 'SUCCESS'){
-                         $('#success_msg_id').text(Response[1].message_desc)
-                    }
-                    $("#err_msg_app_settings_t").prop("hidden", false)
-                     table_sort_filter('id_popup_table');
-                    setTimeout(function() {
-                        $("#err_msg_app_settings_t").prop("hidden", true);
-                    }, 5000)
-                     table_sort_filter('id_popup_table');
-                     CloseLoaderPopup();
+                success_response(Response); // Function call to display response data
+                CloseLoaderPopup();
             }
         });
     }
@@ -363,7 +301,6 @@
         del_ind = ''
         $("#id_popup_table TBODY TR").each(function() {
             var row = $(this);
-
             //*************** reading data from the pop-up ***************
             role = row.find("TD").eq(1).find("select option:selected").val();
             role_desc = row.find("TD").eq(2).find('input[type="text"]').val().toUpperCase();
@@ -374,99 +311,45 @@
                 del_ind = '0'
             }
             roles_list.push([role, role_desc, del_ind])
-
             var format = /[`!@#$%^&*()+\-=\[\]{};':"\\|,.<>\/?~]/;
-
-
             //*************** checking for max length for roles code (max length = 40) ***************
             if (role.length > 40) {
-                      
-                            var msg = "JMSG004";
-                            var msg_type ;
-                          msg_type = message_config_details(msg);
-                          $("#error_msg_id").prop("hidden", false)
-
-                          if(msg_type.message_type == "ERROR"){
-                                display_message("error_msg_id", msg_type.messages_id_desc)
-                          }
-                          else if(msg_type.message_type == "WARNING"){
-                             display_message("id_warning_msg_id", msg_type.messages_id_desc)
-                          }
-                          else if(msg_type.message_type == "INFORMATION"){
-                             display_message("id_info_msg_id", msg_type.messages_id_desc)
-                          }
-                          var display = msg_type.messages_id_desc;
-                   document.getElementById("id_error_msg_roles_length").innerHTML = display + "Roles";
-
+                messages_id = "JMSG004"
+                error_message = ui_messeges(messages_id)
+                var display = msg_type.messages_id_desc;
+                document.getElementById("id_error_msg_roles_length").innerHTML = display + "Roles";
                 $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
                 count = count + 1;
             }
-
             //*************** checking for special characters for roles code ***************
             else if (format.test(role)) {
-                  
-                            var msg = "JMSG003";
-                            var msg_type ;
-                          msg_type = message_config_details(msg);
-                          $("#error_msg_id").prop("hidden", false)
-
-                          if(msg_type.message_type == "ERROR"){
-                                display_message("error_msg_id", msg_type.messages_id_desc)
-                          }
-                          else if(msg_type.message_type == "WARNING"){
-                             display_message("id_warning_msg_id", msg_type.messages_id_desc)
-                          }
-                          else if(msg_type.message_type == "INFORMATION"){
-                             display_message("id_info_msg_id", msg_type.messages_id_desc)
-                          }
-                          var display = msg_type.messages_id_desc ;
-                        document.getElementById("id_error_msg_roles_code").innerHTML = display + "Roles Code";
-
-
+                messages_id = "JMSG003"
+                error_message = ui_messeges(messages_id)
+                var display = msg_type.messages_id_desc ;
+                document.getElementById("id_error_msg_roles_code").innerHTML = display + "Roles Code";
                 $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
                 count = count + 1;
             } else {
                 $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "none");
             }
-
             //*************** checking for special characters for roles name ***************
             if (format.test(role_desc)) {
-                    
-                            var msg = "JMSG003";
-                            var msg_type ;
-                          msg_type = message_config_details(msg);
-                          $("#error_msg_id").prop("hidden", false)
-
-                          if(msg_type.message_type == "ERROR"){
-                                display_message("error_msg_id", msg_type.messages_id_desc)
-                          }
-                          else if(msg_type.message_type == "WARNING"){
-                             display_message("id_warning_msg_id", msg_type.messages_id_desc)
-                          }
-                          else if(msg_type.message_type == "INFORMATION"){
-                             display_message("id_info_msg_id", msg_type.messages_id_desc)
-                          }
-                          var display = msg_type.messages_id_desc;
-                        document.getElementById("id_error_msg_roles_name").innerHTML = display + "Role Description";
-
+                messages_id = "JMSG003"
+                error_message = ui_messeges(messages_id)
+                var display = msg_type.messages_id_desc;
+                document.getElementById("id_error_msg_roles_name").innerHTML = display + "Role Description";
                 $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "1px solid #FF0000");
                 count = count + 1;
             } else {
                 $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "none");
             }
-
             if (roles_code_check.includes(role)) {
                 $(row).css("border", "#f8d7da");
-                //$(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
-                //$(row.find("TD").eq(2).find('input[type="text"]')).css("border", "1px solid #FF0000");
-
             } else {
                 $(row).css("border", "");
             }
-
             roles_code_check.push(role)
         });
-
         //*************** shows save button if there are no errors(special characters and max length) ***************
         if (count == 0) {
             $("#id_check_special_character_messages").prop("hidden", true)
@@ -488,77 +371,62 @@
                 if (count == 0) {
                     $("#id_check_special_character_messages").prop("hidden", true)
                 }
-
                 //*************** retrieving data counts from views ***************
                 check_messages = response
                 var newArrayDataOfOjbect = Object.values(check_messages)
                 $("#id_check_success_messages").prop("hidden", false)
-
                   //*************** if pop-up data count is greater than zero ***************
                     if (newArrayDataOfOjbect[1] > 0) {
-
-                           
-                             var msg = "JMSG010";
-                             var msg_type ;
-                             msg_type = message_config_details(msg);
-                             $("#error_msg_id").prop("hidden", false)
-                             var display = msg_type.messages_id_desc;
-
+                        var msg = "JMSG010";
+                        var msg_type ;
+                        msg_type = message_config_details(msg);
+                        $("#error_msg_id").prop("hidden", false)
+                        var display = msg_type.messages_id_desc;
                         $("#id_check_success_messages").append('<p>' + display + newArrayDataOfOjbect[0] + '</p>')
-
-                           
-                             var msg = "JMSG011";
-                             var msg_type ;
-                             msg_type = message_config_details(msg);
-                             $("#error_msg_id").prop("hidden", false)
-                             var display1 = msg_type.messages_id_desc;
-
+                        var msg = "JMSG011";
+                        var msg_type ;
+                        msg_type = message_config_details(msg);
+                        $("#error_msg_id").prop("hidden", false)
+                        var display1 = msg_type.messages_id_desc;
                         $("#id_check_success_messages").append('<p>' + display1 + newArrayDataOfOjbect[1] + '</p>')
-
-                           
-                             var msg = "JMSG012";
-                             var msg_type ;
-                             msg_type = message_config_details(msg);
-                             $("#error_msg_id").prop("hidden", false)
-                             var display2 = msg_type.messages_id_desc;
+                        var msg = "JMSG012";
+                        var msg_type ;
+                        msg_type = message_config_details(msg);
+                        $("#error_msg_id").prop("hidden", false)
+                        var display2 = msg_type.messages_id_desc;
                         $("#id_check_success_messages").append('<p>' + display2 + newArrayDataOfOjbect[3] + '</p>')
-                               
-                                 var msg = "JMSG013";
-                                 var msg_type ;
-                                 msg_type = message_config_details(msg);
-                                 $("#error_msg_id").prop("hidden", false)
-                                 var display3 = msg_type.messages_id_desc;
+                        var msg = "JMSG013";
+                        var msg_type ;
+                        msg_type = message_config_details(msg);
+                        $("#error_msg_id").prop("hidden", false)
+                        var display3 = msg_type.messages_id_desc;
                         $("#id_check_success_messages").append('<p>' + display3 + newArrayDataOfOjbect[4] + '</p>')
-                               
-                                 var msg = "JMSG014";
-                                 var msg_type ;
-                                 msg_type = message_config_details(msg);
-                                 $("#error_msg_id").prop("hidden", false)
-                                 var display4 = msg_type.messages_id_desc;
+                        var msg = "JMSG014";
+                        var msg_type ;
+                        msg_type = message_config_details(msg);
+                        $("#error_msg_id").prop("hidden", false)
+                        var display4 = msg_type.messages_id_desc;
                         $("#id_check_success_messages").append('<p>' + display4 + newArrayDataOfOjbect[5] + '</p>')
-                               
-                                 var msg = "JMSG053";
-                                 var msg_type ;
-                                 msg_type = message_config_details(msg);
-                                 $("#error_msg_id").prop("hidden", false)
-                                 var display5 = msg_type.messages_id_desc;
-	   				  $("#id_check_success_messages").append('<p>' + display5 + newArrayDataOfOjbect[6] + '</p>')
-                         //*************** if duplicate data data count is greater than zero ***************
+                        var msg = "JMSG053";
+                        var msg_type ;
+                        msg_type = message_config_details(msg);
+                        $("#error_msg_id").prop("hidden", false)
+                        var display5 = msg_type.messages_id_desc;
+	   				    $("#id_check_success_messages").append('<p>' + display5 + newArrayDataOfOjbect[6] + '</p>')
+                        //*************** if duplicate data data count is greater than zero ***************
                         if(newArrayDataOfOjbect[2]>0){
                             $("#id_check_error_messages").prop("hidden",false)
-                              
-                                 var msg = "JMSG015";
-                                 var msg_type ;
-                                 msg_type = message_config_details(msg);
-                                 $("#error_msg_id").prop("hidden", false)
-                                 var display6 = msg_type.messages_id_desc;
+                            var msg = "JMSG015";
+                            var msg_type ;
+                            msg_type = message_config_details(msg);
+                            $("#error_msg_id").prop("hidden", false)
+                            var display6 = msg_type.messages_id_desc;
                             $("#id_check_error_messages").append('<p>' + display6 + newArrayDataOfOjbect[2] + '</p>')
-                               
-                                 var msg = "JMSG001";
-                                 var msg_type ;
-                                 msg_type = message_config_details(msg);
-                                 $("#error_msg_id").prop("hidden", false)
-                                 var display7 = msg_type.messages_id_desc;
+                            var msg = "JMSG001";
+                            var msg_type ;
+                            msg_type = message_config_details(msg);
+                            $("#error_msg_id").prop("hidden", false)
+                            var display7 = msg_type.messages_id_desc;
                             $("#id_check_error_messages").append('<p style = "font-weight: bold;">' + display7 + ' </p>')
                             $("#save_id").prop("hidden", true);
                             $("#id_delete_duplicate").show()
@@ -572,196 +440,109 @@
                     else {
                         $("#id_check_success_messages").hide()
                         $("#id_check_error_messages").prop("hidden", false)
-                              
-                                 var msg = "JMSG006";
-                                 var msg_type ;
-                                 msg_type = message_config_details(msg);
-                                 $("#error_msg_id").prop("hidden", false)
-                                 var display8 = msg_type.messages_id_desc;
+                        var msg = "JMSG006";
+                        var msg_type ;
+                        msg_type = message_config_details(msg);
+                        $("#error_msg_id").prop("hidden", false)
+                        var display8 = msg_type.messages_id_desc;
                         $("#id_check_error_messages").append('<p>' + display8 + '</p>')
                         $("#save_id").prop("hidden", true);
+                    }
                 }
-            }
-        });
-    }
+            });
+        }
 
-  function GetSelectedTextValue(roles) {
+    function GetSelectedTextValue(roles) {
         var selectedText = roles.options[roles.selectedIndex].innerHTML;
         var selectedValue = roles.value;
         var selectedId = (roles.id).split('-')[1];
-         $.each(rendered_roles_type_values, function(i, item){
+        $.each(rendered_roles_type_values, function(i, item){
             if(selectedValue == item.field_type_id){
                 $('#description-'+selectedId).val(item.field_type_desc);
             }
         });
-
     }
 
-         function window_close() {
-             window.history.back();
-              var preUrl = document.referrer;
-              console.log(preUrl);
-              window.open('', '_self', '').close();
-<!--               var win = window.open(preUrl);-->
-<!--                win.focus();-->
-              if (preUrl == null)
-                     return "The previous page url is empty";
-               else
-                     return preUrl;
-       }
-
-
-// validating the  popup table for duplicate entries
-function compare_table_for_duplicate_entries(validate_add_attributes, roles) {
-    add_attr_duplicates = false;
-    var error_message = ''
-    var add_attr_duplicates_list = [];
-    var add_attr_unique_list = [];
-    var no_duplicate_value = 'Y'
-     $.each(validate_add_attributes, function (index, value) {
-        if ($.inArray(value, add_attr_unique_list) == -1) {
-            add_attr_unique_list.push(value);
-        } else {
-            if ($.inArray(value, add_attr_duplicates_list) == -1) {
-                add_attr_duplicates_list.push(value);
+    // validating the  popup table for duplicate entries
+    function compare_table_for_duplicate_entries(validate_add_attributes, roles) {
+        add_attr_duplicates = false;
+        var error_message = ''
+        var add_attr_duplicates_list = [];
+        var add_attr_unique_list = [];
+        var no_duplicate_value = 'Y'
+        $.each(validate_add_attributes, function (index, value) {
+            if ($.inArray(value, add_attr_unique_list) == -1) {
+                add_attr_unique_list.push(value);
+            } else {
+                if ($.inArray(value, add_attr_duplicates_list) == -1) {
+                    add_attr_duplicates_list.push(value);
+                }
             }
+        });
+        if (add_attr_duplicates_list.length != 0) {
+            get_message_details("JMSG001"); // Get message details
+            no_duplicate_value = 'N'
+            return [no_duplicate_value,error_message]
         }
-    });
-    if (add_attr_duplicates_list.length != 0) {
-        //error_message = messageConstants["JMSG001"];
-              
-                var msg = "JMSG001";
-                var msg_type ;
-              msg_type = message_config_details(msg);
-              $("#error_msg_id").prop("hidden", false)
-
-              if(msg_type.message_type == "ERROR"){
-                    display_message("error_msg_id", msg_type.messages_id_desc)
-              }
-              else if(msg_type.message_type == "WARNING"){
-                 display_message("id_warning_msg_id", msg_type.messages_id_desc)
-              }
-              else if(msg_type.message_type == "INFORMATION"){
-                 display_message("id_info_msg_id", msg_type.messages_id_desc)
-              }
-                no_duplicate_value = 'N'
-                return [no_duplicate_value,error_message]
-
+        else {
+            $.each(roles, function (i, item) {
+                if (item.role.length == 0) {
+                    get_message_details("JMSG002"); // Get message details
+                    no_duplicate_value = 'N'
+                    return [no_duplicate_value,error_message]
+                }
+                if (item.role_desc.length == 0) {
+                    get_message_details("JMSG002"); // Get message details
+                    no_duplicate_value = 'N'
+                    return [no_duplicate_value,error_message]
+                }
+            });
+        }
+        return [no_duplicate_value,error_message]
     }
-    else {
-        $.each(roles, function (i, item) {
-        if (item.role.length == 0) {
-            //error_message = messageConstants["JMSG002"] + "Roles";
-            
-                var msg = "JMSG002";
-                var msg_type ;
-              msg_type = message_config_details(msg);
-              $("#error_msg_id").prop("hidden", false)
 
-              if(msg_type.message_type == "ERROR"){
-                    display_message("error_msg_id", msg_type.messages_id_desc)
-              }
-              else if(msg_type.message_type == "WARNING"){
-                 display_message("id_warning_msg_id", msg_type.messages_id_desc)
-              }
-              else if(msg_type.message_type == "INFORMATION"){
-                 display_message("id_info_msg_id", msg_type.messages_id_desc)
-              }
-                no_duplicate_value = 'N'
-                return [no_duplicate_value,error_message]
+    //validate by comparing  main table values and popup table values
+    function maintable_validation(validate_add_attributes, main_table_low_value) {
+        var no_duplicate_entries = 'Y'
+        var error_message =''
+        var common = [];
+        jQuery.grep(validate_add_attributes, function (el) {
+            if (jQuery.inArray(el, main_table_low_value) != -1) {
+                common.push(el);
             }
-         if (item.role_desc.length == 0) {
-                //error_message = messageConstants["JMSG002"] + "Roles description";
-              
-                var msg = "JMSG002";
-                var msg_type ;
-              msg_type = message_config_details(msg);
-              $("#error_msg_id").prop("hidden", false)
-
-              if(msg_type.message_type == "ERROR"){
-                    display_message("error_msg_id", msg_type.messages_id_desc)
-              }
-              else if(msg_type.message_type == "WARNING"){
-                 display_message("id_warning_msg_id", msg_type.messages_id_desc)
-              }
-              else if(msg_type.message_type == "INFORMATION"){
-                 display_message("id_info_msg_id", msg_type.messages_id_desc)
-              }
-                no_duplicate_value = 'N'
-                return [no_duplicate_value,error_message]
-
-    }
-     });
-    }
-
-    return [no_duplicate_value,error_message]
-}
-
-//validate by comparing  main table values and popup table values
-function maintable_validation(validate_add_attributes, main_table_low_value) {
-    var no_duplicate_entries = 'Y'
-    var error_message =''
-    var common = [];
-    jQuery.grep(validate_add_attributes, function (el) {
-        if (jQuery.inArray(el, main_table_low_value) != -1) {
-            common.push(el);
+        });
+        if (common.length != 0) {
+            get_message_details("JMSG001"); // Get message details
+            no_duplicate_value = 'N'
+            return [no_duplicate_value,error_message]
         }
-    });
-    if (common.length != 0) {
-        //error_message = messageConstants["JMSG001"]
-              
-                var msg = "JMSG001";
-                var msg_type ;
-              msg_type = message_config_details(msg);
-              $("#error_msg_id").prop("hidden", false)
-
-              if(msg_type.message_type == "ERROR"){
-                    display_message("error_msg_id", msg_type.messages_id_desc)
-              }
-              else if(msg_type.message_type == "WARNING"){
-                 display_message("id_warning_msg_id", msg_type.messages_id_desc)
-              }
-              else if(msg_type.message_type == "INFORMATION"){
-                 display_message("id_info_msg_id", msg_type.messages_id_desc)
-              }
-                no_duplicate_value = 'N'
-                return [no_duplicate_value,error_message]
-
+        return [no_duplicate_entries,error_message]
     }
-      return [no_duplicate_entries,error_message]
-}
-//onclick of add button display myModal popup and set GLOBAL_ACTION button value
-function onclick_add_button(button) {
-    OpenLoaderPopup();
-    var data = {'table_name':'UserRoles'}
-    $.ajax({
-        type: 'POST',
-        url: "{% url 'eProc_Configuration:get_dropdown_data' %}",
-        data: JSON.stringify(data),
-        success: function(response) {
-            rendered_roles_type_values = response.dropdown_db_values
-            dropdown_value();
-            $("#error_msg_id").css("display", "none")
-            $("#header_select").prop( "hidden", false );
-            GLOBAL_ACTION = button.value
-            $("#id_popup_tbody").empty();
-            $('#myModal').modal('show');
-          //  basic_add_new_html = '<tr ><td><input type="checkbox" required></td><td><select class="form-control">' + roles_id_dropdown + '</select></td><td><select class="form-control">' + roles_desc_dropdown + '</select></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
-            basic_add_new_html='<tr><td><input type="checkbox" required></td>'+
-                 '<td><select type="text" class="input form-control roles" id="roles-1"  name="role" onchange="GetSelectedTextValue(this)"><option value="" disabled selected>Select your option</option>'+ roles_type_dropdown +'</select></td>'+
-                '<td><input class="form-control description" type="text"  name="role_desc"  id="description-1" disabled></td>'+
-                '<td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
-            $('#id_popup_tbody').append(basic_add_new_html);
-            table_sort_filter('id_popup_table');
-            $("#id_del_ind_checkbox").prop("hidden", true);
-            document.getElementById("id_del_add_button").style.display = "block";
-            $("#save_id").prop("hidden", false);
-            CloseLoaderPopup();
-        }
-    });
 
-}
+    //onclick of add button display myModal popup and set GLOBAL_ACTION button value
+    function onclick_add_button(button) {
+        OpenLoaderPopup();
+        var data = {'table_name':'UserRoles'}
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'eProc_Configuration:get_dropdown_data' %}",
+            data: JSON.stringify(data),
+            success: function(response) {
+                rendered_roles_type_values = response.dropdown_db_values
+                dropdown_value();
+                $("#error_msg_id").css("display", "none")
+                $("#header_select").prop( "hidden", false );
+                GLOBAL_ACTION = button.value
+                $("#id_popup_tbody").empty();
+                $('#myModal').modal('show');
+                new_row_data(); // Function for add a new row data
+                $("#id_del_ind_checkbox").prop("hidden", true);
+                document.getElementById("id_del_add_button").style.display = "block";
+                $("#save_id").prop("hidden", false);
+                CloseLoaderPopup();
+            }
+        });
+    }
 </script>
 <script src="{% static 'scripts/organisational_data/org_roles.js' %}"></script>
-
 {% endblock %}

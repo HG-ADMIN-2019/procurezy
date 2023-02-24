@@ -38,7 +38,6 @@
         <div class="configuration-table_section">
             <div id="err_msg_app_settings"> </div>
             <div id="err_msg_app_settings_t" class="alert alert-success" hidden><span id="success_msg_id"></span></div>
-
             <div class="table-container">
                 <div class="edit-button-section mb-4">
                    <button class="btn btn-secondary btn-sm" id="id_edit_data"  onclick="onclick_edit_button()">
@@ -62,8 +61,8 @@
                         <tr>
                             <th id="hg_select_checkbox" hidden>
                             <div id="id_check_all" style="display:none;">
-                                    <INPUT type="checkbox" onchange="checkAll(this)" name="chk[]">
-                                </div>
+                                <INPUT type="checkbox" onchange="checkAll(this)" name="chk[]">
+                            </div>
                             </th>
                             <th>Company Number</th>
                             <th>Name1</th>
@@ -90,9 +89,7 @@
                 </table>
             </div>
         </div>
-
     </div>
-
     <div class="modal fade" id="companyModal">
         <div class="modal-dialog modal-dialog-centered modal-xl">
             <div class="modal-content">
@@ -104,44 +101,38 @@
                 </div>
                 <!-- Modal body -->
                 <div class="modal-body">
-                     <div class="popup-vertical-scroll">
+                    <div class="popup-vertical-scroll">
+                        <div id="id_del_add_button" class="mb-4">
+                            <button class="btn btn-primary" type="button" onclick="add_popup_row()"><i class="fa fa-plus"></i> add new row </button>
+                            <button class="btn btn-outline-danger" onclick="application_settings_delete_Row('id_popup_table')"><i class="fa fa-trash" aria-hidden="true" title="Delete Line"></i> delete</button>
+                        </div>
+                        <div id="id_check_success_messages" class="alert alert-success check_success_message" hidden></div>
+                        <div id="id_check_error_messages" class="alert alert-danger check_error_messages" hidden></div>
+                        <div id="id_check_special_character_messages" class="alert alert-danger check_special_character_messages" hidden>
+                            <p id="id_error_msg_orgcompany_code"></p>
+                            <p id="id_error_msg_orgcompany_name"></p>
+                            <p id="id_error_msg_orgcompany_length"></p>
+                        </div>
+                        <div id="error_msg_id" class="alert alert-danger display-none" role="alert"><span id="error_message"></span></div>
+                        <div id="id_warning_msg_id" class="alert alert-warning display-none" role="alert"></div>
+                        <div id="id_info_msg_id" class="alert alert-primary display-none" role="alert"></div>
+                        <table class="class_popup_table table table-bordered mt-2" id="id_popup_table">
+                            <thead>
+                                <tr>
+                                    <th id="header_select">Select</th>
+                                    <th>Company Number</th>
+                                    <th>Name1</th>
+                                    <th>Name2</th>
+                                    <th id="header_select1" hidden>company_guid</th>
+                                    <th id="id_del_ind_checkbox" hidden>Del Indicator</th>
+                                </tr>
+                            </thead>
+                            <tbody id=id_popup_tbody>
 
-                    <div id="id_del_add_button" class="mb-4">
-                        <button class="btn btn-primary" type="button" onclick="add_popup_row()"><i class="fa fa-plus"></i> add new row </button>
-                        <button class="btn btn-outline-danger" onclick="application_settings_delete_Row('id_popup_table')"><i class="fa fa-trash" aria-hidden="true" title="Delete Line"></i> delete</button>
+                            </tbody>
+                        </table>
                     </div>
-
-                    <div id="id_check_success_messages" class="alert alert-success check_success_message" hidden></div>
-                    <div id="id_check_error_messages" class="alert alert-danger check_error_messages" hidden></div>
-                    <div id="id_check_special_character_messages" class="alert alert-danger check_special_character_messages" hidden>
-                        <p id="id_error_msg_orgcompany_code"></p>
-                        <p id="id_error_msg_orgcompany_name"></p>
-                        <p id="id_error_msg_orgcompany_length"></p>
-                    </div>
-                    <div id="error_msg_id" class="alert alert-danger display-none" role="alert"><span id="error_message"></span></div>
-                    <div id="id_warning_msg_id" class="alert alert-warning display-none" role="alert"></div>
-                    <div id="id_info_msg_id" class="alert alert-primary display-none" role="alert"></div>
-
-
-
-                    <table class="class_popup_table table table-bordered mt-2" id="id_popup_table">
-                        <thead>
-                            <tr>
-                                <th id="header_select">Select</th>
-                                <th>Company Number</th>
-                                 <th>Name1</th>
-                                 <th>Name2</th>
-                                <th id="header_select1" hidden>company_guid</th>
-                                <th id="id_del_ind_checkbox" hidden>Del Indicator</th>
-                            </tr>
-                        </thead>
-                        <tbody id=id_popup_tbody>
-
-                        </tbody>
-                    </table>
-                     </div>
                 </div>
-
                 <!-- Modal footer -->
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-primary remove_upload_data" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
@@ -152,10 +143,8 @@
             </div>
         </div>
     </div>
-
     <!-- modal popup to upload the csv file; save confirmation popup; delete confirmation popup -->
     {% include 'configuration_common_pop_up.html' %}
-
     <div>
         {% if messages %}
         {% for message in messages %}
@@ -171,18 +160,13 @@
         {% endfor %}
         {% endif %}
     </div>
-
 </div>
-
 {{ org_companies|json_script:"org_companies" }}
-
 <script>
-
     var basic_settings = '{{basic_settings|safe}}';
     var rendered_orgcompany_data = JSON.parse(document.getElementById('org_companies').textContent);
     var messages_list = {{messages_list|safe}};
     var orgcompany_data_array = {}
-    var main_table_orgcompany_value = [];
     var orgcompany = '';
     var edit_basic_data = '';
     var GLOBAL_ACTION = '';
@@ -200,16 +184,9 @@
         no_duplicate_entries = 'Y'
         no_duplicate_value = 'Y'
         var error_message = '';
-        var main_table_low_value = [];
         var orgcompany = {};
         $('#display_basic_table').DataTable().destroy();
-        $("#display_basic_table TBODY TR").each(function() {
-            var row = $(this);
-            var main_attribute = {};
-            main_attribute.company_id = row.find("TD").eq(1).html();
-            main_table_low_value.push(main_attribute.company_id);
-        });
-        table_sort_filter('display_basic_table');
+        get_main_table_data(); //Read data from main table
         // compare for duplicates in popup
         [no_duplicate_value,error_message] = compare_table_for_duplicate_entries(validate_add_attributes,company_data )
         if (error_message){

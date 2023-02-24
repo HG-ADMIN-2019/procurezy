@@ -91,8 +91,9 @@ def user_search(request):
         })
         for emails in employee_results:
             encrypted_email.append(encrypt(emails.email))
+        # to be put in function
 
-        context['employee_results'] = zip(employee_results, encrypted_email)
+        context['employee_results'] = zip(employee_results, encrypted_email)  # remove zip
 
     if request.method == 'POST':
         encrypted_email = []
@@ -132,6 +133,7 @@ def user_search(request):
 
         print(employee_results)
         context['employee_results'] = zip(employee_results, encrypted_email)
+    #     funtion to define from 131 - 135
 
     return render(request, 'User Search/user_search.html', context)
 
@@ -1372,7 +1374,8 @@ def email_user_monitoring(request):
         elif inp_type == 'External':
             search_type = inp_email_type_ext
 
-        if search_type in ['REGISTRATION', 'APPROVED_SC', 'PASSWORD_LOCK', 'ACCT_DEACTIVATED', 'RESET_PASSWORD', 'SC_REJECTED']:
+        if search_type in ['REGISTRATION', 'APPROVED_SC', 'PASSWORD_LOCK', 'ACCT_DEACTIVATED', 'RESET_PASSWORD',
+                           'SC_REJECTED']:
             email_list = list(EmailUserMonitoring.objects.filter(
                 client=global_variables.GLOBAL_CLIENT,
                 object_type=search_type, email_status=num,

@@ -2,36 +2,21 @@ var orgnodetyp_data = new Array();
 var validate_add_attributes = [];
 var org_node_type = {};
 
-
-// on click copy icon display the selected checkbox data
-function onclick_copy_button() {
-    GLOBAL_ACTION = "COPY"
-    onclick_copy_update_button("copy")
-    document.getElementById("id_del_add_button").style.display = "block";
-}
-
-// on click update icon display the selected checkbox data to update
-function onclick_update_button() {
-    GLOBAL_ACTION = "UPDATE"
-    onclick_copy_update_button("update")
-    document.getElementById("id_del_add_button").style.display = "none";    
-}
-
+// on click Delete icon
 function onclick_delete_button() {
     GLOBAL_ACTION = "DELETE";
     $('#delete_data').show();
     $('#save_id').hide();
     onclick_copy_update_button("DELETE");
-//    document.getElementById("id_del_add_button").style.display = "none";
 }
 
+//**********************************************************
 function onclick_copy_update_button() {
     $("#error_msg_id").css("display", "none")
     $('#display_basic_table').DataTable().destroy();
     $("#id_popup_tbody").empty();
     //Reference the Table.
     var grid = document.getElementById("display_basic_table");
-
     //Reference the CheckBoxes in Table.
     var checkBoxes = grid.getElementsByTagName("INPUT");
     var edit_basic_data = "";
@@ -41,28 +26,10 @@ function onclick_copy_update_button() {
     for (var i = 1; i < checkBoxes.length; i++) {
         if (checkBoxes[i].checked) {
             var row = checkBoxes[i].parentNode.parentNode;
-            if(GLOBAL_ACTION == "UPDATE"){
-
-                guid = row.cells[3].innerHTML
-                edit_basic_data += '<tr><td hidden><input type="checkbox" required></td>'+
-                '<td><select type="text" class="input form-control" id="nodetype" name="nodetype" disabled>'+ node_type_dropdown +'</select></td>'+
-                '<td><input class="form-control" value="' + row.cells[2].innerHTML + '" type="text" onkeypress="return /[a-z ]/i.test(event.key)" name="description"  maxlength="30" style="text-transform:uppercase" required></td>'+'<td hidden><input value="' + guid + '"></td>'
-                '<td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
-                 $("#header_select").prop("hidden", true);
-            }
-            else if (GLOBAL_ACTION == "COPY"){
-                guid = 'GUID';
-                edit_basic_data += '<tr><td><input type="checkbox" required></td>'+
-                '<td><select type="text" class="input form-control" id="nodetype" name="nodetype">'+ node_type_dropdown +'</select></td>'+
-                '<td><input class="form-control" value="' + row.cells[2].innerHTML + '" type="text" onkeypress="return /[a-z ]/i.test(event.key)" name="description"  maxlength="30" style="text-transform:uppercase" required></td>'+'<td hidden><input value="' + guid + '"></td>'
-                '<td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';  
-                $("#header_select").prop("hidden", false);
-            }
-            else if (GLOBAL_ACTION == "DELETE"){
+             if (GLOBAL_ACTION == "DELETE"){
                 if ((row.cells[4].innerHTML=="False") || (row.cells[4].innerHTML=="false")){
                     check = '<input type="checkbox" disabled>'
                     document.getElementById('delete_data').style.visibility='visible';
-//                     $('#delete_data').show();
                      $('#save_id').hide();
                     $('#delete_data').prop('disabled', true);
                 }
@@ -87,13 +54,14 @@ function onclick_copy_update_button() {
         }
     }
     display_button()
-    $('#id_popup_tbody').append(edit_basic_data);   
+    $('#id_popup_tbody').append(edit_basic_data);
     $("#id_del_ind_checkbox").prop("hidden", true);
-    $('#myModal').modal('show');
+    $('#org_node_Modal').modal('show');
     table_sort_filter('display_basic_table');
     table_sort_filter('id_popup_table');
 }
 
+//***************************
 function display_button(){
     if(GLOBAL_ACTION == "DELETE"){
         $('#delete_data').show();
@@ -103,8 +71,6 @@ function display_button(){
         $('#save_id').show();
         document.getElementById('save_id').style.visibility = 'visible';
     }
-
-
 }
 
 //onclick of cancel empty the popup table body and error messages
@@ -112,7 +78,7 @@ $(".remove_upload_data").click(() => {
     $("#id_error_msg").html("");
     $("#id_popup_tbody").empty();
     $("#id_error_msg").empty();
-    $('#myModal').modal('hide');
+    $('#org_node_Modal').modal('hide');
     $("#id_error_msg").prop("hidden", true);
     $("#id_error_msg_org_node_type_code").prop("hidden", true);
     $("#id_error_msg_org_node_type_name").prop("hidden", true);
@@ -122,51 +88,28 @@ $(".remove_upload_data").click(() => {
     $("#id_check_special_character_messages").prop("hidden", true)
     $("#id_check_data").prop("hidden", true);
     $('#id_popup_table').DataTable().destroy();
-
-
 });
 
-
+//*******************************************
 function display_error_message(error_message){
-
 $('#error_message').text(error_message);
-
 document.getElementById("error_message").style.color = "Red";
 $("#error_msg_id").css("display", "block")
 $('#id_save_confirm_popup').modal('hide');
-$('#myModal').modal('show');
-
-}
-
-
-
-function delete_duplicate() {
-    $('#id_popup_table').DataTable().destroy();
-    var org_node_type_code_check = new Array
-    $("#id_popup_table TBODY TR").each(function () {
-        var row = $(this);
-
-        //*************** reading data from the pop-up ***************
-        node_type = row.find("TD").eq(1).find("select option:selected").val();
-
-
-        if (org_node_type_code_check.includes(node_type)) {
-            $(row).remove();
-        }
-
-        org_node_type_code_check.push(node_type);
-
-
-    });
-    table_sort_filter_popup_pagination('id_popup_table')
-    check_data()
+$('#org_node_Modal').modal('show');
 }
 
 // Function to hide and display save related popups
 $('#save_id').click(function () {
-    $('#myModal').modal('hide');
+    $('#org_node_Modal').modal('hide');
+    orgnodetyp_data = read_popup_data();
+    $('#id_save_confirm_popup').modal('show');
+});
+
+//Read popup table data
+function read_popup_data(){
+    orgnodetyp_data = new Array();
     validate_add_attributes = [];
-   // var orgnodetyp_data = new Array();
     $("#id_popup_table TBODY TR").each(function() {
         var row = $(this);
         org_node_type = {};
@@ -178,14 +121,58 @@ $('#save_id').click(function () {
         if (org_node_type == undefined) {
             org_node_type.node_type = row.find("TD").eq(1).find("select").val();
         }
-        
         if(org_node_type.node_type_guid == undefined) {
             org_node_type.node_type_guid = '';
         }
         validate_add_attributes.push(org_node_type.node_type);
         orgnodetyp_data.push(org_node_type);
     });
+    return orgnodetyp_data;
+}
 
-    $('#id_save_confirm_popup').modal('show');
-});
+// Function to get main table data
+function get_main_table_data(){
+    main_table_low_value = [];
+    $('#display_basic_table').DataTable().destroy();
+    $("#display_basic_table TBODY TR").each(function() {
+        var row = $(this);
+        var main_attribute = {};
+        main_attribute.country_code = row.find("TD").eq(1).html();
+        main_table_low_value.push(main_attribute.country_code);
+    });
+    table_sort_filter('display_basic_table');
+}
 
+// Function for add a new row data
+function new_row_data(){
+    basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select type="text" class="input form-control nodetype" id="nodetype-1"  name="nodetype" onchange="GetSelectedTextValue(this)"><option value="" disabled selected>Select your option</option>'+ node_type_dropdown +'</select></td><td><input class="form-control description" type="text"  name="description"  id="description-1" disabled></td><td hidden>guid</td><td class="class_del_checkbox" hidden><input type="checkbox" required></td><td class="id_del_ind_checkbox1" hidden><input type="checkbox" name = "del_ind_flag" required></td></tr>';
+    $('#id_popup_tbody').append(basic_add_new_html);
+    table_sort_filter('id_popup_table');
+}
+
+// Function to get the selected row data
+function get_selected_row_data() {
+    $("#id_popup_table TBODY TR").each(function() {
+        var row = $(this);
+        var org_node_type_arr_obj = {};
+        var checked_box = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked')
+        disable_check = row.find("TD").eq(0).find('input[type="checkbox"]').is(':disabled');
+        if(checked_box)
+        {
+            org_node_type_arr_obj.del_ind_flag = row.find("TD").eq(5).find('input[type="checkbox"]').is(':checked');
+            org_node_type_arr_obj.del_ind = checked_box;
+            org_node_type_arr_obj.description = row.find("TD").eq(2).find('input[type="text"]').val().toUpperCase();
+            org_node_type_arr_obj.node_type = row.find("TD").eq(1).find('input[type="text"]').val();
+            org_node_type_arr_obj.node_type_guid = row.find("TD").eq(3).find('input[type="text"]').val();
+            main_table_org_node_type_checked.push(org_node_type_arr_obj);
+        }
+    });
+}
+
+//Get message for check data function
+function get_msg_desc_check_data(msg){
+    var msg_type ;
+    msg_type = message_config_details(msg);
+    $("#error_msg_id").prop("hidden", false);
+    return msg_type.messages_id_desc;
+}

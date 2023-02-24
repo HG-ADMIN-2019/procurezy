@@ -106,7 +106,7 @@
                             <button class="btn btn-outline-primary" type="button" onclick="add_popup_row()"><i class="fa fa-plus"></i> Add New Row</button>
                             <button class="btn btn-outline-danger" onclick="application_settings_delete_Row('id_popup_table')"><i class="fa fa-trash"></i> Delete</button>
                         </div>
-                        
+
                         <div id="id_check_success_messages" class="alert alert-success check_success_message" hidden></div>
                         <div id="id_check_error_messages" class="alert alert-danger check_error_messages" hidden></div>
                         <div id="id_check_special_character_messages" class="alert alert-danger check_special_character_messages" hidden>
@@ -356,7 +356,6 @@
                             var company_type_value = value[3]
                             var account_type_value = value[5]
                             dropdown_select_array.push([account_type_value,company_type_value])
-
                             var company = '';
                             var company_list = '';
                             var company_id_list = '';
@@ -368,7 +367,6 @@
                                 }
                                 company_id_list = company + company_list
                             });
-
                             var aac_data = '';
                             var aac_data_list = '';
                             var aac_data_id_list = '';

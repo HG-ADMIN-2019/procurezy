@@ -591,10 +591,9 @@ def auth(request):
     upload_auth = list(
         Authorization.objects.filter(client=global_variables.GLOBAL_CLIENT, del_ind=False).values('auth_guid',
                                                                                                   'auth_obj_grp',
-                                                                                                  'auth_type',
                                                                                                   'role'))
     upload_data_roles = list(
-        FieldTypeDescription.objects.filter(field_name='roles', used_flag=0, del_ind=False,
+        FieldTypeDescription.objects.filter(field_name='roles',del_ind=False,
                                             client=global_variables.GLOBAL_CLIENT).values('field_type_id',
                                                                                           'field_type_desc'))
 
@@ -602,17 +601,14 @@ def auth(request):
         FieldTypeDescription.objects.filter(field_name='auth_obj_grp', used_flag=0, del_ind=False,
                                             client=global_variables.GLOBAL_CLIENT).values('field_type_id',
                                                                                           'field_type_desc'))
-    auth_type_values = list(
-        FieldTypeDescription.objects.filter(field_name='auth_type', del_ind=False, used_flag=0,
-                                            client=global_variables.GLOBAL_CLIENT).values('field_type_id',
-                                                                                          'field_type_desc'))
+
     messages_list = get_ui_messages(CONST_COFIG_UI_MESSAGE_LIST)
     master_data_settings = 'master_data_settings'
     return render(request, 'Organizational_Data/authorization.html',
                   {'auth': upload_auth, 'upload_data_roles': upload_data_roles,
                    'upload_data_auth_grp_obj': upload_data_auth_grp_obj,
                    'master_data_settings': master_data_settings,
-                   'auth_type_values': auth_type_values,'messages_list': messages_list, 'inc_nav': True})
+                   'messages_list': messages_list, 'inc_nav': True})
 
 
 def transaction_type(request):

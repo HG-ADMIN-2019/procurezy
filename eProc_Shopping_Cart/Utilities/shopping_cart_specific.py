@@ -121,7 +121,8 @@ class AuthorizationLevel:
         """
         slide_menu = dict.fromkeys([CONST_WORK_OVERVIEW, CONST_USER_SETTINGS, CONST_APPL_SETTINGS, CONST_SHOPPING,
                                     CONST_SHOPPING_PLUS, CONST_GOODS_RECEIPTS, CONST_APPROVALS, CONST_PURCHASING,
-                                    CONST_ADMIN_TOOL, CONST_SYSTEM_SETTINGS, CONST_CONTENT_MANAGEMENT,CONST_TIME_SHEET], False)
+                                    CONST_ADMIN_TOOL, CONST_SYSTEM_SETTINGS, CONST_CONTENT_MANAGEMENT,
+                                    CONST_TIME_SHEET], False)
 
         auth_feature = self.get_auth_level_id(auth_level)
         for auth_feature_value in auth_feature:
@@ -136,7 +137,7 @@ class AuthorizationLevel:
              CONST_GROUP_CATEGORY, CONST_CHANGE_PO, CONST_PERSONAL_SETTINGS, CONST_PURCHASE_SETTINGS,
              CONST_FORM_BUILDER, CONST_ORG_MODEL, CONST_CONFIRMATION, CONST_CANCELLATION, CONST_RETURN_DELIVERY,
              CONST_WORK_FLOW_ITEMS, CONST_PRODUCT_AND_SERVICE_CONFIG, CONST_CATALOG_CONFIG, CONST_BASIC_SETTINGS,
-             CONST_CONFIG_HOME, CONST_APPLICATION_MONITOR,CONST_PROJECTS,CONST_EFFORTS], False)
+             CONST_CONFIG_HOME, CONST_APPLICATION_MONITOR, CONST_PROJECTS, CONST_EFFORTS], False)
         auth_feature = self.get_auth_level_id(auth_level)
         for auth_feature_value in auth_feature:
             sub_menu[auth_feature_value] = True
@@ -154,15 +155,15 @@ class AuthorizationLevel:
             global_variables.GLOBAL_PURCHASER_FLAG = True
 
         auth_grp = django_query_instance.django_filter_value_list_query(Authorization, {
-            'role__in': user_role, 'client': global_variables.GLOBAL_CLIENT,'del_ind':False
+            'role__in': user_role, 'client': global_variables.GLOBAL_CLIENT, 'del_ind': False
         }, 'auth_obj_grp')
 
         auth_obj_id = django_query_instance.django_filter_value_list_query(AuthorizationGroup, {
-            'auth_obj_grp__in': auth_grp, 'auth_level': auth_level,'del_ind':False
+            'auth_obj_grp__in': auth_grp, 'auth_level': auth_level, 'del_ind': False
         }, 'auth_obj_id')
 
         auth_feature = django_query_instance.django_filter_value_list_query(AuthorizationObject, {
-            'auth_obj_id__in': auth_obj_id, 'auth_level': auth_level,'del_ind':False
+            'auth_obj_id__in': auth_obj_id, 'auth_level': auth_level, 'del_ind': False
         }, 'auth_level_ID')
 
         return auth_feature
@@ -566,7 +567,7 @@ def get_manger_detail(client, login_username, acc_default, total_value, default_
                     if schema_step_type == 'FIN':
                         app_limit = list(django_query_instance.django_filter_only_query(WorkflowACC, {
                             'company_id': default_cmp_code, 'account_assign_cat': acc_default,
-                            'acc_value': acc_value, 'client': client,'del_ind':False
+                            'acc_value': acc_value, 'client': client, 'del_ind': False
                         }).values_list('app_username', 'sup_acc_value', 'sup_company_id', 'currency_id',
                                        'sup_account_assign_cat', 'company_id'))
                         count = 1
@@ -621,7 +622,7 @@ def get_manger_detail(client, login_username, acc_default, total_value, default_
                                             django_query_instance.django_filter_only_query(WorkflowACC, {
                                                 'company_id': approver_detail[2],
                                                 'account_assign_cat': approver_detail[4],
-                                                'acc_value': approver_detail[1], 'client': client,'del_ind':False
+                                                'acc_value': approver_detail[1], 'client': client, 'del_ind': False
                                             }).values_list('app_username', 'sup_acc_value', 'sup_company_id',
                                                            'currency_id',
                                                            'sup_account_assign_cat', 'company_id'))
@@ -938,6 +939,19 @@ def get_limit_item_details(cart_item_guid):
     return limit_item_details
 
 
+def get_limit_order_item_details(cart_items):
+    """
+
+    """
+    is_limit_item = False
+    limit_item_details = {}
+    for items in cart_items:
+        if items['call_off'] == CONST_LIMIT_ORDER_CALLOFF:
+            is_limit_item = True
+            limit_item_details = get_limit_item_details(items['guid'])
+    return limit_item_details, is_limit_item
+
+
 def update_supplier_uom(prod_detail):
     """
 
@@ -965,6 +979,15 @@ def update_supplier_uom_for_prod(prod_detail):
                                                                                             'unit']},
                                                                                         'uom_description')[0]
     return prod_detail
+
+
+def update_suppliers_uom_details(cart_items):
+    """
+
+    """
+    for items in cart_items:
+        items = update_supplier_uom_for_prod(items)
+    return cart_items
 
 
 def update_supplier_desc(prod_detail):
@@ -1056,6 +1079,7 @@ def delete_approver_detail(header_guid):
                                                                  'client': global_variables.GLOBAL_CLIENT}):
         django_query_instance.django_filter_delete_query(ScApproval, {'header_guid': header_guid,
                                                                       'client': global_variables.GLOBAL_CLIENT})
+
 
 def get_highest_acc_detail(header_guid):
     """

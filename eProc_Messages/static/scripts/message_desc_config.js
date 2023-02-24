@@ -260,3 +260,25 @@ $('#save_id').click(function () {
     $('#id_save_confirm_popup').modal('show');
 });
 
+// Function to get the selected row data
+function get_selected_row_data() {
+$("#display_basic_table TBODY TR").each(function () {
+            var row = $(this);
+            var message_id_desc_arr_obj = {};
+             var lang_desc;
+            var lang_code;
+            lang_desc = row.find("TD").eq(3).html();
+            for (i = 0; i < render_language_data.length; i++) {
+                if (lang_desc == render_language_data[i].description)
+                    lang_code = render_language_data[i].language_id
+            }
+            message_id_desc_arr_obj.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
+             if(message_id_desc_arr_obj.del_ind){
+                message_id_desc_arr_obj.messages_id = row.find("TD").eq(1).html();
+                message_id_desc_arr_obj.messages_id_desc = row.find("TD").eq(2).html();
+                message_id_desc_arr_obj.language_id = lang_code;
+                message_id_desc_arr_obj.msg_id_desc_guid = row.find("TD").eq(4).html();
+                main_table_message_id_desc_checked.push(message_id_desc_arr_obj);
+              }
+            });
+}

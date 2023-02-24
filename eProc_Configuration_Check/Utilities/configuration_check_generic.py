@@ -55,7 +55,8 @@ def check_unspsc_category_desc_data(ui_data, status):
                     if django_query_instance.django_existence_check(UnspscCategoriesCustDesc,
                                                                     {'prod_cat_id': unspsc_desc[
                                                                         'prod_cat_id'],
-                                                                     'client': global_variables.GLOBAL_CLIENT}):
+                                                                     'client': global_variables.GLOBAL_CLIENT,
+                                                                     'language_id': unspsc_desc['language_id']}):
                         delete_count = delete_count + 1
                         valid_data_list.append(unspsc_desc)
                 else:
@@ -515,14 +516,15 @@ def check_authorization_data(ui_data, status):
                     invalid_count = invalid_count + 1
         else:
             if django_query_instance.django_existence_check(Authorization,
-                                                            {'auth_obj_grp': auth_detail['auth_obj_grp'],
-                                                             'auth_type': auth_detail['auth_type'],
+                                                            {'del_ind': False,
+                                                             'auth_obj_grp': auth_detail['auth_obj_grp'],
                                                              'role': auth_detail['role'],
                                                              'client': global_variables.GLOBAL_CLIENT
                                                              }):
                 duplicate_count = duplicate_count + 1
             elif django_query_instance.django_existence_check(Authorization,
-                                                              {'auth_obj_grp': auth_detail['auth_obj_grp'],
+                                                              {'del_ind': False,
+                                                               'auth_obj_grp': auth_detail['auth_obj_grp'],
                                                                'client': global_variables.GLOBAL_CLIENT
                                                                }):
                 update_count = update_count + 1
@@ -1177,9 +1179,9 @@ def check_message_id_data(ui_data, status):
         if msg_id['del_ind'] in ['1', True]:
             if status == 'SAVE':
                 if django_query_instance.django_existence_check(MessagesId,
-                                                                {'messages_id': msg_id['messages_id'],
+                                                                {'messages_id': msg_id['message_id'],
                                                                  'client': global_variables.GLOBAL_CLIENT,
-                                                                 'messages_type': msg_id['messages_type']}):
+                                                                 'messages_type': msg_id['message_type']}):
                     delete_count = delete_count + 1
                     valid_data_list.append(msg_id)
         else:
@@ -1279,8 +1281,8 @@ def check_purchase_control_data(ui_data, status):
         if po_split['del_ind'] in ['1', True]:
             if status == 'SAVE':
                 if django_query_instance.django_existence_check(PurchaseControl,
-                                                                {'po_split_type': int(po_split[
-                                                                                          'po_split_type']),
+                                                                {'call_off': int(po_split[
+                                                                                          'call_off']),
                                                                  'company_code_id':
                                                                      po_split['company_code_id'],
                                                                  'client': global_variables.GLOBAL_CLIENT
@@ -1289,8 +1291,8 @@ def check_purchase_control_data(ui_data, status):
                     valid_data_list.append(po_split)
         else:
             if django_query_instance.django_existence_check(PurchaseControl,
-                                                            {'po_split_type': int(po_split[
-                                                                                      'po_split_type']),
+                                                            {'call_off': int(po_split[
+                                                                                      'call_off']),
                                                              'company_code_id':
                                                                  po_split['company_code_id'],
                                                              'client': global_variables.GLOBAL_CLIENT
@@ -2323,10 +2325,24 @@ def check_address_data(ui_data, status):
                                                             {'del_ind': False,
                                                              'client': global_variables.GLOBAL_CLIENT,
                                                              'address_number': com_value['address_number'],
-                                                             # 'title': com_value['title'],
                                                              'name1': com_value['name1'],
                                                              'name2': com_value['name2'],
-                                                             }):
+                                                             'street':com_value['street'],
+                                                             'area':com_value['area'],
+                                                             'landmark':com_value['landmark'],
+                                                             'city':com_value['city'],
+                                                             'address_partner_type':com_value['address_partner_type'],
+                                                             'org_address_source_system':com_value['org_address_source_system'],
+                                                             'postal_code':com_value['postal_code'],
+                                                             'region':com_value['region'],
+                                                             'mobile_number':com_value['mobile_number'],
+                                                             'telephone_number':com_value['telephone_number'],
+                                                             'fax_number':com_value['fax_number'],
+                                                             'email':com_value['email'],
+                                                             'country_code':com_value['country_code'],
+                                                             'language_id':com_value['language_id'],
+                                                             'time_zone':com_value[ 'time_zone']
+                                                            }):
                 duplicate_count = duplicate_count + 1
             elif django_query_instance.django_existence_check(OrgAddress,
                                                               {'del_ind': False,

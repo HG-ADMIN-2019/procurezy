@@ -492,17 +492,17 @@ def extract_calendar_data(request):
     response['Content-Disposition'] = 'attachment; filename=' + CONST_CALENDAR_CSV
 
     writer = csv.writer(response)
-    writer.writerow(['CALENDER_ID', 'DESCRIPTION', 'COUNTRY_CODE', 'YEAR', 'WORKING_DAYS', 'del_ind'])
+    writer.writerow(['CALENDER_ID', 'COUNTRY_CODE', 'DESCRIPTION', 'YEAR', 'WORKING_DAYS', 'del_ind'])
 
     calendar_details = django_query_instance.django_filter_query(CalenderConfig,
                                                                  {'del_ind': False}, None,
-                                                                 ['calender_id', 'description', 'country_code', 'year',
+                                                                 ['calender_id', 'country_code', 'description',  'year',
                                                                   'working_days', 'del_ind'])
     calendar_details_data = query_update_del_ind(calendar_details)
 
     for calendar_detail in calendar_details_data:
-        calendar_detail_info = [calendar_detail['calender_id'], calendar_detail['description'],
-                                calendar_detail['country_code'], calendar_detail['year'],
+        calendar_detail_info = [calendar_detail['calender_id'], calendar_detail['country_code'],
+                                calendar_detail['description'], calendar_detail['year'],
                                 calendar_detail['working_days'],
                                 calendar_detail['del_ind']]
         writer.writerow(calendar_detail_info)

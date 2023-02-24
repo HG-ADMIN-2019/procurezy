@@ -213,6 +213,7 @@
     var Tablename = uiConstants["CONST_TABLENAME_SPEND_LIMIT_ID"]
     var appname = uiConstants["CONST_APPNAME01"]
     var db_header_data = uiConstants["CONST_HEADER_DATA_SPEND_LIMIT_ID"]
+    var main_table_low_value = [];
     var spend_limit_data_array = {}
     var main_table_spend_limit_id_value = [];
     var spend_limit_id = '';
@@ -558,7 +559,7 @@
         $('#success_msg_id').empty()
         $('#id_popup_table').DataTable().destroy();
         var spend_id_data = new Array();
-        var main_table_low_value = [];
+        
         no_duplicate_entries = 'Y'
         no_duplicate_value = 'Y'
         var validate_add_attributes = [];
@@ -581,22 +582,15 @@
             spend_id_data.push(aad);
         });
         $('#display_basic_table').DataTable().destroy();
-        $("#display_basic_table TBODY TR").each(function() {
-            var row = $(this);
-            var main_attribute = {};
-            main_attribute.spend_code_id = row.find("TD").eq(3).html();
-            main_attribute.spender_username = row.find("TD").eq(1).html();
-            main_attribute.company_id = row.find("TD").eq(2).html();
-            compare_maintable = main_attribute.spender_username + '-' + main_attribute.company_id;
-            main_table_low_value.push(compare_maintable);
-        });
-        table_sort_filter('display_basic_table');
+        get_main_table_data(); //Read data from main table
+        // compare for duplicates in popup
         [no_duplicate_value,error_message] = compare_table_for_duplicate_entries(validate_add_attributes, aad)
         if (error_message){
             display_error_message(error_message)
         }
         else{
             if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
+                // compare main table and pop up for duplicate values
                 [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
             }
             if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
@@ -624,6 +618,21 @@
                 display_error_message(error_message)
             }
         }
+    }
+
+    // Function to get main table data
+    function get_main_table_data() {
+        main_table_low_value = [];
+        $("#display_basic_table TBODY TR").each(function() {
+            var row = $(this);
+            var main_attribute = {};
+            main_attribute.spend_code_id = row.find("TD").eq(3).html();
+            main_attribute.spender_username = row.find("TD").eq(1).html();
+            main_attribute.company_id = row.find("TD").eq(2).html();
+            compare_maintable = main_attribute.spender_username + '-' + main_attribute.company_id;
+            main_table_low_value.push(compare_maintable);
+        });
+        table_sort_filter('display_basic_table');
     }
 
     // validating the  popup table for duplicate entries

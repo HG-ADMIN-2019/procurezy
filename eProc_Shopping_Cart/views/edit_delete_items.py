@@ -354,7 +354,7 @@ def update_pr_details(request):
     """
     update_user_info(request)
     item_detail = {}
-    call_off = CONST_CATALOG_CALLOFF
+    call_off = CONST_PR_CALLOFF
     catalog_qty = None
     checked_item_price = 0
     lot_size = 1

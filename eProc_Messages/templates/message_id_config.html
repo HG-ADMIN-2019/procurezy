@@ -3,11 +3,8 @@
 {% block title %} Message Numbers (Application Settings) {% endblock %}
 {% block maincontent %}
 
-
-
 <div class="container-fluid">
     <div class="configuration-table_wrapper">
-
         <div class="elements-space-between">
             <h3>Maintain Message Numbers</h3>
             <div>
@@ -22,16 +19,11 @@
                 </button>
             </div>
         </div>
-
         <hr>
-
         <div class="configuration-table_section">
             <div id="err_msg_app_settings"> </div>
             <div id="err_msg_app_settings_t" class="alert alert-success" hidden><span id="success_msg_id"></span></div>
-
-
             <div class="table-container tcw-80">
-
                 <div class="edit-button-section mb-4">
                     <button id="id_edit_data" class="btn btn-secondary btn-sm" onclick="onclick_edit_button()">
                         <i class="fas fa-edit" id="edit" title="Edit"></i> edit
@@ -46,7 +38,6 @@
                         <i class="fas fa-times"></i> cancel
                     </button>
                 </div>
-
                 <!--   display basic Message Id table-->
                 <table id="display_basic_table" class="class_basic_message_table table table-bordered custom-table">
                     <thead id="id_message_table_header">
@@ -62,7 +53,6 @@
                     </tr>
                     </thead>
                     <tbody id="id_message_tbody">
-
                     {% for msg in message_id_data %}
                     <tr>
                         <td class="class_message_checkbox" hidden><input type="checkbox" class="checkbox_check" onclick="valueChanged()" required></td>
@@ -74,12 +64,9 @@
                     </tbody>
                 </table>
                 <!--end of display basic Messages table-->
-
             </div>
-
         </div>
     </div>
-
     <!--modal popup for Add,copy,update and upload-->
     <div class="modal fade" id="myModal" style="overflow:auto;">
         <div class="modal-dialog modal-dialog-centered modal-lg" >
@@ -97,19 +84,14 @@
                         <button type="button" class="btn btn-primary" onclick="add_popup_row()"><i class="fa fa-plus"></i> add new row</button>
                         <button class="btn btn-outline-danger" onclick="application_settings_delete_Row('id_popup_table')"><i class="fa fa-trash"></i> delete</button>
                     </div>
-
                     <div id="id_check_success_messages" class="alert alert-success check_success_message" hidden></div>
                     <div id="id_check_error_messages" class="alert alert-danger check_error_messages" hidden></div>
                     <div id="id_check_special_character_messages" class="alert alert-danger check_special_character_messages" hidden>
-
-                        <!--                        <p id="id_error_msg_name" ></p>-->
                         <p id="id_error_msg_length" ></p>
                     </div>
                     <div id="error_msg_id" class="alert alert-danger display-none" role="alert"><span id="error_message"></span></div>
                     <div id="id_warning_msg_id" class="alert alert-warning display-none" role="alert"></div>
                     <div id="id_info_msg_id" class="alert alert-primary display-none" role="alert"></div>
-
-
                     <table class="class_popup_table table table-bordered mt-2" id="id_popup_table" >
                         <thead>
                         <tr>
@@ -121,28 +103,20 @@
                         </tr>
                         </thead>
                         <tbody id=id_popup_tbody>
-
                         </tbody>
                     </table>
-
                 </div>
-
                 <!-- Modal footer -->
                 <div class="modal-footer">
-
                     <button type="button" class="btn btn-outline-primary remove_upload_data" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
                     <button class="btn btn-primary" id="save_id"><i class="fas fa-save"></i> save</button>
-
                 </div>
             </div>
         </div>
     </div>
     <!--end of modal popup for Add,copy,update and upload-->
-
     <!-- modal popup to upload the csv file; save confirmation popup; delete confirmation popup -->
     {% include 'configuration_common_pop_up.html' %}
-
-
     <div>
         {% if messages %}
         {% for message in messages %}
@@ -159,13 +133,9 @@
         {% endif %}
     </div>
 </div>
-
-
 {% include 'root/loader.html' %}
-
 <script>
-
-
+    var messages_list = {{messages_list|safe}};
     var rendered_message_id_data = {{message_id_data|safe}};
     var rendered_msgtype_values = {{dropdown_msg_type_values|safe}};
     var rendered_msgid_values = {{dropdown_msg_id_values|safe}};
@@ -179,21 +149,22 @@
     var appname = uiConstants["CONST_APPNAME01"]
     var db_header_data = uiConstants["CONST_HEADER_DATA_COUNTRY"]
     var msg_id_dropdown,msg_type_dropdown;
+
+    //********************
     function drop_down(){
         msg_type_dropdown='';
         $.each(rendered_msgtype_values, function(i, item){
-        msg_type_dropdown += '<option value="' + item.field_type_id + '">' + item.field_type_id + '</option>';
+            msg_type_dropdown += '<option value="' + item.field_type_id + '">' + item.field_type_id + '</option>';
         });
         msg_id_dropdown='';
         $.each(rendered_msgid_values, function(i, item){
-        msg_id_dropdown += '<option value="' + item.field_type_id + '">' + item.field_type_id + '</option>';
+            msg_id_dropdown += '<option value="' + item.field_type_id + '">' + item.field_type_id + '</option>';
         });
     }
 
-    //**************************************
     //onclick of add button display myModal popup and set GLOBAL_ACTION button value
     function onclick_add_button(button){
-         OpenLoaderPopup();
+        OpenLoaderPopup();
         var data = {'table_name':'MessagesId'}
         $.ajax({
             type: 'POST',
@@ -222,14 +193,12 @@
                 CloseLoaderPopup();
             }
         });
-
     }
 
-
-    //**********************************************************
+    //*********************************
     function onclick_copy_update_button() {
-         OpenLoaderPopup();
-         var data = {'table_name':'MessagesId'}
+        OpenLoaderPopup();
+        var data = {'table_name':'MessagesId'}
         $.ajax({
             type: 'POST',
             url: "{% url 'eProc_Configuration:get_dropdown_data' %}",
@@ -243,7 +212,6 @@
                 $('#display_basic_table').DataTable().destroy();
                 //Reference the Table.
                 var grid = document.getElementById("display_basic_table");
-
                 //Reference the CheckBoxes in Table.
                 var checkBoxes = grid.getElementsByTagName("INPUT");
                 var edit_basic_data = "";
@@ -252,31 +220,29 @@
                 for (var i = 1; i < checkBoxes.length; i++) {
                     if (checkBoxes[i].checked) {
                         var row = checkBoxes[i].parentNode.parentNode;
-                         if(GLOBAL_ACTION == "UPDATE"){
+                        if(GLOBAL_ACTION == "UPDATE"){
                         unique_input = '<select class="form-control" type="text" value="' + row.cells[1].innerHTML + '" name="message_id"  disabled>'+ msg_id_dropdown +'</select>'
                         edit_basic_data += '<tr><td hidden><input type="checkbox" required></td>' +
-                                            '<td>'+ unique_input +'</td>' +
-                                            '<td><select id="message_type" class="input form-control" type="text" name="message_type">'+ msg_type_dropdown +'</select></td>'+
-                                            '<td class="class_del_checkbox" hidden><input type="checkbox" required></td> <td hidden><input class="form-control" type="text" value="' + row.cells[3].innerHTML + '"></td></tr>';
-                                            $("#header_select").prop("hidden", true);
-                                            }
-
-                             var message_id_value = row.cells[1].innerHTML
-                             var message_type_value = row.cells[2].innerHTML
-                            dropdown_values.push([message_type_value, message_id_value])
+                            '<td>'+ unique_input +'</td>' +
+                            '<td><select id="message_type" class="input form-control" type="text" name="message_type">'+ msg_type_dropdown +'</select></td>'+
+                            '<td class="class_del_checkbox" hidden><input type="checkbox" required></td> <td hidden><input class="form-control" type="text" value="' + row.cells[3].innerHTML + '"></td></tr>';
+                            $("#header_select").prop("hidden", true);
+                        }
+                        var message_id_value = row.cells[1].innerHTML
+                        var message_type_value = row.cells[2].innerHTML
+                        dropdown_values.push([message_type_value, message_id_value])
                     }
                 }
                 $('#id_popup_table').append(edit_basic_data);
-                 var i =0;
+                var i =0;
                 $("#id_popup_table TBODY TR").each(function() {
-                var row = $(this);
-                 var messagetype_value = dropdown_values[i][0]
-                 var messageid_value = dropdown_values[i][1]
-                 $(row.find("TD").eq(1).find("select option[value="+messageid_value+"]")).attr('selected','selected');
-                 $(row.find("TD").eq(2).find("select option[value="+messagetype_value+"]")).attr('selected','selected');
-                     i++;
+                    var row = $(this);
+                    var messagetype_value = dropdown_values[i][0]
+                    var messageid_value = dropdown_values[i][1]
+                    $(row.find("TD").eq(1).find("select option[value="+messageid_value+"]")).attr('selected','selected');
+                    $(row.find("TD").eq(2).find("select option[value="+messagetype_value+"]")).attr('selected','selected');
+                    i++;
                 });
-
                 $("#id_del_ind_checkbox").prop("hidden", true);
                 $('#myModal').modal('show');
                 table_sort_filter('id_popup_table');
@@ -286,45 +252,43 @@
             }
         });
     }
-    //**********************
+
     // validate and save for add,copy,update and upload data
     function popup_save_data() {
-		$('#success_msg_id').empty()
+        $('#success_msg_id').empty()
         var Tabledata = { "Dbl_clck_tbl_id": 'MessagesId' };
-       $('#id_popup_table').DataTable().destroy();
-    var main_table_low_value = [];
-    no_duplicate_entries = 'Y'
-    no_duplicate_value = 'Y'
-    var error_message = '';
-    $('#display_basic_table').DataTable().destroy();
-    // read data from main table
-    $("#display_basic_table TBODY TR").each(function() {
-        var row = $(this);
-        var main_attribute = {};
-        main_attribute.messages_id = row.find("TD").eq(1).html();
-        main_table_low_value.push(main_attribute.messages_id);
-    });
-    table_sort_filter('display_basic_table');
+        $('#id_popup_table').DataTable().destroy();
+        var main_table_low_value = [];
+        no_duplicate_entries = 'Y'
+        no_duplicate_value = 'Y'
+        var error_message = '';
+        $('#display_basic_table').DataTable().destroy();
+        // read data from main table
+        $("#display_basic_table TBODY TR").each(function() {
+            var row = $(this);
+            var main_attribute = {};
+            main_attribute.messages_id = row.find("TD").eq(1).html();
+            main_table_low_value.push(main_attribute.messages_id);
+        });
+        table_sort_filter('display_basic_table');
         $("#id_error_msg").empty();
-
         [no_duplicate_value,error_message] = compare_table_for_duplicate_entries(validate_add_attributes, message_id_data)
-    if (error_message){
-        display_error_message(error_message)
-    }
-    else{
-        if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
-            [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
+        if (error_message){
+            display_error_message(error_message)
         }
-        if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
-            message_id_data_array = message_id_data ;
-            $('#id_save_confirm_popup').modal('hide');
-
-        data = {'data':message_id_data,'table_name':'MessagesId','action':GLOBAL_ACTION}
+        else{
+            if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
+                [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
+            }
+            if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
+                message_id_data_array = message_id_data ;
+                $('#id_save_confirm_popup').modal('hide');
+            data = {'data':message_id_data,'table_name':'MessagesId','action':GLOBAL_ACTION}
+            OpenLoaderPopup();
             $.ajax({
                 type: 'POST',
                 url: "{% url 'eProc_Configuration:create_update_application_data' %}",
-                data:
-                    JSON.stringify(data),
+                data:JSON.stringify(data),
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 success: function (Response) {
@@ -332,481 +296,147 @@
                     display_basic_db_data();
                     $('#myModal').modal('hide');
 				    $('#id_error_msg').text(messageConstants["JMSG001"])
-                    $('#success_msg_id').text(Response[1])
-                    if(Response[1].message_type== 'SUCCESS'){
-                         $('#success_msg_id').text(Response[1].message_desc)
-                    }
-                    $("#err_msg_app_settings_t").prop("hidden", false)
+                    success_response(Response); // Function call to display response data
                     table_sort_filter('id_popup_table');
-<!--                    setTimeout(function () { $("#err_msg_app_settings_t").prop("hidden", true); }, 5000)-->
-                    message_display_time();
-                    table_sort_filter('id_popup_table');
-
+                    CloseLoaderPopup();
                 }
             });
         }
         else if (error_message){
             display_error_message(error_message)
-
         }
     }
- }
-    //***************************
+}
+
     //delete the selected row in db................
     var main_table_message_id_checked = [];
     function main_table_delete() {
-		 $('#success_msg_id').empty()
-		 GLOBAL_ACTION = 'DELETE'
+        $('#success_msg_id').empty()
+        GLOBAL_ACTION = 'DELETE'
 	    main_table_country_checked = [];
         var Tabledata = { "Dbl_clck_tbl_id": 'MessagesId' };
         $('#display_basic_table').DataTable().destroy();
-        $("#display_basic_table TBODY TR").each(function () {
-            var row = $(this);
-            var message_id_arr_obj = {};
-
-            message_id_arr_obj.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
-            if(message_id_arr_obj.del_ind){
-                message_id_arr_obj.message_id = row.find("TD").eq(1).html();
-                message_id_arr_obj.messages_type = row.find("TD").eq(2).html();
-                message_id_arr_obj.msg_id_guid = row.find("TD").eq(3).html();
-                main_table_message_id_checked.push(message_id_arr_obj);
-        }
-
-        });
+        get_selected_row_data(); // Function call to get the selected row data
         $('#id_delete_confirm_popup').modal('hide');
         data = {'data':main_table_message_id_checked,'table_name':'MessagesId','action':GLOBAL_ACTION}
+        OpenLoaderPopup();
         $.ajax({
             type: 'POST',
             url: "{% url 'eProc_Configuration:create_update_application_data' %}",
-            data:
-               JSON.stringify(data),
+            data:JSON.stringify(data),
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             success: function (Response) {
                 rendered_message_id_data = Response[0];
                 display_basic_db_data();
-				$('#success_msg_id').text(Response[1])
-				 if(Response[1].message_type== 'SUCCESS'){
-                         $('#success_msg_id').text(Response[1].message_desc)
-                    }
-                $("#err_msg_app_settings_t").prop("hidden", false)
-                 table_sort_filter('id_popup_table');
-<!--                setTimeout(function () { $("#err_msg_app_settings_t").prop("hidden", true); }, 5000)-->
-                 message_display_time();
-                 table_sort_filter('id_popup_table');
+                success_response(Response); // Function call to display response data
+                CloseLoaderPopup();
             }
         });
     }
 
-
-    //*************************
-    //check function restricting special char and diaplay the data count of csv file
-    function check_data() {
-        $('#id_popup_table').DataTable().destroy();
-        $("#id_check_success_messages").empty()
-        $("#id_check_error_messages").empty()
-        $("#id_check_success_messages").prop("hidden",true)
-        $("#id_check_error_messages").prop("hidden",true)
-        $("#id_check_special_character_messages").prop("hidden",true)
-        document.getElementById("id_error_msg_id").innerHTML = "";
-        document.getElementById("id_error_msg").innerHTML = "";
-        document.getElementById("id_error_msg_length").innerHTML = "";
-        count = 0;
-        var message_id_array = new Array
-        var DB_array = new Array
-        var message_id_list = new Array
-        var message_id_check = new Array
-        del_ind = ''
-        $("#id_popup_table TBODY TR").each(function() {
-            var row = $(this);
-
-            //*************** reading data from the pop-up ***************
-            message_id = row.find("TD").eq(1).find('input[type="text"]').val().toUpperCase();
-            message_type = row.find("TD").eq(2).find('select[type="text"]').val();
-            checked_box = row.find("TD").eq(3).find('input[type="checkbox"]').is(':checked')
-                if (checked_box){
-                    del_ind = '1'
+    // validating the  popup table for duplicate entries
+    function compare_duplicate(validate_add_attributes,main_table_low_value, main_table_low_value_type){
+        var error_message = ''
+        var table_one = [];
+        var table_two = [];
+        var no_duplicate_value = 'Y';
+        for (i = 0; i < main_table_low_value.length; i++) {
+            table_two_cell_one = validate_add_attributes[0];
+            table_two_cell_two = validate_add_attributes[1];
+            for (j = 0; j < main_table_low_value.length; j++) {
+                table_one_cell_one = main_table_low_value[j];
+                table_one_cell_two = main_table_low_value_type[j];
+                if ((table_two_cell_one == table_one_cell_one) && (table_one_cell_two == table_two_cell_two)) {
+                    var url_new = "{% url 'eProc_Basic:get_message_description' %}";
+                    console.log(url_new);
+                    var msg = "MSG186";
+                    var msg_type, str ;
+                    str = "Message Id & Message Type";
+                    msg_type = message_config_details(msg);
+                    console.log("msg_type == ",msg_type.message_type);
+                    if(msg_type.message_type == "Error"){
+                        display_message_UI("id_error_msg_id", msg_type.messages_id_desc, str)
+                    }
+                    else if(msg_type.message_type == "Warning"){
+                        display_message_UI("id_warning_msg_id", msg_type.messages_id_desc, str)
+                    }
+                    else if(msg_type.message_type == "Information"){
+                        display_message_UI("id_info_msg_id", msg_type.messages_id_desc, str)
+                    }
+                    error_message =  msg_type.messages_id_desc;
+                    $('#id_save_confirm_popup').modal('hide');
+                    $('#myModal').modal('show');
+                    no_duplicate_value = 'N'
                 }
-                else{
-                del_ind = '0'
-                }
-            message_id_list.push([message_id, message_type, del_ind])
-
-            var format = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
-
-
-                //*************** checking for max length for country code (max length = 6) ***************
-                if(message_id.length >10){
-                          
-                            var msg = "JMSG005";
-                            var msg_type ;
-                          msg_type = message_config_details(msg);
-                          $("#error_msg_id").prop("hidden", false)
-
-                          if(msg_type.message_type == "ERROR"){
-                                display_message("error_msg_id", msg_type.messages_id_desc)
-                          }
-                          else if(msg_type.message_type == "WARNING"){
-                             display_message("id_warning_msg_id", msg_type.messages_id_desc)
-                          }
-                          else if(msg_type.message_type == "INFORMATION"){
-                             display_message("id_info_msg_id", msg_type.messages_id_desc)
-                          }
-
-                           var display8 = msg_type.messages_id_desc;
-                           document.getElementById("id_error_msg_length").innerHTML = display8;
-
-
-                    $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
-                    count = count +1;
-                }
-
-                //*************** checking for special characters for country code ***************
-                else if(format.test(message_id)){
-                           var url_new = "{% url 'eProc_Basic:get_message_description' %}";
-                            var msg = "JMSG003";
-                            var msg_type ;
-                          msg_type = message_config_details(msg);
-                          $("#error_msg_id").prop("hidden", false)
-
-                          if(msg_type.message_type == "ERROR"){
-                                display_message("error_msg_id", msg_type.messages_id_desc)
-                          }
-                          else if(msg_type.message_type == "WARNING"){
-                             display_message("id_warning_msg_id", msg_type.messages_id_desc)
-                          }
-                          else if(msg_type.message_type == "INFORMATION"){
-                             display_message("id_info_msg_id", msg_type.messages_id_desc)
-                          }
-                          var display =  msg_type.messages_id_desc;
-
-                     document.getElementById("id_error_msg_id").innerHTML = display + "Message Id";
-
-                    $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
-                    count = count +1;
-                }
-                else{
-                $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "none");
-                }
-
-                message_id_check.push(message_id)
-        });
-
-        //*************** shows save button if there are no errors(special characters and max length) ***************
-        if(count == 0){
-                $("#id_check_special_character_messages").prop("hidden",true)
-                $("#save_id").prop("hidden", false);
+            }
         }
-        popup_data_dict ={'data_list' : message_id_list, 'Tablename' : Tablename, 'appname' : appname, 'db_header_data' : db_header_data}
-        $.ajax({
-            type: 'POST',
-            url: "{% url 'eProc_Basic_Settings:check_data' %}",
-            data: JSON.stringify(popup_data_dict),
-            success: function(response) {
-                table_sort_filter_popup_pagination('id_popup_table')
-                $("#id_check_special_character_messages").prop("hidden",false)
-                if(count == 0){
-                    $("#id_check_special_character_messages").prop("hidden",true)
-                }
-
-                //*************** retrieving data counts from views ***************
-                check_messages = response
-                var newArrayDataOfOjbect = Object.values(check_messages)
-                $("#id_check_success_messages").prop("hidden",false)
-
-                //*************** if pop-up data count is greater than zero ***************
-                if (newArrayDataOfOjbect[1]>0){
-                  
-                             var msg = "JMSG010";
-                             var msg_type ;
-                             msg_type = message_config_details(msg);
-                             $("#error_msg_id").prop("hidden", false)
-                             var display = msg_type.messages_id_desc;
-
-                        $("#id_check_success_messages").append('<p>' + display + newArrayDataOfOjbect[0] + '</p>')
-
-                           
-                             var msg = "JMSG011";
-                             var msg_type ;
-                             msg_type = message_config_details(msg);
-                             $("#error_msg_id").prop("hidden", false)
-                             var display1 = msg_type.messages_id_desc;
-
-                        $("#id_check_success_messages").append('<p>' + display1 + newArrayDataOfOjbect[1] + '</p>')
-
-                           
-                             var msg = "JMSG012";
-                             var msg_type ;
-                             msg_type = message_config_details(msg);
-                             $("#error_msg_id").prop("hidden", false)
-                             var display2 = msg_type.messages_id_desc;
-                        $("#id_check_success_messages").append('<p>' + display2 + newArrayDataOfOjbect[3] + '</p>')
-                               
-                                 var msg = "JMSG013";
-                                 var msg_type ;
-                                 msg_type = message_config_details(msg);
-                                 $("#error_msg_id").prop("hidden", false)
-                                 var display3 = msg_type.messages_id_desc;
-                        $("#id_check_success_messages").append('<p>' + display3 + newArrayDataOfOjbect[4] + '</p>')
-                               
-                                 var msg = "JMSG014";
-                                 var msg_type ;
-                                 msg_type = message_config_details(msg);
-                                 $("#error_msg_id").prop("hidden", false)
-                                 var display4 = msg_type.messages_id_desc;
-                        $("#id_check_success_messages").append('<p>' + display4 + newArrayDataOfOjbect[5] + '</p>')
-                               
-                                 var msg = "JMSG053";
-                                 var msg_type ;
-                                 msg_type = message_config_details(msg);
-                                 $("#error_msg_id").prop("hidden", false)
-                                 var display5 = msg_type.messages_id_desc;
-	   				  $("#id_check_success_messages").append('<p>' + display5 + newArrayDataOfOjbect[6] + '</p>')
-                         //*************** if duplicate data data count is greater than zero ***************
-                        if(newArrayDataOfOjbect[2]>0){
-                            $("#id_check_error_messages").prop("hidden",false)
-                              
-                                 var msg = "JMSG015";
-                                 var msg_type ;
-                                 msg_type = message_config_details(msg);
-                                 $("#error_msg_id").prop("hidden", false)
-                                 var display6 = msg_type.messages_id_desc;
-                            $("#id_check_error_messages").append('<p>' + display6 + newArrayDataOfOjbect[2] + '</p>')
-                               
-                                 var msg = "JMSG001";
-                                 var msg_type ;
-                                 msg_type = message_config_details(msg);
-                                 $("#error_msg_id").prop("hidden", false)
-                                 var display7 = msg_type.messages_id_desc;
-                            $("#id_check_error_messages").append('<p style = "font-weight: bold;">' + display7 + ' </p>')
-                            $("#save_id").prop("hidden", true);
-                            $("#id_delete_duplicate").show()
-                        }
-                        else{
-                            $("#id_check_error_messages").prop("hidden",true)
-                            $("#id_delete_duplicate").hide()
-                        }
-                    }
-                    //*************** if pop-up data count is zero ***************
-                    else {
-                        $("#id_check_success_messages").hide()
-                        $("#id_check_error_messages").prop("hidden", false)
-                              
-                                 var msg = "JMSG006";
-                                 var msg_type ;
-                                 msg_type = message_config_details(msg);
-                                 $("#error_msg_id").prop("hidden", false)
-                                 var display8 = msg_type.messages_id_desc;
-                        $("#id_check_error_messages").append('<p>' + display8 + '</p>')
-                        $("#save_id").prop("hidden", true);
-                }
-            }
-        });
-    }
-//****************************
-// validating the  popup table for duplicate entries
-
-function compare_duplicate(validate_add_attributes,main_table_low_value, main_table_low_value_type){
-    var error_message = ''
-    var table_one = [];
-  var table_two = [];
-  var no_duplicate_value = 'Y';
-
-  for (i = 0; i < main_table_low_value.length; i++) {
-
-    table_two_cell_one = validate_add_attributes[0];
-    table_two_cell_two = validate_add_attributes[1];
-    for (j = 0; j < main_table_low_value.length; j++) {
-
-      table_one_cell_one = main_table_low_value[j];
-      table_one_cell_two = main_table_low_value_type[j];
-
-      if ((table_two_cell_one == table_one_cell_one) && (table_one_cell_two == table_two_cell_two)) {
-
-       var url_new = "{% url 'eProc_Basic:get_message_description' %}";
-       console.log(url_new);
-            var msg = "MSG186";
-            var msg_type, str ;
-              str = "Message Id & Message Type";
-              msg_type = message_config_details(msg);
-              console.log("msg_type == ",msg_type.message_type);
-
-              if(msg_type.message_type == "Error"){
-                display_message_UI("id_error_msg_id", msg_type.messages_id_desc, str)
-              }
-              else if(msg_type.message_type == "Warning"){
-                display_message_UI("id_warning_msg_id", msg_type.messages_id_desc, str)
-              }
-              else if(msg_type.message_type == "Information"){
-                display_message_UI("id_info_msg_id", msg_type.messages_id_desc, str)
-              }
-              error_message =  msg_type.messages_id_desc;
-               $('#id_save_confirm_popup').modal('hide');
-        $('#myModal').modal('show');
-        no_duplicate_value = 'N'
-
-    }
-  }
-}
-     $.each(validate_add_attributes, function (i, item) {
+        $.each(validate_add_attributes, function (i, item) {
             if (item == '') {
-                //error_message = messageConstants["JMSG002"] + "Message Id ";
-               
-                var msg = "JMSG002";
-                var msg_type ;
-                  msg_type = message_config_details(msg);
-                  $("#error_msg_id").prop("hidden", false)
-
-                  if(msg_type.message_type == "ERROR"){
-                        display_message("error_msg_id", msg_type.messages_id_desc)
-                  }
-                  else if(msg_type.message_type == "WARNING"){
-                     display_message("id_warning_msg_id", msg_type.messages_id_desc)
-                  }
-                  else if(msg_type.message_type == "INFORMATION"){
-                     display_message("id_info_msg_id", msg_type.messages_id_desc)
-                  }
+                get_message_details("JMSG001"); // Get message details
                 no_duplicate_value = 'N'
                 return [no_duplicate_value,error_message]
             }
-     });
-  return [no_duplicate_value,error_message];
-}
+        });
+        return [no_duplicate_value,error_message];
+    }
 
-       function window_close() {
-             window.history.back();
-              var preUrl = document.referrer;
-              console.log(preUrl);
-              window.open('', '_self', '').close();
-<!--               var win = window.open(preUrl);-->
-<!--                win.focus();-->
-              if (preUrl == null)
-                     return "The previous page url is empty";
-               else
-                     return preUrl;
-       }
-
-// validating the  popup table for duplicate entries
-function compare_table_for_duplicate_entries(validate_add_attributes, message) {
-    add_attr_duplicates = false;
-    var error_message = ''
-    var add_attr_duplicates_list = [];
-    var add_attr_unique_list = [];
-    var no_duplicate_value = 'Y'
-    $.each(validate_add_attributes, function (index, value) {
-        if ($.inArray(value, add_attr_unique_list) == -1) {
-            add_attr_unique_list.push(value);
+    // validating the  popup table for duplicate entries
+    function compare_table_for_duplicate_entries(validate_add_attributes, message) {
+        add_attr_duplicates = false;
+        var error_message = ''
+        var add_attr_duplicates_list = [];
+        var add_attr_unique_list = [];
+        var no_duplicate_value = 'Y'
+        $.each(validate_add_attributes, function (index, value) {
+            if ($.inArray(value, add_attr_unique_list) == -1) {
+                add_attr_unique_list.push(value);
+            }
+            else {
+                if ($.inArray(value, add_attr_duplicates_list) == -1) {
+                    add_attr_duplicates_list.push(value);
+                }
+            }
+        });
+        if (add_attr_duplicates_list.length != 0) {
+            get_message_details("JMSG001"); // Get message details
+            no_duplicate_value = 'N'
+            return [no_duplicate_value,error_message]
         }
         else {
-            if ($.inArray(value, add_attr_duplicates_list) == -1) {
-                add_attr_duplicates_list.push(value);
-            }
+            $.each(message, function (i, item) {
+                if (item.message_id.length == 0) {
+                    get_message_details("JMSG002"); // Get message details
+                    no_duplicate_value = 'N'
+                    return [no_duplicate_value,error_message]
+                }
+                if (item.message_type.length == 0) {
+                    get_message_details("JMSG002"); // Get message details
+                    no_duplicate_value = 'N'
+                    return [no_duplicate_value,error_message]
+                }
+            });
         }
-    });
-    if (add_attr_duplicates_list.length != 0) {
-        //error_message = messageConstants["JMSG001"];
-        var url_new = "{% url 'eProc_Basic:get_message_description' %}";
-                var msg = "JMSG001";
-                var msg_type ;
-              msg_type = message_config_details(msg);
-              $("#error_msg_id").prop("hidden", false)
-
-              if(msg_type.message_type == "ERROR"){
-                    display_message("error_msg_id", msg_type.messages_id_desc)
-              }
-              else if(msg_type.message_type == "WARNING"){
-                 display_message("id_warning_msg_id", msg_type.messages_id_desc)
-              }
-              else if(msg_type.message_type == "INFORMATION"){
-                 display_message("id_info_msg_id", msg_type.messages_id_desc)
-              }
-                no_duplicate_value = 'N'
-                return [no_duplicate_value,error_message]
-
+        return [no_duplicate_value,error_message]
     }
-    else {
-         $.each(message, function (i, item) {
-            if (item.message_id.length == 0) {
-               //error_message = messageConstants["JMSG002"] + "Message Id";
-               var url_new = "{% url 'eProc_Basic:get_message_description' %}";
-                var msg = "JMSG002";
-                var msg_type ;
-              msg_type = message_config_details(msg);
-              $("#error_msg_id").prop("hidden", false)
 
-              if(msg_type.message_type == "ERROR"){
-                    display_message("error_msg_id", msg_type.messages_id_desc)
-              }
-              else if(msg_type.message_type == "WARNING"){
-                 display_message("id_warning_msg_id", msg_type.messages_id_desc)
-              }
-              else if(msg_type.message_type == "INFORMATION"){
-                 display_message("id_info_msg_id", msg_type.messages_id_desc)
-              }
-                no_duplicate_value = 'N'
-                return [no_duplicate_value,error_message]
-            }
-            if (item.message_type.length == 0) {
-               //error_message = messageConstants["JMSG002"] + "Message Type";
-              var url_new = "{% url 'eProc_Basic:get_message_description' %}";
-                var msg = "JMSG002";
-                var msg_type ;
-              msg_type = message_config_details(msg);
-              $("#error_msg_id").prop("hidden", false)
-
-              if(msg_type.message_type == "ERROR"){
-                    display_message("error_msg_id", msg_type.messages_id_desc)
-              }
-              else if(msg_type.message_type == "WARNING"){
-                 display_message("id_warning_msg_id", msg_type.messages_id_desc)
-              }
-              else if(msg_type.message_type == "INFORMATION"){
-                 display_message("id_info_msg_id", msg_type.messages_id_desc)
-              }
-                no_duplicate_value = 'N'
-                return [no_duplicate_value,error_message]
+    //validate by comparing  main table values and popup table values
+    function maintable_validation(validate_add_attributes, main_table_low_value) {
+        var no_duplicate_entries = 'Y'
+        var error_message =''
+        var common = [];
+        jQuery.grep(validate_add_attributes, function (el) {
+            if (jQuery.inArray(el, main_table_low_value) != -1) {
+                common.push(el);
             }
         });
-    }
-
-    return [no_duplicate_value,error_message]
-}
-
-//validate by comparing  main table values and popup table values
-function maintable_validation(validate_add_attributes, main_table_low_value) {
-    var no_duplicate_entries = 'Y'
-    var error_message =''
-    var common = [];
-    jQuery.grep(validate_add_attributes, function (el) {
-        if (jQuery.inArray(el, main_table_low_value) != -1) {
-        common.push(el);
+        if (common.length != 0) {
+            get_message_details("JMSG001"); // Get message details
+            no_duplicate_value = 'N'
+            return [no_duplicate_value,error_message]
         }
-    });
-    if (common.length != 0) {
-        //error_message = messageConstants["JMSG001"]
-       
-                var msg = "JMSG001";
-                var msg_type ;
-              msg_type = message_config_details(msg);
-              $("#error_msg_id").prop("hidden", false)
-
-              if(msg_type.message_type == "ERROR"){
-                    display_message("error_msg_id", msg_type.messages_id_desc)
-              }
-              else if(msg_type.message_type == "WARNING"){
-                 display_message("id_warning_msg_id", msg_type.messages_id_desc)
-              }
-              else if(msg_type.message_type == "INFORMATION"){
-                 display_message("id_info_msg_id", msg_type.messages_id_desc)
-              }
-                no_duplicate_value = 'N'
-                return [no_duplicate_value,error_message]
+        return [no_duplicate_entries,error_message]
     }
-    return [no_duplicate_entries,error_message]
-}
-
 </script>
-
 <script src="{% static 'scripts/message_config.js' %}"></script>
-
 {% endblock %}

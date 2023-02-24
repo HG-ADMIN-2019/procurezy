@@ -76,10 +76,78 @@ $('#save_id').click(function () {
         }
         purchase_contrl.purchase_ctrl_flag  = data;
         if (purchase_contrl == undefined) {
-            purchase_contrl.company_id = row.find("TD").eq(1).find('select[type="text"]').val();
+            purchase_contrl.company_code_id = row.find("TD").eq(1).find('select[type="text"]').val();
         }
-        validate_add_attributes.push(purchase_contrl.company_id);
+        validate_add_attributes.push(purchase_contrl.company_code_id);
         purhcase_control_data.push(purchase_contrl);
     });
     $('#id_save_confirm_popup').modal('show');
 });
+
+// Function to get main table data
+function get_main_table_data() {
+    main_table_low_value = [];
+    $('#display_basic_table').DataTable().destroy();
+    $("#display_basic_table TBODY TR").each(function () {
+        var row = $(this);
+        var main_attribute = {};
+        main_attribute.company_code_id = row.find("TD").eq(1).html();
+        main_attribute.call_off = row.find("TD").eq(2).html();
+        main_attribute.purchase_ctrl_flag = row.find("TD").eq(3).html();
+        var data = '';
+        if (main_attribute.purchase_ctrl_flag == 'Activate') {
+            data = true
+        } else {
+            data = false
+        }
+        main_attribute.purchase_ctrl_flag = data;
+        main_attribute.purchase_control_guid = row.find("TD").eq(4).html();
+        main_table_low_value.push(main_attribute);
+    });
+    table_sort_filter_page('display_basic_table');
+}
+
+// Function to get the selected row data
+function get_selected_row_data() {
+    $("#display_basic_table TBODY TR").each(function () {
+        var row = $(this);
+        var purchase_contrl_type_dic = {};
+        purchase_contrl_type_dic.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
+         if (purchase_contrl_type_dic.del_ind) {
+            purchase_contrl_type_dic.company_code_id = row.find("TD").eq(1).html();
+            purchase_contrl_type_dic.call_off = row.find("TD").eq(2).html();
+            purchase_contrl_type_dic.purchase_ctrl_flag = row.find("TD").eq(3).html();
+            purchase_contrl_type_dic.purchase_control_guid = row.find("TD").eq(4).html();
+            var data = '';
+            if (purchase_contrl_type_dic.purchase_ctrl_flag == 'Activate'){
+                data = true
+            } else{
+                data = false
+            }
+            purchase_contrl_type_dic.purchase_ctrl_flag  = data;
+            main_table_purchase_contrl_checked.push(purchase_contrl_type_dic);
+        }
+    });
+}
+
+// Function for add a new row data
+function new_row_data(){
+    basic_add_new_html +=
+    `<tr>
+        <td><input type="checkbox" required></td>
+        <td><select class="input form-control" type="text">${pc_company_dropdown}</select></td>
+        <td>
+            <select class="input form-control" type="text">
+                <option value="1">Catalog</option>
+                <option value="2">Free text</option>
+                <option value="3">PR</option>
+                <option value="4">Limit</option>
+            </select>
+        </td>
+        <td><select type="text" class="input form-control">${activate_dropdown}</select></td>
+        <td hidden><input  type="text" class="form-control"  name="guid"></td>
+        <td class="class_del_checkbox" hidden><input type="checkbox" required></td>
+    </tr>`
+    $('#id_popup_tbody').append(basic_add_new_html);
+    table_sort_filter('id_popup_table');
+}

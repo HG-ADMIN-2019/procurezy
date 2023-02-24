@@ -217,21 +217,22 @@ def extract_cusprodcatdesc_data(request):
 
     writer = csv.writer(response)
 
-    writer.writerow(['CATEGORY_DESC', 'del_ind', 'LANGUAGE_ID', 'PROD_CAT_ID'])
+    writer.writerow(['PROD_CAT_ID' , 'LANGUAGE_ID', 'CATEGORY_DESC', 'del_ind'])
     # get only active record
 
     customerproddesc = django_query_instance.django_filter_query(UnspscCategoriesCustDesc,
                                                                  {'del_ind': False}, None,
-                                                                 ['category_desc', 'del_ind', 'language_id',
-                                                                  'prod_cat_id',
+                                                                 ['prod_cat_id', 'language_id',
+                                                                  'category_desc', 'del_ind',
+
                                                                   ])
     customerproddesc_data = query_update_del_ind(customerproddesc)
 
     for customerproddescData in customerproddesc_data:
-        customerproddescData_info = [customerproddescData['category_desc'],
-                                     customerproddescData['del_ind'],
+        customerproddescData_info = [customerproddescData['prod_cat_id'],
                                      customerproddescData['language_id'],
-                                     customerproddescData['prod_cat_id']]
+                                     customerproddescData['category_desc'],
+                                     customerproddescData['del_ind']]
         writer.writerow(customerproddescData_info)
 
     return response
@@ -243,7 +244,7 @@ def extract_cusprodcatdesc_template(request):
 
     writer = csv.writer(response)
 
-    writer.writerow(['CATEGORY_DESC', 'del_ind', 'LANGUAGE_ID', 'PROD_CAT_ID'])
+    writer.writerow(['PROD_CAT_ID', 'LANGUAGE_ID', 'CATEGORY_DESC', 'del_ind'])
 
     return response
 

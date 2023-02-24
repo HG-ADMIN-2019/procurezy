@@ -5,15 +5,13 @@
 
 <div class="container-fluid">
     <div class="configuration-table_wrapper">
-
         <div class="elements-space-between">
             <h3>Maintain Org Node Level Attributes</h3>
             <div>
-                <!-- <button style="display:none;" class="btn btn-primary  modal_upload" id="id_upload_redirect_org_attr" value="org_attr_upload" onclick="onclick_upload_button()" type="button"><i class="fas fa-cloud-upload-alt"></i> DATA UPLOAD </button> -->
                 <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Application_Settings:extract_node_level_attributes_data' %}'" type="button">
                     <i class="fas fa-download"></i> extract
                 </button>
-                <button class="btn btn-primary" type="button" id="id_add_data" value="ADD" data-toggle="modal" data-target="#myModal" onclick="onclick_add_button(this)">
+                <button class="btn btn-primary" type="button" id="id_add_data" value="ADD" data-toggle="modal" data-target="#org_attr_Modal" onclick="onclick_add_button(this)">
                     <i class="fa fa-plus" ></i> Add New Org Node Level Attribute
                 </button>
                  <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"  onclick="window_close();">
@@ -21,13 +19,10 @@
                 </button>
             </div>
         </div>
-
         <hr>
-
         <div class="configuration-table_section">
             <div id="err_msg_app_settings"> </div>
             <div id="err_msg_app_settings_t" class="alert alert-success" hidden><span id="success_msg_id"></span></div>
-
             <div class="table-container tcw-60">
                 <div class="edit-button-section mb-4">
                     <button class="btn btn-secondary btn-sm" id="id_edit_data" title="Edit" onclick="onclick_edit_button()">
@@ -39,9 +34,7 @@
                     <button class="btn btn-secondary btn-sm" title="Cancel" id="id_cancel_data" style="display:none;" type="button" onclick="display_basic_db_data()">
                         <i class="fas fa-times"></i> cancel
                     </button>
-
                 </div>
-
                 <table id="display_basic_table" class="class_basic_org_attr_table table table-bordered custom-table">
                     <thead id="id_org_attr_table_header">
                     <tr>
@@ -54,7 +47,6 @@
                         <th>Attributes</th>
                         <th hidden>org_model_nodetype_config_guid</th>
                         <th hidden>Del Indicator</th>
-
                     </tr>
                     </thead>
                     <tbody id="id_org_attr_tbody">
@@ -72,9 +64,8 @@
             </div>
         </div>
     </div>
-
     <!--modal popup for Add,copy,update and upload-->
-    <div class="modal fade" id="myModal">
+    <div class="modal fade" id="org_attr_Modal">
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
@@ -93,7 +84,6 @@
                             <i class="fa fa-trash"></i> delete
                         </button>
                     </div>
-
                     <div id="id_check_success_messages" class="alert alert-success check_success_message" hidden></div>
                     <div id="id_check_error_messages" class="alert alert-danger check_error_messages" hidden></div>
                     <div id="id_check_special_character_messages" class="alert alert-danger check_special_character_messages" hidden>
@@ -101,11 +91,9 @@
                         <p id="id_error_msg_org_attr_name"></p>
                         <p id="id_error_msg_org_attr_length"></p>
                     </div>
-
                     <div id="error_msg_id" class="alert alert-danger display-none" role="alert"><span id="error_message"></span></div>
                     <div id="id_warning_msg_id" class="alert alert-warning display-none" role="alert"></div>
                     <div id="id_info_msg_id" class="alert alert-primary display-none" role="alert"></div>
-
                     <table class="class_popup_table table table-bordered mt-2" id="id_popup_table">
                         <thead>
                         <tr>
@@ -117,28 +105,23 @@
                         </tr>
                         </thead>
                         <tbody id=id_popup_tbody>
-
                         </tbody>
                     </table>
                 </div>
-
                 <!-- Modal footer -->
                 <div class="modal-footer"><div class="modal-footer">
                     <button type="button" class="btn btn-outline-primary remove_upload_data" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
                     <button id="id_delete_duplicate" class="btn btn-primary" style="display:none;" type="button" onclick="delete_duplicate()"><i class="fa fa-trash"></i> delete duplicates</button>
                     <button id="id_check_data" style="display:none;" class="btn btn-primary" type="button" onclick="check_data()"><i class="fas fa-check"></i> check</button>
                     <button class="btn btn-primary" id="save_id"><i class="fas fa-save"></i> save</button>
-                   
                 </div>
                 </div>
             </div>
         </div>
     </div>
     <!--end of modal popup for Add,copy,update and upload-->
-
     <!-- modal popup to upload the csv file; save confirmation popup; delete confirmation popup -->
     {% include 'configuration_common_pop_up.html' %}
-
     <div>
         {% if messages %} {% for message in messages %} {% if message.tags == 'success' %}
         <div style="color: green; ">{{ message }}</div>
@@ -149,8 +132,6 @@
         {% endif %} {% endfor %} {% endif %}
     </div>
 </div>
-
-
 <script>
     var rendered_org_attrlevel_data ={{org_attributes_level|safe}};
     var rendered_nodetypedropdown_values
@@ -161,83 +142,72 @@
     var edit_basic_data = '';
     var GLOBAL_ACTION = '';
     var no_duplicate_entries = 'Y'
+    var messages_list = {{messages_list|safe}};
 
     //**************************************
     var attributelevel_id_dropdown ;
     var nodetype_dropdown;
+
+    //*****************************
     function orgatt_level_drpdown(){
         nodetype_dropdown = '';
         $.each(rendered_nodetypedropdown_values, function(i, item){
-         nodetype_dropdown += '<option value="' + item.node_type + '">' + item.node_type + '</option>';
+            nodetype_dropdown += '<option value="' + item.node_type + '">' + item.node_type + '</option>';
         })
         attributelevel_id_dropdown = '';
-         $.each(rendered_attiddropdown_values, function(i, item){
+        $.each(rendered_attiddropdown_values, function(i, item){
             attributelevel_id_dropdown  += '<option value="' + item.attribute_id + '">' + item.attribute_id + '</option>';
         })
     }
 
- //onclick of cancel display the table in display mode............
-function display_basic_db_data() {
-    $('#display_basic_table').DataTable().destroy();
-    $('#id_org_attr_tbody').empty();
-    var edit_basic_data = '';
-    $.each(rendered_org_attrlevel_data, function (i, item) {
-        edit_basic_data += '<tr ><td class="class_select_checkbox"><input class="checkbox_check" onclick="valueChanged()" type="checkbox" required></td><td>' + item.node_type + '</td><td>' + item.node_values + '</td>'+
-        '<td hidden>' + item.org_model_nodetype_config_guid + '</td>' +
-        '<td hidden> '+ item.del_ind+'</td></tr>';
-    });
-    $('#id_org_attr_tbody').append(edit_basic_data);
-    $("#hg_select_checkbox").prop("hidden", true);
-    $(".class_select_checkbox").prop("hidden", true);
-    $('input.checkbox_check:checkbox').removeAttr('checked');
-    $('#id_edit_data').show();
-    $('#id_cancel_data').hide();
-    $('#id_delete_data').hide();
-    $('#id_copy_data').hide();
-    $('#id_update_data').hide();
-    $('#id_save_confirm_popup').modal('hide');
-    $('#id_delete_confirm_popup').modal('hide');
-    $('#id_check_all').hide();
-    table_sort_filter('display_basic_table');
-}
+    //onclick of cancel display the table in display mode............
+    function display_basic_db_data() {
+        $('#display_basic_table').DataTable().destroy();
+        $('#id_org_attr_tbody').empty();
+        var edit_basic_data = '';
+        $.each(rendered_org_attrlevel_data, function (i, item) {
+            edit_basic_data += '<tr ><td class="class_select_checkbox"><input class="checkbox_check" onclick="valueChanged()" type="checkbox" required></td><td>' + item.node_type + '</td><td>' + item.node_values + '</td>'+
+                '<td hidden>' + item.org_model_nodetype_config_guid + '</td>' +
+                '<td hidden> '+ item.del_ind+'</td></tr>';
+            });
+            $('#id_org_attr_tbody').append(edit_basic_data);
+            $("#hg_select_checkbox").prop("hidden", true);
+            $(".class_select_checkbox").prop("hidden", true);
+            $('input.checkbox_check:checkbox').removeAttr('checked');
+            $('#id_edit_data').show();
+            $('#id_cancel_data').hide();
+            $('#id_delete_data').hide();
+            $('#id_copy_data').hide();
+            $('#id_update_data').hide();
+            $('#id_save_confirm_popup').modal('hide');
+            $('#id_delete_confirm_popup').modal('hide');
+            $('#id_check_all').hide();
+            table_sort_filter('display_basic_table');
+        }
 
-// validate and save for add,copy,update and upload data
-function popup_save_data() {
-
-    $('#success_msg_id').empty()
-    $('#id_popup_table').DataTable().destroy();
-    var main_table_low_value = [];
-    no_duplicate_entries = 'Y'
-    no_duplicate_value = 'Y'
-    var error_message = '';
-
-    $('#display_basic_table').DataTable().destroy();
-    $("#display_basic_table TBODY TR").each(function() {
-        var row = $(this);
-        var main_attribute = {};
-
-        main_attribute.node_type = row.find("TD").eq(1).html();
-        main_attribute.node_values = row.find("TD").eq(2).html();
-        main_table_low_value.push(main_attribute);
-    });
-    table_sort_filter('display_basic_table');
-
-    [no_duplicate_value,error_message] = compare_table_for_duplicate_entries(validate_add_attributes, org_attr_level_data)
-    if (error_message){
-        display_error_message(error_message)
-
+    // validate and save for add,copy,update and upload data
+    function popup_save_data() {
+        $('#success_msg_id').empty()
+        $('#display_basic_table').DataTable().destroy();
+        no_duplicate_entries = 'Y'
+        no_duplicate_value = 'Y'
+        var error_message = '';
+        get_main_table_data(); //Read data from main table
+        // compare for duplicates in popup
+        [no_duplicate_value,error_message] = compare_table_for_duplicate_entries(validate_add_attributes, org_attr_level_data)
+        if (error_message){
+            display_error_message(error_message)
         }
         else{
             if (GLOBAL_ACTION == "ADD"){
-                [no_duplicate_entries,error_message] = maintable_validation(duplicate_entry, main_table_low_value)
+                [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
             }
             if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
                 var add_basic_data = '';
                 var org_attr_level_data_array =  org_attr_level_data;
-
                 $('#id_save_confirm_popup').modal('hide');
-            data = {'data':org_attr_level_data,'table_name':'OrgModelNodetypeConfig','action':GLOBAL_ACTION}
-            OpenLoaderPopup();
+                data = {'data':org_attr_level_data,'table_name':'OrgModelNodetypeConfig','action':GLOBAL_ACTION}
+                OpenLoaderPopup();
                 $.ajax({
                     type: 'POST',
                     url: "{% url 'eProc_Configuration:create_update_application_data' %}",
@@ -245,50 +215,27 @@ function popup_save_data() {
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
                     success: function(Response) {
-                        rendered_org_attrlevel_data = Response[0];                    
-                        display_basic_db_data();                   
-                        $('#myModal').modal('hide');
-                        //$('#id_error_msg').text(messageConstants["JMSG001"])
-                        $('#success_msg_id').text(Response[1])
-                        if(Response[1].message_type== 'SUCCESS'){
-                            $('#success_msg_id').text(Response[1].message_desc)
-                        }
-                        $("#err_msg_app_settings_t").prop("hidden", false)
-                        table_sort_filter('id_popup_table');
-                        message_display_time();
-                        table_sort_filter('id_popup_table');
+                        rendered_org_attrlevel_data = Response[0];
+                        display_basic_db_data();
+                        $('#org_attr_Modal').modal('hide');
+                        success_response(Response);  // Display Response data
                         CloseLoaderPopup();
                     }
                 });
             }
             else if (error_message){
                 display_error_message(error_message)
-            } 
+            }
+        }
+    }
 
-    }                    
-}
-    
-  
     //delete the selected row in db................
     var main_table_org_attrlevel_checked = [];
-
     function main_table_delete() {
         $('#success_msg_id').empty()
         GLOBAL_ACTION = 'DELETE'
         main_table_org_attrlevel_checked = [];
-        $('#display_basic_table').DataTable().destroy();
-        $("#display_basic_table TBODY TR").each(function() {
-            var row = $(this);
-            var org_attr_arr_obj = {};
-              org_attr_arr_obj.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
-        if(org_attr_arr_obj.del_ind){
-            org_attr_arr_obj.node_type = row.find("TD").eq(1).html();
-            org_attr_arr_obj.node_values = row.find("TD").eq(2).html();
-            org_attr_arr_obj.org_model_nodetype_config_guid = row.find("TD").eq(3).html();
-            org_attr_arr_obj.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
-            main_table_org_attrlevel_checked.push(org_attr_arr_obj);
-        }
-        });
+        get_selected_row_data(); // Function call to get the selected row data
         $('#id_delete_confirm_popup').modal('hide');
         data = {'data':main_table_org_attrlevel_checked,'table_name':'OrgModelNodetypeConfig','action':GLOBAL_ACTION}
         OpenLoaderPopup();
@@ -300,183 +247,118 @@ function popup_save_data() {
             dataType: "json",
             success: function(Response) {
                 rendered_org_attrlevel_data = Response[0];
-                    display_basic_db_data();
-                    $('#myModal').modal('hide');
-                    //$('#id_error_msg').text(messageConstants["JMSG001"])
-                    $('#success_msg_id').text(Response[1])
-                     if(Response[1].message_type== 'SUCCESS'){
-                         $('#success_msg_id').text(Response[1].message_desc)
-                    }
-                $("#err_msg_app_settings_t").prop("hidden",false)
-                 table_sort_filter('id_popup_table');
-                 message_display_time();
+                display_basic_db_data();
+                $('#org_attr_Modal').modal('hide');
+                success_response(Response); // Function call to display response data
                 CloseLoaderPopup();
             }
         });
     }
-    
- function window_close() {
-             window.history.back();
-              var preUrl = document.referrer;
-              console.log(preUrl);
-              window.open('', '_self', '').close();       
 
-              if (preUrl == null)
-                     return "The previous page url is empty";
-               else
-                     return preUrl;
-       }
-
- // validating the  popup table for duplicate entries
-function compare_table_for_duplicate_entries(validate_add_attributes, org_attr_level) {
-    add_attr_duplicates = false;
-    var error_message = ''
-    var add_attr_duplicates_list = [];
-    var add_attr_unique_list = [];
-    var no_duplicate_value = 'Y'
-    var org_attr_level = {};
-    $.each(validate_add_attributes, function (index, value) {
-        if ($.inArray(value, add_attr_unique_list) == -1) {
-            add_attr_unique_list.push(value);
-        } else {
-            if ($.inArray(value, add_attr_duplicates_list) == -1) {
-                add_attr_duplicates_list.push(value);
+    // validating the  popup table for duplicate entries
+    function compare_table_for_duplicate_entries(validate_add_attributes, org_attr_level) {
+        add_attr_duplicates = false;
+        var error_message = ''
+        var add_attr_duplicates_list = [];
+        var add_attr_unique_list = [];
+        var no_duplicate_value = 'Y'
+        var org_attr_level = {};
+        $.each(validate_add_attributes, function (index, value) {
+            if ($.inArray(value, add_attr_unique_list) == -1) {
+                add_attr_unique_list.push(value);
+            } else {
+                if ($.inArray(value, add_attr_duplicates_list) == -1) {
+                    add_attr_duplicates_list.push(value);
+                }
             }
+        });
+        if (add_attr_duplicates_list.length != 0) {
+            error_message = ui_messeges("JMSG001")// Get message details
+            no_duplicate_value = 'N'
+            return [no_duplicate_value,error_message]
         }
-    });
-    if (add_attr_duplicates_list.length != 0) {
-              
-                var msg = "JMSG001";
-                var msg_type ;
-              msg_type = message_config_details(msg);
-              $("#error_msg_id").prop("hidden", false)
+        else{
+            $.each(org_attr_level, function (i, item) {
+                if (item.node_type.length == 0) {
+                    error_message = ui_messeges("JMSG002")// Get message details
+                    no_duplicate_value = 'N'
+                    return [no_duplicate_value,error_message]
+                }
+                if (item.node_values.length == 0) {
+                    error_message = ui_messeges("JMSG002")// Get message details
+                    no_duplicate_value = 'N'
+                    return [no_duplicate_value,error_message]
+                }
+            });
+        }
+        return [no_duplicate_value,error_message]
+    }
 
-              if(msg_type.message_type == "ERROR"){
-                    display_message("error_msg_id", msg_type.messages_id_desc)
-              }
-              else if(msg_type.message_type == "WARNING"){
-                 display_message("id_warning_msg_id", msg_type.messages_id_desc)
-              }
-              else if(msg_type.message_type == "INFORMATION"){
-                 display_message("id_info_msg_id", msg_type.messages_id_desc)
-              }
-                no_duplicate_value = 'N'
-                return [no_duplicate_value,error_message]
-    }            
-    else{
-        $.each(org_attr_level, function (i, item) {
-             if (item.node_type.length == 0) {
-                 //error_message = messageConstants["JMSG002"] +"Maximum length";
-              
-                var msg = "JMSG002";
-                var msg_type ;
-              msg_type = message_config_details(msg);
-              $("#error_msg_id").prop("hidden", false)
+ //Function to highlight duplicate records
+    function display_duplicate_entry(common) {
+        var org_attribute_check = new Array;
+        $("#id_popup_table TBODY TR").each(function() {
+            var row = $(this);
+            org_attr_level.node_type = row.find("TD").eq(1).find('select').val();
+            org_attr_level.node_values = row.find("TD").eq(2).find('select').val();
+            var compare = org_attr_level.node_type +'-'+ org_attr_level.node_values ;
+            org_attribute_check.push(compare);
+            jQuery.grep(org_attribute_check, function(el) {
+                if (jQuery.inArray(el, common) != -1) {
+                    row_color_highlight(row);
+                }
+                else {
+                    row_color_no_highlight(row);
+                }
+            });
+        });
+    }
 
-              if(msg_type.message_type == "ERROR"){
-                    display_message("error_msg_id", msg_type.messages_id_desc)
-              }
-              else if(msg_type.message_type == "WARNING"){
-                 display_message("id_warning_msg_id", msg_type.messages_id_desc)
-              }
-              else if(msg_type.message_type == "INFORMATION"){
-                 display_message("id_info_msg_id", msg_type.messages_id_desc)
-              }
-                no_duplicate_value = 'N'
-                return [no_duplicate_value,error_message]
-            }
-             if (item.node_values.length == 0) {
-                 //error_message = messageConstants["JMSG002"] +"Maximum length";
-               
-                var msg = "JMSG002";
-                var msg_type ;
-              msg_type = message_config_details(msg);
-              $("#error_msg_id").prop("hidden", false)
-
-              if(msg_type.message_type == "ERROR"){
-                    display_message("error_msg_id", msg_type.messages_id_desc)
-              }
-              else if(msg_type.message_type == "WARNING"){
-                 display_message("id_warning_msg_id", msg_type.messages_id_desc)
-              }
-              else if(msg_type.message_type == "INFORMATION"){
-                 display_message("id_info_msg_id", msg_type.messages_id_desc)
-              }
-                no_duplicate_value = 'N'
-                return [no_duplicate_value,error_message]
+    //onclick of add button display org_attr_Modal popup and set GLOBAL_ACTION button value
+    function onclick_add_button(button) {
+        OpenLoaderPopup();
+        var data = {'table_name':'OrgModelNodetypeConfig'}
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'eProc_Configuration:get_dropdown_data' %}",
+            data: JSON.stringify(data),
+            success: function(response) {
+                rendered_attiddropdown_values = response.upload_attributesid_dropdown
+                rendered_nodetypedropdown_values = response.upload_orgnodetypes_dropdown
+                orgatt_level_drpdown()
+                $("#error_msg_id").css("display", "none")
+                $( "#header_select").prop( "hidden", false );
+                GLOBAL_ACTION = button.value
+                $('#id_popup_table').DataTable().destroy();
+                $("#id_popup_tbody").empty();
+                new_row_data(); // Function for add a new row data
+                $("#id_del_ind_checkbox").prop("hidden", true);
+                document.getElementById("id_del_add_button").style.display = "block";
+                $("#save_id").prop("hidden", false);
+                CloseLoaderPopup();
+                $('#org_attr_Modal').modal('show');
             }
         });
     }
 
-    return [no_duplicate_value,error_message]
-}
-
-//validate by comparing  main table values and popup table values
-function maintable_validation(attr_level_data, main_table_low_value) {
-    var no_duplicate_entries = 'Y'
-    var error_message =''
-    var dup_entry = "";
-
-     $.each(attr_level_data, function (i, item) {
-        $.each(main_table_low_value, function (j, item1) {
-            if((item.node_type == item1.node_type) && (item.node_values == item1.node_values)){
-                dup_entry = "1"
-            }
+    //Function to highlight duplicate records
+    function display_duplicate_entry(common){
+        var org_attrlevel_check = new Array;
+        $("#id_popup_table TBODY TR").each(function() {
+            var row = $(this);
+            org_attr_level = {}
+            org_attr_level.node_type = row.find("TD").eq(1).find('select').val();
+            org_attrlevel_check.push(org_attr_level.node_type);
+            jQuery.grep(org_attrlevel_check, function(el) {
+                if (jQuery.inArray(el, common) != -1) {
+                        row_color_highlight(row);
+                }
+                else {
+                    row_color_no_highlight(row);
+                }
+            });
         });
-     });
-    if((dup_entry == "1")){
-        //error_message = messageConstants["JMSG001"]
-              
-                var msg = "JMSG001";
-                var msg_type ;
-              msg_type = message_config_details(msg);
-              $("#error_msg_id").prop("hidden", false)
-
-              if(msg_type.message_type == "ERROR"){
-                    display_message("error_msg_id", msg_type.messages_id_desc)
-              }
-              else if(msg_type.message_type == "WARNING"){
-                 display_message("id_warning_msg_id", msg_type.messages_id_desc)
-              }
-              else if(msg_type.message_type == "INFORMATION"){
-                 display_message("id_info_msg_id", msg_type.messages_id_desc)
-              }
-                no_duplicate_value = 'N'
-                return [no_duplicate_value,error_message]
     }
-    return  [no_duplicate_entries,error_message]
-}
-
-//onclick of add button display myModal popup and set GLOBAL_ACTION button value
-function onclick_add_button(button) {
- OpenLoaderPopup();
-    var data = {'table_name':'OrgModelNodetypeConfig'}
-    $.ajax({
-        type: 'POST',
-        url: "{% url 'eProc_Configuration:get_dropdown_data' %}",
-        data: JSON.stringify(data),
-        success: function(response) {
-            rendered_attiddropdown_values = response.upload_attributesid_dropdown
-            rendered_nodetypedropdown_values = response.upload_orgnodetypes_dropdown
-            orgatt_level_drpdown()
-            $("#error_msg_id").css("display", "none")
-            $( "#header_select").prop( "hidden", false );
-            GLOBAL_ACTION = button.value
-            $('#id_popup_table').DataTable().destroy();
-            $("#id_popup_tbody").empty();
-            basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select class="form-control">'+nodetype_dropdown+'</select></td><td><select class="form-control">'+attributelevel_id_dropdown+'</select></td><td hidden>pgroup_guid</td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
-            $('#id_popup_tbody').append(basic_add_new_html);
-            table_sort_filter('id_popup_table');
-            $("#id_del_ind_checkbox").prop("hidden", true);
-            document.getElementById("id_del_add_button").style.display = "block";
-            $("#save_id").prop("hidden", false);
-            CloseLoaderPopup();
-            $('#myModal').modal('show');
-        }
-    });
-
-}
 </script>
 <script src="{% static 'scripts/organisational_data/org_attributes_level.js' %}"></script>
-
 {% endblock %}

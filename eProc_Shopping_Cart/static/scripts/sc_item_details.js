@@ -116,13 +116,7 @@ function show_image_div(){
 }
 //################################## END SHOW IMAGE  #################################################################
 
-// Function to get guid of the item and displays confirmation pop-up before deleting
-var delete_item_guid = '';
-function get_item(element){
-    id1 = document.getElementById(element.id)
-    $('#sc-delete-single-item').modal('show');
-    delete_item_guid = element.id ;
-}
+
 
 // Function to hide and show hidden table row contents
 function showSection(obj, data) {

@@ -88,18 +88,117 @@
 <div>
     <div>
         <div>
-            <h1 class="h2">enter timesheet</h1>
+            <h1 class="h2">Enter Timesheet</h1>
         </div>
         <hr color="#ffa500">
         <div id="timesheet">
             <div id="select_project">
-
+                                <form>{% csrf_token %}
+                    <span id="week_number" hidden>{{week_number}}</span>
+                    <label for="choose_project">Select project to enter timesheet:</label>
+                    <select id="choose_project" class="form-control form-control-sm">
+                        <option value="">Select</option>
+                        {% for projects in project_details %}
+                        <option value="{{projects.project_id}}">{{projects.project_desc}}</option>
+                        {% endfor %}
+                    </select>
+                    <div style="margin-top: 30px;" class="text-center">
+                        <button type="button" id="get_project_detail_btn" class="btn btn-primary"
+                            data-url="{% url 'eProc_Time_Sheet:get_project_details' %}"
+                            onclick="get_project_details()">Submit</button>
+                    </div>
+                </form>
             </div>
+            <br>
+            <br>
+             <div id="project_det_div" style="display:none;">
+                <h1>Project Details</h1>
+                <table class="table">
+                    <tr>
+                        <th>Project Id</th>
+                        <td id="project_id"></td>
+                    </tr>
+                    <tr>
+                        <th>Project Description</th>
+                        <td id="project_desc"></td>
+                    </tr>
+                    <tr>
+                        <th>Project Validity</th>
+                        <td id="project_val"></td>
+                    </tr>
+                </table>
 
         </div>
     </div>
 </div>
 
-<script src="{% static 'scripts/project_search.js'%}"></script>
+
+<script>
+const get_project_details = () => {
+    var url = $("#get_project_detail_btn").attr("data-url");
+    project_category_dropdown = '';
+    var project_id = document.getElementById("choose_project").value;
+    if (!project_id) {
+        alert('Please select project')
+        return
+    }
+    $.ajax({
+        type: "POST",
+        url: url,
+        data: {
+            project_id: project_id,
+            csrfmiddlewaretoken: $('input[name=csrfmiddlewaretoken]').val()
+        },
+        success: function (context) {
+            clear_values()
+            display_current_week_data(context)
+            $('#project_det_div').show()
+        },
+        error: function (context) {
+            alert(context.responseJSON.error_message)
+        }
+    })
+}
+
+const display_current_week_data = (context) => {
+    weekend_in_days_global = context.weekend_in_days
+    $('#project_val').empty()
+    document.getElementById("project_val").innerHTML = '<div>Start Date : ' + '<span id="project_start_date">' + context.project_start_date + '</span>' + '<br>' + 'End Date: <span id="project_end_date">' + context.project_end_date + '</span></div>';
+    var det_div = document.getElementById("project_det_div");
+    det_div.style.display = "block";
+    project_category_array = context.project_categories
+    project_category_class = document.getElementsByClassName('project_category')
+    for (i = 0; i < project_category_array.length; i++) {
+        project_category_dropdown += '<option value="' + project_category_array[i] + '">' + project_category_array[i] + '</option>'
+        available_project_category_array.push(project_category_array[i])
+    }
+
+    for (j = 0; j < project_category_class.length; j++) {
+        project_category_class[j].innerHTML = empty_select + project_category_dropdown
+    }
+    document.getElementById("project_id").innerHTML = context.project_id;
+    document.getElementById("project_desc").innerHTML = context.project_description;
+    for (i = 0; i < context.weekend_in_days.length; i++) {
+        document.getElementById('update_holiday_' + context.weekend_in_days[i]).innerHTML = 'Weekend'
+    }
+
+    holiday_list = context.holiday_list
+    holiday_list_global = holiday_list
+    get_date_id = $('[id^="date_"]')
+    for (i = 0; i < get_date_id.length; i++) {
+        date_id = get_date_id[i].id
+        day = date_id.split('_')[1]
+        date = $('#' + date_id).html()
+        if (holiday_list.includes(date)) {
+            $('#update_holiday_' + day).html('Holiday')
+        }
+    }
+}
+
+const clear_values = () => {
+    $('input, textarea, .project_category').val('')
+}
+
+</script>
 
 {% endblock %}

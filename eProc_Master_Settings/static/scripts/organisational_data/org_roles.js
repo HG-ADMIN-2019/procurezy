@@ -2,26 +2,6 @@ var roles_data = new Array();
 var validate_add_attributes = [];
 var roles={};
 
-////onclick of add button display myModal popup and set GLOBAL_ACTION button value
-//function onclick_add_button(button) {
-//    dropdown_value();
-//    $("#error_msg_id").css("display", "none")
-//    $("#header_select").prop( "hidden", false );
-//    GLOBAL_ACTION = button.value
-//    $("#id_popup_tbody").empty();
-//    $('#myModal').modal('show');
-//  //  basic_add_new_html = '<tr ><td><input type="checkbox" required></td><td><select class="form-control">' + roles_id_dropdown + '</select></td><td><select class="form-control">' + roles_desc_dropdown + '</select></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
-//    basic_add_new_html='<tr><td><input type="checkbox" required></td>'+
-//         '<td><select type="text" class="input form-control roles" id="roles-1"  name="role" onchange="GetSelectedTextValue(this)"><option value="" disabled selected>Select your option</option>'+ roles_type_dropdown +'</select></td>'+
-//        '<td><input class="form-control description check_special_char" type="text"  name="role_desc"  id="description-1" disabled></td>'+
-//        '<td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
-//    $('#id_popup_tbody').append(basic_add_new_html);
-//    table_sort_filter('id_popup_table');
-//    $("#id_del_ind_checkbox").prop("hidden", true);
-//    document.getElementById("id_del_add_button").style.display = "block";
-//    $("#save_id").prop("hidden", false);
-//}
-
 //onclick of upload button display id_data_upload popup and set GLOBAL_ACTION button value role_desc
 function onclick_upload_button() {
     GLOBAL_ACTION = "roles_upload"
@@ -30,31 +10,15 @@ function onclick_upload_button() {
     document.getElementById('id_file_data_upload').value = "";
 }
 
-// on click copy icon display the selected checkbox data
-function onclick_copy_button() {
-    GLOBAL_ACTION = "COPY"
-    onclick_copy_update_button("copy")
-    document.getElementById("id_del_add_button").style.display = "block";
-}
-
-// on click update icon display the selected checkbox data to update
-function onclick_update_button() {
-    GLOBAL_ACTION = "UPDATE"
-    onclick_copy_update_button("update")
-    document.getElementById("id_del_add_button").style.display = "none";
-}
-
+//*************************************************
 function onclick_copy_update_button() {
     $("#error_msg_id").css("display", "none")
-
     $('#display_basic_table').DataTable().destroy();
     $('#id_popup_table').DataTable().destroy();
     $("#id_popup_tbody").empty();
     $('#display_basic_table').DataTable().destroy();
-
     //Reference the Table.
     var grid = document.getElementById("display_basic_table");
-
     //Reference the CheckBoxes in Table.
     var checkBoxes = grid.getElementsByTagName("INPUT");
     var edit_basic_data = "";
@@ -64,28 +28,28 @@ function onclick_copy_update_button() {
         if (checkBoxes[i].checked) {
             var row = checkBoxes[i].parentNode.parentNode;
             if(GLOBAL_ACTION == "UPDATE"){
-            edit_basic_data += '<tr><td hidden><input type="checkbox" required></td>'+
-            '<td><select type="text" class="input form-control" id="roles" name="roles" disabled>'+ roles_type_dropdown +'</select></td>'+
-            '<td><input class="form-control" value="' + row.cells[2].innerHTML + '" type="text" onkeypress="return /[a-z ]/i.test(event.key)" name="roles_desc"  maxlength="30" style="text-transform:uppercase" required></td>'+
-            '<td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
-            $("#header_select").prop("hidden", true);
-        }
-         else{
-               edit_basic_data += '<tr><td><input type="checkbox" required></td>'+
-            '<td><select type="text" class="input form-control roles" id="roles-1"  name="roles" onchange="GetSelectedTextValue(this)">'+ roles_type_dropdown +'</select></td>'+
-            '<td><input class="input form-control description" id="description-1" value="' + row.cells[2].innerHTML + '" type="text"  name="roles_desc" disabled></td>'+
-            '<td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
-         $("#header_select").prop("hidden", false);
-         }
-         var roles_type_value = row.cells[1].innerHTML
+                edit_basic_data += '<tr><td hidden><input type="checkbox" required></td>'+
+                '<td><select type="text" class="input form-control" id="roles" name="roles" disabled>'+ roles_type_dropdown +'</select></td>'+
+                '<td><input class="form-control" value="' + row.cells[2].innerHTML + '" type="text" onkeypress="return /[a-z ]/i.test(event.key)" name="roles_desc"  maxlength="30" style="text-transform:uppercase" required></td>'+
+                '<td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+                $("#header_select").prop("hidden", true);
+            }
+            else{
+                edit_basic_data += '<tr><td><input type="checkbox" required></td>'+
+                '<td><select type="text" class="input form-control roles" id="roles-1"  name="roles" onchange="GetSelectedTextValue(this)">'+ roles_type_dropdown +'</select></td>'+
+                '<td><input class="input form-control description" id="description-1" value="' + row.cells[2].innerHTML + '" type="text"  name="roles_desc" disabled></td>'+
+                '<td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+                $("#header_select").prop("hidden", false);
+            }
+            var roles_type_value = row.cells[1].innerHTML
             dropdown_values.push([roles_type_value])
-    }
+        }
     }
     $('#id_popup_table').append(edit_basic_data);
     var i =0;
         $("#id_popup_table TBODY TR").each(function() {
         var row = $(this);
-         var roletype_value = dropdown_values[i][0]
+        var roletype_value = dropdown_values[i][0]
         $(row.find("TD").eq(1).find("select option[value="+roletype_value+"]")).attr('selected','selected');
         i++;
     });
@@ -110,24 +74,7 @@ $(".remove_upload_data").click(() => {
     $("#id_check_special_character_messages").prop("hidden", true)
     $("#id_check_data").prop("hidden", true);
     $('#id_popup_table').DataTable().destroy();
-
-
 });
-
-
-//    role_desc = roles.role_desc.replace(/\s\s+/g, ' ')
-//    if (role_desc == " ") {
-//        $("#id_error_msg").prop("hidden", false)
-//        Error_msg = "";
-//        Error_msg = messageConstants["JMSG002"] + "Role Description";
-//        document.getElementById("id_error_msg").innerHTML = Error_msg;
-//        document.getElementById("id_error_msg").style.color = "Red";
-//        $('#id_save_confirm_popup').modal('hide')
-//        $('#myModal').modal('show');
-//        no_duplicate_value = 'N'
-//    }
-//    return no_duplicate_value
-//}
 
 // on click add icon display the row in to add the new entries
 function add_popup_row() {
@@ -142,10 +89,9 @@ function add_popup_row() {
         $("#id_error_msg").html("");
     });
     basic_add_new_html = '<tr><td><input type="checkbox" required></td>'+
-         '<td><select type="text" class="input form-control roles" id="roles-"  name="roles" onchange="GetSelectedTextValue(this)"><option value="" disabled selected>Select your option</option>'+ roles_type_dropdown +'</select></td>'+
-        '<td><input class="form-control description" type="text"  name="description"  id="description-" disabled></td>'+
-        '<td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
-   // basic_add_new_html = '<tr ><td><input type="checkbox" required></td><td><input class="form-control"  type="text" pattern="[A-Z]" maxlength="40" onkeypress="return /[a-z ]/i.test(event.key)" name="role" style="text-transform:uppercase;" required></td><td><input class="form-control" type="text" maxlength="60" onkeypress="return /[a-z ]/i.test(event.key)" name="role_name"  pattern="[A-Z]" style="text-transform:uppercase;" required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+    '<td><select type="text" class="input form-control roles" id="roles-"  name="roles" onchange="GetSelectedTextValue(this)"><option value="" disabled selected>Select your option</option>'+ roles_type_dropdown +'</select></td>'+
+    '<td><input class="form-control description" type="text"  name="description"  id="description-" disabled></td>'+
+    '<td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
     if (GLOBAL_ACTION == "roles_upload") {
         $(".class_del_checkbox").prop("hidden", false);
@@ -175,34 +121,17 @@ function display_basic_db_data() {
     $('#id_check_all').hide();
     table_sort_filter('display_basic_table');
 }
+
+//*********************************************
 function display_error_message(error_message){
-
         $('#error_message').text(error_message);
-
         document.getElementById("error_message").style.color = "Red";
         $("#error_msg_id").css("display", "block")
         $('#id_save_confirm_popup').modal('hide');
         $('#myModal').modal('show');
-
 }
 
-
-function delete_duplicate() {
-    $('#id_popup_table').DataTable().destroy();
-    var roles_code_check = new Array
-    $("#id_popup_table TBODY TR").each(function () {
-        var row = $(this);
-        //*************** reading data from the pop-up ***************
-
-        role = row.find("TD").eq(1).find('input[type="text"]').val().toUpperCase();
-        if (roles_code_check.includes(role)) {
-            $(row).remove();
-        }
-        roles_code_check.push(role);
-    })
-    table_sort_filter_popup_pagination('id_popup_table')
-    check_data()
-}
+// Function to hide and display save related popups
 $('#save_id').click(function () {
     $('#myModal').modal('hide');
      validate_add_attributes = [];
@@ -221,3 +150,27 @@ $('#save_id').click(function () {
         });
     $('#id_save_confirm_popup').modal('show');
 });
+
+// Function to get the selected row data
+function get_selected_row_data(){
+$("#display_basic_table TBODY TR").each(function() {
+            var row = $(this);
+            var roles_arr_obj = {};
+            roles_arr_obj.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
+            if(roles_arr_obj.del_ind){
+            roles_arr_obj.role = row.find("TD").eq(1).html();
+            roles_arr_obj.role_desc = row.find("TD").eq(2).html();
+             main_table_roles_checked.push(roles_arr_obj);
+             }
+        });
+    }
+
+// Function for add a new row data
+function new_row_data(){
+    basic_add_new_html='<tr><td><input type="checkbox" required></td>'+
+    '<td><select type="text" class="input form-control roles" id="roles-1"  name="role" onchange="GetSelectedTextValue(this)"><option value="" disabled selected>Select your option</option>'+ roles_type_dropdown +'</select></td>'+
+    '<td><input class="form-control description" type="text"  name="role_desc"  id="description-1" disabled></td>'+
+    '<td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+    $('#id_popup_tbody').append(basic_add_new_html);
+    table_sort_filter('id_popup_table');
+}

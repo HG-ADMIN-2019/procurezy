@@ -1,5 +1,6 @@
 var cust_prod_cat_desc_data = new Array();
 var validate_add_attributes = [];
+var main_table_low_value = [];
 var cusprodcatdesc={};
 
 //onclick of add button display myModal popup and set GLOBAL_ACTION button value
@@ -141,17 +142,6 @@ function compare_table_for_duplicate_entries(validate_add_attributes, cusprodcat
         $('#myModal').modal('show');
         no_duplicate_value = 'N'
     }
-
-<!--   else if (cusprodcatdesc.cusprodcatdesc_prod_cat_desc.length == 0) {-->
-<!--       $("#id_error_msg").prop("hidden", false)-->
-<!--       Error_msg = "";-->
-<!--       Error_msg = messageConstants["JMSG002"] + "CUSPRODCATDESC Name";-->
-<!--       document.getElementById("id_error_msg").innerHTML = Error_msg;-->
-<!--       document.getElementById("id_error_msg").style.color = "Red";-->
-<!--       $('#id_save_confirm_popup').modal('hide');-->
-<!--       $('#myModal').modal('show');-->
-<!--   }-->
-
     return no_duplicate_value
 }
 
@@ -226,40 +216,3 @@ $('#save_id').click(function () {
     $('#id_save_confirm_popup').modal('show');
 });
 
-//delete the selected row in db................
-var main_table_cusprodcatdesc_checked = [];
-function main_table_delete(){
-
-    var Tabledata = { "Dbl_clck_tbl_id": 'upload_custprodcatdesc' };
-    $('#display_basic_table').DataTable().destroy();
-    $("#display_basic_table TBODY TR").each(function () {
-        var row = $(this);
-        var cusprodcatdesc_arr_obj ={};
-            cusprodcatdesc_arr_obj.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
-            if(cusprodcatdesc_arr_obj.del_ind){
-            cusprodcatdesc_arr_obj.prod_cat_id = row.find("TD").eq(1).html();
-            cusprodcatdesc_arr_obj.prod_cat_desc = row.find("TD").eq(2).html();
-            cusprodcatdesc_arr_obj.language_id = row.find("TD").eq(3).html();
-            cusprodcatdesc_arr_obj.prod_cat_desc_guid = row.find("TD").eq(4).html();
-            main_table_cusprodcatdesc_checked.push(cusprodcatdesc_arr_obj);
-            }
-    });
-    $('#id_delete_confirm_popup').modal('hide');
-
-    $.ajax({
-        type: 'POST',
-        url: "{% url 'eProc_Master_Settings:save_master_settings_data' %}",
-            data:
-                JSON.stringify($.extend({}, main_table_cusprodcatdesc_checked, Tabledata)),
-            contentType: "application/json; charset=utf-8",
-            dataType: "json",
-            success: function (Response) {
-            rendered_cusprodcatdesc_data = Response[0];
-            display_basic_db_data();
-            $("#err_msg_app_settings_t").prop("hidden",false)
-            document.getElementById("err_msg_app_settings_t").innerHTML = Response[2];
-//            setTimeout(function(){$("#err_msg_app_settings_t").prop("hidden",true);},5000)
-             message_display_time();
-        }
-    });
-}

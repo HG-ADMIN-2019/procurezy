@@ -1,0 +1,251 @@
+<div class="card">
+        <div class="card-header hg_card_header_bg" >Monday - <span id="date_monday">{{monday|date:'Y-m-d'}}</span>
+            <span id="update_holiday_monday" class="hg_holiday_span"></span>
+        </div>
+        <div class="card-body">
+            <button type="button" class="btn btn-success btn-sm hg_hide_display_mode" onclick="insert_timesheet_row('monday');">
+                <i class="fa fa-plus" aria-hidden="true"></i>
+                Add new line
+            </button>
+            <form>
+                <div class="hg_card_outer_div input_timesheet_form monday" id="monday_1">
+                    <div class="hg_minus_button">
+                        <button type="button" class="btn btn-danger btn-circle btn-sm">
+                            <i class="fa fa-minus" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                    <div class="hg_project_category">
+                        <label>Select Category:</label>
+                        <select id="category_monday_1" onchange="update_project_categories_onchange(this)" class="project_category category_monday form-control">
+
+                        </select>
+                    </div>
+                    <div class="hg_timespent_div">
+                        <label>Time spent:</label><br>
+                        <input type="number" min="1" class="form-control timespent_monday_1"
+                            placeholder="Enter time spent">
+                    </div>
+                    <div class="hg_task_div">
+                        <label>Task:</label><br>
+                        <textarea class="form-control task_monday_1" rows="1" cols="50"></textarea>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card hg_main_card_spacing">
+        <div class="card-header hg_card_header_bg" >Tuesday - <span id="date_tuesday">{{tuesday|date:'Y-m-d'}}</span>
+            <span id="update_holiday_tuesday" class="hg_holiday_span"></span>
+        </div>
+        <div class="card-body">
+            <button type="button" class="btn btn-success btn-sm hg_hide_display_mode" onclick="insert_timesheet_row('tuesday');">
+                <i class="fa fa-plus" aria-hidden="true"></i>
+                Add new line
+            </button>
+            <form>
+                <div class="hg_card_outer_div input_timesheet_form tuesday" id="tuesday_1">
+                    <div class="hg_minus_button">
+                        <button type="button" class="btn btn-danger btn-circle btn-sm">
+                            <i class="fa fa-minus" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                    <div class="hg_project_category">
+                        <label>Select Category:</label>
+                        <select onchange="update_project_categories_onchange(this)" id="category_tuesday_1" class="project_category category_tuesday form-control">
+
+                        </select>
+                    </div>
+                    <div class="hg_timespent_div">
+                        <label>Time spent:</label>
+                        <input type="number" min="1" class="form-control timespent_tuesday_1"
+                            placeholder="Enter time spent">
+                    </div>
+                    <div class="hg_task_div">
+                        <label>Task:</label>
+                        <textarea class="form-control task_tuesday_1" rows="1" cols="50"></textarea>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card hg_main_card_spacing">
+        <div class="card-header hg_card_header_bg" >Wednesday - <span id="date_wednesday">{{wednesday|date:'Y-m-d'}}</span>
+            <span id="update_holiday_wednesday" class="hg_holiday_span"></span>
+        </div>
+        <div class="card-body">
+            <button type="button" class="btn btn-success btn-sm hg_hide_display_mode" onclick="insert_timesheet_row('wednesday');">
+                <i class="fa fa-plus" aria-hidden="true"></i>
+                Add new line
+            </button>
+            <form>
+                <div class="hg_card_outer_div input_timesheet_form wednesday" id="wednesday_1">
+                    <div class="hg_minus_button">
+                        <button type="button" class="btn btn-danger btn-circle btn-sm">
+                            <i class="fa fa-minus" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                    <div class="hg_project_category">
+                        <label>Select Category:</label>
+                        <select onchange="update_project_categories_onchange(this)" id="category_wednesday_1" class="project_category category_wednesday form-control">
+
+                        </select>
+                    </div>
+                    <div class="hg_timespent_div">
+                        <label>Time spent:</label>
+                        <input type="number" min="1" class="form-control timespent_wednesday_1" placeholder="Enter time spent">
+                    </div>
+                    <div class="hg_task_div">
+                        <label>Task:</label>
+                        <textarea class="form-control task_wednesday_1" rows="1" cols="50"></textarea>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card hg_main_card_spacing">
+        <div class="card-header hg_card_header_bg" >Thursday - <span id="date_thursday">{{thursday|date:'Y-m-d'}}</span>
+            <span id="update_holiday_thursday" class="hg_holiday_span"></span>
+        </div>
+        <div class="card-body">
+            <button type="button" class="btn btn-success btn-sm hg_hide_display_mode" onclick="insert_timesheet_row('thursday');">
+                <i class="fa fa-plus" aria-hidden="true"></i>
+                Add new line
+            </button>
+            <form>
+                <div class="hg_card_outer_div input_timesheet_form thursday" id="thursday_1">
+                    <div class="hg_minus_button">
+                        <button type="button" class="btn btn-danger btn-circle btn-sm">
+                            <i class="fa fa-minus" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                    <div class="hg_project_category">
+                        <label>Select Category:</label>
+                        <select onchange="update_project_categories_onchange(this)" id="category_thursday_1" class="project_category category_thursday form-control">
+
+                        </select>
+                    </div>
+                    <div class="hg_timespent_div">
+                        <label>Time spent:</label>
+                        <input type="number" min="1" class="form-control timespent_thursday_1"
+                            placeholder="Enter time spent">
+                    </div>
+                    <div class="hg_task_div">
+                        <label>Task:</label>
+                        <textarea class="form-control task_thursday_1" rows="1" cols="50"></textarea>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card hg_main_card_spacing">
+        <div class="card-header hg_card_header_bg" >Friday - <span id="date_friday">{{friday|date:'Y-m-d'}}</span>
+            <span id="update_holiday_friday" class="hg_holiday_span"></span>
+        </div>
+        <div class="card-body">
+            <button type="button" class="btn btn-success btn-sm hg_hide_display_mode" onclick="insert_timesheet_row('friday');">
+                <i class="fa fa-plus" aria-hidden="true"></i>
+                Add new line
+            </button>
+            <form>
+                <div class="hg_card_outer_div input_timesheet_form friday" id="friday_1">
+                    <div class="hg_minus_button">
+                        <button type="button" class="btn btn-danger btn-circle btn-sm">
+                            <i class="fa fa-minus" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                    <div class="hg_project_category">
+                        <label>Select Category:</label>
+                        <select onchange="update_project_categories_onchange(this)" id="category_friday_1" class="project_category category_friday form-control">
+
+                        </select>
+                    </div>
+                    <div class="hg_timespent_div">
+                        <label>Time spent:</label>
+                        <input type="number" min="1" class="form-control timespent_friday_1"
+                            placeholder="Enter time spent">
+                    </div>
+                    <div class="hg_task_div">
+                        <label>Task:</label>
+                        <textarea class="form-control task_friday_1" rows="1" cols="50"></textarea>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card hg_main_card_spacing">
+        <div class="card-header hg_card_header_bg" >Saturday - <span id="date_saturday">{{saturday|date:'Y-m-d'}}</span>
+            <span id="update_holiday_saturday" class="hg_holiday_span"></span>
+        </div>
+        <div class="card-body">
+            <button type="button" class="btn btn-success btn-sm hg_hide_display_mode" onclick="insert_timesheet_row('saturday');"
+            ><i class="fa fa-plus" aria-hidden="true"></i>
+                Add new line
+            </button>
+            <form>
+                <div class="hg_card_outer_div input_timesheet_form saturday" id="saturday_1">
+                    <div class="hg_minus_button">
+                        <button type="button" class="btn btn-danger btn-circle btn-sm">
+                            <i class="fa fa-minus" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                    <div class="hg_project_category">
+                        <label>Select Category:</label>
+                        <select onchange="update_project_categories_onchange(this)" id="category_saturday_1" class="project_category category_saturday form-control">
+
+                        </select>
+                    </div>
+                    <div class="hg_timespent_div">
+                        <label>Time spent:</label><br>
+                        <input type="number" min="1" class="form-control timespent_saturday_1" placeholder="Enter time spent">
+                    </div>
+                    <div class="hg_task_div">
+                        <label>Task:</label><br>
+                        <textarea class="form-control task_saturday_1" rows="1" cols="50"></textarea>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+
+    <div class="card hg_main_card_spacing">
+        <div class="card-header hg_card_header_bg">Sunday - <span id="date_sunday">{{sunday|date:'Y-m-d'}}</span>
+            <span id="update_holiday_sunday" class="hg_holiday_span"></span>
+        </div>
+        <div class="card-body">
+            <button type="button" class="btn btn-success btn-sm hg_hide_display_mode" onclick="insert_timesheet_row('sunday');">
+                <i class="fa fa-plus" aria-hidden="true"></i>
+                Add new line
+            </button>
+            <form>
+                <div class="hg_card_outer_div input_timesheet_form sunday"
+                    id="sunday_1">
+                    <div class="hg_minus_button">
+                        <button type="button" class="btn btn-danger btn-circle btn-sm">
+                            <i class="fa fa-minus" aria-hidden="true"></i>
+                        </button>
+                    </div>
+                    <div class="hg_project_category">
+                        <label>Select Category:</label>
+                        <select onchange="update_project_categories_onchange(this)" id="category_sunday_1" class="project_category category_sunday form-control">
+
+                        </select>
+                    </div>
+                    <div class="hg_timespent_div">
+                        <label>Time spent:</label>
+                        <input type="number" min="1" class="form-control timespent_sunday_1"
+                            placeholder="Enter time spent">
+                    </div>
+                    <div class="hg_task_div">
+                        <label>Task:</label>
+                        <textarea class="form-control task_sunday_1" rows="1" cols="50"></textarea>
+                    </div>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>

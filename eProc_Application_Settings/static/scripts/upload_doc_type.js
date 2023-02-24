@@ -1,4 +1,3 @@
-
 var doctype_data = new Array();
 var validate_add_attributes = [];
 var doctype ={};
@@ -9,22 +8,6 @@ function onclick_upload_button() {
     $("#id_popup_tbody").empty();
     $('#id_data_upload').modal('show');
 }
-
-// on click copy icon display the selected checkbox data
-function onclick_copy_button() {
-    GLOBAL_ACTION = "COPY"
-    onclick_copy_update_button("copy")
-    document.getElementById("id_del_add_button").style.display = "block";
-}
-
-// on click update icon display the selected checkbox data to update
-function onclick_update_button() {
-    GLOBAL_ACTION = "UPDATE"
-    onclick_copy_update_button("update")
-    document.getElementById("id_del_add_button").style.display = "none";
-}
-
-
 
 //onclick of cancel empty the popup table body and error messages
 $(".remove_upload_data").click(() => {
@@ -41,23 +24,16 @@ $(".remove_upload_data").click(() => {
     $("#id_check_special_character_messages").prop("hidden", true)
     $("#id_check_data").prop("hidden", true);
     $('#id_popup_table').DataTable().destroy();
-
-
 });
 
-
-
+//********************************************
 function display_error_message(error_message){
-
     $('#error_message').text(error_message);
-
     document.getElementById("error_message").style.color = "Red";
     $("#error_msg_id").css("display", "block")
     $('#id_save_confirm_popup').modal('hide');
     $('#myModal').modal('show');
-
 }
-
 
 //onclick of cancel display the table in display mode............
 function display_basic_db_data() {
@@ -82,31 +58,6 @@ function display_basic_db_data() {
     table_sort_filter('display_basic_table');
 }
 
-//deletes he duplicate data
-function delete_duplicate() {
-    $('#id_popup_table').DataTable().destroy();
-    var document_type_check = new Array
-    $("#id_popup_table TBODY TR").each(function () {
-        var row = $(this);
-
-        //*************** reading data from the pop-up ***************
-        document_type = row.find("TD").eq(1).find('input[type="text"]').val().toUpperCase();
-        document_type_desc = row.find("TD").eq(2).find('input[type="text"]').val().toUpperCase();
-        checked_box = row.find("TD").eq(3).find('input[type="checkbox"]').is(':checked')
-
-
-        if (document_type_check.includes(document_type)) {
-            $(row).remove();
-        }
-
-        document_type_check.push(document_type);
-
-
-    })
-    table_sort_filter_popup_pagination('id_popup_table')
-    check_data()
-}
-
 // Functtion to hide and display save related popups
 $('#save_id').click(function () {
     $('#myModal').modal('hide');
@@ -124,8 +75,47 @@ $('#save_id').click(function () {
         validate_add_attributes.push(doctype.document_type);
         doctype_data.push(doctype);
     });
-
     $('#id_save_confirm_popup').modal('show');
 });
 
+// Function to get the selected row data
+function get_selected_row_data(){
+$("#display_basic_table TBODY TR").each(function () {
+        var row = $(this);
+        var doctype_arr_obj = {};
+        doctype_arr_obj.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
+        if(doctype_arr_obj.del_ind){
+            doctype_arr_obj.document_type = row.find("TD").eq(1).html();
+            doctype_arr_obj.document_type_desc = row.find("TD").eq(2).html();
+            main_table_doctype_checked.push(doctype_arr_obj);
+        }
+    });
+}
 
+// Function to get main table data
+function get_main_table_data(){
+    main_table_low_value = [];
+    $('#display_basic_table').DataTable().destroy();
+    $("#display_basic_table TBODY TR").each(function () {
+        var row = $(this);
+        var main_attribute = {};
+        main_attribute.document_type = row.find("TD").eq(1).html();
+        main_table_low_value.push(main_attribute.document_type);
+    });
+    table_sort_filter('display_basic_table');
+}
+
+// Function for add a new row data
+var inc_index = 0;
+function new_row_data() {
+    basic_add_new_html = '<tr ><td><input type="checkbox" required></td>'+
+        '<td><select type="text" class="input form-control documenttype" id="documenttype-'+inc_index+'" name="documenttype" onchange="GetSelectedTextValue(this)"><option value="" disabled selected>Select your option</option>'+ document_type_dropdown +'</select></td>'+
+        '<td><input class="form-control description" type="text" id="description-'+inc_index+'" name="description" disabled></td>'+
+        '<td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+        $('#id_popup_tbody').append(basic_add_new_html);
+        if (GLOBAL_ACTION == "doctype_upload") {
+            $(".class_del_checkbox").prop("hidden", false);
+        }
+        table_sort_filter_popup('id_popup_table');
+        inc_index += 1;
+}

@@ -1,62 +1,7 @@
 var po_split_type_data = new Array();
 var validate_add_attributes = [];
 var po_split_types={};
-
-//onclick of upload button display id_data_upload popup and set GLOBAL_ACTION button value
-function onclick_upload_button() {
-    GLOBAL_ACTION = "client_upload"
-    $("#id_popup_tbody").empty();
-    $('#id_data_upload').modal('show');
-    document.getElementById('id_file_data_upload').value = "";
-}
-
-// on click copy icon display the selected checkbox data
-function onclick_copy_button() {
-    GLOBAL_ACTION = "COPY"
-    onclick_copy_update_button("copy")
-    document.getElementById("id_del_add_button").style.display = "block";
-}
-
-// on click update icon display the selected checkbox data to update
-function onclick_update_button() {
-    GLOBAL_ACTION = "UPDATE"
-    onclick_copy_update_button("update")
-    document.getElementById("id_del_add_button").style.display = "none";
-}
-
-function onclick_copy_update_button() {
-    $("#error_msg_id").css("display", "none")
-    $('#display_basic_table').DataTable().destroy();
-    $('#id_popup_table').DataTable().destroy();
-    $("#id_popup_tbody").empty();
-    //Reference the Table.
-    var grid = document.getElementById("display_basic_table");
-    //Reference the CheckBoxes in Table.
-    var checkBoxes = grid.getElementsByTagName("INPUT");
-    var edit_basic_data = "";
-    var unique_input = '';
-    //Loop through the CheckBoxes.
-    for (var i = 1; i < checkBoxes.length; i++) {
-        if (checkBoxes[i].checked) {
-            var row = checkBoxes[i].parentNode.parentNode;
-            if(GLOBAL_ACTION == "UPDATE") {
-               unique_input = '<input class="form-control" type="text" value="' + row.cells[1].innerHTML + '" name="client code" onkeypress="return /[A-Z0-9]/i.test(event.key)" maxlength="8" style="text-transform:uppercase" disabled>'
-               edit_basic_data += '<tr ><td hidden><input type="checkbox" required></td><td><input class="form-control" type="text" value="' + row.cells[1].innerHTML + '" name="client code" onkeypress="return /[a-z]/i.test(event.key)" maxlength="4" style="text-transform:uppercase" disabled></td><td><input class="form-control" value="' + row.cells[2].innerHTML + '" type="text" onkeypress="return /[a-z 0-9]/i.test(event.key)" name="description"  maxlength="30"  required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
-               $("#header_select").prop("hidden", true);
-            }
-            else{
-               unique_input = '<input class="form-control" type="text" value="' + row.cells[1].innerHTML + '" name="client code" onkeypress="return /[A-Z0-9]/i.test(event.key)" maxlength="8" style="text-transform:uppercase" required>'
-               edit_basic_data += '<tr ><td ><input type="checkbox" required></td><td>'+unique_input+'</td><td><input class="form-control" value="' + row.cells[2].innerHTML + '" type="text" onkeypress="return /[a-z 0-9]/i.test(event.key)" name="description"  maxlength="30"  required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
-               $("#header_select").prop("hidden", false);
-            }
-        }
-    }
-    $('#id_popup_tbody').append(edit_basic_data);
-    $("#id_del_ind_checkbox").prop("hidden", true);
-    $('#myModal').modal('show');
-    table_sort_filter('id_popup_table');
-    table_sort_filter('display_basic_table');
-}
+var main_table_low_value = [];
 
 //onclick of cancel empty the popup table body and error messages
 $(".remove_upload_data").click(() => {
@@ -98,26 +43,6 @@ function display_basic_db_data() {
     table_sort_filter('display_basic_table');
 }
 
-//deletes he duplicate data
-function delete_duplicate() {
-    $('#id_popup_table').DataTable().destroy();
-    var po_split_type_check = new Array
-    $("#id_popup_table TBODY TR").each(function() {
-        var row = $(this);
-
-        //*************** reading data from the pop-up ***************
-        po_split_type = row.find("TD").eq(1).find('input[type="text"]').val().toUpperCase();
-        po_split_type_desc = row.find("TD").eq(2).find('input[type="text"]').val().toUpperCase();
-        checked_box = row.find("TD").eq(3).find('input[type="checkbox"]').is(':checked')
-        if (po_split_type_check.includes(po_split_types)) {
-            $(row).remove();
-        }
-        po_split_type_check.push(po_split_types);
-    })
-    table_sort_filter_popup_pagination('id_popup_table')
-    check_data()
-}
-
 //Functtion to hide and display save related popups
 $('#save_id').click(function () {
     $('#myModal').modal('hide');
@@ -146,3 +71,39 @@ function display_error_message(error_message){
     $('#id_save_confirm_popup').modal('hide');
     $('#myModal').modal('show');
 }
+
+// Function to get main table data
+function get_main_table_data(){
+    main_table_low_value = [];
+    $("#display_basic_table TBODY TR").each(function() {
+        var row = $(this);
+        var main_attribute = {};
+        main_attribute.po_split_type = row.find("TD").eq(1).html();
+        main_table_low_value.push(main_attribute.po_split_type);
+    });
+    table_sort_filter_page('display_basic_table');
+}
+
+// Function to get the selected row data
+function get_selected_row_data(){
+    $("#display_basic_table TBODY TR").each(function() {
+        var row = $(this);
+        var po_split_type_dic = {};
+        po_split_type_dic.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
+        if(po_split_type_dic.del_ind) {
+            po_split_type_dic.po_split_type = row.find("TD").eq(1).html();
+            po_split_type_dic.po_split_type_desc = row.find("TD").eq(2).html();
+            main_table_po_split_checked.push(po_split_type_dic);
+        }
+    });
+}
+
+// Function for add a new row data
+function new_row_data(){
+    basic_add_new_html = '<tr><td><input type="checkbox" required></td>'+
+        '<td><select type="text" class="input form-control aaccode" id="aaccode-1"  name="aaccode" onchange="GetSelectedTextValue(this)"><option value="" disabled selected>Select your option</option>' +aac_dropdown +'</select></td>'+
+        '<td><input class="form-control description" type="text"  name="description"  id="description-1" disabled></td>'+
+        '<td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+        $('#id_popup_tbody').append(basic_add_new_html);
+        table_sort_filter('id_popup_table');
+    }

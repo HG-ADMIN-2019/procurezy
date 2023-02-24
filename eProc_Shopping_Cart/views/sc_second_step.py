@@ -404,6 +404,337 @@ def review_page(request):
     return render(request, 'Shopping_Cart/sc_second_step/sc_second_step.html', context)
 
 
+def sc_second_step(request):
+    """
+    :param request: Get shopping cart and user details in second step of shopping cart
+    :return: sc_second_step.html
+    """
+    update_user_info(request)
+    username = global_variables.GLOBAL_LOGIN_USERNAME
+    update_requester_info(global_variables.GLOBAL_LOGIN_USERNAME)
+    prod_desc = ''
+    total_item_value = []
+    actual_price_list = []
+    discount_value_list = []
+    tax_value_list = []
+    catalog_qty = None
+    manager_details = []
+    holiday_list = []
+    approver_id = []
+    prod_cat_list = []
+    completion_work_flow = []
+    requester_user_id = ''
+    call_off_list = []
+    cart_items_guid_list = []
+    sc_completion_flag = False
+
+    attr_low_value_list, company_code ,default_calendar_id,object_id_list = get_company_calendar_from_org_model()
+
+    if default_calendar_id is not None or default_calendar_id != '':
+        holiday_list = get_list_of_holidays(default_calendar_id, global_variables.GLOBAL_CLIENT)
+
+    request.session['company_code'] = company_code
+    item_detail_list = []
+    requester_first_name = requester_field_info(username, 'first_name')
+    sc_check_instance = CheckForScErrors(global_variables.GLOBAL_CLIENT, username)
+    sc_check_instance.document_sc_transaction_check(object_id_list)
+    sc_check_instance.po_transaction_check(object_id_list)
+
+    sc_check_instance.calender_id_check(default_calendar_id)
+
+    # Get default shopping cart name
+    cart_name = get_default_cart_name(requester_first_name)
+
+
+    # Display shopping cart items in 2nd step of wizard
+
+    cart_items = django_query_instance.django_filter_query(CartItemDetails,
+                                                           {'username': global_variables.GLOBAL_CLIENT,
+                                                            'client': global_variables.GLOBAL_CLIENT},
+                                                           ['item_num'],
+                                                           None)
+
+
+    cart_items_count = len(cart_items)
+
+    if cart_items_count == 0:
+        return redirect('eProc_Shop_Home:shopping_cart_home')
+    i = 0
+    cart_items_guid_list = dictionary_key_to_list(cart_items, 'guid')
+    for items in cart_items:
+        item_currency = items['currency']
+        if not item_currency:
+            item_currency = global_variables.GLOBAL_REQUESTER_CURRENCY
+        item_details = {}
+        item_number = i + 1
+        requester_user_id = items['username']
+        product_category = items['prod_cat_id']
+        lead_time = items['lead_time']
+        supplier_id = items['supplier_id']
+        call_off = items['call_off']
+
+        sc_check_instance.check_for_prod_cat(product_category, company_code, item_number)
+        if call_off != CONST_PR_CALLOFF:
+            sc_check_instance.check_for_supplier(supplier_id, product_category, company_code, item_number)
+
+        if call_off == CONST_CATALOG_CALLOFF:
+            product_id = items['int_product_id']
+            sc_check_instance.catalog_item_check(product_id, items['price'], lead_time, item_number, items['guid'],
+                                                 items['quantity'])
+        if item_currency != global_variables.GLOBAL_USER_CURRENCY:
+            actual_price_list.append(
+                convert_currency(float(items['actual_price']) * items['quantity'], str(item_currency),
+                                 str(global_variables.GLOBAL_USER_CURRENCY)))
+            discount_value_list.append(
+                convert_currency(items['discount_value'], str(item_currency), str(global_variables.GLOBAL_USER_CURRENCY)))
+            tax_value_list.append(convert_currency(items['tax_value'], str(item_currency), str(global_variables.GLOBAL_USER_CURRENCY)))
+            # gross_price_list.append(convert_currency(float(items['gross_price'])*items['quantity'], str(item_currency), str(global_variables.GLOBAL_USER_CURRENCY)))
+        else:
+            actual_price_list.append(float(items['actual_price']) * items['quantity'])
+            discount_value_list.append(items['discount_value'])
+            tax_value_list.append(items['tax_value'])
+            # gross_price_list.append(float(items['gross_price'])*items['quantity'])
+        if call_off not in [CONST_FREETEXT_CALLOFF, CONST_LIMIT_ORDER_CALLOFF]:
+            if len(holiday_list) == 0:
+                item_delivery_date = None
+            else:
+                item_delivery_date = calculate_delivery_date(items['guid'],
+                                                             lead_time,
+                                                             supplier_id,
+                                                             default_calendar_id,
+                                                             global_variables.GLOBAL_CLIENT,
+                                                             CartItemDetails)
+        elif call_off == CONST_FREETEXT_CALLOFF:
+            item_delivery_date = calculate_delivery_date_base_on_lead_time(
+                lead_time,
+                supplier_id,
+                default_calendar_id)
+            if items['item_del_date'] < item_delivery_date:
+                django_query_instance.django_update_query(CartItemDetails,
+                                                          {'guid': items['guid'],
+                                                           'client': global_variables.GLOBAL_CLIENT},
+                                                          {'item_del_date': item_delivery_date})
+            else:
+                item_delivery_date = items['item_del_date']
+
+        else:
+            if items['start_date'] is None:
+                item_delivery_date = items['item_del_date']
+
+            else:
+                item_delivery_date = items['start_date']
+
+        sc_check_instance.delivery_date_check(item_delivery_date, item_number, holiday_list, default_calendar_id)
+
+        prod_cat_list.append(product_category)
+        call_off_list.append(call_off)
+        call_off = call_off
+        if call_off == CONST_LIMIT_ORDER_CALLOFF:
+            overall_limit = items['overall_limit']
+            quantity = None
+            price_unit = None
+            prod_id = product_category
+            price = None
+            prod_desc = get_prod_by_id(prod_id=prod_id)
+            value = calculate_item_total_value(call_off, quantity, catalog_qty, price_unit, price, overall_limit)
+            value = convert_currency(value, str(item_currency), str(global_variables.GLOBAL_USER_CURRENCY))
+            sc_check_instance.check_for_currency(item_number, value, str(item_currency))
+            if value:
+                total_item_value.append(float(format(value, '2f')))
+            else:
+                value = 0
+                total_item_value.append(0)
+
+            total_value = round(sum(total_item_value), 2)
+            request.session['total_value'] = total_value
+
+        else:
+
+            prod_cat_list.append(product_category)
+            call_off_list.append(call_off)
+            call_off = call_off
+            if call_off == CONST_LIMIT_ORDER_CALLOFF:
+                overall_limit = items['overall_limit']
+                quantity = None
+                price_unit = None
+                prod_id = product_category
+                price = None
+                prod_desc = get_prod_by_id(prod_id=prod_id)
+                value = calculate_item_total_value(call_off, quantity, catalog_qty, price_unit, price, overall_limit)
+                value = convert_currency(value, str(item_currency), str(global_variables.GLOBAL_USER_CURRENCY))
+                sc_check_instance.check_for_currency(item_number, value, str(item_currency))
+                if value:
+                    total_item_value.append(float(format(value, '2f')))
+                else:
+                    value = 0
+                    total_item_value.append(value)
+
+                total_value = round(sum(total_item_value), 2)
+                request.session['total_value'] = total_value
+
+            else:
+                overall_limit = None
+                quantity = items['quantity']
+                price = items['price']
+                price_unit = items['price_unit']
+                value = calculate_item_total_value(call_off, quantity, catalog_qty, price_unit, price, overall_limit)
+                value = convert_currency(value, str(item_currency), str(global_variables.GLOBAL_USER_CURRENCY))
+                sc_check_instance.check_for_currency(item_number, value, str(item_currency))
+                if value:
+                    total_item_value.append(float(format(value, '2f')))
+                else:
+                    value = 0
+                    total_item_value.append(value)
+
+                total_value = round(sum(total_item_value), 2)
+                i += 1
+                request.session['total_value'] = total_value
+
+        item_details['prod_cat'] = product_category
+        item_details['value'] = value
+        item_details['guid'] = items['guid']
+        item_detail_list.append(item_details)
+    global_variables.GLOBAL_REQUESTER_CURRENCY = requester_field_info(requester_user_id, 'currency_id')
+    global_variables.GLOBAL_REQUESTER_LANGUAGE = requester_field_info(requester_user_id, 'language_id')
+    highest_item_value = max(total_item_value)
+    highest_item_number = total_item_value.index(highest_item_value)
+    # Display receivers name
+    receiver_name = concatenate_str_with_space(request.user.first_name, request.user.last_name)
+
+    user_object_id = global_variables.USER_OBJ_ID_LIST
+    user_setting = UserSettings()
+    ship_to_bill_to_address_instance = ShipToBillToAddress(global_variables.GLOBAL_LOGIN_USER_OBJ_ID)
+    address_number_list, default_address_number = ship_to_bill_to_address_instance.get_default_address_number_and_list()
+
+    delivery_addr_list, addr_default, addr_val_desc = ship_to_bill_to_address_instance. \
+        get_default_address_and_available_address_with_description(address_number_list, default_address_number)
+
+    delivery_addr_desc = ship_to_bill_to_address_instance.get_all_addresses_with_descriptions(address_number_list)
+
+    acc_obj = AccountAssignmentCategoryDetails(object_id_list, company_code, item_detail_list)
+    accounting_data = acc_obj.get_acc_list_and_default()
+
+    # Get notes and attachment form
+    upload_attach_form = CreateAttachForm()
+    attach_list_form = CreateAttachlistForm()
+    add_note_form = NotesForm()
+
+    product_category = get_prod_cat_dropdown(request)
+    supplier = check_for_eform(request)
+
+    # to get manager detail
+    default_cmp_code = user_setting.get_attr_default(user_object_id, CONST_CO_CODE)
+    purchase_control_call_off_list = get_order_status(default_cmp_code, global_variables.GLOBAL_CLIENT)
+    if default_cmp_code:
+        manager_detail, msg_info = get_manger_detail(global_variables.GLOBAL_CLIENT, username, accounting_data['default_acc_ass_cat'],
+                                                     total_value,
+                                                     default_cmp_code, accounting_data['default_acc'],
+                                                     global_variables.GLOBAL_USER_CURRENCY)
+        if manager_detail:
+            manager_details, approver_id = get_users_first_name(manager_detail)
+
+        for purchase_control_call_off in purchase_control_call_off_list:
+            if purchase_control_call_off in call_off_list:
+                completion_work_flow = get_completion_work_flow(global_variables.GLOBAL_CLIENT, prod_cat_list, default_cmp_code)
+                sc_completion_flag = True
+    else:
+        error_msg = get_message_desc(MSG109)[1]
+        # msgid = 'MSG109'
+        # error_msg = get_msg_desc(msgid)
+        # msg = error_msg['message_desc'][0]
+        # error_msg = msg
+        msg_info = error_msg
+    formatted_value = format(total_value, '2f')
+
+    default_account_assignment_category, default_account_assignment_value = unpack_accounting_data(accounting_data,
+                                                                                                   sc_check_instance)
+
+    sc_check_instance.delivery_address_check(default_address_number, '0')
+    sc_check_instance.approval_check(default_account_assignment_category, default_account_assignment_value, total_value,
+                                     company_code)
+
+    cart_items = list(
+        django_query_instance.django_filter_query(CartItemDetails, {
+            'username': global_variables.GLOBAL_CLIENT, 'client': global_variables.GLOBAL_CLIENT
+        },['item_num'],None)
+    )
+    for items in cart_items:
+        if items['call_off'] == CONST_CATALOG_CALLOFF:
+            items['image_url'] = get_image_url(items['int_product_id'])
+        else:
+            items['image_url'] = ''
+        items = update_supplier_uom_for_prod(items)
+    cart_items = update_eform_details_scitem(cart_items)
+    cart_items = zip(cart_items, total_item_value)
+    sys_attributes_instance = sys_attributes(global_variables.GLOBAL_CLIENT)
+    shopping_cart_errors = sc_check_instance.get_shopping_cart_errors()
+
+    # total price detail
+    actual_price = round(sum(actual_price_list), 2)
+    discount_value = round(sum(discount_value_list), 2)
+    tax_value = round(sum(tax_value_list), 2)
+
+    context = {
+        'shopping_cart_errors': shopping_cart_errors,
+        'highest_item_number': highest_item_number + 1,
+        'sc_completion_flag': sc_completion_flag,
+        'requester_user_name': requester_user_id,
+        'item_detail_list': item_detail_list,
+        'cart_items_guid_list': cart_items_guid_list,
+        'supplier': supplier,
+        'requester_first_name': requester_first_name,
+        'manager_details': manager_details,
+        'approver_id': approver_id,
+        'msg_info': msg_info,
+        'default_company_code': company_code,
+        'header_level_gl_acc': accounting_data['header_level_gl_acc'],
+        'completion_work_flow': completion_work_flow,
+        'limit_form': UpdateLimitItem(),
+        'cart_name': cart_name,
+        'inc_nav': True,
+        'cart_items': cart_items,
+        'actual_price': format(actual_price, '.2f'),
+        'discount_value': format(discount_value, '.2f'),
+        'tax_value': format(tax_value, '.2f'),
+        'requester_currency': global_variables.GLOBAL_REQUESTER_CURRENCY,
+        'gl_acc_item_level_default': accounting_data['gl_acc_item_level_default'],
+        'receiver_name': receiver_name,
+        'rest_shipping_addr': delivery_addr_list,
+        'upload_attach_form': upload_attach_form,
+        'attach_list_form': attach_list_form,
+        'add_note_form': add_note_form,
+        'select_flag': True,
+        'acc_default': accounting_data['acc_default'],
+        'acc_value': accounting_data['acc_value'],
+        'currency': django_query_instance.django_filter_only_query(Currency, {'del_ind': False}),
+        'unit': django_query_instance.django_filter_only_query(UnitOfMeasures, {'del_ind': False}),
+        'product_category': product_category,
+        'supplier_details': get_supplier_first_second_name(global_variables.GLOBAL_CLIENT),
+        'date_today': datetime.datetime.today(),
+        'total_item_value': total_item_value,
+        'total_value': round(float(formatted_value), 2),
+        'prod_desc': prod_desc,
+        'acc_list': accounting_data['acc_list'],
+        'acc_value_list': accounting_data['acc_value_list'],
+        'addr_val_desc': addr_val_desc,
+        'display_update_delete': False,
+        'delivery_addr_desc': delivery_addr_desc,
+        'acc_cat_default_value': accounting_data['default_acc_ass_cat'],
+        'country_list': get_country_data(),
+        'is_second_step': True,
+        'is_document_detail': False,
+        'acct_assignment_category': sys_attributes_instance.get_acct_assignment_category(),
+        'purchase_group': sys_attributes_instance.get_purchase_group(),
+        'edit_address_flag': sys_attributes_instance.get_edit_address(),
+        'shipping_address_flag': sys_attributes_instance.get_shipping_address(),
+        'attachment_size': sys_attributes_instance.get_attachment_size(),
+        'attachment_extension': sys_attributes_instance.get_attachment_extension(),
+        'currency_list': get_currency_list(),
+
+    }
+
+    return render(request, 'Shopping_Cart/sc_second_step/sc_second_step.html', context)
+
 # Function to call save shopping cart through ajax call (login required decorator is not required)
 @transaction.atomic
 def save_shopping_cart(request):

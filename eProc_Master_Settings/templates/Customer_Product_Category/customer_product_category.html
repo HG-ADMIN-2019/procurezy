@@ -244,6 +244,7 @@
 
     var content_managment_settings = '{{content_managment_settings|safe}}';
     var rendered_cust_prod_cat_data ={{upload_cust_prod_cat|safe}};
+    var rendered_UNSPC_data = {{upload_ProdCat|safe}};
     var cusprodcat_data_array = {}
     var main_table_cusprodcat_value =[];
     var cusprodcat = '';
@@ -254,25 +255,20 @@
     var appname = uiConstants["CONST_APPNAME01"]
     var db_header_data = uiConstants["CONST_HEADER_DATA_CUSTPRODCAT"]
 
-    var description_dropdown = '';
+
     var prod_cat_id_dropdown = '';
-    var prod_cat_array = [];
-    prod_cat_val_list = [];
-    function unspsc_dropdown(){
+
+    function  unspsc_dropdown(){
         prod_cat_id_dropdown = '';
-        $.each(rendered_UNSPC_data, function(i, item){
-             prod_cat_id_dropdown += '<option value="' + item.prod_cat_id + '">' + item.prod_cat_id + '</option>';
-               description_dropdown += '<option value="' + item.prod_cat_desc + '">' + item.prod_cat_desc + '</option>';
-               prod_cat_val_dict = {};
-                prod_cat_val_dict.prod_cat_id =item.prod_cat_id
-                prod_cat_val_dict.prod_cat_desc=item.prod_cat_desc
-                 prod_cat_val_list.push(prod_cat_val_dict)
-               prod_cat_array.push(item.prod_cat_id)
+        $.each(rendered_cust_prod_cat_data, function(i, item){
+        $.each(rendered_UNSPC_data, function(j, item1){
+             prod_cat_id_dropdown = '';
+            if(item.prod_cat_id != item1.prod_cat_id){
+                prod_cat_id_dropdown += '<option value="' + item1.prod_cat_id + '">' + item1.prod_cat_id + '</option>';
+            }
+        })
         })
     }
-
-
-
 
 
 //#################################### START UPLOAD POPUP ##############################################################
@@ -868,76 +864,45 @@ function add_popup_row() {
     $(".modal").on("hidden.bs.modal", function () {
     $("#id_error_msg").html(" ");
      });
-        basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select class="form-control">'+prod_cat_id_dropdown+'</select></td><td id="desc_upload"><select class="form-control"disabled>'+description_dropdown+'</select></td><td hidden>prod_cat_guid</td><td hidden>del_ind</td></tr>';
+        basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select type="text" class="input form-control prodid" id="prodid-1"  name="prodid" onchange="GetSelectedTextValue(this)"><option value=""selected>Select your option</option>'+prod_cat_id_dropdown+'</select></td><td><input class="form-control description" type="text"  name="description"  id="description-1" disabled></td><td hidden><guid></td><td hidden>< del_ind></td></tr>';
         $('#id_popup_tbody').append(basic_add_new_html);
-        var product_id = '';
-        $("#id_popup_table TBODY TR").each(function () {
-        var row = $(this);
-        row.find("TD").eq(2).find("select").empty()
-        product_id = row.find("TD").eq(1).find("select option:selected").val();
-        var product_id_val = product_id_value_find(product_id)
-        row.find("TD").eq(2).find("select").append(product_id_val.description_dropdown)
 
 
-        $(row.find("TD").eq(1).find("select")).change(function () {
-            row.find("TD").eq(2).find("select").empty()
-
-
-            product_id = row.find("TD").eq(1).find("select option:selected").val();
-
-            var product_id_val = product_id_value_find(product_id)
-            row.find("TD").eq(2).find("select").append(product_id_val.description_dropdown)
-
-        })
-     })
-
-    table_sort_filter_popup('id_popup_table');
      if (GLOBAL_ACTION == "cusprodcat_upload") {
             $("#desc_upload").prop("hidden", true);
             $(".id_del_ind_checkbox").prop("hidden", false);
      }
+     table_sort_filter_popup('id_popup_table');
 }
 
 //onclick of add button display myModal popup and set GLOBAL_ACTION button value
 function onclick_add_button(button) {
-     $("#error_msg_id").css("display", "none")
-    $("#header_select").prop( "hidden", false );
-    GLOBAL_ACTION = button.value
-    $("#id_popup_tbody").empty();
-    $('#myModal').modal('show');
-    var data = {'table_name':'UnspscCategoriesCust'}
     OpenLoaderPopup();
-    result = ajax_dropdown_data(data)
-    CloseLoaderPopup();
-    rendered_UNSPC_data = response.upload_ProdCat
-    unspsc_dropdown();
-    basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select class="form-control">'+prod_cat_id_dropdown+'</select></td><td><select class="form-control"disabled>'+description_dropdown+'</select></td><td hidden>prod_cat_guid</td><td hidden>del_ind</td></tr>';
-    $('#id_popup_tbody').append(basic_add_new_html);
-    table_sort_filter('id_popup_table');
+    var data = {'table_name':'UnspscCategoriesCust'}
+    $.ajax({
+        type: 'POST',
+        url: "{% url 'eProc_Configuration:get_dropdown_data' %}",
+        data: JSON.stringify(data),
+        success: function(response) {
+                rendered_UNSPC_data = response.upload_ProdCat
+                unspsc_dropdown();
+                $("#error_msg_id").css("display", "none")
+                $("#header_select").prop( "hidden", false );
+                GLOBAL_ACTION = button.value
+                $("#id_popup_tbody").empty();
+                $('#myModal').modal('show');
+                basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select type="text" class="input form-control prodid" id="prodid-1"  name="prodid" onchange="GetSelectedTextValue(this)"><option value=""selected>Select your option</option>'+prod_cat_id_dropdown+'</select></td><td><input class="form-control description" type="text"  name="description"  id="description-1" disabled></td><td hidden><guid></td><td hidden>< del_ind></td></tr>';
 
-     var product_id = '';
-    $("#id_popup_table TBODY TR").each(function () {
-        var row = $(this);
-        row.find("TD").eq(2).find("select").empty()
-        product_id = row.find("TD").eq(1).find("select option:selected").val();
-        var product_id_val = product_id_value_find(product_id)
-        row.find("TD").eq(2).find("select").append(product_id_val.description_dropdown)
+                $('#id_popup_tbody').append(basic_add_new_html);
+<!--                table_sort_filter('id_popup_table');-->
+                $("#id_del_ind_checkbox").prop("hidden", true);
+                document.getElementById("id_del_add_button").style.display = "block";
+                $("#save_id").prop("hidden", false);
+              CloseLoaderPopup();
 
+        }
+    });
 
-        $(row.find("TD").eq(1).find("select")).change(function () {
-            row.find("TD").eq(2).find("select").empty()
-
-
-            product_id = row.find("TD").eq(1).find("select option:selected").val();
-
-            var product_id_val = product_id_value_find(product_id)
-            row.find("TD").eq(2).find("select").append(product_id_val.description_dropdown)
-
-        })
-    })
-    $("#id_del_ind_checkbox").prop("hidden", true);
-    document.getElementById("id_del_add_button").style.display = "block";
-    $("#save_id").prop("hidden", false);
 }
 
 
@@ -1150,9 +1115,12 @@ function main_table_delete(){
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             success: function (Response) {
-            rendered_cust_prod_cat_data = Response.upload_cust_prod_cat;
+            rendered_cust_prod_cat_data = Response[0];
             display_basic_db_data();
-            $('#success_msg_id').text(Response.message)
+            $('#success_msg_id').text(Response[1])
+            if(Response[1].message_type== 'SUCCESS'){
+                $('#success_msg_id').text(Response[1].message_desc)
+            }
             $("#err_msg_app_settings_t").prop("hidden",false)
              table_sort_filter('id_popup_table');
             setTimeout(function(){$("#err_msg_app_settings_t").prop("hidden",true);},5000)
@@ -1211,12 +1179,13 @@ function main_table_delete(){
                         contentType: "application/json; charset=utf-8",
                         dataType: "json",
                         success: function(Response) {
-                             rendered_cust_prod_cat_data = Response.upload_cust_prod_cat;
+                             rendered_cust_prod_cat_data = Response[0];
                              rendered_UNSPC_data = Response.upload_ProdCat
                             display_basic_db_data();
-                         $('#success_msg_id').text(Response.message)
-                            $('#myModal').modal('hide');
-
+                            $('#success_msg_id').text(Response[1])
+                             if(Response[1].message_type== 'SUCCESS'){
+                                $('#success_msg_id').text(Response[1].message_desc)
+                            }
                             $("#err_msg_app_settings_t").prop("hidden", false)
                             table_sort_filter('id_popup_table');
                             setTimeout(function() {
@@ -1247,7 +1216,7 @@ $('#save_id').click(function () {
 
             cusprodcat.del_ind = row.find("TD").eq(4).find('input[type="checkbox"]').is(':checked');
             cusprodcat.prod_cat_guid = row.find("TD").eq(3).find('input').val();
-            cusprodcat.prod_cat_desc = row.find("TD").eq(2).find('select option:selected').val();
+            cusprodcat.category_desc = row.find("TD").eq(2).find("input").val();
             cusprodcat.prod_cat_id = row.find("TD").eq(1).find('select option:selected').val();
 
 
@@ -1596,6 +1565,18 @@ function AjaxCallAPI(urlLink, data){
    });
    return response;
 };
+
+
+ function GetSelectedTextValue(prodid) {
+        var selectedText = prodid.options[prodid.selectedIndex].innerHTML;
+        var selectedValue = prodid.value;
+        var selectedId = (prodid.id).split('-')[1];
+         $.each (rendered_UNSPC_data,function(i, item){
+            if(selectedValue == item.prod_cat_id){
+                $('#description-'+selectedId).val(item.category_desc);
+            }
+        });
+ }
 
 </script>
 

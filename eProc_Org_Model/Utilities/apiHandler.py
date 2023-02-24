@@ -119,9 +119,9 @@ class ApiHandler:
     def save_node(client, name, node_type, parent_node, root_node_object_id):
         try:
             org_name_count = django_query_instance.django_filter_count_query(OrgModel,
-                                                                             {'client': client,
-                                                                              'name': name,
-                                                                              'del_ind': False})
+                                                                             {'client':client,
+                                                                              'name':name,
+                                                                              'del_ind':False})
             # if OrgModel.objects.filter(client=client, name=name, del_ind = None).exists():
             if org_name_count > 0:
                 return ['{"error": "Node already exists"}']

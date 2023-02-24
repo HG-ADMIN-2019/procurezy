@@ -345,8 +345,10 @@ class ApplicationSettingsSave:
                                                                  'client': self.client,
                                                                  }):
                 guid = guid_generator()
+                calenderid = random_int(4)
+                print(calenderid)
                 calendar_db_dictionary = {'calender_config_guid': guid,
-                                          'calender_id': calendar_detail['calender_id'],
+                                          'calender_id': calenderid,
                                           'description': convert_to_camel_case(calendar_detail['description']),
                                           'year': calendar_detail['year'],
                                           'working_days': calendar_detail['working_days'],
@@ -969,7 +971,7 @@ class ApplicationSettingsSave:
         message = get_message_detail_based_on_action(auth_data['action'])
 
         upload_response = get_configuration_data(Authorization, {'del_ind': False, 'client': self.client},
-                                                 ['auth_guid', 'auth_obj_grp', 'role'
+                                                 ['auth_guid', 'auth_obj_grp', 'auth_type', 'role'
                                                   ])
         return upload_response, message
 
@@ -983,13 +985,15 @@ class ApplicationSettingsSave:
         for auth_detail in auth_data:
             # if entry is not exists in db
             if not django_query_instance.django_existence_check(Authorization,
-                                                                {'role': auth_detail['role'],
-                                                                    'client': self.client
-                                                                }):
+                                                                {
+                                                                 'role': auth_detail['role'],
+                                                                 'client': self.client
+                                                                 }):
 
                 guid = guid_generator()
                 auth_db_dictionary = {'auth_guid': guid,
                                       'auth_obj_grp': auth_detail['auth_obj_grp'],
+                                      'auth_type': auth_detail['auth_type'],
                                       'role': UserRoles.objects.get(role=auth_detail['role']),
                                       'del_ind': False,
                                       'client': self.client,
@@ -1004,12 +1008,14 @@ class ApplicationSettingsSave:
                                                           {'role': auth_detail['role'],
                                                            'client': self.client
                                                            },
-                                                          {'auth_obj_grp': auth_detail['auth_obj_grp'],
-                                                           'role': UserRoles.objects.get(role=auth_detail['role']),
-                                                           'authorization_changed_at': self.current_date_time,
-                                                           'authorization_changed_by': self.username,
-                                                           'client': self.client,
-                                                           'del_ind': auth_detail['del_ind']})
+                                                          {
+                                                              'auth_obj_grp': auth_detail['auth_obj_grp'],
+                                                              'auth_type': auth_detail['auth_type'],
+                                                              'role': UserRoles.objects.get(role=auth_detail['role']),
+                                                              'authorization_changed_at': self.current_date_time,
+                                                              'authorization_changed_by': self.username,
+                                                              'client': self.client,
+                                                              'del_ind': auth_detail['del_ind']})
             if auth_detail['del_ind']:
                 used_flag_reset.append(auth_detail['auth_obj_grp'])
             else:
@@ -1331,13 +1337,15 @@ def user_roles_data():
 
 
 def authorization_dropdown():
-    upload_data_roles = django_query_instance.django_filter_query(UserRoles, {'del_ind': False}, ['role'], ['role'])
+    upload_data_roles = django_query_instance.django_filter_query(UserRoles,{'del_ind':False},['role'],['role'])
 
-    upload_data_auth_grp_obj = django_query_instance.django_filter_query(AuthorizationGroup, {'del_ind': False}, ['auth_obj_grp'], ['auth_obj_grp'])
+    upload_data_auth_grp_obj = get_field_unused_list_values('auth_obj_grp')
+    auth_type_values = get_field_unused_list_values('auth_type')
 
     data = {
         'upload_data_roles': upload_data_roles,
-        'upload_data_auth_grp_obj': upload_data_auth_grp_obj
+        'upload_data_auth_grp_obj': upload_data_auth_grp_obj,
+        'auth_type_values': auth_type_values
     }
     return data
 
@@ -1345,7 +1353,8 @@ def authorization_dropdown():
 def authorization_data():
     upload_auth = list(
         Authorization.objects.filter(client=global_variables.GLOBAL_CLIENT, del_ind=False).values('auth_guid',
-                                                                                                  'auth_obj_grp'                                                                                                 
+                                                                                                  'auth_obj_grp',
+                                                                                                  'auth_type',
                                                                                                   'role'))
     return upload_auth
 

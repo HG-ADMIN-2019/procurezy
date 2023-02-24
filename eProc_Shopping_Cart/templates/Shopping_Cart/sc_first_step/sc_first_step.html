@@ -64,7 +64,7 @@
                 </div>
             </div>
             <div>
-                {% include 'Shopping_Cart/item_table_details/item_details.html' %}
+                {% include 'Shopping_Cart/item_table_details/sc_first_step_item_details.html' %}
             </div>
             <div class="ml-3 mb-3">
                 <a href="javascript:history.back()" class="badge badge-light hg_gb_btn"><i class="fas fa-arrow-left"></i> Go Back</a>
@@ -120,6 +120,14 @@
         let status = AjaxCallAPIBasic(urlLink, data);
         return status;
     }
+
+    // Function to get guid of the item and displays confirmation pop-up before deleting
+var delete_item_guid = '';
+function get_item(element){
+    id1 = document.getElementById(element.id)
+    $('#sc-delete-single-item').modal('show');
+    delete_item_guid = element.id ;
+}
 </script>
 
 {% endblock %}

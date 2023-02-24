@@ -1,12 +1,6 @@
-"""Copyright (c) 2020 Hiranya Garbha, Inc.
-Name:
-    email_notification.py
-Usage:
-    On click of E-mail notification tab in Admin tool
-    email_notification_form - This function handles the display, modifying and saving the email notification format and renders emailnotif.html
-Author:
-     Siddarth
-"""
+"""Copyright (c) 2020 Hiranya Garbha, Inc. Name: email_notification.py Usage: On click of E-mails tab in Application
+Settings email_notification_form - This function handles the display, modifying and saving the email notification
+format and renders email_settings.html Author: Shilpa """
 from django.contrib import messages
 from django.contrib.auth.decorators import login_required
 from django.core.exceptions import ObjectDoesNotExist
@@ -62,7 +56,6 @@ def email_notification_form(req):
             keyword_list.append(dt['keyword'])
 
         form_data = django_query_instance.django_filter_only_query(EmailContents, {
-            'object_type': variant_list[0],
             'client': client,
             'del_ind': False
         })
@@ -78,11 +71,9 @@ def email_notification_form(req):
         'form_data': form_data,
         'data_onload': data_onload,
         'inc_nav': True,
-        'inc_shop_nav': True,
-        'is_slide_menu': True
     }
 
-    return render(req, 'emailnotif.html', context)
+    return render(req, 'Application_Settings/email_settings.html', context)
 
 
 @transaction.atomic

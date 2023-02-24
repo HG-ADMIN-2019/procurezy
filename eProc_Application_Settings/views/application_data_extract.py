@@ -512,19 +512,19 @@ def extract_authorization_data(request):
     response['Content-Disposition'] = 'attachment; filename=' + CONST_AUTHORIZATION
 
     writer = csv.writer(response)
-    writer.writerow(['AUTH_OBJ_GRP', 'AUTH_TYPE', 'ROLE', 'del_ind'])
+    writer.writerow(['ROLE', 'AUTH_OBJ_GRP', 'del_ind'])
 
     auth_obj = django_query_instance.django_filter_query(Authorization,
                                                          {'del_ind': False,
                                                           'client': global_variables.GLOBAL_CLIENT
                                                           }, None,
-                                                         ['auth_obj_grp', 'auth_type', 'role',
+                                                         ['role', 'auth_obj_grp',
                                                           'del_ind'])
     auth_objs = query_update_del_ind(auth_obj)
 
     for auth_obj in auth_objs:
-        auth_obj_info = [auth_obj['auth_obj_grp'], auth_obj['auth_type'],
-                         auth_obj['role'], auth_obj['del_ind']]
+        auth_obj_info = auth_obj['role'], [auth_obj['auth_obj_grp'],
+                                           auth_obj['del_ind']]
         writer.writerow(auth_obj_info)
 
     return response

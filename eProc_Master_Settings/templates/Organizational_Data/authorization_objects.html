@@ -5,14 +5,13 @@
 
 <div class="container-fluid">
     <div class="configuration-table_wrapper">
-
         <div class="elements-space-between">
             <h3>Maintain Authorization Objects </h3>
             <div>
                 <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Application_Settings:extract_authorization_object_data' %}'"type="button">
                     <i class="fas fa-download"></i> extract data
                 </button>
-                <button class="btn btn-primary" type="button" id="id_add_data" value="ADD"  data-toggle="modal" data-target="#myModal" onclick="onclick_add_button(this)">
+                <button class="btn btn-primary" type="button" id="id_add_data" value="ADD"  data-toggle="modal" data-target="#auth_obj_Modal" onclick="onclick_add_button(this)">
                     <i class="fa fa-plus"></i> add authorization object
                 </button>
                   <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"  onclick="window_close();">
@@ -20,13 +19,10 @@
                 </button>
             </div>
         </div>
-
         <hr>
-        
         <div class="configuration-table_section">
             <div id="err_msg_app_settings"> </div>
             <div id="err_msg_app_settings_t" class="alert alert-success" hidden><span id="success_msg_id"></span></div>
-
             <div class="table-container">
                 <div class="edit-button-section mb-4">
                     <button class="btn btn-secondary btn-sm" id="id_edit_data" title="Edit" onclick="onclick_edit_button()">
@@ -35,9 +31,6 @@
                     <button class="btn btn-outline-danger btn-sm" id="id_delete_data" title= "DELETE" value="auth_obj_delete" style="display:none;" data-toggle="modal" data-target="#id_delete_confirm_popup">
                         <i class="fa fa-trash"></i> delete
                     </button>
-<!--                    <button class="btn btn-primary btn-sm" title="Copy"  id="id_copy_data"  title="Copy" style="display:none;" value="auth_obj_copy" type="button" onclick="onclick_copy_button()">-->
-<!--                        <i class="fa fa-copy"></i> copy-->
-<!--                    </button>-->
                     <button class="btn btn-primary btn-sm"  title="Update" id="id_update_data" style="display:none;" value="auth_obj_update" type="button" onclick="onclick_update_button()">
                         <i class="far fa-edit"></i> update
                     </button>
@@ -45,7 +38,6 @@
                         <i class="fas fa-times"></i> cancel
                     </button> 
                 </div>
-
                 <table id="display_basic_table" class="class_basic_auth_obj_table table table-bordered custom-table">
                     <thead id="id_auth_obj_table_header">
                         <tr>
@@ -75,9 +67,8 @@
             </div>
         </div>
     </div>
-
     <!--modal popup for Add,copy,update and upload-->    
-    <div class="modal fade" id="myModal">
+    <div class="modal fade" id="auth_obj_Modal">
         <div class="modal-dialog modal-dialog-centered modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
@@ -103,12 +94,9 @@
                         <p id="id_error_msg_auth_obj_level"></p>
                         <p id="id_error_msg_auth_obj_length"></p>
                     </div>
-                    
                     <div id="error_msg_id" class="alert alert-danger display-none" role="alert"><span id="error_message"></span></div>
                     <div id="id_warning_msg_id" class="alert alert-warning display-none" role="alert"></div>
                     <div id="id_info_msg_id" class="alert alert-primary display-none" role="alert"></div>
-
-
                     <table class="class_popup_table table table-bordered mt-2" id="id_popup_table">
                         <thead>
                             <tr>
@@ -120,11 +108,9 @@
                             </tr>
                         </thead>
                         <tbody id=id_popup_tbody>
-
                         </tbody>
                     </table>
                 </div>
-
                 <!-- Modal footer -->
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-primary remove_upload_data" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
@@ -135,11 +121,9 @@
             </div>
         </div>
     </div>
-    <!--end of modal popup for Add,copy,update and upload-->    
-
+    <!--end of modal popup for Add,copy,update and upload-->
     <!-- modal popup to upload the csv file; save confirmation popup; delete confirmation popup -->
-    {% include 'configuration_common_pop_up.html' %}  
-
+    {% include 'configuration_common_pop_up.html' %}
     <div>
         {% if messages %} {% for message in messages %} {% if message.tags == 'success' %}
         <div style="color: green; ">{{ message }}</div>
@@ -150,13 +134,10 @@
         {% endif %} {% endfor %} {% endif %}
     </div>
 </div>
-
 {{ auth_obj_id_db_values|json_script:"auth_obj_id_db_values" }}
 {{ auth_type_db_values|json_script:"auth_type_db_values" }}
 {{ auth_obj_id_db_values_onload|json_script:"auth_obj_id_db_values_onload" }}
-
 {{ upload_authobj|json_script:"upload_authobj" }}
-
 <script>
     var rendered_auth_obj_data = JSON.parse(document.getElementById('upload_authobj').textContent);
     var rendered_auth_obj_id = JSON.parse(document.getElementById('auth_obj_id_db_values').textContent);
@@ -171,9 +152,12 @@
     var Tablename = uiConstants["CONST_TABLENAME_AUTH_OBJ"]
     var appname = uiConstants["CONST_APPNAME01"]
     var db_header_data = uiConstants["CONST_HEADER_DATA_AUTH_OBJ"]
+    var messages_list = {{messages_list|safe}};
+
     //**************************************
     var auth_type_dropdown,auth_obj_id_dropdown,auth_obj_id_db_values_onload;
 
+    //***************************
     function dropdown_value(){
         auth_obj_id_dropdown = '';
         $.each(rendered_auth_obj_id, function(i, item){
@@ -189,100 +173,63 @@
         })
     }
 
-
     // validate and save for add,copy,update and upload data
     function popup_save_data() {
         $('#success_msg_id').empty()
-         $('#id_popup_table').DataTable().destroy();
+        $('#id_popup_table').DataTable().destroy();
         var main_table_low_value = [];
         no_duplicate_entries = 'Y'
         no_duplicate_value = 'Y'
         var error_message = '';
-        
-        $('#display_basic_table').DataTable().destroy();
-        $("#display_basic_table TBODY TR").each(function() {
-            var row = $(this);
-            var main_attribute = {};
-            main_attribute.auth_obj_id = row.find("TD").eq(1).html();
-            main_table_low_value.push(main_attribute.auth_obj_id);
-        });
-        table_sort_filter('display_basic_table');
-
+        get_main_table_data(); //Read data from main table
+        // compare for duplicates in popup
         [no_duplicate_value,error_message] = compare_table_for_duplicate_entries(validate_add_attributes, authobj_data)
         if (error_message){
                display_error_message(error_message)
-
             }
-        else{
-            if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
-                [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
-            }
-            if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
-                var add_basic_data = '';
-                var auth_obj_data_array = authobj_data;
-               
-                $('#id_save_confirm_popup').modal('hide');
-                data = {'data':authobj_data,'table_name':'AuthorizationObject','action':GLOBAL_ACTION}
-                OpenLoaderPopup();
-                $.ajax({
-                    type: 'POST',
-                    url: "{% url 'eProc_Configuration:create_update_application_data' %}",
-                    data: JSON.stringify(data),
-                    contentType: "application/json; charset=utf-8",
-                    dataType: "json",
-                    success: function(Response) {
-                        rendered_auth_obj_data = Response[0];
-                        rendered_auth_obj_id = Response[2];
-                        display_basic_db_data();
-                        dropdown_value();
-                        $('#myModal').modal('hide');
-                        //$('#id_error_msg').text(messageConstants["JMSG001"])
-                        $('#success_msg_id').text(Response[1])
-                        if(Response[1].message_type== 'SUCCESS'){
-                            $('#success_msg_id').text(Response[1].message_desc)
+            else{
+                if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
+                    [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
+                }
+                if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
+                    var add_basic_data = '';
+                    var auth_obj_data_array = authobj_data;
+                    $('#id_save_confirm_popup').modal('hide');
+                    data = {'data':authobj_data,'table_name':'AuthorizationObject','action':GLOBAL_ACTION}
+                    OpenLoaderPopup();
+                    $.ajax({
+                        type: 'POST',
+                        url: "{% url 'eProc_Configuration:create_update_application_data' %}",
+                        data: JSON.stringify(data),
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function(Response) {
+                            rendered_auth_obj_data = Response[0];
+                            rendered_auth_obj_id = Response[2];
+                            display_basic_db_data();
+                            dropdown_value();
+                            $('#auth_obj_Modal').modal('hide');
+                            success_response(Response);  // Display Response data
+                            CloseLoaderPopup();
                         }
-                        $("#err_msg_app_settings_t").prop("hidden", false)
-                        table_sort_filter('id_popup_table');
-<!--                        setTimeout(function() {-->
-<!--                            $("#err_msg_app_settings_t").prop("hidden", true);-->
-<!--                        }, 5000)-->
-                        message_display_time();
-                        table_sort_filter('id_popup_table');
-                        CloseLoaderPopup();
-                    }
-                });
-            }
-            else if (error_message){
+                    });
+                }
+                else if (error_message){
                     display_error_message(error_message)
-            } 
-  
-
+                }
+            }
         }
-    }
-    
-    
+
     //delete the selected row in db................
     var main_table_auth_obj_checked = [];
-
     function main_table_delete() {
         $('#success_msg_id').empty()
         GLOBAL_ACTION = 'DELETE'
         main_table_auth_obj_checked = [];
-        $('#display_basic_table').DataTable().destroy();
-        $("#display_basic_table TBODY TR").each(function() {
-            var row = $(this);
-            var auth_obj_arr_obj = {};
-            auth_obj_arr_obj.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
-             if(auth_obj_arr_obj.del_ind){
-                auth_obj_arr_obj.auth_obj_id = row.find("TD").eq(1).html();
-                auth_obj_arr_obj.auth_level_ID = row.find("TD").eq(2).html();
-                auth_obj_arr_obj.auth_level = row.find("TD").eq(3).html();
-                main_table_auth_obj_checked.push(auth_obj_arr_obj);
-            }
-        });
+        get_selected_row_data(); // Function call to get the selected row data
         $('#id_delete_confirm_popup').modal('hide');
         data = {'data':main_table_auth_obj_checked,'table_name':'AuthorizationObject','action':GLOBAL_ACTION}
-         OpenLoaderPopup();
+        OpenLoaderPopup();
         $.ajax({
             type: 'POST',
             url: "{% url 'eProc_Configuration:create_update_application_data' %}",
@@ -291,215 +238,112 @@
             dataType: "json",
             success: function(Response) {
                 rendered_auth_obj_data = Response[0];
-                 rendered_auth_obj_id = Response[2];
-                    display_basic_db_data();
-                     $('#success_msg_id').text(Response[1])
-                      if(Response[1].message_type== 'SUCCESS'){
-                         $('#success_msg_id').text(Response[1].message_desc)
-                      }
-                    $("#err_msg_app_settings_t").prop("hidden", false)
-                     table_sort_filter('id_popup_table');
-<!--                    setTimeout(function() {-->
-<!--                        $("#err_msg_app_settings_t").prop("hidden", true);-->
-<!--                    }, 5000)-->
-                    message_display_time();
-                     table_sort_filter('id_popup_table');
-                     CloseLoaderPopup();
+                rendered_auth_obj_id = Response[2];
+                display_basic_db_data();
+                success_response(Response); // Function call to display response data
+                CloseLoaderPopup();
             }
         });
     }
 
-    function GetSelectedTextValue(authobject) {
-        var selectedText = authobject.options[authobject.selectedIndex].innerHTML;
-        var selectedValue = authobject.value;
-        var selectedId = (authobject.id).split('-')[1];
-         $.each(rendered_auth_obj_id, function(i, item){
-            if(selectedValue == item.field_type_id){
-                $('#description-'+selectedId).val(item.field_type_desc);
+    // validating the  popup table for duplicate entries
+    function compare_table_for_duplicate_entries(validate_add_attributes, auth_obj) {
+        add_attr_duplicates = false;
+        var error_message = ''
+        var add_attr_duplicates_list = [];
+        var add_attr_unique_list = [];
+        var no_duplicate_value = 'Y'
+        $.each(validate_add_attributes, function (index, value) {
+            if ($.inArray(value, add_attr_unique_list) == -1) {
+                add_attr_unique_list.push(value);
+            } else {
+                if ($.inArray(value, add_attr_duplicates_list) == -1) {
+                    add_attr_duplicates_list.push(value);
+                }
             }
         });
-
-    }
-    
-         function window_close() {
-             window.history.back();
-              var preUrl = document.referrer;
-              console.log(preUrl);
-              window.open('', '_self', '').close();
-<!--               var win = window.open(preUrl);-->
-<!--                win.focus();-->
-              if (preUrl == null)
-                     return "The previous page url is empty";
-               else
-                     return preUrl;
-       }
-
-  // validating the  popup table for duplicate entries
-function compare_table_for_duplicate_entries(validate_add_attributes, auth_obj) {
-    add_attr_duplicates = false;
-    var error_message = ''
-    var add_attr_duplicates_list = [];
-    var add_attr_unique_list = [];
-    var no_duplicate_value = 'Y'
-    $.each(validate_add_attributes, function (index, value) {
-        if ($.inArray(value, add_attr_unique_list) == -1) {
-            add_attr_unique_list.push(value);
-        } else {
-            if ($.inArray(value, add_attr_duplicates_list) == -1) {
-                add_attr_duplicates_list.push(value);
-            }
+        if (add_attr_duplicates_list.length != 0) {
+            error_message = ui_messeges("JMSG001")// Get message details
+            no_duplicate_value = 'N'
+            return [no_duplicate_value,error_message]
         }
-    });
-    if (add_attr_duplicates_list.length != 0) {
-        //error_message = messageConstants["JMSG001"];
-              
-                var msg = "JMSG001";
-                var msg_type ;
-              msg_type = message_config_details(msg);
-              $("#error_msg_id").prop("hidden", false)
+        else{
+            $.each(auth_obj, function (i, item) {
+                if (item.auth_obj_id.length == 0) {
+                    error_message = ui_messeges("JMSG002")// Get message details
+                    no_duplicate_value = 'N'
+                    return [no_duplicate_value,error_message]
+                }
+                if (item.auth_level_ID.length == 0) {
+                    error_message = ui_messeges("JMSG002")// Get message details
+                    no_duplicate_value = 'N'
+                    return [no_duplicate_value,error_message]
+                }
+            });
+        }
+        return [no_duplicate_value,error_message]
+    }
 
-              if(msg_type.message_type == "ERROR"){
-                    display_message("error_msg_id", msg_type.messages_id_desc)
-              }
-              else if(msg_type.message_type == "WARNING"){
-                 display_message("id_warning_msg_id", msg_type.messages_id_desc)
-              }
-              else if(msg_type.message_type == "INFORMATION"){
-                 display_message("id_info_msg_id", msg_type.messages_id_desc)
-              }
-                no_duplicate_value = 'N'
-                return [no_duplicate_value,error_message]
-           }
-     else{
-         $.each(auth_obj, function (i, item) {
-            if (item.auth_obj_id.length == 0) {
-                      // error_message = messageConstants["JMSG002"] + "Authorization Object ID";
-                     
-                        var msg = "JMSG002";
-                        var msg_type ;
-                      msg_type = message_config_details(msg);
-                      $("#error_msg_id").prop("hidden", false)
-
-                      if(msg_type.message_type == "ERROR"){
-                            display_message("error_msg_id", msg_type.messages_id_desc)
-                      }
-                      else if(msg_type.message_type == "WARNING"){
-                         display_message("id_warning_msg_id", msg_type.messages_id_desc)
-                      }
-                      else if(msg_type.message_type == "INFORMATION"){
-                         display_message("id_info_msg_id", msg_type.messages_id_desc)
-                      }
-                no_duplicate_value = 'N'
-                return [no_duplicate_value,error_message]
+    //validate by comparing  main table values and popup table values
+    function maintable_validation(validate_add_attributes, main_table_low_value) {
+        var no_duplicate_entries = 'Y'
+        var error_message =''
+        var common = [];
+        jQuery.grep(validate_add_attributes, function (el) {
+            if (jQuery.inArray(el, main_table_low_value) != -1) {
+                common.push(el);
             }
+        });
+        if (common.length != 0) {
+            error_message = ui_messeges("JMSG001")// Get message details
+            no_duplicate_value = 'N'
+            return [no_duplicate_value,error_message]
+        }
+        return [no_duplicate_entries,error_message]
+    }
 
-            if (item.auth_level_ID.length == 0) {
-
-                        //error_message = messageConstants["JMSG002"] + "Authorization Level ID";
-                      
-                        var msg = "JMSG002";
-                        var msg_type ;
-                      msg_type = message_config_details(msg);
-                      $("#error_msg_id").prop("hidden", false)
-
-                      if(msg_type.message_type == "ERROR"){
-                            display_message("error_msg_id", msg_type.messages_id_desc)
-                      }
-                      else if(msg_type.message_type == "WARNING"){
-                         display_message("id_warning_msg_id", msg_type.messages_id_desc)
-                      }
-                      else if(msg_type.message_type == "INFORMATION"){
-                         display_message("id_info_msg_id", msg_type.messages_id_desc)
-                      }
-                no_duplicate_value = 'N'
-                return [no_duplicate_value,error_message]
+    //onclick of add button display auth_obj_Modal popup and set GLOBAL_ACTION button value
+    function onclick_add_button(button) {
+        OpenLoaderPopup();
+        var data = {'table_name':'AuthorizationObject'}
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'eProc_Configuration:get_dropdown_data' %}",
+            data: JSON.stringify(data),
+            success: function(response) {
+                rendered_auth_obj_id = response.auth_obj_id_db_values
+                rendered_auth_obj_data_onload = response.auth_obj_id_db_values_onload
+                rendered_auth_type = response.auth_type_db_values
+                dropdown_value();
+                $("#error_msg_id").css("display", "none")
+                $( "#header_select").prop( "hidden", false );
+                GLOBAL_ACTION = button.value
+                $('#id_popup_table').DataTable().destroy();
+                $("#id_popup_tbody").empty();
+                new_row_data(); // Function for add a new row data
+                table_sort_filter('id_popup_table');
+                $("#id_del_ind_checkbox").prop("hidden", true);
+                document.getElementById("id_del_add_button").style.display = "block";
+                $("#save_id").prop("hidden", false);
+                CloseLoaderPopup();
+                $('#auth_obj_Modal').modal('show');
             }
         });
     }
 
-    return [no_duplicate_value,error_message]
-}
-
-//validate by comparing  main table values and popup table values
-function maintable_validation(validate_add_attributes, main_table_low_value) {
-    var no_duplicate_entries = 'Y'
-    var error_message =''
-    var common = [];
-    jQuery.grep(validate_add_attributes, function (el) {
-        if (jQuery.inArray(el, main_table_low_value) != -1) {
-            common.push(el);
-        }
-    });
-    if (common.length != 0) {
-        //error_message = messageConstants["JMSG001"]
-              
-                var msg = "JMSG001";
-                var msg_type ;
-              msg_type = message_config_details(msg);
-              $("#error_msg_id").prop("hidden", false)
-
-              if(msg_type.message_type == "ERROR"){
-                    display_message("error_msg_id", msg_type.messages_id_desc)
-              }
-              else if(msg_type.message_type == "WARNING"){
-                 display_message("id_warning_msg_id", msg_type.messages_id_desc)
-              }
-              else if(msg_type.message_type == "INFORMATION"){
-                 display_message("id_info_msg_id", msg_type.messages_id_desc)
-              }
-                no_duplicate_value = 'N'
-                return [no_duplicate_value,error_message]
-    }
-    return [no_duplicate_entries,error_message]
-}
-
-
-//onclick of add button display myModal popup and set GLOBAL_ACTION button value
-function onclick_add_button(button) {
-     OpenLoaderPopup();
-    var data = {'table_name':'AuthorizationObject'}
-    $.ajax({
-        type: 'POST',
-        url: "{% url 'eProc_Configuration:get_dropdown_data' %}",
-        data: JSON.stringify(data),
-        success: function(response) {
-            rendered_auth_obj_id = response.auth_obj_id_db_values
-            rendered_auth_obj_data_onload = response.auth_obj_id_db_values_onload
-            rendered_auth_type = response.auth_type_db_values
-            dropdown_value();
-            $("#error_msg_id").css("display", "none")
-            $( "#header_select").prop( "hidden", false );
-            GLOBAL_ACTION = button.value
-            $('#id_popup_table').DataTable().destroy();
-            $("#id_popup_tbody").empty();
-            basic_add_new_html = '<tr><td><input type="checkbox" required></td>'+
-            '<td><select type="text" class="input form-control authobject" id="authobject-1"  name="authobject" onchange="GetSelectedTextValue(this)"><option value="" disabled selected>Select your option</option>'+ auth_obj_id_dropdown +'</select></td>'+
-           '<td><input class="form-control description" type="text"  name="description"  id="description-1" disabled></td>'+'<td><select id="authobject_type" name="authobject_type"  class="input form-control">'+auth_type_dropdown+'</select></td>'+
-           '<td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
-           $('#id_popup_tbody').append(basic_add_new_html);
-            table_sort_filter('id_popup_table');
-            $("#id_del_ind_checkbox").prop("hidden", true);
-            document.getElementById("id_del_add_button").style.display = "block";
-            $("#save_id").prop("hidden", false);
-            CloseLoaderPopup();
-            $('#myModal').modal('show');
-        }
-    });
-
-}
-
-function onclick_copy_update_button() {
-     OpenLoaderPopup();
-    var data = {'table_name':'AuthorizationObject'}
-    $.ajax({
-        type: 'POST',
-        url: "{% url 'eProc_Configuration:get_dropdown_data' %}",
-        data: JSON.stringify(data),
-        success: function(response) {
-            rendered_auth_obj_id = response.auth_obj_id_db_values
-            rendered_auth_obj_data_onload = response.auth_obj_id_db_values_onload
-            rendered_auth_type = response.auth_type_db_values
-            dropdown_value();
+    //**********************************************************
+    function onclick_copy_update_button() {
+        OpenLoaderPopup();
+        var data = {'table_name':'AuthorizationObject'}
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'eProc_Configuration:get_dropdown_data' %}",
+            data: JSON.stringify(data),
+            success: function(response) {
+                rendered_auth_obj_id = response.auth_obj_id_db_values
+                rendered_auth_obj_data_onload = response.auth_obj_id_db_values_onload
+                rendered_auth_type = response.auth_type_db_values
+                dropdown_value();
                 $("#error_msg_id").css("display", "none")
                 $("#id_popup_tbody").empty();
                 $('#display_basic_table').DataTable().destroy();
@@ -507,7 +351,6 @@ function onclick_copy_update_button() {
                 $("#id_popup_tbody").empty();
                 //Reference the Table.
                 var grid = document.getElementById("display_basic_table");
-
                 //Reference the CheckBoxes in Table.
                 var checkBoxes = grid.getElementsByTagName("INPUT");
                 var edit_basic_data = "";
@@ -520,11 +363,10 @@ function onclick_copy_update_button() {
                         var auth_level= row.cells[3].innerHTML;
                         dropdown_values.push([auth_obj_id, auth_level])
                         if (GLOBAL_ACTION == "UPDATE") {
-                            edit_basic_data += '<tr><td hidden><input type="checkbox" required></td><td><select type="text" class="input form-control" id="authobjectid"  name="authobjectid" disabled>'+ auth_obj_id_db_values_onload +'</select></td><td><input class="input form-control description" id="description-1" value="' + row.cells[2].innerHTML + '" type="text"  name="description" disabled></td><td><select id="authobject_type" name="authobject_type" class="input form-control" value="' + row.cells[3].innerHTML + '">' + auth_type_dropdown + '</select></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+                            edit_basic_data += '<tr><td hidden><input type="checkbox" required></td><td><select type="text" class="input form-control" id="authobjectid"  name="authobjectid" disabled><option>' + row.cells[1].innerHTML + '</option></select></td><td><input class="input form-control description" id="description-1" value="' + row.cells[2].innerHTML + '" type="text"  name="description" disabled></td><td><select id="authobject_type" name="authobject_type" class="input form-control" value="' + row.cells[3].innerHTML + '">' + auth_type_dropdown + '</select></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
                             $("#header_select").prop("hidden", true);
                         }
                         else{
-
                             unique_input = '<select class="form-control">' + auth_obj_id_add_dropdown + '</select>'
                             edit_basic_data += '<tr ><td><input type="checkbox" required></td><td><select class="form-control">' + auth_obj_id_dropdown + '</select></td><td><select class="form-control">' + auth_obj_level_dropdown + '</select></td><td><select class="form-control">' + auth_obj_level_id_dropdown + '</select></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
                             $("#header_select").prop("hidden", false);
@@ -537,24 +379,19 @@ function onclick_copy_update_button() {
                     var row = $(this);
                     var auth_obj_id = dropdown_values[i][0]
                     var auth_level= dropdown_values[i][1]
-
                     $(row.find("TD").eq(3).find("select option[value=" + auth_level + "]")).attr('selected', 'selected');
                     $(row.find("TD").eq(1).find("select option[value=" + auth_obj_id + "]")).attr('selected', 'selected');
                     i++;
                 });
                 $("#id_del_ind_checkbox").prop("hidden", true);
-
-                $('#myModal').modal('show');
+                $('#auth_obj_Modal').modal('show');
                 table_sort_filter('display_basic_table');
                 table_sort_filter('id_popup_table');
-                $('#myModal').modal('show');
+                $('#auth_obj_Modal').modal('show');
                 CloseLoaderPopup();
-        }
-    });
-
-}
+            }
+        });
+    }
 </script>
-
 <script src="{% static 'scripts/organisational_data/org_authorization_objects.js' %}"></script>
-
 {% endblock %}

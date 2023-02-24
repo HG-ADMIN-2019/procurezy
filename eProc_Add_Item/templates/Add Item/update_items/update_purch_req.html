@@ -42,7 +42,7 @@
             <label for="update-pr-currency">Currency<span class="hg_required"></span></label>
             <select id="update-pr-currency" class="form-control form-control-sm selectpicker" data-live-search="true" required >
                 {% for currencies in currency %}
-                <option id="{{currencies}}" value="{{currencies}}">{{currencies}} - {{currencies.description}}</option>
+                <option id="{{currencies}}" value="{{currencies.currency_id}}">{{currencies.currency_id}} - {{currencies.description}}</option>
                 {% endfor %}
             </select>
         </div>

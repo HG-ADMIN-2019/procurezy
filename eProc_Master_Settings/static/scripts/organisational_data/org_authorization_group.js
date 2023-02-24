@@ -2,28 +2,6 @@ var auth_group_data = new Array();
 var validate_add_attributes = [];
 var auth_group={};
 
-
-//onclick of upload button display id_data_upload popup and set GLOBAL_ACTION button value
-function onclick_upload_button() {
-    GLOBAL_ACTION = "auth_group_upload"
-    $("#id_popup_tbody").empty();
-    $('#id_data_upload').modal('show');
-}
-
-// on click copy icon display the selected checkbox data
-function onclick_copy_button() {
-    GLOBAL_ACTION = "COPY"
-    onclick_copy_update_button("copy")
-    document.getElementById("id_del_add_button").style.display = "block";
-}
-
-// on click update icon display the selected checkbox data to update
-function onclick_update_button() {
-    GLOBAL_ACTION = "UPDATE"
-    onclick_copy_update_button("update")
-    document.getElementById("id_del_add_button").style.display = "none";
-}
-
 function onclick_copy_update_button() {
     $("#error_msg_id").css("display", "none")
     $("#id_popup_tbody").empty();
@@ -163,9 +141,9 @@ $('#save_id').click(function () {
             auth_group.del_ind = row.find("TD").eq(6).find('input[type="checkbox"]').is(':checked');
             auth_group.auth_obj_grp = row.find("TD").eq(1).find('select[type="text"]').val();
             auth_group.auth_obj_id = row.find("TD").eq(4).find("select option:selected").val();
-            auth_group.auth_grp_desc = row.find("TD").eq(2).find('input[type="text"]').val().toUpperCase();
+            auth_group.auth_grp_desc = row.find("TD").eq(2).find('input[type="text"]').val();
             auth_group.auth_level = row.find("TD").eq(3).find("select option:selected").val();
-            auth_group.auth_grp_guid = row.find("TD").eq(5).find('input[type="text"]').val().toUpperCase();
+            auth_group.auth_grp_guid = row.find("TD").eq(5).find('input[type="text"]').val();
             if (auth_group == undefined) {
                 auth_group.auth_obj_grp = row.find("TD").eq(1).find('input[type="text"]').val();
             }
@@ -178,3 +156,50 @@ $('#save_id').click(function () {
         });
     $('#id_save_confirm_popup').modal('show');
 });
+
+// Function to get main table data
+function get_main_table_data() {
+        main_table_low_value = [];
+        $('#display_basic_table').DataTable().destroy();
+        $("#display_basic_table TBODY TR").each(function() {
+            var row = $(this);
+            var main_attribute = {};
+            main_attribute.auth_obj_grp = row.find("TD").eq(1).html();
+            main_attribute.auth_obj_id = row.find("TD").eq(4).html();
+            main_attribute.auth_grp_desc = row.find("TD").eq(2).html();
+            main_attribute.auth_level = row.find("TD").eq(3).html();
+            var main_attribute_compare = main_attribute.auth_obj_grp + ' - ' + main_attribute.auth_grp_desc+ ' - ' + main_attribute.auth_level+ ' - ' + main_attribute.auth_obj_id
+            main_table_low_value.push(main_attribute_compare);
+        });
+        table_sort_filter('display_basic_table');
+}
+
+// Function to get the selected row data
+function get_selected_row_data(){
+        $("#display_basic_table TBODY TR").each(function() {
+            var row = $(this);
+            var auth_group_arr_obj = {};
+            auth_group_arr_obj.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
+            if( auth_group_arr_obj.del_ind) {
+            auth_group_arr_obj.auth_obj_grp = row.find("TD").eq(1).html();
+            auth_group_arr_obj.auth_obj_id = row.find("TD").eq(4).html();
+            auth_group_arr_obj.auth_grp_desc = row.find("TD").eq(2).html();
+            auth_group_arr_obj.auth_level = row.find("TD").eq(3).html();
+            auth_group_arr_obj.auth_grp_guid = row.find("TD").eq(5).html();
+            auth_group_arr_obj.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
+            main_table_auth_group_checked.push(auth_group_arr_obj);
+            }
+        });
+}
+
+// Function for add a new row data
+function new_row_data(){
+            basic_add_new_html = '<tr><td><input type="checkbox" required></td>'+
+            '<td><select type="text" class="input form-control authgroup"  id="authgroup-1" onchange="GetSelectedTextValue(this)"><option value="" disabled selected>Select your option</option>'+ auth_group_id_dropdown+'</select></td>'+
+            '<td><input class="form-control description" type="text"  name="description"  id="description-1" disabled></td>'+
+            '<td><select class="form-control">'+auth_level_dropdown+'</select></td>'+
+            '<td><select class="form-control">'+auth_obj_id_dropdown+'</select></td>'+
+            '<td hidden><input type="text" value="GUID"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+            $('#id_popup_tbody').append(basic_add_new_html);
+            table_sort_filter('id_popup_table');
+}

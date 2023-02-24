@@ -1,5 +1,6 @@
 var company_data = new Array();
 var validate_add_attributes = [];
+var main_table_low_value = [];
 var orgcompany={};
 
 //onclick of upload button display id_data_upload popup and set GLOBAL_ACTION button value
@@ -66,8 +67,6 @@ function onclick_copy_update_button() {
     var checkBoxes = grid.getElementsByTagName("INPUT");
     var edit_basic_data = "";
     var guid= '';
-    var unique_input = '';
-
     //Loop through the CheckBoxes.
     for (var i = 1; i < checkBoxes.length; i++) {
         if (checkBoxes[i].checked) {
@@ -210,9 +209,7 @@ function new_row_data(){
 
 // Function to get main table data
 function get_main_table_data(){
-    var main_table_low_value = [];
-    var orgcompany = {};
-    $('#display_basic_table').DataTable().destroy();
+    main_table_low_value = [];
     $("#display_basic_table TBODY TR").each(function() {
         var row = $(this);
         var main_attribute = {};

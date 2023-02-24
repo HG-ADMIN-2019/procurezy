@@ -44,3 +44,36 @@ function onclick_fav_sc(){
      $('#favourite_sc_name_input').val('');
 
 }
+
+
+// Function to hide and show hidden table row contents
+function showSection(obj, data) {
+    item_number = data.substr(-1)
+    GLOBAL_SELECT_ITEM_NUM = item_number
+    document.getElementById('item_info_tr-'+item_number).hidden = false;
+    if(data.includes('attachments')){
+        $('#attachment_tbody_id-'+item_number).empty()
+        get_attachment_IDB(item_number)
+    }
+    var showsectionid=obj.id;
+    var dropdownContentClass = data;
+    var rowId = document.getElementById(dropdownContentClass);
+    var rowClass = rowId.className;
+    var hideableRowSection = document.getElementsByClassName(rowClass);
+
+    for (var i=0; i < hideableRowSection.length; i++){
+        var current_element = hideableRowSection[i].id
+        if(current_element == dropdownContentClass){
+            hideableRowSection[i].style.display = 'block';
+        } else{
+            hideableRowSection[i].style.display = 'none';
+        }
+    }
+}
+
+function closeSelectSection(obj, data) {
+    item_number = data.substr(-1)
+    var x = data;
+    document.getElementById(x).style.display="none"
+    document.getElementById('item_info_tr-'+item_number).hidden = true;
+}

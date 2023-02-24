@@ -3,7 +3,7 @@ from datetime import date
 import datetime
 
 from eProc_Attributes.Utilities.attributes_generic import OrgAttributeValues
-from eProc_Basic.Utilities.constants.constants import CONST_CALENDAR_ID
+from eProc_Basic.Utilities.constants.constants import CONST_CALENDAR_ID, CONST_CO_CODE
 from eProc_Basic.Utilities.functions.django_query_set import DjangoQueries
 from eProc_Basic.Utilities.global_defination import global_variables
 from eProc_Configuration.models import SupplierMaster, CalenderConfig, CalenderHolidays
@@ -196,18 +196,20 @@ def calculate_delivery_date(guid, lead_time, supplier_id, calender_id, client, m
 #                                          requester_holiday_list)
 #     return delivery_date
 
-def calculate_delivery_date_base_on_lead_time(lead_time,supplier_id,default_calendar_id):
+def calculate_delivery_date_base_on_lead_time(lead_time, supplier_id, default_calendar_id):
     """
 
     """
     if not default_calendar_id:
-        object_id_list = get_object_id_list_user(global_variables.GLOBAL_CLIENT, global_variables.GLOBAL_LOGIN_USER_OBJ_ID)
+        object_id_list = get_object_id_list_user(global_variables.GLOBAL_CLIENT,
+                                                 global_variables.GLOBAL_LOGIN_USER_OBJ_ID)
         org_attr_value_instance = OrgAttributeValues()
         default_calendar_id = org_attr_value_instance.get_user_default_attr_value_list_by_attr_id(object_id_list,
                                                                                                   CONST_CALENDAR_ID)[1]
     is_supplier_holiday = True
-    get_requester_working_days = django_query_instance.django_get_query(CalenderConfig, {'calender_id': default_calendar_id,
-                                                                                         'client': global_variables.GLOBAL_CLIENT})
+    get_requester_working_days = django_query_instance.django_get_query(CalenderConfig,
+                                                                        {'calender_id': default_calendar_id,
+                                                                         'client': global_variables.GLOBAL_CLIENT})
     if get_requester_working_days is not None:
         requester_working_days = get_requester_working_days.working_days
         requester_week_days = (determine_working_days(requester_working_days))[0]
@@ -242,14 +244,14 @@ def calculate_delivery_date_base_on_lead_time(lead_time,supplier_id,default_cale
                     valid_day = calendar.day_name[valid_date.weekday()]
 
             delivery_date = get_delivery_date(requester_working_days, requester_week_days, valid_date,
-                                                 requester_holiday_list)
+                                              requester_holiday_list)
             return delivery_date
 
         else:
             valid_date = current_date + datetime.timedelta(days=int(lead_time))
             # valid_day = calendar.day_name[valid_date.weekday()]
             delivery_date = get_delivery_date(requester_working_days, requester_week_days, valid_date,
-                                                 requester_holiday_list)
+                                              requester_holiday_list)
             return delivery_date
 
     return None
@@ -313,6 +315,7 @@ def update_delivery_date(requester_working_days, requester_week_days, valid_date
             valid_date = valid_date + datetime.timedelta(days=1)
             valid_day = calendar.day_name[valid_date.weekday()]
 
+
 # Function to determine delivery date and update to DB after supplier date validation
 def get_delivery_date(requester_working_days, requester_week_days, valid_date, requester_holiday_list):
     """
@@ -345,3 +348,16 @@ def get_delivery_date(requester_working_days, requester_week_days, valid_date, r
         else:
             valid_date = valid_date + datetime.timedelta(days=1)
             valid_day = calendar.day_name[valid_date.weekday()]
+
+
+def get_company_calendar_from_org_model():
+    """
+
+    """
+    org_attr_value_instance = OrgAttributeValues()
+    object_id_list = get_object_id_list_user(global_variables.GLOBAL_CLIENT, global_variables.GLOBAL_LOGIN_USER_OBJ_ID)
+    attr_low_value_list, company_code = OrgAttributeValues.get_user_default_attr_value_list_by_attr_id(object_id_list,
+                                                                                                       CONST_CO_CODE)
+    default_calendar_id = org_attr_value_instance.get_user_default_attr_value_list_by_attr_id(object_id_list,
+                                                                                              CONST_CALENDAR_ID)[1]
+    return attr_low_value_list, company_code ,default_calendar_id,object_id_list

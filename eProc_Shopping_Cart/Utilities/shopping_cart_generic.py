@@ -1,9 +1,15 @@
+import datetime
+
 from django.db.models import Q
 
 from eProc_Basic.Utilities.functions.dictionary_key_to_list import dictionary_key_to_list
 from eProc_Basic.Utilities.functions.get_db_query import *
 from eProc_Basic.Utilities.functions.remove_element_from_list import remove_element_from_list
+from eProc_Basic.Utilities.functions.str_concatenate import concatenate_str_with_space
+from eProc_Calendar_Settings.Utilities.calender_settings_generic import calculate_delivery_date, \
+    calculate_delivery_date_base_on_lead_time
 from eProc_Configuration.models import UnspscCategories, UnspscCategoriesCustDesc
+from eProc_Configuration.models.basic_data import Currency, UnitOfMeasures
 from eProc_Doc_Search_and_Display.Utilities.search_display_specific import get_po_header_app, get_sc_header_app_wf, \
     get_sc_header_app
 from eProc_Exchange_Rates.Utilities.exchange_rates_generic import convert_currency
@@ -11,6 +17,7 @@ from eProc_Form_Builder.models import EformFieldData
 from eProc_Price_Calculator.Utilities.price_calculator_generic import calculate_item_total_value, calculate_item_price
 from eProc_Shopping_Cart.Utilities.shopping_cart_specific import get_completion_work_flow
 from eProc_Shopping_Cart.models import ScItem, ScHeader, ScAccounting, ScPotentialApproval, ScApproval
+from eProc_Shopping_Cart.models.add_to_cart import CartItemDetails
 
 django_query_instance = DjangoQueries()
 
@@ -187,9 +194,6 @@ def update_eform_details_scitem(cart_items):
                                                                                        None,
                                                                                        None)
     return cart_items
-
-
-
 
 
 def get_price_discount_tax(price, base_price, additional_price, tax, discount_percentage, quantity):
@@ -379,4 +383,126 @@ def update_pricing_data(item_details):
     return total_sc_value
 
 
+def get_currency_converted_price_data(cart_items):
+    """
 
+    """
+    total_actual_price = 0
+    total_discount_value = 0
+    total_tax_value = 0
+    total_value = 0
+    for items in cart_items:
+        item_currency = items['currency']
+        if not item_currency:
+            item_currency = global_variables.GLOBAL_USER_CURRENCY
+        if items['call_off'] == CONST_LIMIT_ORDER_CALLOFF:
+            overall_limit = items['overall_limit']
+            price_unit = 1
+        else:
+            overall_limit = None
+            price_unit = items['price_unit']
+        value = calculate_item_total_value(items['call_off'], items['quantity'], None, price_unit, items['price'],
+                                           overall_limit)
+        if item_currency != global_variables.GLOBAL_USER_CURRENCY:
+            actual_price = convert_currency(float(items['actual_price']) * items['quantity'], str(item_currency),
+                                            str(global_variables.GLOBAL_USER_CURRENCY))
+            discount_value = convert_currency(float(items['discount_value']) * items['quantity'],
+                                              str(item_currency),
+                                              str(global_variables.GLOBAL_USER_CURRENCY))
+            tax_value = convert_currency(float(items['tax_value']) * items['quantity'],
+                                         str(item_currency),
+                                         str(global_variables.GLOBAL_USER_CURRENCY))
+            value = convert_currency(value, str(item_currency), str(global_variables.GLOBAL_USER_CURRENCY))
+            # gross_price_list.append(convert_currency(float(items['gross_price'])*items['quantity'], str(item_currency), str(user_currency)))
+        else:
+            actual_price = float(items['actual_price']) * items['quantity']
+            discount_value = items['discount_value']
+            tax_value = items['tax_value']
+            # gross_price_list.append(float(items['gross_price'])*items['quantity'])
+        items['item_total_value'] = format(value, '.2f')
+        total_actual_price = total_actual_price + actual_price
+        total_discount_value = total_discount_value + discount_value
+        total_tax_value = total_tax_value + tax_value
+        total_value = total_value + value
+    total_actual_price = round(total_actual_price, 2)
+    total_discount_value = round(total_discount_value, 2)
+    total_tax_value = round(total_tax_value, 2)
+    total_value = round(total_value, 2)
+    return total_actual_price, total_discount_value, total_tax_value, total_value
+
+
+def update_image_for_catalog(cart_items):
+    """
+
+    """
+    for items in cart_items:
+        if items['call_off'] == CONST_CATALOG_CALLOFF:
+            items['image_url'] = get_image_url(items['int_product_id'])
+        else:
+            items['image_url'] = ''
+    return cart_items
+
+
+def get_currency_and_uom():
+    """
+
+    """
+    currency = django_query_instance.django_filter_query(Currency, {'del_ind': False}, None,
+                                                         ['currency_id', 'description'])
+    uom = django_query_instance.django_filter_query(UnitOfMeasures, {'del_ind': False}, None, None)
+    currency_list = dictionary_key_to_list(currency, 'currency_id')
+    return currency, uom, currency_list
+
+
+def get_cart_items_detail():
+    """
+
+    """
+    cart_items = django_query_instance.django_filter_query(CartItemDetails,
+                                                           {'username': global_variables.GLOBAL_LOGIN_USERNAME,
+                                                            'client': global_variables.GLOBAL_CLIENT},
+                                                           ['item_num'],
+                                                           None)
+    return cart_items
+
+
+def update_delivery_date_to_item_table(cart_items):
+    """
+
+    """
+    org_attr_value_instance = OrgAttributeValues()
+    object_id_list = get_object_id_list_user(global_variables.GLOBAL_CLIENT, global_variables.GLOBAL_LOGIN_USER_OBJ_ID)
+    default_calendar_id = org_attr_value_instance.get_user_default_attr_value_list_by_attr_id(object_id_list,
+                                                                                              CONST_CALENDAR_ID)[1]
+    for items in cart_items:
+        if items['call_off'] not in [CONST_FREETEXT_CALLOFF, CONST_LIMIT_ORDER_CALLOFF]:
+            items['item_del_date'] = calculate_delivery_date(items['guid'],
+                                                             items['lead_time'],
+                                                             items['supplier_id'],
+                                                             default_calendar_id,
+                                                             global_variables.GLOBAL_CLIENT,
+                                                             CartItemDetails)
+        elif items['call_off'] == CONST_FREETEXT_CALLOFF:
+            # if user entered delivery is less than calculated delivery date than
+            # update delivery date alculated delivery date
+            delivery_date = calculate_delivery_date_base_on_lead_time(
+                items['lead_time'],
+                items['supplier_id'],
+                default_calendar_id)
+            if items['item_del_date'] < delivery_date:
+                django_query_instance.django_update_query(CartItemDetails,
+                                                          {'guid': items['guid'],
+                                                           'client': global_variables.GLOBAL_CLIENT},
+                                                          {'item_del_date': delivery_date})
+                items['item_del_date'] = delivery_date
+    return cart_items
+
+
+def get_default_cart_name(requester_first_name):
+    """
+
+    """
+    date_time = str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+    cart_name = concatenate_str_with_space(requester_first_name, date_time)
+
+    return cart_name

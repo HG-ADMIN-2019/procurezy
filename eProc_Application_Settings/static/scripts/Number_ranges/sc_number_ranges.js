@@ -1,3 +1,4 @@
+var main_table_data = new Array();
 var numberranges_data = new Array();
 var validate_add_attributes = [];
 var number_range={};
@@ -20,25 +21,6 @@ function onclick_add_button(button) {
     nextval = max_sequence;
 }
 
-//onclick of upload button display id_data_upload popup and set GLOBAL_ACTION button value
-function onclick_upload_button() {
-    GLOBAL_ACTION = "number_range_upload"
-    $("#id_popup_tbody").empty();
-    $('#id_data_upload').modal('show');
-    document.getElementById('id_file_data_upload').value = "";
-}
-
-
-//******************
-// on click copy icon display the selected checkbox data
-function onclick_copy_button() {
-    GLOBAL_ACTION = "COPY"
-    onclick_copy_update_button("copy")
-    document.getElementById("id_del_add_button").style.display = "block";
-}
-
-
-//***********************************
 // on click update icon display the selected checkbox data to update
 function onclick_update_button() {
     GLOBAL_ACTION = "UPDATE"
@@ -46,17 +28,14 @@ function onclick_update_button() {
     document.getElementById("id_del_add_button").style.display = "none";
 }
 
-
-//**********************************************************
+//*************************************
 function onclick_copy_update_button() {
     $("#error_msg_id").css("display", "none")
     $('#display_basic_table').DataTable().destroy();
     $('#id_popup_table').DataTable().destroy();
     $("#id_popup_tbody").empty();
-
     //Reference the Table.
     var grid = document.getElementById("display_basic_table");
-
     //Reference the CheckBoxes in Table.
     var checkBoxes = grid.getElementsByTagName("INPUT");
     var edit_basic_data = "";
@@ -64,20 +43,15 @@ function onclick_copy_update_button() {
     //Loop through the CheckBoxes.
     for (var i = 1; i < checkBoxes.length; i++) {
         if (checkBoxes[i].checked) {
-
             var row = checkBoxes[i].parentNode.parentNode;
             if (GLOBAL_ACTION == "COPY") {
                 guid = '';
                 edit_basic_data += '<tr ><td><input type="checkbox" required></td><td><input type="number" class="form-control" value="' + row.cells[1].innerHTML + '" name="sequence"  maxlength="5"  required></td><td><input class="form-control" value="' + row.cells[2].innerHTML + '" type="number"  name="starting"  maxlength="100000000"  required></td><td><input value="' + row.cells[3].innerHTML + '" type="number" class="form-control"  name="ending"  maxlength="10"  required></td><td><input value="' + row.cells[4].innerHTML + '" type="number" class="form-control"  name="current"  maxlength="10"  required></td><td hidden><input  type="text" class="form-control" value="' + guid + '"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
-
             } else {
                 guid = row.cells[5].innerHTML;
                 edit_basic_data += '<tr ><td><input type="checkbox" required></td><td><input type="number" class="form-control" value="' + row.cells[1].innerHTML + '" name="sequence"  maxlength="5"  disabled></td><td><input class="form-control" value="' + row.cells[2].innerHTML + '" type="number"  name="starting"  maxlength="100000000"  required></td><td><input value="' + row.cells[3].innerHTML + '" type="number" class="form-control"  name="ending"  maxlength="10"  required></td><td><input value="' + row.cells[4].innerHTML + '" type="number" class="form-control"  name="current"  maxlength="10"  required></td><td hidden><input  type="text" class="form-control" value="' + guid + '"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
-
             }
- //          edit_basic_data += '<tr ><td><input type="checkbox" required></td><td><input type="text" class="form-control" value="' + row.cells[1].innerHTML + '" name="sequence" onkeypress="return /[0-9]/i.test(event.key)" maxlength="2" style="text-transform:uppercase" required></td><td><input class="form-control" value="' + row.cells[2].innerHTML + '" type="text" onkeypress="return /[0-9]/i.test(event.key)" name="starting"  maxlength="100000000" style="text-transform:uppercase" required></td><td><input value="' + row.cells[3].innerHTML + '" type="text" class="form-control" onkeypress="return /[0-9]/i.test(event.key)" name="ending"  maxlength="100000000" style="text-transform:uppercase" required></td><td><input value="' + row.cells[4].innerHTML + '" type="text" class="form-control" onkeypress="return /[0-9]/i.test(event.key)" name="current"  maxlength="100000000" style="text-transform:uppercase" required></td><td hidden><input  type="text" class="form-control" value="' + guid + '"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
         }
-
     }
     $('#id_popup_table').append(edit_basic_data);
     $("#id_del_ind_checkbox").prop("hidden", true);
@@ -86,8 +60,6 @@ function onclick_copy_update_button() {
     $('#myModal').modal('show');
 }
 
-
-//************************
 //onclick of cancel empty the popup table body and error messages
 $(".remove_upload_data").click(() => {
     $("#id_error_msg").html("");
@@ -106,8 +78,7 @@ $(".remove_upload_data").click(() => {
     $('#id_popup_table').DataTable().destroy();
 });
 
-
-
+//*********************************
 function list_out_of_range(number_range){
     var range_flag = true
     $.each(number_range, function (i, number) {
@@ -118,10 +89,10 @@ function list_out_of_range(number_range){
     return range_flag
 }
 
-
+//********************************************************
 function range_check_function(number_range,check_number_range){
     var validation_error = true
-     $.each(number_range, function (i, number) {
+    $.each(number_range, function (i, number) {
         if (validation_error){
             $.each(check_number_range, function (j, check_number) {
                 if(i!=j){
@@ -135,39 +106,41 @@ function range_check_function(number_range,check_number_range){
                 }
             });
         }
-     });
-     return validation_error
+    });
+    return validation_error
 }
 
+//***********************************************************
 function main_range_check_function(number_range,check_number_range){
     var validation_error = true
-     $.each(number_range, function (i, number) {
+    $.each(number_range, function (i, number) {
         if (validation_error){
             $.each(check_number_range, function (j, check_number) {
                 validation_error = inRange(number.starting,check_number.starting,check_number.ending)
                 if(validation_error == false){
-                        return validation_error
+                    return validation_error
                 }
                 else{
                     validation_error = inRange(number.ending,check_number.starting,check_number.ending)
                 }
                 if(validation_error == false){
-                        return validation_error
+                    return validation_error
                 }
             });
         }
-     });
-     return validation_error
+    });
+    return validation_error
 }
 
-
+//**************************
 function inRange(x, min, max) {
     return !((x-min)*(x-max) <= 0);
 }
 var nextval = max_sequence ;
+
 // on click add icon display the row in to add the new entries
 function add_popup_row() {
-  $("#error_msg_id").css("display", "none")
+    $("#error_msg_id").css("display", "none")
     basic_add_new_html = '';
     var display_db_data = '';
     $('#id_popup_table').DataTable().destroy();
@@ -183,7 +156,6 @@ function add_popup_row() {
     table_sort_filter('id_popup_table');
 }
 
- 
 //onclick of cancel display the table in display mode............
 function display_basic_db_data() {
     $('#display_basic_table').DataTable().destroy();
@@ -207,62 +179,75 @@ function display_basic_db_data() {
     table_sort_filter('display_basic_table');
 }
 
-function delete_duplicate() {
-    $('#id_popup_table').DataTable().destroy();
-    var sequence_check = new Array
-    $("#id_popup_table TBODY TR").each(function () {
-        var row = $(this);
-
-        //*************** reading data from the pop-up ***************
-        sequence = row.find("TD").eq(1).find('input[type="number"]').val();
-
-        if (sequence_check.includes(sequence)) {
-            $(row).remove();
-        }
-
-        sequence_check.push(sequence);
-
-
-    })
-    table_sort_filter_popup('id_popup_table')
-    check_data()
-}
-
 // Functtion to hide and display save related popups
 $('#save_id').click(function () {
     $('#myModal').modal('hide');
-     numberranges_data = new Array();
-     validate_add_attributes = [];
-     $('#id_popup_table').DataTable().destroy();
+    numberranges_data = new Array();
+    validate_add_attributes = [];
+    $('#id_popup_table').DataTable().destroy();
     $("#id_popup_table TBODY TR").each(function () {
-            var row = $(this);
-            number_range={};
-
-            number_range.del_ind = row.find("TD").eq(6).find('input[type="checkbox"]').is(':checked');
+        var row = $(this);
+        number_range={};
+        number_range.del_ind = row.find("TD").eq(6).find('input[type="checkbox"]').is(':checked');
+        number_range.sequence = row.find("TD").eq(1).find('input[type="number"]').val();
+        number_range.starting = row.find("TD").eq(2).find('input[type="number"]').val();
+        number_range.ending = row.find("TD").eq(3).find('input[type="number"]').val();
+        number_range.current= row.find("TD").eq(4).find('input[type="number"]').val();
+        number_range.document_type = "DOC01"
+        number_range.guid = row.find("TD").eq(5).find('input[type="text"]').val();
+        if (number_range == undefined){
             number_range.sequence = row.find("TD").eq(1).find('input[type="number"]').val();
-            number_range.starting = row.find("TD").eq(2).find('input[type="number"]').val();
-            number_range.ending = row.find("TD").eq(3).find('input[type="number"]').val();
-            number_range.current= row.find("TD").eq(4).find('input[type="number"]').val();
-            number_range.document_type = "DOC01"
-            number_range.guid = row.find("TD").eq(5).find('input[type="text"]').val();
-            if (number_range == undefined){
-                number_range.sequence = row.find("TD").eq(1).find('input[type="number"]').val();
-             }
-             if(number_range.guid == undefined) {
-                   number_range.guid = ''
-             }
-            validate_add_attributes.push(number_range.sequence);
-          numberranges_data.push(number_range);
-        });
+        }
+        if(number_range.guid == undefined) {
+            number_range.guid = ''
+        }
+        validate_add_attributes.push(number_range.sequence);
+        numberranges_data.push(number_range);
+    });
     table_sort_filter_popup('id_popup_table')
     $('#id_save_confirm_popup').modal('show');
 });
+
+//*******************************************
 function display_error_message(error_message){
-        $('#error_message').text(error_message);
-        document.getElementById("error_message").style.color = "Red";
-        $("#error_msg_id").css("display", "block")
-        $('#id_save_confirm_popup').modal('hide');
-        $('#myModal').modal('show');
+    $('#error_message').text(error_message);
+    document.getElementById("error_message").style.color = "Red";
+    $("#error_msg_id").css("display", "block")
+    $('#id_save_confirm_popup').modal('hide');
+    $('#myModal').modal('show');
 }
 
+// Function to get main table data
+function get_main_table_data(){
+main_table_low_value = [];
+$("#display_basic_table TBODY TR").each(function () {
+    var row = $(this);
+    var main_attribute = {};
+    main_attribute.sequence = row.find("TD").eq(1).html();
+    main_attribute.starting = row.find("TD").eq(2).html();
+    main_attribute.ending = row.find("TD").eq(3).html();
+    main_attribute.current = row.find("TD").eq(4).html();
+    main_attribute.guid = row.find("TD").eq(5).html();
+    main_table_low_value.push(main_attribute.sequence);
+    main_table_data.push(main_attribute)
+});
+table_sort_filter('display_basic_table');
+}
 
+// Function to get the selected row data
+function get_selected_row_data(){
+    $("#display_basic_table TBODY TR").each(function () {
+        var row = $(this);
+        var number_range_arr_obj = {};
+        number_range_arr_obj.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
+        if(number_range_arr_obj.del_ind){
+        number_range_arr_obj.sequence = row.find("TD").eq(1).html();
+        number_range_arr_obj.starting = row.find("TD").eq(2).html();
+        number_range_arr_obj.ending = row.find("TD").eq(3).html();
+        number_range_arr_obj.current = row.find("TD").eq(4).html();
+        number_range_arr_obj.guid = row.find("TD").eq(5).html();
+        number_range_arr_obj.document_type = "DOC01";
+        main_table_number_range_checked.push(number_range_arr_obj);
+    }
+});
+}

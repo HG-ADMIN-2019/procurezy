@@ -1066,7 +1066,8 @@ class MasterSettingsSave:
                                                                      'account_assign_cat'],
                                                                  'company_id': aad_detail['company_id'],
                                                                  'language_id': aad_detail['language_id'],
-                                                                 'client': self.client
+                                                                 'client': self.client,
+                                                                 'del_ind': False,
                                                                  }):
                 guid = guid_generator()
                 aad_db_dictionary = {'acc_desc_guid': guid,

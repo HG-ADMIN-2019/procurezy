@@ -3,8 +3,6 @@
 {% block title %} Shopping Cart Transaction Types (Application Settings) {% endblock %}
 {% block maincontent %}
 
-
-
     <div class="container-fluid">
         <div class="configuration-table_wrapper">
             <div class="elements-space-between">
@@ -25,7 +23,6 @@
             <div class="configuration-table_section">
             <div id="err_msg_app_settings"> </div>
             <div id="err_msg_app_settings_t" class="alert alert-success" hidden> <span id="success_msg_id"></span></div>
-
             <div class="table-container tcw-80">
                 <div class="edit-button-section mb-4">
                     <button class="btn btn-secondary btn-sm" title="Edit" id="id_edit_data" onclick="onclick_edit_button()">
@@ -34,11 +31,9 @@
                    <button class="btn btn-outline-danger btn-sm" id="id_delete_data" value="transaction_types_delete" style="display:none;" data-toggle="modal" data-target="#id_delete_confirm_popup">
                         <i class="fa fa-trash" aria-hidden="true" title="Delete Line"></i> delete
                     </button>
-
                     <button class="btn btn-primary btn-sm"  title="Copy" id="id_copy_data" style="display:none;" value="COPY"  type="button" onclick="onclick_copy_button()">
                         <i class="fa fa-copy"></i> copy
                     </button>
-
                     <button class="btn btn-primary btn-sm" title="Update" id="id_update_data" style="display:none;" value="UPDATE"  type="button" onclick="onclick_update_button()">
                         <i class="far fa-edit"></i> update
                     </button>
@@ -53,7 +48,6 @@
                                 <div id="id_check_all" style="display:none;">
                                     <INPUT type="checkbox" onchange="checkAll(this)" name="chk[]">
                                 </div>
-
                             </th>
                             <th>Transaction Type</th>
                             <th>Description</th>
@@ -90,7 +84,6 @@
     </div>
 <!--<button style="display:none;" class="btn btn-primary  modal_upload" id="id_upload_redirect_transaction_types" value="transaction_types_upload" onclick="onclick_upload_button()" type="button"><i class="fas fa-cloud-upload-alt"></i> DATA UPLOAD </button>-->
 <!--end of display basic Transaction Type table-->
-       
                 <!-- The Modal -->
             <div class="modal fade" id="myModal" style="overflow:auto;">
                 <div class="modal-dialog modal-dialog-centered modal-xl">
@@ -111,7 +104,6 @@
                                     <i class="fa fa-trash"></i> delete
                                 </button>
                             </div>
-                        
                             <div id="id_check_success_messages" class="alert alert-success check_success_message" hidden></div>
                             <div id="id_check_error_messages" class="alert alert-danger check_error_messages" hidden></div>
                             <div id="id_check_special_character_messages" class="alert alert-danger check_special_character_messages" hidden>
@@ -122,9 +114,6 @@
                             <div id="error_msg_id" class="alert alert-danger display-none" role="alert"><span id="error_message"></span></div>
                             <div id="id_warning_msg_id" class="alert alert-warning display-none" role="alert"></div>
                             <div id="id_info_msg_id" class="alert alert-primary display-none" role="alert"></div>
-        
-
-
                             <table class="class_popup_table  table table-bordered mt-2"  id="id_popup_table">
                                 <thead>
                                     <tr>
@@ -139,24 +128,19 @@
                                     </tr>
                                 </thead>
                                 <tbody id=id_popup_tbody>
-
                                 </tbody>
                             </table>
-
                         </div>
-
                         <!-- Modal footer -->
                         <div class="modal-footer">
                             <button type="button" class="btn btn-outline-primary remove_upload_data" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
                             <button id="id_delete_duplicate" class="btn btn-primary" style="display:none;" type="button" onclick="delete_duplicate()"><i class="fa fa-trash"></i> delete duplicates</button>
                             <button id="id_check_data" style="display:none;" class="btn btn-primary" type="button" onclick="check_data()"><i class="fas fa-check"></i> check</button>
                             <button class="btn btn-primary" id="save_id"><i class="fas fa-save"></i> save</button>
-                           
                         </div>
                     </div>
                 </div>
             </div>
-        
         <!--end of modal popup for Add,copy,update and upload-->
         {% include 'configuration_common_pop_up.html' %}
         <div>
@@ -169,49 +153,46 @@
             {% endif %} {% endfor %} {% endif %}
         </div>
     </div>
-
 {{ transaction_type|json_script:"transaction_type" }}
+<script>
+    var rendered_transaction_types_data = JSON.parse(document.getElementById('transaction_type').textContent);
+    var rendered_document_type
+    var rendered_active_inactive
+    var rendered_sequence = {{upload_numberrange|safe}};
+    var transaction_types_data_array = {}
+    var main_table_transaction_types_value = [];
+    var transaction_types = '';
+    var edit_basic_data = '';
+    var GLOBAL_ACTION = '';
+    var no_duplicate_entries = 'Y'
+    var Tablename = uiConstants["CONST_TABLENAME_TRANSACTION_TYPES"]
+    var appname = uiConstants["CONST_APPNAME01"]
+    var db_header_data = uiConstants["CONST_HEADER_DATA_TRANSACTION_TYPES"]
+    var validate_add_attributes = [];
 
-    <script>
-       
-        var rendered_transaction_types_data = JSON.parse(document.getElementById('transaction_type').textContent);
-        var rendered_document_type
-        var rendered_active_inactive
-        var rendered_sequence = {{upload_numberrange|safe}};
-        var transaction_types_data_array = {}
-        var main_table_transaction_types_value = [];
-        var transaction_types = '';
-        var edit_basic_data = '';
-        var GLOBAL_ACTION = '';
-        var no_duplicate_entries = 'Y'
-        var Tablename = uiConstants["CONST_TABLENAME_TRANSACTION_TYPES"]
-        var appname = uiConstants["CONST_APPNAME01"]
-        var db_header_data = uiConstants["CONST_HEADER_DATA_TRANSACTION_TYPES"]
-        var validate_add_attributes = [];
-        //*********************************
-        var doc_type_dropdown = '';
-        var sequence_dropdown = '';
-        var active_inactive_dropdown = '';
-        var document_type_dropdown= '';
-        active_inactive_dropdown = '';
-        var rendered_sequence_array =[];
-        var sequence_remove_array = [];
+    //*********************************
+    var doc_type_dropdown = '';
+    var sequence_dropdown = '';
+    var active_inactive_dropdown = '';
+    var document_type_dropdown= '';
+    active_inactive_dropdown = '';
+    var rendered_sequence_array =[];
+    var sequence_remove_array = [];
 
-       function dropdown_value(){
-            $.each(rendered_active_inactive, function(i, item){
-                 active_inactive_dropdown += '<option value="' + item.field_type_id + '">' + item.field_type_id + '</option>';
-            });
-             $.each(rendered_document_type, function(i, item){
-                document_type_dropdown += '<option value="' + item.document_type + '">' + item.document_type + '</option>';
-            });
-       }
+    //******************************
+    function dropdown_value(){
+        $.each(rendered_active_inactive, function(i, item){
+            active_inactive_dropdown += '<option value="' + item.field_type_id + '">' + item.field_type_id + '</option>';
+        });
+        $.each(rendered_document_type, function(i, item){
+            document_type_dropdown += '<option value="' + item.document_type + '">' + item.document_type + '</option>';
+        });
+    }
+    var rendered_sequence_array =[];
+    var sequence_remove_array = [];
 
-        var rendered_sequence_array =[];
-        var sequence_remove_array = [];
-
-
-//onclick of add button display myModal popup and set GLOBAL_ACTION button value
-function onclick_add_button(button) {
+    //onclick of add button display myModal popup and set GLOBAL_ACTION button value
+    function onclick_add_button(button) {
         OpenLoaderPopup();
         var data = {'table_name':'TransactionTypesSC'}
         $.ajax({
@@ -240,11 +221,10 @@ function onclick_add_button(button) {
                 CloseLoaderPopup();
             }
         });
-}
+    }
 
-//**********************************************************
-
-function onclick_copy_update_button() {
+    //**********************************************************
+    function onclick_copy_update_button() {
         OpenLoaderPopup();
         var data = {'table_name':'TransactionTypesSC'}
         $.ajax({
@@ -262,7 +242,6 @@ function onclick_copy_update_button() {
                 $('#display_basic_table').DataTable().destroy();
                 //Reference the Table.
                 var grid = document.getElementById("display_basic_table");
-
                 //Reference the CheckBoxes in Table.
                 var checkBoxes = document.getElementsByClassName("checkbox_check");
                 var edit_basic_data = "";
@@ -275,89 +254,63 @@ function onclick_copy_update_button() {
                         var sequence = row.cells[4].innerHTML
                         var active_inactive = row.cells[5].children.active_inactive.checked
                         dropdown_val.push([document_type, sequence, active_inactive])
-
                         sequence_remove_array = $.grep(sequence_remove_array, function (value) {
                             return value != sequence;
                         });
                         rendered_sequence_array.push(sequence)
-
-
                         guid = ''
                         if (GLOBAL_ACTION == "UPDATE") {
                             guid = row.cells[6].innerHTML
-
                         eliminate_used_sequence()
                         edit_basic_data += '<tr ><td><input type="checkbox" required></td><td><input class="input form-control check_special_char" type="text" maxlength="15" value="' + row.cells[1].innerHTML + '"  name="transaction type" style="text-transform:uppercase;" disabled></td><td><input type="text" class= "form-control check_special_char" maxlength="100" value="' + row.cells[2].innerHTML + '"  name="transaction description"  required></td><td><select class="input form-control" disabled>' + document_type_dropdown + '</select></td><td><select class="input form-control" disabled>' + sequence_dropdown + '</select></td><td><input type="checkbox"  name="active_inactive" required></td><td hidden><input type="text" class= "form-control" value="' + guid + '"></td><td hidden><input type="checkbox" required></td></tr>';
                         }
                         else{
                         eliminate_used_sequence()
                         edit_basic_data += '<tr ><td><input type="checkbox" required></td><td><input class="input form-control check_special_char" type="text" maxlength="15" value="' + row.cells[1].innerHTML + '"  name="transaction type" style="text-transform:uppercase;"></td><td><input type="text" class= "form-control check_special_char" maxlength="100" value="' + row.cells[2].innerHTML + '"  name="transaction description"  required></td><td><select class="input form-control" disabled>' + document_type_dropdown + '</select></td><td><select class="input form-control">' + sequence_dropdown + '</select></td><td><input type="checkbox"  name="active_inactive" required></td><td hidden><input type="text" class= "form-control" value="' + guid + '"></td><td hidden><input type="checkbox" required></td></tr>';
-                        }
-
                     }
                 }
-                $('#id_popup_table').append(edit_basic_data);
-                var i = 0;
-                $("#id_popup_table TBODY TR").each(function () {
-                    var row = $(this);
-                    var document_type = dropdown_val[i][0]
-                    var sequence = dropdown_val[i][1]
-                    var active_inactive = dropdown_val[i][2]
-
-                    $(row.find("TD").eq(1).find("select option[value=" + document_type + "]")).attr('selected', 'selected');
-                    $(row.find("TD").eq(4).find("select option[value=" + sequence + "]")).attr('selected', 'selected');
-                    if(active_inactive) {
-                        $(row.find("TD").eq(5).find('input[name="active_inactive"]').attr('checked', 'checked'));
-                    }
-
-                    i++;
-                })
-                $("#id_del_ind_checkbox").prop("hidden", true);
-                $('#myModal').modal('show');
-                table_sort_filter('display_basic_table');
-                table_sort_filter('id_popup_table');
-                $('#myModal').modal('show');
-                CloseLoaderPopup();
+            }
+            $('#id_popup_table').append(edit_basic_data);
+            var i = 0;
+            $("#id_popup_table TBODY TR").each(function () {
+                var row = $(this);
+                var document_type = dropdown_val[i][0]
+                var sequence = dropdown_val[i][1]
+                var active_inactive = dropdown_val[i][2]
+                $(row.find("TD").eq(1).find("select option[value=" + document_type + "]")).attr('selected', 'selected');
+                $(row.find("TD").eq(4).find("select option[value=" + sequence + "]")).attr('selected', 'selected');
+                if(active_inactive) {
+                    $(row.find("TD").eq(5).find('input[name="active_inactive"]').attr('checked', 'checked'));
+                }
+                i++;
+            })
+            $("#id_del_ind_checkbox").prop("hidden", true);
+            $('#myModal').modal('show');
+            table_sort_filter('display_basic_table');
+            table_sort_filter('id_popup_table');
+            $('#myModal').modal('show');
+            CloseLoaderPopup();
         }
     });
-
 }
 
- // validate and save for add,copy,update and upload data
-        function popup_save_data() {
-            $('#success_msg_id').empty()
-            $('#id_popup_table').DataTable().destroy();
-            var main_table_low_value = [];
-            no_duplicate_entries = 'Y'
-            no_duplicate_value = 'Y'
-            var error_message = '';
-            var transaction_type = {}
-            $('#display_basic_table').DataTable().destroy();
-            $("#display_basic_table TBODY TR").each(function() {
-                var row = $(this);
-                var main_attribute = {};
-                main_attribute.transaction_type = row.find("TD").eq(1).html();
-                main_attribute.description  = row.find("TD").eq(2).html();
-                main_attribute.document_type = row.find("TD").eq(3).html();
-                main_attribute.sequence = row.find("TD").eq(4).html();
-                main_table_low_value.push(main_attribute);
-            });
-            table_sort_filter('display_basic_table');
-            $("#id_error_msg").empty();
-            [no_duplicate_value,error_message] = compare_table_for_duplicate_entries(validate_add_attributes, transaction_types_data)
-            if (error_message){
-                display_error_message(error_message)
+    // validate and save for add,copy,update and upload data
+    function popup_save_data() {
+        $('#success_msg_id').empty()
+        get_main_table_data();  //Read data from main table
+        $("#id_error_msg").empty();
+        [no_duplicate_value,error_message] = compare_table_for_duplicate_entries(validate_add_attributes, transaction_types_data)
+        if (error_message){
+            display_error_message(error_message)
+        }
+        else{
+            if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
+                [no_duplicate_entries,error_message] = maintable_validation(transaction_types_data, main_table_low_value)
             }
-            else{
-                if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
-                    [no_duplicate_entries,error_message] = maintable_validation(transaction_types_data, main_table_low_value)
-                }
-                if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
-                    var add_basic_data = '';
-                    var transaction_types_data_array = transaction_types_data;
-                 
-                    $('#id_save_confirm_popup').modal('hide');
-
+            if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
+                var add_basic_data = '';
+                var transaction_types_data_array = transaction_types_data; 
+                $('#id_save_confirm_popup').modal('hide');
                 data = {'data':transaction_types_data,'table_name':'TransactionTypes','action':GLOBAL_ACTION}
                 OpenLoaderPopup();
                 $.ajax({
@@ -370,501 +323,137 @@ function onclick_copy_update_button() {
                         rendered_transaction_types_data = Response[0];
                         display_basic_db_data();
                         $('#myModal').modal('hide');
-                        //$('#id_error_msg').text(messageConstants["JMSG001"])
-                         $('#success_msg_id').text(Response[1])
-                         if(Response[1].message_type== 'SUCCESS'){
-                            $('#success_msg_id').text(Response[1].message_desc)
-                         }
-                        $("#err_msg_app_settings_t").prop("hidden", false)
-                        table_sort_filter('id_popup_table');
-                        setTimeout(function() {
-                            $("#err_msg_app_settings_t").prop("hidden", true);
-                        }, 5000)
+                        success_response(Response); // Function call to display response data
                         table_sort_filter('id_popup_table');
                         CloseLoaderPopup();
                     }
                 });
-
             }
             else if (error_message){
                 display_error_message(error_message)
+            }
         }
     }
-}
   
-
-//delete the selected row in db................
-
-        var main_table_transaction_types_checked = [];
-        function main_table_delete() {
-            $('#success_msg_id').empty()
-            GLOBAL_ACTION = 'DELETE'
-            main_table_transaction_types_checked = [];
-            
-            $('#display_basic_table').DataTable().destroy();
-            $("#display_basic_table TBODY TR").each(function() {
-                var row = $(this);
-                var status;
-                var transaction_types_arr_obj = {};
-
-                transaction_types_arr_obj.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
-
-                if( transaction_types_arr_obj.del_ind){
-                    transaction_types_arr_obj.transaction_type = row.find("TD").eq(1).html();
-                    transaction_types_arr_obj.description = row.find("TD").eq(2).html();
-                    transaction_types_arr_obj.document_type = row.find("TD").eq(3).html();
-                    transaction_types_arr_obj.sequence = row.find("TD").eq(4).html();
-                    transaction_types_arr_obj.active_inactive = row.find("TD").eq(5).html();
-                    console.log(transaction_types_arr_obj.active_inactive);
-                    transaction_types_arr_obj.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
-                    transaction_types_arr_obj.guid = row.find("TD").eq(6).html();
-                   main_table_transaction_types_checked.push(transaction_types_arr_obj);
-                }
-            });
-            $('#id_delete_confirm_popup').modal('hide');
-            data = {'data':main_table_transaction_types_checked,'table_name':'TransactionTypes','action':GLOBAL_ACTION}
-            OpenLoaderPopup();
-            $.ajax({
-                type: 'POST',
-                url: "{% url 'eProc_Configuration:create_update_application_data' %}",
-                data: JSON.stringify(data),
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                success: function(Response) {
-                    console.log(Response);
-                    rendered_transaction_types_data = Response[0];
-                    display_basic_db_data();
-                    $('#success_msg_id').text(Response[1])
-                    if(Response[1].message_type== 'SUCCESS'){
-                         $('#success_msg_id').text(Response[1].message_desc)
-                     }
-                    $("#err_msg_app_settings_t").prop("hidden",false)
-                     table_sort_filter('id_popup_table');
-                    setTimeout(function() {
-                        $("#err_msg_app_settings_t").prop("hidden", true);
-                    }, 5000)
-                     table_sort_filter('id_popup_table');
-                     CloseLoaderPopup();
-                }
-            });
-        }
-        //*************************
-
-        //check function restricting special char and diaplay the data count of csv file
-        function check_data() {
-            $('#id_popup_table').DataTable().destroy();
-            $("#id_check_success_messages").empty()
-            $("#id_check_error_messages").empty()
-            $("#id_check_success_messages").prop("hidden", true)
-            $("#id_check_error_messages").prop("hidden", true)
-            $("#id_check_special_character_messages").prop("hidden", true)
-            document.getElementById("id_error_msg_transaction_types_code").innerHTML = "";
-            document.getElementById("id_error_msg_transaction_types_name").innerHTML = "";
-            document.getElementById("id_error_msg_transaction_types_length").innerHTML = "";
-            count = 0;
-            var transaction_types_array = new Array
-            var DB_array = new Array
-            var transaction_types_list = new Array
-            var transaction_types_code_check = new Array
-            var Duplicate_count = 0
-            del_ind = ''
-            $("#id_popup_table TBODY TR").each(function() {
-                var row = $(this);
-
-                //*************** reading data from the pop-up ***************
-                del_ind = row.find("TD").eq(7).find('input[type="checkbox"]').is(':checked');
-                document_type = row.find("TD").eq(1).find("select option:selected").val();
-                transaction_type = row.find("TD").eq(2).find('input[type="text"]').val().toUpperCase();
-                description = row.find("TD").eq(3).find('input[type="text"]').val().toUpperCase();
-                sequence = row.find("TD").eq(4).find("select option:selected").val();
-                active_inactive = row.find("TD").eq(5).find("select option:selected").val();
-                guid = row.find("TD").eq(6).find('input[type="text"]').val();
-
-                transaction_types_list.push([document_type, transaction_type, sequence, active_inactive, guid, del_ind])
-
-                var format = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
-
-
-                //*************** checking for max length for transaction_types code (max length = 6) ***************
-                if (transaction_type.length > 6) {
-                         
-                            var msg = "JMSG004";
-                            var msg_type ;
-                          msg_type = message_config_details(msg);
-                          $("#error_msg_id").prop("hidden", false)
-
-                          if(msg_type.message_type == "ERROR"){
-                                display_message("error_msg_id", msg_type.messages_id_desc)
-                          }
-                          else if(msg_type.message_type == "WARNING"){
-                             display_message("id_warning_msg_id", msg_type.messages_id_desc)
-                          }
-                          else if(msg_type.message_type == "INFORMATION"){
-                             display_message("id_info_msg_id", msg_type.messages_id_desc)
-                          }
-                          var dispaly = msg_type.messages_id_desc;
-                          document.getElementById("id_error_msg_transaction_types_length").innerHTML = dispaly+ "Transaction Type";
-
-                    $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
-                    count = count + 1;
-                }
-
-                //*************** checking for special characters for transaction_types code ***************
-                else if (format.test(transaction_type)) {
-                        
-                            var msg = "JMSG003";
-                            var msg_type ;
-                          msg_type = message_config_details(msg);
-                          $("#error_msg_id").prop("hidden", false)
-
-                          if(msg_type.message_type == "ERROR"){
-                                display_message("error_msg_id", msg_type.messages_id_desc)
-                          }
-                          else if(msg_type.message_type == "WARNING"){
-                             display_message("id_warning_msg_id", msg_type.messages_id_desc)
-                          }
-                          else if(msg_type.message_type == "INFORMATION"){
-                             display_message("id_info_msg_id", msg_type.messages_id_desc)
-                          }
-                          var display4 = msg_type.messages_id_desc;
-                    document.getElementById("id_error_msg_transaction_types_code").innerHTML = display4+ "Transaction Type";
-
-                    $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
-                    count = count + 1;
-                } else {
-                    $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "none");
-                }
-
-                //*************** checking for special characters for transaction_types name ***************
-                if (format.test(description)) {
-                         
-                            var msg = "JMSG003";
-                            var msg_type ;
-                          msg_type = message_config_details(msg);
-                          $("#error_msg_id").prop("hidden", false)
-
-                          if(msg_type.message_type == "ERROR"){
-                                display_message("error_msg_id", msg_type.messages_id_desc)
-                          }
-                          else if(msg_type.message_type == "WARNING"){
-                             display_message("id_warning_msg_id", msg_type.messages_id_desc)
-                          }
-                          else if(msg_type.message_type == "INFORMATION"){
-                             display_message("id_info_msg_id", msg_type.messages_id_desc)
-                          }
-                          var display4 = msg_type.messages_id_desc;
-                      document.getElementById("id_error_msg_transaction_types_name").innerHTML = display4+ "Description";
-
-                    $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "1px solid #FF0000");
-                    count = count + 1;
-                } else {
-                    $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "none");
-                }
-
-                if (transaction_types_code_check.includes(transaction_type)) {
-                    $(row).css("border", "#f8d7da");
-                    //$(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
-                    //$(row.find("TD").eq(2).find('input[type="text"]')).css("border", "1px solid #FF0000");
-                    Duplicate_count = Duplicate_count +1;
-
-                } else {
-                    $(row).css("border", "");
-                }
-
-                transaction_types_code_check.push(transaction_type)
-            });
-
-            //*************** shows save button if there are no errors(special characters and max length) ***************
-            if (count == 0) {
-                $("#id_check_special_character_messages").prop("hidden", true)
-                $("#save_id").prop("hidden", false);
+    //delete the selected row in db................
+    var main_table_transaction_types_checked = [];
+    function main_table_delete() {
+        $('#success_msg_id').empty()
+        GLOBAL_ACTION = 'DELETE'
+        main_table_transaction_types_checked = [];
+        $('#display_basic_table').DataTable().destroy();
+        get_selected_row_data(); // Function call to get the selected row data
+        $('#id_delete_confirm_popup').modal('hide');
+        data = {'data':main_table_transaction_types_checked,'table_name':'TransactionTypes','action':GLOBAL_ACTION}
+        OpenLoaderPopup();
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'eProc_Configuration:create_update_application_data' %}",
+            data: JSON.stringify(data),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function(Response) {
+                console.log(Response);
+                rendered_transaction_types_data = Response[0];
+                display_basic_db_data();
+                success_response(Response); // Function call to display response data
+                table_sort_filter('id_popup_table');
+                CloseLoaderPopup();
             }
-            popup_data_dict = {
-                'data_list': transaction_types_list,
-                'Tablename': Tablename,
-                'appname': appname,
-                'db_header_data': db_header_data
-            }
-            $.ajax({
-                type: 'POST',
-                url: "{% url 'eProc_Configuration:check_data_fk' %}",
-                data: JSON.stringify(popup_data_dict),
-                success: function(response) {
-                    table_sort_filter_popup_pagination('id_popup_table')
-                    $("#id_check_special_character_messages").prop("hidden", false)
-                    if (count == 0) {
-                        $("#id_check_special_character_messages").prop("hidden", true)
-                    }
+        });
+    }
 
-                    //*************** retrieving data counts from views ***************
-                    check_messages = response
-                    var newArrayDataOfOjbect = Object.values(check_messages)
-                    $("#id_check_success_messages").prop("hidden", false)
-                  //*************** if pop-up data count is greater than zero ***************
-                    if (newArrayDataOfOjbect[1] > 0) {
-
-                           
-                             var msg = "JMSG010";
-                             var msg_type ;
-                             msg_type = message_config_details(msg);
-                             $("#error_msg_id").prop("hidden", false)
-                             var display = msg_type.messages_id_desc;
-
-                        $("#id_check_success_messages").append('<p>' + display + newArrayDataOfOjbect[0] + '</p>')
-
-                           
-                             var msg = "JMSG011";
-                             var msg_type ;
-                             msg_type = message_config_details(msg);
-                             $("#error_msg_id").prop("hidden", false)
-                             var display1 = msg_type.messages_id_desc;
-
-                        $("#id_check_success_messages").append('<p>' + display1 + newArrayDataOfOjbect[1] + '</p>')
-
-                           
-                             var msg = "JMSG012";
-                             var msg_type ;
-                             msg_type = message_config_details(msg);
-                             $("#error_msg_id").prop("hidden", false)
-                             var display2 = msg_type.messages_id_desc;
-                        $("#id_check_success_messages").append('<p>' + display2 + newArrayDataOfOjbect[3] + '</p>')
-                               
-                                 var msg = "JMSG013";
-                                 var msg_type ;
-                                 msg_type = message_config_details(msg);
-                                 $("#error_msg_id").prop("hidden", false)
-                                 var display3 = msg_type.messages_id_desc;
-                        $("#id_check_success_messages").append('<p>' + display3 + newArrayDataOfOjbect[4] + '</p>')
-                               
-                                 var msg = "JMSG014";
-                                 var msg_type ;
-                                 msg_type = message_config_details(msg);
-                                 $("#error_msg_id").prop("hidden", false)
-                                 var display4 = msg_type.messages_id_desc;
-                        $("#id_check_success_messages").append('<p>' + display4 + newArrayDataOfOjbect[5] + '</p>')
-                               
-                                 var msg = "JMSG053";
-                                 var msg_type ;
-                                 msg_type = message_config_details(msg);
-                                 $("#error_msg_id").prop("hidden", false)
-                                 var display5 = msg_type.messages_id_desc;
-	   				  $("#id_check_success_messages").append('<p>' + display5 + newArrayDataOfOjbect[6] + '</p>')
-                         //*************** if duplicate data data count is greater than zero ***************
-                        if(newArrayDataOfOjbect[2]>0){
-                            $("#id_check_error_messages").prop("hidden",false)
-                              
-                                 var msg = "JMSG015";
-                                 var msg_type ;
-                                 msg_type = message_config_details(msg);
-                                 $("#error_msg_id").prop("hidden", false)
-                                 var display6 = msg_type.messages_id_desc;
-                            $("#id_check_error_messages").append('<p>' + display6 + newArrayDataOfOjbect[2] + '</p>')
-                               
-                                 var msg = "JMSG001";
-                                 var msg_type ;
-                                 msg_type = message_config_details(msg);
-                                 $("#error_msg_id").prop("hidden", false)
-                                 var display7 = msg_type.messages_id_desc;
-                            $("#id_check_error_messages").append('<p style = "font-weight: bold;">' + display7 + ' </p>')
-                            $("#save_id").prop("hidden", true);
-                            $("#id_delete_duplicate").show()
-                        }
-                        else{
-                            $("#id_check_error_messages").prop("hidden",true)
-                            $("#id_delete_duplicate").hide()
-                        }
-                    }
-                    //*************** if pop-up data count is zero ***************
-                    else {
-                        $("#id_check_success_messages").hide()
-                        $("#id_check_error_messages").prop("hidden", false)
-                              
-                                 var msg = "JMSG006";
-                                 var msg_type ;
-                                 msg_type = message_config_details(msg);
-                                 $("#error_msg_id").prop("hidden", false)
-                                 var display8 = msg_type.messages_id_desc;
-                        $("#id_check_error_messages").append('<p>' + display8 + '</p>')
-                        $("#save_id").prop("hidden", true);
-                    }
-                }
-            });
-        }
-
-        //onclick of cancel display the table in display mode............
-function display_basic_db_data() {
-    $('#display_basic_table').DataTable().destroy();
-    $('#id_transaction_types_tbody').empty();
-    var edit_basic_data = '';
-    $.each(rendered_transaction_types_data, function (i, item) {
-        var data = '';
-             if (item.active_inactive == true){
+    //onclick of cancel display the table in display mode............
+    function display_basic_db_data() {
+        $('#display_basic_table').DataTable().destroy();
+        $('#id_transaction_types_tbody').empty();
+        var edit_basic_data = '';
+        $.each(rendered_transaction_types_data, function (i, item) {
+            var data = '';
+            if (item.active_inactive == true){
                 data = '<input type="checkbox" name="active_inactive" value="" checked disabled>'
             } else{
                 data = '<input type="checkbox" name="active_inactive" value="" disabled>'
             }
-        edit_basic_data += '<tr ><td class="class_select_checkbox"><input class="checkbox_check" onclick="valueChanged()" type="checkbox" required></td><td>' + item.transaction_type + '</td><td>' + item.description + '</td><td>' + item.document_type + '</td><td>' + item.sequence + '</td><td>' + data + '</td><td hidden>' + item.guid + '</td><td hidden>' + item.del_ind + '</td></tr>';
-        sequence_remove_array.push(item.sequence)
-    });
-    $('#id_transaction_types_tbody').append(edit_basic_data);
-    $("#hg_select_checkbox").prop("hidden", true);
-    $(".class_select_checkbox").prop("hidden", true);
-    $('input.checkbox_check:checkbox').removeAttr('checked');
-    $('#id_edit_data').show();
-    $('#id_cancel_data').hide();
-    //document.getElementById("id_upload_redirect_transaction_types").style.display = "none";
-    $("#id_delete_data").hide();
-    $("#id_copy_data").hide();
-    $("#id_update_data").hide();
-    $("#id_save_confirm_popup").hide();
-    $("#id_delete_confirm_popup").hide();
-    $('#id_check_all').hide();
-    table_sort_filter('display_basic_table');
-}
-
-//***************************
-//**********************************************
-
-       function window_close() {
-             window.history.back();
-              var preUrl = document.referrer;
-              console.log(preUrl);
-              window.open('', '_self', '').close();
-<!--               var win = window.open(preUrl);-->
-<!--                win.focus();-->
-              if (preUrl == null)
-                     return "The previous page url is empty";
-               else
-                     return preUrl;
-       }
-
-       // validating the  popup table for duplicate entries
-function compare_table_for_duplicate_entries(validate_add_attributes, transaction_types) {
-    add_attr_duplicates = false;
-    var error_message = ''
-    var add_attr_duplicates_list = [];
-    var add_attr_unique_list = [];
-    var no_duplicate_value = 'Y'
-    $.each(validate_add_attributes, function (index, value) {
-        if ($.inArray(value, add_attr_unique_list) == -1) {
-            add_attr_unique_list.push(value);
-        } else {
+            edit_basic_data += '<tr ><td class="class_select_checkbox"><input class="checkbox_check" onclick="valueChanged()" type="checkbox" required></td><td>' + item.transaction_type + '</td><td>' + item.description + '</td><td>' + item.document_type + '</td><td>' + item.sequence + '</td><td>' + data + '</td><td hidden>' + item.guid + '</td><td hidden>' + item.del_ind + '</td></tr>';
+            sequence_remove_array.push(item.sequence)
+        });
+        $('#id_transaction_types_tbody').append(edit_basic_data);
+        $("#hg_select_checkbox").prop("hidden", true);
+        $(".class_select_checkbox").prop("hidden", true);
+        $('input.checkbox_check:checkbox').removeAttr('checked');
+        $('#id_edit_data').show();
+        $('#id_cancel_data').hide();
+        $("#id_delete_data").hide();
+        $("#id_copy_data").hide();
+        $("#id_update_data").hide();
+        $("#id_save_confirm_popup").hide();
+        $("#id_delete_confirm_popup").hide();
+        $('#id_check_all').hide();
+        table_sort_filter('display_basic_table');
+    }
+      
+    // validating the  popup table for duplicate entries
+    function compare_table_for_duplicate_entries(validate_add_attributes, transaction_types) {
+        add_attr_duplicates = false;
+        var error_message = ''
+        var add_attr_duplicates_list = [];
+        var add_attr_unique_list = [];
+        var no_duplicate_value = 'Y'
+        $.each(validate_add_attributes, function (index, value) {
+            if ($.inArray(value, add_attr_unique_list) == -1) {
+                add_attr_unique_list.push(value);
+            } else {
                 if ($.inArray(value, add_attr_duplicates_list) == -1) {
                     add_attr_duplicates_list.push(value);
                 }
+            }
+        });
+        if (add_attr_duplicates_list.length != 0) {
+            get_message_details("JMSG001"); // Get message details
+            no_duplicate_value = 'N'
+            return [no_duplicate_value,error_message]
         }
-    });
-    if (add_attr_duplicates_list.length != 0) {
-        //error_message = messageConstants["JMSG001"];
-     
-                var msg = "JMSG001";
-                var msg_type ;
-              msg_type = message_config_details(msg);
-              $("#error_msg_id").prop("hidden", false)
-
-              if(msg_type.message_type == "ERROR"){
-                    display_message("error_msg_id", msg_type.messages_id_desc)
-              }
-              else if(msg_type.message_type == "WARNING"){
-                 display_message("id_warning_msg_id", msg_type.messages_id_desc)
-              }
-              else if(msg_type.message_type == "INFORMATION"){
-                 display_message("id_info_msg_id", msg_type.messages_id_desc)
-              }
-                no_duplicate_value = 'N'
-                return [no_duplicate_value,error_message]
-
+        else {
+            $.each(transaction_types, function (i, item) {
+                if (item.transaction_type.length == 0) {
+                    get_message_details("JMSG002"); // Get message details
+                    no_duplicate_value = 'N'
+                    return [no_duplicate_value,error_message]
+                }
+                if (item.description.length == 0) {
+                    get_message_details("JMSG002"); // Get message details
+                    no_duplicate_value = 'N'
+                    return [no_duplicate_value,error_message]
+                }
+            });
+        }
+        return [no_duplicate_value,error_message]
     }
-    else {
-        $.each(transaction_types, function (i, item) {
-           if (item.transaction_type.length == 0) {
-               //error_message = messageConstants["JMSG002"] + "Transaction type";
-             
-                var msg = "JMSG002";
-                var msg_type ;
-              msg_type = message_config_details(msg);
-              $("#error_msg_id").prop("hidden", false)
 
-              if(msg_type.message_type == "ERROR"){
-                    display_message("error_msg_id", msg_type.messages_id_desc)
-              }
-              else if(msg_type.message_type == "WARNING"){
-                 display_message("id_warning_msg_id", msg_type.messages_id_desc)
-              }
-              else if(msg_type.message_type == "INFORMATION"){
-                 display_message("id_info_msg_id", msg_type.messages_id_desc)
-              }
-                no_duplicate_value = 'N'
-                return [no_duplicate_value,error_message]
-            }
-           if (item.description.length == 0) {
-               //error_message = messageConstants["JMSG002"] + "Description";
-              
-                var msg = "JMSG002";
-                var msg_type ;
-              msg_type = message_config_details(msg);
-              $("#error_msg_id").prop("hidden", false)
-
-              if(msg_type.message_type == "ERROR"){
-                    display_message("error_msg_id", msg_type.messages_id_desc)
-              }
-              else if(msg_type.message_type == "WARNING"){
-                 display_message("id_warning_msg_id", msg_type.messages_id_desc)
-              }
-              else if(msg_type.message_type == "INFORMATION"){
-                 display_message("id_info_msg_id", msg_type.messages_id_desc)
-              }
-                no_duplicate_value = 'N'
-                return [no_duplicate_value,error_message]
-            }
+    //validate by comparing  main table values and popup table values
+    function maintable_validation(validate_add_attributes, main_table_low_value) {
+        var no_duplicate_entries = 'Y'
+        var error_message =''
+        var dup_entry = "";
+        $.each(transaction_types_data, function (i, item) {
+            $.each(main_table_low_value, function (j, item1) {
+                if((item.transaction_type == item1.transaction_type)
+                && (item.document_type == item1.document_type)
+                && (item.sequence == item1.sequence)
+                ){
+                    dup_entry = "1"
+                }
+            });
         });
-   }
-
-    return [no_duplicate_value,error_message]
-}
-
-//validate by comparing  main table values and popup table values
-function maintable_validation(validate_add_attributes, main_table_low_value) {
-    var no_duplicate_entries = 'Y'
-    var error_message =''
-    var dup_entry = "";
-      $.each(transaction_types_data, function (i, item) {
-        $.each(main_table_low_value, function (j, item1) {
-            if((item.transaction_type == item1.transaction_type)
-                    && (item.document_type == item1.document_type)
-                    && (item.sequence == item1.sequence)
-            ){
-                dup_entry = "1"
-            }
-        });
-     });
-         if((dup_entry == "1"))
+        if((dup_entry == "1"))
         {
-        //error_message = messageConstants["JMSG001"]
-          
-                var msg = "JMSG001";
-                var msg_type ;
-              msg_type = message_config_details(msg);
-              $("#error_msg_id").prop("hidden", false)
-
-              if(msg_type.message_type == "ERROR"){
-                    display_message("error_msg_id", msg_type.messages_id_desc)
-              }
-              else if(msg_type.message_type == "WARNING"){
-                 display_message("id_warning_msg_id", msg_type.messages_id_desc)
-              }
-              else if(msg_type.message_type == "INFORMATION"){
-                 display_message("id_info_msg_id", msg_type.messages_id_desc)
-              }
-                no_duplicate_value = 'N'
-                return [no_duplicate_value,error_message]
-
+            get_message_details("JMSG001"); // Get message details
+            no_duplicate_value = 'N'
+            return [no_duplicate_value,error_message]
+        }
+        return [no_duplicate_entries,error_message]
     }
-    return [no_duplicate_entries,error_message]
-}
-
-
-    </script>
-    <script src="{% static 'scripts/transaction_type.js' %}"></script>
-   
+</script>
+<script src="{% static 'scripts/transaction_type.js' %}"></script>   
 {% endblock %}
