@@ -1,4 +1,4 @@
-var client_data = new Array();
+var clients_data = new Array();
 var validate_add_attributes = [];
 var client={};
 var main_table_low_value = [];
