@@ -25,19 +25,19 @@
             <div id="err_msg_app_settings_t" class="alert alert-success" hidden><span id="success_msg_id"></span></div>
             <div class="table-container tcw-60">
                 <div class="edit-button-section mb-4">
-                    <button class="btn btn-secondary btn-sm" title="Edit" id="id_edit_data" onclick="onclick_edit_button()">
-                        <i class="fas fa-edit"></i> edit
+                    <button class="btn btn-secondary btn-sm" title="Edit" id="id_edit_data" onclick="onclick_edit_button();">
+                        <i class="far fa-edit"></i> edit
                     </button>
-                    <button class="btn btn-primary btn-sm" id="id_delete_data" value="DELETE" style="display:none;" data-toggle="modal" data-target="#id_delete_confirm_popup">
-                        <i class="fa fa-trash"></i> Delete
+                    <button class="btn btn-outline-danger btn-sm"  title="Delete" id="id_delete_data" value="DELETE" data-toggle="modal" data-target="#id_delete_confirm_popup" style="display:none;">
+                        <i class="fa fa-trash"></i> delete
                     </button>
-                    <button class="btn btn-primary btn-sm" id="id_copy_data" style="display:none;" value="COPY" type="button" onclick="onclick_copy_button()">
-                        <i class="fa fa-copy"></i> Copy
+                    <button class="btn btn-primary  btn-sm" title="Copy" id="id_copy_data" value="COPY" onclick="onclick_copy_button()" style="display:none;" >
+                        <i class="fa fa-copy"></i> copy
                     </button>
-                    <button class="btn btn-primary btn-sm" id="id_update_data" style="display:none;" value="UPDATE" type="button" onclick="onclick_update_button()">
-                        <i class="far fa-edit"></i> Update
+                    <button class="btn btn-primary btn-sm" title="Update" id="id_update_data" style="display:none;"  value="UPDATE" type="button" onclick="onclick_update_button()">
+                        <i class="far fa-edit"></i> update
                     </button>
-                    <button class="btn btn-secondary btn-sm" id="id_cancel_data" style="display:none;" type="button" onclick="display_basic_db_data()">
+                    <button class="btn btn-secondary btn-sm" title="Cancel"  id="id_cancel_data" style="display:none;" type="button" onclick="display_basic_db_data()">
                         <i class="fas fa-times"></i> cancel
                     </button>
                 </div>
@@ -80,9 +80,13 @@
                 </div>
                 <!-- Modal body -->
                 <div class="modal-body scrollbox">
-                    <div id="id_del_add_button">
-                        <button type="button" class="btn btn-outline-primary" onclick="add_popup_row()"><i class="fa fa-plus"></i> Add New Row</button>
-                        <button class="btn btn-outline-primary" onclick="application_settings_delete_Row('id_popup_table')"><i class="fa fa-trash"></i> Delete</button>
+                    <div id="id_del_add_button" class="mb-4">
+                        <button class="btn btn-primary" type="button" onclick="add_popup_row()">
+                            <i class="fa fa-plus"></i> Add New Row
+                        </button>
+                        <button class="btn btn-outline-danger" onclick="application_settings_delete_Row('id_popup_table')">
+                            <i class="fa fa-trash"></i> delete
+                        </button>
                     </div>
                     <div id="id_check_success_messages" class="alert alert-success check_success_message" hidden></div>
                     <div id="id_check_error_messages" class="alert alert-danger check_error_messages" hidden></div>
@@ -112,8 +116,10 @@
                  </div>
                 <!-- Modal footer -->
                 <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-primary remove_upload_data" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
+                    <button id="id_delete_duplicate" class="btn btn-primary" style="display:none;" type="button" onclick="delete_duplicate()"><i class="fa fa-trash"></i> delete duplicates</button>
+                    <button id="id_check_data" style="display:none;" class="btn btn-primary" type="button" onclick="check_data()"><i class="fas fa-check"></i> check</button>
                     <button class="btn btn-primary" id="save_id"><i class="fas fa-save"></i> save</button>
-                    <button class="btn btn-primary remove_upload_data" type="button" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
                 </div>
             </div>
         </div>
@@ -141,7 +147,6 @@
     var client = '';
     var edit_basic_data = '';
     var GLOBAL_ACTION = '';
-    var no_duplicate_entries = 'Y'
     var messages_list = {{messages_list|safe}};
 
     // validate and save for add,copy,update and upload data
@@ -149,12 +154,13 @@
         $('#success_msg_id').empty()
         $('#id_popup_table').DataTable().destroy();
         var client_data = new Array();
-        var validate_add_attributes = [];
         var error_message = '';
+        no_duplicate_entries = 'Y'
+        no_duplicate_value = 'Y'
         $('#display_basic_table').DataTable().destroy();
         get_main_table_data();  //Read data from main table
         // compare for duplicates in popup
-        [no_duplicate_value,error_message] = compare_table_for_duplicate_entries(validate_add_attributes, client_data)
+        [no_duplicate_value,error_message] = compare_table_for_duplicate_entries(validate_add_attributes, clients_data)
         if (error_message){
             display_error_message(error_message)
         }
