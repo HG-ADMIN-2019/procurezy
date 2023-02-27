@@ -23,10 +23,8 @@ function onclick_edit_button() {
 function checkAll(ele) {
     $('#display_basic_table').DataTable().destroy();
     var checkboxes = document.getElementsByTagName('input');
-//    var table = $('#display_basic_table').DataTable();
-    var info = table.page.len();
     if (ele.checked) {
-        for (var i = 0; i < info; i++) {
+        for (var i = 0; i < checkboxes.length; i++) {
             if (checkboxes[i].type == 'checkbox') {
                 checkboxes[i].checked = true;
                 $('#id_delete_data').show();
@@ -35,46 +33,17 @@ function checkAll(ele) {
             }
         }
     } else {
-        for (var i = 0; i < info; i++) {
+        for (var i = 0; i < checkboxes.length; i++) {
             if (checkboxes[i].type == 'checkbox') {
-                checkboxes[i].checked = false; 
+                checkboxes[i].checked = false;
                 $('#id_delete_data').hide();
                 $('#id_copy_data').hide();
-                $('#id_update_data').hide(); 
+                $('#id_update_data').hide();
             }
         }
     }
-//var StartIdx = table.page.info().start;
-//    var EndIdx = table.page.info().end;
-//      console.log("in check ",currPageStartIdx, currPageEndIdx);
-//    table.rows().every(function(idx, tLoop, rLoop){
-//        var data = this.data();
-//        if (rLoop >= currPageStartIdx && rLoop < currPageEndIdx) {
-//        console.log("*** row on current page", currPageStartIdx, currPageEndIdx);
-//            if (checkboxes[rLoop].type == 'checkbox') {
-//                checkboxes[rLoop].checked = true;
-//                $('#id_delete_data').show();
-//                $('#id_copy_data').show();
-//                $('#id_update_data').show();
-//            }
-//    }
-//});
-
-//console.log('Currently showing page '+(info.page+1)+' of '+info.pages+' pages.')
     table_sort_filter('display_basic_table');
 }
-//$(document).on('draw.dt', function () {
-//    var table = $('#display_basic_table').DataTable();
-//    var StartIdx = table.page.info().start;
-//    var EndIdx = table.page.info().end;
-//    currPageStartIdx = StartIdx;
-//    currPageEndIdx = EndIdx;
-//    $('input[name="chk"]').checked = false;
-//    console.log("index ",currPageStartIdx, currPageEndIdx);
-//    $('#display_basic_table').dataTable({
-//    "paging": false
-//});
-//});
 
 //onclick of checkbox display delete,update and copy Buttons
 function valueChanged() {
