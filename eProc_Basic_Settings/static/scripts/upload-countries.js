@@ -5,7 +5,6 @@ var country={};
 
 //onclick of add button display countriesModal popup and set GLOBAL_ACTION button value
 function onclick_add_button(button) {
-    console.log(rendered_messages_list[0]['messages_id']);
     $("#error_msg_id").css("display", "none")
     $("#header_select").prop( "hidden", false );
     GLOBAL_ACTION = button.value
