@@ -246,31 +246,6 @@
     }
 
 //***********************
-function display_duplicate_entry(common) {
-    var client_check = new Array;
-    $("#id_popup_table TBODY TR").each(function() {
-        var row = $(this);
-        client_dic = {}
-        client_dic.client = row.find("TD").eq(1).find('input[type="text"]').val().toUpperCase();
-        client_check.push(client_dic.client);
-        jQuery.grep(client_check, function(el) {
-            if (jQuery.inArray(el, common) != -1) {
-                row_color_highlight(row);
-                client_dic.client = row.find("TD").eq(1).find('input[type="text"]').val();
-                client_check.push(client_dic.client);
-                jQuery.grep(client_check, function(el) {
-                    if (jQuery.inArray(el, common) != -1) {
-                        row_color_highlight(row);
-                    }
-                    else {
-                        row_color_no_highlight(row);
-                    }
-                });
-            }
-        });
-    });
-}
-
     //Function to highlight duplicate records
     function display_duplicate_entry(common) {
         var client_check = new Array;
