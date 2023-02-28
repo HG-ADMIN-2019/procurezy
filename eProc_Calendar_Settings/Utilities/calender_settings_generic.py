@@ -5,9 +5,9 @@ import datetime
 from eProc_Attributes.Utilities.attributes_generic import OrgAttributeValues
 from eProc_Basic.Utilities.constants.constants import CONST_CALENDAR_ID, CONST_CO_CODE
 from eProc_Basic.Utilities.functions.django_query_set import DjangoQueries
+from eProc_Basic.Utilities.functions.get_db_query import requester_field_info
 from eProc_Basic.Utilities.global_defination import global_variables
 from eProc_Configuration.models import SupplierMaster, CalenderConfig, CalenderHolidays
-from eProc_Configuration.models.development_data import *
 from eProc_User_Settings.Utilities.user_settings_generic import get_object_id_list_user
 
 django_query_instance = DjangoQueries()
@@ -360,4 +360,7 @@ def get_company_calendar_from_org_model():
                                                                                                        CONST_CO_CODE)
     default_calendar_id = org_attr_value_instance.get_user_default_attr_value_list_by_attr_id(object_id_list,
                                                                                               CONST_CALENDAR_ID)[1]
-    return attr_low_value_list, company_code ,default_calendar_id,object_id_list
+    return attr_low_value_list, company_code, default_calendar_id, object_id_list
+
+
+

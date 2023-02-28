@@ -36,7 +36,7 @@ from eProc_Shopping_Cart.Utilities.save_order_edit_sc import SaveShoppingCart, C
 from eProc_Shopping_Cart.Utilities.shopping_cart_generic import *
 from eProc_Shopping_Cart.Utilities.shopping_cart_specific import get_prod_cat_dropdown, get_manger_detail, \
     get_completion_work_flow, get_users_first_name, unpack_accounting_data, update_supplier_uom, \
-    update_supplier_uom_for_prod
+    update_supplier_uom_for_prod, get_cart_default_name_and_user_first_name
 from eProc_Configuration.models import UnitOfMeasures, Currency
 from eProc_Basic.Utilities.functions.get_db_query import getUsername, getClients, get_login_obj_id
 from eProc_Basic.Utilities.functions.str_concatenate import concatenate_str_with_space
@@ -429,21 +429,19 @@ def sc_second_step(request):
     sc_completion_flag = False
 
     attr_low_value_list, company_code ,default_calendar_id,object_id_list = get_company_calendar_from_org_model()
-
+    requester_first_name, cart_name = get_cart_default_name_and_user_first_name()
     if default_calendar_id is not None or default_calendar_id != '':
         holiday_list = get_list_of_holidays(default_calendar_id, global_variables.GLOBAL_CLIENT)
 
     request.session['company_code'] = company_code
     item_detail_list = []
-    requester_first_name = requester_field_info(username, 'first_name')
     sc_check_instance = CheckForScErrors(global_variables.GLOBAL_CLIENT, username)
     sc_check_instance.document_sc_transaction_check(object_id_list)
     sc_check_instance.po_transaction_check(object_id_list)
 
     sc_check_instance.calender_id_check(default_calendar_id)
 
-    # Get default shopping cart name
-    cart_name = get_default_cart_name(requester_first_name)
+
 
 
     # Display shopping cart items in 2nd step of wizard
