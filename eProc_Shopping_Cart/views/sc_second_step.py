@@ -425,25 +425,17 @@ def sc_second_step(request):
     completion_work_flow = []
     requester_user_id = ''
     call_off_list = []
-    cart_items_guid_list = []
+    item_detail_list = []
     sc_completion_flag = False
 
     attr_low_value_list, company_code ,default_calendar_id,object_id_list = get_company_calendar_from_org_model()
 
-    if default_calendar_id is not None or default_calendar_id != '':
-        holiday_list = get_list_of_holidays(default_calendar_id, global_variables.GLOBAL_CLIENT)
+    requester_first_name, cart_name = get_cart_default_name_and_user_first_name()
+
+
 
     request.session['company_code'] = company_code
-    item_detail_list = []
-    requester_first_name = requester_field_info(username, 'first_name')
-    sc_check_instance = CheckForScErrors(global_variables.GLOBAL_CLIENT, username)
-    sc_check_instance.document_sc_transaction_check(object_id_list)
-    sc_check_instance.po_transaction_check(object_id_list)
 
-    sc_check_instance.calender_id_check(default_calendar_id)
-
-    # Get default shopping cart name
-    cart_name = get_default_cart_name(requester_first_name)
 
 
     # Display shopping cart items in 2nd step of wizard
@@ -453,7 +445,7 @@ def sc_second_step(request):
                                                             'client': global_variables.GLOBAL_CLIENT},
                                                            ['item_num'],
                                                            None)
-
+    shopping_cart_errors,cart_items = check_sc_secound_step_shopping_cart(object_id_list, default_calendar_id,company_code,cart_items)
 
     cart_items_count = len(cart_items)
 
@@ -472,15 +464,6 @@ def sc_second_step(request):
         lead_time = items['lead_time']
         supplier_id = items['supplier_id']
         call_off = items['call_off']
-
-        sc_check_instance.check_for_prod_cat(product_category, company_code, item_number)
-        if call_off != CONST_PR_CALLOFF:
-            sc_check_instance.check_for_supplier(supplier_id, product_category, company_code, item_number)
-
-        if call_off == CONST_CATALOG_CALLOFF:
-            product_id = items['int_product_id']
-            sc_check_instance.catalog_item_check(product_id, items['price'], lead_time, item_number, items['guid'],
-                                                 items['quantity'])
         if item_currency != global_variables.GLOBAL_USER_CURRENCY:
             actual_price_list.append(
                 convert_currency(float(items['actual_price']) * items['quantity'], str(item_currency),
@@ -494,37 +477,6 @@ def sc_second_step(request):
             discount_value_list.append(items['discount_value'])
             tax_value_list.append(items['tax_value'])
             # gross_price_list.append(float(items['gross_price'])*items['quantity'])
-        if call_off not in [CONST_FREETEXT_CALLOFF, CONST_LIMIT_ORDER_CALLOFF]:
-            if len(holiday_list) == 0:
-                item_delivery_date = None
-            else:
-                item_delivery_date = calculate_delivery_date(items['guid'],
-                                                             lead_time,
-                                                             supplier_id,
-                                                             default_calendar_id,
-                                                             global_variables.GLOBAL_CLIENT,
-                                                             CartItemDetails)
-        elif call_off == CONST_FREETEXT_CALLOFF:
-            item_delivery_date = calculate_delivery_date_base_on_lead_time(
-                lead_time,
-                supplier_id,
-                default_calendar_id)
-            if items['item_del_date'] < item_delivery_date:
-                django_query_instance.django_update_query(CartItemDetails,
-                                                          {'guid': items['guid'],
-                                                           'client': global_variables.GLOBAL_CLIENT},
-                                                          {'item_del_date': item_delivery_date})
-            else:
-                item_delivery_date = items['item_del_date']
-
-        else:
-            if items['start_date'] is None:
-                item_delivery_date = items['item_del_date']
-
-            else:
-                item_delivery_date = items['start_date']
-
-        sc_check_instance.delivery_date_check(item_delivery_date, item_number, holiday_list, default_calendar_id)
 
         prod_cat_list.append(product_category)
         call_off_list.append(call_off)
@@ -626,7 +578,7 @@ def sc_second_step(request):
     default_cmp_code = user_setting.get_attr_default(user_object_id, CONST_CO_CODE)
     purchase_control_call_off_list = get_order_status(default_cmp_code, global_variables.GLOBAL_CLIENT)
     if default_cmp_code:
-        manager_detail, msg_info = get_manger_detail(global_variables.GLOBAL_CLIENT, username, accounting_data['default_acc_ass_cat'],
+        manager_detail, msg_info = get_manger_detail(global_variables.GLOBAL_CLIENT, global_variables.GLOBAL_LOGIN_USERNAME, accounting_data['default_acc_ass_cat'],
                                                      total_value,
                                                      default_cmp_code, accounting_data['default_acc'],
                                                      global_variables.GLOBAL_USER_CURRENCY)
@@ -742,8 +694,6 @@ def save_shopping_cart(request):
     :param request:
     :return:
     """
-    username = getUsername(request)
-    client = getClients(request)
     manager_details = []
     if request.method == 'POST':
         attachments_data = request.FILES

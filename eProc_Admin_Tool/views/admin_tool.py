@@ -27,10 +27,11 @@ from eProc_Basic.Utilities.functions.json_parser import JsonParser
 from eProc_Basic.Utilities.functions.str_concatenate import concatenate_str
 from eProc_Basic_Settings.views import JsonParser_obj
 from eProc_Configuration.models import *
+from eProc_Configuration.models.master_data import OrgPorg
 from eProc_Doc_Search_and_Display.Utilities.search_display_generic import get_hdr_data, get_hdr_data_app_monitoring
 from eProc_Emails.models import EmailUserMonitoring, EmailDocumentMonitoring, EmailSupplierMonitoring
 from eProc_Org_Model.Utilities import client
-from eProc_Org_Model.models import OrgModel
+from eProc_Org_Model.models.org_model import OrgModel
 from eProc_Org_Support.models import OrgAnnouncements
 # from eProc_Org_Support.views import org_announcement_search
 from eProc_Purchase_Order.Utilities.purchase_order_generic import CreatePurchaseOrder, retrigger_po, check_po
