@@ -5,11 +5,10 @@
 
 <div class="container-fluid">
     <div class="configuration-table_wrapper">
-
         <div class="elements-space-between">
             <h3>Maintain Languages</h3>
             <div>
-                <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Basic_Settings:extract_language_template' %}'"type="button">
+                <button class="btn btn-outline-primary"  title="Template" onclick="location.href='{% url 'eProc_Basic_Settings:extract_language_template' %}'"type="button">
                     <i class="fas fa-download"></i> template
                 </button>
                 <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Basic_Settings:extract_language_data' %}'" type="button">
@@ -18,7 +17,6 @@
                 <button class="btn btn-outline-primary  modal_upload" id="id_upload_redirect_data" title="Upload Data" value="language_upload" onclick="onclick_upload_button()" type="button">
                     <i class="fas fa-cloud-upload-alt"></i> upload data
                 </button>
-
                 <button type="button" id="id_add_data" value="ADD" class="btn btn-primary"  title="Add Language" data-toggle="modal" data-target="#languageModal" onclick="onclick_add_button(this)">
                     <i class="fa fa-plus"></i> add language
                 </button>
@@ -27,15 +25,11 @@
                 </button>
             </div>
         </div>
-        
         <hr>
-
         <div class="configuration-table_section">
             <div id="err_msg_app_settings"> </div>
             <div id="err_msg_app_settings_t" class="alert alert-success" hidden><span id="success_msg_id"></span></div>
-
             <div class="table-container tcw-60">
-
                 <div class="edit-button-section mb-4">
                     <button id="id_edit_data" class="btn btn-secondary btn-sm" onclick="onclick_edit_button()">
                         <i class="fas fa-edit" id="edit" title="Edit"></i> edit
@@ -53,7 +47,6 @@
                         <i class="fas fa-times"></i> cancel
                     </button>        
                 </div>
-
                 <!--   display basic language table-->
                 <table id="display_basic_table" class="class_basic_language_table table table-bordered custom-table">
                     <thead id="id_language_table_header">
@@ -81,29 +74,25 @@
             </div>
         </div>
     </div>
-
     <!--modal popup for Add,copy,update and upload-->  
     <!-- The Modal -->
     <div class="modal fade" id="languageModal" style="overflow:auto;">
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content">
-
                 <div class="modal-header">
                     <h5 class="modal-title"> Maintain Language</h5>
                     <button type="button" class="close remove_upload_data" data-dismiss="modal" aria-label="Close">
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-
                 <!-- Modal body -->
                 <div class="modal-body">
                     <div class="popup-vertical-scroll">
-
                     <div id="id_del_add_button" class="mb-4">
-                        <button class="btn btn-primary" type="button" onclick="add_popup_row()">
+                        <button class="btn btn-primary" title="Add New Row" type="button" onclick="add_popup_row()">
                             <i class="fa fa-plus"></i> add new row
                         </button>
-                        <button class="btn btn-outline-danger" onclick="application_settings_delete_Row('id_popup_table')">
+                        <button class="btn btn-outline-danger" title="Delete" onclick="application_settings_delete_Row('id_popup_table')">
                             <i class="fa fa-trash"></i> delete
                         </button>
                     </div>
@@ -117,7 +106,6 @@
                     <div id="error_msg_id" class="alert alert-danger display-none" role="alert"><span id="error_message"></span></div>
                     <div id="id_warning_msg_id" class="alert alert-warning display-none" role="alert"></div>
                     <div id="id_info_msg_id" class="alert alert-primary display-none" role="alert"></div>
-
                     <table class="class_popup_table table table-bordered mt-2" id="id_popup_table">
                         <thead>
                             <tr>
@@ -132,25 +120,20 @@
                         </tbody>
                     </table>
                     </div>
-
                 </div>
-
                 <!-- Modal footer -->
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-primary remove_upload_data" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
+                    <button type="button" class="btn btn-outline-primary remove_upload_data" title="Cancel" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
                     <button id="id_delete_duplicate" class="btn btn-primary" style="display:none;" type="button" onclick="delete_duplicate()"><i class="fa fa-trash"></i> delete duplicates</button>
                     <button id="id_check_data" style="display:none;" class="btn btn-primary" type="button" onclick="check_data()"><i class="fas fa-check"></i> check</button>
-                    <button class="btn btn-primary" id="save_id"><i class="fas fa-save"></i> save</button>
-                   
+                    <button class="btn btn-primary" title="Save" id="save_id"><i class="fas fa-save"></i> save</button>
                 </div>
             </div>
         </div>
     </div>
     <!--end of modal popup for Add,copy,update and upload-->
-    
     <!-- modal popup to upload the csv file; save confirmation popup; delete confirmation popup -->
     {% include 'configuration_common_pop_up.html' %}
-
     <div>
         {% if messages %} {% for message in messages %} {% if message.tags == 'success' %}
         <div style="color: green; ">{{ message }}</div>
@@ -161,10 +144,10 @@
         {% endif %} {% endfor %} {% endif %}
     </div>
 </div>
-
 <script>
     var basic_settings = '{{basic_settings|safe}}';
     var rendered_language_data = {{upload_languages|safe}};
+    var messages_list = {{messages_list|safe}};
     var language_data_array = {}
     var main_table_language_value = [];
     var language = '';
@@ -323,7 +306,6 @@
     }
         
     //check function restricting special char and diaplay the data count of csv file
-    //var DB_count = {{DB_count|safe}};
     function check_data() {
         $('#id_popup_table').DataTable().destroy();
         $("#id_check_success_messages").empty()
@@ -340,7 +322,6 @@
         var language_list = new Array
         var language_id_check = new Array
         del_ind = ''
-
         $("#id_popup_table TBODY TR").each(function() {
             var row = $(this);
             //*************** reading data from the pop-up ***************
@@ -354,7 +335,6 @@
             }
             language_list.push([language_id, description, del_ind])
             var format = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
-
             //*************** checking for max length for language code (max length = 2) ***************
             if (language_id.length > 2) {
                 error_message = ui_messeges("JMSG004")// Get message details
@@ -363,7 +343,6 @@
                 $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
                 count = count + 1;
             }
-
             //*************** checking for special characters for language id ***************
             else if (format.test(language_id)) {
                 error_message = ui_messeges("JMSG003")// Get message details
@@ -374,7 +353,6 @@
             } else {
                 $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "none");
             }
-
             //*************** checking for special characters for description  ***************
             if (format.test(description)) {
                  error_message = ui_messeges("JMSG003")// Get message details
@@ -493,26 +471,27 @@
         return [no_duplicate_value,error_message]
     }
 
-    //validate by comparing  main table values and popup table values
-    function maintable_validation(validate_add_attributes, main_table_low_value) {
-        var no_duplicate_entries = 'Y'
-        var common = [];
-        var error_message = ''
-        jQuery.grep(validate_add_attributes, function(el) {
-            if (jQuery.inArray(el, main_table_low_value) != -1) {
-                common.push(el);
-            }
+    //Function to highlight duplicate records
+    function display_duplicate_entry(common) {
+        var language_check = new Array;
+        $("#id_popup_table TBODY TR").each(function() {
+            var row = $(this);
+            language_dic = {}
+            language_dic.language_id  = row.find("TD").eq(1).find('input[type="text"]').val().toUpperCase();
+            var compare = language_dic.language_id
+            language_check.push(compare);
+            jQuery.grep(language_check, function(el) {
+                if (jQuery.inArray(el, common) != -1) {
+                    row_color_highlight(row);
+                }
+                else {
+                    row_color_no_highlight(row);
+                }
+            });
+
         });
-        if (common.length != 0) {
-             error_message = ui_messeges("JMSG001")// Get message details
-            no_duplicate_value = 'N'
-            return [no_duplicate_value,error_message]
-        }
-        return [no_duplicate_entries,error_message]
     }
 
 </script>
-
 <script src="{% static 'scripts/upload_languages.js' %}"></script>
-
 {% endblock %}
