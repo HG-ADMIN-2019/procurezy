@@ -489,8 +489,7 @@ const display_fields_from_array = (eform_configured) => {
         field_data_type = value['field_data_type'];
         field_name = value['field_name'];
         is_required = value['required'];
-
-        var options = '<option value="" selected>Select</option>';
+        var options
 
         if (field_data_type == 'dropdown') {
             get_dropdown = value['dropdown_options']
