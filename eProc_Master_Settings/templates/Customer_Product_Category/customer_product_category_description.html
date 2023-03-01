@@ -193,9 +193,11 @@
 
     //Dropdown function
     function unspcdesc_dropdown(){
+        prod_cat_id_dropdown = '';
         $.each(rendered_UNSPCDESC_data, function(i, item){
             prod_cat_id_dropdown += '<option value="' + item.prod_cat_id + '">' + item.prod_cat_id + '</option>';
         })
+        language_id_dropdown = ' ';
         $.each(render_language_data, function(i, item){
             language_id_dropdown += '<option value="' + item.language_id + '">' + item.description + '</option>';
         })
@@ -423,6 +425,23 @@
         var add_attr_duplicates_list = [];
         var add_attr_unique_list = [];
         var no_duplicate_value = 'Y'
+        var language_exists_flag
+
+        $.each(validate_add_attributes, function(i, item){
+            language_exists_flag = flase
+            $.each(rendered_UNSPCDESC_data, function(j, item1){
+                if (item.prod_cat_id == item1.prod_cat_id){
+                    if(item1.language_id == "EN"){
+                        language_exists_flag = true
+                    }
+                }
+            })
+             if(!language_exists_flag){
+                    console.log("Please select default language English for new Product ID")
+                    error_message = ui_messeges("JMSG002")
+             }
+
+        })
         $.each(validate_add_attributes, function (index, value) {
             if ($.inArray(value, add_attr_unique_list) == -1) {
                 add_attr_unique_list.push(value);
@@ -439,24 +458,25 @@
             return [no_duplicate_value,error_message]
 
         }
-        else {
-            $.each(cusprodcatdesc, function (i, item) {
-                if (item.prod_cat_id.length == 0) {
-                    error_message = ui_messeges("JMSG002")// Get message details
-                    no_duplicate_value = 'N'
-                    return [no_duplicate_value,error_message]
-                }
-                if (item.description.length == 0) {
-                    error_message = ui_messeges("JMSG002")// Get message details
-                    no_duplicate_value = 'N'
-                    return [no_duplicate_value,error_message]
-                }
-                if (item.language_id.length == 0) {
-                    error_message = ui_messeges("JMSG002")// Get message details
-                    no_duplicate_value = 'N'
-                    return [no_duplicate_value,error_message]
-                }
-            });
+        else{
+                $.each(cusprodcatdesc, function (i, item) {
+                    if (item.prod_cat_id.length == 0) {
+                        error_message = ui_messeges("JMSG002")// Get message details
+                        no_duplicate_value = 'N'
+                        return [no_duplicate_value,error_message]
+                    }
+                    if (item.description.length == 0) {
+                        error_message = ui_messeges("JMSG002")// Get message details
+                        no_duplicate_value = 'N'
+                        return [no_duplicate_value,error_message]
+                    }
+                    if (item.language_id.length == 0) {
+                        error_message = ui_messeges("JMSG002")// Get message details
+                        no_duplicate_value = 'N'
+                        return [no_duplicate_value,error_message]
+                    }
+                });
+
         }
         return [no_duplicate_value,error_message]
     }
@@ -551,6 +571,7 @@
             cusprodcatdesc.language_id = row.find("TD").eq(2).find('select').val();
             cusprodcatdesc.description = row.find("TD").eq(3).find('input').val();
             cusprodcatdesc.prod_cat_desc_guid = row.find("TD").eq(4).find('input').val();
+
             if (cusprodcatdesc == undefined) {
                 cusprodcatdesc.prod_cat_id = row.find("TD").eq(1).find('select').val();
             }
