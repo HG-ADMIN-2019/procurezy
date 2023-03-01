@@ -608,12 +608,11 @@
                     row.find("TD").eq(2).find("select").append(assign_val.acc_ass_dropdwn)
                     row.find("TD").eq(3).find("select").append(assign_val.acc_ass_val_dropdwn)
                     $(row.find("TD").eq(1).find("select")).change(function () {
-                        row.find("TD").eq(2).find("select").empty()
-                        row.find("TD").eq(3).find("select").empty()
+                        company_dropdwn_change(row);
+                    })
+                    $(row.find("TD").eq(2).find("select")).change(function () {
                         company_num = row.find("TD").eq(1).find("select option:selected").val();
-                        var assign_val = account_assignment_value_find(company_num)
-                        row.find("TD").eq(2).find("select").append(assign_val.acc_ass_dropdwn)
-                        row.find("TD").eq(3).find("select").append(assign_val.acc_ass_val_dropdwn)
+                        acc_ass_cat_dropdwn(row,company_num);
                     })
                 })
                 $("#id_del_ind_checkbox").prop("hidden", true);

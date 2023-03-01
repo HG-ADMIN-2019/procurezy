@@ -10,7 +10,7 @@ from django.shortcuts import render
 
 from Majjaka_eProcure import settings
 from eProc_Add_Item.views import JsonParser_obj
-from eProc_Basic.Utilities.constants.constants import CONST_USER_REG, CONST_ACTIVE
+from eProc_Basic.Utilities.constants.constants import CONST_USER_REG, CONST_ACTIVE, CONST_COFIG_UI_MESSAGE_LIST
 from eProc_Basic.Utilities.functions.django_q_query import django_q_query
 from eProc_Basic.Utilities.functions.django_query_set import DjangoQueries
 from eProc_Basic.Utilities.functions.get_db_query import getClients
@@ -18,8 +18,9 @@ from eProc_Basic.Utilities.functions.guid_generator import guid_generator
 from eProc_Basic.Utilities.functions.messages_config import get_msg_desc, get_message_desc
 from eProc_Basic.Utilities.global_defination import global_variables
 from eProc_Basic.Utilities.messages.messages import *
+from eProc_Configuration.Utilities.application_settings_generic import get_configuration_data, get_ui_messages
 from eProc_Configuration.models import NotifSettings, NotifKeywordsDesc, NotifSettingsDesc, EmailObjectTypes, \
-    EmailKeywords, EmailContents
+    EmailKeywords, EmailContents, Languages
 from eProc_Emails.Utilities.email_notif_generic import email_notify, appr_notify, send_po_attachment_email
 from eProc_Emails.models import EmailUserMonitoring, EmailDocumentMonitoring, EmailSupplierMonitoring
 from eProc_Registration.models import UserData
@@ -55,21 +56,27 @@ def email_notification_form(req):
         for dt in keyword_data:
             keyword_list.append(dt['keyword'])
 
-        form_data = django_query_instance.django_filter_only_query(EmailContents, {
-            'client': client,
-            'del_ind': False
-        })
-        data_onload = list(form_data)
+        email_data = get_configuration_data(EmailContents, {'del_ind': False},
+                                            ['email_contents_guid', 'object_type', 'subject', 'header', 'body',
+                                             'footer', 'language_id'])
+        language_list = list(django_query_instance.django_filter_only_query(Languages, {'del_ind': False}).values('language_id', 'description'))
+        for data in email_data:
+            for lang in language_list:
+                if data['language_id'] == lang['language_id']:
+                    data['lang_description'] = lang['description']
 
     except ObjectDoesNotExist:
         msg = messages.error(req, 'please maintain data')
         return render(req, 'emailnotif.html', msg)
 
+    messages_list = get_ui_messages(CONST_COFIG_UI_MESSAGE_LIST)
+
     context = {
         'variant_list': variant_list,
         'keyword_list': keyword_list,
-        'form_data': form_data,
-        'data_onload': data_onload,
+        'email_data': email_data,
+        'messages_list': messages_list,
+        'language_list': language_list,
         'inc_nav': True,
     }
 
