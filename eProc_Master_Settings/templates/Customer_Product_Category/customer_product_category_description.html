@@ -427,19 +427,24 @@
         var no_duplicate_value = 'Y'
         var language_exists_flag
 
-        $.each(validate_add_attributes, function(i, item){
-            language_exists_flag = flase
+        $.each(cusprodcatdesc, function(i, item){
+            language_exists_flag = false
             $.each(rendered_UNSPCDESC_data, function(j, item1){
+                if(item.language_id == "EN"){
+                        language_exists_flag = true
+                    }
                 if (item.prod_cat_id == item1.prod_cat_id){
                     if(item1.language_id == "EN"){
                         language_exists_flag = true
                     }
+
                 }
-            })
-             if(!language_exists_flag){
+                if(!language_exists_flag){
                     console.log("Please select default language English for new Product ID")
                     error_message = ui_messeges("JMSG002")
              }
+            })
+
 
         })
         $.each(validate_add_attributes, function (index, value) {
