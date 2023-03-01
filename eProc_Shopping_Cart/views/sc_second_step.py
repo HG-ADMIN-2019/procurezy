@@ -32,7 +32,8 @@ from eProc_Price_Calculator.Utilities.price_calculator_generic import calculate_
 from eProc_Purchase_Order.Utilities.purchase_order_generic import CreatePurchaseOrder
 from eProc_Ship_To_Bill_To_Address.Utilites.ship_to_bill_to_generic import ShipToBillToAddress
 from eProc_Shopping_Cart.Shopping_Cart_Forms.call_off_forms.limit_form import UpdateLimitItem
-from eProc_Shopping_Cart.Utilities.save_order_edit_sc import SaveShoppingCart, CheckForScErrors
+from eProc_Shopping_Cart.Utilities.save_order_edit_sc import SaveShoppingCart, CheckForScErrors, \
+    check_sc_second_step_shopping_cart
 from eProc_Shopping_Cart.Utilities.shopping_cart_generic import *
 from eProc_Shopping_Cart.Utilities.shopping_cart_specific import get_prod_cat_dropdown, get_manger_detail, \
     get_completion_work_flow, get_users_first_name, unpack_accounting_data, update_supplier_uom, \
@@ -425,19 +426,14 @@ def sc_second_step(request):
     completion_work_flow = []
     requester_user_id = ''
     call_off_list = []
-    item_detail_list = []
+    cart_items_guid_list = []
     sc_completion_flag = False
 
     attr_low_value_list, company_code ,default_calendar_id,object_id_list = get_company_calendar_from_org_model()
-
     requester_first_name, cart_name = get_cart_default_name_and_user_first_name()
 
-
-
     request.session['company_code'] = company_code
-
-
-
+    item_detail_list = []
     # Display shopping cart items in 2nd step of wizard
 
     cart_items = django_query_instance.django_filter_query(CartItemDetails,
@@ -445,25 +441,22 @@ def sc_second_step(request):
                                                             'client': global_variables.GLOBAL_CLIENT},
                                                            ['item_num'],
                                                            None)
-    shopping_cart_errors,cart_items = check_sc_secound_step_shopping_cart(object_id_list, default_calendar_id,company_code,cart_items)
 
+    cart_items = check_sc_second_step_shopping_cart(object_id_list, default_calendar_id, company_code, cart_items)
+    sc_check_instance = CheckForScErrors(global_variables.GLOBAL_CLIENT, global_variables.GLOBAL_LOGIN_USERNAME)
     cart_items_count = len(cart_items)
 
     if cart_items_count == 0:
         return redirect('eProc_Shop_Home:shopping_cart_home')
     i = 0
     cart_items_guid_list = dictionary_key_to_list(cart_items, 'guid')
-    for items in cart_items:
+    for item_number,items in enumerate(cart_items):
         item_currency = items['currency']
         if not item_currency:
             item_currency = global_variables.GLOBAL_REQUESTER_CURRENCY
         item_details = {}
-        item_number = i + 1
         requester_user_id = items['username']
         product_category = items['prod_cat_id']
-        lead_time = items['lead_time']
-        supplier_id = items['supplier_id']
-        call_off = items['call_off']
         if item_currency != global_variables.GLOBAL_USER_CURRENCY:
             actual_price_list.append(
                 convert_currency(float(items['actual_price']) * items['quantity'], str(item_currency),
@@ -479,16 +472,16 @@ def sc_second_step(request):
             # gross_price_list.append(float(items['gross_price'])*items['quantity'])
 
         prod_cat_list.append(product_category)
-        call_off_list.append(call_off)
-        call_off = call_off
-        if call_off == CONST_LIMIT_ORDER_CALLOFF:
+        call_off_list.append(items['call_off'])
+
+        if items['call_off'] == CONST_LIMIT_ORDER_CALLOFF:
             overall_limit = items['overall_limit']
             quantity = None
             price_unit = None
             prod_id = product_category
             price = None
             prod_desc = get_prod_by_id(prod_id=prod_id)
-            value = calculate_item_total_value(call_off, quantity, catalog_qty, price_unit, price, overall_limit)
+            value = calculate_item_total_value(items['call_off'], quantity, catalog_qty, price_unit, price, overall_limit)
             value = convert_currency(value, str(item_currency), str(global_variables.GLOBAL_USER_CURRENCY))
             sc_check_instance.check_for_currency(item_number, value, str(item_currency))
             if value:
@@ -503,16 +496,15 @@ def sc_second_step(request):
         else:
 
             prod_cat_list.append(product_category)
-            call_off_list.append(call_off)
-            call_off = call_off
-            if call_off == CONST_LIMIT_ORDER_CALLOFF:
+            call_off_list.append(items['call_off'])
+            if items['call_off'] == CONST_LIMIT_ORDER_CALLOFF:
                 overall_limit = items['overall_limit']
                 quantity = None
                 price_unit = None
                 prod_id = product_category
                 price = None
                 prod_desc = get_prod_by_id(prod_id=prod_id)
-                value = calculate_item_total_value(call_off, quantity, catalog_qty, price_unit, price, overall_limit)
+                value = calculate_item_total_value(items['call_off'], quantity, catalog_qty, price_unit, price, overall_limit)
                 value = convert_currency(value, str(item_currency), str(global_variables.GLOBAL_USER_CURRENCY))
                 sc_check_instance.check_for_currency(item_number, value, str(item_currency))
                 if value:
@@ -529,7 +521,7 @@ def sc_second_step(request):
                 quantity = items['quantity']
                 price = items['price']
                 price_unit = items['price_unit']
-                value = calculate_item_total_value(call_off, quantity, catalog_qty, price_unit, price, overall_limit)
+                value = calculate_item_total_value(items['call_off'], quantity, catalog_qty, price_unit, price, overall_limit)
                 value = convert_currency(value, str(item_currency), str(global_variables.GLOBAL_USER_CURRENCY))
                 sc_check_instance.check_for_currency(item_number, value, str(item_currency))
                 if value:
@@ -578,7 +570,7 @@ def sc_second_step(request):
     default_cmp_code = user_setting.get_attr_default(user_object_id, CONST_CO_CODE)
     purchase_control_call_off_list = get_order_status(default_cmp_code, global_variables.GLOBAL_CLIENT)
     if default_cmp_code:
-        manager_detail, msg_info = get_manger_detail(global_variables.GLOBAL_CLIENT, global_variables.GLOBAL_LOGIN_USERNAME, accounting_data['default_acc_ass_cat'],
+        manager_detail, msg_info = get_manger_detail(global_variables.GLOBAL_CLIENT, username, accounting_data['default_acc_ass_cat'],
                                                      total_value,
                                                      default_cmp_code, accounting_data['default_acc'],
                                                      global_variables.GLOBAL_USER_CURRENCY)

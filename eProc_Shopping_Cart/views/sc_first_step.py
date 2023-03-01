@@ -29,7 +29,7 @@ from eProc_Price_Calculator.Utilities.price_calculator_generic import calculate_
 from eProc_Shopping_Cart.Shopping_Cart_Forms.call_off_forms.limit_form import UpdateLimitItem
 from eProc_Shopping_Cart.Utilities.shopping_cart_generic import get_prod_by_id, get_supplier_first_second_name, \
     get_image_url, get_prod_cat, update_eform_details_scitem, get_currency_converted_price_data, \
-    update_image_for_catalog, get_currency_and_uom, get_cart_items_detail, update_delivery_date_to_item_table
+    update_image_for_catalog, get_currency_uom_prod_cat, get_cart_items_detail, update_delivery_date_to_item_table
 from eProc_Shopping_Cart.Utilities.shopping_cart_specific import check_for_eform, get_prod_cat_dropdown, \
     get_free_text_content, get_limit_item_details, update_supplier_uom, update_supplier_uom_for_prod, \
     update_suppliers_uom_details, get_limit_order_item_details
@@ -179,7 +179,7 @@ def sc_first_step(request):
     tax_value = round(sum(tax_value_list), 2)
     # gross_price = round(sum(gross_price_list), 2)
 
-    product_category = get_prod_cat(request, prod_det=None)
+    product_category = get_prod_cat()
     requester_currency = get_requester_currency(requester_user_id)
 
     cart_items = list(django_query_instance.django_filter_query(CartItemDetails,
@@ -265,8 +265,9 @@ def shopping_cart_first_step(request):
     cart_items = update_eform_details_scitem(cart_items)
 
     sys_attributes_instance = sys_attributes(global_variables.GLOBAL_CLIENT)
-    currency, uom, currency_list = get_currency_and_uom()
+    currency, uom, currency_list,product_category = get_currency_uom_prod_cat()
     context = {
+        'product_category': product_category,
         'limit_form': UpdateLimitItem(),
         'cart_items': cart_items,
         'cart_length': cart_length,

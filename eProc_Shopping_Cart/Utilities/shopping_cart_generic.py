@@ -23,7 +23,7 @@ django_query_instance = DjangoQueries()
 
 
 # Function to get product category description based on product category Id and display it in drop down
-def get_prod_cat(request, prod_det):
+def get_prod_cat():
     """
     The variable prod_det is used to store product Id  of an item while updating an item in 1st step of shopping cart wizard
     This function is mainly used to display product category in drop down in limit_order, form_builder,
@@ -443,7 +443,7 @@ def update_image_for_catalog(cart_items):
     return cart_items
 
 
-def get_currency_and_uom():
+def get_currency_uom_prod_cat():
     """
 
     """
@@ -451,7 +451,8 @@ def get_currency_and_uom():
                                                          ['currency_id', 'description'])
     uom = django_query_instance.django_filter_query(UnitOfMeasures, {'del_ind': False}, None, None)
     currency_list = dictionary_key_to_list(currency, 'currency_id')
-    return currency, uom, currency_list
+    product_category = get_prod_cat()
+    return currency, uom, currency_list,product_category
 
 
 def get_cart_items_detail():
