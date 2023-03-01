@@ -313,9 +313,10 @@
         </div>
     </div>
 </div>
+{{ country_list|json_script:"country_list" }}
 <script>
 var rendered_item_guid = {{cart_items_guid_list|safe}};
-
+var country_list = JSON.parse(document.getElementById('currency_list').textContent)
 
 var sc_first_step = {{ display_update_delete|yesno:"true,false" }};
 // Function to delete an item from the cart and update in the UI using ajax call - loader popup not working
@@ -479,6 +480,7 @@ function update(element, item_guid, product_category_id,row_count) {
 }
 
 const display_fields_from_array = (eform_configured) => {
+    var country_list = {{country_list|safe}};
     $('#eform_card_details').empty()
     var div_content = '';
     var user_data = '';

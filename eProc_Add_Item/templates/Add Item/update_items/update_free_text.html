@@ -68,10 +68,12 @@
 </form>
 {{ currency_list|json_script:"currency_list" }}
 {{ country_dropdown|json_script:"country_dropdown" }}
+
 <script>
 
 var country = JSON.parse(document.getElementById('country_dropdown').textContent)
 var currency = JSON.parse(document.getElementById('currency_list').textContent)
+
 var eform_configured = new Array();
 // Function to update freetext item
 function update_free_text_data(){

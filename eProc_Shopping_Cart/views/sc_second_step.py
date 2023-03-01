@@ -119,7 +119,7 @@ def review_page(request):
     cart_items = list(
         django_query_instance.django_filter_query(CartItemDetails, {
             'username': login_username, 'client': client
-        },['item_num'],None)
+        }, ['item_num'], None)
     )
 
     cart_items_count = django_query_instance.django_filter_count_query(CartItemDetails, {
@@ -325,7 +325,7 @@ def review_page(request):
     cart_items = list(
         django_query_instance.django_filter_query(CartItemDetails, {
             'username': login_username, 'client': client
-        },['item_num'],None)
+        }, ['item_num'], None)
     )
     for items in cart_items:
         if items['call_off'] == CONST_CATALOG_CALLOFF:
@@ -429,7 +429,7 @@ def sc_second_step(request):
     cart_items_guid_list = []
     sc_completion_flag = False
 
-    attr_low_value_list, company_code ,default_calendar_id,object_id_list = get_company_calendar_from_org_model()
+    attr_low_value_list, company_code, default_calendar_id, object_id_list = get_company_calendar_from_org_model()
     requester_first_name, cart_name = get_cart_default_name_and_user_first_name()
 
     request.session['company_code'] = company_code
@@ -442,15 +442,16 @@ def sc_second_step(request):
                                                            ['item_num'],
                                                            None)
 
-    cart_items = check_sc_second_step_shopping_cart(object_id_list, default_calendar_id, company_code, cart_items)
     sc_check_instance = CheckForScErrors(global_variables.GLOBAL_CLIENT, global_variables.GLOBAL_LOGIN_USERNAME)
+    cart_items = check_sc_second_step_shopping_cart(sc_check_instance, object_id_list, default_calendar_id,
+                                                    company_code, cart_items)
     cart_items_count = len(cart_items)
 
     if cart_items_count == 0:
         return redirect('eProc_Shop_Home:shopping_cart_home')
     i = 0
     cart_items_guid_list = dictionary_key_to_list(cart_items, 'guid')
-    for item_number,items in enumerate(cart_items):
+    for item_number, items in enumerate(cart_items):
         item_currency = items['currency']
         if not item_currency:
             item_currency = global_variables.GLOBAL_REQUESTER_CURRENCY
@@ -462,8 +463,10 @@ def sc_second_step(request):
                 convert_currency(float(items['actual_price']) * items['quantity'], str(item_currency),
                                  str(global_variables.GLOBAL_USER_CURRENCY)))
             discount_value_list.append(
-                convert_currency(items['discount_value'], str(item_currency), str(global_variables.GLOBAL_USER_CURRENCY)))
-            tax_value_list.append(convert_currency(items['tax_value'], str(item_currency), str(global_variables.GLOBAL_USER_CURRENCY)))
+                convert_currency(items['discount_value'], str(item_currency),
+                                 str(global_variables.GLOBAL_USER_CURRENCY)))
+            tax_value_list.append(
+                convert_currency(items['tax_value'], str(item_currency), str(global_variables.GLOBAL_USER_CURRENCY)))
             # gross_price_list.append(convert_currency(float(items['gross_price'])*items['quantity'], str(item_currency), str(global_variables.GLOBAL_USER_CURRENCY)))
         else:
             actual_price_list.append(float(items['actual_price']) * items['quantity'])
@@ -481,7 +484,8 @@ def sc_second_step(request):
             prod_id = product_category
             price = None
             prod_desc = get_prod_by_id(prod_id=prod_id)
-            value = calculate_item_total_value(items['call_off'], quantity, catalog_qty, price_unit, price, overall_limit)
+            value = calculate_item_total_value(items['call_off'], quantity, catalog_qty, price_unit, price,
+                                               overall_limit)
             value = convert_currency(value, str(item_currency), str(global_variables.GLOBAL_USER_CURRENCY))
             sc_check_instance.check_for_currency(item_number, value, str(item_currency))
             if value:
@@ -504,7 +508,8 @@ def sc_second_step(request):
                 prod_id = product_category
                 price = None
                 prod_desc = get_prod_by_id(prod_id=prod_id)
-                value = calculate_item_total_value(items['call_off'], quantity, catalog_qty, price_unit, price, overall_limit)
+                value = calculate_item_total_value(items['call_off'], quantity, catalog_qty, price_unit, price,
+                                                   overall_limit)
                 value = convert_currency(value, str(item_currency), str(global_variables.GLOBAL_USER_CURRENCY))
                 sc_check_instance.check_for_currency(item_number, value, str(item_currency))
                 if value:
@@ -521,7 +526,8 @@ def sc_second_step(request):
                 quantity = items['quantity']
                 price = items['price']
                 price_unit = items['price_unit']
-                value = calculate_item_total_value(items['call_off'], quantity, catalog_qty, price_unit, price, overall_limit)
+                value = calculate_item_total_value(items['call_off'], quantity, catalog_qty, price_unit, price,
+                                                   overall_limit)
                 value = convert_currency(value, str(item_currency), str(global_variables.GLOBAL_USER_CURRENCY))
                 sc_check_instance.check_for_currency(item_number, value, str(item_currency))
                 if value:
@@ -570,7 +576,8 @@ def sc_second_step(request):
     default_cmp_code = user_setting.get_attr_default(user_object_id, CONST_CO_CODE)
     purchase_control_call_off_list = get_order_status(default_cmp_code, global_variables.GLOBAL_CLIENT)
     if default_cmp_code:
-        manager_detail, msg_info = get_manger_detail(global_variables.GLOBAL_CLIENT, username, accounting_data['default_acc_ass_cat'],
+        manager_detail, msg_info = get_manger_detail(global_variables.GLOBAL_CLIENT, username,
+                                                     accounting_data['default_acc_ass_cat'],
                                                      total_value,
                                                      default_cmp_code, accounting_data['default_acc'],
                                                      global_variables.GLOBAL_USER_CURRENCY)
@@ -579,7 +586,8 @@ def sc_second_step(request):
 
         for purchase_control_call_off in purchase_control_call_off_list:
             if purchase_control_call_off in call_off_list:
-                completion_work_flow = get_completion_work_flow(global_variables.GLOBAL_CLIENT, prod_cat_list, default_cmp_code)
+                completion_work_flow = get_completion_work_flow(global_variables.GLOBAL_CLIENT, prod_cat_list,
+                                                                default_cmp_code)
                 sc_completion_flag = True
     else:
         error_msg = get_message_desc(MSG109)[1]
@@ -600,7 +608,7 @@ def sc_second_step(request):
     cart_items = list(
         django_query_instance.django_filter_query(CartItemDetails, {
             'username': global_variables.GLOBAL_CLIENT, 'client': global_variables.GLOBAL_CLIENT
-        },['item_num'],None)
+        }, ['item_num'], None)
     )
     for items in cart_items:
         if items['call_off'] == CONST_CATALOG_CALLOFF:
@@ -678,6 +686,7 @@ def sc_second_step(request):
     }
 
     return render(request, 'Shopping_Cart/sc_second_step/sc_second_step.html', context)
+
 
 # Function to call save shopping cart through ajax call (login required decorator is not required)
 @transaction.atomic
@@ -773,7 +782,7 @@ def order_shopping_cart(request):
                                                                             {'client': global_variables.GLOBAL_CLIENT,
                                                                              'doc_number': sc_details[0]})
                 create_purchase_order = CreatePurchaseOrder(sc_header_instance)
-                status,error_message,output,po_doc_list = create_purchase_order.create_po()
+                status, error_message, output, po_doc_list = create_purchase_order.create_po()
                 # Send purchase order email to supplier
 
                 for po_document_number in po_doc_list:

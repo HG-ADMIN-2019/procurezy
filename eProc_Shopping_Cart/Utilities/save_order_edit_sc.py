@@ -1536,12 +1536,11 @@ class CheckForScErrors:
         return self.sc_check_data
 
 
-def check_sc_second_step_shopping_cart(object_id_list, default_calendar_id, company_code, cart_items):
+def check_sc_second_step_shopping_cart(sc_check_instance,object_id_list, default_calendar_id, company_code, cart_items):
     """
 
     """
     holiday_list = []
-    sc_check_instance = CheckForScErrors(global_variables.GLOBAL_CLIENT, global_variables.GLOBAL_LOGIN_USERNAME)
     sc_check_instance.document_sc_transaction_check(object_id_list)
     sc_check_instance.po_transaction_check(object_id_list)
     sc_check_instance.calender_id_check(default_calendar_id)

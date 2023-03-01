@@ -443,7 +443,7 @@ def update_image_for_catalog(cart_items):
     return cart_items
 
 
-def get_currency_uom_prod_cat():
+def get_currency_uom_prod_cat_country():
     """
 
     """
@@ -452,7 +452,8 @@ def get_currency_uom_prod_cat():
     uom = django_query_instance.django_filter_query(UnitOfMeasures, {'del_ind': False}, None, None)
     currency_list = dictionary_key_to_list(currency, 'currency_id')
     product_category = get_prod_cat()
-    return currency, uom, currency_list,product_category
+    country_list = get_country_data()
+    return currency, uom, currency_list,product_category,country_list
 
 
 def get_cart_items_detail():

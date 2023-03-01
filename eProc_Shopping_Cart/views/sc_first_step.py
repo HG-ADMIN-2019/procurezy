@@ -29,7 +29,7 @@ from eProc_Price_Calculator.Utilities.price_calculator_generic import calculate_
 from eProc_Shopping_Cart.Shopping_Cart_Forms.call_off_forms.limit_form import UpdateLimitItem
 from eProc_Shopping_Cart.Utilities.shopping_cart_generic import get_prod_by_id, get_supplier_first_second_name, \
     get_image_url, get_prod_cat, update_eform_details_scitem, get_currency_converted_price_data, \
-    update_image_for_catalog, get_currency_uom_prod_cat, get_cart_items_detail, update_delivery_date_to_item_table
+    update_image_for_catalog, get_currency_uom_prod_cat_country, get_cart_items_detail, update_delivery_date_to_item_table
 from eProc_Shopping_Cart.Utilities.shopping_cart_specific import check_for_eform, get_prod_cat_dropdown, \
     get_free_text_content, get_limit_item_details, update_supplier_uom, update_supplier_uom_for_prod, \
     update_suppliers_uom_details, get_limit_order_item_details
@@ -265,7 +265,7 @@ def shopping_cart_first_step(request):
     cart_items = update_eform_details_scitem(cart_items)
 
     sys_attributes_instance = sys_attributes(global_variables.GLOBAL_CLIENT)
-    currency, uom, currency_list,product_category = get_currency_uom_prod_cat()
+    currency, uom, currency_list,product_category,country_list = get_currency_uom_prod_cat_country()
     context = {
         'product_category': product_category,
         'limit_form': UpdateLimitItem(),
@@ -286,7 +286,7 @@ def shopping_cart_first_step(request):
         'date_today': datetime.datetime.today(),
         'display_update_delete': True,
         'currency_list': currency_list,
-        'country_list': get_country_data(),
+        'country_list': country_list,
         'is_first_step': True,
         'add_favourites_flag': sys_attributes_instance.get_add_favourites(),
     }
