@@ -171,7 +171,7 @@ $('#save_id').click(function () {
 });
 
 //Read popup table data
-function read_popup_data(){
+function read_popup_data() {
     countries_data = new Array();
     validate_add_attributes = [];
     $("#id_popup_table TBODY TR").each(function () {

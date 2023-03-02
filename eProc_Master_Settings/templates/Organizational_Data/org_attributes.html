@@ -112,10 +112,10 @@
                 <!-- Modal body -->
                 <div class="modal-body scrollbox">
                     <div id="id_del_add_button" class="mb-4">
-                        <button class="btn btn-primary" type="button" onclick="add_popup_row()">
+                        <button class="btn btn-primary" title="add new row" type="button" onclick="add_popup_row()">
                             <i class="fa fa-plus"></i> add new row
                         </button>
-                        <button class="btn btn-outline-danger" onclick="application_settings_delete_Row('id_popup_table')">
+                        <button class="btn btn-outline-danger" title="delete" onclick="application_settings_delete_Row('id_popup_table')">
                             <i class="fa fa-trash"></i> delete
                         </button>
                     </div>
@@ -151,9 +151,9 @@
                 </div>
                 <!-- Modal footer -->
                 <div class="modal-footer"><div class="modal-footer">
-                    <button type="button" class="btn btn-outline-primary remove_upload_data" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
-                    <button class="btn btn-primary" id="save_id"><i class="fas fa-save"></i> save</button>
-                     <button class="btn btn-primary btn-sm" id="delete_data" value="DELETE" data-toggle="modal" data-target="#id_delete_confirm_popup">
+                    <button type="button" class="btn btn-outline-primary remove_upload_data" title="cancel" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
+                    <button class="btn btn-primary" title="save" id="save_id"><i class="fas fa-save"></i> save</button>
+                     <button class="btn btn-primary btn-sm" title="delete" id="delete_data" value="DELETE" data-toggle="modal" data-target="#id_delete_confirm_popup">
                         <i class="fa fa-trash"></i> Delete
                     </button>
                 </div>
