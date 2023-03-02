@@ -421,7 +421,10 @@ def get_currency_converted_price_data(cart_items):
             discount_value = items['discount_value']
             tax_value = items['tax_value']
             # gross_price_list.append(float(items['gross_price'])*items['quantity'])
-        items['item_total_value'] = format(value, '.2f')
+        if value:
+            items['item_total_value'] = float(format(value, '2f'))
+        else:
+            items['item_total_value'] = 0
         total_actual_price = total_actual_price + actual_price
         total_discount_value = total_discount_value + discount_value
         total_tax_value = total_tax_value + tax_value
@@ -502,14 +505,7 @@ def update_delivery_date_to_item_table(cart_items):
     return cart_items
 
 
-def get_default_cart_name(requester_first_name):
-    """
 
-    """
-    date_time = str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-    cart_name = concatenate_str_with_space(requester_first_name, date_time)
-
-    return cart_name
 
 
 def get_manger_and_purchasing_details(company_code, default_acc_ass_cat, total_value, default_acc, call_off_list,

@@ -1547,7 +1547,8 @@ def check_sc_second_step_shopping_cart(sc_check_instance,object_id_list, default
     if default_calendar_id is not None or default_calendar_id != '':
         holiday_list = get_list_of_holidays(default_calendar_id, global_variables.GLOBAL_CLIENT)
 
-    for item_number, items in enumerate(cart_items):
+    for loop_count, items in enumerate(cart_items):
+        item_number = loop_count+1
         sc_check_instance.check_for_prod_cat(items['prod_cat_id'], company_code, item_number)
         if items['call_off'] != CONST_PR_CALLOFF:
             sc_check_instance.check_for_supplier(items['supplier_id'], items['prod_cat_id'], company_code, item_number)
@@ -1584,6 +1585,7 @@ def check_sc_second_step_shopping_cart(sc_check_instance,object_id_list, default
             else:
                 item_delivery_date = items['start_date']
         sc_check_instance.delivery_date_check(item_delivery_date, item_number, holiday_list, default_calendar_id)
+        sc_check_instance.check_for_currency(item_number, items['value'], str(items['currency']))
         items['item_del_date'] = item_delivery_date
 
     shopping_cart_errors = sc_check_instance.get_shopping_cart_errors()

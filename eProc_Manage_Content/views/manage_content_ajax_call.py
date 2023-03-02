@@ -98,7 +98,7 @@ def get_product_details(request, product_id):
         global_variables.GLOBAL_USER_LANGUAGE)
 
     client = global_variables.GLOBAL_CLIENT
-    product_category = get_prod_cat(request, prod_det=None)
+    product_category = get_prod_cat()
     supplier_details = get_supplier_first_second_name(client)
 
     # print(eform_configured)

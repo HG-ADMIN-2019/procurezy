@@ -412,23 +412,8 @@ def sc_second_step(request):
     :return: sc_second_step.html
     """
     update_user_info(request)
-    username = global_variables.GLOBAL_LOGIN_USERNAME
     update_requester_info(global_variables.GLOBAL_LOGIN_USERNAME)
     prod_desc = ''
-    total_item_value = []
-    actual_price_list = []
-    discount_value_list = []
-    tax_value_list = []
-    catalog_qty = None
-    manager_details = []
-    holiday_list = []
-    approver_id = []
-    prod_cat_list = []
-    completion_work_flow = []
-    requester_user_id = ''
-    call_off_list = []
-    cart_items_guid_list = []
-    sc_completion_flag = False
 
     attr_low_value_list, company_code, default_calendar_id, object_id_list = get_company_calendar_from_org_model()
     requester_first_name, cart_name,receiver_name = get_cart_default_name_and_user_first_name(request.user.first_name, request.user.last_name)
@@ -438,14 +423,12 @@ def sc_second_step(request):
     # Display shopping cart items in 2nd step of wizard
 
     cart_items = django_query_instance.django_filter_query(CartItemDetails,
-                                                           {'username': global_variables.GLOBAL_CLIENT,
+                                                           {'username': global_variables.GLOBAL_LOGIN_USERNAME,
                                                             'client': global_variables.GLOBAL_CLIENT},
                                                            ['item_num'],
                                                            None)
 
-    sc_check_instance = CheckForScErrors(global_variables.GLOBAL_CLIENT, global_variables.GLOBAL_LOGIN_USERNAME)
-    cart_items = check_sc_second_step_shopping_cart(sc_check_instance, object_id_list, default_calendar_id,
-                                                    company_code, cart_items)
+
     cart_items_count = len(cart_items)
 
     if cart_items_count == 0:
@@ -473,12 +456,6 @@ def sc_second_step(request):
     # get Accounting data
     accounting_data = get_acc_details(object_id_list, company_code, item_detail_list)
 
-
-    # Get notes and attachment form
-    upload_attach_form = CreateAttachForm()
-    attach_list_form = CreateAttachlistForm()
-    add_note_form = NotesForm()
-
     product_category = get_prod_cat_dropdown(request)
     supplier = check_for_eform(request)
 
@@ -489,6 +466,9 @@ def sc_second_step(request):
                                       accounting_data['default_acc'],
                                       call_off_list,
                                       prod_cat_list)
+    sc_check_instance = CheckForScErrors(global_variables.GLOBAL_CLIENT, global_variables.GLOBAL_LOGIN_USERNAME)
+    cart_items,shopping_cart_errors = check_sc_second_step_shopping_cart(sc_check_instance, object_id_list, default_calendar_id,
+                                                    company_code, cart_items)
 
     default_account_assignment_category, default_account_assignment_value = unpack_accounting_data(accounting_data,
                                                                                                    sc_check_instance)
@@ -497,21 +477,11 @@ def sc_second_step(request):
     sc_check_instance.approval_check(default_account_assignment_category, default_account_assignment_value, total_value,
                                      company_code)
 
-    cart_items = list(
-        django_query_instance.django_filter_query(CartItemDetails, {
-            'username': global_variables.GLOBAL_CLIENT, 'client': global_variables.GLOBAL_CLIENT
-        }, ['item_num'], None)
-    )
-    for items in cart_items:
-        if items['call_off'] == CONST_CATALOG_CALLOFF:
-            items['image_url'] = get_image_url(items['int_product_id'])
-        else:
-            items['image_url'] = ''
-        items = update_supplier_uom_for_prod(items)
+    cart_items = update_image_for_catalog(cart_items)
+
     cart_items = update_eform_details_scitem(cart_items)
-    cart_items = zip(cart_items, total_item_value)
+    currency, uom, currency_list, product_category, country_list = get_currency_uom_prod_cat_country()
     sys_attributes_instance = sys_attributes(global_variables.GLOBAL_CLIENT)
-    shopping_cart_errors = sc_check_instance.get_shopping_cart_errors()
 
     context = {
         'shopping_cart_errors': shopping_cart_errors,
@@ -540,14 +510,11 @@ def sc_second_step(request):
         'gl_acc_item_level_default': accounting_data['gl_acc_item_level_default'],
         'receiver_name': receiver_name,
         'rest_shipping_addr': delivery_addr_list,
-        'upload_attach_form': upload_attach_form,
-        'attach_list_form': attach_list_form,
-        'add_note_form': add_note_form,
         'select_flag': True,
         'acc_default': accounting_data['acc_default'],
         'acc_value': accounting_data['acc_value'],
-        'currency': django_query_instance.django_filter_only_query(Currency, {'del_ind': False}),
-        'unit': django_query_instance.django_filter_only_query(UnitOfMeasures, {'del_ind': False}),
+        'currency': currency,
+        'unit': uom,
         'product_category': product_category,
         'supplier_details': get_supplier_first_second_name(global_variables.GLOBAL_CLIENT),
         'date_today': datetime.datetime.today(),
@@ -568,11 +535,11 @@ def sc_second_step(request):
         'shipping_address_flag': sys_attributes_instance.get_shipping_address(),
         'attachment_size': sys_attributes_instance.get_attachment_size(),
         'attachment_extension': sys_attributes_instance.get_attachment_extension(),
-        'currency_list': get_currency_list(),
+        'currency_list': currency_list,
 
     }
 
-    return render(request, 'Shopping_Cart/sc_second_step/sc_second_step.html', context)
+    return render(request, 'Shopping_Cart/sc_second_step/shopping_cart_second_step.html', context)
 
 
 # Function to call save shopping cart through ajax call (login required decorator is not required)

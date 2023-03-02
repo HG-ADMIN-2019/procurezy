@@ -47,7 +47,7 @@ from eProc_Exchange_Rates.Utilities.exchange_rates_specific import get_currency_
 from eProc_Exchange_Rates.Utilities.exchange_rates_generic import convert_currency
 from eProc_System_Settings.Utilities.system_settings_generic import sys_attributes
 from eProc_Workflow.Utilities.work_flow_generic import save_sc_approval
-
+import datetime
 django_query_instance = DjangoQueries()
 
 
@@ -1106,6 +1106,15 @@ def get_highest_acc_detail(header_guid):
     else:
         account_assignment_value = highest_item_accounting_data.wbs_ele
     return account_assignment_category, account_assignment_value
+
+def get_default_cart_name(requester_first_name):
+    """
+
+    """
+    date_time = str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
+    cart_name = concatenate_str_with_space(requester_first_name, date_time)
+
+    return cart_name
 
 
 def get_SC_details(sc_header_guid):
