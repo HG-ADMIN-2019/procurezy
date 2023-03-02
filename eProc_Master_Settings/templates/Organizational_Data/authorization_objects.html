@@ -11,8 +11,8 @@
                 <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Application_Settings:extract_authorization_object_data' %}'"type="button">
                     <i class="fas fa-download"></i> extract data
                 </button>
-                <button class="btn btn-primary" type="button" id="id_add_data" value="ADD"  data-toggle="modal" data-target="#auth_obj_Modal" onclick="onclick_add_button(this)">
-                    <i class="fa fa-plus"></i> add authorization object
+                <button class="btn btn-primary" title="Add Authorization Object" type="button" id="id_add_data" value="ADD"  data-toggle="modal" data-target="#auth_obj_Modal" onclick="onclick_add_button(this)">
+                    <i class="fa fa-plus"></i> Add Authorization Object
                 </button>
                   <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"  onclick="window_close();">
                     <i class="fas fa-times"></i> close
@@ -80,10 +80,10 @@
                 <!-- Modal body -->
                 <div class="modal-body scrollbox">
                     <div id="id_del_add_button" class="mb-4">
-                        <button class="btn btn-primary" type="button" onclick="add_popup_row()">
+                        <button class="btn btn-primary" title="Add New Row" type="button" onclick="add_popup_row()">
                             <i class="fa fa-plus"></i> add new row
                         </button>
-                        <button class="btn btn-outline-danger" onclick="application_settings_delete_Row('id_popup_table')">
+                        <button class="btn btn-outline-danger" title="Delete" onclick="application_settings_delete_Row('id_popup_table')">
                             <i class="fa fa-trash"></i> delete
                         </button>
                     </div>
@@ -113,10 +113,10 @@
                 </div>
                 <!-- Modal footer -->
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-primary remove_upload_data" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
+                    <button type="button" class="btn btn-outline-primary remove_upload_data" title="Cancel" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
                     <button id="id_delete_duplicate" class="btn btn-primary" style="display:none;" type="button" onclick="delete_duplicate()"><i class="fa fa-trash"></i> delete duplicates</button>
                     <button id="id_check_data" style="display:none;" class="btn btn-primary" type="button" onclick="check_data()"><i class="fas fa-check"></i> check</button>
-                    <button class="btn btn-primary" id="save_id"><i class="fas fa-save"></i> save</button>
+                    <button class="btn btn-primary" title="Save" id="save_id"><i class="fas fa-save"></i> save</button>
                 </div>
             </div>
         </div>
@@ -143,6 +143,7 @@
     var rendered_auth_obj_id = JSON.parse(document.getElementById('auth_obj_id_db_values').textContent);
     var rendered_auth_type = JSON.parse(document.getElementById('auth_type_db_values').textContent);
     var rendered_auth_obj_data_onload = JSON.parse(document.getElementById('auth_obj_id_db_values_onload').textContent);
+    var messages_list = {{messages_list|safe}};
     var auth_obj_data_array = {}
     var main_table_auth_obj_value = [];
     var auth_obj = '';
@@ -152,9 +153,6 @@
     var Tablename = uiConstants["CONST_TABLENAME_AUTH_OBJ"]
     var appname = uiConstants["CONST_APPNAME01"]
     var db_header_data = uiConstants["CONST_HEADER_DATA_AUTH_OBJ"]
-    var messages_list = {{messages_list|safe}};
-
-    //**************************************
     var auth_type_dropdown,auth_obj_id_dropdown,auth_obj_id_db_values_onload;
 
     //***************************
@@ -177,7 +175,6 @@
     function popup_save_data() {
         $('#success_msg_id').empty()
         $('#id_popup_table').DataTable().destroy();
-        var main_table_low_value = [];
         no_duplicate_entries = 'Y'
         no_duplicate_value = 'Y'
         var error_message = '';
@@ -185,40 +182,40 @@
         // compare for duplicates in popup
         [no_duplicate_value,error_message] = compare_table_for_duplicate_entries(validate_add_attributes, authobj_data)
         if (error_message){
-               display_error_message(error_message)
+            display_error_message(error_message)
+        }
+        else{
+            if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
+                [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
             }
-            else{
-                if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
-                    [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
-                }
-                if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
-                    var add_basic_data = '';
-                    var auth_obj_data_array = authobj_data;
-                    $('#id_save_confirm_popup').modal('hide');
-                    data = {'data':authobj_data,'table_name':'AuthorizationObject','action':GLOBAL_ACTION}
-                    OpenLoaderPopup();
-                    $.ajax({
-                        type: 'POST',
-                        url: "{% url 'eProc_Configuration:create_update_application_data' %}",
-                        data: JSON.stringify(data),
-                        contentType: "application/json; charset=utf-8",
-                        dataType: "json",
-                        success: function(Response) {
-                            rendered_auth_obj_data = Response[0];
-                            rendered_auth_obj_id = Response[2];
-                            display_basic_db_data();
-                            dropdown_value();
-                            $('#auth_obj_Modal').modal('hide');
-                            success_response(Response);  // Display Response data
-                            CloseLoaderPopup();
-                        }
-                    });
-                }
-                else if (error_message){
-                    display_error_message(error_message)
-                }
+            if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
+                var add_basic_data = '';
+                var auth_obj_data_array = authobj_data;
+                $('#id_save_confirm_popup').modal('hide');
+                data = {'data':authobj_data,'table_name':'AuthorizationObject','action':GLOBAL_ACTION}
+                OpenLoaderPopup();
+                $.ajax({
+                    type: 'POST',
+                    url: "{% url 'eProc_Configuration:create_update_application_data' %}",
+                    data: JSON.stringify(data),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function(Response) {
+                        rendered_auth_obj_data = Response[0];
+                        rendered_auth_obj_id = Response[2];
+                        display_basic_db_data();
+                        dropdown_value();
+                        $('#auth_obj_Modal').modal('hide');
+                        success_response(Response);  // Display Response data
+                        CloseLoaderPopup();
+                    }
+                });
+            }
+            else if (error_message){
+                display_error_message(error_message)
             }
         }
+    }
 
     //delete the selected row in db................
     var main_table_auth_obj_checked = [];
@@ -284,24 +281,6 @@
         return [no_duplicate_value,error_message]
     }
 
-    //validate by comparing  main table values and popup table values
-    function maintable_validation(validate_add_attributes, main_table_low_value) {
-        var no_duplicate_entries = 'Y'
-        var error_message =''
-        var common = [];
-        jQuery.grep(validate_add_attributes, function (el) {
-            if (jQuery.inArray(el, main_table_low_value) != -1) {
-                common.push(el);
-            }
-        });
-        if (common.length != 0) {
-            error_message = ui_messeges("JMSG001")// Get message details
-            no_duplicate_value = 'N'
-            return [no_duplicate_value,error_message]
-        }
-        return [no_duplicate_entries,error_message]
-    }
-
     //onclick of add button display auth_obj_Modal popup and set GLOBAL_ACTION button value
     function onclick_add_button(button) {
         OpenLoaderPopup();
@@ -321,7 +300,6 @@
                 $('#id_popup_table').DataTable().destroy();
                 $("#id_popup_tbody").empty();
                 new_row_data(); // Function for add a new row data
-                table_sort_filter('id_popup_table');
                 $("#id_del_ind_checkbox").prop("hidden", true);
                 document.getElementById("id_del_add_button").style.display = "block";
                 $("#save_id").prop("hidden", false);

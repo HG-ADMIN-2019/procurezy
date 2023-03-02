@@ -62,8 +62,8 @@
                                 <INPUT type="checkbox" onchange="checkAll(this)" name="chk[]">
                             </div>
                         </th>
-                        <th>User Name</th>
                         <th>Company Number</th>
+                        <th>User Name</th>
                         <th>Approver Limit</th>
                         <th hidden>guid</th>
                     </tr>
@@ -72,8 +72,8 @@
                     {% for applimit in approval_limit %}
                     <tr>
                         <td class="class_select_checkbox" hidden><input type="checkbox" class="checkbox_check" onclick="valueChanged()" required></td>
-                        <td>{{ applimit.approver_username}}</td>
                         <td>{{applimit.company_id}}</td>
+                        <td>{{ applimit.approver_username}}</td>
                         <td>{{applimit.app_code_id}}</td>
                         <td hidden>{{applimit.app_guid}}</td>
                     </tr>
@@ -123,8 +123,8 @@
                         <thead>
                         <tr>
                             <th id="header_select">Select</th>
-                            <th>User Name</th>
                             <th>Company Number</th>
+                            <th>User Name</th>
                             <th>Approver Limit</th>
                             <th hidden>guid</th>
                             <th id="id_del_ind_checkbox" hidden>Del Indicator</th>
@@ -283,9 +283,9 @@
                                 appid_id_list = appid + appid_list
                             });
                             edit_basic_data += '<tr><td><input type="checkbox" required></td>'+
+                            '<td><select class="form-control" type = "text">'+company_id_list+'</select></td>'+
                             '<td><select type="text" class="form-control">'+ user_id_list +'</select></td>'+
                             '<td><select class="form-control" type = "text">'+appid_id_list+'</select></td>'+
-                            '<td><select class="form-control" type = "text">'+company_id_list+'</select></td>'+
                             '<td hidden><input type="text" value=""></td><td>' + del_ind + '</td></tr>';
                         });
                         $('#id_popup_tbody').append(edit_basic_data);
@@ -296,8 +296,8 @@
                             var appid_id_list = dropdown_values[i][1]
                             var company_id_list = dropdown_values[i][2]
                             
-                            $(row.find("TD").eq(1).find("select option[value="+user_id_list+"]")).attr('selected','selected');
-                            $(row.find("TD").eq(2).find("select option[value="+company_id_list+"]")).attr('selected','selected');
+                            $(row.find("TD").eq(2).find("select option[value="+user_id_list+"]")).attr('selected','selected');
+                            $(row.find("TD").eq(1).find("select option[value="+company_id_list+"]")).attr('selected','selected');
                             $(row.find("TD").eq(3).find("select option[value="+appid_id_list+"]")).attr('selected','selected');
                             i++;
                         });
@@ -428,8 +428,8 @@
             var row = $(this);
               approv_limit_dic = {}
             //*************** reading data from the pop-up ***************
-            approv_limit_dic.approver_username = row.find("TD").eq(1).find("select option:selected").val();
-            approv_limit_dic.company_id = row.find("TD").eq(2).find("select option:selected").val();
+            approv_limit_dic.approver_username = row.find("TD").eq(2).find("select option:selected").val();
+            approv_limit_dic.company_id = row.find("TD").eq(1).find("select option:selected").val();
             approv_limit_dic.app_code_id = row.find("TD").eq(3).find("select option:selected").val(); 
             approv_limit_dic.app_guid = row.find("TD").eq(4).find('input[type="text"]').val().toUpperCase()
             approval_limit_compare = approv_limit_dic.approver_username +'-'+ approv_limit_dic.app_code_id +'-'+ approv_limit_dic.company_id
@@ -457,10 +457,10 @@
                 error_message = ui_messeges("JMSG003")// Get message details
                 var display = msg_type.messages_id_desc[0];
                 document.getElementById("id_error_msg_approval_limit_code").innerHTML = display + "Username";
-                $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
+                $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "1px solid #FF0000");
                 count = count + 1;
             } else {
-                $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "none");
+                $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "none");
             }
             if (approval_limit_code_check.includes(approval_limit_compare)) {
                 $(row).css("border", "#f8d7da");
@@ -592,11 +592,11 @@
                         var row = checkBoxes[i].parentNode.parentNode;
                         if(GLOBAL_ACTION == "COPY"){
                             guid = 'GUID';
-                            edit_basic_data += '<tr><td><input type="checkbox" required></td><td><select class="form-control">'+user_name_dropdown+'</select></td><td><select class="form-control" disabled>'+company_id_dropdown+'</select></td><td><select class="form-control">'+app_code_id_dropdown+'</select></td><td hidden><input type="text" value="'+guid+'"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+                            edit_basic_data += '<tr><td><input type="checkbox" required></td><td><select class="form-control" disabled>'+company_id_dropdown+'</select></td><td><select class="form-control">'+user_name_dropdown+'</select></td><td><select class="form-control">'+app_code_id_dropdown+'</select></td><td hidden><input type="text" value="'+guid+'"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
                             $("#header_select").prop("hidden", false);
                         } else{
                             guid = row.cells[4].innerHTML;
-                            edit_basic_data += '<tr><td hidden><input type="checkbox" required></td><td><select class="form-control"disabled>'+user_name_dropdown+'</select></td><td><select class="form-control" disabled>'+company_id_dropdown+'</select></td><td><select class="form-control">'+app_code_id_dropdown+'</select></td><td hidden><input type="text" value="'+guid+'"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+                            edit_basic_data += '<tr><td hidden><input type="checkbox" required></td><td><select class="form-control" disabled>'+company_id_dropdown+'</select></td><td><select class="form-control"disabled>'+user_name_dropdown+'</select></td><td><select class="form-control">'+app_code_id_dropdown+'</select></td><td hidden><input type="text" value="'+guid+'"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
                             $("#header_select").prop("hidden", true);
                         }
                         var row = checkBoxes[i].parentNode.parentNode;
@@ -614,8 +614,8 @@
                     console.log(approver_username_value)
                     var company_type_value = dropdown_values[i][1]
                     var app_code_id_value = dropdown_values[i][2]
-                    $(row.find("TD").eq(1).find("select option[value="+approver_username_value+"]")).attr('selected','selected');
-                    $(row.find("TD").eq(2).find("select option[value="+company_type_value+"]")).attr('selected','selected');
+                    $(row.find("TD").eq(2).find("select option[value="+approver_username_value+"]")).attr('selected','selected');
+                    $(row.find("TD").eq(1).find("select option[value="+company_type_value+"]")).attr('selected','selected');
                     $(row.find("TD").eq(3).find("select option[value="+app_code_id_value+"]")).attr('selected','selected');
                     i++;
                 });
@@ -635,8 +635,8 @@
         $("#id_popup_table TBODY TR").each(function() {
             var row = $(this);
             approv_limit_dic = {}
-            approv_limit_dic.approver_username = row.find("TD").eq(1).find("select option:selected").val();
-            approv_limit_dic.company_id = row.find("TD").eq(2).find("select option:selected").val();
+            approv_limit_dic.approver_username = row.find("TD").eq(2).find("select option:selected").val();
+            approv_limit_dic.company_id = row.find("TD").eq(1).find("select option:selected").val();
             approv_limit_dic.app_code_id = row.find("TD").eq(3).find("select option:selected").val();
             var compare = approv_limit_dic.approver_username +'-'+ approv_limit_dic.company_id +'-'+ approv_limit_dic.app_code_id
             approv_limit_check.push(compare);

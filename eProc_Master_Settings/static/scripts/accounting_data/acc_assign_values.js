@@ -51,7 +51,7 @@ function display_basic_db_data() {
     $('#id_aav_tbody').empty();
     var edit_basic_data = '';
     $.each(rendered_account_assignment_value, function(index, value) {
-        edit_basic_data += '<tr><td class="class_select_checkbox"><input class="checkbox_check" onclick="valueChanged()" type="checkbox" required></td><td>' + value.account_assign_value + '</td><td>' + value.account_assign_cat + '</td><td>' + value.company_id + '</td><td>' + value.valid_from + '</td><td>' + value.valid_to+ '</td><td hidden>' + value.account_assign_guid + '</td> <td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+        edit_basic_data += '<tr><td class="class_select_checkbox"><input class="checkbox_check" onclick="valueChanged()" type="checkbox" required></td><td>' + value.company_id + '</td><td>' + value.account_assign_cat + '</td><td>' + value.account_assign_value + '</td><td>' + value.valid_from + '</td><td>' + value.valid_to+ '</td><td hidden>' + value.account_assign_guid + '</td> <td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
     });
     $('#id_aav_tbody').append(edit_basic_data);
     $("#hg_select_checkbox").prop("hidden", true);
@@ -114,11 +114,11 @@ function delete_duplicate() {
 
         //*************** reading data from the pop-up ***************
 
-        account_assign_value = row.find("TD").eq(1).find('input[type="number"]').val();
+        account_assign_value = row.find("TD").eq(3).find('input[type="number"]').val();
         valid_from = row.find("TD").eq(4).find('input[type="date"]').val()
         valid_to = row.find("TD").eq(5).find('input[type="date"]').val()
         account_assign_cat = row.find("TD").eq(2).find('Select').val()
-        company_id = row.find("TD").eq(3).find('Select').val()
+        company_id = row.find("TD").eq(1).find('Select').val()
 
         var compare = account_assign_value + '-' + account_assign_cat + '-' + company_id
         if (aav_code_check.includes(compare)) {
@@ -146,20 +146,21 @@ function read_popup_data() {
         var row = $(this);
         aav={};
         aav.del_ind = row.find("TD").eq(7).find('input[type="checkbox"]').is(':checked');
-            aav.account_assign_value = row.find("TD").eq(1).find('input[type="number"]').val();
-            aav.valid_from = row.find("TD").eq(4).find('input[type="date"]').val()
-            aav.valid_to = row.find("TD").eq(5).find('input[type="date"]').val()
-            aav.account_assign_cat = row.find("TD").eq(2).find('Select').val()
-            aav.company_id = row.find("TD").eq(3).find('Select').val()
-            aav.account_assign_guid = row.find("TD").eq(6).find('input[type="text"]').val();
-            if (aav == undefined) {
-                aav.account_assign_value = row.find("TD").eq(1).find('input[type="text"]').val();
-            }
-            if(aav.account_assign_guid == undefined) {
-                aav.account_assign_guid = ''
-            }
-            check_dates.push([aav.valid_from, aav.valid_to])
-        validate_add_attributes.push(aav.account_assign_value);
+        aav.company_id = row.find("TD").eq(1).find('Select').val()
+        aav.account_assign_cat = row.find("TD").eq(2).find('Select').val()
+        aav.account_assign_value = row.find("TD").eq(3).find('input[type="number"]').val();
+        aav.valid_from = row.find("TD").eq(4).find('input[type="date"]').val()
+        aav.valid_to = row.find("TD").eq(5).find('input[type="date"]').val()
+        aav.account_assign_guid = row.find("TD").eq(6).find('input[type="text"]').val();
+        var compare = aav.company_id + '-' + aav.account_assign_cat + '-' + aav.account_assign_value;
+        if (aav == undefined) {
+            aav.account_assign_value = row.find("TD").eq(3).find('input[type="text"]').val();
+        }
+        if(aav.account_assign_guid == undefined) {
+            aav.account_assign_guid = ''
+        }
+        check_dates.push([aav.valid_from, aav.valid_to])
+        validate_add_attributes.push(compare);
         aav_data.push(aav);
     });
     return aav_data;
@@ -199,10 +200,10 @@ function get_main_table_data() {
     $("#display_basic_table TBODY TR").each(function() {
         var row = $(this);
         var main_attribute = {};
-        main_attribute.account_assign_value = row.find("TD").eq(1).html();
+        main_attribute.company_id = row.find("TD").eq(1).html();
         main_attribute.account_assign_cat = row.find("TD").eq(2).html();
-        main_attribute.company_id = row.find("TD").eq(3).html();
-        compare_maintable = main_attribute.account_assign_value + '-' + main_attribute.account_assign_cat + '-' + main_attribute.company_id;
+        main_attribute.account_assign_value = row.find("TD").eq(3).html();
+        compare_maintable = main_attribute.company_id + '-' + main_attribute.account_assign_cat + '-' + main_attribute.account_assign_value;
         main_table_low_value.push(compare_maintable);
     });
     table_sort_filter('display_basic_table');
@@ -216,11 +217,11 @@ function get_selected_row_data() {
          aav_arr_obj.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
          disable_check = row.find("TD").eq(7).find('input[type="text"]').val();
          if(aav_arr_obj.del_ind){
-            aav_arr_obj.account_assign_value = row.find("TD").eq(1).find('input[type="number"]').val();
+            aav_arr_obj.account_assign_value = row.find("TD").eq(3).find('input[type="number"]').val();
             aav_arr_obj.valid_from = row.find("TD").eq(4).find('input[type="date"]').val()
             aav_arr_obj.valid_to = row.find("TD").eq(5).find('input[type="date"]').val()
             aav_arr_obj.account_assign_cat = row.find("TD").eq(2).find('Select').val()
-            aav_arr_obj.company_id = row.find("TD").eq(3).find('Select').val()
+            aav_arr_obj.company_id = row.find("TD").eq(1).find('Select').val()
             aav_arr_obj.account_assign_guid = row.find("TD").eq(6).find('input').val()
             main_table_aav_checked.push(aav_arr_obj);
          }
@@ -230,9 +231,9 @@ function get_selected_row_data() {
  // Function for add a new row data
  function new_row_data() {
     basic_add_new_html = '<tr><td><input type="checkbox" required></td>'+
-    '<td><input class="form-control check_number" type="number" minlength="4" maxlength="40" name="Account Assignment Value" required></td>'+
-    '<td><select class="form-control" id="acc_ass_val_dropdw">' + acc_ass_dropdwn + ' </select></td>'+
     '<td><select class="form-control" id="company_dropdw">' + company_dropdwn + '</select></td>'+
+    '<td><select class="form-control" id="acc_ass_val_dropdw">' + acc_ass_dropdwn + ' </select></td>'+
+    '<td><input class="form-control check_number" type="number" minlength="4" maxlength="40" name="Account Assignment Value" required></td>'+
     '<td><input class="form-control" type="date" maxlength="10" name="valid_from" required></td>'+
     '<td><input class="form-control" type="date" maxlength="10" name="Valid To Date" required></td>'+
     '<td hidden><input value=""></td>'+

@@ -91,8 +91,8 @@
                 <div class="modal-body">
                     <div class="popup-vertical-scroll">
                     <div id="id_del_add_button" class="mb-2">
-                        <button type="button" class="btn btn-primary" onclick="add_popup_row()"><i class="fa fa-plus"></i> add new row</button>
-                        <button class="btn btn-outline-danger" onclick="application_settings_delete_Row('id_popup_table')"><i class="fa fa-trash"></i> delete</button>
+                        <button type="button" class="btn btn-primary" title="Add New Row" onclick="add_popup_row()"><i class="fa fa-plus"></i> add new row</button>
+                        <button class="btn btn-outline-danger" title="Delete" onclick="application_settings_delete_Row('id_popup_table')"><i class="fa fa-trash"></i> delete</button>
                     </div>
                     <div id="id_check_success_messages" class="alert alert-success check_success_message" hidden></div>
                     <div id="id_check_error_messages" class="alert alert-danger check_error_messages" hidden></div>
@@ -123,10 +123,10 @@
                 </div>
                 <!-- Modal footer -->
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-primary remove_upload_data" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
+                    <button type="button" class="btn btn-outline-primary remove_upload_data" title="Cancel" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
                     <button id="id_delete_duplicate" class="btn btn-primary" style="display:none;" type="button" onclick="delete_duplicate()"><i class="fa fa-trash"></i> delete duplicates</button>
                     <button id="id_check_data" style="display:none;" class="btn btn-primary" type="button" onclick="check_data()"><i class="fas fa-check"></i> check</button>
-                    <button class="btn btn-primary" id="save_id"><i class="fas fa-save"></i> save</button>
+                    <button class="btn btn-primary" title="save" id="save_id"><i class="fas fa-save"></i> save</button>
                 </div>
             </div>
         </div>
@@ -146,6 +146,7 @@
 </div>
 <script>
     var rendered_uom_data = {{upload_unit_of_measure|safe}};
+    var messages_list = {{messages_list|safe}};
     var uom_data_array = {}
     var main_table_uom_value = [];
     var uom = '';
@@ -229,51 +230,52 @@
 
     // validate and save for add,copy,update and upload data
     function popup_save_data() {
-            $('#success_msg_id').empty();
-            $('#id_popup_table').DataTable().destroy();
-            no_duplicate_entries = 'Y'
-            no_duplicate_value = 'Y'
-            var error_message = '';
-            get_main_table_data();  //Read data from main table
-            $("#id_error_msg").empty();
-            [no_duplicate_value,error_message] = compare_table_for_duplicate_entries(validate_add_attributes, uom_data);
-            if (error_message){
-               display_error_message(error_message);
+        $('#success_msg_id').empty();
+        $('#id_popup_table').DataTable().destroy();
+        no_duplicate_entries = 'Y'
+        no_duplicate_value = 'Y'
+        var error_message = '';
+        get_main_table_data();  //Read data from main table
+        $("#id_error_msg").empty();
+        [no_duplicate_value,error_message] = compare_table_for_duplicate_entries(validate_add_attributes, uom_data);
+        if (error_message){
+            display_error_message(error_message);
+        }
+        else{
+            if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
+                [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
+                if(no_duplicate_entries == 'N'){
+                    $('#uomModal').modal('show');
+                }
             }
-            else{
-                if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
-                    [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
-                    if(no_duplicate_entries == 'N'){
-                        $('#uomModal').modal('show');
+            if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
+                var add_basic_data = '';
+                var uom_data_array = uom_data;
+                $('#id_save_confirm_popup').modal('hide');
+                data = {'data':uom_data,'table_name':'UnitOfMeasures','action':GLOBAL_ACTION}
+                OpenLoaderPopup();
+                $.ajax({
+                    type: 'POST',
+                    url: "{% url 'eProc_Basic_Settings:create_update_basic_data' %}",
+                    data: JSON.stringify(data),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function(Response) {
+                        rendered_uom_data = Response[0];
+                        display_basic_db_data();
+                        $('#uomModal').modal('hide');
+                        success_response(Response); // Function call to display response data
+                        $("#id_check_data").prop("hidden", true);
+                        CloseLoaderPopup();
                     }
-                }
-                if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
-                    var add_basic_data = '';
-                    var uom_data_array = uom_data;
-                    $('#id_save_confirm_popup').modal('hide');
-                    data = {'data':uom_data,'table_name':'UnitOfMeasures','action':GLOBAL_ACTION}
-                    OpenLoaderPopup();
-                    $.ajax({
-                        type: 'POST',
-                        url: "{% url 'eProc_Basic_Settings:create_update_basic_data' %}",
-                        data: JSON.stringify(data),
-                        contentType: "application/json; charset=utf-8",
-                        dataType: "json",
-                        success: function(Response) {
-                            rendered_uom_data = Response[0];
-                            display_basic_db_data();
-                            $('#uomModal').modal('hide');
-                            success_response(Response); // Function call to display response data
-                            $("#id_check_data").prop("hidden", true);
-                            CloseLoaderPopup();
-                        }
-                    });
-                }
-                else if (error_message){
-                    display_error_message(error_message)
-                } 
+                });
             }
+            else if (error_message){
+                display_error_message(error_message)
+            } 
+        }
     }
+
     //delete the selected row in db................
     var main_table_uom_checked = [];
     function main_table_delete() {
@@ -298,6 +300,7 @@
             }
         });
     }
+
     //check function restricting special char and diaplay the data count of csv file
     function check_data() {
         $('#id_popup_table').DataTable().destroy();
@@ -317,206 +320,178 @@
         var uom_id_check = new Array
         del_ind = ''
         $("#id_popup_table TBODY TR").each(function() {
-        var row = $(this);
-        //*************** reading data from the pop-up ***************
-                uom_id = row.find("TD").eq(1).find('input[type="text"]').val().toUpperCase();
-                uom_description = row.find("TD").eq(2).find('input[type="text"]').val().toUpperCase();
-                iso_code_id = row.find("TD").eq(3).find('input[type="text"]').val().toUpperCase();
-                checked_box = row.find("TD").eq(4).find('input[type="checkbox"]').is(':checked')
-                if (checked_box) {
-                    del_ind = '1'
-                } else {
-                    del_ind = '0'
-                }
-                uom_list.push([uom_id, uom_description, iso_code_id, del_ind])
-                var format = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
-                //*************** checking for max length for uom code (max length = 3) ***************
-                if (uom_id.length > 3) {
-                    msg_type = message_config_details(msg);
-                    error_message = ui_messeges("JMSG004")// Get message details
-                    var display = error_message;
-                    document.getElementById("id_error_msg_uom_length").innerHTML = display + "Unit of Measure Code";
-                    $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
-                    count = count + 1;
-                }
-                //*************** checking for special characters for uom code ***************
-                else if (format.test(uom_id)) {
-                    error_message = ui_messeges("JMSG003")// Get message details
-                    var display = error_message;
-                    document.getElementById("id_error_msg_uom_code").innerHTML = display + "Unit of Measure Code";
-                    $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
-                    count = count + 1;
-                    } else {
-                    $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "none");
-                    }
-                //*************** checking for special characters for description ***************
-                if (format.test(uom_description)) {
-                    error_message = ui_messeges("JMSG003")// Get message details
-                    var display = error_message;
-                    document.getElementById("id_error_msg_uom_name").innerHTML = display + "Unit of Measure Description";
-                    $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "1px solid #FF0000");
-                    count = count + 1;
-                } else {
-                    $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "none");
-                }
-                if (uom_id_check.includes(uom_id)) {
-                    $(row).css({
-                        "background-color": "#E0FFFF",
-                        "border": "1px solid #000000"
-                    });
-                } else {
-                    $(row).css("background-color", "");
-                }
-                uom_id_check.push(uom_id)
-            });
-            //*************** shows save button if there are no errors(special characters and max length) ***************
-            if (count == 0) {
-                $("#id_check_special_character_messages").prop("hidden", true)
-                $("#save_id").prop("hidden", false);
+            var row = $(this);
+            //*************** reading data from the pop-up ***************
+            uom_id = row.find("TD").eq(1).find('input[type="text"]').val().toUpperCase();
+            uom_description = row.find("TD").eq(2).find('input[type="text"]').val().toUpperCase();
+            iso_code_id = row.find("TD").eq(3).find('input[type="text"]').val().toUpperCase();
+            checked_box = row.find("TD").eq(4).find('input[type="checkbox"]').is(':checked')
+            if (checked_box) {
+                del_ind = '1'
+            } else {
+                del_ind = '0'
             }
-            popup_data_dict = {
-                'data_list': uom_list,
-                'Tablename': Tablename,
-                'appname': appname,
-                'db_header_data': ["UOM_ID", "UOM_DESCRIPTION", "del_ind"]
+            uom_list.push([uom_id, uom_description, iso_code_id, del_ind])
+            var format = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
+            //*************** checking for max length for uom code (max length = 3) ***************
+            if (uom_id.length > 3) {
+                msg_type = message_config_details(msg);
+                error_message = ui_messeges("JMSG004")// Get message details
+                var display = error_message;
+                document.getElementById("id_error_msg_uom_length").innerHTML = display + "Unit of Measure Code";
+                $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
+                count = count + 1;
             }
-            OpenLoaderPopup();
-            $.ajax({
-                type: 'POST',
-                url: "{% url 'eProc_Basic_Settings:check_data' %}",
-                data: JSON.stringify(popup_data_dict),
-                success: function(response) {
-                    table_sort_filter_popup_pagination('id_popup_table')
-                    $("#id_check_special_character_messages").prop("hidden", false)
-                    if (count == 0) {
-                        $("#id_check_special_character_messages").prop("hidden", true)
-                    }
-                    //*************** retrieving data counts from views ***************
-                    check_messages = response
-                    var newArrayDataOfOjbect = Object.values(check_messages)
-                    $("#id_check_success_messages").prop("hidden", false)
-                  //*************** if pop-up data count is greater than zero ***************
-                    if (newArrayDataOfOjbect[1] > 0) {
-                            $.each(response['messages'], function(i, item) {
-                                $("#id_check_success_messages").append('<p>' + item + '</p>');
-                            });
-                        //*************** if duplicate data data count is greater than zero ***************
-                        if(newArrayDataOfOjbect[2]>0){
-                            $("#id_check_error_messages").prop("hidden",false)
-                            var display6 = get_msg_desc_check_data("JMSG015");
-                            $("#id_check_error_messages").append('<p>' + display6 + newArrayDataOfOjbect[2] + '</p>')
-                            var display7 = get_msg_desc_check_data("JMSG001");
-                            $("#id_check_error_messages").append('<p style = "font-weight: bold;">' + display7 + ' </p>')
-                            $("#save_id").prop("hidden", true);
-                            $("#id_delete_duplicate").show();
-                        }
-                        else{
-                            $("#id_check_error_messages").prop("hidden",true)
-                            $("#id_delete_duplicate").hide();
-                        }
-                    }
-                    //*************** if pop-up data count is zero ***************
-                    else {
-                        $("#id_check_success_messages").hide();
-                        $("#id_check_error_messages").prop("hidden", false)
-                        var display8 = get_msg_desc_check_data("JMSG006");
-                        $("#id_check_error_messages").append('<p>' + display8 + '</p>')
+            //*************** checking for special characters for uom code ***************
+            else if (format.test(uom_id)) {
+                error_message = ui_messeges("JMSG003")// Get message details
+                var display = error_message;
+                document.getElementById("id_error_msg_uom_code").innerHTML = display + "Unit of Measure Code";
+                $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
+                count = count + 1;
+            } else {
+                $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "none");
+            }
+            //*************** checking for special characters for description ***************
+            if (format.test(uom_description)) {
+                error_message = ui_messeges("JMSG003")// Get message details
+                var display = error_message;
+                document.getElementById("id_error_msg_uom_name").innerHTML = display + "Unit of Measure Description";
+                $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "1px solid #FF0000");
+                count = count + 1;
+            } else {
+                $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "none");
+            }
+            if (uom_id_check.includes(uom_id)) {
+                $(row).css({
+                    "background-color": "#E0FFFF",
+                    "border": "1px solid #000000"
+                });
+            } else {
+                $(row).css("background-color", "");
+            }
+            uom_id_check.push(uom_id)
+        });
+        //*************** shows save button if there are no errors(special characters and max length) ***************
+        if (count == 0) {
+            $("#id_check_special_character_messages").prop("hidden", true)
+            $("#save_id").prop("hidden", false);
+        }
+        popup_data_dict = {
+            'data_list': uom_list,
+            'Tablename': Tablename,
+            'appname': appname,
+            'db_header_data': ["UOM_ID", "UOM_DESCRIPTION", "del_ind"]
+        }
+        OpenLoaderPopup();
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'eProc_Basic_Settings:check_data' %}",
+            data: JSON.stringify(popup_data_dict),
+            success: function(response) {
+                table_sort_filter_popup_pagination('id_popup_table')
+                $("#id_check_special_character_messages").prop("hidden", false)
+                if (count == 0) {
+                    $("#id_check_special_character_messages").prop("hidden", true)
+                }
+                //*************** retrieving data counts from views ***************
+                check_messages = response
+                var newArrayDataOfOjbect = Object.values(check_messages)
+                $("#id_check_success_messages").prop("hidden", false)
+                //*************** if pop-up data count is greater than zero ***************
+                if (newArrayDataOfOjbect[1] > 0) {
+                        $.each(response['messages'], function(i, item) {
+                            $("#id_check_success_messages").append('<p>' + item + '</p>');
+                        });
+                    //*************** if duplicate data data count is greater than zero ***************
+                    if(newArrayDataOfOjbect[2]>0){
+                        $("#id_check_error_messages").prop("hidden",false)
+                        var display6 = get_msg_desc_check_data("JMSG015");
+                        $("#id_check_error_messages").append('<p>' + display6 + newArrayDataOfOjbect[2] + '</p>')
+                        var display7 = get_msg_desc_check_data("JMSG001");
+                        $("#id_check_error_messages").append('<p style = "font-weight: bold;">' + display7 + ' </p>')
                         $("#save_id").prop("hidden", true);
+                        $("#id_delete_duplicate").show();
                     }
-                    CloseLoaderPopup();
+                    else{
+                        $("#id_check_error_messages").prop("hidden",true)
+                        $("#id_delete_duplicate").hide();
+                    }
                 }
-            });
-        }
-
-    function window_close() {
-        window.history.back();
-        var preUrl = document.referrer;
-        console.log(preUrl);
-        window.open('', '_self', '').close();
-        if (preUrl == null)
-             return "The previous page url is empty";
-        else
-             return preUrl;
+                //*************** if pop-up data count is zero ***************
+                else {
+                    $("#id_check_success_messages").hide();
+                    $("#id_check_error_messages").prop("hidden", false)
+                    var display8 = get_msg_desc_check_data("JMSG006");
+                    $("#id_check_error_messages").append('<p>' + display8 + '</p>')
+                    $("#save_id").prop("hidden", true);
+                }
+                CloseLoaderPopup();
+            }
+        });
     }
 
-// validating the  popup table for duplicate entries
-function compare_table_for_duplicate_entries(validate_add_attributes, uom) {
-    add_attr_duplicates = false;
-    var error_message = ''
-    var add_attr_duplicates_list = [];
-    var add_attr_unique_list = [];
-    var no_duplicate_value = 'Y'
-    $.each(validate_add_attributes, function(index, value) {
-        if ($.inArray(value, add_attr_unique_list) == -1) {
-            add_attr_unique_list.push(value);
-        } else {
-            if ($.inArray(value, add_attr_duplicates_list) == -1) {
-                add_attr_duplicates_list.push(value);
+    // validating the  popup table for duplicate entries
+    function compare_table_for_duplicate_entries(validate_add_attributes, uom) {
+        add_attr_duplicates = false;
+        var error_message = ''
+        var add_attr_duplicates_list = [];
+        var add_attr_unique_list = [];
+        var no_duplicate_value = 'Y'
+        $.each(validate_add_attributes, function(index, value) {
+            if ($.inArray(value, add_attr_unique_list) == -1) {
+                add_attr_unique_list.push(value);
+            } else {
+                if ($.inArray(value, add_attr_duplicates_list) == -1) {
+                    add_attr_duplicates_list.push(value);
+                }
             }
+        });
+        if (add_attr_duplicates_list.length != 0) {
+            $('#uomModal').modal('show');
+            error_message = ui_messeges("JMSG001")// Get message details
+            no_duplicate_value = 'N'
+            return [no_duplicate_value,error_message]
         }
-    });
-    if (add_attr_duplicates_list.length != 0) {
-        $('#uomModal').modal('show');
-         error_message = ui_messeges("JMSG001")// Get message details
-        no_duplicate_value = 'N'
-        return [no_duplicate_value,error_message]
-    }
-    else {
-         $.each(uom, function (i, item) {
-            if ((item.uom_id.length == 0) || (item.uom_description.length == 0)) {
-                error_message = ui_messeges("JMSG002")// Get message details
-                $('#uomModal').modal('show');
-                no_duplicate_value = 'N'
-                return [no_duplicate_value,error_message]
-            }
-            if(item.uom_id.length<2){
+        else {
+            $.each(uom, function (i, item) {
+                if ((item.uom_id.length == 0) || (item.uom_description.length == 0)) {
+                    error_message = ui_messeges("JMSG002")// Get message details
                     $('#uomModal').modal('show');
-                     error_message = ui_messeges("JMSG113")  // Get message details
                     no_duplicate_value = 'N'
                     return [no_duplicate_value,error_message]
                 }
-         });
+                if(item.uom_id.length<2){
+                        $('#uomModal').modal('show');
+                        error_message = ui_messeges("JMSG113")  // Get message details
+                        no_duplicate_value = 'N'
+                        return [no_duplicate_value,error_message]
+                    }
+            });
+        }
+        return [no_duplicate_value,error_message]
     }
-    return [no_duplicate_value,error_message]
-}
 
-<!-- //validate by comparing  main table values and popup table values-->
-<!-- function maintable_validation(validate_add_attributes, main_table_low_value) {-->
-<!--    var no_duplicate_entries = 'Y'-->
-<!--    var error_message =''-->
-<!--    var common = [];-->
-<!--    jQuery.grep(validate_add_attributes, function(el) {-->
-<!--        if (jQuery.inArray(el, main_table_low_value) != -1) {-->
-<!--            common.push(el);-->
-<!--        }-->
-<!--    });-->
-<!--    if (common.length != 0) {-->
-<!--        //error_message = messageConstants["JMSG001"]-->
-<!--       -->
-<!--                var msg = "JMSG001";-->
-<!--                var msg_type ;-->
-<!--              msg_type = message_config_details(msg);-->
-<!--              $("#error_msg_id").prop("hidden", false)-->
+    //Function to highlight duplicate records
+    function display_duplicate_entry(common) {
+        var uom_check = new Array;
+        $("#id_popup_table TBODY TR").each(function() {
+            var row = $(this);
+            uom_dic = {}
+            uom_dic.uom_id = row.find("TD").eq(1).find('input[type="text"]').val().toUpperCase();
+            var compare = uom_dic.uom_id
+            uom_check.push(compare);
+            jQuery.grep(uom_check, function(el) {
+                if (jQuery.inArray(el, common) != -1) {
+                    row_color_highlight(row);
+                }
+                else {
+                    row_color_no_highlight(row);
+                }
+            });
 
-<!--              if(msg_type.message_type == "ERROR"){-->
-<!--                    display_message("error_msg_id", msg_type.messages_id_desc)-->
-<!--              }-->
-<!--              else if(msg_type.message_type == "WARNING"){-->
-<!--                 display_message("id_warning_msg_id", msg_type.messages_id_desc)-->
-<!--              }-->
-<!--              else if(msg_type.message_type == "INFORMATION"){-->
-<!--                 display_message("id_info_msg_id", msg_type.messages_id_desc)-->
-<!--              }-->
-<!--                no_duplicate_value = 'N'-->
-<!--                return [no_duplicate_value,error_message]-->
-
-<!--    }-->
-<!--    return [no_duplicate_entries,error_message]-->
-<!--}-->
-//**********************************************
-
-    </script>
-
-    <script src="{% static 'scripts/upload_uom.js' %}"></script>
-
+        });
+    }
+</script>
+<script src="{% static 'scripts/upload_uom.js' %}"></script>
 {% endblock %}

@@ -686,17 +686,17 @@ def extract_spendlimit_data(request):
 
     writer = csv.writer(response)
 
-    writer.writerow(['SPENDER_USERNAME', 'COMPANY_ID', 'SPEND_CODE_ID', 'del_ind'])
+    writer.writerow(['COMPANY_ID', 'SPENDER_USERNAME', 'SPEND_CODE_ID', 'del_ind'])
     # get only active record
 
     spendlimitvals = django_query_instance.django_filter_query(SpendLimitId,
                                                                {'del_ind': False}, None,
-                                                               ['spender_username', 'company_id',
+                                                               ['company_id', 'spender_username',
                                                                 'spend_code_id', 'del_ind'])
     spendlim_data = query_update_del_ind(spendlimitvals)
 
     for spendlimitval in spendlim_data:
-        spendlimitval_info = [spendlimitval['spender_username'], spendlimitval['company_id'],
+        spendlimitval_info = [spendlimitval[spendlimitval['company_id'], 'spender_username'],
                               spendlimitval['spend_code_id'], spendlimitval['del_ind']]
         writer.writerow(spendlimitval_info)
 
@@ -709,16 +709,16 @@ def extract_spendlimitval_data(request):
 
     writer = csv.writer(response)
 
-    writer.writerow(['SPEND_CODE_ID', 'COMPANY_ID', 'CURRENCY_ID', 'UPPER_LIMIT_VALUE', 'del_ind'])
+    writer.writerow(['COMPANY_ID', 'SPEND_CODE_ID', 'UPPER_LIMIT_VALUE', 'CURRENCY_ID',  'del_ind'])
 
     spendlimitvalues = django_query_instance.django_filter_query(SpendLimitValue, {'del_ind': False}, None,
-                                                                 ['spend_code_id', 'company_id', 'currency_id',
-                                                                  'upper_limit_value', 'del_ind'])
+                                                                 ['company_id', 'spend_code_id',
+                                                                  'upper_limit_value', 'currency_id', 'del_ind'])
     spendlim_data = query_update_del_ind(spendlimitvalues)
 
     for spendlimitvaluedata in spendlim_data:
-        spendlimitvaluedata_info = [spendlimitvaluedata['spend_code_id'], spendlimitvaluedata['company_id'],
-                                    spendlimitvaluedata['currency_id'], spendlimitvaluedata['upper_limit_value'],
+        spendlimitvaluedata_info = [spendlimitvaluedata['company_id'], spendlimitvaluedata['spend_code_id'],
+                                    spendlimitvaluedata['upper_limit_value'], spendlimitvaluedata['currency_id'],
                                     spendlimitvaluedata['del_ind']]
         writer.writerow(spendlimitvaluedata_info)
 
@@ -731,7 +731,7 @@ def extract_spendlimit_template(request):
 
     writer = csv.writer(response)
 
-    writer.writerow(['SPENDER_USERNAME', 'COMPANY_ID', 'SPEND_CODE_ID', 'del_ind'])
+    writer.writerow(['COMPANY_ID', 'SPENDER_USERNAME',  'SPEND_CODE_ID', 'del_ind'])
 
     return response
 
@@ -1436,7 +1436,7 @@ def extract_spendlimitval_data_template(request):
 
     writer = csv.writer(response)
 
-    writer.writerow(['SPEND_CODE_ID', 'COMPANY_ID', 'CURRENCY_ID', 'UPPER_LIMIT_VALUE', 'del_ind'])
+    writer.writerow(['COMPANY_ID', 'SPEND_CODE_ID', 'UPPER_LIMIT_VALUE', 'CURRENCY_ID',  'del_ind'])
     return response
 
 

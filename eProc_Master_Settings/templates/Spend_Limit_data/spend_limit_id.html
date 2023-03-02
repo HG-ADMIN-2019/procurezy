@@ -65,8 +65,8 @@
                             <input type="checkbox" onchange="checkAll(this)" name="chk[]">
                         </div>
                     </th>
-                    <th>User Name </th>
                     <th>Company Number </th>
+                    <th>User Name </th>
                     <th>Spending Limit</th>
                     <th hidden>guid</th>
                     <th hidden>del_ind</th>
@@ -77,8 +77,8 @@
                 {% for spndlimid in spend_limit_id %}
                 <tr>
                     <td class="class_select_checkbox" hidden><input type="checkbox" class="checkbox_check" onclick="valueChanged()" required></td>
-                    <td>{{spndlimid.spender_username}}</td>
                     <td>{{spndlimid.company_id}}</td>
+                    <td>{{spndlimid.spender_username}}</td>
                     <td>{{spndlimid.spend_code_id}}</td>
                     <td hidden>{{spndlimid.spend_guid}}</td>
                     <td hidden>del_ind</td>
@@ -151,8 +151,8 @@
                         <thead>
                         <tr>
                             <th id="header_select">Select</th>
-                            <th>User Name </th>
                             <th>Company Number </th>
+                            <th>User Name </th>
                             <th>Spending Limit</th>
                             <th hidden>guid</th>
                             <th id="id_del_ind_checkbox" hidden>Del Indicator</th>
@@ -175,11 +175,8 @@
         </div>
     </div>
 </div>
-
-
 <!-- modal popup to upload the csv file; save confirmation popup; delete confirmation popup -->
 {% include 'configuration_common_pop_up.html' %}
-
 <div>
     {% if messages %}
     {% for message in messages %}
@@ -195,14 +192,12 @@
     {% endfor %}
     {% endif %}
 </div>
-
 <div style="display: none">
     <select id="drop_down_attr"> </select>
     <select id="drop_down_attr1"> </select>
 </div>
 </div>
 </div>
-
 <script>
    var main_table_spendlimitid = [];
     var master_data_settings = '{{master_data_settings|safe}}';
@@ -283,7 +278,7 @@
                             if (flag){
                                 high_light_row_index_list.push(i)
                             }
-                            var company_type_value = value[2]
+                            var company_type_value = value[1]
                             var spend_limit_id = value[0] 
                             dropdown_values.push([company_type_value, spend_limit_id])
                             del_ind = '<td>' + value[3] + '</td>'
@@ -296,7 +291,7 @@
                             var company_list = '';
                             var company_id_list = '';
                             $.each(rendered_company_data, function(i, item){
-                                if( value[2].company_type_value == item){   
+                                if( value[1].company_type_value == item){   
                                     company = '<option value="' + item.company_id + '">' + item.company_id + '</option>';
                                 }else{
                                     company_list += '<option value="' + item.company_id + '">' + item.company_id + '</option>';
@@ -314,7 +309,7 @@
                                 }
                                 spendcode_id_list = spendcode + spendcode_list
                             });
-                            edit_basic_data += '<tr><td><input type="checkbox" required></td><td><input class="form-control"  type="text" value="'+value[1]+'" maxlength="16" onkeypress="return /[a-z0-9]/i.test(event.key)" name="spender_username" style="text-transform:uppercase;" required></td><td><select class="form-control" type = "text">'+company_id_list+'</select></td><td><select class="form-control" type = "text">'+spendcode_id_list+'</select></td><td hidden><input type="text" value=""></td><td>' + del_ind + '</td></tr>';
+                            edit_basic_data += '<tr><td><input type="checkbox" required></td><td><select class="form-control" type = "text">'+company_id_list+'</select></td><td><input class="form-control"  type="text" value="'+value[1]+'" maxlength="16" onkeypress="return /[a-z0-9]/i.test(event.key)" name="spender_username" style="text-transform:uppercase;" required></td><td><select class="form-control" type = "text">'+spendcode_id_list+'</select></td><td hidden><input type="text" value=""></td><td>' + del_ind + '</td></tr>';
                         });
                         $('#id_popup_tbody').append(edit_basic_data);
                         var i =0;
@@ -330,7 +325,7 @@
                             }
                             var company_id_list= dropdown_values[i][0]
                             var spendcode_id_list= dropdown_values[i][1]
-                            $(row.find("TD").eq(2).find("select option[value="+company_id_list+"]")).attr('selected','selected');
+                            $(row.find("TD").eq(1).find("select option[value="+company_id_list+"]")).attr('selected','selected');
                             $(row.find("TD").eq(3).find("select option[value="+spendcode_id_list+"]")).attr('selected','selected');
                             i = i + 1;
                         });
@@ -373,7 +368,7 @@
             }
             var spend_limit_id = value.spend_code_id
             var company_type_value = value.company_id
-            dropdown_values.push([spend_limit_id,company_type_value])
+            dropdown_values.push([company_type_value, spend_limit_id])
             del_ind = '<td>' + value[3] + '</td>'
             if (value.del_ind == 1) {
                 del_ind = ' <input type="checkbox" value="' + value.del_ind + '" checked>'
@@ -402,7 +397,7 @@
                 }
                 company_id_list = company + company_list
             });
-            edit_basic_data += '<tr><td><input type="checkbox" required></td><td><select class="form-control" type = "text">'+spendcode_id_list+'</select></td><td><input class="form-control"  type="text" value="'+value.spender_username+'" maxlength="16" onkeypress="return /[a-z0-9]/i.test(event.key)" name="spender_username" style="text-transform:uppercase;" required></td><td><select class="form-control" type = "text">'+company_id_list+'</select></td><td hidden><input type="text" value=""></td><td>' + del_ind + '</td></tr>';
+            edit_basic_data += '<tr><td><input type="checkbox" required></td><td><select class="form-control" type = "text">'+company_id_list+'</select></td><td><select class="form-control" type = "text">'+spendcode_id_list+'</select></td><td><input class="form-control"  type="text" value="'+value.spender_username+'" maxlength="16" onkeypress="return /[a-z0-9]/i.test(event.key)" name="spender_username" style="text-transform:uppercase;" required></td><td hidden><input type="text" value=""></td><td>' + del_ind + '</td></tr>';
         });
         $('#id_popup_tbody').append(edit_basic_data);
         var i =0;
@@ -416,8 +411,8 @@
             }
             var spendcode_id_list= dropdown_values[i][0]
             var company_id_list= dropdown_values[i][1]
-            $(row.find("TD").eq(1).find("select option[value="+spendcode_id_list+"]")).attr('selected','selected');
-            $(row.find("TD").eq(3).find("select option[value="+company_id_list+"]")).attr('selected','selected');
+            $(row.find("TD").eq(1).find("select option[value="+company_id_list+"]")).attr('selected','selected');
+            $(row.find("TD").eq(3).find("select option[value="+spendcode_id_list+"]")).attr('selected','selected');
             i = i + 1;
         });
         table_sort_filter_popup_pagination('id_popup_table')
@@ -446,8 +441,8 @@
             var row = $(this);
             spending_limit_dic = {}
             //*************** reading data from the pop-up ***************
-            spending_limit_dic.company_id = row.find("TD").eq(2).find('select[type="text"]').val();
-            spending_limit_dic.spender_username = row.find("TD").eq(1).find('input[type="text"]').val();
+            spending_limit_dic.company_id = row.find("TD").eq(1).find('select[type="text"]').val();
+            spending_limit_dic.spender_username = row.find("TD").eq(2).find('input[type="text"]').val();
             spending_limit_dic.spend_code_id = row.find("TD").eq(3).find('select[type="text"]').val();
             checked_box = row.find("TD").eq(5).find('input[type="checkbox"]').is(':checked')
             if (checked_box){
@@ -559,28 +554,10 @@
         $('#success_msg_id').empty()
         $('#id_popup_table').DataTable().destroy();
         var spend_id_data = new Array();
-        
         no_duplicate_entries = 'Y'
         no_duplicate_value = 'Y'
-        var validate_add_attributes = [];
         var error_message = '';
         var aad = {};
-        $('#display_basic_table').DataTable().destroy();
-        $("#id_popup_table TBODY TR").each(function() {
-            var row = $(this);
-            aad = {};
-            aad.spender_username = row.find("TD").eq(1).find('input[type="text"]').val().toUpperCase();
-            aad.company_id = row.find("TD").eq(2).find("select option:selected").val();
-            aad.spend_code_id = row.find("TD").eq(3).find("select option:selected").val();
-            aad.spend_guid = (row.find("TD").eq(4).find('input').val());
-            aad.del_ind = row.find("TD").eq(5).find('input[type="checkbox"]').is(':checked');
-            if (aad == undefined) {
-                aad.spender_username = row.find("TD").eq(1).find('input[type="text"]').val();
-            }
-            var compare = aad.spender_username + '-' + aad.company_id
-            validate_add_attributes.push(compare);
-            spend_id_data.push(aad);
-        });
         $('#display_basic_table').DataTable().destroy();
         get_main_table_data(); //Read data from main table
         // compare for duplicates in popup
@@ -626,10 +603,10 @@
         $("#display_basic_table TBODY TR").each(function() {
             var row = $(this);
             var main_attribute = {};
+            main_attribute.company_id = row.find("TD").eq(1).html();  
+            main_attribute.spender_username = row.find("TD").eq(2).html();
             main_attribute.spend_code_id = row.find("TD").eq(3).html();
-            main_attribute.spender_username = row.find("TD").eq(1).html();
-            main_attribute.company_id = row.find("TD").eq(2).html();
-            compare_maintable = main_attribute.spender_username + '-' + main_attribute.company_id;
+            compare_maintable = main_attribute.company_id + '-' + main_attribute.spender_username;
             main_table_low_value.push(compare_maintable);
         });
         table_sort_filter('display_basic_table');
@@ -683,7 +660,6 @@
     }
 
     var spend_limit_id_data = new Array();
-    var validate_add_attributes = [];
     var spend_limit={};
     var duplicate_entry = [];
 
@@ -741,16 +717,16 @@
                         if(GLOBAL_ACTION == "UPDATE"){
                             guid = row.cells[4].innerHTML;
                             unique_input ='<select class="form-control" value="' + row.cells[3].innerHTML + '">'+spendcodeid_dropdwn+' </select>'
-                            edit_basic_data += '<tr><td hidden><input type="checkbox" required></td><td><input class="form-control check_special_char" type="text" value="'+row.cells[1].innerHTML+'" maxlength="16"  name="spend_username" style="text-transform:uppercase;" disabled></td><td><select class="form-control" value="' + row.cells[2].innerHTML + '"disabled>'+company_dropdwn+'</select></td><td>'+unique_input+'</td><td hidden><input type="text" value="'+guid+'" hidden></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+                            edit_basic_data += '<tr><td hidden><input type="checkbox" required></td><td><select class="form-control" value="' + row.cells[1].innerHTML + '"disabled>'+company_dropdwn+'</select></td><td><input class="form-control check_special_char" type="text" value="'+row.cells[2].innerHTML+'" maxlength="16"  name="spend_username" style="text-transform:uppercase;" disabled></td><td>'+unique_input+'</td><td hidden><input type="text" value="'+guid+'" hidden></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
                             $("#header_select").prop("hidden", true);
                         } else{
                             guid = 'GUID';
                             unique_input ='<select class="form-control" value="' + row.cells[3].innerHTML + '">'+spendcodeid_dropdwn+' </select>'
-                            edit_basic_data += '<tr><td><input type="checkbox" required></td><td><input class="form-control check_special_char" type="text" value="'+row.cells[1].innerHTML+'" maxlength="16"  name="spender_username" style="text-transform:uppercase;" required></td><td><select class="form-control" value="' + row.cells[2].innerHTML + '">'+company_dropdwn+'</select></td><td>'+unique_input+'</td><td hidden><input type="text" value="'+guid+'" hidden></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+                            edit_basic_data += '<tr><td><input type="checkbox" required></td><td><select class="form-control" value="' + row.cells[1].innerHTML + '">'+company_dropdwn+'</select></td><td><input class="form-control check_special_char" type="text" value="'+row.cells[2].innerHTML+'" maxlength="16"  name="spender_username" style="text-transform:uppercase;" required></td><td>'+unique_input+'</td><td hidden><input type="text" value="'+guid+'" hidden></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
                             $("#header_select").prop("hidden", false);
                         }
                         var row = checkBoxes[i].parentNode.parentNode;
-                        var company_type_value = row.cells[2].innerHTML
+                        var company_type_value = row.cells[1].innerHTML
                         var spendid_type_value = row.cells[3].innerHTML
                         dropdown_values.push([company_type_value, spendid_type_value])
                     }
@@ -761,7 +737,7 @@
                     var row = $(this);
                     var company_type_value = dropdown_values[i][0]
                     var spendid_type_value = dropdown_values[i][1]
-                    $(row.find("TD").eq(2).find("select option[value="+company_type_value+"]")).attr('selected','selected');
+                    $(row.find("TD").eq(1).find("select option[value="+company_type_value+"]")).attr('selected','selected');
                     $(row.find("TD").eq(3).find("select option[value="+spendid_type_value+"]")).attr('selected','selected');  
                     i++;
                 });
@@ -840,7 +816,7 @@
         $('#id_spendlimitid_tbody').empty();
         var edit_basic_data = '';
         $.each(rendered_spendlimitid_data, function(i, item) {
-            edit_basic_data += '<tr ><td class="class_select_checkbox"><input class="checkbox_check" onclick="valueChanged()" type="checkbox" required></td><td>' + item.spender_username + '</td><td>' + item.company_id + '</td><td>' + item.spend_code_id + '</td><td hidden>' + item.guid + '</td>><td hidden>' + item.del_ind + '</td></tr>';
+            edit_basic_data += '<tr ><td class="class_select_checkbox"><input class="checkbox_check" onclick="valueChanged()" type="checkbox" required></td><td>' + item.company_id + '</td><td>' + item.spender_username + '</td><td>' + item.spend_code_id + '</td><td hidden>' + item.guid + '</td>><td hidden>' + item.del_ind + '</td></tr>';
         });
         $('#id_spendlimitid_tbody').append(edit_basic_data);
         $("#hg_select_checkbox").prop("hidden", true);
@@ -873,11 +849,11 @@
         $("#id_popup_table TBODY TR").each(function() {
             var row = $(this);
             //*************** reading data from the pop-up ***************
-            spend_code_id = row.find("TD").eq(1).find('input[type="text"]').val().toUpperCase();
+            company_id = row.find("TD").eq(1).find("select option:selected").val();
             spender_username = row.find("TD").eq(2).find("select option:selected").val();
-            company_id = row.find("TD").eq(3).find("select option:selected").val();
+            spend_code_id = row.find("TD").eq(3).find('input[type="text"]').val().toUpperCase();
             spendlimid_guid = row.find("TD").eq(4).find('input[type="text"]').val().toUpperCase()
-            spend_limit_compare = spend_code_id +'-'+ spender_username +'-'+ company_id
+            spend_limit_compare = company_id +'-'+ spender_username
             if (spend_limit_code_check.includes(spend_limit_compare)) {
                 $(row).remove();
             }
@@ -893,15 +869,13 @@
         spend_limit_id_data = new Array();
         var spend_limit = {};
         validate_add_attributes = [];
-        // duplicate_entry = [];
         $("#id_popup_table tbody tr").each(function() {
             var row = $(this);
             spend_limit ={};
             spend_limit.del_ind = row.find("TD").eq(5).find('input[type="checkbox"]').is(':checked');
-            spend_limit.spender_username = row.find("TD").eq(1).find('input').val();
-            spend_limit.company_id = row.find("TD").eq(2).find('select').val();
+            spend_limit.company_id = row.find("TD").eq(1).find('select').val();
+            spend_limit.spender_username = row.find("TD").eq(2).find('input').val();
             spend_limit.spend_code_id = row.find("TD").eq(3).find('select').val();
-
             spend_limit.spend_guid = row.find("TD").eq(4).find('input').val();
             if (spend_limit == undefined){
                 spend_limit.spend_code_id = row.find("TD").eq(1).find('select').val();
@@ -909,11 +883,8 @@
                 if(spend_limit.spend_guid == undefined) {
                 spend_limit.spend_guid = '';
             }
-            // var attribute_dup = {};
-            // attribute_dup.spender_username = spend_limit.spender_username;
-            // attribute_dup.company_id = spend_limit.company_id;
-            // duplicate_entry.push(attribute_dup);
-            validate_add_attributes.push( spend_limit.spender_username);
+            var compare = spend_limit.company_id + '-' + spend_limit.spender_username
+            validate_add_attributes.push(compare);
             spend_limit_id_data.push(spend_limit);
         });
         $('#id_save_confirm_popup').modal('show');
@@ -929,7 +900,7 @@
 
     // Function for add a new row data
     function new_row_data(){
-        basic_add_new_html = '<tr ><td><input type="checkbox" required></td><td><input class="input form-control check_special_char" type="text"  maxlength="16" style="text-transform:uppercase"</td><td ><select class = "input form-control" type="text"> ' + company_dropdwn + '</select></td><td><select class="form-control" type="text">'+spendcodeid_dropdwn+'</select></td> <td hidden><input  type="text" class="form-control"  name="guid"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+        basic_add_new_html = '<tr ><td><input type="checkbox" required></td><td ><select class = "input form-control" type="text"> ' + company_dropdwn + '</select></td><td><input class="input form-control check_special_char" type="text"  maxlength="16" style="text-transform:uppercase"</td><td><select class="form-control" type="text">'+spendcodeid_dropdwn+'</select></td> <td hidden><input  type="text" class="form-control"  name="guid"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
         $('#id_popup_tbody').append(basic_add_new_html);
         table_sort_filter('id_popup_table');
     }
@@ -941,9 +912,9 @@
             var spendlimitid_arr_obj = {};
             spendlimitid_arr_obj.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
             if(spendlimitid_arr_obj.del_ind){
+                spendlimitid_arr_obj.company_id = row.find("TD").eq(1).html();
+                spendlimitid_arr_obj.spender_username = row.find("TD").eq(2).html();
                 spendlimitid_arr_obj.spend_code_id = row.find("TD").eq(3).html();
-                spendlimitid_arr_obj.spender_username = row.find("TD").eq(1).html();
-                spendlimitid_arr_obj.company_id = row.find("TD").eq(2).html();
                 spendlimitid_arr_obj.spend_guid = row.find("TD").eq(4).html();
                 main_table_spendlimitid_checked.push(spendlimitid_arr_obj);
             }
@@ -956,9 +927,9 @@
         $("#id_popup_table TBODY TR").each(function() {
             var row = $(this);
             spend_id_dic = {}
-            spend_id_dic.spender_username = row.find("TD").eq(1).find('input[type="text"]').val().toUpperCase();
-            spend_id_dic.company_id = row.find("TD").eq(2).find("select option:selected").val();
-            var compare = spend_id_dic.spender_username + '-' + spend_id_dic.company_id
+            spend_id_dic.company_id = row.find("TD").eq(1).find("select option:selected").val();
+            spend_id_dic.spender_username = row.find("TD").eq(2).find('input[type="text"]').val().toUpperCase();
+            var compare = spend_id_dic.company_id + '-' + spend_id_dic.spender_username
             spend_id_check.push(compare);
             jQuery.grep(spend_id_check, function(el) {
                 if (jQuery.inArray(el, common) != -1) {

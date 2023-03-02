@@ -1,5 +1,6 @@
 var authobj_data = new Array();
 var validate_add_attributes = [];
+var main_table_low_value = [];
 var auth_obj={};
 
 // on click copy icon display the selected checkbox data
@@ -55,15 +56,10 @@ function add_popup_row() {
     $(".modal").on("hidden.bs.modal", function () {
         $("#id_error_msg").html("");
     });
-    basic_add_new_html = '<tr ><td><input type="checkbox" required></td>'+
-    '<td><select type="text" class="input form-control authobject" id="authobject-'+inc_index+'" name="authobject" onchange="GetSelectedTextValue(this)"><option value="" disabled selected>Select your option</option>'+ auth_obj_id_dropdown +'</select></td>'+
-   '<td><input class="form-control description" type="text" id="description-'+inc_index+'" name="description" disabled></td>'+'<td><select id="authobject_type" name="authobject_type"  class="input form-control">'+auth_type_dropdown+'</select></td>'+
-   '<td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
-        $('#id_popup_tbody').append(basic_add_new_html);
+    new_row_data(); // Function for add a new row data
     if (GLOBAL_ACTION == "auth_obj_upload") {
         $(".class_del_checkbox").prop("hidden", false);
     }
-    table_sort_filter_popup_pagination('id_popup_table');
 }
 
 //onclick of cancel display the table in display mode............
@@ -108,6 +104,12 @@ function delete_duplicate() {
 // Function to hide and display save related popups
 $('#save_id').click(function () {
     $('#auth_obj_Modal').modal('hide');
+    authobj_data = read_popup_data();
+    $('#id_save_confirm_popup').modal('show');
+});
+
+//Read popup table data
+function read_popup_data() {
     validate_add_attributes = [];
     $("#id_popup_table TBODY TR").each(function() {
         var row = $(this);
@@ -122,8 +124,8 @@ $('#save_id').click(function () {
         validate_add_attributes.push(auth_obj.auth_obj_id);
         authobj_data.push(auth_obj);
     });
-    $('#id_save_confirm_popup').modal('show');
-});
+    return authobj_data;
+}
 
 // Function to get main table data
 function get_main_table_data(){
@@ -161,6 +163,7 @@ function new_row_data(){
     '<td><input class="form-control description" type="text"  name="description"  id="description-1" disabled></td>'+'<td><select id="authobject_type" name="authobject_type"  class="input form-control">'+auth_type_dropdown+'</select></td>'+
     '<td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
+    table_sort_filter('id_popup_table');
 }
 
 //************************************

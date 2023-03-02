@@ -171,7 +171,7 @@ $('#save_id').click(function () {
 });
 
 //Read popup table data
-function read_popup_data(){
+function read_popup_data() {
     countries_data = new Array();
     validate_add_attributes = [];
     $("#id_popup_table TBODY TR").each(function () {
@@ -197,7 +197,7 @@ function new_row_data(){
 }
 
 // Function to get main table data
-function get_main_table_data(){
+function get_main_table_data() {
     main_table_low_value = [];
     $('#display_basic_table').DataTable().destroy();
     $("#display_basic_table TBODY TR").each(function() {

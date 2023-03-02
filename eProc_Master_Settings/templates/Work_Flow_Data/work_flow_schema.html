@@ -57,9 +57,9 @@
                                     <input type="checkbox" onchange="checkAll(this)" name="chk[]">
                                 </div>
                             </th>
-                            <th>WorkFlow Schema</th>
                             <th>Company Number</th>
                             <th>Approval Type</th>
+                            <th>WorkFlow Schema</th>
                             <th hidden>Guid</th>
                             <th hidden>Del Indicator</th>
                         </tr>
@@ -68,9 +68,9 @@
                         {% for wfschema in work_flow_schema %}
                         <tr>
                             <td class="class_select_checkbox" hidden><input type="checkbox" class="checkbox_check" onclick="valueChanged()" required></td>
-                            <td>{{wfschema.workflow_schema}}</td>
                             <td>{{wfschema.company_id}}</td>
                             <td>{{wfschema.app_types}}</td>
+                            <td>{{wfschema.workflow_schema}}</td>
                             <td hidden>{{wfschema.workflow_schema_guid}}</td>
                             <td hidden>wfschema.del_ind</td>
                         </tr>
@@ -119,10 +119,10 @@
                     <table class="class_popup_table table table-bordered mt-2" id="id_popup_table" >
                         <thead>
                         <tr>
-                            <th id="header_select">Select</th> 
-                            <th>WorkFlow Schema</th>
+                            <th id="header_select">Select</th>
                             <th>Company Number</th>
                             <th>Approval Type</th>
+                            <th>WorkFlow Schema</th>
                             <th hidden>Guid</th>
                             <th id="id_del_ind_checkbox" hidden>Del Indicator</th>
                         </tr>
@@ -209,7 +209,7 @@
         $('#id_workflow_tbody').empty();
         var edit_basic_data = '';
         $.each(rendered_wfschema_data, function (i, item) {
-            edit_basic_data += '<tr><td class="class_select_checkbox"><input class="checkbox_check" onclick="valueChanged()" type="checkbox" required></td><td>' + item.workflow_schema + '</td><td>' + item.company_id + '</td><td>' + item.app_types + '</td><td hidden>' + item.workflow_schema_guid + '</td><td hidden>' + item.del_ind + '</td></tr>';
+            edit_basic_data += '<tr><td class="class_select_checkbox"><input class="checkbox_check" onclick="valueChanged()" type="checkbox" required></td><td>' + item.company_id + '</td><td>' + item.app_types + '</td><td>' + item.workflow_schema + '</td><td hidden>' + item.workflow_schema_guid + '</td><td hidden>' + item.del_ind + '</td></tr>';
         });
         $('#id_workflow_tbody').append(edit_basic_data);
         $( "#hg_select_checkbox").prop( "hidden", true );
@@ -258,9 +258,9 @@
             var workflowschema_arr_obj ={};
             workflowschema_arr_obj.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
             if(workflowschema_arr_obj.del_ind){
-                workflowschema_arr_obj.workflow_schema = row.find("TD").eq(1).html();
-                workflowschema_arr_obj.company_id = row.find("TD").eq(2).html();
-                workflowschema_arr_obj.app_types = row.find("TD").eq(3).html();
+                workflowschema_arr_obj.workflow_schema = row.find("TD").eq(3).html();
+                workflowschema_arr_obj.company_id = row.find("TD").eq(1).html();
+                workflowschema_arr_obj.app_types = row.find("TD").eq(2).html();
                 workflowschema_arr_obj.workflow_schema_guid = row.find("TD").eq(4).html();
                 main_table_workflowschema_checked.push(workflowschema_arr_obj);
             }
@@ -338,9 +338,9 @@
         $("#display_basic_table TBODY TR").each(function() {
             var row = $(this);
             var main_attribute = {};
-            main_attribute.workflow_schema = row.find("TD").eq(1).html();
-            main_attribute.company_id = row.find("TD").eq(2).html();
-            main_attribute.app_types = row.find("TD").eq(3).html();
+            main_attribute.workflow_schema = row.find("TD").eq(3).html();
+            main_attribute.company_id = row.find("TD").eq(1).html();
+            main_attribute.app_types = row.find("TD").eq(2).html();
             main_attribute.workflow_schema_guid = row.find("TD").eq(4).html();
             var wfschm_compare_maintable = main_attribute.workflow_schema +'-'+ main_attribute.company_id
             main_table_low_value.push(wfschm_compare_maintable);
@@ -350,7 +350,7 @@
 
     // Function for add a new row data
     function new_row_data() {
-        basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select id="workflow_schema" name="workflow_schema"  type="text" class="input form-control">'+wrksch_types_dropdown_onload+'</select></td><td><select class=" input form-control">'+company_id_dropdown+'</select></td><td><select class=" input form-control">'+approvar_types_dropdown+'</select></td><td hidden></td><td hidden> del_ind</td></tr>';
+        basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select class=" input form-control">'+company_id_dropdown+'</select></td><td><select class=" input form-control">'+approvar_types_dropdown+'</select></td><td><select id="workflow_schema" name="workflow_schema"  type="text" class="input form-control">'+wrksch_types_dropdown_onload+'</select></td><td hidden></td><td hidden> del_ind</td></tr>';
         $('#id_popup_tbody').append(basic_add_new_html);
         table_sort_filter('id_popup_table');
     }
@@ -450,21 +450,21 @@
                     if (checkBoxes[i].checked) {
                         var row = checkBoxes[i].parentNode.parentNode;
                         if(GLOBAL_ACTION == "UPDATE"){
-                            unique_input = '<select id="workflow_schema" name="workflow_schema" value="' + row.cells[1].innerHTML + '" class="form-control"  type="text" disabled><option>'+row.cells[1].innerHTML+'</option> </select>';
+                            unique_input = '<select value="' + row.cells[1].innerHTML + '" class="form-control" disabled>' + company_id_dropdown + '</select>';
                             edit_basic_data += '<tr><td hidden><input type="checkbox" required></td><td>'+unique_input+'</td>'+
-                            '<td><select value="' + row.cells[2].innerHTML + '" class="form-control" disabled>' + company_id_dropdown + '</select></td>'+
-                            '<td><select value="' + row.cells[3].innerHTML + '" class="form-control" >' + approvar_types_dropdown + '</select></td>'+
+                            '<td><select value="' + row.cells[2].innerHTML + '" class="form-control" >'  + approvar_types_dropdown + '</select></td>'+
+                            '<td><select value="' + row.cells[3].innerHTML + '" class="form-control"disabled >' + wrksch_types_dropdown_onload + '</select></td>'+
                             '<td hidden>"><input type="text" value="' + row.cells[4].innerHTML + '"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
                             $("#header_select").prop("hidden", true);
                         }
                         else{
-                            unique_input = '<select  id="workflow_schema" name="workflow_schema" value="' + row.cells[1].innerHTML + '" class="form-control"  type="text">'+ wrksch_types_dropdown_onload +' </select>';
-                            edit_basic_data += '<tr><td><input type="checkbox" required></td><td>'+unique_input+'</td><td><select value="' + row.cells[2].innerHTML + '" class="form-control">' + company_id_dropdown + '</select></td><td><select value="' + row.cells[3].innerHTML + '" class="form-control">' + approvar_types_dropdown + '</select></td><td hidden>"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+                            unique_input = '<select  id="workflow_schema" name="workflow_schema" value="' + row.cells[3].innerHTML + '" class="form-control"  type="text">'+ wrksch_types_dropdown_onload +' </select>';
+                            edit_basic_data += '<tr><td><input type="checkbox" required></td><td>'+unique_input+'</td><td><select value="' + row.cells[1].innerHTML + '" class="form-control">' + company_id_dropdown + '</select></td><td><select value="' + row.cells[2].innerHTML + '" class="form-control">' + approvar_types_dropdown + '</select></td><td hidden>"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
                             $("#header_select").prop("hidden", false);
                         }
-                        var wf_schema_value = row.cells[1].innerHTML;
-                        var company_value = row.cells[2].innerHTML;
-                        var appr_value = row.cells[3].innerHTML;
+                        var wf_schema_value = row.cells[3].innerHTML;
+                        var company_value = row.cells[1].innerHTML;
+                        var appr_value = row.cells[2].innerHTML;
                         dropdown_values.push([wf_schema_value, company_value, appr_value]);
                     }
                 }
@@ -475,8 +475,8 @@
                     var wf_schema_val = dropdown_values[i][0];
                     var company_val = dropdown_values[i][1];
                     var apr_val = dropdown_values[i][2];
-                    $(row.find("TD").eq(2).find("select option[value="+company_val+"]")).attr('selected','selected');
-                    $(row.find("TD").eq(3).find("select option[value="+apr_val+"]")).attr('selected','selected');
+                    $(row.find("TD").eq(1).find("select option[value="+company_val+"]")).attr('selected','selected');
+                    $(row.find("TD").eq(2).find("select option[value="+apr_val+"]")).attr('selected','selected');
                     i++;
                 });
                 $("#id_del_ind_checkbox").prop("hidden", true);
@@ -495,9 +495,9 @@
         $("#id_popup_table TBODY TR").each(function () {
             var row = $(this);
             //*************** reading data from the pop-up ***************
-            workflow_schema = row.find("TD").eq(1).find("select option:selected").val().toUpperCase();
-            company_id = row.find("TD").eq(2).find("select option:selected").val().toUpperCase();
-            app_types = row.find("TD").eq(3).find("select option:selected").val().toUpperCase();
+            workflow_schema = row.find("TD").eq(3).find("select option:selected").val().toUpperCase();
+            company_id = row.find("TD").eq(1).find("select option:selected").val().toUpperCase();
+            app_types = row.find("TD").eq(2).find("select option:selected").val().toUpperCase();
             checked_box = row.find("TD").eq(4).find('input[type="checkbox"]').is(':checked')
             if (workflowsch_code_check.includes(workflowsch_code)) {
                 $(row).remove();
@@ -577,12 +577,12 @@
            var row = $(this);
            wfschema = {};
            wfschema.del_ind = row.find("TD").eq(5).find('input[type="checkbox"]').is(':checked');
-           wfschema.workflow_schema  = row.find("TD").eq(1).find('select').val();
-           wfschema.company_id = row.find("TD").eq(2).find('select').val();
-           wfschema.app_types = row.find("TD").eq(3).find('select').val();
+           wfschema.workflow_schema  = row.find("TD").eq(3).find('select').val();
+           wfschema.company_id = row.find("TD").eq(1).find('select').val();
+           wfschema.app_types = row.find("TD").eq(2).find('select').val();
            wfschema.workflow_schema_guid  = row.find("TD").eq(4).find('input').val();
            if (wfschema == undefined){
-            wfschema.workflow_schema = row.find("TD").eq(1).find('select').val();
+            wfschema.workflow_schema = row.find("TD").eq(3).find('select').val();
             }
             if (wfschema.workflow_schema_guid == undefined){
                 wfschema.workflow_schema_guid ='';
@@ -670,8 +670,8 @@
                             var row = $(this);
                             var company_id_list = dropdown_values[i][0]
                             var apptype_id_list = dropdown_values[i][1] 
-                            $(row.find("TD").eq(2).find("select option[value="+company_id_list+"]")).attr('selected','selected');
-                            $(row.find("TD").eq(3).find("select option[value="+apptype_id_list+"]")).attr('selected','selected');
+                            $(row.find("TD").eq(1).find("select option[value="+company_id_list+"]")).attr('selected','selected');
+                            $(row.find("TD").eq(2).find("select option[value="+apptype_id_list+"]")).attr('selected','selected');
                             i++;
                         });
                         $( "#id_del_ind_checkbox").prop( "hidden", false );
@@ -724,9 +724,9 @@
             var row = $(this);
                 workflw_schm_dic = {}
             //*************** reading data from the pop-up ***************
-            workflw_schm_dic.workflow_schema = row.find("TD").eq(1).find('select[type="text"]').val();
-            workflw_schm_dic.company_id = row.find("TD").eq(2).find('select[type="text"]').val();
-            workflw_schm_dic.app_types = row.find("TD").eq(3).find('select[type="text"]').val();
+            workflw_schm_dic.workflow_schema = row.find("TD").eq(3).find('select[type="text"]').val();
+            workflw_schm_dic.company_id = row.find("TD").eq(1).find('select[type="text"]').val();
+            workflw_schm_dic.app_types = row.find("TD").eq(2).find('select[type="text"]').val();
             checked_box = row.find("TD").eq(4).find('input[type="checkbox"]').is(':checked')
             if (checked_box){
                 workflw_schm_dic.del_ind = '1'
@@ -753,10 +753,10 @@
                 error_message = ui_messeges("JMSG003")// Get message details
                 var display = msg_type.messages_id_desc;
                 document.getElementById("id_error_msg_workflow_schema").innerHTML = display + "Work flow schema";
-                $(row.find("TD").eq(1).find('input')).css("border", "1px solid #FF0000");
+                $(row.find("TD").eq(3).find('input')).css("border", "1px solid #FF0000");
                 count = count + 1;
             } else {
-                    $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "none");
+                    $(row.find("TD").eq(3).find('input[type="text"]')).css("border", "none");
             }
         });
         if (wfsch_check.includes(workflw_schm_dic.workflow_schema)) {
@@ -803,8 +803,8 @@
         $("#id_popup_table TBODY TR").each(function() {
             var row = $(this);
             workflw_schm_dic = {}
-            workflw_schm_dic.workflow_schema = row.find("TD").eq(1).find('select[type="text"]').val();
-            workflw_schm_dic.company_id = row.find("TD").eq(2).find('select').val();
+            workflw_schm_dic.workflow_schema = row.find("TD").eq(3).find('select[type="text"]').val();
+            workflw_schm_dic.company_id = row.find("TD").eq(1).find('select').val();
             var compare = workflw_schm_dic.workflow_schema +'-'+ workflw_schm_dic.company_id 
             workflw_schm_check.push(compare);
             jQuery.grep(workflw_schm_check, function(el) {

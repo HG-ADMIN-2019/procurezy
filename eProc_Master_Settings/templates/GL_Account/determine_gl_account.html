@@ -57,10 +57,10 @@
                             </div>
                         </th>
                         <th>UNSPSC Code</th>
+                        <th>Company Number</th>
+                        <th>Account Assignment Category</th>
                         <th>General Ledger Account</th>
                         <th>Default</th>
-                        <th>Account Assignment Category</th>
-                        <th>Company Number</th>
                         <th>From Value</th>
                         <th>To Value</th>
                         <th>Currency</th>
@@ -74,6 +74,8 @@
                             onclick="valueChanged()" required>
                         </td>
                         <td>{{detgl.prod_cat_id}}</td>
+                        <td>{{detgl.company_id}}</td>
+                        <td>{{detgl.account_assign_cat}}</td>
                         <td>{{detgl.gl_acc_num}}</td>
                         <td class="class_select_checkbox">
                             {% if detgl.gl_acc_default %}
@@ -81,9 +83,7 @@
                             {% else %}
                             <input type="checkbox" name="gl_acc_default" value="" disabled>
                             {% endif %}
-                        </td>                       
-                        <td>{{detgl.account_assign_cat}}</td>
-                        <td>{{detgl.company_id}}</td>
+                        </td>
                         <td>{{detgl.item_from_value}}</td>
                         <td>{{detgl.item_to_value}}</td>
                         <td>{{detgl.currency_id}}</td>
@@ -134,10 +134,10 @@
                         <tr>
                             <th id="header_select">Select</th>
                             <th>UNSPSC Code</th>
+                            <th>Company Number</th>
+                            <th>Account Assignment Category</th>
                             <th>General Ledger Account</th>
                             <th>Default</th>
-                            <th>Account Assignment Category</th>
-                            <th>Company Number</th>
                             <th>Valid From Value</th>
                             <th>Valid To Value</th>
                             <th>Currency</th>
@@ -237,7 +237,7 @@
             } else{
                 data = '<input type="checkbox" name="gl_acc_default" value="" disabled>'
             }
-            edit_basic_data += '<tr ><td class="class_select_checkbox"><input class="checkbox_check" onclick="valueChanged()" type="checkbox" required></td><td>' + item.prod_cat_id + '</td><td>' + item.gl_acc_num + '</td><td>' + data + '</td><td>' + item.account_assign_cat + '</td><td>' + item.company_id + '</td><td>' + item.item_from_value + '</td><td>' + item.item_to_value + '</td><td>' + item.currency_id + '</td><td hidden>' + item.det_gl_acc_guid + '</td></tr>';
+            edit_basic_data += '<tr ><td class="class_select_checkbox"><input class="checkbox_check" onclick="valueChanged()" type="checkbox" required></td><td>' + item.prod_cat_id + '</td><td>' + item.company_id + '</td><td>' + item.account_assign_cat + '</td><td>' + item.gl_acc_num + '</td><td>' + data + '</td><td>' + item.item_from_value + '</td><td>' + item.item_to_value + '</td><td>' + item.currency_id + '</td><td hidden>' + item.det_gl_acc_guid + '</td></tr>';
         });
         $('#id_detgl_tbody').append(edit_basic_data);
         $("#hg_select_checkbox").prop("hidden", true);
@@ -374,7 +374,7 @@
                             var gl_acc = value[3]
                             var glacc_def = value[4]
                             var acc_ass_cat = value[7]
-                            var company_id = value[5]
+                            var company_id = value[1]
                             var currency_id = value[8]
                             dropdown_array.push([prod_cat_id,gl_acc, glacc_def, company_id, acc_ass_cat, currency_id])
 
@@ -437,7 +437,7 @@
                                 }
                                 accasscat_id_list = accasscat + accasscat_list
                             });
-                            edit_basic_data += '<tr ><td><input type="checkbox" required></td><td><select class="form-control">' + prod_cat_id_list + '</select class="form-control"></td><td><select class="form-control">' + glacc_data_id_list + '</select class="form-control"></td><td><input type="checkbox" value="' + value[4] + '" name="default" required></td><td><select class="form-control">' + accasscat_id_list + '</select></td><td><select class="form-control">' + company_id_list + '</select></td><td><input class="form-control" type="number" value="' + value[1] + '" onkeypress="return event.charCode >= 48" min="1" name="From_value"  required></td><td><input class="form-control" type="number" value="' + value[2] + '" onkeypress="return event.charCode >= 48" min="1" name="To_value"  required></td><td><select class="form-control">' + currency_id_list + '</select></td><td hidden><input type="text" value=""></td><td>' + del_ind + '</td></tr>';
+                            edit_basic_data += '<tr ><td><input type="checkbox" required></td><td><select class="form-control">' + prod_cat_id_list + '</select class="form-control"></td><td><select class="form-control">' + company_id_list + '</select></td><td><select class="form-control">' + accasscat_id_list + '</select></td><td><select class="form-control">' + glacc_data_id_list + '</select class="form-control"></td><td><input type="checkbox" value="' + value[5] + '" name="default" required></td><td><input class="form-control" type="number" value="' + value[1] + '" onkeypress="return event.charCode >= 48" min="1" name="From_value"  required></td><td><input class="form-control" type="number" value="' + value[2] + '" onkeypress="return event.charCode >= 48" min="1" name="To_value"  required></td><td><select class="form-control">' + currency_id_list + '</select></td><td hidden><input type="text" value=""></td><td>' + del_ind + '</td></tr>';
                         });
                         $('#id_popup_tbody').append(edit_basic_data);
                         var i = 0;
@@ -450,12 +450,12 @@
                             var accasscat_id_list = dropdown_array[i][4]
                             var currency_id_list = dropdown_array[i][5]
                             $(row.find("TD").eq(1).find("select option[value=" + prod_cat_id_list + "]")).attr('selected', 'selected');
-                            $(row.find("TD").eq(2).find("select option[value=" + glacc_data_id_list + "]")).attr('selected', 'selected');
+                            $(row.find("TD").eq(4).find("select option[value=" + glacc_data_id_list + "]")).attr('selected', 'selected');
                             if (glacc_def == "True") {
-                                $(row.find("TD").eq(3).find('input[type="checkbox"]')).attr('checked', 'checked');
+                                $(row.find("TD").eq(5).find('input[type="checkbox"]')).attr('checked', 'checked');
                             }
-                            $(row.find("TD").eq(4).find("select option[value=" + accasscat_id_list + "]")).attr('selected', 'selected');
-                            $(row.find("TD").eq(5).find("select option[value=" + company_id_list + "]")).attr('selected', 'selected');
+                            $(row.find("TD").eq(3).find("select option[value=" + accasscat_id_list + "]")).attr('selected', 'selected');
+                            $(row.find("TD").eq(2).find("select option[value=" + company_id_list + "]")).attr('selected', 'selected');
                             $(row.find("TD").eq(8).find("select option[value=" + currency_id_list + "]")).attr('selected', 'selected');
                             i++;
                         })
@@ -509,10 +509,10 @@
             var row = $(this);
             //*************** reading data from the pop-up ***************
             prod_cat_id = row.find("TD").eq(1).find('input[type="text"]').val();
-            gl_acc_num = row.find("TD").eq(2).find("select option:selected").val();
-            gl_acc_default = row.find("TD").eq(3).find('input[type="checkbox"]').is(':checked');
-            account_assign_cat = row.find("TD").eq(4).find("select option:selected").val();
-            company_id = row.find("TD").eq(5).find("select option:selected").val();
+            gl_acc_num = row.find("TD").eq(4).find("select option:selected").val();
+            gl_acc_default = row.find("TD").eq(5).find('input[type="checkbox"]').is(':checked');
+            account_assign_cat = row.find("TD").eq(3).find("select option:selected").val();
+            company_id = row.find("TD").eq(2).find("select option:selected").val();
             from_value = row.find("TD").eq(6).find('input[type="number"]').val();
             to_value = row.find("TD").eq(7).find('input[type="number"]').val();
             currency_id = row.find("TD").eq(8).find("select option:selected").val();
@@ -807,18 +807,18 @@
                             guid = row.cells[9].innerHTML;
                             unique_input = '<select class="form-control">' + prod_cat_dropdown + ' </select>'
                             edit_basic_data += '<tr ><td><input type="checkbox" required></td>'+
-                            '<td>'+unique_input+'</td><td><select class="form-control">' + glacc_dropdown + '</select></td><td><input type="checkbox" name="gl_acc_default" required></td>'+
+                            '<td>'+unique_input+'</td><td><select class="form-control">' + company_dropdown + ' </select></td>'+
                             '<td><select class="form-control">' + accasscat_dropdown + '</select></td>' +
-                            '<td><select class="form-control">' + company_dropdown + ' </select></td>'+
+                            '<td><select class="form-control">' + glacc_dropdown + '</select></td><td><input type="checkbox" name="gl_acc_default" required></td>'+
                             '<td><input class="form-control" type="number" value="' + row.cells[6].innerHTML + '" onkeypress="return event.charCode >= 48" min="1" name="From_value"  required></td><td><input class="form-control" type="number" value="' + row.cells[7].innerHTML + '" onkeypress="return event.charCode >= 48" min="1" name="To_value"  required></td>' +
                             '<td><select class="form-control">' + currency_dropdown + '</select></td><td hidden><input type="text" class ="form-control"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
                             $("#header_select").prop("hidden", false);
                         }
                         var prod_cat = row.cells[1].innerHTML
-                        var gl_acc = row.cells[2].innerHTML
-                        var gl_acc_default = row.cells[3].children.gl_acc_default.checked
-                        var acc_ass_cat = row.cells[4].innerHTML
-                        var company_id = row.cells[5].innerHTML
+                        var gl_acc = row.cells[4].innerHTML
+                        var gl_acc_default = row.cells[5].children.gl_acc_default.checked
+                        var acc_ass_cat = row.cells[3].innerHTML
+                        var company_id = row.cells[2].innerHTML
                         var currency_id = row.cells[8].innerHTML
                         dropdown_array.push([prod_cat,gl_acc, gl_acc_default, acc_ass_cat,company_id,currency_id])
                     }
@@ -834,12 +834,12 @@
                     var company_id = dropdown_array[i][4];
                     var currency_id = dropdown_array[i][5];
                     $(row.find("TD").eq(1).find("select option[value=" + prod_cat + "]")).attr('selected', 'selected');
-                    $(row.find("TD").eq(2).find("select option[value=" + gl_acc + "]")).attr('selected', 'selected');
+                    $(row.find("TD").eq(4).find("select option[value=" + gl_acc + "]")).attr('selected', 'selected');
                     if(gl_acc_default) {
-                        $(row.find("TD").eq(3).find('input[name="gl_acc_default"]').attr('checked', 'checked'));
+                        $(row.find("TD").eq(5).find('input[name="gl_acc_default"]').attr('checked', 'checked'));
                     }
-                    $(row.find("TD").eq(4).find("select option[value=" + acc_ass_cat + "]")).attr('selected', 'selected');
-                    $(row.find("TD").eq(5).find("select option[value=" +  company_id  + "]")).attr('selected', 'selected');
+                    $(row.find("TD").eq(3).find("select option[value=" + acc_ass_cat + "]")).attr('selected', 'selected');
+                    $(row.find("TD").eq(2).find("select option[value=" +  company_id  + "]")).attr('selected', 'selected');
                     $(row.find("TD").eq(8).find("select option[value=" + currency_id  + "]")).attr('selected', 'selected');
                     i++;
                 });
@@ -859,9 +859,9 @@
         $("#id_popup_table TBODY TR").each(function() {
             var row = $(this);
             detgl_dic = {}
-            detgl_dic.gl_acc_num = row.find("TD").eq(2).find("select option:selected").val();
-            detgl_dic.account_assign_cat = row.find("TD").eq(4).find("select option:selected").val();
-            detgl_dic.company_id = row.find("TD").eq(5).find("select option:selected").val();
+            detgl_dic.gl_acc_num = row.find("TD").eq(4).find("select option:selected").val();
+            detgl_dic.account_assign_cat = row.find("TD").eq(3).find("select option:selected").val();
+            detgl_dic.company_id = row.find("TD").eq(2).find("select option:selected").val();
             var compare = detgl.gl_acc_num + '-' + detgl.account_assign_cat + '-' + detgl.company_id 
             detgl_check.push(compare);
             jQuery.grep(detgl_check, function(el) {
