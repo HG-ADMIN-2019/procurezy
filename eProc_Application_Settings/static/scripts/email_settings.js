@@ -1,9 +1,8 @@
-var countries_data = new Array();
+var email_setting_data = new Array();
 var validate_add_attributes = [];
 var main_table_low_value = [];
-var country={};
 
-//onclick of add button display countriesModal popup and set GLOBAL_ACTION button value
+//onclick of add button display emailsModal popup and set GLOBAL_ACTION button value
 function onclick_add_button(button) {
     email_type_dropdown();
     $("#error_msg_id").css("display", "none")
@@ -11,18 +10,11 @@ function onclick_add_button(button) {
     GLOBAL_ACTION = button.value
     $('#id_popup_table').DataTable().destroy();
     $("#id_popup_tbody").empty();
-    $('#countriesModal').modal('show');
+    $('#emailsModal').modal('show');
     new_row_data();  // Add a new row in popup
     $("#id_del_ind_checkbox").prop("hidden", true);
     document.getElementById("id_del_add_button").style.display = "block";
     $("#save_id").prop("hidden", false);
-}
-
-// on click copy icon display the selected checkbox data
-function onclick_copy_button() {
-    GLOBAL_ACTION = "COPY"
-    onclick_copy_update_button("copy")
-    document.getElementById("id_del_add_button").style.display = "block";
 }
 
 // on click update icon display the selected checkbox data to update
@@ -34,6 +26,7 @@ function onclick_update_button() {
 
 //**********************************************************
 function onclick_copy_update_button(data) {
+    email_type_dropdown();
     $("#error_msg_id").css("display", "none")
     $('#display_basic_table').DataTable().destroy();
     $('#id_popup_table').DataTable().destroy();
@@ -49,34 +42,22 @@ function onclick_copy_update_button(data) {
         if (checkBoxes[i].checked) {
             var row = checkBoxes[i].parentNode.parentNode;
             if(GLOBAL_ACTION == "UPDATE"){
-                unique_input = '<select class="form-control check_special_char" type="text" value="' + row.cells[1].innerHTML + '" name="email_type" disabled><option>' + row.cells[1].innerHTML + '</option></select>'
+                unique_input = '<select class="form-control" type="text" name="email_type" disabled><option>' + row.cells[1].innerHTML + '</option></select>'
                 edit_basic_data += '<tr><td hidden><input type="checkbox" required></td>'+
                     '<td>'+unique_input+'</td>'+
-                    '<td><input class="form-control check_special_char" value="' + row.cells[2].innerHTML + '" type="text" maxlength="100"  name="email_subject" required></td>'+
-                    '<td><input class="form-control check_special_char" value="' + row.cells[3].innerHTML + '" type="text" maxlength="100"  name="email_header" required></td>'+
-                    '<td><input class="form-control check_special_char" value="' + row.cells[4].innerHTML + '" type="text"  name="email_body" required></td>'+
-                    '<td><input class="form-control check_special_char" value="' + row.cells[5].innerHTML + '" type="text" maxlength="100"  name="email_footer" required></td>'+
-                    '<td hidden><input class="form-control check_special_char" value="' + row.cells[6].innerHTML + '" type="text" maxlength="100"  name="email_guid" required></td>'+
+                    '<td><select class="form-control" type="text"  name="language_id" disabled><option>'+ row.cells[2].innerHTML +'</option></select></td>'+
+                    '<td><textarea class="form-control check_special_char"  type="text"   name="email_subject" required>' + row.cells[3].innerHTML + '</textarea></td>'+
+                    '<td><textarea class="form-control check_special_char" type="text"   name="email_header" required>' + row.cells[4].innerHTML + '</textarea></td>'+
+                    '<td><textarea class="form-control check_special_char" type="text"  name="email_body" required>' + row.cells[5].innerHTML + '</textarea></td>'+
+                    '<td><textarea class="form-control check_special_char" type="text"    name="email_footer" required>' + row.cells[6].innerHTML + '</textarea></td><td hidden><input class="form-control"  name="email_guid" required></td>'+
                     '<td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
                 $("#header_select").prop("hidden", true);
             }
-            else{
-                unique_input = '<select class="form-control check_special_char" type="text" value="' + row.cells[1].innerHTML + '" name="email_type" required><option>' + row.cells[1].innerHTML + '</option></select>'
-                edit_basic_data += '<tr><td><input type="checkbox" required></td>'+
-                '<td>'+unique_input+'</td>'+
-                '<td><input class="form-control check_special_char" value="' + row.cells[2].innerHTML + '" type="text" maxlength="100"  name="email_subject" required></td>'+
-                '<td><input class="form-control check_special_char" value="' + row.cells[3].innerHTML + '" type="text" maxlength="100"  name="email_header" required></td>'+
-                '<td><input class="form-control check_special_char" value="' + row.cells[4].innerHTML + '" type="text"  name="email_body" required></td>'+
-                '<td><input class="form-control check_special_char" value="' + row.cells[5].innerHTML + '" type="text" maxlength="100"  name="email_footer" required></td>'+
-                '<td hidden><input class="form-control check_special_char" value="' + row.cells[6].innerHTML + '" type="text" maxlength="100"  name="email_guid" required></td>'+
-                '<td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
-                $("#header_select").prop("hidden", false);
-            }      
         }
     }
     $('#id_popup_tbody').append(edit_basic_data);
     $("#id_del_ind_checkbox").prop("hidden", true);
-    $('#countriesModal').modal('show');
+    $('#emailsModal').modal('show');
     table_sort_filter('id_popup_table');
     table_sort_filter('display_basic_table');
 }
@@ -87,11 +68,11 @@ $(".remove_upload_data").click(() => {
     $("#id_error_msg").html("");
     $("#id_popup_tbody").empty();
     $("#id_error_msg").empty();
-    $('#countriesModal').modal('hide');
+    $('#emailsModal').modal('hide');
     $("#id_error_msg").prop("hidden", true);
-    $("#id_error_msg_country_code").prop("hidden", true);
-    $("#id_error_msg_country_name").prop("hidden", true);
-    $("#id_error_msg_country_length").prop("hidden", true);
+    $("#id_error_msg_email_type").prop("hidden", true);
+    $("#id_error_msg_email_sub").prop("hidden", true);
+    $("#id_error_msg_email_length").prop("hidden", true);
     $("#id_check_error_messages").prop("hidden", true);
     $("#id_check_success_messages").prop("hidden", true);
     $("#id_check_special_character_messages").prop("hidden", true)
@@ -104,7 +85,7 @@ function display_error_message(error_message){
     document.getElementById("error_message").style.color = "Red";
     $("#error_msg_id").css("display", "block")
     $('#id_save_confirm_popup').modal('hide');
-    $('#countriesModal').modal('show');
+    $('#emailsModal').modal('show');
 }
 
 //*******************************************************
@@ -125,12 +106,28 @@ function add_popup_row() {
 //onclick of cancel display the table in display mode............
 function display_basic_db_data() {
     $('#display_basic_table').DataTable().destroy();
-    $('#id_country_tbody').empty();
+    $('#id_email_tbody').empty();
     var edit_basic_data = '';
-    $.each(rendered_country_data, function (i, item) {
-        edit_basic_data += '<tr ><td class="class_select_checkbox"><input class="checkbox_check" onclick="valueChanged()" type="checkbox" required></td><td>' + item.country_code + '</td><td>' + item.country_name + '</td></tr>';
+    var lang_desc;
+    var lang_code;
+
+    $.each(rendered_email_data, function (i, item) {
+        lang_code = item.language_id;
+        for (i = 0; i < render_language_data.length; i++) {
+            if (lang_code == render_language_data[i].language_id)
+            lang_desc = render_language_data[i].description
+        }
+        edit_basic_data += '<tr ><td class="class_select_checkbox"><input class="checkbox_check" onclick="valueChanged()" type="checkbox" required></td>'+
+        '<td>' + item.object_type + '</td>'+
+        '<td>' + lang_desc + '</td>'+
+        '<td>' + item.subject + '</td>'+
+        '<td>' + item.header + '</td>'+
+        '<td>' + item.body + '</td>'+
+        '<td>' + item.footer + '</td>'+
+        '<td hidden>' + item.email_contents_guid + '</td>'+
+        '</tr>';
     });
-    $('#id_country_tbody').append(edit_basic_data);
+    $('#id_email_tbody').append(edit_basic_data);
     $("#hg_select_checkbox").prop("hidden", true);
     $(".class_select_checkbox").prop("hidden", true);
     $('input:checkbox').removeAttr('checked');
@@ -147,40 +144,46 @@ function display_basic_db_data() {
 
 // Function to hide and display save related popups
 $('#save_id').click(function () {
-    $('#countriesModal').modal('hide');
-    countries_data = read_popup_data();
+    $('#emailsModal').modal('hide');
+    email_setting_data = read_popup_data();
     $('#id_save_confirm_popup').modal('show');
 });
 
 //Read popup table data
 function read_popup_data(){
-    countries_data = new Array();
+    email_setting_data = new Array();
     validate_add_attributes = [];
     $("#id_popup_table TBODY TR").each(function () {
         var row = $(this);
-        country={};
-        country.del_ind = row.find("TD").eq(3).find('input[type="checkbox"]').is(':checked');
-        country.country_name = row.find("TD").eq(2).find('input[type="text"]').val().toUpperCase();
-        country.country_code = row.find("TD").eq(1).find('input[type="text"]').val().toUpperCase();
-        if (country == undefined){
-            country.country_code = row.find("TD").eq(1).find('input[type="text"]').val();
+        email={};
+        email.del_ind = row.find("TD").eq(8).find('input[type="checkbox"]').is(':checked');
+        email.email_type = row.find("TD").eq(1).find('select[type="text"]').val();
+        email.language_id = row.find("TD").eq(2).find('select[type="text"]').val();
+        email.email_subject = row.find("TD").eq(3).find('textarea[type="text"]').val();
+        email.email_header = row.find("TD").eq(4).find('textarea[type="text"]').val();
+        email.email_body = row.find("TD").eq(5).find('textarea[type="text"]').val();
+        email.email_footer = row.find("TD").eq(6).find('textarea[type="text"]').val();
+        email.email_guid = row.find("TD").eq(7).find('input[type="text"]').val();
+
+        if (email == undefined){
+            email.email_type = row.find("TD").eq(1).find('select[type="text"]').val();
         }
-        validate_add_attributes.push(country.country_code);
-        countries_data.push(country);
+        validate_add_attributes.push(email.email_type);
+        email_setting_data.push(email);
     });
-    return countries_data;
+    return email_setting_data;
 }
 
 // Function for add a new row data
 function new_row_data(){
     basic_add_new_html = '<tr><td><input type="checkbox" required></td>'+
-    '<td><select class="form-control check_special_char"  type="text"  name="email_type" required>'+email_type_dropdwn+'</select></td>'+
-    '<td><input class="form-control check_special_char" type="text" maxlength="100"  name="email_subject" required></td>'+
-    '<td><input class="form-control check_special_char" type="text" maxlength="100"  name="email_header" required></td>'+
-    '<td><input class="form-control check_special_char" type="text"  name="email_body" required></td>'+
-    '<td><input class="form-control check_special_char" type="text" maxlength="100"  name="email_footer" required></td>'+
-    '<td hidden><input class="form-control" type="text" maxlength="100"  name="email_guid" required></td>'+
-    '<td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+    '<td><select class="form-control"  type="text"  name="email_type" required>'+email_type_dropdwn+'</select></td>'+
+    '<td><select class="form-control"  type="text"  name="language_id" required>'+language_dropdown+'</select></td>'+
+    '<td><textarea class="form-control " type="text"  name="email_subject" required></textarea></td>'+
+    '<td><textarea class="form-control check_special_char" type="text"  name="email_header" required></textarea></td>'+
+    '<td><textarea class="form-control check_special_char" type="text"  name="email_body"  required></textarea></td>'+
+    '<td><textarea class="form-control check_special_char" type="text"  name="email_footer" required></textarea></td>'+
+    '<td hidden><input class="form-control" type="text" maxlength="100"  name="email_guid" required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
     table_sort_filter('id_popup_table');
 }
@@ -192,8 +195,17 @@ function get_main_table_data(){
     $("#display_basic_table TBODY TR").each(function() {
         var row = $(this);
         var main_attribute = {};
-        main_attribute.country_code = row.find("TD").eq(1).html();
-        main_table_low_value.push(main_attribute.country_code);
+        var lang_desc;
+        var lang_code;
+        lang_desc = row.find("TD").eq(2).html();
+        for (i = 0; i < render_language_data.length; i++) {
+            if (lang_desc == render_language_data[i].description)
+                lang_code = render_language_data[i].language_id
+        }
+        main_attribute.email_type = row.find("TD").eq(1).html();
+        main_attribute.language_id = lang_code;
+        var compare_maintable = main_attribute.email_type+'-'+main_attribute.language_id
+        main_table_low_value.push(compare_maintable);
     });
     table_sort_filter('display_basic_table');
 }
@@ -202,12 +214,23 @@ function get_main_table_data(){
 function get_selected_row_data(){
     $("#display_basic_table TBODY TR").each(function () {
         var row = $(this);
-        var country_arr_obj ={};
-        country_arr_obj.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
-        if(country_arr_obj.del_ind){
-            country_arr_obj.country_code = row.find("TD").eq(1).html();
-            country_arr_obj.country_name = row.find("TD").eq(2).html();
-            main_table_country_checked.push(country_arr_obj);
+        var email_arr_obj ={};
+        var lang_desc;
+        var lang_code;
+        lang_desc = row.find("TD").eq(2).html();
+        for (i = 0; i < render_language_data.length; i++) {
+            if (lang_desc == render_language_data[i].description)
+                lang_code = render_language_data[i].language_id
+        }
+        email_arr_obj.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
+        if(email_arr_obj.del_ind){
+            email_arr_obj.email_type = row.find("TD").eq(1).html();
+            email_arr_obj.language_id = lang_code;
+            email_arr_obj.email_subject = row.find("TD").eq(3).html();
+            email_arr_obj.email_header = row.find("TD").eq(4).html();
+            email_arr_obj.email_body = row.find("TD").eq(5).html();
+            email_arr_obj.email_footer = row.find("TD").eq(6).html();
+            main_table_email_checked.push(email_arr_obj);
         }
     });
 }

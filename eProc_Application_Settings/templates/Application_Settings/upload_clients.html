@@ -136,7 +136,6 @@
     var basic_settings = '{{basic_settings|safe}}';
     var rendered_client_data = {{upload_clients|safe}};
     var messages_list = {{messages_list|safe}};
-    var client_data_array = {}
     var main_table_client_value = [];
     var client = '';
     var edit_basic_data = '';
@@ -148,13 +147,11 @@
     function popup_save_data() {
         $('#success_msg_id').empty()
         $('#id_popup_table').DataTable().destroy();
-        var client_data = new Array();
-        var validate_add_attributes = [];
         var error_message = '';
         $('#display_basic_table').DataTable().destroy();
         get_main_table_data();  //Read data from main table
         // compare for duplicates in popup
-        [no_duplicate_value,error_message] = compare_table_for_duplicate_entries(validate_add_attributes, client_data)
+        [no_duplicate_value,error_message] = compare_table_for_duplicate_entries(validate_add_attributes, clients_data)
         if (error_message){
             display_error_message(error_message)
         }
@@ -165,7 +162,6 @@
             }
             if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
                 var add_basic_data = '';
-                var client_data_array = clients_data;
                 $('#id_save_confirm_popup').modal('hide');
                 data = {'data':clients_data,'table_name':'OrgClients','action':GLOBAL_ACTION}
                 OpenLoaderPopup();
@@ -250,31 +246,6 @@
     }
 
 //***********************
-function display_duplicate_entry(common) {
-    var client_check = new Array;
-    $("#id_popup_table TBODY TR").each(function() {
-        var row = $(this);
-        client_dic = {}
-        client_dic.client = row.find("TD").eq(1).find('input[type="text"]').val().toUpperCase();
-        client_check.push(client_dic.client);
-        jQuery.grep(client_check, function(el) {
-            if (jQuery.inArray(el, common) != -1) {
-                row_color_highlight(row);
-                client_dic.client = row.find("TD").eq(1).find('input[type="text"]').val();
-                client_check.push(client_dic.client);
-                jQuery.grep(client_check, function(el) {
-                    if (jQuery.inArray(el, common) != -1) {
-                        row_color_highlight(row);
-                    }
-                    else {
-                        row_color_no_highlight(row);
-                    }
-                });
-            }
-        });
-    });
-}
-
     //Function to highlight duplicate records
     function display_duplicate_entry(common) {
         var client_check = new Array;

@@ -984,8 +984,8 @@ class ApplicationSettingsSave:
             # if entry is not exists in db
             if not django_query_instance.django_existence_check(Authorization,
                                                                 {'role': auth_detail['role'],
-                                                                    'client': self.client
-                                                                }):
+                                                                 'client': self.client
+                                                                 }):
 
                 guid = guid_generator()
                 auth_db_dictionary = {'auth_guid': guid,
@@ -1172,6 +1172,74 @@ class ApplicationSettingsSave:
         bulk_create_entry_db(UserRoles, roles_db_list)
         set_reset_field(used_flag_reset, used_flag_set, 'roles')
 
+    def save_email_settings_into_db(self, email_data):
+        """
+
+        """
+        variant_list = []
+        self.save_email_settings(email_data['data'])
+        message = get_message_detail_based_on_action(email_data['action'])
+
+        upload_response = get_configuration_data(EmailContents,
+                                                 {'del_ind': False,
+                                                  'client': self.client},
+                                                 ['email_contents_guid', 'object_type', 'subject', 'header', 'body',
+                                                  'footer', 'language_id'])
+        variant_values = get_configuration_data(EmailObjectTypes,
+                                                {'del_ind': False,
+                                                 'client': self.client},
+                                                ['object_type'])
+        for variant_names in variant_values:
+            variant_list.append(variant_names['object_type'])
+
+        return upload_response, message, variant_list
+
+    def save_email_settings(self, email_data):
+        """
+
+        """
+        emailSettings_db_list = []
+        for emailSettings_detail in email_data:
+            # if entry is not exists in db
+            if not django_query_instance.django_existence_check(EmailContents,
+                                                                {'object_type': emailSettings_detail['email_type'],
+                                                                 'language_id': emailSettings_detail['language_id'],
+                                                                 'client': self.client}):
+                guid = guid_generator()
+                emailSettings_db_dictionary = {'email_contents_guid': guid,
+                                               'object_type': emailSettings_detail['email_type'],
+                                               'subject': emailSettings_detail['email_subject'],
+                                               'header': emailSettings_detail['email_header'],
+                                               'body': emailSettings_detail['email_body'],
+                                               'footer': emailSettings_detail['email_footer'],
+                                               'language_id': Languages.objects.get(
+                                                   language_id=emailSettings_detail['language_id']),
+                                               'del_ind': False,
+                                               'client': self.client,
+                                               'email_contents_created_at': self.current_date_time,
+                                               'email_contents_created_by': self.username,
+                                               'email_contents_changed_at': self.current_date_time,
+                                               'email_contents_changed_by': self.username
+                                               }
+                emailSettings_db_list.append(emailSettings_db_dictionary)
+            else:
+                django_query_instance.django_update_query(EmailContents,
+                                                          {'object_type': emailSettings_detail['email_type'],
+                                                           'language_id': emailSettings_detail['language_id'],
+                                                           'client': self.client},
+                                                          {'object_type': emailSettings_detail['email_type'],
+                                                           'subject': emailSettings_detail['email_subject'],
+                                                           'header': emailSettings_detail['email_header'],
+                                                           'body': emailSettings_detail['email_body'],
+                                                           'footer': emailSettings_detail['email_footer'],
+                                                           'language_id': Languages.objects.get(
+                                                               language_id=emailSettings_detail['language_id']),
+                                                           'email_contents_changed_at': self.current_date_time,
+                                                           'email_contents_changed_by': self.username,
+                                                           'del_ind': emailSettings_detail['del_ind'],
+                                                           'client': self.client})
+        bulk_create_entry_db(EmailContents, emailSettings_db_list)
+
 
 class SystemSettingConfig:
     def __init__(self, client):
@@ -1333,7 +1401,8 @@ def user_roles_data():
 def authorization_dropdown():
     upload_data_roles = django_query_instance.django_filter_query(UserRoles, {'del_ind': False}, ['role'], ['role'])
 
-    upload_data_auth_grp_obj = django_query_instance.django_filter_query(AuthorizationGroup, {'del_ind': False}, ['auth_obj_grp'], ['auth_obj_grp'])
+    upload_data_auth_grp_obj = django_query_instance.django_filter_query(AuthorizationGroup, {'del_ind': False},
+                                                                         ['auth_obj_grp'], ['auth_obj_grp'])
 
     data = {
         'upload_data_roles': upload_data_roles,
@@ -1345,7 +1414,7 @@ def authorization_dropdown():
 def authorization_data():
     upload_auth = list(
         Authorization.objects.filter(client=global_variables.GLOBAL_CLIENT, del_ind=False).values('auth_guid',
-                                                                                                  'auth_obj_grp'                                                                                                 
+                                                                                                  'auth_obj_grp'
                                                                                                   'role'))
     return upload_auth
 

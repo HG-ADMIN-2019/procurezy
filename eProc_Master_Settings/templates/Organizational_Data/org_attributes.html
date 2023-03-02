@@ -274,7 +274,7 @@
               get_message_details("JMSG005"); // Get message details
                var display4 = msg_type.messages_id_desc;
               document.getElementById("id_error_msg_checkbox").innerHTML = display4+ "Checkbox";
-
+              $('#id_delete_confirm_popup').modal('hide');
         }
         else{
            $('#id_save_confirm_popup').modal('hide');
@@ -290,6 +290,7 @@
                         rendered_org_attr_data = Response[0];
                         display_basic_db_data();
                        success_response(Response); // Function call to display response data
+                       $('#myModal').modal('hide');
                         CloseLoaderPopup();
                     }
                 });
@@ -354,7 +355,6 @@ function onclick_copy_update_button(data) {
                         if (checkBoxes[i].checked) {
                             var row = checkBoxes[i].parentNode.parentNode;
                             if(GLOBAL_ACTION == "UPDATE"){
-
                                 edit_basic_data +=  '<tr><td hidden><input type="checkbox" required></td>'+
                                 '<td><select type="text" class="input form-control" id="attributeid"  name="attributeid" disabled>'+ attribute_id_dropdown_onload +'</select></td>'+
                                 '<td><input class="form-control attribute_name" type="text" value="' + row.cells[2].innerHTML + '" name="attribute_name" id="attribute_name-1" disabled></td>'+
