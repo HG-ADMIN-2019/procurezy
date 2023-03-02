@@ -67,7 +67,6 @@ function onclick_copy_update_button(data) {
                 edit_basic_data += '<tr ><td><input type="checkbox" required></td><td>'+ unique_input +'</td><td><input value="' + row.cells[2].innerHTML + '" type="text" class="form-control check_special_char"  name="currency description"  maxlength="100"  required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
                 $("#header_select").prop("hidden", false);
             }
-
         }
     }
     $('#id_popup_tbody').append(edit_basic_data);
@@ -94,14 +93,14 @@ $(".remove_upload_data").click(() => {
     $('#id_popup_table').DataTable().destroy();
 });
 
+//***********************************************
 function display_error_message(error_message){
-        $("#error_msg_id").css("display", "none")
-        $('#error_message').text(error_message);
-        document.getElementById("error_message").style.color = "Red";
-        $("#error_msg_id").css("display", "block")
-        $('#id_save_confirm_popup').modal('hide');
-        $('#currencyModal').modal('show');
-
+    $("#error_msg_id").css("display", "none")
+    $('#error_message').text(error_message);
+    document.getElementById("error_message").style.color = "Red";
+    $("#error_msg_id").css("display", "block")
+    $('#id_save_confirm_popup').modal('hide');
+    $('#currencyModal').modal('show');
 }
 
 // on click add icon display the row in to add the new entries
@@ -143,12 +142,12 @@ function display_basic_db_data() {
     table_sort_filter('display_basic_table');
 }
 
+//*************************************
 function delete_duplicate(){
     $('#id_popup_table').DataTable().destroy();
     var currency_id_check = new Array
     $("#id_popup_table TBODY TR").each(function() {
         var row = $(this);
-
         //*************** reading data from the pop-up ***************
         description = row.find("TD").eq(2).find('input[type="text"]').val().toUpperCase();
         currency_id = row.find("TD").eq(1).find('input[type="text"]').val().toUpperCase();
