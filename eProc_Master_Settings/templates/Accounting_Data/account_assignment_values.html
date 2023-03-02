@@ -193,10 +193,10 @@
     //*******************************
     function acc_value_dropdown() {
         acc_ass_dropdwn = ''
-        company_dropdwn = ''
         $.each(rendered_aac_data, function(i, item) {
             acc_ass_dropdwn += '<option value ="' + item.account_assign_cat + '" >' + item.account_assign_cat + '</option>'
         });
+        company_dropdwn = ''
         $.each(rendered_company_data, function(i, item) {
             company_dropdwn += '<option value ="' + item.company_id + '">' + item.company_id + '</option>'
         });
@@ -207,32 +207,10 @@
     function popup_save_data() {
         $('#success_msg_id').empty()
         $('#id_popup_table').DataTable().destroy();
-        var countries_data = new Array();
-        var validate_add_attributes = [];
-        var aav = {};
         var check_dates = []
         no_duplicate_entries = 'Y'
         no_duplicate_value = 'Y'
         var error_message = '';
-        $('#display_basic_table').DataTable().destroy();
-        $("#id_popup_table TBODY TR").each(function() {
-            var row = $(this);
-            aav = {};
-            aav.del_ind = row.find("TD").eq(7).find('input[type="checkbox"]').is(':checked');
-            aav.account_assign_value = row.find("TD").eq(3).find('input[type="number"]').val();
-            aav.valid_from = row.find("TD").eq(4).find('input[type="date"]').val()
-            aav.valid_to = row.find("TD").eq(5).find('input[type="date"]').val()
-            aav.account_assign_cat = row.find("TD").eq(2).find('Select').val()
-            aav.company_id = row.find("TD").eq(1).find('Select').val()
-            aav.account_assign_guid = row.find("TD").eq(6).find('input').val()
-            if (aav == undefined) {
-                aav.account_assign_value = row.find("TD").eq(3).find('input[type="text"]').val();
-            }
-            check_dates.push([aav.valid_from, aav.valid_to])
-            var compare = aav.account_assign_value + '-' + aav.account_assign_cat + '-' + aav.company_id
-            validate_add_attributes.push(compare);
-            countries_data.push(aav);
-        });
         $('#display_basic_table').DataTable().destroy();
         get_main_table_data(); //Read data from main table
         // compare for duplicates in popup
@@ -695,19 +673,28 @@
         }
     }
 
+    //Function to highlight duplicate records
     function display_duplicate_entry(common) {
-    var aav_data = read_popup_data();
-    $("#id_popup_table TBODY TR").each(function () {
-        var row = $(this);
-        var account_assign_value = row.find("TD").eq(3).find('input[type="number"]').val();
-        if (common.includes(account_assign_value)) {
-            row.addClass("highlight");
-        } else {
-            row.removeClass("highlight");
-        }
-    });
-    $("#id_duplicate_entry_popup").show();
-}
+        var aav_check = new Array;
+        $("#id_popup_table TBODY TR").each(function() {
+            var row = $(this);
+            aav = {}
+            aav.company_id = row.find("TD").eq(1).find('Select').val()
+            aav.account_assign_cat = row.find("TD").eq(2).find('Select').val()
+            aav.account_assign_value = row.find("TD").eq(3).find('input[type="number"]').val();
+            var compare =  aav.company_id + '-' + aav.account_assign_cat + '-' + aav.account_assign_value;
+            aav_check.push(compare);
+            jQuery.grep(aav_check, function(el) {
+                if (jQuery.inArray(el, common) != -1) {
+                    row_color_highlight(row);
+                }
+                else {
+                    row_color_no_highlight(row);
+                }
+            });
+
+        });
+    }
 
 </script>
 <script src="{% static 'scripts/accounting_data/acc_assign_values.js' %}"></script>

@@ -1,5 +1,6 @@
 var orgattr_data = new Array();
 var validate_add_attributes = [];
+var main_table_low_value = [];
 var org_attr={};
 
 // on click update icon display the selected checkbox data to update
@@ -8,11 +9,15 @@ function onclick_update_button() {
     onclick_copy_update_button("UPDATE")
     document.getElementById("id_del_add_button").style.display = "none";
 }
+
+//**********************************
 function onclick_delete_button() {
     GLOBAL_ACTION = "DELETE"
     onclick_copy_update_button("DELETE")
     document.getElementById("id_del_add_button").style.display = "none";
 }
+
+//********************************************
 function onclick_copy_update_button(data) {
     $('#display_basic_table').DataTable().destroy();
     $('#id_popup_table').DataTable().destroy();
@@ -44,15 +49,15 @@ function onclick_copy_update_button(data) {
             }
             else if (GLOBAL_ACTION == "COPY"){
                edit_basic_data +=  '<tr><td><input type="checkbox" required></td>'+
-                                   '<td><select type="text" class="input form-control attribute" id="attribute-1"  name="attribute" onchange="GetSelectedTextValue(this)"><option value="" disabled selected>Select your option</option>'+ attribute_id_dropdown +'</select></td>'+
-                                   '<td><input class="form-control attribute_name" type="text" value="' + row.cells[2].innerHTML + '" name="attribute_name" id="attribute_name-1" disabled></td>'+
-                                   '<td><input type="checkbox"  name="range_indicator" required></td>'+
-                                   '<td><input type="checkbox"  name="multiple_value" required></td>'+
-                                   '<td><input type="checkbox"  name="allow_defaults" required></td>'+
-                                   '<td><input type="checkbox" name="inherit_values" required></td>'+
-                                   '<td><input type="number" value="' + row.cells[7].innerHTML + '" name="maxlength"></td>'+
-                                   '<td class="class_del_checkbox" hidden><input type="checkbox" required></td>'+
-                                   '<td class="class_del_checkbox1" hidden><input type="checkbox" required></td></tr>';
+                '<td><select type="text" class="input form-control attribute" id="attribute-1"  name="attribute" onchange="GetSelectedTextValue(this)"><option value="" disabled selected>Select your option</option>'+ attribute_id_dropdown +'</select></td>'+
+                '<td><input class="form-control attribute_name" type="text" value="' + row.cells[2].innerHTML + '" name="attribute_name" id="attribute_name-1" disabled></td>'+
+                '<td><input type="checkbox"  name="range_indicator" required></td>'+
+                '<td><input type="checkbox"  name="multiple_value" required></td>'+
+                '<td><input type="checkbox"  name="allow_defaults" required></td>'+
+                '<td><input type="checkbox" name="inherit_values" required></td>'+
+                '<td><input type="number" value="' + row.cells[7].innerHTML + '" name="maxlength"></td>'+
+                '<td class="class_del_checkbox" hidden><input type="checkbox" required></td>'+
+                '<td class="class_del_checkbox1" hidden><input type="checkbox" required></td></tr>';
 	           $("#header_select").prop("hidden", false);
             }
             else if (GLOBAL_ACTION == "DELETE"){
@@ -92,9 +97,6 @@ function onclick_copy_update_button(data) {
         var multiple_value = dropdown_values[i][2];
         var allow_defaults = dropdown_values[i][3];
         var inherit_values = dropdown_values[i][4];
-
-//        $(row.find("TD").eq(1).find("select option[value="+attribute+"]")).attr("selected", "selected");
-//        $(row.find("TD").eq(1).find("select option[value="+row.cells[1].innerHTML+"]")).attr('selected','selected');
         if(range_indicator) {
             $(row.find("TD").eq(3).find('input[name="range_indicator"]').attr('checked', 'checked'));
         }
@@ -115,6 +117,8 @@ function onclick_copy_update_button(data) {
         table_sort_filter('display_basic_table');
         $('#myModal').modal('show');
 }
+
+//***************************
 function display_button(){
     if(GLOBAL_ACTION == "DELETE"){
         $('#delete_data').show();
@@ -125,6 +129,7 @@ function display_button(){
         $('#save_id').show();
     }
 }
+
 //onclick of cancel empty the popup table body and error messages
 $(".remove_upload_data").click(() => {
     $("#id_error_msg").html("");
@@ -142,6 +147,7 @@ $(".remove_upload_data").click(() => {
     $('#id_popup_table').DataTable().destroy();
 });
 
+//**********************************************
 function display_error_message(error_message){
     $('#error_message').text(error_message);
     document.getElementById("error_message").style.color = "Red";
@@ -156,30 +162,30 @@ function display_basic_db_data() {
     $('#id_org_attr_tbody').empty();
     var edit_basic_data = '';
     $.each(rendered_org_attr_data, function (i, item) {
-            var data = '';
-            var data1 = '';
-            var data2 = '';
-            var data3 = '';
-            if (item.range_indicator == true){
-                data = '<input type="checkbox" name="range_indicator" value="" checked disabled>'
-            } else{
-                data = '<input type="checkbox" name="range_indicator" value="" disabled>'
-            }
-             if (item.multiple_value == true){
-                data1 = '<input type="checkbox" name="multiple_value" value="" checked disabled>'
-            } else{
-                data1 = '<input type="checkbox" name="multiple_value" value="" disabled>'
-            }
-             if (item.allow_defaults == true){
-                data2 = '<input type="checkbox" name="allow_defaults" value="" checked disabled>'
-            } else{
-                data2 = '<input type="checkbox" name="allow_defaults" value="" disabled>'
-            }
-            if (item.inherit_values == true){
-                data3 = '<input type="checkbox" name="inherit_values" value="" checked disabled>'
-            } else{
-                data3 = '<input type="checkbox" name="inherit_values" value="" disabled>'
-            }
+        var data = '';
+        var data1 = '';
+        var data2 = '';
+        var data3 = '';
+        if (item.range_indicator == true){
+            data = '<input type="checkbox" name="range_indicator" value="" checked disabled>'
+        } else{
+            data = '<input type="checkbox" name="range_indicator" value="" disabled>'
+        }
+            if (item.multiple_value == true){
+            data1 = '<input type="checkbox" name="multiple_value" value="" checked disabled>'
+        } else{
+            data1 = '<input type="checkbox" name="multiple_value" value="" disabled>'
+        }
+            if (item.allow_defaults == true){
+            data2 = '<input type="checkbox" name="allow_defaults" value="" checked disabled>'
+        } else{
+            data2 = '<input type="checkbox" name="allow_defaults" value="" disabled>'
+        }
+        if (item.inherit_values == true){
+            data3 = '<input type="checkbox" name="inherit_values" value="" checked disabled>'
+        } else{
+            data3 = '<input type="checkbox" name="inherit_values" value="" disabled>'
+        }
         edit_basic_data += '<tr ><td class="class_select_checkbox"><input class="checkbox_check" onclick="valueChanged()" type="checkbox" required></td><td>' + item.attribute_id + '</td><td>' + item.attribute_name + '</td>'+
         '<td>' + data + '</td>' +
         '<td>' + data1 + '</td>' +
@@ -202,6 +208,8 @@ function display_basic_db_data() {
     $('#id_check_all').hide();
     table_sort_filter('display_basic_table');
 }
+
+//**********************************
 function delete_duplicate() {
     $('#id_popup_table').DataTable().destroy();
     var org_attr_code_check = new Array
@@ -217,9 +225,16 @@ function delete_duplicate() {
     table_sort_filter_popup_pagination('id_popup_table')
     check_data()
 }
+
 // Function to hide and display save related popups
 $('#save_id').click(function () {
     $('#myModal').modal('hide');
+    orgattr_data = read_popup_data();
+    $('#id_save_confirm_popup').modal('show');
+});
+
+//Read popup table data
+function read_popup_data() {
     validate_add_attributes = [];
     orgattr_data = [];
     $("#id_popup_table TBODY TR").each(function() {
@@ -240,8 +255,8 @@ $('#save_id').click(function () {
         validate_add_attributes.push(org_attr.attribute_id);
         orgattr_data.push(org_attr);
     });
-    $('#id_save_confirm_popup').modal('show');
-});
+    return orgattr_data;
+}
 
 // Function to get main table data
 function get_main_table_data() {
