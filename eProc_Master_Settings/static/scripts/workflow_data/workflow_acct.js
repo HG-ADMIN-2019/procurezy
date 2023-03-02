@@ -68,12 +68,12 @@ function read_popup_data() {
         wfacc.sup_currency_id = row.find("TD").eq(8).find('select[type="text"]').val();
         wfacc.workflow_acc_guid = row.find("TD").eq(9).find('input[type="text"]').val();
         if (wfacc == undefined) {
-            wfacc.app_username = row.find("TD").eq(4).find('select[type="text"]').val();
+            wfacc.app_username = row.find("TD").eq(1).find('select[type="text"]').val();
         }
         if(wfacc.workflow_acc_guid == undefined) {
             wfacc.workflow_acc_guid = ''
         }
-        var wfacc_compare = wfacc.app_username +'-'+ wfacc.account_assign_cat +'-'+ wfacc.acc_value +'-'+ wfacc.company_id +'-'+ wfacc.sup_account_assign_cat +'-'+ wfacc.sup_acc_value +'-'+ wfacc.sup_company_id +'-'+ wfacc.sup_currency_id
+        var wfacc_compare = wfacc.company_id +'-'+  wfacc.account_assign_cat +'-'+ wfacc.acc_value +'-'+ wfacc.app_username +'-'+ wfacc.sup_account_assign_cat +'-'+ wfacc.sup_acc_value +'-'+ wfacc.sup_company_id +'-'+ wfacc.sup_currency_id
         validate_add_attributes.push(wfacc_compare);
         wfacc_data.push(wfacc);
     });

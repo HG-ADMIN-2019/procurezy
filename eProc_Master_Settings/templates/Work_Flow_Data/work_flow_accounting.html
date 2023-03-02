@@ -444,51 +444,52 @@
         }
     }
 
-    // validate and save for add,copy,update and upload data
+     // validate and save for add,copy,update and upload data
     function popup_save_data() {
-        $('#success_msg_id').empty();
-        $('#id_popup_table').DataTable().destroy();
-        no_duplicate_entries = 'Y'
-        no_duplicate_value = 'Y'
-        var error_message = '';
-        $('#display_basic_table').DataTable().destroy();
-        get_main_table_data(); //Read data from main table
-        // compare for duplicates in popup
-        [no_duplicate_value,error_message] = compare_table_for_duplicate_entries(validate_add_attributes, wfacc_data)
-        if (error_message) {
-            display_error_message(error_message)
-        }
-        else {
-            if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
-                // compare main table and pop up for duplicate values
-                [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
-            }
-            if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
-                var add_basic_data = '';
-                var wfacc_data_array = wfacc_data;
-                console.log(wfacc_data);
-                $('#id_save_confirm_popup').modal('hide');
-                data = {'data':wfacc_data_array,'table_name':'WorkflowACC','action':GLOBAL_ACTION}
-                OpenLoaderPopup();
-                    $.ajax({
-                    type: 'POST',
-                    url: "{% url 'eProc_Master_Settings:create_update_master_data' %}",
-                    data: JSON.stringify(data),
-                    contentType: "application/json; charset=utf-8",
-                    dataType: "json",
-                    success: function(Response) {
-                        rendered_wfacc_data = Response[0];
-                        display_basic_db_data();
-                        $('#Wf_Acc_Modal').modal('hide');
-                        success_response(Response); // Function call to display response data
-                        CloseLoaderPopup();
-                    }
-                });
-            }
-            if (error_message){
-                display_error_message(error_message)
-            }
-        }
+      $('#success_msg_id').empty();
+      $('#id_popup_table').DataTable().destroy();
+      no_duplicate_entries = 'Y';
+      no_duplicate_value = 'Y';
+      var error_message = '';
+      $('#display_basic_table').DataTable().destroy();
+      get_main_table_data(); //Read data from main table
+      // check for duplicates in popup table
+      var duplicate_entries = check_duplicate_entry(validate_add_attributes, wfacc_data);
+      if (duplicate_entries.length > 0) {
+        display_duplicate_entry(duplicate_entries);
+        error_message = ui_messeges("JMSG001");
+        display_error_message(error_message);
+        return;
+      }
+      if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
+        // compare main table and pop up for duplicate values
+        [no_duplicate_entries, error_message] = maintable_validation(validate_add_attributes, main_table_low_value);
+      }
+      if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
+        var add_basic_data = '';
+        var wfacc_data_array = wfacc_data;
+        console.log(wfacc_data);
+        $('#id_save_confirm_popup').modal('hide');
+        data = {'data': wfacc_data_array, 'table_name': 'WorkflowACC', 'action': GLOBAL_ACTION};
+        OpenLoaderPopup();
+        $.ajax({
+          type: 'POST',
+          url: "{% url 'eProc_Master_Settings:create_update_master_data' %}",
+          data: JSON.stringify(data),
+          contentType: "application/json; charset=utf-8",
+          dataType: "json",
+          success: function(Response) {
+            rendered_wfacc_data = Response[0];
+            display_basic_db_data();
+            $('#Wf_Acc_Modal').modal('hide');
+            success_response(Response); // Function call to display response data
+            CloseLoaderPopup();
+          }
+        });
+      }
+      if (error_message){
+        display_error_message(error_message)
+      }
     }
 
     //delete the selected row in db................
@@ -782,7 +783,29 @@ function onclick_add_button(button) {
             }
         });
     }
-        
+
+    //to check duplicate entries
+    function check_duplicate_entry(attributes, data) {
+      var duplicate_entries = [];
+      var found = false;
+      for (var i = 0; i < data.length; i++) {
+        var item = data[i];
+        var allMatch = true;
+        for (var j = 0; j < attributes.length; j++) {
+          var attr = attributes[j];
+          if (item[attr] != $('#' + attr).val()) {
+            allMatch = false;
+            break;
+          }
+        }
+        if (allMatch) {
+          found = true;
+          duplicate_entries.push(item);
+        }
+      }
+      return duplicate_entries;
+    }
+
     // validating the  popup table for duplicate entries
     function compare_table_for_duplicate_entries(validate_add_attributes, wfacc) {
         add_attr_duplicates = false;
@@ -841,15 +864,15 @@ function onclick_add_button(button) {
         $("#id_popup_table TBODY TR").each(function() {
             var row = $(this);
             wfacc_dic = {}
-            wfacc_dic.app_username = row.find("TD").eq(4).find('select[type="text"]').val();
+            wfacc_dic.company_id = row.find("TD").eq(1).find('select[type="text"]').val();
             wfacc_dic.account_assign_cat = row.find("TD").eq(2).find('select[type="text"]').val();
             wfacc_dic.acc_value = row.find("TD").eq(3).find('input[type="number"]').val();
-            wfacc_dic.company_id = row.find("TD").eq(1).find('select[type="text"]').val();
+            wfacc_dic.app_username = row.find("TD").eq(4).find('select[type="text"]').val();
+            wfacc_dic.sup_company_id = row.find("TD").eq(5).find('select[type="text"]').val();
             wfacc_dic.sup_account_assign_cat = row.find("TD").eq(6).find('select[type="text"]').val();
             wfacc_dic.sup_acc_value = row.find("TD").eq(7).find('input[type="number"]').val();
-            wfacc_dic.sup_company_id = row.find("TD").eq(5).find('select[type="text"]').val();
             wfacc_dic.sup_currency_id = row.find("TD").eq(8).find('select[type="text"]').val();
-            var compare = wfacc_dic.app_username +'-'+ wfacc_dic.account_assign_cat +'-'+ wfacc_dic.acc_value +'-'+ wfacc_dic.company_id +'-'+ wfacc_dic.sup_account_assign_cat +'-'+ wfacc_dic.sup_acc_value +'-'+ wfacc_dic.sup_company_id +'-'+ wfacc_dic.sup_currency_id
+            var compare = wfacc_dic.company_id +'-'+ wfacc_dic.account_assign_cat +'-'+ wfacc_dic.acc_value +'-'+ wfacc_dic.app_username +'-'+ wfacc_dic.sup_company_id +'-'+ wfacc_dic.sup_account_assign_cat +'-'+ wfacc_dic.sup_acc_value +'-'+  wfacc_dic.sup_currency_id
             wfacc_check.push(compare);
             jQuery.grep(wfacc_check, function(el) {
                 if (jQuery.inArray(el, common) != -1) {

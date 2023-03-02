@@ -328,7 +328,7 @@
                 // compare main table and pop up for duplicate values
                 [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
             }
-            if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
+            if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')&& (dateValid == 'Y')) {
                 var add_basic_data = '';
                 var address_type_data_array = addresstype_data;
                 $('#id_save_confirm_popup').modal('hide');
@@ -636,7 +636,7 @@
             addresstype_dic = {}
             addresstype_dic.address_number = row.find("TD").eq(3).find('select').val();
             addresstype_dic.address_type = row.find("TD").eq(2).find('select').val();
-            var compare =  addresstype_dic.address_number +'-'+ addresstype_dic.address_type 
+            var compare =  addresstype_dic.address_number +'-'+ addresstype_dic.address_type
             addresstype_check.push(compare);
             jQuery.grep(addresstype_check, function(el) {
                 if (jQuery.inArray(el, common) != -1) {

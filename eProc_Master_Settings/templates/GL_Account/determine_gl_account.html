@@ -317,8 +317,7 @@
         $.ajax({
             type: 'POST',
             url: "{% url 'eProc_Master_Settings:create_update_master_data' %}",
-            data:
-                JSON.stringify(data),
+            data:JSON.stringify(data),
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             success: function (Response) {
@@ -509,10 +508,10 @@
             var row = $(this);
             //*************** reading data from the pop-up ***************
             prod_cat_id = row.find("TD").eq(1).find('input[type="text"]').val();
+            company_id = row.find("TD").eq(2).find("select option:selected").val();
+            account_assign_cat = row.find("TD").eq(3).find("select option:selected").val();
             gl_acc_num = row.find("TD").eq(4).find("select option:selected").val();
             gl_acc_default = row.find("TD").eq(5).find('input[type="checkbox"]').is(':checked');
-            account_assign_cat = row.find("TD").eq(3).find("select option:selected").val();
-            company_id = row.find("TD").eq(2).find("select option:selected").val();
             from_value = row.find("TD").eq(6).find('input[type="number"]').val();
             to_value = row.find("TD").eq(7).find('input[type="number"]').val();
             currency_id = row.find("TD").eq(8).find("select option:selected").val();
@@ -815,10 +814,10 @@
                             $("#header_select").prop("hidden", false);
                         }
                         var prod_cat = row.cells[1].innerHTML
+                        var company_id = row.cells[2].innerHTML
+                        var acc_ass_cat = row.cells[3].innerHTML
                         var gl_acc = row.cells[4].innerHTML
                         var gl_acc_default = row.cells[5].children.gl_acc_default.checked
-                        var acc_ass_cat = row.cells[3].innerHTML
-                        var company_id = row.cells[2].innerHTML
                         var currency_id = row.cells[8].innerHTML
                         dropdown_array.push([prod_cat,gl_acc, gl_acc_default, acc_ass_cat,company_id,currency_id])
                     }
@@ -828,11 +827,11 @@
                 $("#id_popup_table TBODY TR").each(function () {
                     var row = $(this);
                     var prod_cat = dropdown_array[i][0]
-                    var gl_acc = dropdown_array[i][1];
-                    var gl_acc_default = dropdown_array[i][2];
-                    var acc_ass_cat =dropdown_array[i][3];
-                    var company_id = dropdown_array[i][4];
-                    var currency_id = dropdown_array[i][5];
+                    var gl_acc = dropdown_array[i][3];
+                    var gl_acc_default = dropdown_array[i][4];
+                    var acc_ass_cat =dropdown_array[i][2];
+                    var company_id = dropdown_array[i][1];
+                    var currency_id = dropdown_array[i][7];
                     $(row.find("TD").eq(1).find("select option[value=" + prod_cat + "]")).attr('selected', 'selected');
                     $(row.find("TD").eq(4).find("select option[value=" + gl_acc + "]")).attr('selected', 'selected');
                     if(gl_acc_default) {
