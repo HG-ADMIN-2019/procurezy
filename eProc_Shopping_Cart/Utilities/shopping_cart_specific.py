@@ -1202,7 +1202,17 @@ def get_SC_details(sc_header_guid):
     return context
 
 
-def get_cart_default_name_and_user_first_name():
+def get_cart_default_name_and_user_first_name(first_name,last_name):
+    """
+
+    """
+    requester_first_name = requester_field_info(global_variables.GLOBAL_LOGIN_USERNAME, 'first_name')
+    # Get default shopping cart name
+    cart_name = get_default_cart_name(requester_first_name)
+    receiver_name = concatenate_str_with_space(first_name,last_name)
+    return requester_first_name, cart_name ,receiver_name
+
+def get_cart_default_name_and_user_first_name_last_name():
     """
 
     """

@@ -4,6 +4,7 @@ from django.db.models import Q
 
 from eProc_Basic.Utilities.functions.dictionary_key_to_list import dictionary_key_to_list
 from eProc_Basic.Utilities.functions.get_db_query import *
+from eProc_Basic.Utilities.functions.messages_config import get_message_desc
 from eProc_Basic.Utilities.functions.remove_element_from_list import remove_element_from_list
 from eProc_Basic.Utilities.functions.str_concatenate import concatenate_str_with_space
 from eProc_Calendar_Settings.Utilities.calender_settings_generic import calculate_delivery_date, \
@@ -11,11 +12,12 @@ from eProc_Calendar_Settings.Utilities.calender_settings_generic import calculat
 from eProc_Configuration.models import UnspscCategories, UnspscCategoriesCustDesc
 from eProc_Configuration.models.basic_data import Currency, UnitOfMeasures
 from eProc_Doc_Search_and_Display.Utilities.search_display_specific import get_po_header_app, get_sc_header_app_wf, \
-    get_sc_header_app
+    get_sc_header_app, get_order_status
 from eProc_Exchange_Rates.Utilities.exchange_rates_generic import convert_currency
 from eProc_Form_Builder.models import EformFieldData
 from eProc_Price_Calculator.Utilities.price_calculator_generic import calculate_item_total_value, calculate_item_price
-from eProc_Shopping_Cart.Utilities.shopping_cart_specific import get_completion_work_flow
+from eProc_Shopping_Cart.Utilities.shopping_cart_specific import get_completion_work_flow, get_manger_detail, \
+    get_users_first_name
 from eProc_Shopping_Cart.models import ScItem, ScHeader, ScAccounting, ScPotentialApproval, ScApproval
 from eProc_Shopping_Cart.models.add_to_cart import CartItemDetails
 
@@ -453,7 +455,7 @@ def get_currency_uom_prod_cat_country():
     currency_list = dictionary_key_to_list(currency, 'currency_id')
     product_category = get_prod_cat()
     country_list = get_country_data()
-    return currency, uom, currency_list,product_category,country_list
+    return currency, uom, currency_list, product_category, country_list
 
 
 def get_cart_items_detail():
@@ -508,3 +510,34 @@ def get_default_cart_name(requester_first_name):
     cart_name = concatenate_str_with_space(requester_first_name, date_time)
 
     return cart_name
+
+
+def get_manger_and_purchasing_details(company_code, default_acc_ass_cat, total_value, default_acc, call_off_list,
+                                      prod_cat_list):
+    """
+
+    """
+    error_msg = ''
+    completion_work_flow = []
+    manager_details = {}
+    sc_completion_flag = False
+    approver_id = ''
+    purchase_control_call_off_list = get_order_status(company_code, global_variables.GLOBAL_CLIENT)
+    if company_code:
+        manager_detail, msg_info = get_manger_detail(global_variables.GLOBAL_CLIENT,
+                                                     global_variables.GLOBAL_LOGIN_USERNAME,
+                                                     default_acc_ass_cat,
+                                                     total_value,
+                                                     company_code, default_acc,
+                                                     global_variables.GLOBAL_USER_CURRENCY)
+        if manager_detail:
+            manager_details, approver_id = get_users_first_name(manager_detail)
+
+        for purchase_control_call_off in purchase_control_call_off_list:
+            if purchase_control_call_off in call_off_list:
+                completion_work_flow = get_completion_work_flow(global_variables.GLOBAL_CLIENT, prod_cat_list,
+                                                                company_code)
+                sc_completion_flag = True
+    else:
+        error_msg = get_message_desc('MSG109')[1]
+    return error_msg, sc_completion_flag, completion_work_flow, manager_details, approver_id
