@@ -24,7 +24,7 @@
                    <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"  onclick="window_close();">
                     <i class="fas fa-times"></i> close
                 </button>
-                
+
             </div>
         </div>
 
@@ -62,9 +62,9 @@
                                     <INPUT type="checkbox" onchange="checkAll(this)" name="chk[]">
                                 </div>
                             </th>
-                            <th>Account Assignment Value</th>
-                            <th>Account Assignment Category</th>
                             <th>Company Number</th>
+                            <th>Account Assignment Category</th>
+                            <th>Account Assignment Value</th>
                             <th>Valid From Date</th>
                             <th>Valid To Date</th>
                             <th hidden>Guid</th>
@@ -75,9 +75,9 @@
                         {% for aav in upload_account_assignment_value %}
                         <tr>
                             <td class="class_select_checkbox" hidden><input type="checkbox" class="checkbox_check" onclick="valueChanged()" required></td>
-                            <td>{{aav.account_assign_value}}</td>
-                            <td>{{aav.account_assign_cat}}</td>
                             <td>{{aav.company_id}}</td>
+                            <td>{{aav.account_assign_cat}}</td>
+                            <td>{{aav.account_assign_value}}</td>
                             <td>{{aav.valid_from}}</td>
                             <td>{{aav.valid_to}}</td>
                             <td hidden>{{aav.account_assign_guid}}</td>
@@ -123,9 +123,9 @@
                             <thead>
                                 <tr>
                                     <th id="header_select">Select</th>
-                                    <th>Account Assignment Value</th>
-                                    <th>Account Assignment Category</th>
                                     <th>Company Number</th>
+                                    <th>Account Assignment Category</th>
+                                    <th>Account Assignment Value</th>
                                     <th>Valid From Date</th>
                                     <th>Valid To Date</th>
                                     <th hidden>Guid</th>
@@ -219,14 +219,14 @@
             var row = $(this);
             aav = {};
             aav.del_ind = row.find("TD").eq(7).find('input[type="checkbox"]').is(':checked');
-            aav.account_assign_value = row.find("TD").eq(1).find('input[type="number"]').val();
+            aav.account_assign_value = row.find("TD").eq(3).find('input[type="number"]').val();
             aav.valid_from = row.find("TD").eq(4).find('input[type="date"]').val()
             aav.valid_to = row.find("TD").eq(5).find('input[type="date"]').val()
             aav.account_assign_cat = row.find("TD").eq(2).find('Select').val()
-            aav.company_id = row.find("TD").eq(3).find('Select').val()
+            aav.company_id = row.find("TD").eq(1).find('Select').val()
             aav.account_assign_guid = row.find("TD").eq(6).find('input').val()
             if (aav == undefined) {
-                aav.account_assign_value = row.find("TD").eq(1).find('input[type="text"]').val();
+                aav.account_assign_value = row.find("TD").eq(3).find('input[type="text"]').val();
             }
             check_dates.push([aav.valid_from, aav.valid_to])
             var compare = aav.account_assign_value + '-' + aav.account_assign_cat + '-' + aav.company_id
@@ -273,7 +273,7 @@
             }
         }
     }              
-    
+
     //delete the selected row in db................
     var main_table_aav_checked = [];
     function main_table_delete() {
@@ -378,7 +378,7 @@
                                 }
                                 aac_data_id_list = aac_data + aac_data_list
                             });
-                            edit_basic_data += '<tr><td><input type="checkbox" required></td><td><input class="form-control" type="text" value="' + value[0] + '" maxlength="40" name="Account Assignment Value" required></td><td><select class="form-control">' + aac_data_id_list + ' </select></td><td ><select class="form-control">'+company_id_list+'</select></td><td><input class="input" type="date" value="' + value[1] + '" name="Valid From Date" required></td><td><input class="input" type="date" value="' + value[2] + '" name="Valid To Date" required></td><td hidden><input value="" type="hidden"></td><td>' + del_ind + '</td></tr>';
+                            edit_basic_data += '<tr><td><input type="checkbox" required></td><td ><select class="form-control">'+company_id_list+'</select></td><td><select class="form-control">' + aac_data_id_list + ' </select></td><td><input class="form-control" type="text" value="' + value[0] + '" maxlength="40" name="Account Assignment Value" required></td><td><input class="input" type="date" value="' + value[1] + '" name="Valid From Date" required></td><td><input class="input" type="date" value="' + value[2] + '" name="Valid To Date" required></td><td hidden><input value="" type="hidden"></td><td>' + del_ind + '</td></tr>';
                         });
                         $('#id_popup_tbody').append(edit_basic_data);
                         var i =0;
@@ -387,7 +387,7 @@
                             var aac_data_id_list = dropdown_select_array[i][0]
                             var company_id_list = dropdown_select_array[i][1]
                             $(row.find("TD").eq(2).find("select option[value="+aac_data_id_list+"]")).attr('selected','selected');
-                            $(row.find("TD").eq(3).find("select option[value="+company_id_list+"]")).attr('selected','selected');
+                            $(row.find("TD").eq(1).find("select option[value="+company_id_list+"]")).attr('selected','selected');
                             i++;
                         });
                         $("#id_del_ind_checkbox").prop("hidden", false);
@@ -440,11 +440,11 @@
                 var row = $(this);
                 accval_dic = {}
                 //*************** reading data from the pop-up ***************
-                accval_dic.account_assign_value = row.find("TD").eq(1).find('input[type="text"]').val();
+                accval_dic.account_assign_value = row.find("TD").eq(3).find('input[type="text"]').val();
                 accval_dic.valid_from = row.find("TD").eq(4).find('input[type="date"]').val()
                 accval_dic.valid_to = row.find("TD").eq(5).find('input[type="date"]').val()
                 accval_dic.account_assign_cat = row.find("TD").eq(2).find("select option:selected").val();
-                accval_dic.company_id = row.find("TD").eq(3).find("select option:selected").val();
+                accval_dic.company_id = row.find("TD").eq(1).find("select option:selected").val();
                 checked_box = row.find("TD").eq(7).find('input[type="checkbox"]').is(':checked')
                 if (checked_box) {
                     accval_dic.del_ind = '1'
@@ -470,17 +470,17 @@
                 //*************** checking for max length for aav code (max length = 2) ***************
                 if (accval_dic.account_assign_value < 0) {
                     error_message = ui_messeges("JMSG002")// Get message details
-                    $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
+                    $(row.find("TD").eq(3).find('input[type="text"]')).css("border", "1px solid #FF0000");
                     count = count + 1;
                 }
 
                 //*************** checking for special characters for aav code ***************
                 else if (format_aav.test(accval_dic.account_assign_value)) {
                     error_message = ui_messeges("JMSG002")// Get message details
-                    $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
+                    $(row.find("TD").eq(3).find('input[type="text"]')).css("border", "1px solid #FF0000");
                     count = count + 1;
                 } else {
-                    $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "none");
+                    $(row.find("TD").eq(3).find('input[type="text"]')).css("border", "none");
                 }
 
                 //*************** checking for special characters for aav name ***************
@@ -631,8 +631,8 @@
                         var row = checkBoxes[i].parentNode.parentNode;
                         if(GLOBAL_ACTION == "COPY"){
                             guid = 'GUID';
-                            unique_input = '<input class="form-control check_number" type="number" value="' + row.cells[1].innerHTML + '" name="Account Assignment Value" maxlength="40" required>'
-                            edit_basic_data += '<tr><td><input type="checkbox" required></td> <td>'+unique_input+'</td><td><select id="acc_dropdwn" class="form-control" id="acc_ass_val_dropdw">' + acc_ass_dropdwn + ' </select></td> <td ><select class="form-control" id="company_dropdw">' + company_dropdwn + '</select> </td> <td><input class="form-control" type="date" value="' + row.cells[4].innerHTML + '" maxlength="10" name="Valid From Date" required></td> <td><input class="form-control" type="date" value="' + row.cells[5].innerHTML + '" maxlength="10" name="Valid To Date" required></td> <td hidden><input value="' + guid + '"></td> <td class="class_del_checkbox" hidden><input type="checkbox" required></td>'+
+                            unique_input = '<select class="form-control" id="company_dropdw">' + company_dropdwn + '</select>'
+                            edit_basic_data += '<tr><td><input type="checkbox" required></td><td >' + unique_input + ' </td><td><select id="acc_dropdwn" class="form-control" id="acc_ass_val_dropdw">' + acc_ass_dropdwn + ' </select></td> <td ><input class="form-control check_number" type="number" value="' + row.cells[3].innerHTML + '" name="Account Assignment Value" maxlength="40" required> </td> <td><input class="form-control" type="date" value="' + row.cells[4].innerHTML + '" maxlength="10" name="Valid From Date" required></td> <td><input class="form-control" type="date" value="' + row.cells[5].innerHTML + '" maxlength="10" name="Valid To Date" required></td> <td hidden><input value="' + guid + '"></td> <td class="class_del_checkbox" hidden><input type="checkbox" required></td>'+
                             '<td class="class_del_checkbox1" hidden><input type="checkbox" required></td></tr>';
                             $("#header_select").prop("hidden",false);
                         }
@@ -646,14 +646,14 @@
                                 check = '<input type="checkbox">'
                                 $('#delete_data').prop('disabled', false);
                             }
-                            unique_input = '<input class="form-control check_number" type="number" value="' + row.cells[1].innerHTML + '" name="Account Assignment Value" maxlength="40" required>'
+                            unique_input = '<select class="form-control" id="company_dropdw">' + company_dropdwn + '</select>'
                             edit_basic_data += '<tr> <td>'+check+'</td> <td>'+unique_input+'</td><td><select id="acc_dropdwn" class="form-control" id="acc_ass_val_dropdw">' + acc_ass_dropdwn + ' </select></td> <td ><select class="form-control" id="company_dropdw">' + company_dropdwn + '</select> </td> <td><input class="form-control" type="date" value="' + row.cells[4].innerHTML + '" maxlength="10" name="Valid From Date" required></td> <td><input class="form-control" type="date" value="' + row.cells[5].innerHTML + '" maxlength="10" name="Valid To Date" required></td> <td hidden><input value="' + guid + '"></td> <td class="class_del_checkbox" hidden><input type="checkbox" required></td>'+
                             '<td class="id_del_ind_checkbox1" hidden><input type="text" name = "del_ind_flag" value="' + row.cells[7].innerHTML + '"></td></tr>';
                             $("#header_select").prop("hidden", false);
                         }
                         else {
                             guid = row.cells[6].innerHTML;
-                            unique_input = '<input class="form-control" type="number" value="' + row.cells[1].innerHTML + '" name="Account Assignment Value" maxlength="40" disabled>'
+                            unique_input = '<select class="form-control" id="company_dropdw">' + company_dropdwn + '</select>'
                             edit_basic_data += '<tr> <td hidden><input type="checkbox" required></td> <td>'+unique_input+'</td><td><select id="acc_dropdwn" class="form-control"  id="acc_ass_val_dropdw" disabled>' + acc_ass_dropdwn + ' </select></td> <td ><select class="form-control" id="company_dropdw" disabled>' + company_dropdwn + '</select> </td> <td><input class="form-control" type="date" value="' + row.cells[4].innerHTML + '" maxlength="10" name="Valid From Date" required></td> <td><input class="form-control" type="date" value="' + row.cells[5].innerHTML + '" maxlength="10" name="Valid To Date" required></td>  <td hidden><input value="' + guid + '"></td> <td class="class_del_checkbox" hidden><input type="checkbox" required></td><td class="class_del_checkbox1" hidden><input type="checkbox" required></td></tr>';
                             $("#header_select").prop("hidden",true);
                         }
@@ -670,7 +670,7 @@
                     var account_assign_cat = dropdown_select_array[i][0]
                     var company_id = dropdown_select_array[i][1]
                     $(row.find("TD").eq(2).find("select option[value="+account_assign_cat+"]")).attr('selected','selected');
-                    $(row.find("TD").eq(3).find("select option[value="+company_id+"]")).attr('selected','selected');
+                    $(row.find("TD").eq(1).find("select option[value="+company_id+"]")).attr('selected','selected');
                     i++;
                 });
                 display_button();
@@ -694,6 +694,21 @@
             $('#save_id').show();
         }
     }
+
+    function display_duplicate_entry(common) {
+    var aav_data = read_popup_data();
+    $("#id_popup_table TBODY TR").each(function () {
+        var row = $(this);
+        var account_assign_value = row.find("TD").eq(3).find('input[type="number"]').val();
+        if (common.includes(account_assign_value)) {
+            row.addClass("highlight");
+        } else {
+            row.removeClass("highlight");
+        }
+    });
+    $("#id_duplicate_entry_popup").show();
+}
+
 </script>
 <script src="{% static 'scripts/accounting_data/acc_assign_values.js' %}"></script>
 {% endblock %}
