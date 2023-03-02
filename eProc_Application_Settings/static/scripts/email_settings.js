@@ -47,14 +47,15 @@ function onclick_copy_update_button(data) {
                     if (lang_desc == render_language_data[i].description)
                         lang_code = render_language_data[i].language_id
                 }
-                unique_input = '<select class="form-control" type="text" name="email_type" disabled><option>' + row.cells[1].innerHTML + '</option></select>'
+                unique_input = '<select class="form-control" type="text" name="email_type" disabled><option>' + row.cells[1].innerHTML + '</option></select>';
                 edit_basic_data += '<tr><td hidden><input type="checkbox" required></td>'+
                     '<td>'+unique_input+'</td>'+
-                    '<td><select class="form-control" type="text"  name="language_id" disabled><option>'+ row.cells[2].innerHTML +'</option></select></td>'+
-                    '<td><textarea class="form-control check_special_char"  type="text"   name="email_subject" required>' + row.cells[3].innerHTML + '</textarea></td>'+
-                    '<td><textarea class="form-control check_special_char" type="text"   name="email_header" required>' + row.cells[4].innerHTML + '</textarea></td>'+
-                    '<td><textarea class="form-control check_special_char" type="text"  name="email_body" required>' + row.cells[5].innerHTML + '</textarea></td>'+
-                    '<td><textarea class="form-control check_special_char" type="text"    name="email_footer" required>' + row.cells[6].innerHTML + '</textarea></td><td hidden><input class="form-control"  name="email_guid" required></td>'+
+                    '<td><select class="form-control" type="text"  name="language_id" disabled></select></td>'+
+                    '<td><input class="form-control check_special_char" value="'+ row.cells[3].innerHTML+'"  type="text"   name="email_subject" required></td>'+
+                    '<td><input class="form-control check_special_char" value="'+row.cells[4].innerHTML+'" type="text"   name="email_header" required></td>'+
+                    '<td><input class="form-control check_special_char" value="' + row.cells[5].innerHTML + '" type="text"  name="email_body" required></td>'+
+                    '<td><input class="form-control check_special_char" type="text" value="'+row.cells[6].innerHTML+'"   name="email_footer" required></td>'+
+                    '<td hidden><input class="form-control"  name="email_guid" required></td>'+
                     '<td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
                 $("#header_select").prop("hidden", true);
             }
@@ -113,10 +114,18 @@ function display_basic_db_data() {
     $('#display_basic_table').DataTable().destroy();
     $('#id_email_tbody').empty();
     var edit_basic_data = '';
+    var lang_desc;
+    var lang_code;
+
     $.each(rendered_email_data, function (i, item) {
+        lang_code = item.language_id;
+        for (i = 0; i < render_language_data.length; i++) {
+            if (lang_code == render_language_data[i].language_id)
+            lang_desc = render_language_data[i].description
+        }
         edit_basic_data += '<tr ><td class="class_select_checkbox"><input class="checkbox_check" onclick="valueChanged()" type="checkbox" required></td>'+
         '<td>' + item.object_type + '</td>'+
-        '<td>' + item.language_id + '</td>'+
+        '<td>' + lang_desc + '</td>'+
         '<td>' + item.subject + '</td>'+
         '<td>' + item.header + '</td>'+
         '<td>' + item.body + '</td>'+
@@ -176,10 +185,10 @@ function new_row_data(){
     basic_add_new_html = '<tr><td><input type="checkbox" required></td>'+
     '<td><select class="form-control"  type="text"  name="email_type" required>'+email_type_dropdwn+'</select></td>'+
     '<td><select class="form-control"  type="text"  name="language_id" required>'+language_dropdown+'</select></td>'+
-    '<td><textarea class="form-control " type="text" maxlength="100" rows=5 name="email_subject" required></textarea></td>'+
-    '<td><textarea class="form-control check_special_char" type="text" maxlength="100" rows=5 name="email_header" required></textarea></td>'+
-    '<td><textarea class="form-control check_special_char" type="text"  name="email_body" rows=5 required></textarea></td>'+
-    '<td><textarea class="form-control check_special_char" type="text" maxlength="100" rows=5 name="email_footer" required></textarea></td>'+
+    '<td><textarea class="form-control " type="text"  name="email_subject" required></textarea></td>'+
+    '<td><textarea class="form-control check_special_char" type="text"  name="email_header" required></textarea></td>'+
+    '<td><textarea class="form-control check_special_char" type="text"  name="email_body"  required></textarea></td>'+
+    '<td><textarea class="form-control check_special_char" type="text"  name="email_footer" required></textarea></td>'+
     '<td hidden><input class="form-control" type="text" maxlength="100"  name="email_guid" required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
     table_sort_filter('id_popup_table');

@@ -171,16 +171,32 @@
     var edit_basic_data ='';
     var GLOBAL_ACTION='';
     var no_duplicate_entries = 'Y'
-    var email_type_dropdwn = [];
+    var email_type_dropdwn = '';
     function email_type_dropdown(){
-        email_type_dropdwn = [];
-        $.each(variant_list, function (i, item) {
-        email_type_dropdwn += '<option  value="' + item + '">' + item + '</option>'
+        var common = []; var uncommon = [];
+<!--        $.each(variant_list, function (i, item) {-->
+<!--            $.each(rendered_email_data, function (i, item1) {-->
+<!--                if(item1.object_type != item){-->
+<!--                    email_type_dropdwn += '<option  value="' + item1 + '">' + item1 + '</option>';-->
+<!--                }-->
+<!--            });-->
+<!--        });-->
+        $.each(rendered_email_data, function (i, item1) {
+            uncommon.push(item1.object_type);
         });
         language_dropdown= '';
         $.each(render_language_data, function(i, item){
             language_dropdown += '<option value="' + item.language_id + '">' + item.description + '</option>';
         });
+
+        email_type_dropdwn = '';
+
+        jQuery.grep(variant_list, function (el) {
+        if (jQuery.inArray(el, uncommon) == -1) {
+            email_type_dropdwn += '<option  value="' + el + '">' + el + '</option>';
+        }
+    });
+
     }
     //**********************
     // validate and save for add,copy,update and upload data
@@ -217,6 +233,7 @@
                     dataType: "json",
                     success: function(Response) {
                         rendered_email_data = Response[0];
+                        variant_list = Response[2];
                         display_basic_db_data();
                         $('#emailsModal').modal('hide');
                         success_response(Response); // Function call to display response data
@@ -250,6 +267,7 @@
                 dataType: "json",
             success: function (Response) {
                 rendered_email_data = Response[0];
+                variant_list = Response[2];
                 display_basic_db_data();
                 success_response(Response);  // Display Response data
                 CloseLoaderPopup();

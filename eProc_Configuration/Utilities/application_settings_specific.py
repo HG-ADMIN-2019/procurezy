@@ -1176,7 +1176,7 @@ class ApplicationSettingsSave:
         """
 
         """
-
+        variant_list = []
         self.save_email_settings(email_data['data'])
         message = get_message_detail_based_on_action(email_data['action'])
 
@@ -1185,7 +1185,14 @@ class ApplicationSettingsSave:
                                                   'client': self.client},
                                                  ['email_contents_guid', 'object_type', 'subject', 'header', 'body',
                                                   'footer', 'language_id'])
-        return upload_response, message
+        variant_values = get_configuration_data(EmailObjectTypes,
+                                                {'del_ind': False,
+                                                 'client': self.client},
+                                                ['object_type'])
+        for variant_names in variant_values:
+            variant_list.append(variant_names['object_type'])
+
+        return upload_response, message, variant_list
 
     def save_email_settings(self, email_data):
         """
@@ -1205,7 +1212,8 @@ class ApplicationSettingsSave:
                                                'header': emailSettings_detail['email_header'],
                                                'body': emailSettings_detail['email_body'],
                                                'footer': emailSettings_detail['email_footer'],
-                                               'language_id': Languages.objects.get(language_id=emailSettings_detail['language_id']),
+                                               'language_id': Languages.objects.get(
+                                                   language_id=emailSettings_detail['language_id']),
                                                'del_ind': False,
                                                'client': self.client,
                                                'email_contents_created_at': self.current_date_time,
