@@ -77,9 +77,9 @@ function display_basic_db_data() {
     var edit_basic_data = '';
     $.each(rendered_address_type_data, function (i, item) {
         edit_basic_data += '<tr><td class="class_select_checkbox"><input class="checkbox_check" onclick="valueChanged()" type="checkbox" required></td>' +
-        '<td>' + item.address_number + '</td>' +
-        '<td>' + item.address_type + '</td>' +
         '<td>'+ item.company_id +'</td>'+
+        '<td>' + item.address_type + '</td>' +
+        '<td>' + item.address_number + '</td>' +
         '<td>'+ item.valid_from +'</td>'+
         '<td>'+ item.valid_to +'</td>'+
         '<td hidden> <input type="checkbox"></td>' +
@@ -115,9 +115,9 @@ function read_popup_data() {
         addresstype={};
         addresstype.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
         addresstype.address_guid = row.find("TD").eq(7).find('input').val();
-        addresstype.address_number = row.find("TD").eq(1).find('select').val();
+        addresstype.address_number = row.find("TD").eq(3).find('select').val();
         addresstype.address_type = row.find("TD").eq(2).find('select').val();
-        addresstype.company_id = row.find("TD").eq(3).find('select').val();
+        addresstype.company_id = row.find("TD").eq(1).find('select').val();
         addresstype.valid_from = row.find("TD").eq(4).find('input[type="text"]').val();
         addresstype.valid_to = row.find("TD").eq(5).find('input[type="text"]').val();
         var addresstype_compare = addresstype.address_number +'-'+ addresstype.address_type
@@ -136,9 +136,9 @@ function read_popup_data() {
 // Function for add a new row data
 function new_row_data() {
     basic_add_new_html = '<tr><td><input type="checkbox" required></td>' +
-        '<td><select class="form-control">'+address_number_dropdwn+'</select></td>' +
-        '<td><select class="form-control">'+address_type_dropdown+'</select></td>' +
         '<td><select class="form-control">'+company_dropdwn+'</select></td>' +
+        '<td><select class="form-control">'+address_type_dropdown+'</select></td>' +
+        '<td><select class="form-control">'+address_number_dropdwn+'</select></td>' +
         '<td><input  type="text" name = "valid_from" class="form-control from_to_date"></td>' +
         '<td><input type="text" name = "valid_to"  class="form-control from_to_date"></td>' +
         '<td class="class_del_checkbox" hidden><input type="checkbox" required></td>' +
@@ -154,7 +154,7 @@ function get_main_table_data() {
     $("#display_basic_table TBODY TR").each(function () {
         var row = $(this);
         var main_attribute = {};
-        main_attribute.address_number = row.find("TD").eq(1).html();
+        main_attribute.address_number = row.find("TD").eq(3).html();
         main_attribute.address_type = row.find("TD").eq(2).html();
         var address_compare_maintable = main_attribute.address_number +'-'+ main_attribute.address_type
         main_table_low_value.push(address_compare_maintable);
@@ -172,9 +172,9 @@ function get_main_table_data() {
             address_type_arr_obj.address_guid = row.find("TD").eq(7).html();
              address_type_arr_obj.valid_to = row.find("TD").eq(5).html();
               address_type_arr_obj.valid_from = row.find("TD").eq(4).html();
-             address_type_arr_obj.company_id = row.find("TD").eq(3).html();
+             address_type_arr_obj.company_id = row.find("TD").eq(1).html();
             address_type_arr_obj.address_type = row.find("TD").eq(2).html();
-            address_type_arr_obj.address_number = row.find("TD").eq(1).html();
+            address_type_arr_obj.address_number = row.find("TD").eq(3).html();
             main_table_address_type_checked.push(address_type_arr_obj);
         }
     });

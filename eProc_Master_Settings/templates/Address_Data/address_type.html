@@ -62,9 +62,9 @@
                                     <INPUT type="checkbox" onchange="checkAll(this)" name="chk[]">
                                 </div>
                             </th>
-                            <th>Address Number</th>
-                            <th>Address Type</th>
                             <th>Company Number</th>
+                            <th>Address Type</th>
+                            <th>Address Number</th>
                             <th>Valid From</th>
                             <th>Valid To</th>
                             <th hidden>Del Indicator</th>
@@ -75,9 +75,9 @@
                         {% for data in address_type_data %}
                         <tr>
                             <td class="class_select_checkbox" hidden><input type="checkbox" class="checkbox_check" onclick="valueChanged()" required></td>
-                            <td>{{ data.address_number}}</td>
-                            <td>{{ data.address_type}}</td>
                             <td>{{ data.company_id}}</td>
+                            <td>{{ data.address_type}}</td>
+                            <td>{{ data.address_number}}</td>
                              <td>{{ data.valid_from}}</td>
                              <td>{{ data.valid_to}}</td>
                             <td hidden>{{ data.del_ind}}</td>
@@ -126,9 +126,9 @@
                             <thead>
                                 <tr>
                                     <th id="header_select">Select</th>
-                                    <th>Address Number</th>
-                                    <th>Address Type</th>
                                     <th>Company Number </th>
+                                    <th>Address Type</th>
+                                    <th>Address Number</th>
                                     <th>Valid From</th>
                                     <th>Valid To</th>
                                     <th id="id_del_ind_checkbox" hidden>Del Indicator</th>
@@ -271,20 +271,20 @@
                         var row = checkBoxes[i].parentNode.parentNode;
                         if(GLOBAL_ACTION == "COPY"){
                             address_guid = 'GUID';
-                            unique_input = '<select class="form-control">'+address_number_dropdwn+'</select>'
+                            unique_input = '<select class="form-control">'+company_dropdwn+'</select>'
                             edit_basic_data += '<tr><td><input type="checkbox" required></td>' +
                             '<td>'+unique_input+'</td>' +
                             '<td><select class="form-control" >'+address_type_dropdown+'</select></td>' +
-                            '<td><select class="form-control">'+company_dropdwn+'</select></td>' +
+                            '<td><select class="form-control">'+address_number_dropdwn+'</select></td>' +
                             '<td><input  type="text" name = "valid_from" value="' + row.cells[4].innerHTML + '"class="form-control from_to_date"></td>'+
                             '<td><input  type="text" name = "valid_to" value="' + row.cells[5].innerHTML + '"class="form-control from_to_date"></td>'+
                             '<td class="class_del_checkbox" hidden><input type="checkbox" ></td>' +
                             '<td hidden><input  type="text" class="form-control"  value="' + row.cells[7].innerHTML + '"  name="guid"></td></tr>';
                             $("#header_select").prop("hidden", false);
                         }
-                        var address_number = row.cells[1].innerHTML
+                        var address_number = row.cells[3].innerHTML
                         var address_type = row.cells[2].innerHTML
-                        var company_id = row.cells[3].innerHTML
+                        var company_id = row.cells[1].innerHTML
                         dropdown_array.push([address_number, address_type, company_id])
                     }
                 }
@@ -293,12 +293,12 @@
                 var i = 0;
                 $("#id_popup_table TBODY TR").each(function () {
                     var row = $(this);
-                    var address_number = dropdown_array[i][0]
+                    var address_number = dropdown_array[i][2]
                     var address_type = dropdown_array[i][1]
-                    var company_id = dropdown_array[i][2]
-                    $(row.find("TD").eq(1).find("select option[value=" + address_number + "]")).attr('selected', 'selected');
+                    var company_id = dropdown_array[i][0]
+                    $(row.find("TD").eq(1).find("select option[value=" + company_id + "]")).attr('selected', 'selected');
+                    $(row.find("TD").eq(3).find("select option[value=" + address_number + "]")).attr('selected', 'selected');
                     $(row.find("TD").eq(2).find("select option[value=" + address_type + "]")).attr('selected', 'selected');
-                    $(row.find("TD").eq(3).find("select option[value=" + company_id + "]")).attr('selected', 'selected');
                     i++;
                 });
                 $("#id_del_ind_checkbox").prop("hidden", true);
@@ -417,9 +417,9 @@
                         var dropdown_values = [];
                         $("#id_popup_tbody").empty();
                         $.each(response.data, function (i, value) {
-                            var address_type = value[0]
+                            var address_type = value[2]
                             var address_number = value[1]
-                            var company_id_value = value[2]
+                            var company_id_value = value[0]
                             dropdown_values.push([address_number,address_type,company_id_value])
                             del_ind = '<td>' + value[5] + '</td>'
                             if (value[5] == 1) {
@@ -432,7 +432,7 @@
                             var address_data_list = '';
                             var address_data_id_list = '';
                             $.each(rendered_address_type_values, function(i, item){
-                                if( value[0].address_type_value == item){
+                                if( value[2].address_type_value == item){
                                     address_data = '<option value="' + item.field_type_id + '">' + item.field_type_id + '</option>';
                                 }else{
                                     address_data_list += '<option value="' + item.field_type_id + '">' + item.field_type_id + '</option>';
@@ -454,25 +454,25 @@
                             var company_list = '';
                             var company_id_list = '';
                             $.each(rendered_company_data, function(i, item){
-                                if( value[2].company_type_value == item){
+                                if( value[0].company_type_value == item){
                                     company = '<option value="' + item.company_id + '">' + item.company_id + '</option>';
                                 } else {
                                     company_list += '<option value="' + item.company_id + '">' + item.company_id + '</option>';
                                 }
                                 company_id_list = company + company_list
                             });
-                            edit_basic_data += '<tr ><td><input type="checkbox" required></td><td><select class = "form-control" type ="text"> type="text" name="address number" value ="' + value[1] + '" '+address_number_id_list+'</select></td><td><select class = "form-control" type = "text"> value ="' + value[0] + '" maxlength="1" ' +address_data_id_list+'</select></td><td><select class="form-control">value ="' + value[2] + '"'+company_id_list+'</select></td><td><input  type="number" name = "valid_from" class="form-control" value ="' + value[3] + '"></td><td><input  type="number" name = "valid_to" value ="' + value[4] + '" class="form-control"></td><td hidden></td><td>'+ del_ind +'</td></tr>';
+                            edit_basic_data += '<tr ><td><input type="checkbox" required></td><td><select class="form-control">value ="' + value[0] + '"'+company_id_list+'</select></td><td><select class = "form-control" type = "text"> value ="' + value[1] + '" maxlength="1" ' +address_data_id_list+'</select></td><td><select class = "form-control" type ="text"> type="text" name="address number" value ="' + value[2] + '" '+address_number_id_list+'</select></td><td><input  type="number" name = "valid_from" class="form-control" value ="' + value[3] + '"></td><td><input  type="number" name = "valid_to" value ="' + value[4] + '" class="form-control"></td><td hidden></td><td>'+ del_ind +'</td></tr>';
                         });
                         $('#id_popup_tbody').append(edit_basic_data);
                         var i = 0;
                         $("#id_popup_table TBODY TR").each(function () {
                             var row = $(this);
-                            var address_number_id_list = dropdown_values[i][0]
+                            var address_number_id_list = dropdown_values[i][2]
                             var address_data_id_list = dropdown_values[i][1]
-                            var company_id_list = dropdown_values[i][2]
-                            $(row.find("TD").eq(1).find("select option[value=" + address_number_id_list + "]")).attr('selected', 'selected');
+                            var company_id_list = dropdown_values[i][0]
+                            $(row.find("TD").eq(3).find("select option[value=" + address_number_id_list + "]")).attr('selected', 'selected');
                             $(row.find("TD").eq(2).find("select option[value=" + address_data_id_list + "]")).attr('selected', 'selected');
-                                $(row.find("TD").eq(3).find("select option[value=" + company_id_list + "]")).attr('selected', 'selected');
+                                $(row.find("TD").eq(1).find("select option[value=" + company_id_list + "]")).attr('selected', 'selected');
                             i++;
                         })
                         $("#id_del_ind_checkbox").prop("hidden", false);
@@ -527,8 +527,8 @@
             //*************** reading data from the pop-up ***************
             address_type_dic.valid_to = row.find("TD").eq(5).find('input[type="text"]').val();
             address_type_dic.valid_from = row.find("TD").eq(4).find('input[type="text"]').val();
-            address_type_dic.company_id = row.find("TD").eq(3).find('select[type="text"]').val();
-            address_type_dic.address_number = row.find("TD").eq(1).find('select[type="text"]').val();
+            address_type_dic.company_id = row.find("TD").eq(1).find('select[type="text"]').val();
+            address_type_dic.address_number = row.find("TD").eq(3).find('select[type="text"]').val();
             address_type_dic.address_type = row.find("TD").eq(2).find('select[type="text"]').val();
             checked_box = row.find("TD").eq(6).find('input[type="checkbox"]').is(':checked')
             if (checked_box){
@@ -544,7 +544,7 @@
                 error_message = ui_messeges("JMSG004")// Get message details
                 var display = msg_type.messages_id_desc;
                 document.getElementById("id_error_msg_address_type_length").innerHTML = display  + "Address Number";
-                $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
+                $(row.find("TD").eq(3).find('input[type="text"]')).css("border", "1px solid #FF0000");
                 count = count +1;
             }
             //*************** checking for special characters for country code ***************
@@ -552,11 +552,11 @@
                 error_message = ui_messeges("JMSG003")// Get message details
                 var display = msg_type.messages_id_desc;
                 document.getElementById("id_error_msg_address_type_length").innerHTML = display + "Address Number";
-                $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
+                $(row.find("TD").eq(3).find('input[type="text"]')).css("border", "1px solid #FF0000");
                 count = count +1;
             }
             else{
-                $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "none");
+                $(row.find("TD").eq(3).find('input[type="text"]')).css("border", "none");
             }
             if(addtype_code_check.includes(address_type)){
                 $(row).css("border", "#f8d7da");
@@ -634,7 +634,7 @@
         $("#id_popup_table TBODY TR").each(function() {
             var row = $(this);
             addresstype_dic = {}
-            addresstype_dic.address_number = row.find("TD").eq(1).find('select').val();
+            addresstype_dic.address_number = row.find("TD").eq(3).find('select').val();
             addresstype_dic.address_type = row.find("TD").eq(2).find('select').val();
             var compare =  addresstype_dic.address_number +'-'+ addresstype_dic.address_type 
             addresstype_check.push(compare);

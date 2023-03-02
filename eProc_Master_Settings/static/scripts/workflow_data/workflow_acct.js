@@ -58,17 +58,17 @@ function read_popup_data() {
         var row = $(this);
         wfacc = {};
         wfacc.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
-        wfacc.app_username = row.find("TD").eq(1).find('select[type="text"]').val();
+        wfacc.app_username = row.find("TD").eq(4).find('select[type="text"]').val();
         wfacc.account_assign_cat = row.find("TD").eq(2).find('select[type="text"]').val();
         wfacc.acc_value = row.find("TD").eq(3).find('input[type="number"]').val();
-        wfacc.company_id = row.find("TD").eq(4).find('select[type="text"]').val();
-        wfacc.sup_account_assign_cat = row.find("TD").eq(5).find('select[type="text"]').val();
-        wfacc.sup_acc_value = row.find("TD").eq(6).find('input[type="number"]').val();
-        wfacc.sup_company_id = row.find("TD").eq(7).find('select[type="text"]').val();
+        wfacc.company_id = row.find("TD").eq(1).find('select[type="text"]').val();
+        wfacc.sup_account_assign_cat = row.find("TD").eq(6).find('select[type="text"]').val();
+        wfacc.sup_acc_value = row.find("TD").eq(7).find('input[type="number"]').val();
+        wfacc.sup_company_id = row.find("TD").eq(5).find('select[type="text"]').val();
         wfacc.sup_currency_id = row.find("TD").eq(8).find('select[type="text"]').val();
         wfacc.workflow_acc_guid = row.find("TD").eq(9).find('input[type="text"]').val();
         if (wfacc == undefined) {
-            wfacc.app_username = row.find("TD").eq(1).find('select[type="text"]').val();
+            wfacc.app_username = row.find("TD").eq(4).find('select[type="text"]').val();
         }
         if(wfacc.workflow_acc_guid == undefined) {
             wfacc.workflow_acc_guid = ''
@@ -83,13 +83,13 @@ function read_popup_data() {
 // Function for add a new row data
 function new_row_data()  {
     basic_add_new_html = '<tr><td><input type="checkbox" required></td>'+
-    '<td><select type="text" class="form-control">'+ user_dropdwn +'</select></td>'+
+    '<td><select type="text" class="form-control">'+ company_id_dropdown +'</select></td>'+
     '<td><select type="text" class="form-control">'+ acc_ass_dropdwn+'</select></td>'+
     '<td><input class="form-control" type="number" maxlength="40"  name="acc_value" required></td>'+
-    '<td><select type="text" class="form-control">'+ company_id_dropdown +'</select></td>'+
+    '<td><select type="text" class="form-control">'+ user_dropdwn +'</select></td>'+
+    '<td><select type="text" class="form-control">'+ supcompany_dropdwn +'</select></td>'+
     '<td><select type="text" class="form-control">'+ sup_acc_ass_dropdwn +'</select></td>'+
     '<td><input class="form-control" type="number" maxlength="40"  name="sup_acc_value"  required></td>'+
-    '<td><select type="text" class="form-control">'+ supcompany_dropdwn +'</select></td>'+
     '<td><select type="text" class="form-control">'+ currency_dropdwn +'</select></td>'+
     '<td class="class_del_checkbox" hidden> <input type="checkbox" required> </td>'+
     '<td hidden><input type="text" id="workflow_acc_guid"></td></tr>';
@@ -97,19 +97,20 @@ function new_row_data()  {
     table_sort_filter('id_popup_table');
 }
 
+
 // Function to get main table data
 function get_main_table_data() {
     main_table_low_value = [];
     $("#display_basic_table TBODY TR").each(function() {
         var row = $(this);
         var main_attribute = {};
-        main_attribute.app_username = row.find("TD").eq(1).html();
+        main_attribute.app_username = row.find("TD").eq(4).html();
         main_attribute.account_assign_cat = row.find("TD").eq(2).html();
         main_attribute.acc_value = row.find("TD").eq(3).html();
-        main_attribute.company_id = row.find("TD").eq(4).html();
-        main_attribute.sup_account_assign_cat = row.find("TD").eq(5).html();
-        main_attribute.sup_acc_value = row.find("TD").eq(6).html();
-        main_attribute.sup_company_id = row.find("TD").eq(7).html();
+        main_attribute.company_id = row.find("TD").eq(1).html();
+        main_attribute.sup_account_assign_cat = row.find("TD").eq(6).html();
+        main_attribute.sup_acc_value = row.find("TD").eq(7).html();
+        main_attribute.sup_company_id = row.find("TD").eq(5).html();
         main_attribute.sup_currency_id = row.find("TD").eq(8).html();
         var wfacc_compare_maintable = main_attribute.app_username +'-'+ main_attribute.account_assign_cat +'-'+ main_attribute.acc_value +'-'+ main_attribute.company_id +'-'+ main_attribute.sup_account_assign_cat +'-'+ main_attribute.sup_acc_value +'-'+ main_attribute.sup_company_id +'-'+ main_attribute.sup_currency_id
         main_table_low_value.push(wfacc_compare_maintable);
@@ -124,13 +125,13 @@ function get_selected_row_data() {
         var workflowaccounting_arr_obj ={};
         workflowaccounting_arr_obj.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
         if(workflowaccounting_arr_obj.del_ind){
-            workflowaccounting_arr_obj.app_username = row.find("TD").eq(1).html();
+            workflowaccounting_arr_obj.app_username = row.find("TD").eq(4).html();
             workflowaccounting_arr_obj.account_assign_cat = row.find("TD").eq(2).html();
             workflowaccounting_arr_obj.acc_value = row.find("TD").eq(3).html();
-            workflowaccounting_arr_obj.company_id = row.find("TD").eq(4).html();
-            workflowaccounting_arr_obj.sup_account_assign_cat = row.find("TD").eq(5).html();
-            workflowaccounting_arr_obj.sup_acc_value = row.find("TD").eq(6).html();
-            workflowaccounting_arr_obj.sup_company_id = row.find("TD").eq(7).html();
+            workflowaccounting_arr_obj.company_id = row.find("TD").eq(1).html();
+            workflowaccounting_arr_obj.sup_account_assign_cat = row.find("TD").eq(6).html();
+            workflowaccounting_arr_obj.sup_acc_value = row.find("TD").eq(7).html();
+            workflowaccounting_arr_obj.sup_company_id = row.find("TD").eq(5).html();
             workflowaccounting_arr_obj.sup_currency_id = row.find("TD").eq(8).html();
             workflowaccounting_arr_obj.workflow_acc_guid = row.find("TD").eq(9).html();
             main_table_workflowaccounting_checked.push(workflowaccounting_arr_obj);
