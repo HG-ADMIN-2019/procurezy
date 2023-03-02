@@ -105,7 +105,7 @@ function read_popup_data() {
         detgl.gl_acc_num = row.find("TD").eq(4).find("select option:selected").val();
         detgl.gl_acc_default = row.find("TD").eq(5).find('input[type="checkbox"]').is(':checked');
         detgl.account_assign_cat = row.find("TD").eq(3).find("select option:selected").val();
-        detgl.company_id = row.find("TD").eq(1).find("select option:selected").val();
+        detgl.company_id = row.find("TD").eq(2).find("select option:selected").val();
         detgl.from_value = row.find("TD").eq(6).find('input[type="number"]').val();
         detgl.to_value = row.find("TD").eq(7).find('input[type="number"]').val();
         detgl.currency_id = row.find("TD").eq(8).find("select option:selected").val();
@@ -125,8 +125,8 @@ function new_row_data() {
     basic_add_new_html = '<tr ><td><input type="checkbox" required></td>'+
     '<td><select class="form-control">' + prod_cat_dropdown + '</select></td>'+
     '<td><select class="form-control">' + company_dropdown + '</select></td>'+
-    '<td><select class="form-control">' + glacc_dropdown + '</select></td>'+
     '<td><select class="form-control">' + accasscat_dropdown + '</select></td>'+
+    '<td><select class="form-control">' + glacc_dropdown + '</select></td>'+
     '<td><input type="checkbox" name="gl_acc_default" required></td>'+
     '<td><input class="form-control" type="number"  min="1" name="From_value"  required></td>'+
     '<td><input class="form-control" type="number"  min="1" name="To_value"  required></td>'+
@@ -142,9 +142,9 @@ function get_main_table_data() {
         var row = $(this);
         var main_attribute = {};
         main_attribute.prod_cat_id = row.find("TD").eq(1).html();
-        main_attribute.gl_acc_num= row.find("TD").eq(4).html();
-        main_attribute.account_assign_cat = row.find("TD").eq(3).html();
         main_attribute.company_id = row.find("TD").eq(2).html();
+        main_attribute.account_assign_cat = row.find("TD").eq(3).html();
+        main_attribute.gl_acc_num= row.find("TD").eq(4).html();
         main_attribute.item_from_value = row.find("TD").eq(6).html();
         main_attribute.item_to_value = row.find("TD").eq(7).html();
         main_attribute.currency_id = row.find("TD").eq(8).html();
@@ -165,7 +165,7 @@ function get_selected_row_data() {
             detgl_arr_obj.gl_acc_num= row.find("TD").eq(4).html();
             detgl_arr_obj.gl_acc_default = row.find("TD").eq(5).find('input[type="checkbox"]').is(':checked');
             detgl_arr_obj.account_assign_cat = row.find("TD").eq(3).html();
-            detgl_arr_obj.company_id = row.find("TD").eq(2  ).html();
+            detgl_arr_obj.company_id = row.find("TD").eq(2).html();
             detgl_arr_obj.from_value = row.find("TD").eq(6).html();
             detgl_arr_obj.to_value = row.find("TD").eq(7).html();
             detgl_arr_obj.currency_id = row.find("TD").eq(8).html();
