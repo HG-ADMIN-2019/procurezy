@@ -42,20 +42,14 @@ function onclick_copy_update_button(data) {
         if (checkBoxes[i].checked) {
             var row = checkBoxes[i].parentNode.parentNode;
             if(GLOBAL_ACTION == "UPDATE"){
-                lang_desc = row.cells[2].innerHTML;
-                for (i = 0; i < render_language_data.length; i++) {
-                    if (lang_desc == render_language_data[i].description)
-                        lang_code = render_language_data[i].language_id
-                }
-                unique_input = '<select class="form-control" type="text" name="email_type" disabled><option>' + row.cells[1].innerHTML + '</option></select>';
+                unique_input = '<select class="form-control" type="text" name="email_type" disabled><option>' + row.cells[1].innerHTML + '</option></select>'
                 edit_basic_data += '<tr><td hidden><input type="checkbox" required></td>'+
                     '<td>'+unique_input+'</td>'+
-                    '<td><select class="form-control" type="text"  name="language_id" disabled></select></td>'+
-                    '<td><input class="form-control check_special_char" value="'+ row.cells[3].innerHTML+'"  type="text"   name="email_subject" required></td>'+
-                    '<td><input class="form-control check_special_char" value="'+row.cells[4].innerHTML+'" type="text"   name="email_header" required></td>'+
-                    '<td><input class="form-control check_special_char" value="' + row.cells[5].innerHTML + '" type="text"  name="email_body" required></td>'+
-                    '<td><input class="form-control check_special_char" type="text" value="'+row.cells[6].innerHTML+'"   name="email_footer" required></td>'+
-                    '<td hidden><input class="form-control"  name="email_guid" required></td>'+
+                    '<td><select class="form-control" type="text"  name="language_id" disabled><option>'+ row.cells[2].innerHTML +'</option></select></td>'+
+                    '<td><textarea class="form-control check_special_char"  type="text"   name="email_subject" required>' + row.cells[3].innerHTML + '</textarea></td>'+
+                    '<td><textarea class="form-control check_special_char" type="text"   name="email_header" required>' + row.cells[4].innerHTML + '</textarea></td>'+
+                    '<td><textarea class="form-control check_special_char" type="text"  name="email_body" required>' + row.cells[5].innerHTML + '</textarea></td>'+
+                    '<td><textarea class="form-control check_special_char" type="text"    name="email_footer" required>' + row.cells[6].innerHTML + '</textarea></td><td hidden><input class="form-control"  name="email_guid" required></td>'+
                     '<td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
                 $("#header_select").prop("hidden", true);
             }
