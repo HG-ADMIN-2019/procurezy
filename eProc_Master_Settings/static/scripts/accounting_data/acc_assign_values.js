@@ -146,20 +146,21 @@ function read_popup_data() {
         var row = $(this);
         aav={};
         aav.del_ind = row.find("TD").eq(7).find('input[type="checkbox"]').is(':checked');
-            aav.account_assign_value = row.find("TD").eq(3).find('input[type="number"]').val();
-            aav.valid_from = row.find("TD").eq(4).find('input[type="date"]').val()
-            aav.valid_to = row.find("TD").eq(5).find('input[type="date"]').val()
-            aav.account_assign_cat = row.find("TD").eq(2).find('Select').val()
-            aav.company_id = row.find("TD").eq(1).find('Select').val()
-            aav.account_assign_guid = row.find("TD").eq(6).find('input[type="text"]').val();
-            if (aav == undefined) {
-                aav.account_assign_value = row.find("TD").eq(3).find('input[type="text"]').val();
-            }
-            if(aav.account_assign_guid == undefined) {
-                aav.account_assign_guid = ''
-            }
-            check_dates.push([aav.valid_from, aav.valid_to])
-        validate_add_attributes.push(aav.account_assign_value);
+        aav.company_id = row.find("TD").eq(1).find('Select').val()
+        aav.account_assign_cat = row.find("TD").eq(2).find('Select').val()
+        aav.account_assign_value = row.find("TD").eq(3).find('input[type="number"]').val();
+        aav.valid_from = row.find("TD").eq(4).find('input[type="date"]').val()
+        aav.valid_to = row.find("TD").eq(5).find('input[type="date"]').val()
+        aav.account_assign_guid = row.find("TD").eq(6).find('input[type="text"]').val();
+        var compare = aav.company_id + '-' + aav.account_assign_cat + '-' + aav.account_assign_value;
+        if (aav == undefined) {
+            aav.account_assign_value = row.find("TD").eq(3).find('input[type="text"]').val();
+        }
+        if(aav.account_assign_guid == undefined) {
+            aav.account_assign_guid = ''
+        }
+        check_dates.push([aav.valid_from, aav.valid_to])
+        validate_add_attributes.push(compare);
         aav_data.push(aav);
     });
     return aav_data;
@@ -199,10 +200,10 @@ function get_main_table_data() {
     $("#display_basic_table TBODY TR").each(function() {
         var row = $(this);
         var main_attribute = {};
-        main_attribute.account_assign_value = row.find("TD").eq(3).html();
-        main_attribute.account_assign_cat = row.find("TD").eq(2).html();
         main_attribute.company_id = row.find("TD").eq(1).html();
-        compare_maintable = main_attribute.account_assign_value + '-' + main_attribute.account_assign_cat + '-' + main_attribute.company_id;
+        main_attribute.account_assign_cat = row.find("TD").eq(2).html();
+        main_attribute.account_assign_value = row.find("TD").eq(3).html();
+        compare_maintable = main_attribute.company_id + '-' + main_attribute.account_assign_cat + '-' + main_attribute.account_assign_value;
         main_table_low_value.push(compare_maintable);
     });
     table_sort_filter('display_basic_table');

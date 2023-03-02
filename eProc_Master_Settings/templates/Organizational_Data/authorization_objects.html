@@ -182,40 +182,40 @@
         // compare for duplicates in popup
         [no_duplicate_value,error_message] = compare_table_for_duplicate_entries(validate_add_attributes, authobj_data)
         if (error_message){
-               display_error_message(error_message)
+            display_error_message(error_message)
+        }
+        else{
+            if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
+                [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
             }
-            else{
-                if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
-                    [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
-                }
-                if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
-                    var add_basic_data = '';
-                    var auth_obj_data_array = authobj_data;
-                    $('#id_save_confirm_popup').modal('hide');
-                    data = {'data':authobj_data,'table_name':'AuthorizationObject','action':GLOBAL_ACTION}
-                    OpenLoaderPopup();
-                    $.ajax({
-                        type: 'POST',
-                        url: "{% url 'eProc_Configuration:create_update_application_data' %}",
-                        data: JSON.stringify(data),
-                        contentType: "application/json; charset=utf-8",
-                        dataType: "json",
-                        success: function(Response) {
-                            rendered_auth_obj_data = Response[0];
-                            rendered_auth_obj_id = Response[2];
-                            display_basic_db_data();
-                            dropdown_value();
-                            $('#auth_obj_Modal').modal('hide');
-                            success_response(Response);  // Display Response data
-                            CloseLoaderPopup();
-                        }
-                    });
-                }
-                else if (error_message){
-                    display_error_message(error_message)
-                }
+            if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
+                var add_basic_data = '';
+                var auth_obj_data_array = authobj_data;
+                $('#id_save_confirm_popup').modal('hide');
+                data = {'data':authobj_data,'table_name':'AuthorizationObject','action':GLOBAL_ACTION}
+                OpenLoaderPopup();
+                $.ajax({
+                    type: 'POST',
+                    url: "{% url 'eProc_Configuration:create_update_application_data' %}",
+                    data: JSON.stringify(data),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function(Response) {
+                        rendered_auth_obj_data = Response[0];
+                        rendered_auth_obj_id = Response[2];
+                        display_basic_db_data();
+                        dropdown_value();
+                        $('#auth_obj_Modal').modal('hide');
+                        success_response(Response);  // Display Response data
+                        CloseLoaderPopup();
+                    }
+                });
+            }
+            else if (error_message){
+                display_error_message(error_message)
             }
         }
+    }
 
     //delete the selected row in db................
     var main_table_auth_obj_checked = [];
