@@ -160,7 +160,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',  # Database engine
         'HOST': 'sg2plzcpnl489587.prod.sin2.secureserver.net',  # Database host
-        'NAME': 'MEP_DEPLOYED_NEW',  # Database name MEP_FIXING MEP_DEPLOYED_NEW_22
+        'NAME': 'MEP_DEPLOYED_NEW_QA',  # Database name MEP_FIXING MEP_DEPLOYED_NEW_22
         'USER': 'MajjakaShopEProcure',  # Database user name
         'PASSWORD': 'Project@2019',  # Database credentials
         'PORT': '3306',  # Database port number
