@@ -11,7 +11,7 @@
                 <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Application_Settings:extract_node_level_attributes_data' %}'" type="button">
                     <i class="fas fa-download"></i> extract
                 </button>
-                <button class="btn btn-primary" type="button" id="id_add_data" value="ADD" data-toggle="modal" data-target="#org_attr_Modal" onclick="onclick_add_button(this)">
+                <button class="btn btn-primary" title="add new org node level attribute" type="button" id="id_add_data" value="ADD" data-toggle="modal" data-target="#org_attr_Modal" onclick="onclick_add_button(this)">
                     <i class="fa fa-plus" ></i> Add New Org Node Level Attribute
                 </button>
                  <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"  onclick="window_close();">
@@ -77,10 +77,10 @@
                 <!-- Modal body -->
                 <div class="modal-body scrollbox">
                     <div id="id_del_add_button" class="mb-4">
-                        <button class="btn btn-primary" type="button" onclick="add_popup_row()">
+                        <button class="btn btn-primary" title="add new row" type="button" onclick="add_popup_row()">
                             <i class="fa fa-plus"></i> add new row
                         </button>
-                        <button class="btn btn-outline-danger" onclick="application_settings_delete_Row('id_popup_table')">
+                        <button class="btn btn-outline-danger" title="delete" onclick="application_settings_delete_Row('id_popup_table')">
                             <i class="fa fa-trash"></i> delete
                         </button>
                     </div>
@@ -110,10 +110,10 @@
                 </div>
                 <!-- Modal footer -->
                 <div class="modal-footer"><div class="modal-footer">
-                    <button type="button" class="btn btn-outline-primary remove_upload_data" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
+                    <button type="button" class="btn btn-outline-primary remove_upload_data" title="cancel" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
                     <button id="id_delete_duplicate" class="btn btn-primary" style="display:none;" type="button" onclick="delete_duplicate()"><i class="fa fa-trash"></i> delete duplicates</button>
                     <button id="id_check_data" style="display:none;" class="btn btn-primary" type="button" onclick="check_data()"><i class="fas fa-check"></i> check</button>
-                    <button class="btn btn-primary" id="save_id"><i class="fas fa-save"></i> save</button>
+                    <button class="btn btn-primary" title="save" id="save_id"><i class="fas fa-save"></i> save</button>
                 </div>
                 </div>
             </div>
@@ -134,6 +134,7 @@
 </div>
 <script>
     var rendered_org_attrlevel_data ={{org_attributes_level|safe}};
+    var messages_list = {{messages_list|safe}};
     var rendered_nodetypedropdown_values
     var rendered_attiddropdown_values
     var org_attr_level_data_array = {}
@@ -142,9 +143,6 @@
     var edit_basic_data = '';
     var GLOBAL_ACTION = '';
     var no_duplicate_entries = 'Y'
-    var messages_list = {{messages_list|safe}};
-
-    //**************************************
     var attributelevel_id_dropdown ;
     var nodetype_dropdown;
 
@@ -167,23 +165,23 @@
         var edit_basic_data = '';
         $.each(rendered_org_attrlevel_data, function (i, item) {
             edit_basic_data += '<tr ><td class="class_select_checkbox"><input class="checkbox_check" onclick="valueChanged()" type="checkbox" required></td><td>' + item.node_type + '</td><td>' + item.node_values + '</td>'+
-                '<td hidden>' + item.org_model_nodetype_config_guid + '</td>' +
-                '<td hidden> '+ item.del_ind+'</td></tr>';
-            });
-            $('#id_org_attr_tbody').append(edit_basic_data);
-            $("#hg_select_checkbox").prop("hidden", true);
-            $(".class_select_checkbox").prop("hidden", true);
-            $('input.checkbox_check:checkbox').removeAttr('checked');
-            $('#id_edit_data').show();
-            $('#id_cancel_data').hide();
-            $('#id_delete_data').hide();
-            $('#id_copy_data').hide();
-            $('#id_update_data').hide();
-            $('#id_save_confirm_popup').modal('hide');
-            $('#id_delete_confirm_popup').modal('hide');
-            $('#id_check_all').hide();
-            table_sort_filter('display_basic_table');
-        }
+            '<td hidden>' + item.org_model_nodetype_config_guid + '</td>' +
+            '<td hidden> '+ item.del_ind+'</td></tr>';
+        });
+        $('#id_org_attr_tbody').append(edit_basic_data);
+        $("#hg_select_checkbox").prop("hidden", true);
+        $(".class_select_checkbox").prop("hidden", true);
+        $('input.checkbox_check:checkbox').removeAttr('checked');
+        $('#id_edit_data').show();
+        $('#id_cancel_data').hide();
+        $('#id_delete_data').hide();
+        $('#id_copy_data').hide();
+        $('#id_update_data').hide();
+        $('#id_save_confirm_popup').modal('hide');
+        $('#id_delete_confirm_popup').modal('hide');
+        $('#id_check_all').hide();
+        table_sort_filter('display_basic_table');
+    }
 
     // validate and save for add,copy,update and upload data
     function popup_save_data() {
@@ -294,7 +292,7 @@
         return [no_duplicate_value,error_message]
     }
 
- //Function to highlight duplicate records
+    //Function to highlight duplicate records
     function display_duplicate_entry(common) {
         var org_attribute_check = new Array;
         $("#id_popup_table TBODY TR").each(function() {
@@ -348,7 +346,9 @@
             var row = $(this);
             org_attr_level = {}
             org_attr_level.node_type = row.find("TD").eq(1).find('select').val();
-            org_attrlevel_check.push(org_attr_level.node_type);
+            org_attr_level.node_values = row.find("TD").eq(2).find('select').val();
+            var compare = org_attr_level.node_type + '-' + org_attr_level.node_values
+            org_attrlevel_check.push(compare);
             jQuery.grep(org_attrlevel_check, function(el) {
                 if (jQuery.inArray(el, common) != -1) {
                         row_color_highlight(row);
@@ -359,6 +359,7 @@
             });
         });
     }
+
 </script>
 <script src="{% static 'scripts/organisational_data/org_attributes_level.js' %}"></script>
 {% endblock %}

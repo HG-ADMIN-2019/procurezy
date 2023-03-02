@@ -5,7 +5,6 @@ var country={};
 
 //onclick of add button display countriesModal popup and set GLOBAL_ACTION button value
 function onclick_add_button(button) {
-    console.log(rendered_messages_list[0]['messages_id']);
     $("#error_msg_id").css("display", "none")
     $("#header_select").prop( "hidden", false );
     GLOBAL_ACTION = button.value
@@ -172,7 +171,7 @@ $('#save_id').click(function () {
 });
 
 //Read popup table data
-function read_popup_data(){
+function read_popup_data() {
     countries_data = new Array();
     validate_add_attributes = [];
     $("#id_popup_table TBODY TR").each(function () {

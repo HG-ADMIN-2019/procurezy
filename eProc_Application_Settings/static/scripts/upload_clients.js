@@ -1,4 +1,4 @@
-var client_data = new Array();
+var clients_data = new Array();
 var validate_add_attributes = [];
 var client={};
 var main_table_low_value = [];
@@ -180,7 +180,7 @@ function display_error_message(error_message){
     }
     $("#error_msg_id").css("display", "block")
     $('#id_save_confirm_popup').modal('hide');
-    $('#countriesModal').modal('show');
+    $('#upload_client_Modal').modal('show');
 }
 
 // Function for add a new row data

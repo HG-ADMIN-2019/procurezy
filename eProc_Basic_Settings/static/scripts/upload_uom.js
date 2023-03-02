@@ -3,20 +3,6 @@ var validate_add_attributes = [];
 var uom={};
 var main_table_low_value = [];
 
-//onclick of add button display uomModal popup and set GLOBAL_ACTION button value
-function onclick_add_button(button) {
-    $("#error_msg_id").css("display", "none")
-    $( "#header_select").prop( "hidden", false );
-    GLOBAL_ACTION = button.value
-    $('#id_popup_table').DataTable().destroy();
-    $("#id_popup_tbody").empty();
-    $('#uomModal').modal('show');
-    new_row_data();  // Add a new row in popup
-    $("#id_del_ind_checkbox").prop("hidden", true);
-    document.getElementById("id_del_add_button").style.display = "block";
-    $("#save_id").prop("hidden", false);
-}
-
 //onclick of upload button display id_data_upload popup and set GLOBAL_ACTION button value
 function onclick_upload_button() {
     GLOBAL_ACTION = "uom_upload"
@@ -39,6 +25,21 @@ function onclick_update_button() {
     document.getElementById("id_del_add_button").style.display = "none";
 }
 
+//onclick of add button display uomModal popup and set GLOBAL_ACTION button value
+function onclick_add_button(button) {
+    $("#error_msg_id").css("display", "none")
+    $( "#header_select").prop( "hidden", false );
+    GLOBAL_ACTION = button.value
+    $('#id_popup_table').DataTable().destroy();
+    $("#id_popup_tbody").empty();
+    $('#uomModal').modal('show');
+    new_row_data();  // Add a new row in popup
+    $("#id_del_ind_checkbox").prop("hidden", true);
+    document.getElementById("id_del_add_button").style.display = "block";
+    $("#save_id").prop("hidden", false);
+}
+
+//******************************************************
 function onclick_copy_update_button(data) {
     $("#error_msg_id").css("display", "none")
     $("#id_popup_tbody").empty();
@@ -91,6 +92,7 @@ $(".remove_upload_data").click(() => {
 
 });
 
+//**************************************************
 function display_error_message(error_message){
     $('#error_message').text(error_message);
     document.getElementById("error_message").style.color = "Red";
