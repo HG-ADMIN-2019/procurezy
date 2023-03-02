@@ -26,13 +26,13 @@
             <div id="err_msg_app_settings_t" class="alert alert-success" hidden><span id="success_msg_id"></span></div>
             <div class="table-container tcw-60">
                 <div class="edit-button-section mb-4">
-                    <button class="btn btn-secondary btn-sm" id="id_edit_data" onclick="onclick_edit_button()">
+                    <button class="btn btn-secondary btn-sm" title="Edit" id="id_edit_data" onclick="onclick_edit_button()">
                         <i class="fas fa-edit"></i> Edit
                     </button>
-                    <button class="btn btn-outline-danger btn-sm" id="id_delete_data" value="roles_delete" data-toggle="modal" data-target="#id_delete_confirm_popup" style="display:none;">
+                    <button class="btn btn-outline-danger btn-sm" title="Delete" id="id_delete_data" value="roles_delete" data-toggle="modal" data-target="#id_delete_confirm_popup" style="display:none;">
                         <i class="fa fa-trash"></i> Delete
                     </button>
-                    <button class="btn btn-secondary btn-sm" id="id_cancel_data" style="display:none;" type="button"  onclick="display_basic_db_data()">
+                    <button class="btn btn-secondary btn-sm" title="Cancel" id="id_cancel_data" style="display:none;" type="button"  onclick="display_basic_db_data()">
                         <i class="fas fa-times"></i> cancel
                     </button>
                 </div>
@@ -76,8 +76,8 @@
                 <!-- Modal body -->
                 <div class="modal-body scrollbox">
                     <div id="id_del_add_button">
-                        <button class="btn btn-primary" type="button" onclick="add_popup_row()"><i class="fa fa-plus"></i> add new row </button>
-                        <button class="btn btn-outline-danger" onclick="application_settings_delete_Row('id_popup_table')"><i class="fa fa-trash" aria-hidden="true" title="Delete Line"></i> delete</button>
+                        <button class="btn btn-primary" title="Add New Row" type="button" onclick="add_popup_row()"><i class="fa fa-plus"></i> add new row </button>
+                        <button class="btn btn-outline-danger" title="Delete" onclick="application_settings_delete_Row('id_popup_table')"><i class="fa fa-trash" aria-hidden="true" title="Delete"></i> delete</button>
                     </div>
                     <div id="id_check_success_messages" class="alert alert-success check_success_message" hidden></div>
                     <div id="id_check_error_messages" class="alert alert-danger check_error_messages" hidden></div>
@@ -113,8 +113,10 @@
         </div>
     </div>
     <!--end of modal popup for Add,copy,update and upload-->
-    <!-- modal popup to upload the csv file; save confirmation popup; delete confirmation popup -->
-    {% include 'configuration_common_pop_up.html' %}  
+    
+     <!-- modal popup to upload the csv file; save confirmation popup; delete confirmation popup -->
+     {% include 'configuration_common_pop_up.html' %}  
+
     <div>
         {% if messages %} {% for message in messages %} {% if message.tags == 'success' %}
         <div style="color: green; ">{{ message }}</div>
@@ -128,7 +130,6 @@
 {{ roles|json_script:"roles" }}
 <script>
     var rendered_roles_data = JSON.parse(document.getElementById('roles').textContent);
-    var messages_list = {{messages_list|safe}};
     var rendered_roles_type_values
     var roles_data_array = {}
     var main_table_roles_value = [];
@@ -165,7 +166,7 @@
             contentType: "application/json; charset=utf-8",
             success: function(response) {
                 if (response == "Please check the uploaded csv file") {
-                $("#id_error_msg_upload").prop("hidden", false)
+                    $("#id_error_msg_upload").prop("hidden", false)
                     document.getElementById("id_error_msg_upload").innerHTML = response;
                     document.getElementById("id_error_msg_upload").style.color = "Red";
                     $('#id_data_upload').modal('show');
@@ -208,6 +209,7 @@
         no_duplicate_entries = 'Y'
         no_duplicate_value = 'Y'
         var error_message = '';
+        $('#display_basic_table').DataTable().destroy();
         get_main_table_data(); //Read data from main table
         // compare for duplicates in popup
         [no_duplicate_value,error_message] = compare_table_for_duplicate_entries(validate_add_attributes, roles_data)
@@ -367,84 +369,83 @@
                 check_messages = response
                 var newArrayDataOfOjbect = Object.values(check_messages)
                 $("#id_check_success_messages").prop("hidden", false)
-                //*************** if pop-up data count is greater than zero ***************
-                if (newArrayDataOfOjbect[1] > 0) {
-                    var msg = "JMSG010";
-                    var msg_type ;
-                    msg_type = message_config_details(msg);
-                    $("#error_msg_id").prop("hidden", false)
-                    var display = msg_type.messages_id_desc;
-                    $("#id_check_success_messages").append('<p>' + display + newArrayDataOfOjbect[0] + '</p>')
-                    var msg = "JMSG011";
-                    var msg_type ;
-                    msg_type = message_config_details(msg);
-                    $("#error_msg_id").prop("hidden", false)
-                    var display1 = msg_type.messages_id_desc;
-                    $("#id_check_success_messages").append('<p>' + display1 + newArrayDataOfOjbect[1] + '</p>')
-                    var msg = "JMSG012";
-                    var msg_type ;
-                    msg_type = message_config_details(msg);
-                    $("#error_msg_id").prop("hidden", false)
-                    var display2 = msg_type.messages_id_desc;
-                    $("#id_check_success_messages").append('<p>' + display2 + newArrayDataOfOjbect[3] + '</p>')
-                    var msg = "JMSG013";
-                    var msg_type ;
-                    msg_type = message_config_details(msg);
-                    $("#error_msg_id").prop("hidden", false)
-                    var display3 = msg_type.messages_id_desc;
-                    $("#id_check_success_messages").append('<p>' + display3 + newArrayDataOfOjbect[4] + '</p>')
-                    var msg = "JMSG014";
-                    var msg_type ;
-                    msg_type = message_config_details(msg);
-                    $("#error_msg_id").prop("hidden", false)
-                    var display4 = msg_type.messages_id_desc;
-                    $("#id_check_success_messages").append('<p>' + display4 + newArrayDataOfOjbect[5] + '</p>')
-                    var msg = "JMSG053";
-                    var msg_type ;
-                    msg_type = message_config_details(msg);
-                    $("#error_msg_id").prop("hidden", false)
-                    var display5 = msg_type.messages_id_desc;
-                    $("#id_check_success_messages").append('<p>' + display5 + newArrayDataOfOjbect[6] + '</p>')
-                    //*************** if duplicate data data count is greater than zero ***************
-                    if(newArrayDataOfOjbect[2]>0){
-                        $("#id_check_error_messages").prop("hidden",false)
-                        var msg = "JMSG015";
+                  //*************** if pop-up data count is greater than zero ***************
+                    if (newArrayDataOfOjbect[1] > 0) {
+                        var msg = "JMSG010";
                         var msg_type ;
                         msg_type = message_config_details(msg);
                         $("#error_msg_id").prop("hidden", false)
-                        var display6 = msg_type.messages_id_desc;
-                        $("#id_check_error_messages").append('<p>' + display6 + newArrayDataOfOjbect[2] + '</p>')
-                        var msg = "JMSG001";
+                        var display = msg_type.messages_id_desc;
+                        $("#id_check_success_messages").append('<p>' + display + newArrayDataOfOjbect[0] + '</p>')
+                        var msg = "JMSG011";
                         var msg_type ;
                         msg_type = message_config_details(msg);
                         $("#error_msg_id").prop("hidden", false)
-                        var display7 = msg_type.messages_id_desc;
-                        $("#id_check_error_messages").append('<p style = "font-weight: bold;">' + display7 + ' </p>')
+                        var display1 = msg_type.messages_id_desc;
+                        $("#id_check_success_messages").append('<p>' + display1 + newArrayDataOfOjbect[1] + '</p>')
+                        var msg = "JMSG012";
+                        var msg_type ;
+                        msg_type = message_config_details(msg);
+                        $("#error_msg_id").prop("hidden", false)
+                        var display2 = msg_type.messages_id_desc;
+                        $("#id_check_success_messages").append('<p>' + display2 + newArrayDataOfOjbect[3] + '</p>')
+                        var msg = "JMSG013";
+                        var msg_type ;
+                        msg_type = message_config_details(msg);
+                        $("#error_msg_id").prop("hidden", false)
+                        var display3 = msg_type.messages_id_desc;
+                        $("#id_check_success_messages").append('<p>' + display3 + newArrayDataOfOjbect[4] + '</p>')
+                        var msg = "JMSG014";
+                        var msg_type ;
+                        msg_type = message_config_details(msg);
+                        $("#error_msg_id").prop("hidden", false)
+                        var display4 = msg_type.messages_id_desc;
+                        $("#id_check_success_messages").append('<p>' + display4 + newArrayDataOfOjbect[5] + '</p>')
+                        var msg = "JMSG053";
+                        var msg_type ;
+                        msg_type = message_config_details(msg);
+                        $("#error_msg_id").prop("hidden", false)
+                        var display5 = msg_type.messages_id_desc;
+	   				    $("#id_check_success_messages").append('<p>' + display5 + newArrayDataOfOjbect[6] + '</p>')
+                        //*************** if duplicate data data count is greater than zero ***************
+                        if(newArrayDataOfOjbect[2]>0){
+                            $("#id_check_error_messages").prop("hidden",false)
+                            var msg = "JMSG015";
+                            var msg_type ;
+                            msg_type = message_config_details(msg);
+                            $("#error_msg_id").prop("hidden", false)
+                            var display6 = msg_type.messages_id_desc;
+                            $("#id_check_error_messages").append('<p>' + display6 + newArrayDataOfOjbect[2] + '</p>')
+                            var msg = "JMSG001";
+                            var msg_type ;
+                            msg_type = message_config_details(msg);
+                            $("#error_msg_id").prop("hidden", false)
+                            var display7 = msg_type.messages_id_desc;
+                            $("#id_check_error_messages").append('<p style = "font-weight: bold;">' + display7 + ' </p>')
+                            $("#save_id").prop("hidden", true);
+                            $("#id_delete_duplicate").show()
+                        }
+                        else{
+                            $("#id_check_error_messages").prop("hidden",true)
+                            $("#id_delete_duplicate").hide()
+                        }
+                    }
+                    //*************** if pop-up data count is zero ***************
+                    else {
+                        $("#id_check_success_messages").hide()
+                        $("#id_check_error_messages").prop("hidden", false)
+                        var msg = "JMSG006";
+                        var msg_type ;
+                        msg_type = message_config_details(msg);
+                        $("#error_msg_id").prop("hidden", false)
+                        var display8 = msg_type.messages_id_desc;
+                        $("#id_check_error_messages").append('<p>' + display8 + '</p>')
                         $("#save_id").prop("hidden", true);
-                        $("#id_delete_duplicate").show()
-                    }
-                    else{
-                        $("#id_check_error_messages").prop("hidden",true)
-                        $("#id_delete_duplicate").hide()
                     }
                 }
-                //*************** if pop-up data count is zero ***************
-                else {
-                    $("#id_check_success_messages").hide()
-                    $("#id_check_error_messages").prop("hidden", false)
-                    var msg = "JMSG006";
-                    var msg_type ;
-                    msg_type = message_config_details(msg);
-                    $("#error_msg_id").prop("hidden", false)
-                    var display8 = msg_type.messages_id_desc;
-                    $("#id_check_error_messages").append('<p>' + display8 + '</p>')
-                    $("#save_id").prop("hidden", true);
-                }
-            }
-        });
-    }
+            });
+        }
 
-    //****************************************
     function GetSelectedTextValue(roles) {
         var selectedText = roles.options[roles.selectedIndex].innerHTML;
         var selectedValue = roles.value;
