@@ -7,6 +7,8 @@ from eProc_Basic.Utilities.functions.messages_config import get_msg_desc, get_me
 from eProc_Basic.Utilities.global_defination import global_variables
 from eProc_Basic.Utilities.messages.messages import MSG161, MSG162, MSG163, MSG164, MSG165, MSG166, MSG167, MSG168, \
     MSG169, MSG170, MSG171, MSG192
+from eProc_Calendar_Settings.Utilities.calender_settings_generic import calculate_delivery_date, \
+    calculate_delivery_date_base_on_lead_time, get_list_of_holidays
 from eProc_Chat.models import ChatContent
 from eProc_Configuration.models.master_data import OrgAddress
 from eProc_Exchange_Rates.Utilities.exchange_rates_generic import convert_currency
@@ -450,7 +452,7 @@ class SaveShoppingCart:
                 'prod_type': prod_type,
                 # 'catalog_id': catalog_id,
                 'item_del_date': item_del_date,
-                'product_info_id':cart_item_details.product_info_id,
+                'product_info_id': cart_item_details.product_info_id,
                 'start_date': start_date,
                 'end_date': end_date,
                 'catalog_id': catalog_id,
@@ -486,7 +488,7 @@ class SaveShoppingCart:
                 'value': value,
                 # 'eform': eform,
                 'eform_id': cart_item_details.eform_id,
-                'variant_id':cart_item_details.variant_id,
+                'variant_id': cart_item_details.variant_id,
                 'client': django_query_instance.django_get_query(OrgClients, {'client': self.client, 'del_ind': False}),
                 'description': cart_item_details.description,
                 'silent_po': silent_po,
@@ -1532,3 +1534,59 @@ class CheckForScErrors:
         self.sc_check_data['sc_error'] = self.data
         self.sc_check_data['sc_info'] = self.info
         return self.sc_check_data
+
+
+def check_sc_second_step_shopping_cart(sc_check_instance,object_id_list, default_calendar_id, company_code, cart_items):
+    """
+
+    """
+    holiday_list = []
+    sc_check_instance.document_sc_transaction_check(object_id_list)
+    sc_check_instance.po_transaction_check(object_id_list)
+    sc_check_instance.calender_id_check(default_calendar_id)
+    if default_calendar_id is not None or default_calendar_id != '':
+        holiday_list = get_list_of_holidays(default_calendar_id, global_variables.GLOBAL_CLIENT)
+
+    for loop_count, items in enumerate(cart_items):
+        item_number = loop_count+1
+        sc_check_instance.check_for_prod_cat(items['prod_cat_id'], company_code, item_number)
+        if items['call_off'] != CONST_PR_CALLOFF:
+            sc_check_instance.check_for_supplier(items['supplier_id'], items['prod_cat_id'], company_code, item_number)
+        if items['call_off'] == CONST_CATALOG_CALLOFF:
+            sc_check_instance.catalog_item_check(items['int_product_id'], items['price'], items['lead_time'],
+                                                 item_number, items['guid'],
+                                                 items['quantity'])
+        if items['call_off'] not in [CONST_FREETEXT_CALLOFF, CONST_LIMIT_ORDER_CALLOFF]:
+            if len(holiday_list) == 0:
+                item_delivery_date = None
+            else:
+                item_delivery_date = calculate_delivery_date(items['guid'],
+                                                             items['lead_time'],
+                                                             items['supplier_id'],
+                                                             default_calendar_id,
+                                                             global_variables.GLOBAL_CLIENT,
+                                                             CartItemDetails)
+        elif items['call_off'] == CONST_FREETEXT_CALLOFF:
+            item_delivery_date = calculate_delivery_date_base_on_lead_time(items['lead_time'],
+                                                                           items['supplier_id'],
+                                                                           default_calendar_id)
+            if items['item_del_date'] < item_delivery_date:
+                django_query_instance.django_update_query(CartItemDetails,
+                                                          {'guid': items['guid'],
+                                                           'client': global_variables.GLOBAL_CLIENT},
+                                                          {'item_del_date': item_delivery_date})
+            else:
+                item_delivery_date = items['item_del_date']
+
+        else:
+            if items['start_date'] is None:
+                item_delivery_date = items['item_del_date']
+
+            else:
+                item_delivery_date = items['start_date']
+        sc_check_instance.delivery_date_check(item_delivery_date, item_number, holiday_list, default_calendar_id)
+        sc_check_instance.check_for_currency(item_number, items['value'], str(items['currency']))
+        items['item_del_date'] = item_delivery_date
+
+    shopping_cart_errors = sc_check_instance.get_shopping_cart_errors()
+    return cart_items, shopping_cart_errors

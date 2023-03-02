@@ -2,13 +2,11 @@
 Name:
     sc_second_step.py
 Usage:
-
       review_page: 1) Functionality to generate default shopping cart name and make it editable returning the values to sc_second_step.html page.
                    2) Functionality to display shopping cart items in sc_second_step.html page.
                    3) Functionality to display receivers name in sc_second_step.html page.
                    4) Functionality to retrieve and edit default shipping address of the user in sc_second_step.html page.
                    5) Functionality to change and edit shipping address from an available list in drop-down of the user in sc_second_step.html page.
-
 Author:
     Sanjay, Deepika, Siddarth Menon
 """
@@ -20,7 +18,7 @@ from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from eProc_Account_Assignment.Utilities.account_assignment_generic import AccountAssignmentCategoryDetails, \
-    get_default_gl_acc
+    get_default_gl_acc, get_acc_details
 from eProc_Basic.Utilities.functions.get_system_setting_attributes import *
 from eProc_Basic.Utilities.functions.guid_generator import guid_generator
 from eProc_Basic.Utilities.functions.json_parser import JsonParser
@@ -30,13 +28,15 @@ from eProc_Doc_Search_and_Display.Utilities.search_display_specific import get_o
 from eProc_Emails.Utilities.email_notif_generic import appr_notify, send_po_attachment_email
 from eProc_Price_Calculator.Utilities.price_calculator_generic import calculate_item_total_value
 from eProc_Purchase_Order.Utilities.purchase_order_generic import CreatePurchaseOrder
-from eProc_Ship_To_Bill_To_Address.Utilites.ship_to_bill_to_generic import ShipToBillToAddress
+from eProc_Ship_To_Bill_To_Address.Utilites.ship_to_bill_to_generic import ShipToBillToAddress, \
+    get_shipping_address_detail
 from eProc_Shopping_Cart.Shopping_Cart_Forms.call_off_forms.limit_form import UpdateLimitItem
-from eProc_Shopping_Cart.Utilities.save_order_edit_sc import SaveShoppingCart, CheckForScErrors
+from eProc_Shopping_Cart.Utilities.save_order_edit_sc import SaveShoppingCart, CheckForScErrors, \
+    check_sc_second_step_shopping_cart
 from eProc_Shopping_Cart.Utilities.shopping_cart_generic import *
 from eProc_Shopping_Cart.Utilities.shopping_cart_specific import get_prod_cat_dropdown, get_manger_detail, \
     get_completion_work_flow, get_users_first_name, unpack_accounting_data, update_supplier_uom, \
-    update_supplier_uom_for_prod
+    update_supplier_uom_for_prod, get_cart_default_name_and_user_first_name
 from eProc_Configuration.models import UnitOfMeasures, Currency
 from eProc_Basic.Utilities.functions.get_db_query import getUsername, getClients, get_login_obj_id
 from eProc_Basic.Utilities.functions.str_concatenate import concatenate_str_with_space
@@ -118,7 +118,7 @@ def review_page(request):
     cart_items = list(
         django_query_instance.django_filter_query(CartItemDetails, {
             'username': login_username, 'client': client
-        },['item_num'],None)
+        }, ['item_num'], None)
     )
 
     cart_items_count = django_query_instance.django_filter_count_query(CartItemDetails, {
@@ -324,7 +324,7 @@ def review_page(request):
     cart_items = list(
         django_query_instance.django_filter_query(CartItemDetails, {
             'username': login_username, 'client': client
-        },['item_num'],None)
+        }, ['item_num'], None)
     )
     for items in cart_items:
         if items['call_off'] == CONST_CATALOG_CALLOFF:
@@ -410,193 +410,63 @@ def sc_second_step(request):
     :return: sc_second_step.html
     """
     update_user_info(request)
-    username = global_variables.GLOBAL_LOGIN_USERNAME
     update_requester_info(global_variables.GLOBAL_LOGIN_USERNAME)
     prod_desc = ''
-    total_item_value = []
-    actual_price_list = []
-    discount_value_list = []
-    tax_value_list = []
-    catalog_qty = None
-    manager_details = []
-    holiday_list = []
-    approver_id = []
-    prod_cat_list = []
-    completion_work_flow = []
-    requester_user_id = ''
-    call_off_list = []
-    item_detail_list = []
-    sc_completion_flag = False
 
-    attr_low_value_list, company_code ,default_calendar_id,object_id_list = get_company_calendar_from_org_model()
-
-    requester_first_name, cart_name = get_cart_default_name_and_user_first_name()
-
-
+    attr_low_value_list, company_code, default_calendar_id, object_id_list = get_company_calendar_from_org_model()
+    requester_first_name, cart_name,receiver_name = get_cart_default_name_and_user_first_name(request.user.first_name, request.user.last_name)
 
     request.session['company_code'] = company_code
-
-
-
+    item_detail_list = []
     # Display shopping cart items in 2nd step of wizard
 
     cart_items = django_query_instance.django_filter_query(CartItemDetails,
-                                                           {'username': global_variables.GLOBAL_CLIENT,
+                                                           {'username': global_variables.GLOBAL_LOGIN_USERNAME,
                                                             'client': global_variables.GLOBAL_CLIENT},
                                                            ['item_num'],
                                                            None)
-    shopping_cart_errors,cart_items = check_sc_secound_step_shopping_cart(object_id_list, default_calendar_id,company_code,cart_items)
+
 
     cart_items_count = len(cart_items)
 
     if cart_items_count == 0:
         return redirect('eProc_Shop_Home:shopping_cart_home')
-    i = 0
+
     cart_items_guid_list = dictionary_key_to_list(cart_items, 'guid')
-    for items in cart_items:
-        item_currency = items['currency']
-        if not item_currency:
-            item_currency = global_variables.GLOBAL_REQUESTER_CURRENCY
-        item_details = {}
-        item_number = i + 1
-        requester_user_id = items['username']
-        product_category = items['prod_cat_id']
-        lead_time = items['lead_time']
-        supplier_id = items['supplier_id']
-        call_off = items['call_off']
-        if item_currency != global_variables.GLOBAL_USER_CURRENCY:
-            actual_price_list.append(
-                convert_currency(float(items['actual_price']) * items['quantity'], str(item_currency),
-                                 str(global_variables.GLOBAL_USER_CURRENCY)))
-            discount_value_list.append(
-                convert_currency(items['discount_value'], str(item_currency), str(global_variables.GLOBAL_USER_CURRENCY)))
-            tax_value_list.append(convert_currency(items['tax_value'], str(item_currency), str(global_variables.GLOBAL_USER_CURRENCY)))
-            # gross_price_list.append(convert_currency(float(items['gross_price'])*items['quantity'], str(item_currency), str(global_variables.GLOBAL_USER_CURRENCY)))
-        else:
-            actual_price_list.append(float(items['actual_price']) * items['quantity'])
-            discount_value_list.append(items['discount_value'])
-            tax_value_list.append(items['tax_value'])
-            # gross_price_list.append(float(items['gross_price'])*items['quantity'])
-
-        prod_cat_list.append(product_category)
-        call_off_list.append(call_off)
-        call_off = call_off
-        if call_off == CONST_LIMIT_ORDER_CALLOFF:
-            overall_limit = items['overall_limit']
-            quantity = None
-            price_unit = None
-            prod_id = product_category
-            price = None
-            prod_desc = get_prod_by_id(prod_id=prod_id)
-            value = calculate_item_total_value(call_off, quantity, catalog_qty, price_unit, price, overall_limit)
-            value = convert_currency(value, str(item_currency), str(global_variables.GLOBAL_USER_CURRENCY))
-            sc_check_instance.check_for_currency(item_number, value, str(item_currency))
-            if value:
-                total_item_value.append(float(format(value, '2f')))
-            else:
-                value = 0
-                total_item_value.append(0)
-
-            total_value = round(sum(total_item_value), 2)
-            request.session['total_value'] = total_value
-
-        else:
-
-            prod_cat_list.append(product_category)
-            call_off_list.append(call_off)
-            call_off = call_off
-            if call_off == CONST_LIMIT_ORDER_CALLOFF:
-                overall_limit = items['overall_limit']
-                quantity = None
-                price_unit = None
-                prod_id = product_category
-                price = None
-                prod_desc = get_prod_by_id(prod_id=prod_id)
-                value = calculate_item_total_value(call_off, quantity, catalog_qty, price_unit, price, overall_limit)
-                value = convert_currency(value, str(item_currency), str(global_variables.GLOBAL_USER_CURRENCY))
-                sc_check_instance.check_for_currency(item_number, value, str(item_currency))
-                if value:
-                    total_item_value.append(float(format(value, '2f')))
-                else:
-                    value = 0
-                    total_item_value.append(value)
-
-                total_value = round(sum(total_item_value), 2)
-                request.session['total_value'] = total_value
-
-            else:
-                overall_limit = None
-                quantity = items['quantity']
-                price = items['price']
-                price_unit = items['price_unit']
-                value = calculate_item_total_value(call_off, quantity, catalog_qty, price_unit, price, overall_limit)
-                value = convert_currency(value, str(item_currency), str(global_variables.GLOBAL_USER_CURRENCY))
-                sc_check_instance.check_for_currency(item_number, value, str(item_currency))
-                if value:
-                    total_item_value.append(float(format(value, '2f')))
-                else:
-                    value = 0
-                    total_item_value.append(value)
-
-                total_value = round(sum(total_item_value), 2)
-                i += 1
-                request.session['total_value'] = total_value
-
-        item_details['prod_cat'] = product_category
-        item_details['value'] = value
-        item_details['guid'] = items['guid']
-        item_detail_list.append(item_details)
-    global_variables.GLOBAL_REQUESTER_CURRENCY = requester_field_info(requester_user_id, 'currency_id')
-    global_variables.GLOBAL_REQUESTER_LANGUAGE = requester_field_info(requester_user_id, 'language_id')
+    prod_cat_list = dictionary_key_to_list(cart_items, 'prod_cat_id')
+    call_off_list = dictionary_key_to_list(cart_items, 'call_off')
+    actual_price, discount_value, tax_value, total_value = get_currency_converted_price_data(cart_items)
+    total_item_value = dictionary_key_to_list(cart_items, 'item_total_value')
+    request.session['total_value'] = total_item_value
+    global_variables.GLOBAL_REQUESTER_CURRENCY = requester_field_info(global_variables.GLOBAL_LOGIN_USERNAME, 'currency_id')
+    global_variables.GLOBAL_REQUESTER_LANGUAGE = requester_field_info(global_variables.GLOBAL_LOGIN_USERNAME, 'language_id')
     highest_item_value = max(total_item_value)
     highest_item_number = total_item_value.index(highest_item_value)
-    # Display receivers name
-    receiver_name = concatenate_str_with_space(request.user.first_name, request.user.last_name)
 
-    user_object_id = global_variables.USER_OBJ_ID_LIST
-    user_setting = UserSettings()
-    ship_to_bill_to_address_instance = ShipToBillToAddress(global_variables.GLOBAL_LOGIN_USER_OBJ_ID)
-    address_number_list, default_address_number = ship_to_bill_to_address_instance.get_default_address_number_and_list()
+    # get shipping data
+    address_number_list,\
+    default_address_number,\
+    delivery_addr_list,\
+    addr_default,\
+    addr_val_desc,\
+    delivery_addr_desc = get_shipping_address_detail(object_id_list)
 
-    delivery_addr_list, addr_default, addr_val_desc = ship_to_bill_to_address_instance. \
-        get_default_address_and_available_address_with_description(address_number_list, default_address_number)
-
-    delivery_addr_desc = ship_to_bill_to_address_instance.get_all_addresses_with_descriptions(address_number_list)
-
-    acc_obj = AccountAssignmentCategoryDetails(object_id_list, company_code, item_detail_list)
-    accounting_data = acc_obj.get_acc_list_and_default()
-
-    # Get notes and attachment form
-    upload_attach_form = CreateAttachForm()
-    attach_list_form = CreateAttachlistForm()
-    add_note_form = NotesForm()
+    # get Accounting data
+    accounting_data = get_acc_details(object_id_list, company_code, item_detail_list)
 
     product_category = get_prod_cat_dropdown(request)
     supplier = check_for_eform(request)
 
     # to get manager detail
-    default_cmp_code = user_setting.get_attr_default(user_object_id, CONST_CO_CODE)
-    purchase_control_call_off_list = get_order_status(default_cmp_code, global_variables.GLOBAL_CLIENT)
-    if default_cmp_code:
-        manager_detail, msg_info = get_manger_detail(global_variables.GLOBAL_CLIENT, global_variables.GLOBAL_LOGIN_USERNAME, accounting_data['default_acc_ass_cat'],
-                                                     total_value,
-                                                     default_cmp_code, accounting_data['default_acc'],
-                                                     global_variables.GLOBAL_USER_CURRENCY)
-        if manager_detail:
-            manager_details, approver_id = get_users_first_name(manager_detail)
-
-        for purchase_control_call_off in purchase_control_call_off_list:
-            if purchase_control_call_off in call_off_list:
-                completion_work_flow = get_completion_work_flow(global_variables.GLOBAL_CLIENT, prod_cat_list, default_cmp_code)
-                sc_completion_flag = True
-    else:
-        error_msg = get_message_desc(MSG109)[1]
-        # msgid = 'MSG109'
-        # error_msg = get_msg_desc(msgid)
-        # msg = error_msg['message_desc'][0]
-        # error_msg = msg
-        msg_info = error_msg
-    formatted_value = format(total_value, '2f')
+    msg_info, sc_completion_flag, completion_work_flow, manager_details, approver_id = get_manger_and_purchasing_details(company_code,
+                                      accounting_data['default_acc_ass_cat'],
+                                      total_value,
+                                      accounting_data['default_acc'],
+                                      call_off_list,
+                                      prod_cat_list)
+    sc_check_instance = CheckForScErrors(global_variables.GLOBAL_CLIENT, global_variables.GLOBAL_LOGIN_USERNAME)
+    cart_items,shopping_cart_errors = check_sc_second_step_shopping_cart(sc_check_instance, object_id_list, default_calendar_id,
+                                                    company_code, cart_items)
 
     default_account_assignment_category, default_account_assignment_value = unpack_accounting_data(accounting_data,
                                                                                                    sc_check_instance)
@@ -605,32 +475,17 @@ def sc_second_step(request):
     sc_check_instance.approval_check(default_account_assignment_category, default_account_assignment_value, total_value,
                                      company_code)
 
-    cart_items = list(
-        django_query_instance.django_filter_query(CartItemDetails, {
-            'username': global_variables.GLOBAL_CLIENT, 'client': global_variables.GLOBAL_CLIENT
-        },['item_num'],None)
-    )
-    for items in cart_items:
-        if items['call_off'] == CONST_CATALOG_CALLOFF:
-            items['image_url'] = get_image_url(items['int_product_id'])
-        else:
-            items['image_url'] = ''
-        items = update_supplier_uom_for_prod(items)
-    cart_items = update_eform_details_scitem(cart_items)
-    cart_items = zip(cart_items, total_item_value)
-    sys_attributes_instance = sys_attributes(global_variables.GLOBAL_CLIENT)
-    shopping_cart_errors = sc_check_instance.get_shopping_cart_errors()
+    cart_items = update_image_for_catalog(cart_items)
 
-    # total price detail
-    actual_price = round(sum(actual_price_list), 2)
-    discount_value = round(sum(discount_value_list), 2)
-    tax_value = round(sum(tax_value_list), 2)
+    cart_items = update_eform_details_scitem(cart_items)
+    currency, uom, currency_list, product_category, country_list = get_currency_uom_prod_cat_country()
+    sys_attributes_instance = sys_attributes(global_variables.GLOBAL_CLIENT)
 
     context = {
         'shopping_cart_errors': shopping_cart_errors,
         'highest_item_number': highest_item_number + 1,
         'sc_completion_flag': sc_completion_flag,
-        'requester_user_name': requester_user_id,
+        'requester_user_name': global_variables.GLOBAL_LOGIN_USERNAME,
         'item_detail_list': item_detail_list,
         'cart_items_guid_list': cart_items_guid_list,
         'supplier': supplier,
@@ -645,6 +500,7 @@ def sc_second_step(request):
         'cart_name': cart_name,
         'inc_nav': True,
         'cart_items': cart_items,
+        'total_value': format(total_value, '.2f'),
         'actual_price': format(actual_price, '.2f'),
         'discount_value': format(discount_value, '.2f'),
         'tax_value': format(tax_value, '.2f'),
@@ -652,19 +508,15 @@ def sc_second_step(request):
         'gl_acc_item_level_default': accounting_data['gl_acc_item_level_default'],
         'receiver_name': receiver_name,
         'rest_shipping_addr': delivery_addr_list,
-        'upload_attach_form': upload_attach_form,
-        'attach_list_form': attach_list_form,
-        'add_note_form': add_note_form,
         'select_flag': True,
         'acc_default': accounting_data['acc_default'],
         'acc_value': accounting_data['acc_value'],
-        'currency': django_query_instance.django_filter_only_query(Currency, {'del_ind': False}),
-        'unit': django_query_instance.django_filter_only_query(UnitOfMeasures, {'del_ind': False}),
+        'currency': currency,
+        'unit': uom,
         'product_category': product_category,
         'supplier_details': get_supplier_first_second_name(global_variables.GLOBAL_CLIENT),
         'date_today': datetime.datetime.today(),
         'total_item_value': total_item_value,
-        'total_value': round(float(formatted_value), 2),
         'prod_desc': prod_desc,
         'acc_list': accounting_data['acc_list'],
         'acc_value_list': accounting_data['acc_value_list'],
@@ -681,11 +533,12 @@ def sc_second_step(request):
         'shipping_address_flag': sys_attributes_instance.get_shipping_address(),
         'attachment_size': sys_attributes_instance.get_attachment_size(),
         'attachment_extension': sys_attributes_instance.get_attachment_extension(),
-        'currency_list': get_currency_list(),
+        'currency_list': currency_list,
 
     }
 
-    return render(request, 'Shopping_Cart/sc_second_step/sc_second_step.html', context)
+    return render(request, 'Shopping_Cart/sc_second_step/shopping_cart_second_step.html', context)
+
 
 # Function to call save shopping cart through ajax call (login required decorator is not required)
 @transaction.atomic
@@ -694,6 +547,8 @@ def save_shopping_cart(request):
     :param request:
     :return:
     """
+    username = getUsername(request)
+    client = getClients(request)
     manager_details = []
     if request.method == 'POST':
         attachments_data = request.FILES
@@ -779,7 +634,7 @@ def order_shopping_cart(request):
                                                                             {'client': global_variables.GLOBAL_CLIENT,
                                                                              'doc_number': sc_details[0]})
                 create_purchase_order = CreatePurchaseOrder(sc_header_instance)
-                status,error_message,output,po_doc_list = create_purchase_order.create_po()
+                status, error_message, output, po_doc_list = create_purchase_order.create_po()
                 # Send purchase order email to supplier
 
                 for po_document_number in po_doc_list:
@@ -828,7 +683,6 @@ def update_user_name(request):
 
 def ajax_trigger_wf(request):
     """
-
     """
     wf_data_dictionary = {}
     gl_acc_list = []

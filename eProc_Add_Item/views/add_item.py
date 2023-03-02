@@ -51,7 +51,7 @@ def add_limit_item(request):
     """
     update_user_info(request)
     client = getClients(request)
-    product_category = get_prod_cat(request, prod_det=None)
+    product_category = get_prod_cat()
     supplier_details = get_supplier_first_second_name(client)
 
     limit_form = CreateLimitOrderForm()
@@ -81,7 +81,7 @@ def add_purch_req(request, document_number=None):
     update_user_info(request)
     client = getClients(request)
     pr_form = CreatePurchaseReqForm()
-    product_category = get_prod_cat(request, prod_det=None)
+    product_category = get_prod_cat()
     supplier_details = get_supplier_first_second_name(client)
     if request.method == 'GET':
         if document_number != 'create':

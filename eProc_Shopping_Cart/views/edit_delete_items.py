@@ -397,7 +397,6 @@ def update_ft_details(request):
     cart_details = []
     context = {}
     update_user_info(request)
-    username = global_variables.GLOBAL_LOGIN_USERNAME
     item_details = JsonParser().get_json_from_req(request)
     item_detail = item_details['cart_item_data']
     username = global_variables.GLOBAL_LOGIN_USERNAME

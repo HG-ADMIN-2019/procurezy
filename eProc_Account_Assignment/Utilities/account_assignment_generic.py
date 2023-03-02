@@ -285,3 +285,12 @@ def get_attribute_id_based_on_acc(account_assignment_cat):
     elif account_assignment_cat == CONST_AS:
         attribute_id = CONST_AS_SET
     return attribute_id
+
+
+def get_acc_details(object_id_list, company_code, item_detail_list):
+    """
+
+    """
+    acc_obj = AccountAssignmentCategoryDetails(object_id_list, company_code, item_detail_list)
+    accounting_data = acc_obj.get_acc_list_and_default()
+    return accounting_data

@@ -4,6 +4,7 @@ from django.db.models import Q
 
 from eProc_Basic.Utilities.functions.dictionary_key_to_list import dictionary_key_to_list
 from eProc_Basic.Utilities.functions.get_db_query import *
+from eProc_Basic.Utilities.functions.messages_config import get_message_desc
 from eProc_Basic.Utilities.functions.remove_element_from_list import remove_element_from_list
 from eProc_Basic.Utilities.functions.str_concatenate import concatenate_str_with_space
 from eProc_Calendar_Settings.Utilities.calender_settings_generic import calculate_delivery_date, \
@@ -11,11 +12,12 @@ from eProc_Calendar_Settings.Utilities.calender_settings_generic import calculat
 from eProc_Configuration.models import UnspscCategories, UnspscCategoriesCustDesc
 from eProc_Configuration.models.basic_data import Currency, UnitOfMeasures
 from eProc_Doc_Search_and_Display.Utilities.search_display_specific import get_po_header_app, get_sc_header_app_wf, \
-    get_sc_header_app
+    get_sc_header_app, get_order_status
 from eProc_Exchange_Rates.Utilities.exchange_rates_generic import convert_currency
 from eProc_Form_Builder.models import EformFieldData
 from eProc_Price_Calculator.Utilities.price_calculator_generic import calculate_item_total_value, calculate_item_price
-from eProc_Shopping_Cart.Utilities.shopping_cart_specific import get_completion_work_flow
+from eProc_Shopping_Cart.Utilities.shopping_cart_specific import get_completion_work_flow, get_manger_detail, \
+    get_users_first_name
 from eProc_Shopping_Cart.models import ScItem, ScHeader, ScAccounting, ScPotentialApproval, ScApproval
 from eProc_Shopping_Cart.models.add_to_cart import CartItemDetails
 
@@ -23,7 +25,7 @@ django_query_instance = DjangoQueries()
 
 
 # Function to get product category description based on product category Id and display it in drop down
-def get_prod_cat(request, prod_det):
+def get_prod_cat():
     """
     The variable prod_det is used to store product Id  of an item while updating an item in 1st step of shopping cart wizard
     This function is mainly used to display product category in drop down in limit_order, form_builder,
@@ -419,7 +421,10 @@ def get_currency_converted_price_data(cart_items):
             discount_value = items['discount_value']
             tax_value = items['tax_value']
             # gross_price_list.append(float(items['gross_price'])*items['quantity'])
-        items['item_total_value'] = format(value, '.2f')
+        if value:
+            items['item_total_value'] = float(format(value, '2f'))
+        else:
+            items['item_total_value'] = 0
         total_actual_price = total_actual_price + actual_price
         total_discount_value = total_discount_value + discount_value
         total_tax_value = total_tax_value + tax_value
@@ -443,7 +448,7 @@ def update_image_for_catalog(cart_items):
     return cart_items
 
 
-def get_currency_and_uom():
+def get_currency_uom_prod_cat_country():
     """
 
     """
@@ -451,7 +456,9 @@ def get_currency_and_uom():
                                                          ['currency_id', 'description'])
     uom = django_query_instance.django_filter_query(UnitOfMeasures, {'del_ind': False}, None, None)
     currency_list = dictionary_key_to_list(currency, 'currency_id')
-    return currency, uom, currency_list
+    product_category = get_prod_cat()
+    country_list = get_country_data()
+    return currency, uom, currency_list, product_category, country_list
 
 
 def get_cart_items_detail():
@@ -498,11 +505,35 @@ def update_delivery_date_to_item_table(cart_items):
     return cart_items
 
 
-def get_default_cart_name(requester_first_name):
+
+
+
+def get_manger_and_purchasing_details(company_code, default_acc_ass_cat, total_value, default_acc, call_off_list,
+                                      prod_cat_list):
     """
 
     """
-    date_time = str(datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S"))
-    cart_name = concatenate_str_with_space(requester_first_name, date_time)
+    error_msg = ''
+    completion_work_flow = []
+    manager_details = {}
+    sc_completion_flag = False
+    approver_id = ''
+    purchase_control_call_off_list = get_order_status(company_code, global_variables.GLOBAL_CLIENT)
+    if company_code:
+        manager_detail, msg_info = get_manger_detail(global_variables.GLOBAL_CLIENT,
+                                                     global_variables.GLOBAL_LOGIN_USERNAME,
+                                                     default_acc_ass_cat,
+                                                     total_value,
+                                                     company_code, default_acc,
+                                                     global_variables.GLOBAL_USER_CURRENCY)
+        if manager_detail:
+            manager_details, approver_id = get_users_first_name(manager_detail)
 
-    return cart_name
+        for purchase_control_call_off in purchase_control_call_off_list:
+            if purchase_control_call_off in call_off_list:
+                completion_work_flow = get_completion_work_flow(global_variables.GLOBAL_CLIENT, prod_cat_list,
+                                                                company_code)
+                sc_completion_flag = True
+    else:
+        error_msg = get_message_desc('MSG109')[1]
+    return error_msg, sc_completion_flag, completion_work_flow, manager_details, approver_id

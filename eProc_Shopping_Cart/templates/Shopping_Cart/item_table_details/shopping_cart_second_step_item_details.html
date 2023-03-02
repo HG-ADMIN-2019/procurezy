@@ -78,6 +78,7 @@
                 <td>
                     <div class="item-action-icon-section">
 
+                        {% if display_update_delete %}
                         <span title="Update Item">
                             <a href="#" data-toggle="modal" onclick="update(this, '{{items.guid}}', '{{items.prod_cat}}','{{forloop.counter}}');">
                                 <i class="fas fa-edit item-action-icons"></i>
@@ -88,7 +89,25 @@
                                 <i class="material-icons item-action-icons">delete_outline</i>
                             </a>
                         </span>
+                        {% endif %}
 
+                        {% if select_flag %}
+                        <div class="action_dropdown dropdown">
+                            <a  type="button" id="dropdownMenuButton" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                                <i class="material-icons action_dropdown-icon item-action-icons">more_vert</i>
+                            </a>
+                            <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
+                                <a class="dropdown-item notes{{ forloop.counter }}"
+                                   onclick="showSection(this, 'notes{{ forloop.counter }}')" >Notes</a>
+                                <a class="dropdown-item attachments{{ forloop.counter }}"
+                                   onclick="showSection(this, 'attachments{{ forloop.counter }}')" >Attachments</a>
+                                <a class="dropdown-item shipAddress{{ forloop.counter }}"
+                                   onclick="showSection(this, 'shipAddress{{ forloop.counter }}')" >Shipping Address</a>
+                                <a class="dropdown-item accoutingData{{ forloop.counter }}"
+                                   onclick="showSection(this, 'accoutingData{{ forloop.counter }}')" >Cost Assignment</a>
+                            </div>
+                        </div>
+                        {% endif %}
                     </div>
 
                 </td>
@@ -117,6 +136,164 @@
 
                         </div>
                     </div>
+
+
+                    <!--start of hideable content which lets the user add notes -->
+                    <div id="notes{{ forloop.counter }}" class="item{{ forloop.counter }} dummy_more_div_class card display-none">
+                        <div class="card-header item-table-action__header">
+                            <span>Notes</span>
+                            <span onclick="closeSelectSection(this, 'notes{{ forloop.counter }}')">
+                                <i class="fas fa-times"></i>
+                            </span>
+                        </div>
+                        <div>
+                            <div class="action-item-notes__buttons-section">
+                                <button id="internalbutton{{ forloop.counter }}" class="notes_button{{ forloop.counter }} intbtn{{ forloop.counter }} add-note-internal btn btn-outline-primary" onclick="selectNoteType(this)">For internal use</button>
+                                <button id="supplierbutton{{ forloop.counter }}" class="notes_button{{ forloop.counter }} supbtn{{ forloop.counter }} add-note-external btn btn-outline-primary" onclick="selectNoteType(this)">For supplier use</button>
+                            </div>
+
+                            <div id="intbtn{{ forloop.counter }}" class="tabContent{{ forloop.counter }} action-item-notes__textarea">
+                                <textarea id="int_note_text-{{ forloop.counter }}" maxlength="1000" class="add_notes_textarea sc_notes" rows="4"></textarea>
+                            </div>
+
+                            <div id="supbtn{{ forloop.counter }}" class="tabContent{{ forloop.counter }} action-item-notes__textarea" style="display: none;">
+                                <textarea id="sup_note_text-{{ forloop.counter }}" maxlength="1000" class="add_notes_textarea sc_notes " rows="4"></textarea>
+                            </div>
+                            <div>
+                                <span class="badge badge_valid_text_label"> Valid characters are A-Z a-z 0-9</span>
+                            </div>
+                        </div>
+                    </div>
+                    <!--end of hideable content which lets the user add notes -->
+
+                    <!-- start of hideable content which lets the user add attachments -->
+                    <div  id="attachments{{ forloop.counter }}" class="item{{ forloop.counter }} dummy_more_div_class card display-none">
+                        <div class="card-header item-table-action__header">
+                            <span>Attachments</span>
+                            <span onclick="closeSelectSection(this, 'attachments{{ forloop.counter }}')">
+                                <i class="fas fa-times"></i>
+                            </span>
+                        </div>
+                        <div class="card-body">
+                            <div class="elements-space-between">
+                                <div class="form-check form-check-inline hg_display add-attachment-section">
+                                    <form class="form-group" method="post" enctype="multipart/form-data">
+                                        <div id="attachment_error{{ forloop.counter }}" class="alert alert-danger" style="display: none;"></div>
+
+                                        <label><b>Type:</b></label><br>
+                                        <input class="form-check-input" name="toogle_me" type="radio" checked id="internal{{ forloop.counter }}">
+                                        <label>For internal use </label>
+                                        <input class="form-check-input" name="toogle_me" type="radio" id="external{{ forloop.counter }}">
+                                        <label>For external use</label><br>
+
+                                        <label><b>File</b></label><br>
+                                        <input id="attachment_data{{forloop.counter}}" type="file" class="form-control-file File" multiple required>
+                                        <small class="form-text text-muted">Help text - Supported file types</small>
+                                        <br>
+                                        <label><b>Name</b></label><br>
+                                        <input id="attachment_name{{ forloop.counter }}" type="text" maxlength="20" class="form-control attachment-input-name" placeholder="Name" aria-label="Name" aria-describedby="basic-addon1">
+                                        <br>
+                                        <button class="btn btn-primary" type="button" id="upload-attachment_data{{forloop.counter}}" onclick="upload_attachments(this.id)"><i class="fas fa-upload"></i> upload</button>
+                                    </form>
+
+                                </div>
+
+                                <div id="added_attachments_display-{{forloop.counter}}" class="attachment-added-section" style="display:none;">
+                                    <!-- <hr> -->
+                                    <div class="view-attachments-header">
+                                        <span class="h6">View Attachments</span>
+                                    </div>
+                                    <div>
+                                        <table class="table">
+                                            <thead>
+                                            <tr>
+                                                <th>Name</th>
+                                                <th>Type</th>
+                                                <th>File</th>
+                                                <th class="hg_display">Action</th>
+                                            </tr>
+                                            </thead>
+                                            <tbody class="hg_attachment_table_tbody" id="attachment_tbody_id-{{forloop.counter}}">
+
+                                            </tbody>
+                                        </table>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <!--end of hideable content which lets the user add attachments -->
+
+                    <!-- start of hideable content which lets the user change shipping address -->
+                    <div id="shipAddress{{ forloop.counter }}" class="item{{ forloop.counter }} dummy_more_div_class card display-none">
+                        <div class="card-header item-table-action__header">
+                            <span>Shipping Address</span>
+                            <span onclick="closeSelectSection(this, 'shipAddress{{ forloop.counter }}')">
+                                <i class="fas fa-times"></i>
+                            </span>
+                        </div>
+                        <div class="card-body">
+                            {% for addr in addr_val_desc %}
+                            <span id="address_number_{{ forloop.parentloop.counter }}" class="check_address_number" hidden>{{ addr.address_number }}</span>
+                            <span id="street_output{{ forloop.parentloop.counter }}" >{{ addr.street }},</span><br>
+                            <span id="area_output{{ forloop.parentloop.counter }}">{{ addr.area }},</span><br>
+                            <span id="landmark_output{{ forloop.parentloop.counter }}">{{ addr.landmark }},</span><br>
+                            <span id="city_output{{ forloop.parentloop.counter }}">{{ addr.city }}</span>
+                            - <span id="pcode_output{{ forloop.parentloop.counter }}">{{ addr.postal_code }}</span><br>
+                            <span id="region_output{{ forloop.parentloop.counter }}">{{ addr.region }}</span><br>
+                            {% endfor %}
+
+                            {% if shipping_address_flag == '1'  %}
+                            <button onclick="change_item_address(this.id)" class="btn btn-primary hg_display mt-2"  id="change_address_{{forloop.counter}}" ><i class="far fa-edit"></i> Change Address</button>
+                            {% elif shipping_address_flag == '0' %}
+                            <button onclick="change_item_address(this.id)" class="btn btn-secondary hg_display mt-2"  id="change_address_{{forloop.counter}}" disabled><i class="far fa-edit"></i> Change Address</button>
+                            {% endif %}
+                            {% if edit_address_flag == '1'  %}
+                            <button onclick="edit_item_address(this.id)" class="btn btn-primary hg_display mt-2" id="edit_address_{{forloop.counter}}"><i class="far fa-edit"></i> Edit  Address</button>
+                            {% elif edit_address_flag == '0' %}
+                            <button  class="btn btn-primary display-none mt-2" id="edit_address_{{forloop.counter}}"><i class="far fa-edit"></i> Edit Current Shipping Address</button>
+                            {% endif %}
+                        </div>
+                    </div>
+                    <!-- end of hideable content which lets the user change shipping address -->
+
+                    <!--    start of hideable content which lets the user change cost assignment            -->
+                    <div id="accoutingData{{ forloop.counter }}" class="item{{ forloop.counter }} dummy_more_div_class card display-none">
+                        <div class="card-header item-table-action__header">
+                            <span>Account Assignment Category</span>
+                            <span onclick="closeSelectSection(this, 'accoutingData{{ forloop.counter }}')">
+                                <i class="fas fa-times"></i>
+                            </span>
+                        </div>
+                        <div class="card-body">
+                            {% if acc_default %}
+                            <div>
+                                <span class="h6">Account Assignment Category :</span> <span id="change_acc_type_{{ forloop.counter }}" class="change_account_type">{{ acc_default }}</span><br>
+                                <span class="h6">Value :</span> <span id="change_acc_value_{{ forloop.counter }}" class="check_account_assignment_values">{{acc_value.0}}</span><br>
+                                <span class="h6"> GL Account Number :</span>
+                                <span id="gl_acc_val_{{ forloop.counter }}">
+                                {% for gl_acc_default in gl_acc_item_level_default%}
+                                {% if gl_acc_default.cart_item_guid == items.guid %}
+                                {{ gl_acc_default.default_gl_acc }}
+                                {% endif %}
+                                {% endfor %}
+                                </span>
+                                <br>
+                            </div>
+                            <div id="item_secondary_acc_assign_category_{{ forloop.counter }}">
+
+                            </div>
+                            <br>
+                            {% if acct_assignment_category == '1' %}
+                            <button id="change_acc_asign-item-{{forloop.counter}}" onclick="edit_account_assign(this.id)" class="btn btn-primary hg_display"><i class="far fa-edit"></i> change account assignment</button>
+                            {% elif acct_assignment_category == '0' %}
+                            <button id="change_acc_asign-item-{{forloop.counter}}" onclick="edit_account_assign(this.id)" class="btn btn-secondary" disabled><i class="far fa-edit"></i> change account assignment</button>
+                            {% endif %}
+                            {% endif %}
+                        </div>
+
+                    </div>
+                    <!-- end of hideable content which lets the user change cost assignment -->
 
                 </td>
             </tr>
@@ -289,34 +466,42 @@
 
 <!--                <p> Total value without tax for <span id="total_items"></span> items: <span id="total_cart_value" class="item-table-total-cart-value">{{total_value}}</span> <span id="total_cart_currency">{{request.user.currency_id}}</span></p>-->
 <!--            </div>-->
-<div class="tab-content">
-    <div id="item_efrom_details" data-tab-content >
-        <div class="m-4">
-            {% for items in item_dictionary_list %}
-            <div id="display_eform-{{items.guid}}-{{ forloop.counter0 }}" class="hg_class_eform" style="display:none;">
-                <div class="card-header">
-                    <span class="h5">Additional eForm Data</span>
-                </div>
-                <div class="card-body">
-                    {% if items.call_off == '02'%}
-                    {% if items.eform_id %}
-                    {% for eform_details in items.eform_data %}
-                    <div style="padding-bottom:5px;">
-                        <span class="h6">{{eform_details.eform_field_name}}:&nbsp;&nbsp;</span><span>{{eform_details.eform_field_data}}</span>
-                    </div>
-                    {% endfor %}
-                    {% endif %}
-                    {% endif %}
-                </div>
-            </div>
-            {% endfor %}
-        </div>
-    </div>
-</div>
-{{ country_list|json_script:"country_list" }}
+
+<script src="{% static 'scripts/sc_item_details.js' %}"> </script>
+
 <script>
+//############################### start update catalog Quantity ########################################################
 var rendered_item_guid = {{cart_items_guid_list|safe}};
-var country_list = JSON.parse(document.getElementById('currency_list').textContent)
+function update_quantity(){
+    var updated_quantity = $("#id_quantity").val();
+    if(GLOBAL_QUANTITY != updated_quantity){
+        var cart_item_detail = {}
+        cart_item_detail['quantity'] =  updated_quantity;
+        cart_item_detail['item_guid'] =  GLOBAL_ONCLICK_ITEM_GUID;
+        $.ajax({
+            type : 'POST',
+            url  : "{% url 'eProc_Shopping_Cart:update_quantity' %}",
+            data: {
+                quantity:updated_quantity,
+                item_guid:GLOBAL_ONCLICK_ITEM_GUID
+            },
+            success: function (response) {
+                GLOBAL_QUANTITY = updated_quantity
+                $("#quantity_"+GLOBAL_ONCLICK_ITEM_GUID).html(response.quantity);
+                document.getElementById("total_cart_value").innerHTML = response.total;
+                document.getElementById("discount_value").innerHTML = response.price_details.discount_value
+                document.getElementById("actual_price").innerHTML = response.price_details.actual_price
+                $('#prod_detail_popup').modal('hide');
+            }
+        });
+    }
+    else{
+        $('#prod_detail_popup').modal('hide');
+    }
+
+}
+
+//############################### End update catalog Quantity ########################################################
 
 var sc_first_step = {{ display_update_delete|yesno:"true,false" }};
 // Function to delete an item from the cart and update in the UI using ajax call - loader popup not working
@@ -366,6 +551,12 @@ function delete_cart_item(){
     })
 }
 
+
+// function ajax_delete_cart_item(data) {
+//     urlLink= "{% url 'eProc_Shopping_Cart:delete_item' %}";
+//     let result = AjaxCallAPIBasic(urlLink, data);
+//     return result;
+// }
 
 // Function to get form data to update in update form
 eform = false;
@@ -480,7 +671,6 @@ function update(element, item_guid, product_category_id,row_count) {
 }
 
 const display_fields_from_array = (eform_configured) => {
-    var country_list = {{country_list|safe}};
     $('#eform_card_details').empty()
     var div_content = '';
     var user_data = '';
@@ -489,7 +679,8 @@ const display_fields_from_array = (eform_configured) => {
         field_data_type = value['field_data_type'];
         field_name = value['field_name'];
         is_required = value['required'];
-        var options
+
+        var options = '<option value="" selected>Select</option>';
 
         if (field_data_type == 'dropdown') {
             get_dropdown = value['dropdown_options']
@@ -581,4 +772,13 @@ function display_eform(element, item_number){
         $('#item_info_tr-' + item_number).prop('hidden', true);
     }
 }
+//function update_product_specification_main_table(product_specification_data){
+//    $('#product_spec_main_tbody').empty();
+//    var prod_spec_main_html = ''
+//     $.each(product_specification_data, function (i, item) {
+//        prod_spec_main_html += '<tr ><td>' + item.product_info_key + '</td><td>' + item.product_info_value + '</td></tr>';
+//    });
+//    $('#product_spec_main_tbody').append(prod_spec_main_html);
+//    document.getElementById('prod_spec_div_id').style.display = 'block';
+//}
 </script>

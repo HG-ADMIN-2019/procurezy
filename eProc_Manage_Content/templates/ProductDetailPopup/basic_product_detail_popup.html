@@ -237,16 +237,21 @@
         });
     }
     //###############################end of view catalog images #########################################################
+function show_image_div(){
+     $(".catalog_img").hide();
+     $(".catalog_img:eq(" + image_visible_div + ")").show();
+}
 
-    function update_product_specification(product_specification){
-        $('#product_spec_main_tbody').empty();
-        var prod_spec_main_html = ''
-        $.each(product_specification, function (i, item) {
-            prod_spec_main_html += '<tr ><td class="text-muted">' + item.product_info_key + '</td><td>' + item.product_info_value + '</td></tr>';
-        });
-        $('#product_spec_main_tbody').append(prod_spec_main_html);
-        document.getElementById('prod_spec_div_id').style.display = 'block';
-    }
+
+function update_product_specification(product_specification){
+    $('#product_spec_main_tbody').empty();
+    var prod_spec_main_html = ''
+    $.each(product_specification, function (i, item) {
+        prod_spec_main_html += '<tr ><td class="text-muted">' + item.product_info_key + '</td><td>' + item.product_info_value + '</td></tr>';
+    });
+    $('#product_spec_main_tbody').append(prod_spec_main_html);
+    document.getElementById('prod_spec_div_id').style.display = 'block';
+}
 
     function update_product_specification_main_table(product_specification_data){
         $('#product_spec_main_tbody').empty();

@@ -52,7 +52,7 @@ def create_or_update_freetext_form(request, freetext_id):
     encrypt_freetext_id = encrypt(freetext_id)
     context = {
         'inc_nav': True,
-        'product_category': get_prod_cat(request, prod_det=None),
+        'product_category': get_prod_cat(),
         'supplier_details': supplier_details,
         'freetext_id': freetext_id,
         'freetext_details': freetext_details,
@@ -87,7 +87,7 @@ def display_freetext_forms(request):
         'encrypted_freetext_id': None,
         'display_available_forms': freetext_details,
         'supplier_details': get_supplier_first_second_name(client),
-        'product_category': get_prod_cat(request, prod_det=None),
+        'product_category': get_prod_cat(),
         'catalogs': django_query_instance.django_filter_only_query(Catalogs, {'client': client, 'del_ind': False,
                                                                               'is_active_flag': True}),
         'currency_list': get_currency_data(),
