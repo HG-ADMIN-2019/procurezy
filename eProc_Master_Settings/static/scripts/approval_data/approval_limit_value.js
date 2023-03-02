@@ -63,7 +63,7 @@ function display_basic_db_data() {
     $('#id_alv_tbody').empty();
     var edit_basic_data = '';
     $.each(rendered_alv_data, function(i, item) {
-        edit_basic_data += '<tr ><td class="class_select_checkbox"><input class="checkbox_check" onclick="valueChanged()" type="checkbox" required></td><td>' + item.app_code_id + '</td><td>' + item.company_id + '</td><td>' + item.app_types + '</td><td>' + item.currency_id + '</td><td>' + item.upper_limit_value + '</td><td hidden>' + item.app_lim_dec_guid + '</td></tr>';
+        edit_basic_data += '<tr ><td class="class_select_checkbox"><input class="checkbox_check" onclick="valueChanged()" type="checkbox" required></td><td>' + item.company_id + '</td><td>' + item.app_types + '</td><td>' + item.app_code_id + '</td><td>' + item.upper_limit_value + '</td><td>' + item.currency_id + '</td><td hidden>' + item.app_lim_dec_guid + '</td></tr>';
     });
     $('#id_alv_tbody').append(edit_basic_data);
     $("#hg_select_checkbox").prop("hidden", true);
@@ -88,11 +88,11 @@ function delete_duplicate() {
         var row = $(this);
 
         //*************** reading data from the pop-up ***************
-        app_code_id = row.find("TD").eq(1).find('input[type="text"]').val().toUpperCase();
-        company_id = row.find("TD").eq(2).find("select option:selected").val();
-        app_types = row.find("TD").eq(3).find("select option:selected").val();
-        currency_id = row.find("TD").eq(4).find("select option:selected").val();
-        upper_limit_value = row.find("TD").eq(5).find('input[type="number"]').val().toUpperCase();
+        app_code_id = row.find("TD").eq(3).find('input[type="text"]').val().toUpperCase();
+        company_id = row.find("TD").eq(1).find("select option:selected").val();
+        app_types = row.find("TD").eq(2).find("select option:selected").val();
+        currency_id = row.find("TD").eq(5).find("select option:selected").val();
+        upper_limit_value = row.find("TD").eq(4).find('input[type="number"]').val().toUpperCase();
         app_lim_dec_guid = row.find("TD").eq(6).find('input[type="text"]').val().toUpperCase()
         alv_compare = alv.app_code_id +'-'+ alv.app_types +'-'+ alv.company_id
         if (alv_code_check.includes(alv_compare)) {
@@ -119,14 +119,14 @@ function read_popup_data() {
         var row = $(this);
         alv = {};
         alv.del_ind = row.find("TD").eq(7).find('input[type="checkbox"]').is(':checked');
-        alv.app_code_id = row.find("TD").eq(1).find('input[type="text"]').val().toUpperCase();
-        alv.company_id = row.find("TD").eq(2).find("select option:selected").val();
-        alv.app_types = row.find("TD").eq(3).find("select option:selected").val();
-        alv.currency_id = row.find("TD").eq(4).find("select option:selected").val();
-        alv.upper_limit_value = row.find("TD").eq(5).find('input[type="number"]').val();
+        alv.app_code_id = row.find("TD").eq(3).find('input[type="text"]').val().toUpperCase();
+        alv.company_id = row.find("TD").eq(1).find("select option:selected").val();
+        alv.app_types = row.find("TD").eq(2).find("select option:selected").val();
+        alv.currency_id = row.find("TD").eq(5).find("select option:selected").val();
+        alv.upper_limit_value = row.find("TD").eq(4).find('input[type="number"]').val();
         alv.app_lim_dec_guid = row.find("TD").eq(6).find('input[type="text"]').val().toUpperCase()
         if (alv == undefined) {
-            alv.app_code_id = row.find("TD").eq(1).find('input[type="text"]').val();
+            alv.app_code_id = row.find("TD").eq(3).find('input[type="text"]').val();
         }
         if(alv.app_lim_dec_guid  == undefined) {
             alv.app_lim_dec_guid  = ''
@@ -148,7 +148,7 @@ function display_error_message(error_message){
 
 // Function for add a new row data
 function new_row_data() {
-    basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><input class="form-control check_special_char" type="text" maxlength="8"  name="approver_code" style="text-transform:uppercase;" required></td><td><select class="form-control">'+company_id_dropdown+'</select></td><td><select class="form-control">'+ approval_type_dropdown +'</select></td><td><select class="form-control">'+currency_id_dropdown+'</select></td><td><input class="form-control" type="number" name="upper_limit_value" required></td><td hidden><input type="text" value=""></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+    basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select class="form-control">'+company_id_dropdown+'</select></td><td><select class="form-control">'+ approval_type_dropdown +'</select></td><td><input class="form-control check_special_char" type="text" maxlength="8"  name="approver_code" style="text-transform:uppercase;" required></td><td><input class="form-control" type="number" name="upper_limit_value" required></td><td><select class="form-control">'+currency_id_dropdown+'</select></td><td hidden><input type="text" value=""></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
     table_sort_filter('id_popup_table');
 }
@@ -160,11 +160,11 @@ function get_selected_row_data() {
         var alv_arr_obj = {};
         alv_arr_obj.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
         if(alv_arr_obj.del_ind){
-            alv_arr_obj.app_code_id = row.find("TD").eq(1).html();
-            alv_arr_obj.company_id = row.find("TD").eq(2).html();
-            alv_arr_obj.app_types = row.find("TD").eq(3).html();
-            alv_arr_obj.currency_id = row.find("TD").eq(4).html();
-            alv_arr_obj.upper_limit_value = row.find("TD").eq(5).html();
+            alv_arr_obj.app_code_id = row.find("TD").eq(3).html();
+            alv_arr_obj.company_id = row.find("TD").eq(1).html();
+            alv_arr_obj.app_types = row.find("TD").eq(2).html();
+            alv_arr_obj.currency_id = row.find("TD").eq(5).html();
+            alv_arr_obj.upper_limit_value = row.find("TD").eq(4).html();
             alv_arr_obj.app_lim_dec_guid = row.find("TD").eq(6).html();
             main_table_alv_checked.push(alv_arr_obj);
         }
@@ -177,10 +177,10 @@ function get_main_table_data() {
     $("#display_basic_table TBODY TR").each(function() {
         var row = $(this);
         var main_attribute = {};
-        main_attribute.app_code_id = row.find("TD").eq(1).html();
-        main_attribute.company_id = row.find("TD").eq(2).html();
-        main_attribute.app_types = row.find("TD").eq(3).html();
-        main_attribute.currency_id = row.find("TD").eq(4).html();
+        main_attribute.app_code_id = row.find("TD").eq(3).html();
+        main_attribute.company_id = row.find("TD").eq(1).html();
+        main_attribute.app_types = row.find("TD").eq(2).html();
+        main_attribute.currency_id = row.find("TD").eq(5).html();
         var alv_compare_maintable = main_attribute.app_code_id +'-'+ main_attribute.company_id +'-'+main_attribute.app_types +'-'+ main_attribute.currency_id
         main_table_low_value.push(alv_compare_maintable);
     });

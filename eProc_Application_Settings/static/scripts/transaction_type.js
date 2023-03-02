@@ -14,7 +14,7 @@ function add_popup_row() {
         $("#id_error_msg").html("");
     });
     eliminate_used_sequence()
-    basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><input class="input form-control check_special_char" type="text" maxlength="15"  name="transaction type" style="text-transform:uppercase;" required></td><td><input type="text" class="form-control check_special_char" maxlength="10"  name="transaction description"  required></td><td><select class="input form-control" disabled>'+ document_type_dropdown +'</select></td><td><select class="input form-control">' + sequence_dropdown + '</select></td><td><input type="checkbox"  name="active_inactive" required></td><td hidden><input type="text" class= "form-control" name=" guid "></td><td hidden><input type="checkbox" required></td></tr>';
+    basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><input class="input form-control check_special_char" type="text" maxlength="15"  name="transaction type" style="text-transform:uppercase;" required></td><td><select class="input form-control" disabled>'+ document_type_dropdown +'</select></td><td><select class="input form-control">' + sequence_dropdown + '</select></td><td><input type="text" class="form-control check_special_char" maxlength="10"  name="transaction description"  required></td><td><input type="checkbox"  name="active_inactive" required></td><td hidden><input type="text" class= "form-control" name=" guid "></td><td hidden><input type="checkbox" required></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
     if (GLOBAL_ACTION == "transaction_types_upload") {
         $(".class_del_checkbox").prop("hidden", false);
@@ -49,7 +49,7 @@ function eliminate_used_sequence() {
     });
     $("#id_popup_table TBODY TR").each(function () {
         var row = $(this);
-        sequence_popup = row.find("TD").eq(4).find("select option:selected").val();
+        sequence_popup = row.find("TD").eq(3).find("select option:selected").val();
         rendered_sequence_array = $.grep(rendered_sequence_array, function (item) {
             return item != sequence_popup;
         });
@@ -112,15 +112,15 @@ $('#save_id').click(function () {
         var row = $(this);
         transaction_types = {};
         transaction_types.del_ind = row.find("TD").eq(7).find('input[type="checkbox"]').is(':checked');
-        transaction_types.document_type = row.find("TD").eq(3).find("select option:selected").val();
+        transaction_types.document_type = row.find("TD").eq(2).find("select option:selected").val();
         transaction_types.transaction_type = row.find("TD").eq(1).find('input[type="text"]').val();
-        transaction_types.description = row.find("TD").eq(2).find('input[type="text"]').val();
-        transaction_types.sequence = row.find("TD").eq(4).find("select option:selected").val();
+        transaction_types.sequence = row.find("TD").eq(3).find("select option:selected").val();
+        transaction_types.description = row.find("TD").eq(4).find('input[type="text"]').val();
         transaction_types.active_inactive = row.find("TD").eq(5).find('input[type="checkbox"]').is(':checked');
         transaction_types.guid = row.find("TD").eq(6).find('input[type="text"]').val();
         transaction_types.attribute_id ='FC_TRANS_TYPE'
         if (transaction_types == undefined) {
-            transaction_types.transaction_type = row.find("TD").eq(2).find('input[type="text"]').val().toUpperCase();
+            transaction_types.transaction_type = row.find("TD").eq(1).find('input[type="text"]').val().toUpperCase();
         }
         if (transaction_types.guid == undefined){
             transaction_types.guid = ''
@@ -133,7 +133,7 @@ $('#save_id').click(function () {
 
 // Function for add a new row data
 function new_row_data() {
-    basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><input class="input form-control check_special_char" type="text" maxlength="15"  name="transaction type" style="text-transform:uppercase;" required></td><td><input type="text" class="form-control check_special_char" maxlength="10"  name="transaction description"  required></td><td><select class="input form-control" disabled>'+ document_type_dropdown +'</select></td><td><select class="input form-control">' + sequence_dropdown + '</select></td><td><input type="checkbox"  name="active_inactive" required></td><td hidden><input type="text" class= "form-control" name=" guid "></td><td hidden><input type="checkbox" required></td></tr>';
+    basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><input class="input form-control check_special_char" type="text" maxlength="15"  name="transaction type" style="text-transform:uppercase;" required></td><td><select class="input form-control" disabled>'+ document_type_dropdown +'</select></td><td><select class="input form-control">' + sequence_dropdown + '</select></td><td><input type="text" class="form-control check_special_char" maxlength="10"  name="transaction description"  required></td><td><input type="checkbox"  name="active_inactive" required></td><td hidden><input type="text" class= "form-control" name=" guid "></td><td hidden><input type="checkbox" required></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
     table_sort_filter('id_popup_table');
 }
@@ -145,9 +145,9 @@ function get_main_table_data(){
         var row = $(this);
         var main_attribute = {};
         main_attribute.transaction_type = row.find("TD").eq(1).html();
-        main_attribute.description  = row.find("TD").eq(2).html();
-        main_attribute.document_type = row.find("TD").eq(3).html();
-        main_attribute.sequence = row.find("TD").eq(4).html();
+        main_attribute.document_type = row.find("TD").eq(2).html();
+        main_attribute.sequence = row.find("TD").eq(3).html();
+        main_attribute.description  = row.find("TD").eq(4).html();
         main_table_low_value.push(main_attribute);
     });
     table_sort_filter('display_basic_table');
@@ -162,9 +162,9 @@ function get_selected_row_data(){
         transaction_types_arr_obj.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
         if( transaction_types_arr_obj.del_ind){
             transaction_types_arr_obj.transaction_type = row.find("TD").eq(1).html();
-            transaction_types_arr_obj.description = row.find("TD").eq(2).html();
-            transaction_types_arr_obj.document_type = row.find("TD").eq(3).html();
-            transaction_types_arr_obj.sequence = row.find("TD").eq(4).html();
+            transaction_types_arr_obj.document_type = row.find("TD").eq(2).html();
+            transaction_types_arr_obj.sequence = row.find("TD").eq(3).html();
+            transaction_types_arr_obj.description = row.find("TD").eq(4).html();
             transaction_types_arr_obj.active_inactive = row.find("TD").eq(5).find('input[type="checkbox"]').is(':checked');
             transaction_types_arr_obj.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
             transaction_types_arr_obj.guid = row.find("TD").eq(6).html();
