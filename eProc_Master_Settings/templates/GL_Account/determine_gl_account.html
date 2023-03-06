@@ -819,7 +819,7 @@
                         var gl_acc = row.cells[4].innerHTML
                         var gl_acc_default = row.cells[5].children.gl_acc_default.checked
                         var currency_id = row.cells[8].innerHTML
-                        dropdown_array.push([prod_cat,gl_acc, gl_acc_default, acc_ass_cat,company_id,currency_id])
+                        dropdown_array.push([prod_cat,company_id,acc_ass_cat, gl_acc, gl_acc_default, currency_id])
                     }
                 }
                 $('#id_popup_table').append(edit_basic_data);
@@ -831,7 +831,7 @@
                     var gl_acc_default = dropdown_array[i][4];
                     var acc_ass_cat =dropdown_array[i][2];
                     var company_id = dropdown_array[i][1];
-                    var currency_id = dropdown_array[i][7];
+                    var currency_id = dropdown_array[i][5];
                     $(row.find("TD").eq(1).find("select option[value=" + prod_cat + "]")).attr('selected', 'selected');
                     $(row.find("TD").eq(4).find("select option[value=" + gl_acc + "]")).attr('selected', 'selected');
                     if(gl_acc_default) {
@@ -858,10 +858,9 @@
         $("#id_popup_table TBODY TR").each(function() {
             var row = $(this);
             detgl_dic = {}
-            detgl_dic.gl_acc_num = row.find("TD").eq(4).find("select option:selected").val();
-            detgl_dic.account_assign_cat = row.find("TD").eq(3).find("select option:selected").val();
             detgl_dic.company_id = row.find("TD").eq(2).find("select option:selected").val();
-            var compare = detgl.gl_acc_num + '-' + detgl.account_assign_cat + '-' + detgl.company_id 
+            detgl_dic.account_assign_cat = row.find("TD").eq(3).find("select option:selected").val();
+            var compare = detgl.company_id + '-' +  detgl.account_assign_cat
             detgl_check.push(compare);
             jQuery.grep(detgl_check, function(el) {
                 if (jQuery.inArray(el, common) != -1) {

@@ -71,7 +71,7 @@ function delete_duplicate() {
         gl_acc_num = row.find("TD").eq(4).find("select option:selected").val();
         gl_acc_default = row.find("TD").eq(5).find('input[type="checkbox"]').is(':checked');
         account_assign_cat = row.find("TD").eq(3).find("select option:selected").val();
-        company_id = row.find("TD").eq(1).find("select option:selected").val();
+        company_id = row.find("TD").eq(2).find("select option:selected").val();
         from_value = row.find("TD").eq(6).find('input[type="number"]').val();
         to_value = row.find("TD").eq(7).find('input[type="number"]').val();
         currency_id = row.find("TD").eq(8).find("select option:selected").val();
@@ -148,7 +148,7 @@ function get_main_table_data() {
         main_attribute.item_from_value = row.find("TD").eq(6).html();
         main_attribute.item_to_value = row.find("TD").eq(7).html();
         main_attribute.currency_id = row.find("TD").eq(8).html();
-        var detgl_compare = main_attribute.gl_acc_num + '-' + main_attribute.account_assign_cat + '-' + main_attribute.company_id
+        var detgl_compare = main_attribute.company_id + '-' + main_attribute.account_assign_cat+ '-' + main_attribute.gl_acc_num
         main_table_low_value.push(detgl_compare);
     });
     table_sort_filter('display_basic_table');

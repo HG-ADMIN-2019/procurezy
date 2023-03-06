@@ -10,6 +10,35 @@ function onclick_update_button() {
 }
 
 
+//onclick of cancel display the table in display mode............
+function display_basic_db_data() {
+    $('#display_basic_table').DataTable().destroy();
+    $('#id_pc_tbody').empty();
+    var edit_basic_data = '';
+    $.each(rendered_pc_data, function (i, item) {
+        var data = '';
+        if (item.purchase_ctrl_flag == true) {
+            data = 'Activate'
+        } else {
+            data = 'Deactivate'
+        }
+        edit_basic_data += '<tr><td class="class_select_checkbox"><input class="checkbox_check" onclick="valueChanged()" type="checkbox" required></td><td>' + item.company_code_id + '</td><td>' + item.call_off + '</td><td>' + data + '</td><td hidden>' + item.purchase_control_guid + '</td><td hidden>' + item.del_ind_flag + '</td></tr>';
+    });
+    $('#id_pc_tbody').append(edit_basic_data);
+    $("#hg_select_checkbox").prop("hidden", true);
+    $(".class_select_checkbox").prop("hidden", true);
+    $(" input:checkbox ").prop('checked', false);
+    $('#id_edit_data').show();
+    $('#id_cancel_data').hide();
+    $('#id_delete_data').hide();
+    $('#id_copy_data').hide();
+    $('#id_update_data').hide();
+    $('#id_save_confirm_popup').modal('hide');
+    $('#id_delete_confirm_popup').modal('hide');
+    $('#id_check_all').hide();
+    table_sort_filter('display_basic_table');
+}
+
 //onclick of cancel empty the popup table body and error messages
 $(".remove_upload_data").click(() => {
     $("#id_error_msg").html("");

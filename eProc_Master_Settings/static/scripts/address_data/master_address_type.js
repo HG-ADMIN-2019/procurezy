@@ -1,4 +1,3 @@
-
 var addresstype_data = new Array();
 var main_table_low_value = [];
 var validate_add_attributes = [];
@@ -118,8 +117,8 @@ function read_popup_data() {
         addresstype.address_number = row.find("TD").eq(3).find('select').val();
         addresstype.address_type = row.find("TD").eq(2).find('select').val();
         addresstype.company_id = row.find("TD").eq(1).find('select').val();
-        addresstype.valid_from = row.find("TD").eq(4).find('input[type="text"]').val();
-        addresstype.valid_to = row.find("TD").eq(5).find('input[type="text"]').val();
+        addresstype.valid_from = row.find("TD").eq(4).find('input[type="date"]').val();
+        addresstype.valid_to = row.find("TD").eq(5).find('input[type="date"]').val();
         var addresstype_compare = addresstype.address_number +'-'+ addresstype.address_type
         if (addresstype == undefined){
             addresstype.address_number = row.find("TD").eq(2).find('input').val();
@@ -139,8 +138,8 @@ function new_row_data() {
         '<td><select class="form-control">'+company_dropdwn+'</select></td>' +
         '<td><select class="form-control">'+address_type_dropdown+'</select></td>' +
         '<td><select class="form-control">'+address_number_dropdwn+'</select></td>' +
-        '<td><input  type="text" name = "valid_from" class="form-control from_to_date"></td>' +
-        '<td><input type="text" name = "valid_to"  class="form-control from_to_date"></td>' +
+        '<td><input  type="date" name = "valid_from" class="form-control from_to_date"></td>' +
+        '<td><input type="date" name = "valid_to"  class="form-control from_to_date"></td>' +
         '<td class="class_del_checkbox" hidden><input type="checkbox" required></td>' +
         '<td hidden><input  type="text" class="form-control"  name="guid"></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
