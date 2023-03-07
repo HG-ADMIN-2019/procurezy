@@ -44,9 +44,8 @@ def check_unspsc_category_desc_data(ui_data, status):
     valid_data_list = []
     for unspsc_desc in ui_data:
         # dependent check
-        if django_query_instance.django_existence_check(UnspscCategoriesCust,
+        if django_query_instance.django_existence_check(UnspscCategories,
                                                         {'del_ind': False,
-                                                         'client': global_variables.GLOBAL_CLIENT,
                                                          'prod_cat_id': unspsc_desc['prod_cat_id']}):
             # check for deletion of record
             if unspsc_desc['del_ind'] in ['1', True]:
