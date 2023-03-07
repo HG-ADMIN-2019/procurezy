@@ -6,6 +6,7 @@ var seq_array= [];
 
 //onclick of add button display myModal popup and set GLOBAL_ACTION button value
 function onclick_add_button(button) {
+    nextval = max_sequence;
     $("#error_msg_id").css("display", "none")
     $("#header_select").prop( "hidden", false );
     GLOBAL_ACTION = button.value
@@ -18,7 +19,6 @@ function onclick_add_button(button) {
     $("#id_del_ind_checkbox").prop("hidden", true);
     document.getElementById("id_del_add_button").style.display = "block";
     $("#save_id").prop("hidden", false);
-    nextval = max_sequence;
 }
 
 // on click update icon display the selected checkbox data to update
