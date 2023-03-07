@@ -661,12 +661,14 @@ function onclick_add_button(button) {
                             $("#header_select").prop("hidden", false);
                         }
                         var user_value = row.cells[4].innerHTML
+                        var acc_cat_value = row.cells[2].innerHTML
                         var acc_ass_value = row.cells[3].innerHTML
                         var sup_acc_ass_value = row.cells[7].innerHTML
                         var company_id_value = row.cells[1].innerHTML
                         var supcompany_value = row.cells[5].innerHTML
                         var currency_value = row.cells[8].innerHTML
-                        dropdown_values.push([user_value, acc_ass_value, sup_acc_ass_value, company_id_value, supcompany_value, currency_value])
+                        var sup_acc_cat_value = row.cells[6].innerHTML
+                        dropdown_values.push([user_value, acc_ass_value, sup_acc_ass_value, company_id_value, supcompany_value, currency_value, acc_cat_value, sup_acc_cat_value])
                     }
                 }
                 $('#id_popup_tbody').append(edit_basic_data);
@@ -679,11 +681,15 @@ function onclick_add_button(button) {
                     var companyid_value = dropdown_values[i][3]
                     var sup_compid_value = dropdown_values[i][4]
                     var curr_value = dropdown_values[i][5]
+                    var acct_cat_value = dropdown_values[i][6]
+                    var sup_cat_value = dropdown_values[i][7]
                     $(row.find("TD").eq(4).find("select option[value="+appr_user_value+"]")).attr('selected','selected');
+                    $(row.find("TD").eq(2).find("select option[value="+acct_cat_value+"]")).attr('selected','selected');
                     $(row.find("TD").eq(3).find("select option[value="+acc_value+"]")).attr('selected','selected');
-                    $(row.find("TD").eq(7).find("select option[value="+sup_acc_value+"]")).attr('selected','selected');
+                    $(row.find("TD").eq(6).find("select option[value="+sup_cat_value+"]")).attr('selected','selected');
                     $(row.find("TD").eq(1).find("select option[value="+companyid_value+"]")).attr('selected','selected');
                     $(row.find("TD").eq(5).find("select option[value="+sup_compid_value+"]")).attr('selected','selected');
+                    $(row.find("TD").eq(7).find("select option[value="+sup_acc_value+"]")).attr('selected','selected');
                     $(row.find("TD").eq(8).find("select option[value="+curr_value+"]")).attr('selected','selected');
                     i++;
                 });
@@ -876,7 +882,7 @@ function onclick_add_button(button) {
             wfacc_dic.sup_account_assign_cat = row.find("TD").eq(6).find('select[type="text"]').val();
             wfacc_dic.sup_acc_value = row.find("TD").eq(7).find('input[type="number"]').val();
             wfacc_dic.sup_currency_id = row.find("TD").eq(8).find('select[type="text"]').val();
-            var compare = wfacc_dic.company_id +'-'+ wfacc_dic.account_assign_cat +'-'+ wfacc_dic.acc_value +'-'+ wfacc_dic.app_username +'-'+ wfacc_dic.sup_company_id +'-'+ wfacc_dic.sup_account_assign_cat +'-'+ wfacc_dic.sup_acc_value +'-'+  wfacc_dic.sup_currency_id
+            var compare = wfacc_dic.company_id+'-'+wfacc_dic.account_assign_cat+'-'+wfacc_dic.acc_value+'-'+wfacc_dic.app_username+'-'+wfacc_dic.sup_company_id+'-'+wfacc_dic.sup_account_assign_cat+'-'+wfacc_dic.sup_acc_value+'-'+wfacc_dic.sup_currency_id
             wfacc_check.push(compare);
             jQuery.grep(wfacc_check, function(el) {
                 if (jQuery.inArray(el, common) != -1) {

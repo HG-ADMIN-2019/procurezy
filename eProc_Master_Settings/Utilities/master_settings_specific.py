@@ -522,7 +522,8 @@ class MasterSettingsSave:
                                                               'address_number'],
                                                            'address_type': addresstype_detail[
                                                                'address_type'],
-                                                           'client': self.client},
+                                                           'client': self.client,
+                                                           'company_id': addresstype_detail['company_id']},
                                                           {'address_number': addresstype_detail['address_number'],
                                                            'address_type': (
                                                                addresstype_detail['address_type']).upper(),
