@@ -86,7 +86,7 @@ function delete_duplicate() {
     check_data()
 }
 
-// Function to hide and display save related popups
+// Functtion to hide and display save related popups
 $('#save_id').click(function () {
     $('#Detgl_Modal').modal('hide');
     detgl_data = read_popup_data();

@@ -658,17 +658,17 @@
                             $("#header_select").prop("hidden",true);
                         }
                         var account_assign_cat = row.cells[2].innerHTML
-                        var company_id = row.cells[3].innerHTML
+                        var company_id = row.cells[1].innerHTML
                         dropdown_select_array.push([account_assign_cat, company_id])
-                        $("#acc_dropdwn").val(row.cells[2])
+<!--                        $("#acc_dropdwn").val(row.cells[2])-->
                     }
                 }
                 $('#id_popup_table').append(edit_basic_data);
                 var i =0;
                 $("#id_popup_table TBODY TR").each(function() {
                     var row = $(this);
-                    var account_assign_cat = dropdown_select_array[i][1]
-                    var company_id = dropdown_select_array[i][0]
+                    var account_assign_cat = dropdown_select_array[i][0]
+                    var company_id = dropdown_select_array[i][1]
                     $(row.find("TD").eq(2).find("select option[value="+account_assign_cat+"]")).attr('selected','selected');
                     $(row.find("TD").eq(1).find("select option[value="+company_id+"]")).attr('selected','selected');
                     i++;

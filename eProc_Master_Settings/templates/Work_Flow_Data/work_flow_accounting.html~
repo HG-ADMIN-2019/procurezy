@@ -454,17 +454,13 @@
       $('#display_basic_table').DataTable().destroy();
       get_main_table_data(); //Read data from main table
       // check for duplicates in popup table
-<!--      var duplicate_entries = check_duplicate_entry(validate_add_attributes, wfacc_data);-->
-<!--      if (duplicate_entries.length > 0) {-->
-<!--        display_duplicate_entry(duplicate_entries);-->
-<!--        error_message = ui_messeges("JMSG001");-->
-<!--        display_error_message(error_message);-->
-<!--        return;-->
-<!--      }-->
-    [no_duplicate_value,error_message] = compare_table_for_duplicate_entries(validate_add_attributes, wfacc_data)
-        if (error_message){
-            display_error_message(error_message)
-        }
+      var duplicate_entries = check_duplicate_entry(validate_add_attributes, wfacc_data);
+      if (duplicate_entries.length > 0) {
+        display_duplicate_entry(duplicate_entries);
+        error_message = ui_messeges("JMSG001");
+        display_error_message(error_message);
+        return;
+      }
       if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
         // compare main table and pop up for duplicate values
         [no_duplicate_entries, error_message] = maintable_validation(validate_add_attributes, main_table_low_value);

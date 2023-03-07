@@ -219,7 +219,7 @@
             main_attribute.messages_desc = row.find("TD").eq(2).html();
             main_attribute.language_id = row.find("TD").eq(3).html();
             main_table_low_value.push(main_attribute);
-            //main_table_low_value_desc.push(main_attribute.messages_desc);
+
              main_table_low_value_lang.push(main_attribute.language_id);
         });
         table_sort_filter('display_basic_table');
@@ -254,7 +254,6 @@
                          $('#success_msg_id').text(Response[1].message_desc)
                     }
                     $("#err_msg_app_settings_t").prop("hidden", false)
-<!--                    setTimeout(function () { $("#err_msg_app_settings_t").prop("hidden", true); }, 5000)-->
                    message_display_time();
                    table_sort_filter('display_basic_table');
                     CloseLoaderPopup();
@@ -313,7 +312,6 @@
                     }
                 $("#err_msg_app_settings_t").prop("hidden", false)
                  table_sort_filter('id_popup_table');
-<!--                setTimeout(function () { $("#err_msg_app_settings_t").prop("hidden", true); }, 5000)-->
                 message_display_time();
                  table_sort_filter('id_popup_table');
                  CloseLoaderPopup();
