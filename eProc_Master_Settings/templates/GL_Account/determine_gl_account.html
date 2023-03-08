@@ -792,17 +792,6 @@
                 for (var i = 0; i < checkBoxes.length; i++) {
                     if (checkBoxes[i].checked) {
                         var row = checkBoxes[i].parentNode.parentNode;
-                        if (GLOBAL_ACTION == "UPDATE") {
-                            guid = 'GUID';
-                            unique_input = '<select class="form-control"><option selected="true" disabled="disabled">' + row.cells[1].innerHTML + '</option>' + prod_cat_dropdown + ' </select>'
-                            edit_basic_data += '<tr ><td hidden><input type="checkbox" required></td>'+
-                            '<td>'+unique_input+'</td>'+
-                                '<td><input class="form-control" type="number" value="' + row.cells[2].innerHTML + '"  min="1" name="From_value"  required></td><td><input class="form-control" type="number" value="' + row.cells[3].innerHTML + '"  min="1" name="To_value"  required></td><td><select class="form-control"><option selected="true">' + row.cells[4].innerHTML + '</option>' + glacc_dropdown + '</select></td><td><input type="checkbox" name="default" required></td>'+
-                                '<td><select class="form-control"><option selected="true" disabled="disabled">' + row.cells[6].innerHTML + '</option>' + company_dropdown + ' </select></td>'+
-                                '<td><select class="form-control"><option selected="true">' + row.cells[7].innerHTML + '</option>' + accasscat_dropdown + '</select></td><td><select class="form-control"><option selected="true">' + row.cells[8].innerHTML + '</option>' + currency_dropdown + '</select></td><td hidden><input type="text" class ="form-control"  value="' + guid + '"</td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
-                                $("#header_select").prop("hidden", true);
-
-                        } else {
                             guid = row.cells[9].innerHTML;
                             unique_input = '<select class="form-control">' + prod_cat_dropdown + ' </select>'
                             edit_basic_data += '<tr ><td><input type="checkbox" required></td>'+
@@ -812,7 +801,6 @@
                             '<td><input class="form-control" type="number" value="' + row.cells[6].innerHTML + '" onkeypress="return event.charCode >= 48" min="1" name="From_value"  required></td><td><input class="form-control" type="number" value="' + row.cells[7].innerHTML + '" onkeypress="return event.charCode >= 48" min="1" name="To_value"  required></td>' +
                             '<td><select class="form-control">' + currency_dropdown + '</select></td><td hidden><input type="text" class ="form-control"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
                             $("#header_select").prop("hidden", false);
-                        }
                         var prod_cat = row.cells[1].innerHTML
                         var company_id = row.cells[2].innerHTML
                         var acc_ass_cat = row.cells[3].innerHTML
@@ -827,11 +815,11 @@
                 $("#id_popup_table TBODY TR").each(function () {
                     var row = $(this);
                     var prod_cat = dropdown_array[i][0]
-                    var gl_acc = dropdown_array[i][3];
-                    var gl_acc_default = dropdown_array[i][4];
-                    var acc_ass_cat =dropdown_array[i][2];
-                    var company_id = dropdown_array[i][1];
-                    var currency_id = dropdown_array[i][7];
+                    var gl_acc = dropdown_array[i][1];
+                    var gl_acc_default = dropdown_array[i][2];
+                    var acc_ass_cat =dropdown_array[i][3];
+                    var company_id = dropdown_array[i][4];
+                    var currency_id = dropdown_array[i][5];
                     $(row.find("TD").eq(1).find("select option[value=" + prod_cat + "]")).attr('selected', 'selected');
                     $(row.find("TD").eq(4).find("select option[value=" + gl_acc + "]")).attr('selected', 'selected');
                     if(gl_acc_default) {
@@ -861,7 +849,8 @@
             detgl_dic.gl_acc_num = row.find("TD").eq(4).find("select option:selected").val();
             detgl_dic.account_assign_cat = row.find("TD").eq(3).find("select option:selected").val();
             detgl_dic.company_id = row.find("TD").eq(2).find("select option:selected").val();
-            var compare = detgl.gl_acc_num + '-' + detgl.account_assign_cat + '-' + detgl.company_id 
+            detgl_dic.unspsc_code = row.find("TD").eq(1).find("select option:selected").val();
+            var compare = detgl.gl_acc_num + '-' + detgl.account_assign_cat + '-' + detgl.company_id+'-'+ detgl_dic.unspsc_code
             detgl_check.push(compare);
             jQuery.grep(detgl_check, function(el) {
                 if (jQuery.inArray(el, common) != -1) {

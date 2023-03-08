@@ -109,8 +109,10 @@ def create_update_master_data(request):
 def account_ass_values(request):
     update_user_info(request)
 
+    messages_list = get_ui_messages(CONST_COFIG_UI_MESSAGE_LIST)
     # get table data
     data = {'upload_account_assignment_value': get_account_assignment_value(),
+            'messages_list': messages_list,
             'inc_nav': True}
 
     return render(request, 'Accounting_Data/account_assignment_values.html',

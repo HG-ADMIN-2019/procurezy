@@ -266,7 +266,7 @@
         $(".modal").on("hidden.bs.modal", function() {
             $("#id_error_msg").html("");
         });
-        new_row_data();   // Add a new row in popup
+        new_row_data(inc_index);   // Add a new row in popup
         if (GLOBAL_ACTION == "approval_type_upload") {
             $(".class_del_checkbox").prop("hidden", false);
         }

@@ -3,6 +3,7 @@ var validate_add_attributes = [];
 var main_table_low_value = [];
 var aav={};
 
+
 //onclick of upload button display id_data_upload popup and set GLOBAL_ACTION button value
 function onclick_upload_button() {
     GLOBAL_ACTION = "aav_upload"
@@ -220,8 +221,8 @@ function get_selected_row_data() {
             aav_arr_obj.account_assign_value = row.find("TD").eq(3).find('input[type="number"]').val();
             aav_arr_obj.valid_from = row.find("TD").eq(4).find('input[type="date"]').val()
             aav_arr_obj.valid_to = row.find("TD").eq(5).find('input[type="date"]').val()
-            aav_arr_obj.account_assign_cat = row.find("TD").eq(2).find('Select').val()
-            aav_arr_obj.company_id = row.find("TD").eq(1).find('Select').val()
+            aav_arr_obj.account_assign_cat = row.find("TD").eq(2).find('select option:selected').val()
+            aav_arr_obj.company_id = row.find("TD").eq(1).find('select option:selected').val()
             aav_arr_obj.account_assign_guid = row.find("TD").eq(6).find('input').val()
             main_table_aav_checked.push(aav_arr_obj);
          }
