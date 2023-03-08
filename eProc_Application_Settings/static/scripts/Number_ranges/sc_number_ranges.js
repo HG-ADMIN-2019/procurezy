@@ -148,12 +148,38 @@ function add_popup_row() {
         $("#id_error_msg").html("");
     });
     nextval += 1;
-    basic_add_new_html = '<tr ><td class="number_range_checkbox"><input type="checkbox" required></td><td><input class="form-control"  type="number" maxlength="2" value = '+ nextval +'  name="sequence"  required></td><td><input class="form-control" type="number" maxlength="100000000"  name="starting"  required></td><td><input class="form-control" type="number" maxlength="100000000"  name="ending" required></td><td><input class="form-control" type="number" maxlength="100000000"  name="current"  required></td>><td hidden><input class="form-control" type="text" value=""></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+    basic_add_new_html = '<tr ><td class="number_range_checkbox"><input type="checkbox" required></td><td><input class="form-control"  type="number" maxlength="2" value = '+ nextval +'  name="sequence"  required disabled></td><td><input class="form-control" type="number" maxlength="100000000"  name="starting"  required></td><td><input class="form-control" type="number" maxlength="100000000"  name="ending" required></td><td><input class="form-control" type="number" maxlength="100000000"  name="current"  required></td>><td hidden><input class="form-control" type="text" value=""></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
     if (GLOBAL_ACTION == "number_range") {
         $(".class_del_checkbox").prop("hidden", false);
     }
     table_sort_filter('id_popup_table');
+}
+
+//function to delete selected row in popup
+function delete_popup_row(myTable) {
+    $('#id_popup_table').DataTable().destroy();
+    try {
+        var table = document.getElementById(myTable);
+        var rowCount = table.rows.length;
+        for (var i = 0; i < rowCount; i++) {
+            var row = table.rows[i];
+            var chkbox = row.cells[0].childNodes[0];
+            if (null != chkbox && true == chkbox.checked) {
+                table.deleteRow(i);
+                nextval -= 1;
+                rowCount--;
+                i--;
+            }
+        }
+        $("#id_delete_data").hide();
+        $("#id_copy_data").hide();
+        $("#id_update_data").hide();
+        table_sort_filter('id_popup_table');
+        return rowCount;
+    } catch (e) {
+        alert(e);
+    }
 }
 
 //onclick of cancel display the table in display mode............

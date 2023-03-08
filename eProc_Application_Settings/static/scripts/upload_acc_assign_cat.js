@@ -77,15 +77,6 @@ $('#save_id').click(function () {
     $('#id_save_confirm_popup').modal('show');
 });
 
-// Function for add a new row data
-function new_row_data() {
-    basic_add_new_html = '<tr><td><input type="checkbox" required></td>'+
-        '<td><select type="text" class="input form-control acct_assignment_category" id="acct_assignment_category-1" name="acct_assignment_category" onchange="GetSelectedTextValue(this)"><option value="" disabled selected>Select your option</option>'+ aac_dropdown +'</select></td>'+
-        '<td><input class="form-control description check_special_char" type="text"  name="description"  id="description-1" disabled></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
-    $('#id_popup_tbody').append(basic_add_new_html);
-    table_sort_filter('id_popup_table');
-}
-
 //Read popup table data
 function read_popup_data(){
     accasscat_data = new Array();
@@ -103,6 +94,15 @@ function read_popup_data(){
         accasscat_data.push(aac);
     });
     return accasscat_data;
+}
+
+// Function for add a new row data
+function new_row_data() {
+    basic_add_new_html = '<tr><td><input type="checkbox" required></td>'+
+        '<td><select type="text" class="input form-control acct_assignment_category" id="acct_assignment_category-1" name="acct_assignment_category" onchange="GetSelectedTextValue(this)"><option value="" disabled selected>Select your option</option>'+ aac_dropdown +'</select></td>'+
+        '<td><input class="form-control description check_special_char" type="text"  name="description"  id="description-1" disabled></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+    $('#id_popup_tbody').append(basic_add_new_html);
+    table_sort_filter('id_popup_table');
 }
 
 //********************************************
@@ -133,6 +133,7 @@ function get_selected_row_data(){
 
 // Function to get main table data
 function get_main_table_data(){
+    main_table_low_value = [];
     $('#display_basic_table').DataTable().destroy();
     $("#display_basic_table TBODY TR").each(function() {
         var row = $(this);
@@ -141,60 +142,4 @@ function get_main_table_data(){
         main_table_low_value.push(main_attribute.account_assign_cat);
     });
     table_sort_filter_page('display_basic_table');
-}
-
-// validating the  popup table for duplicate entries
-function compare_table_for_duplicate_entries(validate_add_attributes, aac) {
-    add_attr_duplicates = false;
-    var error_message = ''
-    var add_attr_duplicates_list = [];
-    var add_attr_unique_list = [];
-    var no_duplicate_value = 'Y'
-    $.each(validate_add_attributes, function (index, value) {
-        if ($.inArray(value, add_attr_unique_list) == -1) {
-            add_attr_unique_list.push(value);
-        } else {
-            if ($.inArray(value, add_attr_duplicates_list) == -1) {
-                add_attr_duplicates_list.push(value);
-            }
-        }
-    });
-    if (add_attr_duplicates_list.length != 0) {
-        get_message_details("JMSG001"); // Get message details
-        no_duplicate_value = 'N'
-        return [no_duplicate_value,error_message]
-    }
-    else {
-        $.each(aac, function (i, item) {
-            if (item.account_assign_cat.length == 0) {
-                get_message_details("JMSG002"); //// Get message details
-                no_duplicate_value = 'N'
-                return [no_duplicate_value,error_message]
-            }
-            if (item.description.length == 0) {
-                get_message_details("JMSG002"); //// Get message details
-                no_duplicate_value = 'N'
-                return [no_duplicate_value,error_message]
-            }
-        });
-    }
-    return [no_duplicate_value,error_message]
-}
-
-//validate by comparing  main table values and popup table values
-function maintable_validation(validate_add_attributes, main_table_low_value) {
-    var no_duplicate_entries = 'Y'
-    var error_message =''
-    var common = [];
-    jQuery.grep(validate_add_attributes, function (el) {
-        if (jQuery.inArray(el, main_table_low_value) != -1) {
-            common.push(el);
-        }
-    });
-    if (common.length != 0) {
-        get_message_details("JMSG001"); // Get message details
-        no_duplicate_value = 'N'
-        return [no_duplicate_value,error_message]
-    }
-    return [no_duplicate_entries,error_message]
 }

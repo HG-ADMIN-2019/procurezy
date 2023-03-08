@@ -11,7 +11,7 @@
                 <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Basic_Settings:extract_calendar_data' %}'" type="button">
                     <i class="fas fa-download"></i> extract
                 </button>
-                <button type="button" id="id_add_data" value="ADD" class="btn btn-primary" data-toggle="modal" data-target="#Calendar_Modal" onclick="onclick_add_button(this)">
+                <button type="button" id="id_add_data" title="Add Calendar" value="ADD" class="btn btn-primary" data-toggle="modal" data-target="#Calendar_Modal" onclick="onclick_add_button(this)">
                     <i class="fa fa-plus" title="Add Country"></i> add calendar
                 </button>
                   <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"  onclick="window_close();">
@@ -25,16 +25,16 @@
             <div id="err_msg_app_settings_t" class="alert alert-success" hidden><span id="success_msg_id"></span></div>
             <div class="table-container tcw-80">
                 <div class="edit-button-section mb-4">
-                    <button id="id_edit_data" class="btn btn-secondary btn-sm" onclick="onclick_edit_button()">
+                    <button id="id_edit_data" class="btn btn-secondary btn-sm" title="Edit" onclick="onclick_edit_button()">
                         <i class="fas fa-edit" id="edit" title="Edit"></i> edit
                     </button>
-                    <button class="btn btn-outline-danger btn-sm" id="id_delete_data" value="calendar_delete" style="display:none;" data-toggle="modal" data-target="#id_delete_confirm_popup">
+                    <button class="btn btn-outline-danger btn-sm" title="Delete" id="id_delete_data" value="calendar_delete" style="display:none;" data-toggle="modal" data-target="#id_delete_confirm_popup">
                         <i class="fa fa-trash" title="Delete"></i> delete
                     </button>
-                    <button class="btn btn-primary btn-sm" id="id_update_data" style="display:none;" value="calendar_update" type="button" onclick="onclick_update_button()">
+                    <button class="btn btn-primary btn-sm" title="Update" id="id_update_data" style="display:none;" value="calendar_update" type="button" onclick="onclick_update_button()">
                         <i class="far fa-edit" title="Update"></i> update
                     </button>
-                    <button class="btn btn-secondary btn-sm" id="id_cancel_data" style="display:none;" type="button" onclick="display_basic_db_data()">
+                    <button class="btn btn-secondary btn-sm" title="Cancel" id="id_cancel_data" style="display:none;" type="button" onclick="display_basic_db_data()">
                         <i class="fas fa-times" title="Cancel"></i> cancel
                     </button>
                 </div>
@@ -90,8 +90,8 @@
                 <!-- Modal body -->
                 <div class="modal-body scrollbox">
                     <div id="id_del_add_button" class="mb-4">
-                        <button type="button" class="btn btn-primary" onclick="add_popup_row()"><i class="fa fa-plus"></i> add new row</button>
-                        <button class="btn btn-outline-danger" onclick="application_settings_delete_Row('id_popup_table')" id="deleteBtn"><i class="fa fa-trash"></i>
+                        <button type="button" class="btn btn-primary" title="Add New Row" onclick="add_popup_row()"><i class="fa fa-plus"></i> add new row</button>
+                        <button class="btn btn-outline-danger" title="Delete" onclick="application_settings_delete_Row('id_popup_table')" id="deleteBtn"><i class="fa fa-trash"></i>
                             delete
                         </button>
                     </div>
@@ -125,8 +125,8 @@
                 </div>
                 <!-- Modal footer -->
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-primary remove_upload_data" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
-                    <button class="btn btn-primary" id="save_id"><i class="fas fa-save"></i> save</button>
+                    <button type="button" class="btn btn-outline-primary remove_upload_data" title="Cancel" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
+                    <button class="btn btn-primary" title="Save" id="save_id"><i class="fas fa-save"></i> save</button>
                 </div>
             </div>
         </div>
@@ -202,9 +202,8 @@
                 $("#calenderid").prop("hidden", true);
                 GLOBAL_ACTION=button.value
                 $("#id_popup_tbody").empty();
-
-                 $('#id_popup_table').DataTable().destroy();
-                 $("#id_popup_tbody").empty();
+                $('#id_popup_table').DataTable().destroy();
+                $("#id_popup_tbody").empty();
                 $('#Calendar_Modal').modal('show');
                 basic_add_new_html = '<tr> <td><input type="checkbox"> </td>'+
                 '<td><input class="form-control" type="text"  pattern="[A-Z]" maxlength="10"  name="calender_id" style="text-transform:uppercase;" required></td>'+
@@ -223,10 +222,10 @@
                 document.getElementById("id_del_add_button").style.display = "block";
                 $("#save_id").prop("hidden", false);
                 CloseLoaderPopup();
-        }
-    });
+            }
+        });
+    }
 
-}
     function onclick_copy_update_button(data) {
         $("#error_msg_id").css("display", "none")
         $("#id_popup_tbody").empty();
@@ -314,7 +313,7 @@
                 [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
             }
             if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
-<!--                var calendar_data_array = calendarconfig_data;-->
+                var calendar_data_array = calendarconfig_data;
                 $('#id_save_confirm_popup').modal('hide');
                 data = {'data':calendarconfig_data,'table_name':'CalenderConfig','action':GLOBAL_ACTION}
                 OpenLoaderPopup();
