@@ -473,9 +473,7 @@
                 invalid_count = invalid_count + 1;
                 }
                 var compare = accdesc_dic.account_assign_value + '-' + accdesc_dic.account_assign_cat + '-' + accdesc_dic.company_id + '-' + accdesc_dic.language_id
-
             var format = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
-
             //*************** checking for special characters for aad description ***************
             if (format.test(accdesc_dic.description)) {
                 error_message = ui_messeges("JMSG003")// Get message details
@@ -574,7 +572,6 @@
         $.each(messages, function (i, message) {
             $("#id_check_success_messages").append('<p>' + message + '</p>')
         });
-
         $("#id_check_success_messages").prop("hidden",false)
     }
 

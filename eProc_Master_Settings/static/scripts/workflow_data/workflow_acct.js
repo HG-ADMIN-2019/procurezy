@@ -73,7 +73,7 @@ function read_popup_data() {
         if(wfacc.workflow_acc_guid == undefined) {
             wfacc.workflow_acc_guid = ''
         }
-        var wfacc_compare = wfacc.company_id +'-'+  wfacc.account_assign_cat +'-'+ wfacc.acc_value +'-'+ wfacc.app_username +'-'+ wfacc.sup_account_assign_cat +'-'+ wfacc.sup_acc_value +'-'+ wfacc.sup_company_id +'-'+ wfacc.sup_currency_id
+        var wfacc_compare = wfacc.company_id +'-'+  wfacc.account_assign_cat +'-'+ wfacc.acc_value +'-'+ wfacc.app_username +'-'+ wfacc.sup_company_id +'-'+wfacc.sup_account_assign_cat +'-'+ wfacc.sup_acc_value +'-'+ wfacc.sup_currency_id
         validate_add_attributes.push(wfacc_compare);
         wfacc_data.push(wfacc);
     });
@@ -112,7 +112,7 @@ function get_main_table_data() {
         main_attribute.sup_account_assign_cat = row.find("TD").eq(6).html();
         main_attribute.sup_acc_value = row.find("TD").eq(7).html();
         main_attribute.sup_currency_id = row.find("TD").eq(8).html();
-        var wfacc_compare_maintable = main_attribute.app_username +'-'+ main_attribute.account_assign_cat +'-'+ main_attribute.acc_value +'-'+ main_attribute.company_id +'-'+ main_attribute.sup_account_assign_cat +'-'+ main_attribute.sup_acc_value +'-'+ main_attribute.sup_company_id +'-'+ main_attribute.sup_currency_id
+        var wfacc_compare_maintable = main_attribute.company_id+'-'+main_attribute.account_assign_cat+'-'+main_attribute.acc_value+'-'+main_attribute.app_username+'-'+main_attribute.sup_company_id+'-'+main_attribute.sup_account_assign_cat+'-'+main_attribute.sup_acc_value+'-'+main_attribute.sup_currency_id
         main_table_low_value.push(wfacc_compare_maintable);
     });
     table_sort_filter('display_basic_table');

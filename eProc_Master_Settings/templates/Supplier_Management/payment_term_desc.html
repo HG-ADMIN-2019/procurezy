@@ -384,7 +384,13 @@
                         }
                         var language_value = row.cells[1].innerHTML;
                         var payment_term_value = row.cells[2].innerHTML;
-                        dropdown_values.push([language_value, payment_term_value])
+                        var lang_desc;
+                        var lang_code;
+                        for (i = 0; i < render_language_data.length; i++) {
+                            if (language_value == render_language_data[i].description)
+                                lang_code = render_language_data[i].language_id
+                        }
+                        dropdown_values.push([lang_code, payment_term_value])
                     }
                 }
                 $('#id_popup_tbody').append(edit_basic_data);
@@ -394,6 +400,7 @@
                     var lang_value = dropdown_values[j][0];
                     var payment_value = dropdown_values[j][1];
                     var  dropdown_flag;
+
                     $('#payterm_key option').each(function(i, v){
                         if(v.value==payment_value){
                             dropdown_flag = 1;
@@ -408,7 +415,7 @@
                     {
                         $(row.find("TD").eq(2).find("select")).prepend("<option value='" + payment_value + "'>" + payment_value + "</option>").val(payment_value);
                     }
-                    $(row.find("TD").eq(1).find("select option[value="+lang_id+"]")).attr('selected','selected');
+                    $(row.find("TD").eq(1).find("select option[value="+lang_code+"]")).attr('selected','selected');
                     j++;
                 });
                 $("#id_del_ind_checkbox").prop("hidden", true);
