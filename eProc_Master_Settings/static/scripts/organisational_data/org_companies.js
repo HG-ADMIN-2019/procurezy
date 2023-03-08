@@ -11,6 +11,7 @@ function onclick_upload_button() {
     document.getElementById('id_file_data_upload').value = "";
 }
 
+
 // on click copy icon display the selected checkbox data
 function onclick_copy_button() {
     GLOBAL_ACTION = "COPY"
@@ -34,6 +35,7 @@ function onclick_add_button(button) {
     $("#id_popup_tbody").empty();
     $('#companyModal').modal('show');
     new_row_data(); // Add a new row in popup
+    table_sort_filter('id_popup_table');
     $("#id_del_ind_checkbox").prop("hidden", true);
     document.getElementById("id_del_add_button").style.display = "block";
     $("#save_id").prop("hidden", false);
@@ -51,7 +53,9 @@ function add_popup_row() {
     new_row_data(); // Add a new row in popup
     if (GLOBAL_ACTION == "orgcompany_upload") {
         $(".class_del_checkbox").prop("hidden", false);
+        $("#id_del_ind_checkbox").prop("hidden", false);
     }
+    table_sort_filter('id_popup_table');
 }
 
 //**********************************************************
@@ -204,7 +208,6 @@ function update_check_message(messages) {
 function new_row_data(){
     basic_add_new_html = '<tr> <td><input class="input" type="checkbox" required></td><td><input class="form-control check_special_char color_change" type="text"  name= "company_id"  minlength="4" maxlength="8"></td><td><input class="form-control check_special_char" type="text" name="name1"  maxlength="100"></td><td><input class="form-control check_special_char" type="text" name="name2" maxlength="100"></td><td hidden><input value="GUID" hidden></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
-    table_sort_filter('id_popup_table');
 }
 
 // Function to get main table data

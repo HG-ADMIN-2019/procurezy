@@ -136,7 +136,7 @@
                         <div id="id_check_special_character_messages" class="alert alert-danger check_special_character_messages" hidden>
                             <p id="id_error_msg_purgrp_id" ></p>
                             <p id="id_error_msg_description" ></p>
-                            <p id="id_error_msg_purorg_id" ></p>
+                            <p id="id_error_msg_purgrp_length"></p>
                         </div>
 
                         <div id="error_msg_id" class="alert alert-danger display-none" role="alert"><span id="error_message"></span></div>
@@ -400,7 +400,7 @@
         $("#id_check_special_character_messages").prop("hidden",true)
         document.getElementById("id_error_msg_purgrp_id").innerHTML = "";
         document.getElementById("id_error_msg_description").innerHTML = "";
-        document.getElementById("id_error_msg_purorg_id").innerHTML = "";
+        document.getElementById("id_error_msg_purgrp_length").innerHTML = "";
         count = 0;
         var purchasegrp_array = new Array
         var DB_array = new Array
@@ -413,7 +413,7 @@
             //*************** reading data from the pop-up ***************
             purchasegrp_dic.description = row.find("TD").eq(2).find('input[type="text"]').val()
             purchasegrp_dic.pgroup_id = row.find("TD").eq(1).find('input[type="text"]').val()
-            checked_box = row.find("TD").eq(4).find('input[type="checkbox"]').is(':checked')
+            checked_box = row.find("TD").eq(3).find('input[type="checkbox"]').is(':checked')
             if (checked_box){
                 purchasegrp_dic.del_ind = '1'
             }
@@ -422,7 +422,46 @@
             }
             purchasegrp_list.push(purchasegrp_dic)
 
+            var format = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
+            //*************** checking for max length for purchasegrp code (max length = 8) ***************
+            if(purchasegrp_dic.pgroup_id.length<8){
+                error_message = ui_messeges("JMSG113") // Get message details
+                var display8 = error_message;
+                document.getElementById("id_error_msg_purgrp_length").innerHTML = display8 + "Purchase Group ID";
+                 $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
+                count = count +1;
+            }
+
+            //*************** checking for special characters for purchasegrp code ***************
+            if (format.test(purchasegrp_dic.pgroup_id)) {
+                  error_message = ui_messeges("JMSG003") // Get message details
+                var display = error_message;
+                document.getElementById("id_error_msg_purgrp_id").innerHTML = display + "Purchase organisation Code";
+                 $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
+                count = count + 1;
+            } else {
+                $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "none");
+            }
+            //*************** checking for special characters for purchaseorg name ***************
+            if(format.test(purchasegrp_dic.description)){
+                error_message = ui_messeges("JMSG003")// Get message details
+                var display3 = error_message;
+                document.getElementById("id_error_msg_description").innerHTML = display3+ "Purchasegrp Name";
+                $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "1px solid #FF0000");
+                count = count +1;
+            }
+            else{
+                $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "none");
+            }
+            if(purchasegrp_code_check.includes(purchasegrp_dic.pgroup_id)){
+                $(row).css("border", "#f8d7da");
+            }
+            else{
+                $(row).css("border", "");
+            }
+            purchasegrp_code_check.push(purchasegrp_dic.pgroup_id)
         });
+
 
         //*************** shows save button if there are no errors(special characters and max length) ***************
         if(count == 0) {
@@ -437,13 +476,13 @@
                 data: JSON.stringify(popup_data_dict),
                 success: function(response) {
                     table_sort_filter_popup_pagination('id_popup_table')
-                    table_sort_filter('id_popup_table');
+                   $("#id_check_special_character_messages").prop("hidden",false)
+                    if(count == 0){
+                        $("#id_check_special_character_messages").prop("hidden",true)
+                    }
                     var message = ''
                     update_check_message(response.messages)
                     CloseLoaderPopup();
-                    update_ppup_data(response.valid_data)
-                    document.getElementById('id_del_add_button').style.visibility='hidden';
-                    document.getElementById('id_check_data').style.visibility='hidden';
                 }
             });
     }
