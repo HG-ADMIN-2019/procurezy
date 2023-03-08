@@ -10,6 +10,9 @@
         <div class="elements-space-between">
             <h3>Maintain Currencies</h3>
             <div>
+                <button type="button" id="id_read_pdf" value="READ PDF" class="btn btn-primary"  title="Add Currency" data-toggle="modal" data-target="#myModal" onclick="onclick_read_pdf_button(this)">
+                    <i class="fa fa-plus"></i> READ PDF
+                </button>
                 <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Basic_Settings:extract_currency_template' %}'"type="button">
                     <i class="fas fa-download"></i> template
                 </button>
@@ -785,6 +788,33 @@ function maintable_validation(validate_add_attributes, main_table_low_value) {
 
     }
     return [no_duplicate_entries,error_message]
+}
+
+function onclick_read_pdf_button(){
+    data = {'data':'sdkjfhjd'}
+    $.ajax({
+        type: 'POST',
+        url: "{% url 'eProc_Basic_Settings:read_pdf' %}",
+        data: JSON.stringify(data),
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: function(Response) {
+            rendered_currency_data = Response[0];
+            display_basic_db_data();
+            $('#myModal').modal('hide');
+            $('#success_msg_id').text(Response[1])
+              if(Response[1].message_type== 'SUCCESS'){
+                         $('#success_msg_id').text(Response[1].message_desc)
+              }
+            $("#err_msg_app_settings_t").prop("hidden", false)
+            table_sort_filter('id_popup_table');
+            message_display_time();
+            table_sort_filter('id_popup_table');
+            CloseLoaderPopup();
+        }
+
+    });
+
 }
     </script>
 

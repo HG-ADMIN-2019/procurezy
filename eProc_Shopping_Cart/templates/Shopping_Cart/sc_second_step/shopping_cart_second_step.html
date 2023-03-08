@@ -311,7 +311,7 @@
     </div>
 </div>
 <!-- end on save error popup-->
-
+{{ cart_items_guid_list|json_script:"cart_items_guid_list" }}
 <script>
 
 
@@ -349,6 +349,32 @@
         document.getElementById('OR - Internal Order').value = acc_cat_values;
     }
 
+const check_manager_detail = (response) => {
+    GLOBAL_MANAGER_DETAIL = response.approver_id;
+    $('#div_manager_detail').empty();
+    var manager_icon = '';
+    error_message = '';
+    $('#id_dynamic').empty();
+    if (response.manager_detail) {
+        $.each(response.manager_detail, function (i, item) {
+            if (item == 'Auto') {
+                double_angular = '<div class="approval-overview__next-icon-container"><i class="fas fa-angle-double-right fa-3x"></i></div>';
+                manager_icon += '' + double_angular + '<div class="approval-overview__user-icon-container ao-workflow-user"><div class="workflow-user-bg"><i class="fas fa-user-check fa-2x icon-workflow-auto" aria-hidden="true"></i></div><button type="button" class="button-workflow-user">' + item.first_name + '</button></div>';
+            }
+            else {
+                double_angular = '<div class="approval-overview__next-icon-container"><i class="fas fa-angle-double-right fa-3x"></i></div>';
+                manager_icon += '' + double_angular + '<div class="approval-overview__user-icon-container ao-workflow-user"><div class="workflow-user-bg"><i class="fa fa-user-tie fa-3x" aria-hidden="true"> </i></div><button type="button" class="button-workflow-user">' + item.first_name + '</button></div>';
+            }
+        });
+    }
+    if (response.msg_info) {
+        error_message = response.msg_info + '<br>'
+    }
+    $('#div_manager_detail').append(manager_icon);
+    return error_message
+}
+
+
 // Check for shopping cart errors
 function check_shopping_cart(type, sc_data, acc_default, acc_default_val){
 
@@ -360,6 +386,7 @@ function check_shopping_cart(type, sc_data, acc_default, acc_default_val){
     var default_address = "{{addr_val_desc|safe}}";
     var default_account_asignment_category = "{{acc_default|safe}}";
     var default_account_asignment_value = {{acc_value|safe}}
+    default_account_asignment_value = default_account_asignment_value[0]
     var error_messages = '';
     var check_sc_data = '';
     if(type != 'approval_workflow'){
@@ -368,13 +395,14 @@ function check_shopping_cart(type, sc_data, acc_default, acc_default_val){
     acc_default = acc_default
     acc_default_val = acc_default_val
     var total_val = $('#total_cart_value').text();
+    var requester = $('#shopping_cart_requester').val()
     data = {
-            'acc_default': acc_default.split(' - ')[0],
-            'acc_default_val': acc_default_val.split(' - ')[0],
+            'acc_default': default_account_asignment_category.split(' - ')[0],
+            'acc_default_val': default_account_asignment_value.split(' - ')[0],
             'total_val':total_val,
             'check_sc_data': check_sc_data,
             'type': type,
-            'requester': $('#shopping_cart_requester').val()
+            'requester': requester
     }
     OpenLoaderPopup();
     $.ajax({
@@ -486,6 +514,9 @@ function check_shopping_cart(type, sc_data, acc_default, acc_default_val){
     });
 
 }
+
+
+
 
   // Function to check multiple purchasing Group
 <!--    function purchasing_group(){-->
@@ -763,5 +794,5 @@ var msg_type, result;
 
 </script>
 
-<script src="{% static 'scripts/sc_second_step.js' %}"></script>
+<script src="{% static 'scripts/shopping_cart_second_step.js' %}"></script>
 {% endblock %}

@@ -15,6 +15,7 @@ urlpatterns = [
     path('export_languages', extract_language_data, name='extract_language_data'),
     path('extract_language_template', extract_language_template, name='extract_language_template'),
     path('export_currency', extract_currency_data, name='extract_currency_data'),
+    path('read_pdf', read_pdf, name='read_pdf'),
     path('srm_currency_converter_p02', srm_currency_converter_p02, name='srm_currency_converter_p02'),
     path('srm_currency_converter_e7p', srm_currency_converter_e7p, name='srm_currency_converter_e7p'),
     path('Scheduling', Scheduling, name='Scheduling'),

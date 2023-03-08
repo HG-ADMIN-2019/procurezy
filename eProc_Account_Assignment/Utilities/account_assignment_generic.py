@@ -191,7 +191,7 @@ class AccountAssignmentCategoryDetails:
         header_level_gl_acc = ''
         for item in self.item_detail_list:
             gl_acc_detail = {'cart_item_guid': item['guid']}
-            item_value = int(item['value'])
+            item_value = float(item['value'])
             gl_acc_detail['default_gl_acc'] = get_default_gl_acc(self.default_company_code, default_acc,
                                                                  item['prod_cat'], item_value,
                                                                  global_variables.GLOBAL_REQUESTER_CURRENCY,
@@ -294,3 +294,16 @@ def get_acc_details(object_id_list, company_code, item_detail_list):
     acc_obj = AccountAssignmentCategoryDetails(object_id_list, company_code, item_detail_list)
     accounting_data = acc_obj.get_acc_list_and_default()
     return accounting_data
+
+
+def get_prod_cat_value_guid(cart_items):
+    """
+
+    """
+    item_list = []
+    for cart_item in cart_items:
+        item_list.append({'guid':cart_item['guid'],
+                          'prod_cat':cart_item['prod_cat_id'],
+                          'value':cart_item['value']})
+    return item_list
+

@@ -401,41 +401,6 @@
     </div>
 </div>
 
-<!-- Update item pop up in Shopping cart 1st step -->
-<div class="modal fade" id="update_pop_up">
-    <div class="modal-dialog modal-lg" role="document">
-        <div class="modal-content">
-
-            <div class="modal-header" >
-                <h4 class="modal-title">Update Item</h4>
-                <button type="button" class="close" data-dismiss="modal">&times;</button>
-            </div>
-
-            <div class="modal-body">
-                <form method="post">{% csrf_token %}
-
-                    <div class="hg_error_field">
-
-                    </div>
-                    <div id="update_forms" >
-                        <div id="update_limit_form" class="display-none">
-                            {% include 'Add Item/update_items/update_limit_order.html' %}
-                        </div>
-                        <div id="update_pr_form" class="display-none">
-                            {% include 'Add Item/update_items/update_purch_req.html' %}
-                        </div>
-                        <div id="update_freetext_form" class="display-none">
-                            {% include 'Add Item/update_items/update_free_text.html' %}
-                        </div>
-                        <div id="update_catalog_form" class="display-none">
-                            {% include 'Add Item/update_items/update_catalog_item.html' %}
-                        </div>
-                    </div>
-                </form>
-            </div>
-        </div>
-    </div>
-</div>
 {% include 'ProductDetailPopup/basic_product_detail_popup.html' %}
 
 <!-- Cart value section -->
@@ -467,7 +432,7 @@
 <!--                <p> Total value without tax for <span id="total_items"></span> items: <span id="total_cart_value" class="item-table-total-cart-value">{{total_value}}</span> <span id="total_cart_currency">{{request.user.currency_id}}</span></p>-->
 <!--            </div>-->
 
-<script src="{% static 'scripts/sc_item_details.js' %}"> </script>
+<script src="{% static 'scripts/shopping_cart_item_details.js' %}"> </script>
 
 <script>
 //############################### start update catalog Quantity ########################################################
