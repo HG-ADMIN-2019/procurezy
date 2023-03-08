@@ -76,13 +76,14 @@ function display_basic_db_data() {
     $('#id_address_type_tbody').empty();
     var edit_basic_data = '';
     $.each(rendered_address_type_data, function (i, item) {
-        var date = new Date(item.valid_from).toLocaleDateString();
+        var from_date = new Date(item.valid_from).toLocaleDateString();
+        var to_date = new Date(item.valid_from).toLocaleDateString();
         edit_basic_data += '<tr><td class="class_select_checkbox"><input class="checkbox_check" onclick="valueChanged()" type="checkbox" required></td>' +
         '<td>'+ item.company_id +'</td>'+
         '<td>' + item.address_type + '</td>' +
         '<td>' + item.address_number + '</td>' +
-        '<td>'+ date +'</td>'+
-        '<td>'+ item.valid_to +'</td>'+
+        '<td>'+ from_date +'</td>'+
+        '<td>'+ to_date +'</td>'+
         '<td hidden> <input type="checkbox"></td>' +
         '<td hidden>' + item.address_guid + '</td></tr>';
     });
