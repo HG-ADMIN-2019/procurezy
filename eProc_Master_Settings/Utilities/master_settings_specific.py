@@ -528,8 +528,8 @@ class MasterSettingsSave:
                                                            'address_type': (
                                                                addresstype_detail['address_type']).upper(),
                                                            'company_id': addresstype_detail['company_id'],
-                                                           'valid_from': addresstype_detail['valid_from'],
-                                                           'valid_to': addresstype_detail['valid_to'],
+                                                           'valid_from': datetime.strptime(addresstype_detail['valid_from'],'%y-%b-%d-%H:%M:%S'),
+                                                           'valid_to': datetime.strptime(addresstype_detail['valid_to'],'%y-%b-%d-%H:%M:%S'),
                                                            'org_address_map_changed_at': self.current_date_time,
                                                            'org_address_map_changed_by': self.username,
                                                            'client': OrgClients.objects.get(client=self.client),
