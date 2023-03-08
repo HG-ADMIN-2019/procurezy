@@ -112,11 +112,11 @@ function add_popup_row() {
         $("#id_error_msg").html(" ");
     });
     new_row_data();   // Add a new row in popup
-    table_sort_filter('id_popup_table');
     if (GLOBAL_ACTION == "purchase_grp_upload") {
         $(".class_del_checkbox").prop("hidden", false);
         $("#id_del_ind_checkbox").prop("hidden", false);
     }
+    table_sort_filter('id_popup_table');
 }
 
 //onclick of cancel display the table in display mode............
