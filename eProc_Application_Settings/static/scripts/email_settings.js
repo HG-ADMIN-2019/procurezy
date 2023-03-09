@@ -155,16 +155,27 @@ function read_popup_data(){
     validate_add_attributes = [];
     $("#id_popup_table TBODY TR").each(function () {
         var row = $(this);
+        var language = row.find("TD").eq(2).find('select[type="text"]').val();
+        for (i = 0; i < render_language_data.length; i++) {
+            if (language == render_language_data[i].description){
+                lang_id = render_language_data[i].language_id
+            }
+        }
         email={};
         email.del_ind = row.find("TD").eq(8).find('input[type="checkbox"]').is(':checked');
         email.email_type = row.find("TD").eq(1).find('select[type="text"]').val();
-        email.language_id = row.find("TD").eq(2).find('select[type="text"]').val();
         email.email_subject = row.find("TD").eq(3).find('textarea[type="text"]').val();
         email.email_header = row.find("TD").eq(4).find('textarea[type="text"]').val();
         email.email_body = row.find("TD").eq(5).find('textarea[type="text"]').val();
         email.email_footer = row.find("TD").eq(6).find('textarea[type="text"]').val();
         email.email_guid = row.find("TD").eq(7).find('input[type="text"]').val();
-
+        if(GLOBAL_ACTION == "UPDATE"){
+            email.language_id = lang_id;
+        }
+        else
+        {
+            email.language_id = row.find("TD").eq(2).find('select[type="text"]').val();
+        }
         if (email == undefined){
             email.email_type = row.find("TD").eq(1).find('select[type="text"]').val();
         }

@@ -15,14 +15,14 @@ function onclick_upload_button() {
 // on click Delete icon 
 function onclick_delete_button() {
     GLOBAL_ACTION = "DELETE"
-    onclick_copy_update_button("DELETE");
+    onclick_copy_update_button("DELETE")
     document.getElementById("id_del_add_button").style.display = "none";
 }
 
 // on click copy icon display the selected checkbox data
 function onclick_button_action(action) {
     GLOBAL_ACTION = action
-    onclick_copy_update_button(action);
+    onclick_copy_update_button()
     if(action == 'UPDATE'){
         document.getElementById("id_del_add_button").style.display = "none";
     }

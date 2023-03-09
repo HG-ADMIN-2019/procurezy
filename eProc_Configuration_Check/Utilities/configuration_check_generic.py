@@ -2182,7 +2182,8 @@ def check_address_types_data(ui_data, status):
                     if django_query_instance.django_existence_check(OrgAddressMap,
                                                                     {'client': global_variables.GLOBAL_CLIENT,
                                                                      'address_number': address_type['address_number'],
-                                                                     'address_type': address_type['address_type']}):
+                                                                     'address_type': address_type['address_type'],
+                                                                     'company_id': address_type['company_id']}):
                         delete_count = delete_count + 1
                         valid_data_list.append(address_type)
                     else:
@@ -2191,7 +2192,8 @@ def check_address_types_data(ui_data, status):
                                                                          'client': global_variables.GLOBAL_CLIENT,
                                                                          'address_number': address_type[
                                                                              'address_number'],
-                                                                         'address_type': address_type['address_type']}):
+                                                                         'address_type': address_type['address_type'],
+                                                                         'company_id': address_type['company_id']}):
                             delete_count = delete_count + 1
                             valid_data_list.append(address_type)
                         else:
@@ -2202,7 +2204,8 @@ def check_address_types_data(ui_data, status):
                                                                 {'del_ind': False,
                                                                  'client': global_variables.GLOBAL_CLIENT,
                                                                  'address_number': address_type['address_number'],
-                                                                 'address_type': address_type['address_type']
+                                                                 'address_type': address_type['address_type'],
+                                                                 'company_id': address_type['company_id']
                                                                  }):
                     duplicate_count = duplicate_count + 1
                 # update check
@@ -2210,7 +2213,8 @@ def check_address_types_data(ui_data, status):
                                                                   {'del_ind': False,
                                                                    'client': global_variables.GLOBAL_CLIENT,
                                                                    'address_number': address_type['address_number'],
-                                                                   'address_type': address_type['address_type']}):
+                                                                   'address_type': address_type['address_type'],
+                                                                   'company_id': address_type['company_id']}):
                     update_count = update_count + 1
                     valid_data_list.append(address_type)
                 else:

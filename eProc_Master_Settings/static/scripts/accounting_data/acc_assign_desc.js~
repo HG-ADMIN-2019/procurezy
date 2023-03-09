@@ -263,7 +263,7 @@ function read_popup_data() {
         if(aad.acc_desc_guid == undefined) {
                 aad.acc_desc_guid = ''
             }
-        var compare = aad.account_assign_value+'-'+aad.account_assign_cat+'-'+aad.company_id+'-'+ aad.language_id
+        var compare = aad.account_assign_value + '-' + aad.account_assign_cat + '-' + aad.company_id + '-' + aad.language_id
         validate_add_attributes.push(compare);
         aad_data.push(aad);
     }); 

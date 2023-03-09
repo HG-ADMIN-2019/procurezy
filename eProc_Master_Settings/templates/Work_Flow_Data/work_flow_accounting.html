@@ -1,9 +1,7 @@
 {% extends 'root/base.html' %}
 {% load static %}
 {% block title %} Workflows (Master Settings) {% endblock %}
-
 {% block maincontent %}
-
 
 <div class="container-fluid">
     <div class="configuration-table_wrapper">
@@ -33,7 +31,6 @@
         <div class="configuration-table_section">
             <div id="err_msg_app_settings"> </div>
             <div id="err_msg_app_settings_t" class="alert alert-success" hidden><span id="success_msg_id"></span></div>
-
             <!--   display basic country table-->
             <div class="table-container">
                 <div class="edit-button-section mb-4">
@@ -51,7 +48,6 @@
                         <i class="fas fa-times"></i> cancel
                     </button>
                 </div>
-
                 <table id="display_basic_table" class="class_basic_country_table table table-bordered custom-table">
                     <thead  id="id_WorkFlowAcc_table_header">
                     <tr>
@@ -91,9 +87,7 @@
             </div>
         </div>
     </div>
-
-
-    <!-- !--modal popup for Add,copy,update and upload--> -->
+    <!-- !--modal popup for Add,copy,update and upload-->
     <!-- The Modal -->
     <div class="modal fade" id="Wf_Acc_Modal" style="overflow:auto;" >
         <div class="modal-dialog modal-dialog-centered modal-xl">
@@ -115,7 +109,6 @@
                             <i class="fa fa-trash"></i> delete
                         </button>
                     </div>
-
                     <div id="id_check_success_messages" class="alert alert-success check_success_message" hidden></div>
                     <div id="id_check_error_messages" class="alert alert-danger check_error_messages" hidden></div>
                     <div id="id_check_special_character_messages" class="alert alert-danger check_special_character_messages" hidden>
@@ -123,12 +116,9 @@
                         <p id="id_error_msg_wfacc_id" ></p>
                         <p id="id_error_msg_wfacc_length" ></p>
                     </div>
-
                     <div id="error_msg_id" class="alert alert-danger display-none" role="alert"><span id="error_message"></span></div>
                     <div id="id_warning_msg_id" class="alert alert-warning display-none" role="alert"></div>
                     <div id="id_info_msg_id" class="alert alert-primary display-none" role="alert"></div>
-
-
                         <table class="class_popup_table table table-bordered mt-2" id="id_popup_table" >
                             <thead>
                             <tr>
@@ -146,27 +136,22 @@
                             </tr>
                             </thead>
                             <tbody id="id_popup_tbody">
-
                             </tbody>
                         </table>
                     </div>
                 </div>
-
                 <!-- Modal footer -->
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-primary remove_upload_data" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
                     <button id="id_delete_duplicate" class="btn btn-primary" style="display:none;" type="button" onclick="delete_duplicate()"><i class="fa fa-trash"></i> delete duplicates</button>
                     <button id="id_check_data" style="display:none;" class="btn btn-primary" type="button" onclick="check_data()"><i class="fas fa-check"></i> check</button>
                     <button class="btn btn-primary" id="save_id"><i class="fas fa-save"></i> save</button>
-
                 </div>
             </div>
         </div>
     </div>
-
     <!-- modal popup to upload the csv file; save confirmation popup; delete confirmation popup -->
     {% include 'configuration_common_pop_up.html' %}
-
     <div>
         {% if messages %}
         {% for message in messages %}
@@ -183,7 +168,6 @@
         {% endif %}
     </div>
 </div>
-
 <script>
 
     var rendered_wfacc_data = {{ work_flow_accounting| safe}};
@@ -310,11 +294,11 @@
                                 del_ind = '<input type="checkbox" value="' + value[8] + '" required>'
                             }
                             var user_drwn = value[2]
-                            var acc_ass_cat = value[6]
-                            var company_id = value[1]
-                            var sup_acc_ass_cat = value[8]
+                            var acc_ass_cat = value[1]
+                            var company_id = value[0]
+                            var sup_acc_ass_cat = value[4]
                             var sup_company_id = value[3]
-                            var currency_id = value[7]
+                            var currency_id = value[5]
                             dropdown_array.push([user_drwn,acc_ass_cat,company_id,sup_acc_ass_cat,sup_company_id,currency_id])
 
                             var user = '';
@@ -333,7 +317,7 @@
                             var accasscat_list = '';
                             var accasscat_id_list = '';
                             $.each(rendered_accasscat_data, function(i, item){
-                                if( value[6].accasscat_type_value == item){
+                                if( value[1].accasscat_type_value == item){
                                     accasscat = '<option value="' + item.account_assign_cat + '">' + item.account_assign_cat + '</option>';
                                 }else{
                                     accasscat_list += '<option value="' + item.account_assign_cat + '">' + item.account_assign_cat + '</option>';
@@ -345,7 +329,7 @@
                             var company_list = '';
                             var company_id_list = '';
                             $.each(rendered_company_data, function(i, item){
-                                if( value[1].company_type_value == item){
+                                if( value[0].company_type_value == item){
                                     company = '<option value="' + item.company_id + '">' + item.company_id + '</option>';
                                     }else{
                                     company_list += '<option value="' + item.company_id + '">' + item.company_id + '</option>';
@@ -357,7 +341,7 @@
                             var supaccasscat_list = '';
                             var supaccasscat_id_list = '';
                             $.each(rendered_accasscat_data, function(i, item) {
-                                if( value[8].supaccasscat_type_value == item) {
+                                if( value[4].supaccasscat_type_value == item) {
                                     supaccasscat = '<option value="' + item.account_assign_cat + '">' + item.account_assign_cat + '</option>';
                                 } else {
                                     supaccasscat_list += '<option value="' + item.account_assign_cat + '">' + item.account_assign_cat + '</option>';
@@ -381,7 +365,7 @@
                             var currency_list = '';
                             var currency_id_list = '';
                             $.each(rendered_currency_data, function(i, item) {
-                                if( value[7].currency_type_value == item) {
+                                if( value[5].currency_type_value == item) {
                                     currency = '<option value="' + item.currency_id + '">' + item.currency_id + '</option>';
                                 }else{
                                     currency_list += '<option value="' + item.currency_id + '">' + item.currency_id + '</option>';
@@ -389,13 +373,13 @@
                                 currency_id_list = currency + currency_list
                             });
                             edit_basic_data += '<tr ><td class="class_select_checkbox"><input type="checkbox" required></td>'+
-                            '<td><select type="text" class="form-control">'+ user_id_list +'</select></td>'+
+                            '<td><select type="text" class="form-control">'+ company_id_list +'</select></td>'+
                             '<td><select type="text" class="form-control">'+ accasscat_id_list+'</select></td>'+
                             '<td><input class="form-control" type="text" maxlength="8" onkeypress="return /[0-9]/i.test(event.key)" name="acc_value" value="' + value[3] + '"></td>'+
-                            '<td><select type="text" class="form-control">'+ company_id_list +'</select></td>'+
-                            '<td><select type="text" class="form-control">'+ supaccasscat_id_list +'</select></td>'+
-                            '<td><input class="form-control" type="text" maxlength="8" onkeypress="return /[0-9]/i.test(event.key)" name="sup_acc_value"  value="' + value[6] + '"></td>'+
+                            '<td><select type="text" class="form-control">'+ user_id_list +'</select></td>'+
                             '<td><select type="text" class="form-control" >'+ supcompany_id_list +'</select></td>'+
+                            '<td><select type="text" class="form-control">'+ supaccasscat_id_list +'</select></td>'+
+                            '<td><input class="form-control" type="text" maxlength="8" onkeypress="return /[0-9]/i.test(event.key)" name="sup_acc_value"  value="' + value[7] + '"></td>'+
                             '<td><select type="text" class="form-control">'+ currency_id_list +'</select></td>'+
                             '<td hidden><input type="text" value=""></td>'+
                             '<td>' + del_ind + '</td></tr>';
@@ -404,17 +388,17 @@
                         var i = 0;
                         $("#id_popup_table TBODY TR").each(function () {
                             var row = $(this);
-                            var user_id_list = dropdown_array[i][0]
+                            var user_id_list = dropdown_array[i][2]
                             var accasscat_id_list = dropdown_array[i][1]
-                            var company_id_list = dropdown_array[i][2]
-                            var supaccasscat_id_list = dropdown_array[i][3]
-                            var supcompany_id_list = dropdown_array[i][4]
+                            var company_id_list = dropdown_array[i][0]
+                            var supaccasscat_id_list = dropdown_array[i][4]
+                            var supcompany_id_list = dropdown_array[i][3]
                             var currency_id_list = dropdown_array[i][5]
-                            $(row.find("TD").eq(1).find("select option[value=" + user_id_list + "]")).attr('selected', 'selected');
+                            $(row.find("TD").eq(4).find("select option[value=" + user_id_list + "]")).attr('selected', 'selected');
                             $(row.find("TD").eq(2).find("select option[value=" + accasscat_id_list + "]")).attr('selected', 'selected');
-                            $(row.find("TD").eq(4).find("select option[value=" + company_id_list + "]")).attr('selected', 'selected');
-                            $(row.find("TD").eq(5).find("select option[value=" + supaccasscat_id_list + "]")).attr('selected', 'selected');
-                            $(row.find("TD").eq(7).find("select option[value=" + supcompany_id_list + "]")).attr('selected', 'selected');
+                            $(row.find("TD").eq(1).find("select option[value=" + company_id_list + "]")).attr('selected', 'selected');
+                            $(row.find("TD").eq(6).find("select option[value=" + supaccasscat_id_list + "]")).attr('selected', 'selected');
+                            $(row.find("TD").eq(5).find("select option[value=" + supcompany_id_list + "]")).attr('selected', 'selected');
                             $(row.find("TD").eq(8).find("select option[value=" + currency_id_list + "]")).attr('selected', 'selected');
                             i++;
                         })
@@ -444,8 +428,49 @@
         }
     }
 
-     // validate and save for add,copy,update and upload data
+    // validate and save for add,copy,update and upload data
     function popup_save_data() {
+        $('#success_msg_id').empty();
+        $('#id_popup_table').DataTable().destroy();
+        no_duplicate_entries = 'Y';
+        no_duplicate_value = 'Y';
+        var error_message = '';
+        $('#display_basic_table').DataTable().destroy();
+        get_main_table_data(); //Read data from main table
+        // compare for duplicates in popup
+        [no_duplicate_value,error_message] = compare_table_for_duplicate_entries(validate_add_attributes, wfacc_data)
+        if (error_message){
+            display_error_message(error_message)
+        } else {
+            if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
+            // compare main table and pop up for duplicate values
+            [no_duplicate_entries, error_message] = maintable_validation(validate_add_attributes, main_table_low_value);
+            }
+            if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
+                var add_basic_data = '';
+                var wfacc_data_array = wfacc_data;
+                $('#id_save_confirm_popup').modal('hide');
+                data = {'data': wfacc_data_array, 'table_name': 'WorkflowACC', 'action': GLOBAL_ACTION};
+                OpenLoaderPopup();
+                $.ajax({
+                    type: 'POST',
+                    url: "{% url 'eProc_Master_Settings:create_update_master_data' %}",
+                    data: JSON.stringify(data),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function(Response) {
+                        rendered_wfacc_data = Response[0];
+                        display_basic_db_data();
+                        $('#Wf_Acc_Modal').modal('hide');
+                        success_response(Response); // Function call to display response data
+                        CloseLoaderPopup(); // Close the loader popup
+                    }
+                });
+            }
+            else if (error_message){
+                display_error_message(error_message)
+            }
+        }
       $('#success_msg_id').empty();
       $('#id_popup_table').DataTable().destroy();
       no_duplicate_entries = 'Y';
@@ -454,13 +479,17 @@
       $('#display_basic_table').DataTable().destroy();
       get_main_table_data(); //Read data from main table
       // check for duplicates in popup table
-      var duplicate_entries = check_duplicate_entry(validate_add_attributes, wfacc_data);
-      if (duplicate_entries.length > 0) {
-        display_duplicate_entry(duplicate_entries);
-        error_message = ui_messeges("JMSG001");
-        display_error_message(error_message);
-        return;
-      }
+<!--      var duplicate_entries = check_duplicate_entry(validate_add_attributes, wfacc_data);-->
+<!--      if (duplicate_entries.length > 0) {-->
+<!--        display_duplicate_entry(duplicate_entries);-->
+<!--        error_message = ui_messeges("JMSG001");-->
+<!--        display_error_message(error_message);-->
+<!--        return;-->
+<!--      }-->
+    [no_duplicate_value,error_message] = compare_table_for_duplicate_entries(validate_add_attributes, wfacc_data)
+        if (error_message){
+            display_error_message(error_message)
+        }
       if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
         // compare main table and pop up for duplicate values
         [no_duplicate_entries, error_message] = maintable_validation(validate_add_attributes, main_table_low_value);
@@ -513,7 +542,7 @@
                 rendered_wfacc_data = Response[0];
                 display_basic_db_data();
                 success_response(Response); // Function call to display response data
-                 CloseLoaderPopup();
+                CloseLoaderPopup();
             }
         });
     }
@@ -549,20 +578,6 @@ function onclick_add_button(button) {
         }
     });
 }
-
-    // on click add icon display the row in to add the new entries
-    function add_popup_row() {
-        basic_add_new_html = '';
-        var display_db_data = '';
-        $('#id_popup_table').DataTable().destroy();
-        $(".modal").on("hidden.bs.modal", function () {
-            $("#id_error_msg").html(" ");
-        });
-        new_row_data();   // Add a new row in popup
-        if (GLOBAL_ACTION == "country_upload") {
-            $(".class_del_checkbox").prop("hidden", false);
-        }
-    }
 
     //onclick of add button display Wf_Acc_Modal popup and set GLOBAL_ACTION button value
     function onclick_add_button(button) {
@@ -604,7 +619,7 @@ function onclick_add_button(button) {
             $("#id_error_msg").html(" ");
         });
         new_row_data();   // Add a new row in popup
-        if (GLOBAL_ACTION == "country_upload") {
+        if (GLOBAL_ACTION == "workflowacc_upload") {
             $(".class_del_checkbox").prop("hidden", false);
         }
     }
@@ -657,27 +672,37 @@ function onclick_add_button(button) {
                             $("#header_select").prop("hidden", false);
                         }
                         var user_value = row.cells[4].innerHTML
+                        var acc_cat_value = row.cells[2].innerHTML
                         var acc_ass_value = row.cells[3].innerHTML
                         var sup_acc_ass_value = row.cells[7].innerHTML
                         var company_id_value = row.cells[1].innerHTML
                         var supcompany_value = row.cells[5].innerHTML
                         var currency_value = row.cells[8].innerHTML
-                        dropdown_values.push([user_value, acc_ass_value, sup_acc_ass_value, company_id_value, supcompany_value, currency_value])
+                        var sup_acc_cat_value = row.cells[6].innerHTML
+                        dropdown_values.push([company_id_value, acc_ass_value, user_value, supcompany_value, sup_acc_ass_value, currency_value,acc_cat_value, sup_acc_cat_value])
+                        var sup_acc_cat_value = row.cells[6].innerHTML
                     }
                 }
                 $('#id_popup_tbody').append(edit_basic_data);
                 var i =0;
                 $("#id_popup_table TBODY TR").each(function() {
                     var row = $(this);
-                    var appr_user_value = dropdown_values[i][0]
+                    var appr_user_value = dropdown_values[i][2]
                     var acc_value = dropdown_values[i][1]
-                    var sup_acc_value = dropdown_values[i][2]
-                    var companyid_value = dropdown_values[i][3]
-                    var sup_compid_value = dropdown_values[i][4]
+                    var sup_acc_value = dropdown_values[i][4]
+                    var companyid_value = dropdown_values[i][0]
+                    var sup_compid_value = dropdown_values[i][3]
                     var curr_value = dropdown_values[i][5]
+                    var acct_cat_value = dropdown_values[i][6]
+                    var sup_cat_value = dropdown_values[i][7]
+                    $(row.find("TD").eq(1).find("select option[value="+companyid_value+"]")).attr('selected','selected');
+                    var acct_cat_value = dropdown_values[i][6]
+                    var sup_cat_value = dropdown_values[i][7]
                     $(row.find("TD").eq(4).find("select option[value="+appr_user_value+"]")).attr('selected','selected');
+                    $(row.find("TD").eq(2).find("select option[value="+acct_cat_value+"]")).attr('selected','selected');
                     $(row.find("TD").eq(3).find("select option[value="+acc_value+"]")).attr('selected','selected');
                     $(row.find("TD").eq(7).find("select option[value="+sup_acc_value+"]")).attr('selected','selected');
+                    $(row.find("TD").eq(6).find("select option[value="+sup_cat_value+"]")).attr('selected','selected');
                     $(row.find("TD").eq(1).find("select option[value="+companyid_value+"]")).attr('selected','selected');
                     $(row.find("TD").eq(5).find("select option[value="+sup_compid_value+"]")).attr('selected','selected');
                     $(row.find("TD").eq(8).find("select option[value="+curr_value+"]")).attr('selected','selected');
@@ -741,7 +766,7 @@ function onclick_add_button(button) {
                 error_message = ui_messeges("JMSG004")// Get message details
                 var display8 = msg_type.messages_id_desc;
                 document.getElementById("id_error_msg_wfacc_length").innerHTML = display8 + "User Acct Assignment value";
-                $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "1px solid #FF0000");
+                $(row.find("TD").eq(3).find('input[type="text"]')).css("border", "1px solid #FF0000");
                 count = count + 1;
             }
 
@@ -784,30 +809,10 @@ function onclick_add_button(button) {
         });
     }
 
-    //to check duplicate entries
-    function check_duplicate_entry(attributes, data) {
-      var duplicate_entries = [];
-      var found = false;
-      for (var i = 0; i < data.length; i++) {
-        var item = data[i];
-        var allMatch = true;
-        for (var j = 0; j < attributes.length; j++) {
-          var attr = attributes[j];
-          if (item[attr] != $('#' + attr).val()) {
-            allMatch = false;
-            break;
-          }
-        }
-        if (allMatch) {
-          found = true;
-          duplicate_entries.push(item);
-        }
-      }
-      return duplicate_entries;
-    }
+
 
     // validating the  popup table for duplicate entries
-    function compare_table_for_duplicate_entries(validate_add_attributes, wfacc) {
+    function compare_table_for_duplicate_entries(validate_add_attributes, wfacc_data) {
         add_attr_duplicates = false;
         var error_message = ''
         var add_attr_duplicates_list = [];
@@ -829,7 +834,7 @@ function onclick_add_button(button) {
             return [no_duplicate_value,error_message]
         }
         else {
-            $.each(wfacc, function (i, item) {
+            $.each(wfacc_data, function (i, item) {
                 if (item.acc_value.length == 0) {
                     error_message = ui_messeges("JMSG002")// Get message details
                     no_duplicate_value = 'N'
@@ -872,7 +877,7 @@ function onclick_add_button(button) {
             wfacc_dic.sup_account_assign_cat = row.find("TD").eq(6).find('select[type="text"]').val();
             wfacc_dic.sup_acc_value = row.find("TD").eq(7).find('input[type="number"]').val();
             wfacc_dic.sup_currency_id = row.find("TD").eq(8).find('select[type="text"]').val();
-            var compare = wfacc_dic.company_id +'-'+ wfacc_dic.account_assign_cat +'-'+ wfacc_dic.acc_value +'-'+ wfacc_dic.app_username +'-'+ wfacc_dic.sup_company_id +'-'+ wfacc_dic.sup_account_assign_cat +'-'+ wfacc_dic.sup_acc_value +'-'+  wfacc_dic.sup_currency_id
+            var compare = wfacc_dic.company_id+'-'+wfacc_dic.account_assign_cat+'-'+wfacc_dic.acc_value+'-'+wfacc_dic.app_username+'-'+wfacc_dic.sup_company_id+'-'+wfacc_dic.sup_account_assign_cat+'-'+wfacc_dic.sup_acc_value+'-'+wfacc_dic.sup_currency_id
             wfacc_check.push(compare);
             jQuery.grep(wfacc_check, function(el) {
                 if (jQuery.inArray(el, common) != -1) {

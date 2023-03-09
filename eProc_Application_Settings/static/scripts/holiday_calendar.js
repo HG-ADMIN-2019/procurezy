@@ -203,7 +203,6 @@ function get_selected_row_data() {
             calendar_arr_obj.calender_id = GLOBAL_CALENDER_ID;
             main_table_calendar_checked.push(calendar_arr_obj);
         }
-<<<<<<< HEAD
         $("#id_delete_currency").hide();
         $("#id_copy_currency").hide();
         $("#id_update_currency").hide();
@@ -246,7 +245,5 @@ $("#id_popup_table TBODY TR").each(function () {
                 main_table_calendar_checked.push(calendar_arr_obj);
             }
         });
-=======
     });
->>>>>>> gadarsh
 }

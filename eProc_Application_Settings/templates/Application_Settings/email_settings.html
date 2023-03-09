@@ -33,9 +33,6 @@
                     <button class="btn btn-outline-danger btn-sm"  title="Delete" id="id_delete_data" value="DELETE" data-toggle="modal" data-target="#id_delete_confirm_popup" style="display:none;">
                         <i class="fa fa-trash"></i> delete
                     </button>
-<!--                    <button class="btn btn-primary  btn-sm" title="Copy" id="id_copy_data" value="COPY" onclick="onclick_copy_button()" style="display:none;" >-->
-<!--                        <i class="fa fa-copy"></i> copy-->
-<!--                    </button>-->
                     <button class="btn btn-primary btn-sm" title="Update" id="id_update_data" style="display:none;"  value="UPDATE" type="button" onclick="onclick_update_button()">
                         <i class="far fa-edit"></i> update
                     </button>
@@ -43,6 +40,7 @@
                         <i class="fas fa-times"></i> cancel
                     </button>
                 </div>
+                {{data_list.paginator.page_range}}
                 <table id="display_basic_table" class="class_basic_country_table table table-bordered custom-table">
                     <thead id="id_email_settings_header">
                     <tr>
@@ -173,14 +171,7 @@
     var no_duplicate_entries = 'Y'
     var email_type_dropdwn = '';
     function email_type_dropdown(){
-        var common = []; var uncommon = [];
-<!--        $.each(variant_list, function (i, item) {-->
-<!--            $.each(rendered_email_data, function (i, item1) {-->
-<!--                if(item1.object_type != item){-->
-<!--                    email_type_dropdwn += '<option  value="' + item1 + '">' + item1 + '</option>';-->
-<!--                }-->
-<!--            });-->
-<!--        });-->
+        var uncommon = [];
         $.each(rendered_email_data, function (i, item1) {
             uncommon.push(item1.object_type);
         });
@@ -188,15 +179,12 @@
         $.each(render_language_data, function(i, item){
             language_dropdown += '<option value="' + item.language_id + '">' + item.description + '</option>';
         });
-
         email_type_dropdwn = '';
-
         jQuery.grep(variant_list, function (el) {
-        if (jQuery.inArray(el, uncommon) == -1) {
-            email_type_dropdwn += '<option  value="' + el + '">' + el + '</option>';
-        }
-    });
-
+            if (jQuery.inArray(el, uncommon) == -1) {
+                email_type_dropdwn += '<option  value="' + el + '">' + el + '</option>';
+            }
+        });
     }
     //**********************
     // validate and save for add,copy,update and upload data
@@ -301,7 +289,13 @@
         }                      
         else {
             $.each(email_setting_data, function (i, item) {
-                if ((item.email_subject.length == 0))  {
+                if(item.email_type==null) {
+                    $('#emailsModal').modal('show');
+                    error_message = ui_messeges("JMSG005")// Get message details
+                    no_duplicate_value = 'N'
+                    return [no_duplicate_value,error_message]
+                }
+                if ((item.email_subject.length == 0) || (item.email_header.length == 0) || (item.email_body.length == 0) || (item.email_footer.length == 0)){
                     $('#emailsModal').modal('show');
                     error_message = ui_messeges("JMSG002")// Get message details
                     no_duplicate_value = 'N'

@@ -193,35 +193,6 @@
          });
      }
 
-    //onclick of cancel display the table in display mode............
-    function display_basic_db_data() {
-        $('#display_basic_table').DataTable().destroy();
-        $('#id_pc_tbody').empty();
-        var edit_basic_data = '';
-        $.each(rendered_pc_data, function (i, item) {
-            var data = '';
-            if (item.purchase_ctrl_flag == true) {
-                data = 'Activate'
-            } else {
-                data = 'Deactivate'
-            }
-            edit_basic_data += '<tr><td class="class_select_checkbox"><input class="checkbox_check" onclick="valueChanged()" type="checkbox" required></td><td>' + item.company_code_id + '</td><td>' + item.call_off + '</td><td>' + data + '</td><td hidden>' + item.purchase_control_guid + '</td><td hidden>' + item.del_ind_flag + '</td></tr>';
-        });
-        $('#id_pc_tbody').append(edit_basic_data);
-        $("#hg_select_checkbox").prop("hidden", true);
-        $(".class_select_checkbox").prop("hidden", true);
-        $(" input:checkbox ").prop('checked', false);
-        $('#id_edit_data').show();
-        $('#id_cancel_data').hide();
-        $('#id_delete_data').hide();
-        $('#id_copy_data').hide();
-        $('#id_update_data').hide();
-        $('#id_save_confirm_popup').modal('hide');
-        $('#id_delete_confirm_popup').modal('hide');
-        $('#id_check_all').hide();
-        table_sort_filter('display_basic_table');
-    }
-
     // validate and save for add,copy,update and upload data
     function popup_save_data() {
         $('#success_msg_id').empty()
@@ -294,7 +265,6 @@
         });
     }
 
-
     //onclick of add button display myModal popup and set GLOBAL_ACTION button value
     function onclick_add_button(button) {
         OpenLoaderPopup();
@@ -304,24 +274,24 @@
             url: "{% url 'eProc_Configuration:get_dropdown_data' %}",
             data: JSON.stringify(data),
             success: function(response) {
-            rendered_activate = response.dropdown_activate
-            rendered_pc_company_data = response.upload_company_code
-            drop_down();
-            $("#error_msg_id").css("display", "none")
-            $("#header_select").prop("hidden", false);
-            GLOBAL_ACTION = button.value
-            basic_add_new_html = '';
-            $("#id_popup_tbody").empty();
-            $('#myModal').modal('show');
-            new_row_data();   // Add a new row in popup
-            $("#header_select").prop("hidden", false);
-            $("#id_del_ind_checkbox").prop("hidden", true);
-            document.getElementById("id_del_add_button").style.display = "block";
-            $("#save_id").prop("hidden", false);
-            CloseLoaderPopup();
-        }
-    });
-}
+                rendered_activate = response.dropdown_activate
+                rendered_pc_company_data = response.upload_company_code
+                drop_down();
+                $("#error_msg_id").css("display", "none")
+                $("#header_select").prop("hidden", false);
+                GLOBAL_ACTION = button.value
+                basic_add_new_html = '';
+                $("#id_popup_tbody").empty();
+                $('#myModal').modal('show');
+                new_row_data();   // Add a new row in popup
+                $("#header_select").prop("hidden", false);
+                $("#id_del_ind_checkbox").prop("hidden", true);
+                document.getElementById("id_del_add_button").style.display = "block";
+                $("#save_id").prop("hidden", false);
+                CloseLoaderPopup();
+            }
+        });
+    }
 
     // on click copy icon display the selected checkbox data
     function onclick_copy_update_button() {
@@ -332,69 +302,70 @@
             url: "{% url 'eProc_Configuration:get_dropdown_data' %}",
             data: JSON.stringify(data),
             success: function(response) {
-            rendered_activate = response.dropdown_activate
-            rendered_pc_company_data = response.upload_company_code
-            drop_down();
-            $("#error_msg_id").css("display", "none")
-            $('#display_basic_table').DataTable().destroy();
-            $('#id_popup_table').DataTable().destroy();
-            $("#id_popup_tbody").empty();
-            //Reference the Table.
-            var grid = document.getElementById("display_basic_table");
-            //Reference the CheckBoxes in Table.
-            var checkBoxes = grid.getElementsByTagName("INPUT");
-            var edit_basic_data = "";
-            var unique_input = '';
-            var dropdown_val = [];
-            //Loop through the CheckBoxes.
-            for (var i = 1; i < checkBoxes.length; i++) {
-                if (checkBoxes[i].checked) {
-                    var row = checkBoxes[i].parentNode.parentNode;
-                    var Status = row.cells[3].innerHTML;
-                    dropdown_val.push([ Status ])
-                    if (GLOBAL_ACTION == "UPDATE") {
-                        guid = row.cells[4].innerHTML;
-                        edit_basic_data +=
-                        `<tr>
-                            <td hidden><input type="checkbox" required></td>
-                            <td>
-                                <select  type="text" class="input form-control" } disabled>
-                                <option>${row.cells[1].innerHTML}</option>
-                                </select>
-                            </td>
-                            <td>
-                                <select type="text" class="input form-control" value= ${row.cells[2].innerHTML} disabled>
-                                    <option>${row.cells[2].innerHTML}</option>
-                                </select>
-                            </td>
-                                <td><select type="text" class="input form-control">${activate_dropdown}</select></td>
-                                <td hidden><input type="text" class= "form-control" value= ${guid}></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td>
-                            </tr>`;
-                            $("#header_select").prop("hidden", true);
-                        }
-                        else {
-                            unique_input = '<select class="form-control">' + row.cells[1].innerHTML + '</select>'
-                            edit_basic_data += '<tr><td><input type="checkbox" required></td><td><select type="text" class="input form-control">'+unique_input+'</select></td><td><select type="text" class="input form-control">' + row.cells[2].innerHTML + '</select></td><td hidden></td></tr>';
-                            $("#header_select").prop("hidden", false);
+                rendered_activate = response.dropdown_activate
+                rendered_pc_company_data = response.upload_company_code
+                drop_down();
+                $("#error_msg_id").css("display", "none")
+                $('#display_basic_table').DataTable().destroy();
+                $('#id_popup_table').DataTable().destroy();
+                $("#id_popup_tbody").empty();
+                //Reference the Table.
+                var grid = document.getElementById("display_basic_table");
+                //Reference the CheckBoxes in Table.
+                var checkBoxes = grid.getElementsByTagName("INPUT");
+                var edit_basic_data = "";
+                var unique_input = '';
+                var dropdown_val = [];
+                //Loop through the CheckBoxes.
+                for (var i = 1; i < checkBoxes.length; i++) {
+                    if (checkBoxes[i].checked) {
+                        var row = checkBoxes[i].parentNode.parentNode;
+                        var Status = row.cells[3].innerHTML;
+                        dropdown_val.push([ Status ])
+                        if (GLOBAL_ACTION == "UPDATE") {
+                            guid = row.cells[4].innerHTML;
+                            edit_basic_data +=
+                            `<tr>
+                                <td hidden><input type="checkbox" required></td>
+                                <td>
+                                    <select  type="text" class="input form-control" } disabled>
+                                    <option>${row.cells[1].innerHTML}</option>
+                                    </select>
+                                </td>
+                                <td>
+                                    <select type="text" class="input form-control" value= ${row.cells[2].innerHTML} disabled>
+                                        <option>${row.cells[2].innerHTML}</option>
+                                    </select>
+                                </td>
+                                    <td><select type="text" class="input form-control">${activate_dropdown}</select></td>
+                                    <td hidden><input type="text" class= "form-control" value= ${guid}></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td>
+                                </tr>`;
+                                $("#header_select").prop("hidden", true);
+                            }
+                            else {
+                                unique_input = '<select class="form-control">' + row.cells[1].innerHTML + '</select>'
+                                edit_basic_data += '<tr><td><input type="checkbox" required></td><td><select type="text" class="input form-control">'+unique_input+'</select></td><td><select type="text" class="input form-control">' + row.cells[2].innerHTML + '</select></td><td hidden></td></tr>';
+                                $("#header_select").prop("hidden", false);
+                            }
                         }
                     }
+                    $('#id_popup_table').append(edit_basic_data);
+                    var i = 0;
+                    $("#id_popup_table TBODY TR").each(function () {
+                        var row = $(this);
+                        var Status = dropdown_val[i][0]
+                        $(row.find("TD").eq(3).find("select option[value=" + Status + "]")).attr('selected', 'selected');
+                        i++;
+                    });
+                    $("#id_del_ind_checkbox").prop("hidden", true);
+                    $('#myModal').modal('show');
+                    table_sort_filter('display_basic_table');
+                    table_sort_filter('id_popup_table');
+                    CloseLoaderPopup();
                 }
-                $('#id_popup_table').append(edit_basic_data);
-                var i = 0;
-                $("#id_popup_table TBODY TR").each(function () {
-                    var row = $(this);
-                    var Status = dropdown_val[i][0]
-                    $(row.find("TD").eq(3).find("select option[value=" + Status + "]")).attr('selected', 'selected');
-                    i++;
-                });
-                $("#id_del_ind_checkbox").prop("hidden", true);
-                $('#myModal').modal('show');
-                table_sort_filter('display_basic_table');
-                table_sort_filter('id_popup_table');
-                CloseLoaderPopup();
-            }
-        });
-    }
+            });
+        }
+
     // on click add icon display the row in to add the new entries
     function add_popup_row() {
         basic_add_new_html = '';
@@ -445,18 +416,6 @@
             });
         }
         return [no_duplicate_value, error_message]
-    }
-
-    //*********************************
-    function GetSelectedTextValue(aaccode) {
-        var selectedText = aaccode.options[aaccode.selectedIndex].innerHTML;
-        var selectedValue = aaccode.value;
-        var selectedId = (aaccode.id).split('-')[1];
-        $.each(rendered_pc_values, function (i, item) {
-            if (selectedValue == item.field_type_id) {
-                $('#description-' + selectedId).val(item.field_type_desc);
-            }
-        });
     }
 </script>
 <script src="{% static 'scripts/purchase_control.js' %}"></script>

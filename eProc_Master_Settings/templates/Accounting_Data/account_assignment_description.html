@@ -473,9 +473,7 @@
                 invalid_count = invalid_count + 1;
                 }
                 var compare = accdesc_dic.account_assign_value + '-' + accdesc_dic.account_assign_cat + '-' + accdesc_dic.company_id + '-' + accdesc_dic.language_id
-
             var format = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
-
             //*************** checking for special characters for aad description ***************
             if (format.test(accdesc_dic.description)) {
                 error_message = ui_messeges("JMSG003")// Get message details
@@ -574,7 +572,6 @@
         $.each(messages, function (i, message) {
             $("#id_check_success_messages").append('<p>' + message + '</p>')
         });
-
         $("#id_check_success_messages").prop("hidden",false)
     }
 
@@ -743,7 +740,7 @@
             acct_assmt_dic.account_assign_cat = row.find("TD").eq(2).find("select option:selected").val();
             acct_assmt_dic.account_assign_value = row.find("TD").eq(3).find("select option:selected").val();
             acct_assmt_dic.language_id = row.find("TD").eq(5).find("select option:selected").val();
-            var compare = acct_assmt_dic.account_assign_value +'-'+ acct_assmt_dic.account_assign_cat +'-'+ acct_assmt_dic.company_id+'-'+acct_assmt_dic.language_id
+            var compare = acct_assmt_dic.account_assign_value+'-'+acct_assmt_dic.account_assign_cat+'-'+acct_assmt_dic.company_id+'-'+acct_assmt_dic.language_id
             acct_assmt_check.push(compare);
             jQuery.grep(acct_assmt_check, function(el) {
                 if (jQuery.inArray(el, common) != -1) {
