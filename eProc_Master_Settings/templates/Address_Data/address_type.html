@@ -1,8 +1,8 @@
 {% extends 'root/base.html' %}
 {% load static %}
 {% block title %} Address Types (Master Settings) {% endblock %}
-
 {% block maincontent %}
+
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.9.0/moment.min.js"></script>
 <!-- Include Bootstrap DateTimePicker CDN -->
@@ -285,7 +285,7 @@
                         var address_number = row.cells[3].innerHTML
                         var address_type = row.cells[2].innerHTML
                         var company_id = row.cells[1].innerHTML
-                        dropdown_array.push([address_number, address_type, company_id])
+                        dropdown_array.push([company_id, address_type, address_number])
                     }
                 }
                 $('#id_popup_table').append(edit_basic_data);
@@ -297,8 +297,8 @@
                     var address_type = dropdown_array[i][1]
                     var company_id = dropdown_array[i][0]
                     $(row.find("TD").eq(1).find("select option[value=" + company_id + "]")).attr('selected', 'selected');
-                    $(row.find("TD").eq(3).find("select option[value=" + address_number + "]")).attr('selected', 'selected');
                     $(row.find("TD").eq(2).find("select option[value=" + address_type + "]")).attr('selected', 'selected');
+                    $(row.find("TD").eq(3).find("select option[value=" + address_number + "]")).attr('selected', 'selected');
                     i++;
                 });
                 $("#id_del_ind_checkbox").prop("hidden", true);
@@ -463,7 +463,7 @@
                                 }
                                 company_id_list = company + company_list
                             });
-                            edit_basic_data += '<tr ><td><input type="checkbox" required></td><td><select class="form-control">value ="' + value[0] + '"'+company_id_list+'</select></td><td><select class = "form-control" type = "text"> value ="' + value[1] + '" maxlength="1" ' +address_data_id_list+'</select></td><td><select class = "form-control" type ="text"> type="text" name="address number" value ="' + value[2] + '" '+address_number_id_list+'</select></td><td><input  type="number" name = "valid_from" class="form-control" value ="' + value[3] + '"></td><td><input  type="number" name = "valid_to" value ="' + value[4] + '" class="form-control"></td><td hidden></td><td>'+ del_ind +'</td></tr>';
+                            edit_basic_data += '<tr ><td><input type="checkbox" required></td><td><select class="form-control">value ="' + value[0] + '"'+company_id_list+'</select></td><td><select class = "form-control" type = "text"> value ="' + value[1] + '" maxlength="1" ' +address_data_id_list+'</select></td><td><select class = "form-control" type ="text"> type="text" name="address number" value ="' + value[2] + '" '+address_number_id_list+'</select></td><td><input  type="date" name = "valid_from" class="form-control" value ="' + value[4] + '"></td><td><input  type="date" name = "valid_to" value ="' + value[5] + '" class="form-control"></td><td hidden></td><td>'+ del_ind +'</td></tr>';
                         });
                         $('#id_popup_tbody').append(edit_basic_data);
                         var i = 0;
@@ -527,8 +527,8 @@
             var row = $(this);
             address_type_dic = {}
             //*************** reading data from the pop-up ***************
-            address_type_dic.valid_to = row.find("TD").eq(5).find('input[type="text"]').val();
-            address_type_dic.valid_from = row.find("TD").eq(4).find('input[type="text"]').val();
+            address_type_dic.valid_to = row.find("TD").eq(5).find('input[type="date"]').val();
+            address_type_dic.valid_from = row.find("TD").eq(4).find('input[type="date"]').val();
             address_type_dic.company_id = row.find("TD").eq(1).find('select[type="text"]').val();
             address_type_dic.address_number = row.find("TD").eq(3).find('select[type="text"]').val();
             address_type_dic.address_type = row.find("TD").eq(2).find('select[type="text"]').val();

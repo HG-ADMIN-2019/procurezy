@@ -851,8 +851,13 @@
             var row = $(this);
             detgl_dic = {}
             detgl_dic.company_id = row.find("TD").eq(2).find("select option:selected").val();
+<<<<<<< HEAD
             detgl_dic.unspsc_code = row.find("TD").eq(1).find("select option:selected").val();
             var compare = detgl.gl_acc_num + '-' + detgl.account_assign_cat + '-' + detgl.company_id+'-'+ detgl_dic.unspsc_code
+=======
+            detgl_dic.account_assign_cat = row.find("TD").eq(3).find("select option:selected").val();
+            var compare = detgl.company_id + '-' +  detgl.account_assign_cat
+>>>>>>> Bharsha
             detgl_check.push(compare);
             jQuery.grep(detgl_check, function(el) {
                 if (jQuery.inArray(el, common) != -1) {

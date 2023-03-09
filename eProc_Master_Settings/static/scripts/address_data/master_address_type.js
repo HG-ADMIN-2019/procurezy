@@ -1,4 +1,3 @@
-
 var addresstype_data = new Array();
 var main_table_low_value = [];
 var validate_add_attributes = [];
@@ -153,8 +152,8 @@ function new_row_data() {
         '<td><select class="form-control">'+company_dropdwn+'</select></td>' +
         '<td><select class="form-control">'+address_type_dropdown+'</select></td>' +
         '<td><select class="form-control">'+address_number_dropdwn+'</select></td>' +
-        '<td><input  type="text" name = "valid_from" class="form-control from_to_date"></td>' +
-        '<td><input type="text" name = "valid_to"  class="form-control from_to_date"></td>' +
+        '<td><input  type="date" name = "valid_from" class="form-control from_to_date"></td>' +
+        '<td><input type="date" name = "valid_to"  class="form-control from_to_date"></td>' +
         '<td class="class_del_checkbox" hidden><input type="checkbox" required></td>' +
         '<td hidden><input  type="text" class="form-control"  name="guid"></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
@@ -206,7 +205,6 @@ function get_main_table_data() {
             $("#id_error_msg").prop("hidden", false)
             get_message_details("JMSG017"); // Get message details
             $('#id_save_confirm_popup').modal('hide');
-//            onclick_copy_update_button(item.calender_id);
             $('#Adrs_Type_Modal').modal('show');
             validDate = 'N'
         }

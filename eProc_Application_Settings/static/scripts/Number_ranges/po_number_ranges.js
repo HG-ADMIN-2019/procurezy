@@ -1,19 +1,17 @@
 var numberranges_data = new Array();
 var validate_add_attributes = [];
 var number_range={};
+var main_table_low_value = [];
 
-//onclick of add button display myModal popup and set GLOBAL_ACTION button value
+//onclick of add button display poorder_Modal popup and set GLOBAL_ACTION button value
 function onclick_add_button(button) {
   $("#error_msg_id").css("display", "none")
     $("#header_select").prop( "hidden", false );
     GLOBAL_ACTION = button.value
     $('#id_popup_table').DataTable().destroy();
     $("#id_popup_tbody").empty();
-    $('#myModal').modal('show');
-    console.log(max_sequence)
-    basic_add_new_html = '<tr ><td class="number_range_checkbox"><input type="checkbox" required></td><td><input class="form-control" value="' + max_sequence + '" type="number"  name="sequence"  disabled></td><td><input class="form-control" type="number" maxlength="100000000"  name="starting"  required></td><td><input class="form-control" type="number" maxlength="100000000"  name="ending"  required></td><td><input class="form-control" type="number" maxlength="100000000"  name="current"  required></td>><td hidden><input type="text" value=""></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
-    $('#id_popup_tbody').append(basic_add_new_html);
-    table_sort_filter('id_popup_table');
+    $('#poorder_Modal').modal('show');
+    new_row_data(); // Function for add a new row data
     $("#id_del_ind_checkbox").prop("hidden", true);
     document.getElementById("id_del_add_button").style.display = "block";
     $("#save_id").prop("hidden", false);
@@ -52,7 +50,7 @@ function onclick_copy_update_button() {
     $("#id_del_ind_checkbox").prop("hidden", true);
     table_sort_filter('display_basic_table');
     table_sort_filter('id_popup_table');
-    $('#myModal').modal('show');
+    $('#poorder_Modal').modal('show');
 }
 
 //onclick of cancel empty the popup table body and error messages
@@ -60,7 +58,7 @@ $(".remove_upload_data").click(() => {
     $("#id_error_msg").html("");
     $("#id_popup_tbody").empty();
     $("#id_error_msg").empty();
-    $('#myModal').modal('hide');
+    $('#poorder_Modal').modal('hide');
     $("#id_error_msg").prop("hidden", true);
     $("#id_error_msg_sequence").prop("hidden", true);
     $("#id_error_msg_starting").prop("hidden", true);
@@ -135,7 +133,7 @@ var nextval = max_sequence ;
 
 // on click add icon display the row in to add the new entries
 function add_popup_row() {
-    ("#error_msg_id").css("display", "none")
+    $("#error_msg_id").css("display", "none")
     basic_add_new_html = '';
     var display_db_data = '';
     $('#id_popup_table').DataTable().destroy();
@@ -143,11 +141,16 @@ function add_popup_row() {
         $("#id_error_msg").html("");
     });
     nextval += 1;
-    basic_add_new_html = '<tr ><td class="number_range_checkbox"><input type="checkbox" required></td><td><input class="form-control"  type="number" maxlength="2" value = '+ nextval +'  name="sequence"  required></td><td><input class="form-control" type="number" maxlength="100000000"  name="starting"  required></td><td><input class="form-control" type="number" maxlength="100000000"  name="ending"  required></td><td><input class="form-control" type="number" maxlength="100000000"  name="current"  required></td>><td hidden><input class="form-control" type="text" value=""></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
-    $('#id_popup_tbody').append(basic_add_new_html);
     if (GLOBAL_ACTION == "number_range") {
         $(".class_del_checkbox").prop("hidden", false);
     }
+    new_row_data(); // Function for add a new row data
+}
+
+// Function for add a new row data
+function new_row_data() {
+    basic_add_new_html = '<tr ><td class="number_range_checkbox"><input type="checkbox" required></td><td><input class="form-control"  type="number" maxlength="2" value = '+ nextval +'  name="sequence"  required></td><td><input class="form-control" type="number" maxlength="100000000"  name="starting"  required></td><td><input class="form-control" type="number" maxlength="100000000"  name="ending"  required></td><td><input class="form-control" type="number" maxlength="100000000"  name="current"  required></td>><td hidden><input class="form-control" type="text" value=""></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+    $('#id_popup_tbody').append(basic_add_new_html);
     table_sort_filter('id_popup_table');
 }
 
@@ -176,7 +179,7 @@ function display_basic_db_data() {
 
 //****************************
 $('#save_id').click(function () {
-    $('#myModal').modal('hide');
+    $('#poorder_Modal').modal('hide');
     numberranges_data = new Array();
     validate_add_attributes = [];
     $("#id_popup_table TBODY TR").each(function () {
@@ -207,24 +210,43 @@ function display_error_message(error_message){
     document.getElementById("error_message").style.color = "Red";
     $("#error_msg_id").css("display", "block")
     $('#id_save_confirm_popup').modal('hide');
-    $('#myModal').modal('show');
+    $('#poorder_Modal').modal('show');
 }
 
 // Function to get the selected row data
-function get_selected_row_data(){
-$("#display_basic_table TBODY TR").each(function () {
-    var row = $(this);
-    var number_range_arr_obj = {};
-    number_range_arr_obj.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
-    if(number_range_arr_obj.del_ind){
-    number_range_arr_obj.sequence = row.find("TD").eq(1).html();
-    number_range_arr_obj.starting = row.find("TD").eq(2).html();
-    number_range_arr_obj.ending = row.find("TD").eq(3).html();
-    number_range_arr_obj.current = row.find("TD").eq(4).html();
-    number_range_arr_obj.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
-    number_range_arr_obj.guid = row.find("TD").eq(5).html();
-    number_range_arr_obj.document_type = 'DOC02'
-    main_table_number_range_checked.push(number_range_arr_obj);
+    function get_selected_row_data(){
+        $("#display_basic_table TBODY TR").each(function () {
+            var row = $(this);
+            var number_range_arr_obj = {};
+            number_range_arr_obj.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
+            if(number_range_arr_obj.del_ind){
+            number_range_arr_obj.sequence = row.find("TD").eq(1).html();
+            number_range_arr_obj.starting = row.find("TD").eq(2).html();
+            number_range_arr_obj.ending = row.find("TD").eq(3).html();
+            number_range_arr_obj.current = row.find("TD").eq(4).html();
+            number_range_arr_obj.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
+            number_range_arr_obj.guid = row.find("TD").eq(5).html();
+            number_range_arr_obj.document_type = 'DOC02'
+            main_table_number_range_checked.push(number_range_arr_obj);
+        }
+    });
 }
-});
+
+// Function to get main table data
+function get_main_table_data(){
+    main_table_low_value = [];
+    var main_table_data = [];
+    $('#display_basic_table').DataTable().destroy();
+    $("#display_basic_table TBODY TR").each(function () {
+        var row = $(this);
+        var main_attribute = {};
+        main_attribute.sequence = row.find("TD").eq(1).html();
+        main_attribute.starting = row.find("TD").eq(2).html();
+        main_attribute.ending = row.find("TD").eq(3).html();
+        main_attribute.current = row.find("TD").eq(4).html();
+        main_attribute.guid = row.find("TD").eq(5).html();
+        main_table_low_value.push(main_attribute.sequence);
+        main_table_data.push(main_attribute)
+    });
+    table_sort_filter('display_basic_table');
 }

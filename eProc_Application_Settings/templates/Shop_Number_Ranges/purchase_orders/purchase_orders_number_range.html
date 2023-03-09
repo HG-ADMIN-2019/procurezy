@@ -12,7 +12,7 @@
                 <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Application_Settings:extract_purchase_order_number_range_data' %}'" type="button">
                        <i class="fas fa-download"></i> extract
                  </button>
-                <button class="btn btn-primary" type="button" id="id_add_data" value="ADD" data-toggle="modal" data-target="#myModal" onclick="onclick_add_button(this)">
+                <button class="btn btn-primary" type="button" id="id_add_data" value="ADD" data-toggle="modal" data-target="#poorder_Modal" onclick="onclick_add_button(this)">
                     <i class="fa fa-plus"></i> add number ranges
                 </button>
                  <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"  onclick="window_close();">
@@ -72,7 +72,7 @@
         </div>
     </div>
     <!--modal popup for Add,copy,update and upload-->
-    <div class="modal fade" id="myModal">
+    <div class="modal fade" id="poorder_Modal">
         <div class="modal-dialog modal-dialog-centered modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
@@ -181,19 +181,8 @@
                 number_range_data.push(number_range);
                 compare_array.push(number_range.starting, number_range.ending, number_range.current)
             });
-            $('#display_basic_table').DataTable().destroy();
-            $("#display_basic_table TBODY TR").each(function () {
-                var row = $(this);
-                var main_attribute = {};
-                main_attribute.sequence = row.find("TD").eq(1).html();
-                main_attribute.starting = row.find("TD").eq(2).html();
-                main_attribute.ending = row.find("TD").eq(3).html();
-                main_attribute.current = row.find("TD").eq(4).html();
-                main_attribute.guid = row.find("TD").eq(5).html();
-                main_table_low_value.push(main_attribute.sequence);
-                main_table_data.push(main_attribute)
-            });
-            table_sort_filter('display_basic_table');
+            get_main_table_data();  //Read data from main table
+            // compare for duplicates in popup
             $("#id_error_msg").empty();
             [no_duplicate_value,error_message] = compare_table_for_duplicate_entries(validate_add_attributes, numberranges_data)
             if (error_message){
@@ -217,7 +206,7 @@
                         dataType: "json",
                         success: function (Response) {
                             display_basic_db_data();
-                            $('#myModal').modal('hide');
+                            $('#poorder_Modal').modal('hide');
                             success_response(Response); // Function call to display response data
                             CloseLoaderPopup();
                         }
@@ -313,30 +302,6 @@
             }
         }
         return [no_duplicate_value,error_message]
-    }
-
-    //validate by comparing  main table values and popup table values
-    function maintable_validation(validate_add_attributes, main_table_low_value,numberranges_data,main_table_data) {
-        var no_duplicate_entries = 'Y'
-        var common = [];
-        var error_message =''
-        jQuery.grep(validate_add_attributes, function (el) {
-            if (jQuery.inArray(el, main_table_low_value) != -1) {
-                common.push(el);
-            }
-        });
-        if (common.length != 0) {
-            get_message_details("JMSG001"); // Get message details
-            no_duplicate_value = 'N'
-            return [no_duplicate_value,error_message]
-        }
-        validation_error = main_range_check_function(numberranges_data,main_table_data)
-        if(!validation_error){
-            get_message_details("JMSG109"); // Get message details
-            no_duplicate_value = 'N'
-            return [no_duplicate_value,error_message]
-        }
-        return [no_duplicate_entries,error_message]
     }
 </script>
 <script src="{% static 'scripts/Number_ranges/po_number_ranges.js' %}"></script>

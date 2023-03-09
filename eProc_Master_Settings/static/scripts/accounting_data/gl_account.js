@@ -71,7 +71,7 @@ function delete_duplicate() {
         gl_acc_num = row.find("TD").eq(4).find("select option:selected").val();
         gl_acc_default = row.find("TD").eq(5).find('input[type="checkbox"]').is(':checked');
         account_assign_cat = row.find("TD").eq(3).find("select option:selected").val();
-        company_id = row.find("TD").eq(1).find("select option:selected").val();
+        company_id = row.find("TD").eq(2).find("select option:selected").val();
         from_value = row.find("TD").eq(6).find('input[type="number"]').val();
         to_value = row.find("TD").eq(7).find('input[type="number"]').val();
         currency_id = row.find("TD").eq(8).find("select option:selected").val();
