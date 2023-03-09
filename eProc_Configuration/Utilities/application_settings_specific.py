@@ -2,6 +2,8 @@ from calendar import weekday
 from datetime import datetime
 import datetime
 
+from django.db.models.aggregates import Max
+
 from eProc_Basic.Utilities.constants.constants import *
 from eProc_Basic.Utilities.functions.get_db_query import get_country_data
 from eProc_Basic.Utilities.messages.messages import MSG112, MSG113
@@ -210,7 +212,11 @@ class ApplicationSettingsSave:
                                                  ['guid', 'sequence', 'starting', 'ending',
                                                   'current', 'document_type',
                                                   ])
-        return upload_response, message
+        sequence = NumberRanges.objects.filter(client=global_variables.GLOBAL_CLIENT, document_type=CONST_DOC_TYPE_FC, del_ind=False).aggregate(
+            Max('sequence'))
+        sequence_max = sequence['sequence__max']
+        data = {'upload_response':upload_response,'sequence_max':sequence_max}
+        return data, message
 
     def save_document_type_data(self, documenttype_data):
         documenttype_db_list = []
