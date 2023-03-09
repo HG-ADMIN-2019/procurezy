@@ -507,11 +507,14 @@
         $("#error_msg_id").css("display", "none")
         basic_add_new_html = '';
         var display_db_data = '';
+         var getid = $(".prodid:last").attr("id");
+        var getindex = getid.split("-")[1]
+        var inc_index = Number(getindex)+1
         $('#id_popup_table').DataTable().destroy();
         $(".modal").on("hidden.bs.modal", function () {
             $("#id_error_msg").html(" ");
         });
-        new_row_data();   // Add a new row in popup
+        new_row_data(inc_index);   // Add a new row in popup
         if (GLOBAL_ACTION == "cusprodcatdesc_upload") {
             $(".class_del_checkbox").prop("hidden", false);
         }
@@ -846,7 +849,7 @@ function onclick_copy_update_button(data){
         var selectedText = prodid.options[prodid.selectedIndex].innerHTML;
         var selectedValue = prodid.value;
         var selectedId = (prodid.id).split('-')[1];
-        $.each (rendered_UNSPCDESC_data,function(i, item){
+        $.each (rendered_UNSPC_data,function(i, item){
             if(selectedValue == item.prod_cat_id){
                 $('#description-'+selectedId).val(item.prod_cat_desc);
             }
@@ -854,8 +857,8 @@ function onclick_copy_update_button(data){
     }
 
     // Function for add a new row data
-    function new_row_data() {
-        basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select type="text" class="input form-control prodid" id="prodid-1"  name="prodid" onchange="GetSelectedTextValue(this)"><option value=""selected>Select your option</option>'+prod_cat_id_dropdown+'</select></td><td><select class="form-control">'+language_id_dropdown+'</select></td><td><input class="form-control description" type="text"  name="description"  id="description-1"></td><td hidden><guid></td><td hidden>< del_ind></td></tr>';
+    function new_row_data(inc_index) {
+        basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select type="text" class="input form-control prodid" id="prodid-'+inc_index+'"  name="prodid" onchange="GetSelectedTextValue(this)"><option value=""selected>Select your option</option>'+prod_cat_id_dropdown+'</select></td><td><select class="form-control">'+language_id_dropdown+'</select></td><td><input class="form-control description" type="text"  name="description"  id="description-'+inc_index+'"></td><td hidden><guid></td><td hidden>< del_ind></td></tr>';
         $('#id_popup_tbody').append(basic_add_new_html);
         table_sort_filter('id_popup_table');
     }
