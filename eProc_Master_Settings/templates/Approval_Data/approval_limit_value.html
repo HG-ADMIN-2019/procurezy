@@ -2,7 +2,6 @@
 {% load static %}
 {% block title %} Approval Limit Values (Master Settings) {% endblock %}
 {% block maincontent %}
-
 {% include 'root/loader.html' %}
 
 <div class="container-fluid">
@@ -127,7 +126,6 @@
                         </tr>
                         </thead>
                         <tbody id=id_popup_tbody>
-
                         </tbody>
                     </table>
                      </div>
@@ -143,7 +141,6 @@
         </div>
     </div>
     <!--end of modal popup for Add,copy,update and upload-->
-
     <!-- modal popup to upload the csv file; save confirmation popup; delete confirmation popup -->
     {% include 'configuration_common_pop_up.html' %}
     <div>
@@ -156,9 +153,7 @@
         {% endif %} {% endfor %} {% endif %}
     </div>
 </div>
-
 {{ approval_limit_value|json_script:"approval_limit_value" }}
-
 <script>
     var rendered_alv_data = JSON.parse(document.getElementById('approval_limit_value').textContent);
     var rendered_company_data = {{upload_data_company|safe}};

@@ -573,7 +573,7 @@
             if (wfschema.workflow_schema_guid == undefined){
                 wfschema.workflow_schema_guid ='';
             }
-            var wfschema_compare = wfschema.company_id +'-'+ wfschema.workflow_schema
+            var wfschema_compare = wfschema.workflow_schema +'-'+ wfschema.company_id
            validate_add_attributes.push(wfschema_compare);
            wfschema_data.push(wfschema);
        });
