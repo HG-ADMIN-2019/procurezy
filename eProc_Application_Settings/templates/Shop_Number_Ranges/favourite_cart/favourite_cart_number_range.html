@@ -205,6 +205,7 @@
                 dataType: "json",
                 success: function (Response) {
                     rendered_number_range_data = Response[0];
+                    max_sequence = response[0].sequence;
                     display_basic_db_data();
                     $('#myModal').modal('hide');
                     success_response(Response); // Function call to display response data
