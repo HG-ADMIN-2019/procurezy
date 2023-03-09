@@ -208,6 +208,12 @@ function display_basic_db_data() {
 // Functtion to hide and display save related popups
 $('#save_id').click(function () {
     $('#myModal').modal('hide');
+    numberranges_data = read_popup_data();
+    $('#id_save_confirm_popup').modal('show');
+});
+
+//Read popup table data
+function read_popup_data() {
     numberranges_data = new Array();
     validate_add_attributes = [];
     $('#id_popup_table').DataTable().destroy();
@@ -230,9 +236,8 @@ $('#save_id').click(function () {
         validate_add_attributes.push(number_range.sequence);
         numberranges_data.push(number_range);
     });
-    table_sort_filter_popup('id_popup_table')
-    $('#id_save_confirm_popup').modal('show');
-});
+    return numberranges_data;
+}
 
 //********************************************
 function display_error_message(error_message){

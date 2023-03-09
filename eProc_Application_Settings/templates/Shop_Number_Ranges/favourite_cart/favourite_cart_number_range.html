@@ -11,7 +11,7 @@
                     <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Application_Settings:extract_favourite_cart_number_range_data' %}'" type="button">
                        <i class="fas fa-download"></i> extract
                     </button>
-                    <button type="button" id="id_add_data" value="ADD" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="onclick_add_button(this)">
+                    <button type="button" id="id_add_data" title="Add Favourite Cart Number Range" value="ADD" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="onclick_add_button(this)">
                        <i class="fa fa-plus"></i> Add Favourite Cart Number Range
                     </button>
                     <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"  onclick="window_close();">
@@ -25,16 +25,16 @@
             <div id="err_msg_app_settings_t" class="alert alert-success" hidden><span id="success_msg_id"></span></div>
             <div class="table-container tcw-80">
                 <div  class="edit-button-section mb-4">
-                       <button class="btn btn-secondary btn-sm"id="id_edit_data" onclick="onclick_edit_button()">
+                       <button class="btn btn-secondary btn-sm" title="Edit" id="id_edit_data" onclick="onclick_edit_button()">
                         <i class="fas fa-edit"></i> edit
                     </button>
-                     <button class="btn btn-outline-danger btn-sm" id="id_delete_data" value="number_range_delete" style="display:none;" data-toggle="modal" data-target="#id_delete_confirm_popup">
+                     <button class="btn btn-outline-danger btn-sm" title="Delete" id="id_delete_data" value="number_range_delete" style="display:none;" data-toggle="modal" data-target="#id_delete_confirm_popup">
                         <i class="fa fa-trash"></i> delete
                     </button>
-                    <button class="btn btn-primary btn-sm" id="id_update_data" style="display:none;" value="UPDATE" type="button" onclick="onclick_update_button()">
+                    <button class="btn btn-primary btn-sm" title="Update" id="id_update_data" style="display:none;" value="UPDATE" type="button" onclick="onclick_update_button()">
                         <i class="far fa-edit"></i> update
                     </button>
-                    <button class="btn btn-secondary btn-sm" id="id_cancel_data" style="display:none;" type="button" onclick="display_basic_db_data()">
+                    <button class="btn btn-secondary btn-sm" title="Cancel" id="id_cancel_data" style="display:none;" type="button" onclick="display_basic_db_data()">
                         <i class="fas fa-times"></i> cancel
                     </button>
                 </div>
@@ -82,8 +82,8 @@
                 <!-- Modal body -->
                 <div class="modal-body scrollbox">
                     <div id="id_del_add_button">
-                        <button class="btn btn-primary" type="button" onclick="add_popup_row()"><i class="fa fa-plus"></i> add new row</button>
-                        <button class="btn btn-outline-danger" onclick="delete_popup_row('id_popup_table')"><i class="fa fa-trash"></i> delete</button>
+                        <button class="btn btn-primary" title="Add New Row" type="button" onclick="add_popup_row()"><i class="fa fa-plus"></i> add new row</button>
+                        <button class="btn btn-outline-danger" title="Delete" onclick="delete_popup_row('id_popup_table')"><i class="fa fa-trash"></i> delete</button>
                     </div>
                     <div id="id_check_success_messages" class="alert alert-success check_success_message" hidden></div>
                     <div id="id_check_error_messages" class="alert alert-danger check_error_messages" hidden></div>
@@ -116,9 +116,9 @@
                 </div>
                 <!-- Modal footer -->
                 <div class="modal-footer">
-                     <button type="button" class="btn btn-outline-primary remove_upload_data" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
+                     <button type="button" class="btn btn-outline-primary remove_upload_data" title="Cancel" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
                     <button id="id_delete_duplicate" class="btn btn-primary" style="display:none;" type="button" onclick="delete_duplicate()"><i class="fa fa-trash"></i> delete duplicates</button>
-                    <button class="btn btn-primary" id="save_id"><i class="fas fa-save"></i> save</button> </div>
+                    <button class="btn btn-primary" title="Save" id="save_id"><i class="fas fa-save"></i> save</button> </div>
             </div>
         </div>
     </div>
@@ -164,23 +164,6 @@
         var number_range = {};
         var no_duplicates = 'Y'
         var error_message = '';
-        $('#display_basic_table').DataTable().destroy();
-        $("#id_popup_table TBODY TR").each(function () {
-            var row = $(this);
-            var number_range = {};
-            number_range.sequence = row.find("TD").eq(1).find('input[type="text"]').val();
-            number_range.starting = row.find("TD").eq(2).find('input[type="text"]').val();
-            number_range.ending = row.find("TD").eq(3).find('input[type="text"]').val();
-            number_range.current = row.find("TD").eq(4).find('input[type="text"]').val();
-            number_range.del_ind = row.find("TD").eq(6).find('input[type="checkbox"]').is(':checked');
-            number_range.guid = row.find("TD").eq(5).find('input').val();
-            if (number_range == undefined) {
-                number_range.sequence = row.find("TD").eq(1).find('input[type="text"]').val();
-            }
-            validate_add_attributes.push(number_range.sequence);
-            number_range_data.push(number_range);
-            compare_array.push(number_range.starting, number_range.ending, number_range.current)
-        });
         get_main_table_data();  //Read data from main table
         [no_duplicate_value,error_message] = compare_table_for_duplicate_entries(validate_add_attributes, numberranges_data)
         if (error_message){
@@ -190,34 +173,33 @@
             if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
                 [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value,numberranges_data,main_table_data)
             }
-            console.log(compare_array);
             if (((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y'))) {
                 var add_basic_data = '';
-            var number_range_data_array = numberranges_data;
-            $('#id_save_confirm_popup').modal('hide');
-            data = {'data':numberranges_data,'table_name':'NumberRanges','action':GLOBAL_ACTION}
-            OpenLoaderPopup();
-            $.ajax({
-                type: 'POST',
-                url: "{% url 'eProc_Configuration:create_update_application_data' %}",
-                data: JSON.stringify(data),
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                success: function (Response) {
-                    rendered_number_range_data = Response[0];
-                    max_sequence = response[0].sequence;
-                    display_basic_db_data();
-                    $('#myModal').modal('hide');
-                    success_response(Response); // Function call to display response data
-                    CloseLoaderPopup();
-                }
-            });
-        }
-        else if (error_message){
-            display_error_message(error_message)
+                var number_range_data_array = numberranges_data;
+                $('#id_save_confirm_popup').modal('hide');
+                data = {'data':numberranges_data,'table_name':'NumberRanges','action':GLOBAL_ACTION}
+                OpenLoaderPopup();
+                $.ajax({
+                    type: 'POST',
+                    url: "{% url 'eProc_Configuration:create_update_application_data' %}",
+                    data: JSON.stringify(data),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (Response) {
+                        rendered_number_range_data = Response[0].upload_response;
+                        max_sequence = parseInt(Response[0].sequence_max) + 1;
+                        display_basic_db_data();
+                        $('#myModal').modal('hide');
+                        success_response(Response); // Function call to display response data
+                        CloseLoaderPopup();
+                    }
+                });
+            }
+            else if (error_message){
+                display_error_message(error_message)
+            }
         }
     }
-}
 
     //delete the selected row in db................
     var main_table_number_range_checked = [];
@@ -237,8 +219,8 @@
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             success: function (Response) {
-                console.log(Response[2]);
-                rendered_number_range_data = Response[0];
+                rendered_number_range_data = Response[0].upload_response;
+                max_sequence = parseInt(Response[0].sequence_max) + 1;
                 display_basic_db_data();
                 success_response(Response); // Function call to display response data
                 CloseLoaderPopup();

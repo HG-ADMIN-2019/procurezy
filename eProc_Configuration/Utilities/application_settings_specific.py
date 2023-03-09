@@ -212,7 +212,7 @@ class ApplicationSettingsSave:
                                                  ['guid', 'sequence', 'starting', 'ending',
                                                   'current', 'document_type',
                                                   ])
-        sequence = NumberRanges.objects.filter(client=global_variables.GLOBAL_CLIENT, document_type=CONST_DOC_TYPE_FC, del_ind=False).aggregate(
+        sequence = NumberRanges.objects.filter(client=global_variables.GLOBAL_CLIENT, document_type=doc_type, del_ind=False).aggregate(
             Max('sequence'))
         sequence_max = sequence['sequence__max']
         data = {'upload_response':upload_response,'sequence_max':sequence_max}
