@@ -1,11 +1,13 @@
 var numberranges_data = new Array();
 var main_table_data = new Array();
 var validate_add_attributes = [];
+var nextval = max_sequence ;
 var number_range={};
 var seq_array= [];
 
 //onclick of add button display myModal popup and set GLOBAL_ACTION button value
 function onclick_add_button(button) {
+    nextval = max_sequence;
     $("#error_msg_id").css("display", "none")
     $("#header_select").prop( "hidden", false );
     GLOBAL_ACTION = button.value
@@ -18,7 +20,6 @@ function onclick_add_button(button) {
     $("#id_del_ind_checkbox").prop("hidden", true);
     document.getElementById("id_del_add_button").style.display = "block";
     $("#save_id").prop("hidden", false);
-    nextval = max_sequence;
 }
 
 // on click update icon display the selected checkbox data to update
@@ -136,7 +137,6 @@ function main_range_check_function(number_range,check_number_range){
 function inRange(x, min, max) {
     return !((x-min)*(x-max) <= 0);
 }
-var nextval = max_sequence ;
 
 // on click add icon display the row in to add the new entries
 function add_popup_row() {
@@ -148,12 +148,38 @@ function add_popup_row() {
         $("#id_error_msg").html("");
     });
     nextval += 1;
-    basic_add_new_html = '<tr ><td class="number_range_checkbox"><input type="checkbox" required></td><td><input class="form-control"  type="number" maxlength="2" value = '+ nextval +'  name="sequence"  required></td><td><input class="form-control" type="number" maxlength="100000000"  name="starting"  required></td><td><input class="form-control" type="number" maxlength="100000000"  name="ending"  required></td><td><input class="form-control" type="number" maxlength="100000000"  name="current"  required></td>><td hidden><input class="form-control" type="text" value=""></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+    basic_add_new_html = '<tr ><td class="number_range_checkbox"><input type="checkbox" required></td><td><input class="form-control"  type="number" maxlength="2" value = '+ nextval +'  name="sequence"  required disabled></td><td><input class="form-control" type="number" maxlength="100000000"  name="starting"  required></td><td><input class="form-control" type="number" maxlength="100000000"  name="ending"  required></td><td><input class="form-control" type="number" maxlength="100000000"  name="current"  required></td>><td hidden><input class="form-control" type="text" value=""></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
     if (GLOBAL_ACTION == "number_range") {
         $(".class_del_checkbox").prop("hidden", false);
     }
     table_sort_filter('id_popup_table');
+}
+
+//function to delete selected row in popup
+function delete_popup_row(myTable) {
+    $('#id_popup_table').DataTable().destroy();
+    try {
+        var table = document.getElementById(myTable);
+        var rowCount = table.rows.length;
+        for (var i = 0; i < rowCount; i++) {
+            var row = table.rows[i];
+            var chkbox = row.cells[0].childNodes[0];
+            if (null != chkbox && true == chkbox.checked) {
+                table.deleteRow(i);
+                nextval -= 1;
+                rowCount--;
+                i--;
+            }
+        }
+        $("#id_delete_data").hide();
+        $("#id_copy_data").hide();
+        $("#id_update_data").hide();
+        table_sort_filter('id_popup_table');
+        return rowCount;
+    } catch (e) {
+        alert(e);
+    }
 }
 
 //onclick of cancel display the table in display mode............
@@ -182,6 +208,12 @@ function display_basic_db_data() {
 // Functtion to hide and display save related popups
 $('#save_id').click(function () {
     $('#myModal').modal('hide');
+    numberranges_data = read_popup_data();
+    $('#id_save_confirm_popup').modal('show');
+});
+
+//Read popup table data
+function read_popup_data() {
     numberranges_data = new Array();
     validate_add_attributes = [];
     $('#id_popup_table').DataTable().destroy();
@@ -204,9 +236,8 @@ $('#save_id').click(function () {
         validate_add_attributes.push(number_range.sequence);
         numberranges_data.push(number_range);
     });
-    table_sort_filter_popup('id_popup_table')
-    $('#id_save_confirm_popup').modal('show');
-});
+    return numberranges_data;
+}
 
 //********************************************
 function display_error_message(error_message){

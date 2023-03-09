@@ -437,15 +437,14 @@
                     if(item1.language_id == "EN"){
                         language_exists_flag = true
                     }
-
                 }
-                if(!language_exists_flag){
-                    console.log("Please select default language English for new Product ID")
-                    error_message = ui_messeges("JMSG002")
-             }
+                if (item.prod_cat_id != item1.prod_cat_id){
+                    if(!language_exists_flag){
+                        console.log("Please select default language English for new Product ID")
+                        error_message = ui_messeges("JMSG029")
+                    }
+                }
             })
-
-
         })
         $.each(validate_add_attributes, function (index, value) {
             if ($.inArray(value, add_attr_unique_list) == -1) {
@@ -461,7 +460,6 @@
             error_message = ui_messeges("JMSG001")// Get message details
             no_duplicate_value = 'N'
             return [no_duplicate_value,error_message]
-
         }
         else{
                 $.each(cusprodcatdesc, function (i, item) {
@@ -568,6 +566,7 @@
         var desc='';
         validate_add_attributes = [];
         duplicate_entry = [];
+        var cusprodcatdesc_data = new Array();
         $("#id_popup_table TBODY TR").each(function() {
             var row = $(this);
             cusprodcatdesc = {};
