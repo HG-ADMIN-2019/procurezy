@@ -128,7 +128,7 @@ function read_popup_data() {
         addresstype.address_type = row.find("TD").eq(2).find('select').val();
         addresstype.company_id = row.find("TD").eq(1).find('select').val();
         addresstype.valid_from = row.find("TD").eq(4).find('input[type="text"]').val();
-        if(addresstype.valid_from == undefined){
+        if((addresstype.valid_from == undefined) || (addresstype.valid_from == '')){
             addresstype.valid_from = '';
         }
         else
@@ -137,7 +137,7 @@ function read_popup_data() {
             addresstype.valid_from = from_date+ ' 00:00:00'
         }
         addresstype.valid_to = row.find("TD").eq(5).find('input[type="text"]').val();
-        if(addresstype.valid_to == undefined){
+        if((addresstype.valid_to == undefined) || (addresstype.valid_to == '')){
             addresstype.valid_to = '';
         }
         else{
@@ -163,8 +163,8 @@ function new_row_data() {
         '<td><select class="form-control">'+company_dropdwn+'</select></td>' +
         '<td><select class="form-control">'+address_type_dropdown+'</select></td>' +
         '<td><select class="form-control">'+address_number_dropdwn+'</select></td>' +
-        '<td><input  type="date" name = "valid_from" class="form-control from_to_date"></td>' +
-        '<td><input type="date" name = "valid_to"  class="form-control from_to_date"></td>' +
+        '<td><input  type="text" name = "valid_from" class="form-control from_to_date"></td>' +
+        '<td><input type="text" name = "valid_to"  class="form-control from_to_date"></td>' +
         '<td class="class_del_checkbox" hidden><input type="checkbox" required></td>' +
         '<td hidden><input  type="text" class="form-control"  name="guid"></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
