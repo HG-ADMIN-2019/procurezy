@@ -138,13 +138,13 @@
                             </a>
                             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
 
-                                <a class="dropdown-item notes{{ forloop.counter }}"
+                                <a class="dropdown-item notes-{{ forloop.counter }}"
                                    onclick="showSection(this, 'notes-{{ forloop.counter }}')">Notes</a>
-                                <a class="dropdown-item attachments{{ forloop.counter }}"
+                                <a class="dropdown-item attachments-{{ forloop.counter }}"
                                    onclick="showSection(this, 'attachments-{{ forloop.counter }}')">Attachments</a>
-                                <a class="dropdown-item shipAddress{{ forloop.counter }}"
+                                <a class="dropdown-item shipAddress-{{ forloop.counter }}"
                                    onclick="showSection(this, 'shipAddress-{{ forloop.counter }}')">Shipping Address</a>
-                                <a class="dropdown-item accoutingData{{ forloop.counter }}"
+                                <a class="dropdown-item accoutingData-{{ forloop.counter }}"
                                    onclick="showSection(this, 'accoutingData-{{ forloop.counter }}')">Cost
                                     Assignment</a>
                                 {% if items.related_documents %}
@@ -184,11 +184,11 @@
                     </div>
 
                     <!--start of hidable content which lets the user add notes -->
-                    <div id="notes{{ forloop.counter }}" class="item{{ forloop.counter }}" style="display: none;">
+                    <div id="notes-{{ forloop.counter }}" class="item{{ forloop.counter }}" style="display: none;">
                         <div class="card item-table-action__item-notes">
                             <div class="card-header item-table-action__header">
                                 <span>Notes</span>
-                                <span onclick="closeAttachSection(this, 'notes{{ forloop.counter }}')">
+                                <span onclick="closeAttachSection(this, 'notes-{{ forloop.counter }}')">
                                     <i class="fas fa-times"></i>
                                 </span>
                             </div>
@@ -226,11 +226,11 @@
                     <!--end of hideable content which lets the user add notes -->
 
                     <!-- start of hideable content which lets the user add attachments -->
-                    <div id="attachments{{ forloop.counter }}" class="item{{ forloop.counter }}" style="display: none">
+                    <div id="attachments-{{ forloop.counter }}" class="item{{ forloop.counter }}" style="display: none">
                         <div class="card">
                             <div class="card-header item-table-action__header">
                                 <span>Attachments</span>
-                                <span onclick="closeAttachSection(this, 'attachments{{ forloop.counter }}')">
+                                <span onclick="closeAttachSection(this, 'attachments-{{ forloop.counter }}')">
                                     <i class="fas fa-times"></i>
                                 </span>
                             </div>
@@ -304,13 +304,13 @@
                     <!--end of hideable content which lets the user add attachments -->
 
                     <!-- start of hideable content which lets the user change shipping address -->
-                    <div id="shipAddress{{ forloop.counter }}" class="item{{ forloop.counter }}" style="display: none;">
+                    <div id="shipAddress-{{ forloop.counter }}" class="item{{ forloop.counter }}" style="display: none;">
                         <div class="card">
                             {% for addr in addr_det %}
                             {% if addr.item_guid_id == items.guid %}
                             <div class="card-header item-table-action__header">
                                 <span>Shipping Address</span>
-                                <span onclick="closeAttachSection(this, 'shipAddress{{ forloop.counter }}')">
+                                <span onclick="closeAttachSection(this, 'shipAddress-{{ forloop.counter }}')">
                                     <i class="fas fa-times"></i>
                                 </span>
                             </div>
@@ -347,13 +347,13 @@
                     <!-- end of hideable content which lets the user change shipping assignment -->
 
                     <!-- start of hideable content which lets the user change cost assignment -->
-                    <div id="accoutingData{{ forloop.counter }}" style="display: none;" class="item{{ forloop.counter }}">
+                    <div id="accoutingData-{{ forloop.counter }}" style="display: none;" class="item{{ forloop.counter }}">
                         <div class="card">
                             {% for acc in acc_det %}
                             {% if acc.item_guid_id == items.guid %}
                             <div class="card-header item-table-action__header">
                                 <span>Account assignment category</span>
-                                <span onclick="closeAttachSection(this, 'accoutingData{{ forloop.counter }}')">
+                                <span onclick="closeAttachSection(this, 'accoutingData-{{ forloop.counter }}')">
                                     <i class="fas fa-times"></i>
                                 </span>
                             </div>
