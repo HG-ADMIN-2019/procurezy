@@ -13,6 +13,7 @@ function onclick_add_button(button) {
     $('#unspscModal').modal('show');
     // Add a new row in popup
     new_row_data();
+    table_sort_filter('id_popup_table');
     $("#id_del_ind_checkbox").prop("hidden", true);
     display_button();
     document.getElementById("id_del_add_button").style.display = "block";
@@ -132,8 +133,10 @@ function add_popup_row() {
         $("#id_error_msg").html("No records to be saved");
     });
     new_row_data();
+    table_sort_filter('id_popup_table');
     if (GLOBAL_ACTION == "prodcat_upload") {
         $(".class_del_checkbox").prop("hidden", false);
+        $("#id_del_ind_checkbox").prop("hidden", false);
     }
     $('#delete_data').hide()
 }
@@ -227,7 +230,6 @@ function new_row_data() {
     '<td class="class_del_checkbox" hidden><input type="checkbox" required></td>'+
     '<td class="id_del_ind_checkbox1" hidden><input type="checkbox" name = "del_ind_flag" required></td></tr>'
     $('#id_popup_tbody').append(basic_add_new_html);
-    table_sort_filter('id_popup_table');
 }
 
 
