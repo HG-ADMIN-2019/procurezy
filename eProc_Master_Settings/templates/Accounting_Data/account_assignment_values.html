@@ -215,27 +215,13 @@
         no_duplicate_value = 'Y'
         var error_message = '';
         $('#display_basic_table').DataTable().destroy();
-<!--        $("#id_popup_table TBODY TR").each(function() {-->
-<!--            var row = $(this);-->
-<!--            aav = {};-->
-<!--            aav.company_id = row.find("TD").eq(1).find('Select').val()-->
-<!--            aav.account_assign_cat = row.find("TD").eq(2).find('Select').val()-->
-<!--            aav.account_assign_value = row.find("TD").eq(3).find('input[type="number"]').val();-->
-<!--            aav.valid_from = row.find("TD").eq(4).find('input[type="date"]').val()-->
-<!--            aav.valid_to = row.find("TD").eq(5).find('input[type="date"]').val()-->
-<!--            aav.account_assign_guid = row.find("TD").eq(6).find('input').val()-->
-<!--            aav.del_ind = row.find("TD").eq(7).find('input[type="checkbox"]').is(':checked');-->
-<!--            if (aav == undefined) {-->
-<!--                aav.account_assign_value = row.find("TD").eq(3).find('input[type="text"]').val();-->
-<!--            }-->
-<!--            check_dates.push([aav.valid_from, aav.valid_to])-->
-<!--            var compare = aav.account_assign_value + '-' + aav.account_assign_cat + '-' + aav.company_id-->
-<!--            validate_add_attributes.push(compare);-->
-<!--            countries_data.push(aav);-->
-<!--        });-->
         get_main_table_data(); //Read data from main table
         // compare for duplicates in popup
-        [no_duplicate_value,validDate,error_message] = compare_table_for_duplicate_entries(validate_add_attributes, aav_data)
+        [no_duplicate_value,error_message] = compare_table_for_duplicate_entries(validate_add_attributes, aav_data)
+        if(error_message){
+            display_error_message(error_message)
+        }
+        else{
         var dateValid ;
         [dateValid,error_message] = check_date(aav);
         if (error_message){
@@ -269,6 +255,7 @@
             else if (error_message){
                 display_error_message(error_message)
             }
+        }
         }
     }
 
