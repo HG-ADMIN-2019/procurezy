@@ -321,9 +321,13 @@
         get_main_table_data(); //Read data from main table
         // compare for duplicates in popup
         [no_duplicate_value,error_message] = compare_table_for_duplicate_entries(validate_add_attributes, addresstype_data)
+         if(error_message){
+            display_error_message(error_message)
+        }
+        else{
          var dateValid ;
         [dateValid,error_message] = check_date(addresstype_data);
-        if (error_message){
+        if(error_message){
             display_error_message(error_message)
         } else {
             if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
@@ -356,7 +360,8 @@
             else if (error_message){
                     display_error_message(error_message)
             } 
-        } 
+        }
+        }
     }
 
     //delete the selected row in db................
@@ -614,6 +619,11 @@
             $.each(address_type, function (i, item) {
                 if (item.address_number.length == 0) {
                     error_message = ui_messeges("JMSG002")// Get message details
+                    no_duplicate_value = 'N'
+                    return [no_duplicate_value,error_message]
+                }
+                if ((item.valid_from == '') || (item.valid_to == '')) {
+                    error_message = ui_messeges("JMSG002") + " For Date "// Get message details
                     no_duplicate_value = 'N'
                     return [no_duplicate_value,error_message]
                 }

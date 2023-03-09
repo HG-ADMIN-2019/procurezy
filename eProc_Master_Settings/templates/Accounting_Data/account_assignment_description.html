@@ -740,7 +740,7 @@
             acct_assmt_dic.account_assign_cat = row.find("TD").eq(2).find("select option:selected").val();
             acct_assmt_dic.account_assign_value = row.find("TD").eq(3).find("select option:selected").val();
             acct_assmt_dic.language_id = row.find("TD").eq(5).find("select option:selected").val();
-            var compare = acct_assmt_dic.account_assign_value +'-'+ acct_assmt_dic.account_assign_cat +'-'+ acct_assmt_dic.company_id+'-'+acct_assmt_dic.language_id
+            var compare = acct_assmt_dic.account_assign_value+'-'+acct_assmt_dic.account_assign_cat+'-'+acct_assmt_dic.company_id+'-'+acct_assmt_dic.language_id
             acct_assmt_check.push(compare);
             jQuery.grep(acct_assmt_check, function(el) {
                 if (jQuery.inArray(el, common) != -1) {

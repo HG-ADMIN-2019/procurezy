@@ -128,11 +128,22 @@ function read_popup_data() {
         addresstype.address_type = row.find("TD").eq(2).find('select').val();
         addresstype.company_id = row.find("TD").eq(1).find('select').val();
         addresstype.valid_from = row.find("TD").eq(4).find('input[type="text"]').val();
+        if(addresstype.valid_from == undefined){
+            addresstype.valid_from = '';
+        }
+        else
+        {
+            var from_date = new Date(addresstype.valid_from).toLocaleDateString();
+            addresstype.valid_from = from_date+ ' 00:00:00'
+        }
         addresstype.valid_to = row.find("TD").eq(5).find('input[type="text"]').val();
-        var from_date = new Date(addresstype.valid_from).toLocaleDateString();
-        var to_date = new Date(addresstype.valid_to).toLocaleDateString();
-        addresstype.valid_from = from_date+ ' 00:00:00'
-        addresstype.valid_to = to_date+ ' 00:00:00'
+        if(addresstype.valid_to == undefined){
+            addresstype.valid_to = '';
+        }
+        else{
+            var to_date = new Date(addresstype.valid_to).toLocaleDateString();
+            addresstype.valid_to = to_date+ ' 00:00:00'
+        }
         var addresstype_compare = addresstype.address_number +'-'+ addresstype.address_type+'-'+addresstype.company_id
         if (addresstype == undefined){
             addresstype.address_number = row.find("TD").eq(2).find('input').val();
