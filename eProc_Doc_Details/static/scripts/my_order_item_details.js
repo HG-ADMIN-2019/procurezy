@@ -117,7 +117,7 @@ function get_item1(item_guid) {
 
 // Function to hide and show hidden table row contents
 function showSection(obj, data) {
-    item_number = data.substr(-1)
+    item_number = data.split('-')[1]
     GLOBAL_SELECT_ITEM_NUM = item_number
     document.getElementById('item_info_tr-'+item_number).hidden = false;
     if (data.includes('attachments')) {

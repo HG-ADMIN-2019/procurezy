@@ -51,7 +51,7 @@
                     <div class="desc-section-bottom">
                         {% if items.eform_id %}
                         {% if items.call_off == '04' or items.call_off == '02' or items.call_off == '03' %}
-                        <button class="hg_button_edit" onclick="showSection(this, 'displayEform{{ forloop.counter }}')"> View Additional details</button>
+                        <button class="hg_button_edit" onclick="showSection(this, 'displayEform-{{ forloop.counter }}')"> View Additional details</button>
                         {% endif %}
                         {% endif %}
                         <button type="button" class="hg_button_round notes badge_status_await_approval" id="notes_added-{{forloop.counter}}" title="Notes Added" hidden> <i class="material-icons-outlined">description</i></button>

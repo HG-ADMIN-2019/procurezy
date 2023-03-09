@@ -54,7 +54,7 @@
                     <div class="desc-section-bottom">
                         {% if items.eform_id %}
                         {% if items.call_off == '04' or items.call_off == '02' or items.call_off == '03' %}
-                        <button class="hg_button_edit" onclick="showSection(this, 'displayEform{{ forloop.counter }}')"> View Additional details</button>
+                        <button class="hg_button_edit" onclick="showSection(this, 'displayEform-{{ forloop.counter }}')"> View Additional details</button>
                         {% endif %}
                         {% endif %}
                         <button type="button" class="hg_button_round notes badge_status_await_approval" id="notes_added-{{forloop.counter}}" title="Notes Added" hidden> <i class="material-icons-outlined">description</i></button>
@@ -101,13 +101,13 @@
                             </a>
                             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
                                 <a class="dropdown-item notes{{ forloop.counter }}"
-                                   onclick="showSection(this, 'notes{{ forloop.counter }}')" >Notes</a>
+                                   onclick="showSection(this, 'notes-{{ forloop.counter }}')" >Notes</a>
                                 <a class="dropdown-item attachments{{ forloop.counter }}"
-                                   onclick="showSection(this, 'attachments{{ forloop.counter }}')" >Attachments</a>
+                                   onclick="showSection(this, 'attachments-{{ forloop.counter }}')" >Attachments</a>
                                 <a class="dropdown-item shipAddress{{ forloop.counter }}"
-                                   onclick="showSection(this, 'shipAddress{{ forloop.counter }}')" >Shipping Address</a>
-                                <a class="dropdown-item accoutingData{{ forloop.counter }}"
-                                   onclick="showSection(this, 'accoutingData{{ forloop.counter }}')" >Cost Assignment</a>
+                                   onclick="showSection(this, 'shipAddress-{{ forloop.counter }}')" >Shipping Address</a>
+                                <a class="dropdown-item accoutingData-{{ forloop.counter }}"
+                                   onclick="showSection(this, 'accoutingData-{{ forloop.counter }}')" >Cost Assignment</a>
                             </div>
                         </div>
                         {% endif %}
