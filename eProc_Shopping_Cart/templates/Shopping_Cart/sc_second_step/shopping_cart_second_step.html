@@ -331,7 +331,7 @@
     var gl_account_values = "{{default_gl_account.0}}";
     var url_new = "{% url 'eProc_Basic:get_message_description' %}";
     var msg_display_interval = {{msg_display_time_value|safe}};
-
+    var cart_length = {{cart_items_count}};
     //cart item guid
     var sc_item_guid = []
     {% for items in cart_items_guid_list %}

@@ -142,7 +142,7 @@ request.onupgradeneeded = function (event) {
 var highest_value_item_number = document.getElementById('highest_item').value
 var highest_item_acc_asgn_cat = (document.getElementById('change_acc_type_'+highest_value_item_number).innerHTML).split(' - ')[0]
 var highest_item_change_acc_value = (document.getElementById('change_acc_value_'+highest_value_item_number).innerHTML).split(' - ')[0]
-var cart_length = parseInt(document.getElementById('cart_counter').innerHTML)
+
 
 // Function to edit cart name in sc second step
 function edit_sc_name(){

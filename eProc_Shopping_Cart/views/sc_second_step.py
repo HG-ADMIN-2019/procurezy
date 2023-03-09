@@ -496,6 +496,7 @@ def sc_second_step(request):
 
     context = {
         'shopping_cart_errors': shopping_cart_errors,
+        'cart_items_count':cart_items_count,
         'highest_item_number': highest_item_number + 1,
         'sc_completion_flag': sc_completion_flag,
         'requester_user_name': global_variables.GLOBAL_LOGIN_USERNAME,

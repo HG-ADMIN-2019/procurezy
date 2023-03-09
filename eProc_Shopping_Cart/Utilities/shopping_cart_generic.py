@@ -574,7 +574,7 @@ def get_manger_and_purchasing_details(company_code, default_acc_ass_cat, total_v
     completion_work_flow = []
     manager_details = {}
     sc_completion_flag = False
-    approver_id = ''
+    approver_id = []
     purchase_control_call_off_list = get_order_status(company_code, global_variables.GLOBAL_CLIENT)
     if company_code:
         manager_detail, msg_info = get_manger_detail(global_variables.GLOBAL_CLIENT,
