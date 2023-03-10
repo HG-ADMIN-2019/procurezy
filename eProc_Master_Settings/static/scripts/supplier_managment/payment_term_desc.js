@@ -120,7 +120,8 @@ function get_main_table_data() {
         var main_attribute = {};
         main_attribute.language_id = row.find("TD").eq(1).html();
         main_attribute.payment_term_key = row.find("TD").eq(2).html();
-        var paytrm_desc_maintable = main_attribute.language_id +'-'+ main_attribute.payment_term_key
+        var desc = get_language(render_language_data,main_attribute.language_id)
+        var paytrm_desc_maintable = desc+'-'+ main_attribute.payment_term_key
         main_table_low_value.push(paytrm_desc_maintable);
     });
     table_sort_filter('display_basic_table');
