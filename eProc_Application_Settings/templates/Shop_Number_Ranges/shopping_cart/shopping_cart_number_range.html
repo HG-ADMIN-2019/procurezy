@@ -85,7 +85,7 @@
                 <div class="modal-body scrollbox">
                     <div id="id_del_add_button">
                         <button class="btn btn-primary" type="button" onclick="add_popup_row()"><i class="fa fa-plus"></i> add new row</button>
-                        <button class="btn btn-outline-danger" onclick="application_settings_delete_Row('id_popup_table')"><i class="fa fa-trash"></i> delete</button>
+                        <button class="btn btn-outline-danger" onclick="delete_popup_row('id_popup_table')"><i class="fa fa-trash"></i> delete</button>
                     </div>
                     <div id="id_check_success_messages" class="alert alert-success check_success_message" hidden></div>
                     <div id="id_check_error_messages" class="alert alert-danger check_error_messages" hidden></div>
@@ -182,7 +182,6 @@
             number_range_data.push(number_range);
             compare_array.push(number_range.starting, number_range.ending, number_range.current)
         });
-        $('#display_basic_table').DataTable().destroy();
         get_main_table_data();  //Read data from main table
         // compare for duplicates in popup
         [no_duplicate_value,error_message] = compare_table_for_duplicate_entries(validate_add_attributes, numberranges_data)
@@ -193,7 +192,6 @@
             if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
                 [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value,numberranges_data,main_table_data)
             }
-            console.log(compare_array);
             if (((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y'))) {
                 var add_basic_data = '';
                 var number_range_data_array = numberranges_data;
@@ -207,9 +205,10 @@
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
                     success: function (Response) {
-                        rendered_number_range_data = Response[0];
+                        rendered_number_range_data = Response[0].upload_response;
+                        max_sequence = parseInt(Response[0].sequence_max) + 1;
                         display_basic_db_data();
-                        $('#sccart_Modal').modal('hide');
+                        $('#myModal').modal('hide');
                         success_response(Response); // Function call to display response data
                         CloseLoaderPopup();
                     }
@@ -240,7 +239,8 @@
             dataType: "json",
             success: function (Response) {
                 console.log(Response[2]);
-                rendered_number_range_data = Response[0];
+                rendered_number_range_data = Response[0].upload_response;
+                max_sequence = parseInt(Response[0].sequence_max) + 1;
                 display_basic_db_data();
                 success_response(Response); // Function call to display response data
                 CloseLoaderPopup();

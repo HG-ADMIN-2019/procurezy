@@ -194,7 +194,7 @@
     //Dropdown function
     function unspcdesc_dropdown(){
         prod_cat_id_dropdown = '';
-        $.each(rendered_UNSPCDESC_data, function(i, item){
+        $.each(rendered_UNSPC_data, function(i, item){
             prod_cat_id_dropdown += '<option value="' + item.prod_cat_id + '">' + item.prod_cat_id + '</option>';
         })
         language_id_dropdown = ' ';
@@ -418,6 +418,26 @@
         $('#id_popup_table').DataTable().destroy();
     });
 
+    function check_unspsc_desc(item){
+        language_exists_flag = false
+        $.each(rendered_cust_prod_cat_desc_data, function(j, item1){
+                if(item.language_id == "EN"){
+                        language_exists_flag = true
+                        return language_exists_flag
+                    }
+
+                else if (item.prod_cat_id == item1.prod_cat_id){
+                    if(item1.language_id == "EN"){
+                        language_exists_flag = true
+                        return language_exists_flag
+                    }
+                }
+
+            })
+            return language_exists_flag
+
+    }
+
     // validating the  popup table for duplicate entries
     function compare_table_for_duplicate_entries(validate_add_attributes, cusprodcatdesc) {
         add_attr_duplicates = false;
@@ -429,22 +449,11 @@
 
         $.each(cusprodcatdesc, function(i, item){
             language_exists_flag = false
-            $.each(rendered_UNSPCDESC_data, function(j, item1){
-                if(item.language_id == "EN"){
-                        language_exists_flag = true
+            language_exists_flag = check_unspsc_desc(item)
+            if(!language_exists_flag){
+                        console.log("Please select default language English for new Product ID")
+                        error_message = ui_messeges("JMSG029")
                     }
-                if (item.prod_cat_id == item1.prod_cat_id){
-                    if(item1.language_id == "EN"){
-                        language_exists_flag = true
-                    }
-
-                }
-                if(!language_exists_flag){
-                    console.log("Please select default language English for new Product ID")
-                    error_message = ui_messeges("JMSG002")
-             }
-            })
-
 
         })
         $.each(validate_add_attributes, function (index, value) {
@@ -461,7 +470,6 @@
             error_message = ui_messeges("JMSG001")// Get message details
             no_duplicate_value = 'N'
             return [no_duplicate_value,error_message]
-
         }
         else{
                 $.each(cusprodcatdesc, function (i, item) {
@@ -499,11 +507,14 @@
         $("#error_msg_id").css("display", "none")
         basic_add_new_html = '';
         var display_db_data = '';
+         var getid = $(".prodid:last").attr("id");
+        var getindex = getid.split("-")[1]
+        var inc_index = Number(getindex)+1
         $('#id_popup_table').DataTable().destroy();
         $(".modal").on("hidden.bs.modal", function () {
             $("#id_error_msg").html(" ");
         });
-        new_row_data();   // Add a new row in popup
+        new_row_data(inc_index);   // Add a new row in popup
         if (GLOBAL_ACTION == "cusprodcatdesc_upload") {
             $(".class_del_checkbox").prop("hidden", false);
         }
@@ -568,6 +579,7 @@
         var desc='';
         validate_add_attributes = [];
         duplicate_entry = [];
+        var cusprodcatdesc_data = new Array();
         $("#id_popup_table TBODY TR").each(function() {
             var row = $(this);
             cusprodcatdesc = {};
@@ -845,8 +857,8 @@ function onclick_copy_update_button(data){
     }
 
     // Function for add a new row data
-    function new_row_data() {
-        basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select type="text" class="input form-control prodid" id="prodid-1"  name="prodid" onchange="GetSelectedTextValue(this)"><option value=""selected>Select your option</option>'+prod_cat_id_dropdown+'</select></td><td><select class="form-control">'+language_id_dropdown+'</select></td><td><input class="form-control description" type="text"  name="description"  id="description-1"></td><td hidden><guid></td><td hidden>< del_ind></td></tr>';
+    function new_row_data(inc_index) {
+        basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select type="text" class="input form-control prodid" id="prodid-'+inc_index+'"  name="prodid" onchange="GetSelectedTextValue(this)"><option value=""selected>Select your option</option>'+prod_cat_id_dropdown+'</select></td><td><select class="form-control">'+language_id_dropdown+'</select></td><td><input class="form-control description" type="text"  name="description"  id="description-'+inc_index+'"></td><td hidden><guid></td><td hidden>< del_ind></td></tr>';
         $('#id_popup_tbody').append(basic_add_new_html);
         table_sort_filter('id_popup_table');
     }

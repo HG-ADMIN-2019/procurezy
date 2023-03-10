@@ -12,6 +12,7 @@ function onclick_add_button(button) {
     $("#id_popup_tbody").empty();
     $('#currencyModal').modal('show');
     new_row_data();   // Add a new row in popup
+    table_sort_filter('id_popup_table');
     $("#id_del_ind_checkbox").prop("hidden", true);
     document.getElementById("id_del_add_button").style.display = "block";
     $("#save_id").prop("hidden", false);
@@ -113,8 +114,10 @@ function add_popup_row() {
         $("#id_error_msg").html(" ");
     });
     new_row_data();   // Add a new row in popup
+    table_sort_filter('id_popup_table');
     if (GLOBAL_ACTION == "currency_upload") {
         $(".class_del_checkbox").prop("hidden", false);
+        $("#id_del_ind_checkbox").prop("hidden", false);
     }
     $('#delete_data').hide()
 }
@@ -218,7 +221,6 @@ function get_selected_row_data(){
 function new_row_data(){
     basic_add_new_html = '<tr ><td><input type="checkbox" required></td><td><input class="input form-control check_special_char" type="text"  title="Minimum length is 3" minlength="3"  maxlength="3"  name="currencycode" style="text-transform:uppercase;" required></td><td><input class="input form-control check_special_char" type="text" maxlength="100"  name="currencyname"  required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
-    table_sort_filter('id_popup_table');
 }
 
 //Get message for check data function

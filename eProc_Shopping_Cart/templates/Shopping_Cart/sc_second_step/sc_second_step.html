@@ -311,7 +311,7 @@
     </div>
 </div>
 <!-- end on save error popup-->
-
+{{ cart_items_guid_list|json_script:"cart_items_guid_list" }}
 <script>
 
 
@@ -331,6 +331,7 @@
     var gl_account_values = "{{default_gl_account.0}}";
     var url_new = "{% url 'eProc_Basic:get_message_description' %}";
     var msg_display_interval = {{msg_display_time_value|safe}};
+    var cart_length = {{cart_items_count}};
 
     //cart item guid
     var sc_item_guid = []
@@ -368,13 +369,14 @@ function check_shopping_cart(type, sc_data, acc_default, acc_default_val){
     acc_default = acc_default
     acc_default_val = acc_default_val
     var total_val = $('#total_cart_value').text();
+    var requester = $('#shopping_cart_requester').val();
     data = {
             'acc_default': acc_default.split(' - ')[0],
             'acc_default_val': acc_default_val.split(' - ')[0],
             'total_val':total_val,
             'check_sc_data': check_sc_data,
             'type': type,
-            'requester': $('#shopping_cart_requester').val()
+            'requester': requester
     }
     OpenLoaderPopup();
     $.ajax({

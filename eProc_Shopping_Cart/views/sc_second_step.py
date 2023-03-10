@@ -18,7 +18,7 @@ from django.db.models import Q
 from django.http import JsonResponse
 from django.shortcuts import render, redirect
 from eProc_Account_Assignment.Utilities.account_assignment_generic import AccountAssignmentCategoryDetails, \
-    get_default_gl_acc, get_acc_details
+    get_default_gl_acc, get_acc_details, get_prod_cat_value_guid
 from eProc_Basic.Utilities.functions.get_system_setting_attributes import *
 from eProc_Basic.Utilities.functions.guid_generator import guid_generator
 from eProc_Basic.Utilities.functions.json_parser import JsonParser
@@ -36,7 +36,7 @@ from eProc_Shopping_Cart.Utilities.save_order_edit_sc import SaveShoppingCart, C
 from eProc_Shopping_Cart.Utilities.shopping_cart_generic import *
 from eProc_Shopping_Cart.Utilities.shopping_cart_specific import get_prod_cat_dropdown, get_manger_detail, \
     get_completion_work_flow, get_users_first_name, unpack_accounting_data, update_supplier_uom, \
-    update_supplier_uom_for_prod, get_cart_default_name_and_user_first_name
+    update_supplier_uom_for_prod, get_cart_default_name_and_user_first_name, update_suppliers_uom_details
 from eProc_Configuration.models import UnitOfMeasures, Currency
 from eProc_Basic.Utilities.functions.get_db_query import getUsername, getClients, get_login_obj_id
 from eProc_Basic.Utilities.functions.str_concatenate import concatenate_str_with_space
@@ -409,80 +409,102 @@ def sc_second_step(request):
     :param request: Get shopping cart and user details in second step of shopping cart
     :return: sc_second_step.html
     """
-    update_user_info(request)
-    update_requester_info(global_variables.GLOBAL_LOGIN_USERNAME)
     prod_desc = ''
+    update_user_info(request)
 
+    sc_check_instance = CheckForScErrors(global_variables.GLOBAL_CLIENT, global_variables.GLOBAL_LOGIN_USERNAME)
+
+    update_requester_info(global_variables.GLOBAL_LOGIN_USERNAME)
+
+    # get default calender id and company code from org model
     attr_low_value_list, company_code, default_calendar_id, object_id_list = get_company_calendar_from_org_model()
-    requester_first_name, cart_name,receiver_name = get_cart_default_name_and_user_first_name(request.user.first_name, request.user.last_name)
 
-    request.session['company_code'] = company_code
-    item_detail_list = []
-    # Display shopping cart items in 2nd step of wizard
+    # get cart default name, first name
+    requester_first_name, cart_name, receiver_name = get_cart_default_name_and_user_first_name(request.user.first_name,
+                                                                                               request.user.last_name)
 
+    # get cart detail
     cart_items = django_query_instance.django_filter_query(CartItemDetails,
                                                            {'username': global_variables.GLOBAL_LOGIN_USERNAME,
                                                             'client': global_variables.GLOBAL_CLIENT},
                                                            ['item_num'],
                                                            None)
 
-
     cart_items_count = len(cart_items)
 
     if cart_items_count == 0:
         return redirect('eProc_Shop_Home:shopping_cart_home')
 
-    cart_items_guid_list = dictionary_key_to_list(cart_items, 'guid')
-    prod_cat_list = dictionary_key_to_list(cart_items, 'prod_cat_id')
-    call_off_list = dictionary_key_to_list(cart_items, 'call_off')
-    actual_price, discount_value, tax_value, total_value = get_currency_converted_price_data(cart_items)
-    total_item_value = dictionary_key_to_list(cart_items, 'item_total_value')
-    request.session['total_value'] = total_item_value
-    global_variables.GLOBAL_REQUESTER_CURRENCY = requester_field_info(global_variables.GLOBAL_LOGIN_USERNAME, 'currency_id')
-    global_variables.GLOBAL_REQUESTER_LANGUAGE = requester_field_info(global_variables.GLOBAL_LOGIN_USERNAME, 'language_id')
+    # get price detail
+    actual_price, discount_value, \
+    tax_value, total_value, cart_items = validate_get_currency_converted_price_data(cart_items, sc_check_instance)
+    cart_items_guid_list, prod_cat_list, call_off_list, total_item_value = get_required_field_into_list(cart_items)
+
+    global_variables.GLOBAL_REQUESTER_CURRENCY = requester_field_info(global_variables.GLOBAL_LOGIN_USERNAME,
+                                                                      'currency_id')
+    global_variables.GLOBAL_REQUESTER_LANGUAGE = requester_field_info(global_variables.GLOBAL_LOGIN_USERNAME,
+                                                                      'language_id')
     highest_item_value = max(total_item_value)
     highest_item_number = total_item_value.index(highest_item_value)
 
     # get shipping data
-    address_number_list,\
-    default_address_number,\
-    delivery_addr_list,\
-    addr_default,\
-    addr_val_desc,\
+    address_number_list, \
+    default_address_number, \
+    delivery_addr_list, \
+    addr_default, \
+    addr_val_desc, \
     delivery_addr_desc = get_shipping_address_detail(object_id_list)
 
+    # cart_items = add_new_key_value(cart_items)
+    item_detail_list = get_prod_cat_value_guid(cart_items)
     # get Accounting data
     accounting_data = get_acc_details(object_id_list, company_code, item_detail_list)
 
-    product_category = get_prod_cat_dropdown(request)
     supplier = check_for_eform(request)
 
+    # updates suppliers and UOM details into cart items
+    cart_items = update_suppliers_uom_details(cart_items)
+
+    # updates delivery data
+    cart_items = update_delivery_date_to_item_table(cart_items)
+
     # to get manager detail
-    msg_info, sc_completion_flag, completion_work_flow, manager_details, approver_id = get_manger_and_purchasing_details(company_code,
-                                      accounting_data['default_acc_ass_cat'],
-                                      total_value,
-                                      accounting_data['default_acc'],
-                                      call_off_list,
-                                      prod_cat_list)
-    sc_check_instance = CheckForScErrors(global_variables.GLOBAL_CLIENT, global_variables.GLOBAL_LOGIN_USERNAME)
-    cart_items,shopping_cart_errors = check_sc_second_step_shopping_cart(sc_check_instance, object_id_list, default_calendar_id,
-                                                    company_code, cart_items)
+    msg_info, sc_completion_flag, \
+    completion_work_flow, manager_details, \
+    approver_id = get_manger_and_purchasing_details(
+        company_code,
+        accounting_data['default_acc_ass_cat'],
+        total_value,
+        accounting_data['default_acc'],
+        call_off_list,
+        prod_cat_list)
 
     default_account_assignment_category, default_account_assignment_value = unpack_accounting_data(accounting_data,
                                                                                                    sc_check_instance)
 
     sc_check_instance.delivery_address_check(default_address_number, '0')
+
     sc_check_instance.approval_check(default_account_assignment_category, default_account_assignment_value, total_value,
                                      company_code)
 
+    cart_items, shopping_cart_errors = check_sc_second_step_shopping_cart(sc_check_instance, object_id_list,
+                                                                          default_calendar_id,
+                                                                          company_code, cart_items)
+
+    # update images
     cart_items = update_image_for_catalog(cart_items)
 
     cart_items = update_eform_details_scitem(cart_items)
+
     currency, uom, currency_list, product_category, country_list = get_currency_uom_prod_cat_country()
+
     sys_attributes_instance = sys_attributes(global_variables.GLOBAL_CLIENT)
 
+    request.session['total_value'] = total_item_value
+    request.session['company_code'] = company_code
     context = {
         'shopping_cart_errors': shopping_cart_errors,
+        'cart_items_count':cart_items_count,
         'highest_item_number': highest_item_number + 1,
         'sc_completion_flag': sc_completion_flag,
         'requester_user_name': global_variables.GLOBAL_LOGIN_USERNAME,

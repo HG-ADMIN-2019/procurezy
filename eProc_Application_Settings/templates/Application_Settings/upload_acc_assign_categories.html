@@ -12,7 +12,7 @@
                 <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Application_Settings:extract_account_assignment_category_data' %}'" type="button">
                         <i class="fas fa-download"></i> extract
                 </button>
-                <button type="button" id="id_add_data" value="ADD" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="onclick_add_button(this)">
+                <button type="button" id="id_add_data" title="Add Account Assignment Category" value="ADD" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="onclick_add_button(this)">
                     <i class="fa fa-plus"></i> add account assignment category
                 </button>
                     <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"  onclick="window_close();">
@@ -26,13 +26,13 @@
             <div id="err_msg_app_settings_t" class="alert alert-success" hidden><span id="success_msg_id"></span></div>
             <div class="table-container tcw-60">
                 <div class="edit-button-section mb-4">
-                    <button class="btn btn-secondary btn-sm" id="id_edit_data" onclick="onclick_edit_button()">
+                    <button class="btn btn-secondary btn-sm" title="Edit" id="id_edit_data" onclick="onclick_edit_button()">
                         <i class="fas fa-edit"></i> edit
                     </button>
-                    <button class="btn btn-outline-danger btn-sm" id="id_delete_data" value="DELETE" style="display:none;" data-toggle="modal" data-target="#id_delete_confirm_popup">
+                    <button class="btn btn-outline-danger btn-sm" title="Delete" id="id_delete_data" value="DELETE" style="display:none;" data-toggle="modal" data-target="#id_delete_confirm_popup">
                         <i class="fa fa-trash"></i> delete
                     </button>
-                    <button class="btn btn-secondary btn-sm" id="id_cancel_data" style="display:none;" type="button" onclick="display_basic_db_data()">
+                    <button class="btn btn-secondary btn-sm" title="Cancel" id="id_cancel_data" style="display:none;" type="button" onclick="display_basic_db_data()">
                         <i class="fas fa-times"></i> cancel
                     </button>
                 </div>
@@ -75,8 +75,8 @@
                 <!-- Modal body -->
                 <div class="modal-body scrollbox">
                     <div id="id_del_add_button" class="mb-4">
-                        <button class="btn btn-primary" type="button" onclick="add_popup_row()"><i class="fa fa-plus"></i> add new row </button>
-                        <button class="btn btn-outline-danger" onclick="application_settings_delete_Row('id_popup_table')"><i class="fa fa-trash"></i> delete</button>
+                        <button class="btn btn-primary" title="Add New Row" type="button" onclick="add_popup_row()"><i class="fa fa-plus"></i> add new row </button>
+                        <button class="btn btn-outline-danger" title="Delete" onclick="application_settings_delete_Row('id_popup_table')"><i class="fa fa-trash"></i> delete</button>
                     </div>
                     <div id="id_check_success_messages" class="alert alert-success check_success_message" hidden></div>
                     <div id="id_check_error_messages" class="alert alert-danger check_error_messages" hidden></div>
@@ -103,8 +103,8 @@
                 </div>
                 <!-- Modal footer -->
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-primary remove_upload_data" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
-                    <button class="btn btn-primary" id="save_id"><i class="fas fa-save"></i> save</button>
+                    <button type="button" class="btn btn-outline-primary remove_upload_data" title="Cancel" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
+                    <button class="btn btn-primary" title="Save" id="save_id"><i class="fas fa-save"></i> save</button>
                 </div>
             </div>
         </div>
@@ -200,16 +200,7 @@
         GLOBAL_ACTION = 'DELETE'
         main_table_aac_checked = [];
         $('#display_basic_table').DataTable().destroy();
-        $("#display_basic_table TBODY TR").each(function() {
-            var row = $(this);
-            var aac_arr_obj = {};
-            aac_arr_obj.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
-            if(aac_arr_obj.del_ind){
-                aac_arr_obj.account_assign_cat = row.find("TD").eq(1).html();
-                aac_arr_obj.description = row.find("TD").eq(2).html();
-                main_table_aac_checked.push(aac_arr_obj);
-            }
-        });
+        get_selected_row_data(); // Function call to get the selected row data
         $('#id_delete_confirm_popup').modal('hide');
         data = {'data':main_table_aac_checked,'table_name':'AccountAssignmentCategory','action':GLOBAL_ACTION}
         OpenLoaderPopup();
@@ -231,33 +222,29 @@
 
     //onclick of add button display myModal popup and set GLOBAL_ACTION button value
     function onclick_add_button(button) {
-    OpenLoaderPopup();
-    var data = {'table_name':'AccountAssignmentCategory'}
-    $.ajax({
-        type: 'POST',
-        url: "{% url 'eProc_Configuration:get_dropdown_data' %}",
-        data: JSON.stringify(data),
-        success: function(response) {
-            rendered_aac_values = response.dropdown_acct_assmt_values
-            rendered_aac_data = response.accasscat_data
-            dropdown_value();
-            $("#error_msg_id").css("display", "none")
-            $( "#header_select").prop( "hidden", false );
-            GLOBAL_ACTION = button.value
-            $("#id_popup_tbody").empty();
-            $('#myModal').modal('show');
-            basic_add_new_html = '<tr><td><input type="checkbox" required></td>'+
-                '<td><select type="text" class="input form-control acct_assignment_category" id="acct_assignment_category-1" name="acct_assignment_category" onchange="GetSelectedTextValue(this)"><option value="" disabled selected>Select your option</option>'+ aac_dropdown +'</select></td>'+
-                '<td><input class="form-control description check_special_char" type="text"  id="description-1" name="description" disabled></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
-            $('#id_popup_tbody').append(basic_add_new_html);
-            table_sort_filter('id_popup_table');
-            $("#id_del_ind_checkbox").prop("hidden", true);
-            document.getElementById("id_del_add_button").style.display = "block";
-            $("#save_id").prop("hidden", false);
-            CloseLoaderPopup();
-        }
-    });
-}
+        OpenLoaderPopup();
+        var data = {'table_name':'AccountAssignmentCategory'}
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'eProc_Configuration:get_dropdown_data' %}",
+            data: JSON.stringify(data),
+            success: function(response) {
+                rendered_aac_values = response.dropdown_acct_assmt_values
+                rendered_aac_data = response.accasscat_data
+                dropdown_value();
+                $("#error_msg_id").css("display", "none")
+                $( "#header_select").prop( "hidden", false );
+                GLOBAL_ACTION = button.value
+                $("#id_popup_tbody").empty();
+                $('#myModal').modal('show');
+                new_row_data();  // Add a new row in popup
+                $("#id_del_ind_checkbox").prop("hidden", true);
+                document.getElementById("id_del_add_button").style.display = "block";
+                $("#save_id").prop("hidden", false);
+                CloseLoaderPopup();
+            }
+        });
+    }
 
     // on click add icon display the row in to add the new entries
     function add_popup_row() {
@@ -272,14 +259,10 @@
         $(".modal").on("hidden.bs.modal", function () {
             $("#id_error_msg").html("");
         });
-        basic_add_new_html = '<tr><td><input type="checkbox" required></td>'+
-            '<td><select type="text" class="input form-control acct_assignment_category" id="acct_assignment_category-'+inc_index+'" name="acct_assignment_category" onchange="GetSelectedTextValue(this)"><option value="" disabled selected>Select your option</option>'+ aac_dropdown +'</select></td>'+
-            '<td><input class="form-control description check_special_char" type="text"  id="description-'+inc_index+'" name="description" disabled></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
-        $('#id_popup_tbody').append(basic_add_new_html);
+        new_row_data();  // Add a new row in popup
         if (GLOBAL_ACTION == "aac_upload") {
             $(".class_del_checkbox").prop("hidden", false);
         }
-        table_sort_filter('id_popup_table');
     }
 
     // validating the  popup table for duplicate entries
@@ -305,8 +288,8 @@
         }
         else {
             $.each(aac, function (i, item) {
-                if (item.account_assign_cat == null) {
-                    get_message_details("JMSG005"); //// Get message details
+                if (item.account_assign_cat.length == 0) {
+                    get_message_details("JMSG002"); //// Get message details
                     no_duplicate_value = 'N'
                     return [no_duplicate_value,error_message]
                 }
