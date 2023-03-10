@@ -849,7 +849,7 @@ function onclick_copy_update_button(data){
         var selectedText = prodid.options[prodid.selectedIndex].innerHTML;
         var selectedValue = prodid.value;
         var selectedId = (prodid.id).split('-')[1];
-        $.each (rendered_UNSPC_data,function(i, item){
+        $.each (rendered_UNSPCDESC_data,function(i, item){
             if(selectedValue == item.prod_cat_id){
                 $('#description-'+selectedId).val(item.prod_cat_desc);
             }
