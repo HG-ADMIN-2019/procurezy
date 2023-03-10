@@ -409,18 +409,21 @@ def sc_second_step(request):
     :param request: Get shopping cart and user details in second step of shopping cart
     :return: sc_second_step.html
     """
-    update_user_info(request)
-    sc_check_instance = CheckForScErrors(global_variables.GLOBAL_CLIENT, global_variables.GLOBAL_LOGIN_USERNAME)
-    update_requester_info(global_variables.GLOBAL_LOGIN_USERNAME)
     prod_desc = ''
+    update_user_info(request)
 
+    sc_check_instance = CheckForScErrors(global_variables.GLOBAL_CLIENT, global_variables.GLOBAL_LOGIN_USERNAME)
+
+    update_requester_info(global_variables.GLOBAL_LOGIN_USERNAME)
+
+    # get default calender id and company code from org model
     attr_low_value_list, company_code, default_calendar_id, object_id_list = get_company_calendar_from_org_model()
+
+    # get cart default name, first name
     requester_first_name, cart_name, receiver_name = get_cart_default_name_and_user_first_name(request.user.first_name,
                                                                                                request.user.last_name)
 
-    request.session['company_code'] = company_code
-    # Display shopping cart items in 2nd step of wizard
-
+    # get cart detail
     cart_items = django_query_instance.django_filter_query(CartItemDetails,
                                                            {'username': global_variables.GLOBAL_LOGIN_USERNAME,
                                                             'client': global_variables.GLOBAL_CLIENT},
@@ -432,12 +435,11 @@ def sc_second_step(request):
     if cart_items_count == 0:
         return redirect('eProc_Shop_Home:shopping_cart_home')
 
-
-
+    # get price detail
     actual_price, discount_value, \
     tax_value, total_value, cart_items = validate_get_currency_converted_price_data(cart_items, sc_check_instance)
     cart_items_guid_list, prod_cat_list, call_off_list, total_item_value = get_required_field_into_list(cart_items)
-    request.session['total_value'] = total_item_value
+
     global_variables.GLOBAL_REQUESTER_CURRENCY = requester_field_info(global_variables.GLOBAL_LOGIN_USERNAME,
                                                                       'currency_id')
     global_variables.GLOBAL_REQUESTER_LANGUAGE = requester_field_info(global_variables.GLOBAL_LOGIN_USERNAME,
@@ -481,6 +483,7 @@ def sc_second_step(request):
                                                                                                    sc_check_instance)
 
     sc_check_instance.delivery_address_check(default_address_number, '0')
+
     sc_check_instance.approval_check(default_account_assignment_category, default_account_assignment_value, total_value,
                                      company_code)
 
@@ -488,12 +491,17 @@ def sc_second_step(request):
                                                                           default_calendar_id,
                                                                           company_code, cart_items)
 
+    # update images
     cart_items = update_image_for_catalog(cart_items)
 
     cart_items = update_eform_details_scitem(cart_items)
+
     currency, uom, currency_list, product_category, country_list = get_currency_uom_prod_cat_country()
+
     sys_attributes_instance = sys_attributes(global_variables.GLOBAL_CLIENT)
 
+    request.session['total_value'] = total_item_value
+    request.session['company_code'] = company_code
     context = {
         'shopping_cart_errors': shopping_cart_errors,
         'cart_items_count':cart_items_count,
