@@ -270,24 +270,6 @@ m {% extends 'root/base.html' %}
             });
         });
     }
-
-    //validate by comparing  main table values and popup table values
-function maintable_validation(validate_add_attributes, main_table_low_value) {
-    var no_duplicate_entries = 'Y'
-    var error_message =''
-    var common = [];
-    jQuery.grep(validate_add_attributes, function (el) {
-        if (jQuery.inArray(el, main_table_low_value) != -1) {
-            common.push(el);
-        }
-    });
-    if (common.length != 0) {
-        get_message_details("JMSG001"); // Get message details
-        no_duplicate_value = 'N'
-        return [no_duplicate_value,error_message]
-    }
-    return [no_duplicate_entries,error_message]
-}
 </script>
 <script src="{% static 'scripts/upload_clients.js' %}"></script>
 {% endblock %}

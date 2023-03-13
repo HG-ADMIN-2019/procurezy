@@ -69,7 +69,7 @@
             </div>
         </div>
     </div>
-     <!--modal popup for Add,copy,update and upload-->
+    <!--modal popup for Add,copy,update and upload-->
     <div class="modal fade" id="myModal">
         <div class="modal-dialog modal-dialog-centered modal-xl">
             <div class="modal-content">
@@ -116,9 +116,10 @@
                 </div>
                 <!-- Modal footer -->
                 <div class="modal-footer">
-                     <button type="button" class="btn btn-outline-primary remove_upload_data" title="Cancel" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
+                    <button type="button" class="btn btn-outline-primary remove_upload_data" title="Cancel" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
                     <button id="id_delete_duplicate" class="btn btn-primary" style="display:none;" type="button" onclick="delete_duplicate()"><i class="fa fa-trash"></i> delete duplicates</button>
-                    <button class="btn btn-primary" title="Save" id="save_id"><i class="fas fa-save"></i> save</button> </div>
+                    <button class="btn btn-primary" title="Save" id="save_id"><i class="fas fa-save"></i> save</button>
+                </div>
             </div>
         </div>
     </div>
@@ -157,9 +158,6 @@
         $('#success_msg_id').empty()
         $('#id_popup_table').DataTable().destroy();
         var number_range_data = new Array();
-        var main_table_low_value = [];
-        var main_table_data = new Array();
-        var validate_add_attributes = [];
         var compare_array = [];
         var number_range = {};
         var no_duplicates = 'Y'
