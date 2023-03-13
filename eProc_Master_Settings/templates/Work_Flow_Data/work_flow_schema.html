@@ -323,7 +323,7 @@
 
    // Function to get main table data
     function get_main_table_data()  {
-        var main_table_low_value = [];
+        main_table_low_value = [];
         $("#display_basic_table TBODY TR").each(function() {
             var row = $(this);
             var main_attribute = {};
@@ -331,7 +331,7 @@
             main_attribute.company_id = row.find("TD").eq(1).html();
             main_attribute.app_types = row.find("TD").eq(3).html();
             main_attribute.workflow_schema_guid = row.find("TD").eq(4).html();
-            var wfschm_compare_maintable = main_attribute.company_id +'-'+ main_attribute.workflow_schema
+            var wfschm_compare_maintable = main_attribute.workflow_schema +'-'+ main_attribute.company_id
             main_table_low_value.push(wfschm_compare_maintable);
         });
         table_sort_filter('display_basic_table');
