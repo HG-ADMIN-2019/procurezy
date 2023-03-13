@@ -12,6 +12,7 @@ function onclick_add_button(button) {
     $("#id_popup_tbody").empty();
     $('#countriesModal').modal('show');
     new_row_data();  // Add a new row in popup
+    table_sort_filter('id_popup_table');
     $("#id_del_ind_checkbox").prop("hidden", true);
     document.getElementById("id_del_add_button").style.display = "block";
     $("#save_id").prop("hidden", false);
@@ -117,7 +118,9 @@ function add_popup_row() {
     new_row_data();   // Add a new row in popup
     if (GLOBAL_ACTION == "country_upload") {
         $(".class_del_checkbox").prop("hidden", false);
+        $("#id_del_ind_checkbox").prop("hidden", false);
     }
+    table_sort_filter('id_popup_table');
     $('#delete_data').hide()
 }
 
@@ -193,7 +196,6 @@ function read_popup_data() {
 function new_row_data(){
     basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><input class="form-control check_special_char"  type="text"   maxlength="2" minlength="2"  name="countrycode" style="text-transform:uppercase;" required></td><td><input class="form-control check_special_char" type="text" maxlength="100"  name="countryname" required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
-    table_sort_filter('id_popup_table');
 }
 
 // Function to get main table data

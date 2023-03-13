@@ -15,14 +15,14 @@ function onclick_upload_button() {
 // on click Delete icon 
 function onclick_delete_button() {
     GLOBAL_ACTION = "DELETE"
-    onclick_copy_update_button("DELETE")
+    onclick_copy_update_button("DELETE");
     document.getElementById("id_del_add_button").style.display = "none";
 }
 
 // on click copy icon display the selected checkbox data
 function onclick_button_action(action) {
     GLOBAL_ACTION = action
-    onclick_copy_update_button()
+    onclick_copy_update_button(action);
     if(action == 'UPDATE'){
         document.getElementById("id_del_add_button").style.display = "none";
     }
@@ -134,6 +134,7 @@ function delete_duplicate() {
 // Functtion to hide and display save related popups
 $('#save_id').click(function () {
     $('#myModal').modal('hide');
+    aav_data = [];
     aav_data = read_popup_data();
     $('#id_save_confirm_popup').modal('show');
 });
@@ -142,6 +143,7 @@ $('#save_id').click(function () {
 function read_popup_data() {
     var aav={};
     validate_add_attributes = [];
+    aav_data = new Array();
     var check_dates = []
     $("#id_popup_table TBODY TR").each(function () {
         var row = $(this);

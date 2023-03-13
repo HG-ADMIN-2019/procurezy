@@ -11,7 +11,7 @@ m {% extends 'root/base.html' %}
                 <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Basic_Settings:extract_client_data' %}'" type="button">
                     <i class="fas fa-download"></i> extract
                 </button>
-                <button type="button" id="id_add_data" title="Add Clients" value="ADD" class="btn btn-primary" data-toggle="modal" data-target="#upload_client_Modal" onclick="onclick_add_button(this)">
+                <button type="button" id="id_add_data" title="Add Client" value="ADD" class="btn btn-primary" data-toggle="modal" data-target="#upload_client_Modal" onclick="onclick_add_button(this)">
                     <i class="fa fa-plus"></i> Add Client
                 </button>
                   <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"  onclick="window_close();">
@@ -81,10 +81,10 @@ m {% extends 'root/base.html' %}
                 <!-- Modal body -->
                 <div class="modal-body scrollbox">
                     <div id="id_del_add_button" class="mb-4">
-                        <button class="btn btn-primary" title="add new row" type="button" onclick="add_popup_row()">
+                        <button class="btn btn-primary" title="Add New Wow" type="button" onclick="add_popup_row()">
                             <i class="fa fa-plus"></i> Add New Row
                         </button>
-                        <button class="btn btn-outline-danger" title="delete" onclick="application_settings_delete_Row('id_popup_table')">
+                        <button class="btn btn-outline-danger" title="Delete" onclick="application_settings_delete_Row('id_popup_table')">
                             <i class="fa fa-trash"></i> delete
                         </button>
                     </div>
@@ -116,10 +116,9 @@ m {% extends 'root/base.html' %}
                  </div>
                 <!-- Modal footer -->
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-primary remove_upload_data" title="cancel" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
+                    <button type="button" class="btn btn-outline-primary remove_upload_data" title="Cancel" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
                     <button id="id_delete_duplicate" class="btn btn-primary" style="display:none;" type="button" onclick="delete_duplicate()"><i class="fa fa-trash"></i> delete duplicates</button>
-                    <button id="id_check_data" style="display:none;" class="btn btn-primary" type="button" onclick="check_data()"><i class="fas fa-check"></i> check</button>
-                    <button class="btn btn-primary" title="save" id="save_id"><i class="fas fa-save"></i> save</button>
+                    <button class="btn btn-primary" title="Save" id="save_id"><i class="fas fa-save"></i> save</button>
                 </div>
             </div>
         </div>

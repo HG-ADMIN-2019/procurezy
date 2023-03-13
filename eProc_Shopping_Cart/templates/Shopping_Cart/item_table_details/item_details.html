@@ -54,7 +54,7 @@
                     <div class="desc-section-bottom">
                         {% if items.eform_id %}
                         {% if items.call_off == '04' or items.call_off == '02' or items.call_off == '03' %}
-                        <button class="hg_button_edit" onclick="showSection(this, 'displayEform{{ forloop.counter }}')"> View Additional details</button>
+                        <button class="hg_button_edit" onclick="showSection(this, 'displayEform-{{ forloop.counter }}')"> View Additional details</button>
                         {% endif %}
                         {% endif %}
                         <button type="button" class="hg_button_round notes badge_status_await_approval" id="notes_added-{{forloop.counter}}" title="Notes Added" hidden> <i class="material-icons-outlined">description</i></button>
@@ -100,14 +100,14 @@
                                 <i class="material-icons action_dropdown-icon item-action-icons">more_vert</i>
                             </a>
                             <div class="dropdown-menu dropdown-menu-right" aria-labelledby="dropdownMenuButton">
-                                <a class="dropdown-item notes{{ forloop.counter }}"
-                                   onclick="showSection(this, 'notes{{ forloop.counter }}')" >Notes</a>
-                                <a class="dropdown-item attachments{{ forloop.counter }}"
-                                   onclick="showSection(this, 'attachments{{ forloop.counter }}')" >Attachments</a>
-                                <a class="dropdown-item shipAddress{{ forloop.counter }}"
-                                   onclick="showSection(this, 'shipAddress{{ forloop.counter }}')" >Shipping Address</a>
-                                <a class="dropdown-item accoutingData{{ forloop.counter }}"
-                                   onclick="showSection(this, 'accoutingData{{ forloop.counter }}')" >Cost Assignment</a>
+                                <a class="dropdown-item notes-{{ forloop.counter }}"
+                                   onclick="showSection(this, 'notes-{{ forloop.counter }}')" >Notes</a>
+                                <a class="dropdown-item attachments-{{ forloop.counter }}"
+                                   onclick="showSection(this, 'attachments-{{ forloop.counter }}')" >Attachments</a>
+                                <a class="dropdown-item shipAddress-{{ forloop.counter }}"
+                                   onclick="showSection(this, 'shipAddress-{{ forloop.counter }}')" >Shipping Address</a>
+                                <a class="dropdown-item accoutingData-{{ forloop.counter }}"
+                                   onclick="showSection(this, 'accoutingData-{{ forloop.counter }}')" >Cost Assignment</a>
                             </div>
                         </div>
                         {% endif %}
@@ -123,7 +123,7 @@
                     <div id="displayEform{{forloop.counter}}" class="item{{ forloop.counter }} dummy_more_div_class card display-none">
                         <div class="card-header item-table-action__header">
                             <span>Additional eForm Data</span>
-                            <span onclick="closeSelectSection(this, 'displayEform{{ forloop.counter }}')">
+                            <span onclick="closeSelectSection(this, 'displayEform-{{ forloop.counter }}')">
                                 <i class="fas fa-times"></i>
                             </span>
                         </div>
@@ -142,10 +142,10 @@
 
 
                     <!--start of hideable content which lets the user add notes -->
-                    <div id="notes{{ forloop.counter }}" class="item{{ forloop.counter }} dummy_more_div_class card display-none">
+                    <div id="notes-{{ forloop.counter }}" class="item{{ forloop.counter }} dummy_more_div_class card display-none">
                         <div class="card-header item-table-action__header">
                             <span>Notes</span>
-                            <span onclick="closeSelectSection(this, 'notes{{ forloop.counter }}')">
+                            <span onclick="closeSelectSection(this, 'notes-{{ forloop.counter }}')">
                                 <i class="fas fa-times"></i>
                             </span>
                         </div>
@@ -170,10 +170,10 @@
                     <!--end of hideable content which lets the user add notes -->
 
                     <!-- start of hideable content which lets the user add attachments -->
-                    <div  id="attachments{{ forloop.counter }}" class="item{{ forloop.counter }} dummy_more_div_class card display-none">
+                    <div  id="attachments-{{ forloop.counter }}" class="item{{ forloop.counter }} dummy_more_div_class card display-none">
                         <div class="card-header item-table-action__header">
                             <span>Attachments</span>
-                            <span onclick="closeSelectSection(this, 'attachments{{ forloop.counter }}')">
+                            <span onclick="closeSelectSection(this, 'attachments-{{ forloop.counter }}')">
                                 <i class="fas fa-times"></i>
                             </span>
                         </div>
@@ -228,10 +228,10 @@
                     <!--end of hideable content which lets the user add attachments -->
 
                     <!-- start of hideable content which lets the user change shipping address -->
-                    <div id="shipAddress{{ forloop.counter }}" class="item{{ forloop.counter }} dummy_more_div_class card display-none">
+                    <div id="shipAddress-{{ forloop.counter }}" class="item{{ forloop.counter }} dummy_more_div_class card display-none">
                         <div class="card-header item-table-action__header">
                             <span>Shipping Address</span>
-                            <span onclick="closeSelectSection(this, 'shipAddress{{ forloop.counter }}')">
+                            <span onclick="closeSelectSection(this, 'shipAddress-{{ forloop.counter }}')">
                                 <i class="fas fa-times"></i>
                             </span>
                         </div>
@@ -261,10 +261,10 @@
                     <!-- end of hideable content which lets the user change shipping address -->
 
                     <!--    start of hideable content which lets the user change cost assignment            -->
-                    <div id="accoutingData{{ forloop.counter }}" class="item{{ forloop.counter }} dummy_more_div_class card display-none">
+                    <div id="accoutingData-{{ forloop.counter }}" class="item{{ forloop.counter }} dummy_more_div_class card display-none">
                         <div class="card-header item-table-action__header">
                             <span>Account Assignment Category</span>
-                            <span onclick="closeSelectSection(this, 'accoutingData{{ forloop.counter }}')">
+                            <span onclick="closeSelectSection(this, 'accoutingData-{{ forloop.counter }}')">
                                 <i class="fas fa-times"></i>
                             </span>
                         </div>

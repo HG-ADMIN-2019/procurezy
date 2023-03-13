@@ -1,5 +1,6 @@
 var doctype_data = new Array();
 var validate_add_attributes = [];
+var main_table_low_value = [];
 var doctype ={};
 
 //onclick of upload button display id_data_upload popup and set GLOBAL_ACTION button value
@@ -14,7 +15,7 @@ $(".remove_upload_data").click(() => {
     $("#id_error_msg").html("");
     $("#id_popup_tbody").empty();
     $("#id_error_msg").empty();
-    $('#myModal').modal('hide');
+    $('#doc_Modal').modal('hide');
     $("#id_error_msg").prop("hidden", true);
     $("#id_error_msg_doctype_code").prop("hidden", true);
     $("#id_error_msg_doctype_name").prop("hidden", true);
@@ -32,7 +33,7 @@ function display_error_message(error_message){
     document.getElementById("error_message").style.color = "Red";
     $("#error_msg_id").css("display", "block")
     $('#id_save_confirm_popup').modal('hide');
-    $('#myModal').modal('show');
+    $('#doc_Modal').modal('show');
 }
 
 //onclick of cancel display the table in display mode............
@@ -60,7 +61,13 @@ function display_basic_db_data() {
 
 // Functtion to hide and display save related popups
 $('#save_id').click(function () {
-    $('#myModal').modal('hide');
+    $('#doc_Modal').modal('hide');
+    doctype_data  = read_popup_data();
+    $('#id_save_confirm_popup').modal('show');
+});
+
+//Read popup table data
+function read_popup_data() {
     doctype_data = new Array();
     validate_add_attributes = [];
     $("#id_popup_table TBODY TR").each(function () {
@@ -75,8 +82,8 @@ $('#save_id').click(function () {
         validate_add_attributes.push(doctype.document_type);
         doctype_data.push(doctype);
     });
-    $('#id_save_confirm_popup').modal('show');
-});
+    return doctype_data;
+}
 
 // Function to get the selected row data
 function get_selected_row_data(){

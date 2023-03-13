@@ -12,6 +12,7 @@ function onclick_add_button(button) {
     $("#id_popup_tbody").empty();
     $('#timezoneModal').modal('show');
     new_row_data();  // Add a new row in popup
+    table_sort_filter('id_popup_table');
     $("#id_del_ind_checkbox").prop("hidden", true);
     document.getElementById("id_del_add_button").style.display = "block";
     $("#save_id").prop("hidden", false);
@@ -118,8 +119,10 @@ function add_popup_row() {
         $("#id_error_msg").html("no records found");
     });
     new_row_data();  // Add a new row in popup
+    table_sort_filter('id_popup_table');
     if (GLOBAL_ACTION == "timezone_upload") {
         $(".class_del_checkbox").prop("hidden", false);
+        $("#id_del_ind_checkbox").prop("hidden", false);
     }
 }
 
@@ -211,7 +214,6 @@ function new_row_data() {
     '<td><input class="input form-control check_UTC_Difference" type="text" title="Minimum length is 15" minlength="15" maxlength="15"  name="utcdifference"  style="text-transform:uppercase;" required></td>'+
     '<td><input class="input form-control check_special_char" type="text" maxlength="10"  name="daylightsave"   style="text-transform:uppercase;" required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
-    table_sort_filter('id_popup_table');
 }
 
 //Read popup table data

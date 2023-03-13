@@ -87,7 +87,7 @@
             </div>
         </div>
     </div>
-    <!-- !--modal popup for Add,copy,update and upload--> -->
+    <!-- !--modal popup for Add,copy,update and upload-->
     <!-- The Modal -->
     <div class="modal fade" id="Wf_Acc_Modal" style="overflow:auto;" >
         <div class="modal-dialog modal-dialog-centered modal-xl">
@@ -678,9 +678,9 @@ function onclick_add_button(button) {
                         var company_id_value = row.cells[1].innerHTML
                         var supcompany_value = row.cells[5].innerHTML
                         var currency_value = row.cells[8].innerHTML
-                        dropdown_values.push([company_id_value, acc_ass_value, user_value, supcompany_value, sup_acc_ass_value, currency_value])
                         var sup_acc_cat_value = row.cells[6].innerHTML
-                        dropdown_values.push([user_value, acc_ass_value, sup_acc_ass_value, company_id_value, supcompany_value, currency_value, acc_cat_value, sup_acc_cat_value])
+                        dropdown_values.push([company_id_value, acc_ass_value, user_value, supcompany_value, sup_acc_ass_value, currency_value,acc_cat_value, sup_acc_cat_value])
+                        var sup_acc_cat_value = row.cells[6].innerHTML
                     }
                 }
                 $('#id_popup_tbody').append(edit_basic_data);
@@ -693,6 +693,8 @@ function onclick_add_button(button) {
                     var companyid_value = dropdown_values[i][0]
                     var sup_compid_value = dropdown_values[i][3]
                     var curr_value = dropdown_values[i][5]
+                    var acct_cat_value = dropdown_values[i][6]
+                    var sup_cat_value = dropdown_values[i][7]
                     $(row.find("TD").eq(1).find("select option[value="+companyid_value+"]")).attr('selected','selected');
                     var acct_cat_value = dropdown_values[i][6]
                     var sup_cat_value = dropdown_values[i][7]
@@ -703,7 +705,6 @@ function onclick_add_button(button) {
                     $(row.find("TD").eq(6).find("select option[value="+sup_cat_value+"]")).attr('selected','selected');
                     $(row.find("TD").eq(1).find("select option[value="+companyid_value+"]")).attr('selected','selected');
                     $(row.find("TD").eq(5).find("select option[value="+sup_compid_value+"]")).attr('selected','selected');
-                    $(row.find("TD").eq(7).find("select option[value="+sup_acc_value+"]")).attr('selected','selected');
                     $(row.find("TD").eq(8).find("select option[value="+curr_value+"]")).attr('selected','selected');
                     i++;
                 });

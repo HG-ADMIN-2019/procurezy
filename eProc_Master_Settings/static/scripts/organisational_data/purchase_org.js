@@ -122,8 +122,9 @@ function add_popup_row() {
         '<td hidden><input value=""></td>'+
         '<td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
-    if (GLOBAL_ACTION == "purchase_grp_upload") {
+    if (GLOBAL_ACTION == "purchase_org_upload") {
         $(".class_del_checkbox").prop("hidden", false);
+        $("#id_del_ind_checkbox").prop("hidden", false);
     }
     table_sort_filter('id_popup_table');
 }

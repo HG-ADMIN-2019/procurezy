@@ -117,7 +117,7 @@
                         <div id="id_check_special_character_messages" class="alert alert-danger check_special_character_messages" hidden>
                             <p id="id_error_msg_porg_id" ></p>
                             <p id="id_error_msg_description" ></p>
-                            <p id="id_error_msg_company_id" ></p>
+                            <p id="id_error_msg_porgid_length" ></p>
                         </div>
 
                         <div id="error_msg_id" class="alert alert-danger display-none" role="alert"><span id="error_message"></span></div>
@@ -185,7 +185,7 @@
     var messages_list = {{messages_list|safe}};
     var Tablename = uiConstants["CONST_TABLENAME_PURORG"]
     var appname = uiConstants["CONST_APPNAME01"]
-    var db_header_data = uiConstants[ 'PORG_ID', 'DESCRIPTION', 'OBJECT_ID', 'del_ind']
+    var db_header_data = uiConstants[ 'PORG_ID', 'DESCRIPTION','OBJECT_ID','del_ind']
 
     // validate and save for add,copy,update and upload data
     function popup_save_data() {
@@ -399,9 +399,9 @@
         $("#id_check_success_messages").prop("hidden",true)
         $("#id_check_error_messages").prop("hidden",true)
         $("#id_check_special_character_messages").prop("hidden",true)
-        document.getElementById("id_error_msg_company_id").innerHTML = "";
-        document.getElementById("id_error_msg_description").innerHTML = "";
         document.getElementById("id_error_msg_porg_id").innerHTML = "";
+        document.getElementById("id_error_msg_description").innerHTML = "";
+        document.getElementById("id_error_msg_porgid_length").innerHTML = "";
         count = 0;
         var purchaseorg_array = new Array
         var DB_array = new Array
@@ -411,48 +411,54 @@
         $("#id_popup_table TBODY TR").each(function() {
             var row = $(this);
             purchaseorg_dic = {}
-
             //*************** reading data from the pop-up ***************
-            purchaseorg_dic.company_id = row.find("TD").eq(3).find('select[type="text"]').val();
             purchaseorg_dic.description = row.find("TD").eq(2).find('input[type="text"]').val();
             purchaseorg_dic.porg_id = row.find("TD").eq(1).find('input').val();
-            checked_box = row.find("TD").eq(4).find('input[type="checkbox"]').is(':checked')
+            checked_box = row.find("TD").eq(3).find('input[type="checkbox"]').is(':checked')
                 if (checked_box){
                     purchaseorg_dic.del_ind = '1'
                 }
                 else{
-                purchaseorg_dic.del_ind = '0'
+                    purchaseorg_dic.del_ind = '0'
                 }
-            purchaseorg_list.push(purchaseorg_dic)    
-            var format = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
-            if(purchaseorg_dic.porg_id.length>10){
-                error_message = ui_messeges("JMSG004") // Get message details
-                var display8 = msg_type.messages_id_desc;
-                document.getElementById("id_error_msg_prod_cat_id_length").innerHTML = display8 + "Prod Category ID";
-                $(row.find("TD").eq(1).find('input')).css("border", "1px solid #FF0000");
+            purchaseorg_list.push(purchaseorg_dic)
+
+             var format = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
+            //*************** checking for max length for purchaseorg code (max length = 8) ***************
+            if(purchaseorg_dic.porg_id.length<8){
+                error_message = ui_messeges("JMSG113") // Get message details
+                var display8 = error_message;
+                document.getElementById("id_error_msg_porg_id").innerHTML = display8 + "Purchase Org ID";
+                 $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
                 count = count +1;
             }
 
             //*************** checking for special characters for prodcat code ***************
             if (format.test(purchaseorg_dic.porg_id)) {
                   error_message = ui_messeges("JMSG003") // Get message details
-                var dispaly = msg_type.messages_id_desc;
-                document.getElementById("id_error_msg_prod_cat_id").innerHTML = dispaly + "Purchase organisation Code";
-                $(row.find("TD").eq(1).find('input')).css("border", "1px solid #FF0000");
+                var display = error_message;
+                document.getElementById("id_error_msg_porg_id").innerHTML = display + "Purchase organisation Code";
+                 $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
                 count = count + 1;
             } else {
                 $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "none");
             }
-            if (purchaseorg_check.includes(purchaseorg_dic.porg_id)) {
-                $(row).css({
-                    "background-color": "#E0FFFF",
-                    "border": "1px solid #000000"
-                });
-                $(row).css("border", "1px solid #000000");
-                $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
+         //*************** checking for special characters for purchaseorg name ***************
+            if(format.test(purchaseorg_dic.description)){
+                error_message = ui_messeges("JMSG003")// Get message details
+                var display3 = error_message;
+                document.getElementById("id_error_msg_description").innerHTML = display3+ "purchaseorg Name";
                 $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "1px solid #FF0000");
-            } else {
-                $(row).css("background-color", "");
+                count = count +1;
+            }
+            else{
+                $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "none");
+            }
+            if(purchaseorg_check.includes(purchaseorg_dic.porg_id)){
+                $(row).css("border", "#f8d7da");
+            }
+            else{
+                $(row).css("border", "");
             }
             purchaseorg_check.push(purchaseorg_dic.porg_id)
         });
@@ -463,7 +469,7 @@
             $("#save_id").prop("hidden", false);
         }
         popup_data_dict = {
-            'data_list': purchaseorg_list,
+            'data_list': purchaseorg_list
         }
         OpenLoaderPopup();
         $.ajax({
@@ -472,6 +478,10 @@
             data: JSON.stringify(popup_data_dict),
             success: function(response) {
                 table_sort_filter_popup_pagination('id_popup_table')
+                $("#id_check_special_character_messages").prop("hidden",false)
+                if(count == 0){
+                    $("#id_check_special_character_messages").prop("hidden",true)
+                }
                 var message = ''
                 update_check_message(response.messages)
                 CloseLoaderPopup();

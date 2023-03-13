@@ -357,12 +357,12 @@ def get_login_user_spend_limit(company_code, client, login_username):
     max_sl_value = 0
 
     sl_code_id = django_query_instance.django_filter_value_list_query(SpendLimitId, {
-        'company_id': company_code, 'spender_username': login_username, 'client': client
+        'company_id': company_code, 'spender_username': login_username, 'client': client,'del_ind':False
     }, 'spend_code_id')
 
     if sl_code_id:
         sl_value = django_query_instance.django_filter_value_list_query(SpendLimitValue, {
-            'company_id': company_code, 'spend_code_id__in': sl_code_id, 'client': client
+            'company_id': company_code, 'spend_code_id__in': sl_code_id, 'client': client,'del_ind':False
         }, 'upper_limit_value')
         if sl_value:
             max_sl_value = max(sl_value)

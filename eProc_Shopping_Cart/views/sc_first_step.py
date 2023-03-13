@@ -258,7 +258,7 @@ def shopping_cart_first_step(request):
     cart_items = update_suppliers_uom_details(cart_items)
 
     # calculate and convert currency
-    actual_price, discount_value, tax_value, total_item_value = get_currency_converted_price_data(cart_items)
+    actual_price, discount_value, tax_value, total_item_value,cart_items = get_currency_converted_price_data(cart_items)
 
     cart_items = update_image_for_catalog(cart_items)
 

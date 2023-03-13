@@ -3,6 +3,7 @@ import datetime
 from django.db.models import Q
 
 from eProc_Basic.Utilities.functions.dictionary_key_to_list import dictionary_key_to_list
+from eProc_Basic.Utilities.functions.dictionary_list_functions import update_key_value_with_new_key_dictionary_list
 from eProc_Basic.Utilities.functions.get_db_query import *
 from eProc_Basic.Utilities.functions.messages_config import get_message_desc
 from eProc_Basic.Utilities.functions.remove_element_from_list import remove_element_from_list
@@ -422,9 +423,11 @@ def get_currency_converted_price_data(cart_items):
             tax_value = items['tax_value']
             # gross_price_list.append(float(items['gross_price'])*items['quantity'])
         if value:
-            items['item_total_value'] = float(format(value, '2f'))
+            item_total_value = round(value, 2)
+            # item_total_value = round(item_total_value, 2)
+            items['item_total_value'] = format(item_total_value, '.2f')
         else:
-            items['item_total_value'] = 0
+            items['item_total_value'] = round(0, 2)
         total_actual_price = total_actual_price + actual_price
         total_discount_value = total_discount_value + discount_value
         total_tax_value = total_tax_value + tax_value
@@ -433,7 +436,64 @@ def get_currency_converted_price_data(cart_items):
     total_discount_value = round(total_discount_value, 2)
     total_tax_value = round(total_tax_value, 2)
     total_value = round(total_value, 2)
-    return total_actual_price, total_discount_value, total_tax_value, total_value
+    return total_actual_price, total_discount_value, total_tax_value, total_value, cart_items
+
+
+def validate_get_currency_converted_price_data(cart_items,sc_check_instance):
+    """
+
+    """
+    total_actual_price = 0
+    total_discount_value = 0
+    total_tax_value = 0
+    total_value = 0
+    for loop_count,items in enumerate(cart_items):
+        item_number = loop_count+1
+        item_currency = items['currency']
+        if not item_currency:
+            item_currency = global_variables.GLOBAL_USER_CURRENCY
+        if items['call_off'] == CONST_LIMIT_ORDER_CALLOFF:
+            overall_limit = items['overall_limit']
+            price_unit = 1
+        else:
+            overall_limit = None
+            price_unit = items['price_unit']
+        value = calculate_item_total_value(items['call_off'], items['quantity'], None, price_unit, items['price'],
+                                           overall_limit)
+        if item_currency != global_variables.GLOBAL_USER_CURRENCY:
+            actual_price = convert_currency(float(items['actual_price']) * items['quantity'], str(item_currency),
+                                            str(global_variables.GLOBAL_USER_CURRENCY))
+            discount_value = convert_currency(float(items['discount_value']) * items['quantity'],
+                                              str(item_currency),
+                                              str(global_variables.GLOBAL_USER_CURRENCY))
+            tax_value = convert_currency(float(items['tax_value']) * items['quantity'],
+                                         str(item_currency),
+                                         str(global_variables.GLOBAL_USER_CURRENCY))
+            value = convert_currency(value, str(item_currency), str(global_variables.GLOBAL_USER_CURRENCY))
+            sc_check_instance.check_for_currency(item_number, value, str(item_currency))
+            # gross_price_list.append(convert_currency(float(items['gross_price'])*items['quantity'], str(item_currency), str(user_currency)))
+        else:
+            actual_price = float(items['actual_price']) * items['quantity']
+            discount_value = items['discount_value']
+            tax_value = items['tax_value']
+            # gross_price_list.append(float(items['gross_price'])*items['quantity'])
+        if value:
+            item_total_value = round(value, 2)
+            item_total_value = format(item_total_value, '.2f')
+            items['item_total_value'] = item_total_value
+            items['value'] = item_total_value
+        else:
+            items['item_total_value'] = 0.00
+            items['value'] = 0.00
+        total_actual_price = total_actual_price + actual_price
+        total_discount_value = total_discount_value + discount_value
+        total_tax_value = total_tax_value + tax_value
+        total_value = total_value + value
+    total_actual_price = round(total_actual_price, 2)
+    total_discount_value = round(total_discount_value, 2)
+    total_tax_value = round(total_tax_value, 2)
+    total_value = round(total_value, 2)
+    return total_actual_price, total_discount_value, total_tax_value, total_value, cart_items
 
 
 def update_image_for_catalog(cart_items):
@@ -505,9 +565,6 @@ def update_delivery_date_to_item_table(cart_items):
     return cart_items
 
 
-
-
-
 def get_manger_and_purchasing_details(company_code, default_acc_ass_cat, total_value, default_acc, call_off_list,
                                       prod_cat_list):
     """
@@ -515,9 +572,9 @@ def get_manger_and_purchasing_details(company_code, default_acc_ass_cat, total_v
     """
     error_msg = ''
     completion_work_flow = []
-    manager_details = {}
+    manager_details = []
     sc_completion_flag = False
-    approver_id = ''
+    approver_id = []
     purchase_control_call_off_list = get_order_status(company_code, global_variables.GLOBAL_CLIENT)
     if company_code:
         manager_detail, msg_info = get_manger_detail(global_variables.GLOBAL_CLIENT,
@@ -537,3 +594,23 @@ def get_manger_and_purchasing_details(company_code, default_acc_ass_cat, total_v
     else:
         error_msg = get_message_desc('MSG109')[1]
     return error_msg, sc_completion_flag, completion_work_flow, manager_details, approver_id
+
+
+def get_required_field_into_list(cart_items):
+    """
+
+    """
+    cart_items_guid_list = dictionary_key_to_list(cart_items, 'guid')
+    prod_cat_list = dictionary_key_to_list(cart_items, 'prod_cat_id')
+    call_off_list = dictionary_key_to_list(cart_items, 'call_off')
+    total_item_value = dictionary_key_to_list(cart_items, 'item_total_value')
+
+    return cart_items_guid_list, prod_cat_list, call_off_list, total_item_value
+
+
+def add_new_key_value(cart_items):
+    """
+
+    """
+    cart_items = update_key_value_with_new_key_dictionary_list(cart_items,'prod_cat_id','prod_cat')
+    return cart_items

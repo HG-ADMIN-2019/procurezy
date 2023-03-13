@@ -130,11 +130,12 @@ def login_page(request):
                     user_details.login_attempts = user_details.login_attempts + 1
                     user_details.save()
                     attempts = int(login_attempts) - user_details.login_attempts
-                    error_msg = get_message_desc_without_client('MSG057')
+                    error_msg = get_message_desc_without_client('MSG057')[1]
                     # msgid = 'MSG057'
                     # msg = error_msg['message_desc'][0]
                     # error_msg = msg
                     attempts_left = str(attempts) + error_msg
+                    messages.error(request, attempts_left)
                     # attempts_left = str(attempts) + MSG057
 
                 # If Number of login_attempts is 3 then pwd_locked will be True

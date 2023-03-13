@@ -6,6 +6,7 @@ from datetime import datetime
 import time
 import os
 
+import PyPDF2.pdf
 from apscheduler.schedulers.background import BackgroundScheduler
 from django.db.models.query_utils import Q
 from django.http import JsonResponse, HttpResponse
@@ -581,6 +582,20 @@ def extract_currency_data(request):
 
     return response
 
+def read_pdf(request):
+    pdfData = ''
+    directory = os.path.join(str(settings.BASE_DIR), 'media', 'pdf_read')
+    for root, dirs, files in os.walk(directory):
+        for file in files:
+            file_path = os.path.join(directory, file)  # create path
+            pdf_file = open(file_path, 'rb')  # open .csv file
+            reader = PyPDF2.PdfFileReader(pdf_file)
+            page1 = reader.getPage(0)
+            print(reader.numPages)
+            pdfData = page1.extractText()
+            print(pdfData)
+    data ={'pdf_data':pdfData}
+    return JsonResponse(data)
 
 def srm_currency_converter_p02(request):
     response = HttpResponse(content_type='text/plain')

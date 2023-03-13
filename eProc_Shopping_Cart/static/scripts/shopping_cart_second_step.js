@@ -8,7 +8,7 @@ var CONST_MULTIPLE = ''
 var manager_detail_initial = shopping_cart_errors.manager_detail.length
 var sc_errors_initial = shopping_cart_errors.sc_error
 var sc_info_messsages = shopping_cart_errors.sc_info
-var error_messages_initial = '' 
+var error_messages_initial = ''
 
 if (sc_info_messsages.length > 0){
     var info_messages = '';
@@ -142,7 +142,7 @@ request.onupgradeneeded = function (event) {
 var highest_value_item_number = document.getElementById('highest_item').value
 var highest_item_acc_asgn_cat = (document.getElementById('change_acc_type_'+highest_value_item_number).innerHTML).split(' - ')[0]
 var highest_item_change_acc_value = (document.getElementById('change_acc_value_'+highest_value_item_number).innerHTML).split(' - ')[0]
-var cart_length = parseInt(document.getElementById('cart_counter').innerHTML)
+
 
 // Function to edit cart name in sc second step
 function edit_sc_name(){
@@ -739,32 +739,6 @@ const check_ui_errors_warnings = (error_messages) => {
 
 
 }
-
-const check_manager_detail = (response) => {
-    GLOBAL_MANAGER_DETAIL = response.approver_id;
-    $('#div_manager_detail').empty();
-    var manager_icon = '';
-    error_message = '';
-    $('#id_dynamic').empty();
-    if (response.manager_detail) {
-        $.each(response.manager_detail, function (i, item) {
-            if (item == 'Auto') {
-                double_angular = '<div class="approval-overview__next-icon-container"><i class="fas fa-angle-double-right fa-3x"></i></div>';
-                manager_icon += '' + double_angular + '<div class="approval-overview__user-icon-container ao-workflow-user"><div class="workflow-user-bg"><i class="fas fa-user-check fa-2x icon-workflow-auto" aria-hidden="true"></i></div><button type="button" class="button-workflow-user">' + item.first_name + '</button></div>';
-            }
-            else {
-                double_angular = '<div class="approval-overview__next-icon-container"><i class="fas fa-angle-double-right fa-3x"></i></div>';
-                manager_icon += '' + double_angular + '<div class="approval-overview__user-icon-container ao-workflow-user"><div class="workflow-user-bg"><i class="fa fa-user-tie fa-3x" aria-hidden="true"> </i></div><button type="button" class="button-workflow-user">' + item.first_name + '</button></div>';
-            }
-        });
-    }
-    if (response.msg_info) {
-        error_message = response.msg_info + '<br>'
-    }
-    $('#div_manager_detail').append(manager_icon);
-    return error_message
-}
-
 
 
 // Funtion to clear session storage
