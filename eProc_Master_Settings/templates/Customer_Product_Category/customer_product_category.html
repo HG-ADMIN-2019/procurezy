@@ -60,7 +60,8 @@
                                     <input type="checkbox" onchange="checkAll(this)" name="chk[]">
                                 </div>
                                 </th>
-                            <th style="width: 30%;">Description</th>
+                            <th style="width: 25%;">Image</th>
+                            <th style="width: 35%;">Description</th>
                             <th>UNSPSC Code</th>
                             <th class="hg_unspsc_th_column" hidden> Upload Images</th>
                             <th hidden>Guid</th>
@@ -77,10 +78,10 @@
                                         <div> 
                                                  <img src="/media/{{cust_prod_cat.image_url}}" onerror='this.src="/static/images/no-image-cropped.png"' id='prod_img-{{cust_prod_cat.prod_cat_id}}' class="mr-3 catalog_img product-config-img" >
                                         </div>
-                                        <span>{{cust_prod_cat.prod_cat_desc}}</span> 
                                     </div> 
                                 </a>
                             </td>
+                            <td>{{cust_prod_cat.prod_cat_desc}}</td>
                             <td>{{ cust_prod_cat.prod_cat_id}}</td>
                             <td class="hg_unspsc_td_column" hidden><a onclick="upload_unscpsc_prod_cat_image({{cust_prod_cat.prod_cat_id}})"><i class="fa fa-upload" aria-hidden="true"></i></a></td>
                             <td hidden>{{cust_prod_cat.prod_cat_guid}}</td>
@@ -815,7 +816,7 @@ $('#display_basic_table').DataTable().destroy();
     $('#id_cusprodcat_tbody').empty();
     var edit_basic_data = '';
     $.each(rendered_cust_prod_cat_data, function (i, item) {
-        edit_basic_data += '<tr><td class="class_select_checkbox"><input class="checkbox_check" onclick="valueChanged()" type="checkbox" required></td><td><a onclick="get_image_detail('+item.prod_cat_id+')" href="#"><div style="display: flex; flex-direction: row;"><div><img src="/media/'+item.image_url+'" onerror="this.src="/static/images/no-image-cropped.png"" class="mr-3 catalog_img product-config-img" ></div><span>'+item.prod_cat_desc+'</span></div></a></td><td>' + item.prod_cat_id + '</td><td  class="hg_unspsc_td_column" hidden><a onclick="upload_unscpsc_prod_cat_image({{cust_prod_cat.prod_cat_id}})"><i class="fa fa-upload" aria-hidden="true"></i></a></td><td hidden>' + item.prod_cat_guid + '</td><td hidden>'+item.del_ind+'</td></tr>'
+        edit_basic_data += '<tr><td class="class_select_checkbox"><input class="checkbox_check" onclick="valueChanged()" type="checkbox" required></td><td><a onclick="get_image_detail('+item.prod_cat_id+')" href="#"><div style="display: flex; flex-direction: row;"><div><img src="/media/'+item.image_url+'" onerror="this.src="/static/images/no-image-cropped.png"" class="mr-3 catalog_img product-config-img" ></div></div></a></td><td>'+item.prod_cat_desc+'</td><td>' + item.prod_cat_id + '</td><td  class="hg_unspsc_td_column" hidden><a onclick="upload_unscpsc_prod_cat_image({{cust_prod_cat.prod_cat_id}})"><i class="fa fa-upload" aria-hidden="true"></i></a></td><td hidden>' + item.prod_cat_guid + '</td><td hidden>'+item.del_ind+'</td></tr>'
 
     });
     $('#id_cusprodcat_tbody').append(edit_basic_data);
