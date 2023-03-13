@@ -421,27 +421,18 @@ def sc_second_step(request):
     request.session['company_code'] = company_code
     # Display shopping cart items in 2nd step of wizard
 
-    cart_items = django_query_instance.django_filter_query(CartItemDetails,
-                                                           {'username': global_variables.GLOBAL_LOGIN_USERNAME,
-                                                            'client': global_variables.GLOBAL_CLIENT},
-                                                           ['item_num'],
-                                                           None)
-
-    cart_items_count = len(cart_items)
+    cart_items, cart_items_count = get_cart_items_detail()
 
     if cart_items_count == 0:
         return redirect('eProc_Shop_Home:shopping_cart_home')
-
-
 
     actual_price, discount_value, \
     tax_value, total_value, cart_items = validate_get_currency_converted_price_data(cart_items, sc_check_instance)
     cart_items_guid_list, prod_cat_list, call_off_list, total_item_value = get_required_field_into_list(cart_items)
     request.session['total_value'] = total_item_value
-    global_variables.GLOBAL_REQUESTER_CURRENCY = requester_field_info(global_variables.GLOBAL_LOGIN_USERNAME,
-                                                                      'currency_id')
-    global_variables.GLOBAL_REQUESTER_LANGUAGE = requester_field_info(global_variables.GLOBAL_LOGIN_USERNAME,
-                                                                      'language_id')
+
+    update_request_default_detail()
+
     highest_item_value = max(total_item_value)
     highest_item_number = total_item_value.index(highest_item_value)
 
@@ -480,9 +471,10 @@ def sc_second_step(request):
     default_account_assignment_category, default_account_assignment_value = unpack_accounting_data(accounting_data,
                                                                                                    sc_check_instance)
 
-    sc_check_instance.delivery_address_check(default_address_number, '0')
-    sc_check_instance.approval_check(default_account_assignment_category, default_account_assignment_value, total_value,
-                                     company_code)
+    sc_check_instance.default_delivery_address_check(default_address_number)
+
+    sc_check_instance.update_approval_check(manager_details, approver_id, total_value,
+                                     msg_info)
 
     cart_items, shopping_cart_errors = check_sc_second_step_shopping_cart(sc_check_instance, object_id_list,
                                                                           default_calendar_id,

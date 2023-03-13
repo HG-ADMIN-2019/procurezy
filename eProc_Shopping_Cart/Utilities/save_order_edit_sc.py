@@ -1230,13 +1230,33 @@ class CheckForScErrors:
         self.info = []
         self.sc_check_data = {}
         self.username = username
+        self.error_message_info = []
+
+    def default_delivery_address_check(self, address_number):
+        address_error = {}
+
+        if address_number == 'None' or address_number is None or address_number == '':
+            error_msg = get_message_desc('MSG163')[1]
+            self.error_message_info.append(error_msg)
+            return False, self.data
+
+        check_for_address_number = django_query_instance.django_existence_check(OrgAddress, {
+            'client': self.client, 'del_ind': False, 'address_number': address_number
+        })
+
+        if not check_for_address_number:
+            error_msg = get_message_desc('MSG162')[1]
+            self.error_message_info.append(error_msg)
+            return False, self.data
+        else:
+            return True, ''
 
     def delivery_address_check(self, address_number, item_num):
         address_error = {}
-        msgid = 'MSG162'
-        error_msg = get_message_desc(msgid)[1]
 
         if address_number == 'None' or address_number is None or address_number == '':
+            msgid = 'MSG162'
+            error_msg = get_message_desc(msgid)[1]
             address_error[item_num] = error_msg
             self.data.append(address_error)
             return False, self.data
@@ -1421,6 +1441,23 @@ class CheckForScErrors:
         self.sc_check_data['approver_id'] = approver_id
         if error_message:
             self.sc_check_data['msg_info'] = error_message
+            self.error_message_info.append(error_message)
+
+    def update_approval_check(self, manager_details, approver_id, total_value,
+                                     msg_info):
+        """
+        :param acc_default:
+        :param acc_default_val:
+        :param total_val:
+        :param company_code:
+        :return:
+        """
+        self.sc_check_data['total_value'] = total_value
+        self.sc_check_data['manager_detail'] = manager_details
+        self.sc_check_data['approver_id'] = approver_id
+        if msg_info:
+            self.sc_check_data['msg_info'] = msg_info
+            self.error_message_info.append(msg_info)
 
     def catalog_item_check(self, product_id, price, lead_time, item_num, item_guid, quantity):
         check_catalog_errors = {}
@@ -1532,6 +1569,7 @@ class CheckForScErrors:
 
     def get_shopping_cart_errors(self):
         self.sc_check_data['sc_error'] = self.data
+        self.sc_check_data['msg_info'] = self.error_message_info
         self.sc_check_data['sc_info'] = self.info
         return self.sc_check_data
 

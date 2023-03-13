@@ -34,7 +34,7 @@ class Address_desc:
     def append_addr_desc(addr_details, addr_default_value):
         attr_val = []
         attr_desc = []
-        addr_append_default_val_desc = 0
+        addr_append_default_val_desc = None
         addr_append_val_desc = ''
         if addr_details:
             for addr_detail in addr_details:
@@ -65,9 +65,10 @@ def get_shipping_drop_down(addr_value, addr_default_value):
     addr_val_desc = ''
 
     if addr_value:
-        add_default_address_value = [addr_default_value]
-        addr_val_desc = Address_desc.get_addr_description(global_variables.GLOBAL_CLIENT, add_default_address_value,
-                                                          CONST_DEL_ADDR, 'D')
+        if addr_default_value:
+            add_default_address_value = [addr_default_value]
+            addr_val_desc = Address_desc.get_addr_description(global_variables.GLOBAL_CLIENT, add_default_address_value,
+                                                              CONST_DEL_ADDR, 'D')
         delivery_addr_desc = Address_desc.get_addr_description(global_variables.GLOBAL_CLIENT, addr_value,
                                                                CONST_DEL_ADDR, 'D')
         delivery_addr_list, addr_default = Address_desc.append_addr_desc(delivery_addr_desc, addr_default_value)

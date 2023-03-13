@@ -439,7 +439,7 @@ def get_currency_converted_price_data(cart_items):
     return total_actual_price, total_discount_value, total_tax_value, total_value, cart_items
 
 
-def validate_get_currency_converted_price_data(cart_items,sc_check_instance):
+def validate_get_currency_converted_price_data(cart_items, sc_check_instance):
     """
 
     """
@@ -447,8 +447,8 @@ def validate_get_currency_converted_price_data(cart_items,sc_check_instance):
     total_discount_value = 0
     total_tax_value = 0
     total_value = 0
-    for loop_count,items in enumerate(cart_items):
-        item_number = loop_count+1
+    for loop_count, items in enumerate(cart_items):
+        item_number = loop_count + 1
         item_currency = items['currency']
         if not item_currency:
             item_currency = global_variables.GLOBAL_USER_CURRENCY
@@ -530,7 +530,8 @@ def get_cart_items_detail():
                                                             'client': global_variables.GLOBAL_CLIENT},
                                                            ['item_num'],
                                                            None)
-    return cart_items
+    cart_items_count = len(cart_items)
+    return cart_items,cart_items_count
 
 
 def update_delivery_date_to_item_table(cart_items):
@@ -577,7 +578,7 @@ def get_manger_and_purchasing_details(company_code, default_acc_ass_cat, total_v
     approver_id = []
     purchase_control_call_off_list = get_order_status(company_code, global_variables.GLOBAL_CLIENT)
     if company_code:
-        manager_detail, msg_info = get_manger_detail(global_variables.GLOBAL_CLIENT,
+        manager_detail, error_msg = get_manger_detail(global_variables.GLOBAL_CLIENT,
                                                      global_variables.GLOBAL_LOGIN_USERNAME,
                                                      default_acc_ass_cat,
                                                      total_value,
@@ -612,5 +613,15 @@ def add_new_key_value(cart_items):
     """
 
     """
-    cart_items = update_key_value_with_new_key_dictionary_list(cart_items,'prod_cat_id','prod_cat')
+    cart_items = update_key_value_with_new_key_dictionary_list(cart_items, 'prod_cat_id', 'prod_cat')
     return cart_items
+
+
+def update_request_default_detail():
+    """
+
+    """
+    global_variables.GLOBAL_REQUESTER_CURRENCY = requester_field_info(global_variables.GLOBAL_LOGIN_USERNAME,
+                                                                      'currency_id')
+    global_variables.GLOBAL_REQUESTER_LANGUAGE = requester_field_info(global_variables.GLOBAL_LOGIN_USERNAME,
+                                                                      'language_id')
