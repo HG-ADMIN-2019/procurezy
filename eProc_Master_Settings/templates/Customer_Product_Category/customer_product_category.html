@@ -257,27 +257,27 @@
     var db_header_data = uiConstants["CONST_HEADER_DATA_CUSTPRODCAT"]
 
 
-<!--    var prod_cat_id_dropdown = '';-->
-<!--     function  unspsc_dropdown(){-->
-<!--        prod_cat_id_dropdown = '';-->
-<!--          $.each(rendered_UNSPC_data, function(j, item1){-->
-<!--                            prod_cat_id_dropdown += '<option value="' + item1.prod_cat_id + '">' + item1.prod_cat_id + '</option>';-->
-<!--          })-->
-
-<!--          }-->
-
-     var prod_cat_id_dropdown = '';
-    function  unspsc_dropdown(){
+    var prod_cat_id_dropdown = '';
+     function  unspsc_dropdown(){
         prod_cat_id_dropdown = '';
-        $.each(rendered_cust_prod_cat_data, function(i, item){
-        $.each(rendered_UNSPC_data, function(j, item1){
-             prod_cat_id_dropdown = '';
-            if(item.prod_cat_id != item1.prod_cat_id){
-                prod_cat_id_dropdown += '<option value="' + item1.prod_cat_id + '">' + item1.prod_cat_id + '</option>';
-            }
-        })
-        })
-    }
+          $.each(rendered_UNSPC_data, function(j, item1){
+                            prod_cat_id_dropdown += '<option value="' + item1.prod_cat_id + '">' + item1.prod_cat_id + '</option>';
+          })
+
+     }
+
+<!--     var prod_cat_id_dropdown = '';-->
+<!--    function  unspsc_dropdown(){-->
+<!--        prod_cat_id_dropdown = '';-->
+<!--        $.each(rendered_cust_prod_cat_data, function(i, item){-->
+<!--        $.each(rendered_UNSPC_data, function(j, item1){-->
+<!--             prod_cat_id_dropdown = '';-->
+<!--            if(item.prod_cat_id != item1.prod_cat_id){-->
+<!--                prod_cat_id_dropdown += '<option value="' + item1.prod_cat_id + '">' + item1.prod_cat_id + '</option>';-->
+<!--            }-->
+<!--        })-->
+<!--        })-->
+<!--    }-->
 
 
 //#################################### START UPLOAD POPUP ##############################################################
@@ -1107,8 +1107,9 @@ function main_table_delete(){
     var row = $(this);
     checked = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
     if(checked){
-        cusprodcat_arr_obj.prod_cat_id = row.find("TD").eq(2).html();
-        cusprodcat_arr_obj.prod_cat_guid = row.find("TD").eq(4).html();
+        cusprodcat_arr_obj.prod_cat_desc = row.find("TD").eq(2).html();
+        cusprodcat_arr_obj.prod_cat_id = row.find("TD").eq(3).html();
+        cusprodcat_arr_obj.prod_cat_guid = row.find("TD").eq(5).html();
         cusprodcat_arr_obj.del_ind = checked
         main_table_cusprodcat_checked.push(cusprodcat_arr_obj);
     }
@@ -1124,7 +1125,7 @@ function main_table_delete(){
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             success: function (Response) {
-            rendered_cust_prod_cat_data = Response[0];
+            rendered_cust_prod_cat_data = Response[0][0];
             display_basic_db_data();
             $('#success_msg_id').text(Response[1])
             if(Response[1].message_type== 'SUCCESS'){
@@ -1188,7 +1189,7 @@ function main_table_delete(){
                         contentType: "application/json; charset=utf-8",
                         dataType: "json",
                         success: function(Response) {
-                             rendered_cust_prod_cat_data = Response[0];
+                             rendered_cust_prod_cat_data = Response[0][0];
                              rendered_UNSPC_data = Response.upload_ProdCat
                             display_basic_db_data();
                             $('#success_msg_id').text(Response[1])
