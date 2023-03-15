@@ -345,7 +345,7 @@
                     dataType: "json",
                     success: function(Response) {
                         rendered_cust_prod_cat_desc_data = Response[0];
-                        rendered_UNSPCDESC_data = Response.upload_ProdCat
+                        rendered_UNSPC_data = Response.upload_ProdCat
                         display_basic_db_data();
                         $('#myModal').modal('hide');
                         success_response(Response);  // Display Response data
@@ -368,7 +368,7 @@
             url: "{% url 'eProc_Configuration:get_dropdown_data' %}",
             data: JSON.stringify(data),
             success: function(response) {
-                rendered_UNSPCDESC_data = response.upload_ProdCat
+                rendered_UNSPC_data = response.upload_ProdCat
                 render_language_data = response.upload_language
                 unspcdesc_dropdown();
                 $("#error_msg_id").css("display", "none")
@@ -424,17 +424,22 @@
                 if(item.language_id == "EN"){
                         language_exists_flag = true
                         return language_exists_flag
-                    }
-
+                }
                 else if (item.prod_cat_id == item1.prod_cat_id){
                     if(item1.language_id == "EN"){
                         language_exists_flag = true
                         return language_exists_flag
                     }
                 }
+                else if(item.prod_cat_id == item.prod_cat_id){
+                   if(item1.language_id != "EN"){
+                     language_exists_flag = true
+                     return language_exists_flag
+                   }
+                }
 
-            })
-            return language_exists_flag
+        })
+        return language_exists_flag
 
     }
 
@@ -782,7 +787,7 @@ function onclick_copy_update_button(data){
         url: "{% url 'eProc_Configuration:get_dropdown_data' %}",
         data: JSON.stringify(data),
         success: function(response) {
-            rendered_UNSPCDESC_data = response.upload_ProdCat
+            rendered_UNSPC_data = response.upload_ProdCat
             render_language_data = response.upload_language
             unspcdesc_dropdown()
             $("#error_msg_id").css("display", "none")
@@ -849,7 +854,7 @@ function onclick_copy_update_button(data){
         var selectedText = prodid.options[prodid.selectedIndex].innerHTML;
         var selectedValue = prodid.value;
         var selectedId = (prodid.id).split('-')[1];
-        $.each (rendered_UNSPCDESC_data,function(i, item){
+        $.each (rendered_UNSPC_data,function(i, item){
             if(selectedValue == item.prod_cat_id){
                 $('#description-'+selectedId).val(item.prod_cat_desc);
             }

@@ -80,7 +80,7 @@ class RegForm(ModelForm):
             raise forms.ValidationError("Your username must contain at least four alphanumeric characters")
         elif not (uname.isalnum() and re.match('[A-Za-z0-9]{4,16}', uname)):
             raise forms.ValidationError("Must contain min four alphanumeric characters without special characters")
-        elif UserData.objects.filter(username=uname, client=global_variables.GLOBAL_CLIENT).exists():
+        elif UserData.objects.filter(username=uname, client=global_variables.GLOBAL_CLIENT,del_ind = False).exists():
             raise forms.ValidationError('Username already exists')
 
         return uname.upper()
@@ -117,13 +117,13 @@ class RegForm(ModelForm):
 
     def clean_email(self):
         email = self.cleaned_data.get('email')
-        if UserData.objects.filter(email=email, client=global_variables.GLOBAL_CLIENT).exists():
+        if UserData.objects.filter(email=email, client=global_variables.GLOBAL_CLIENT,del_ind=False).exists():
             raise forms.ValidationError("User email already exists")
         return email
 
     def clean_empId(self):
         emp_id = self.cleaned_data.get('employee_id')
-        if UserData.objects.filter(employee_id=emp_id, client=global_variables.GLOBAL_CLIENT).exists():
+        if UserData.objects.filter(employee_id=emp_id, client=global_variables.GLOBAL_CLIENT,del_ind=False).exists():
             raise forms.ValidationError("Employee Id already exists")
         return emp_id
 

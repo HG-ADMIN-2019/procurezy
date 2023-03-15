@@ -409,15 +409,19 @@ def sc_second_step(request):
     :param request: Get shopping cart and user details in second step of shopping cart
     :return: sc_second_step.html
     """
-    update_user_info(request)
-    sc_check_instance = CheckForScErrors(global_variables.GLOBAL_CLIENT, global_variables.GLOBAL_LOGIN_USERNAME)
-    update_requester_info(global_variables.GLOBAL_LOGIN_USERNAME)
     prod_desc = ''
+    update_user_info(request)
 
+    sc_check_instance = CheckForScErrors(global_variables.GLOBAL_CLIENT, global_variables.GLOBAL_LOGIN_USERNAME)
+
+    update_requester_info(global_variables.GLOBAL_LOGIN_USERNAME)
+
+    # get default calender id and company code from org model
     attr_low_value_list, company_code, default_calendar_id, object_id_list = get_company_calendar_from_org_model()
+
+    # get cart default name, first name
     requester_first_name, cart_name, receiver_name = get_cart_default_name_and_user_first_name(request.user.first_name,
                                                                                                request.user.last_name)
-
     request.session['company_code'] = company_code
     # Display shopping cart items in 2nd step of wizard
 
@@ -470,7 +474,6 @@ def sc_second_step(request):
 
     default_account_assignment_category, default_account_assignment_value = unpack_accounting_data(accounting_data,
                                                                                                    sc_check_instance)
-
     error_msg = sc_check_instance.header_level_delivery_address_check(default_address_number)
     if error_msg:
         sc_check_instance.item_level_delivery_address_check(cart_items_count)
@@ -483,12 +486,17 @@ def sc_second_step(request):
                                                                           default_calendar_id,
                                                                           company_code, cart_items)
 
+    # update images
     cart_items = update_image_for_catalog(cart_items)
 
     cart_items = update_eform_details_scitem(cart_items)
+
     currency, uom, currency_list, product_category, country_list = get_currency_uom_prod_cat_country()
+
     sys_attributes_instance = sys_attributes(global_variables.GLOBAL_CLIENT)
 
+    request.session['total_value'] = total_item_value
+    request.session['company_code'] = company_code
     context = {
         'shopping_cart_errors': shopping_cart_errors,
         'cart_items_count':cart_items_count,
