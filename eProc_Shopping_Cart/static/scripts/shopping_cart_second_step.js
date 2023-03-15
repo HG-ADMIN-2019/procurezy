@@ -60,9 +60,11 @@ if (sc_errors_initial.length == 0 && manager_detail_initial != 0) {
         }
     }
     if (shopping_cart_errors['msg_info']) {
-        error_messages_initial += shopping_cart_errors['msg_info']
+        error_messages_initial += shopping_cart_errors['msg_info'] + '<br>'
     }
-
+    if (shopping_cart_errors['error_msg_info']) {
+        error_messages_initial += shopping_cart_errors['error_msg_info']+ '<br>'
+    }
     $('#sc_error_msg').html(error_messages_initial);
     document.getElementById('sc_success_messages').style.display = 'none';
     document.getElementById('sc_error_msg').style.display = 'block';

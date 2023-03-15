@@ -471,7 +471,10 @@ def sc_second_step(request):
     default_account_assignment_category, default_account_assignment_value = unpack_accounting_data(accounting_data,
                                                                                                    sc_check_instance)
 
-    sc_check_instance.default_delivery_address_check(default_address_number)
+    error_msg = sc_check_instance.header_level_delivery_address_check(default_address_number)
+    if error_msg:
+        sc_check_instance.item_level_delivery_address_check(cart_items_count)
+
 
     sc_check_instance.update_approval_check(manager_details, approver_id, total_value,
                                      msg_info)
