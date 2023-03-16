@@ -134,10 +134,8 @@
                         </div>
                         <!-- Modal footer -->
                         <div class="modal-footer">
-                            <button type="button" class="btn btn-outline-primary remove_upload_data" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
-                            <button id="id_delete_duplicate" class="btn btn-primary" style="display:none;" type="button" onclick="delete_duplicate()"><i class="fa fa-trash"></i> delete duplicates</button>
-                            <button id="id_check_data" style="display:none;" class="btn btn-primary" type="button" onclick="check_data()"><i class="fas fa-check"></i> check</button>
-                            <button class="btn btn-primary" id="save_id"><i class="fas fa-save"></i> save</button>
+                            <button type="button" class="btn btn-outline-primary remove_upload_data" title="Cancel" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
+                            <button class="btn btn-primary" title="Save" id="save_id"><i class="fas fa-save"></i> save</button>
                         </div>
                     </div>
                 </div>
@@ -162,7 +160,6 @@
     var rendered_active_inactive
     var rendered_sequence = {{upload_numberrange|safe}}
     var transaction_types_data_array = {}
-    var main_table_transaction_types_value = [];
     var transaction_types = '';
     var edit_basic_data = '';
     var GLOBAL_ACTION = '';
@@ -199,9 +196,9 @@
             url: "{% url 'eProc_Configuration:get_dropdown_data' %}",
             data: JSON.stringify(data),
             success: function(response) {
-                rendered_active_inactive = response.rendered_active_inactive
-                rendered_document_type = response.document_type_render
-                rendered_sequence = response.upload_numberrange
+                rendered_active_inactive = response.rendered_active_inactive;
+                rendered_document_type = response.document_type_render;
+                rendered_sequence = response.number_range_sequence;
                 dropdown_value();
                 $("#error_msg_id").css("display", "none")
                 $( "#header_select").prop( "hidden", false );
@@ -292,31 +289,27 @@
     }
 
     // validate and save for add,copy,update and upload data
-     function popup_save_data() {
-            $('#success_msg_id').empty()
-            $('#id_popup_table').DataTable().destroy();
-            var main_table_low_value = [];
-            no_duplicate_entries = 'Y'
-            no_duplicate_value = 'Y'
-            var error_message = '';
-            var transaction_type = {}
-            get_main_table_data(); //Read data from main table
-            // compare for duplicates in popup
-            $("#id_error_msg").empty();
-            [no_duplicate_value,error_message] = compare_table_for_duplicate_entries(validate_add_attributes, transaction_types_data)
-            if (error_message){
-                display_error_message(error_message)
+    function popup_save_data() {
+        $('#success_msg_id').empty()
+        $('#id_popup_table').DataTable().destroy();
+        no_duplicate_entries = 'Y'
+        no_duplicate_value = 'Y'
+        var error_message = '';
+        var transaction_type = {}
+        get_main_table_data(); //Read data from main table
+        // compare for duplicates in popup
+        $("#id_error_msg").empty();
+        [no_duplicate_value,error_message] = compare_table_for_duplicate_entries(validate_add_attributes, transaction_types_data)
+        if (error_message){
+            display_error_message(error_message)
+        }
+        else{
+            if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
+                [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
             }
-            else{
-                if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
-                    [no_duplicate_entries,error_message] = maintable_validation(transaction_types_data, main_table_low_value)
-                }
-                if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
-                    var add_basic_data = '';
-                    var transaction_types_data_array = transaction_types_data;
-
-                    $('#id_save_confirm_popup').modal('hide');
-
+            if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
+                var transaction_types_data_array = transaction_types_data;
+                $('#id_save_confirm_popup').modal('hide');
                 data = {'data':transaction_types_data,'table_name':'TransactionTypes','action':GLOBAL_ACTION}
                 OpenLoaderPopup();
                 $.ajax({
@@ -340,9 +333,9 @@
             }
             else if (error_message){
                 display_error_message(error_message)
+            }
         }
     }
-}
 
     //delete the selected row in db................
     var main_table_transaction_types_checked = [];
@@ -362,9 +355,8 @@
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             success: function(Response) {
-                console.log(Response);
                 rendered_transaction_types_data = Response[0];
-                rendered_active_inactive = Response[2];
+                eliminate_used_sequence()
                 display_basic_db_data();
                 success_response(Response); // Function call to display response data
                 table_sort_filter('id_popup_table');
@@ -384,7 +376,7 @@
                 data = '<input type="checkbox" name="active_inactive" value="" checked disabled>'
             } else{
                 data = '<input type="checkbox" name="active_inactive" value="" disabled>'
-            }
+            } 
             edit_basic_data += '<tr><td class="class_select_checkbox"><input class="checkbox_check" onclick="valueChanged()" type="checkbox" required></td><td>' + item.transaction_type + '</td><td>' + item.document_type + '</td><td>' + item.sequence + '</td><td>' + item.description + '</td><td>' + data + '</td><td hidden>' + item.guid + '</td><td hidden>' + item.del_ind + '</td></tr>';
             sequence_remove_array.push(item.sequence)
         });
@@ -479,28 +471,26 @@
         return [no_duplicate_value,error_message]
     }
 
-    //validate by comparing  main table values and popup table values
-    function maintable_validation(validate_add_attributes, main_table_low_value) {
-        var no_duplicate_entries = 'Y'
-        var error_message =''
-        var dup_entry = "";
-        $.each(transaction_types_data, function (i, item) {
-            $.each(main_table_low_value, function (j, item1) {
-                if((item.transaction_type == item1.transaction_type)
-                && (item.document_type == item1.document_type)
-                && (item.sequence == item1.sequence)
-                ){
-                    dup_entry = "1"
+    //Function to highlight duplicate records
+    function display_duplicate_entry(common) {
+        var transaction_types_check = new Array;
+        $("#id_popup_table TBODY TR").each(function() {
+            var row = $(this);
+            transaction_types_dic = {}
+            transaction_types_dic.transaction_type = row.find("TD").eq(1).find('input[type="text"]').val();
+            transaction_types_dic.document_type = row.find("TD").eq(2).find("select option:selected").val();
+            transaction_types_dic.sequence = row.find("TD").eq(3).find("select option:selected").val();
+            var compare = transaction_types_dic.transaction_type + '-' + transaction_types_dic.document_type + '-' + transaction_types_dic.sequence
+            transaction_types_check.push(compare);
+            jQuery.grep(transaction_types_check, function(el) {
+                if (jQuery.inArray(el, common) != -1) {
+                    row_color_highlight(row);
+                }
+                else {
+                    row_color_no_highlight(row);
                 }
             });
         });
-        if((dup_entry == "1"))
-        {
-            get_message_details("JMSG001"); // Get message details
-            no_duplicate_value = 'N'
-            return [no_duplicate_value,error_message]
-        }
-        return [no_duplicate_entries,error_message]
     }
 </script>
 <script src="{% static 'scripts/transaction_type.js' %}"></script>

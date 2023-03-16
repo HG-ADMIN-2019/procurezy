@@ -1,17 +1,22 @@
 var numberranges_data = new Array();
-var validate_add_attributes = [];
-var number_range={};
+var main_table_data = new Array();
 var main_table_low_value = [];
+var validate_add_attributes = [];
+var nextval = max_sequence ;
+var number_range={};
 
 //onclick of add button display poorder_Modal popup and set GLOBAL_ACTION button value
 function onclick_add_button(button) {
-  $("#error_msg_id").css("display", "none")
+    nextval = max_sequence;
+     $("#error_msg_id").css("display", "none")
     $("#header_select").prop( "hidden", false );
     GLOBAL_ACTION = button.value
     $('#id_popup_table').DataTable().destroy();
     $("#id_popup_tbody").empty();
     $('#poorder_Modal').modal('show');
-    new_row_data(); // Function for add a new row data
+    basic_add_new_html = '<tr ><td class="number_range_checkbox"><input type="checkbox" required></td><td><input class="form-control"  type="number" maxlength="2" value = '+ nextval +'  name="sequence"  required disabled></td><td><input class="form-control" type="number" maxlength="100000000"  name="starting"  required></td><td><input class="form-control" type="number" maxlength="100000000"  name="ending"  required></td><td><input class="form-control" type="number" maxlength="100000000"  name="current"  required></td>><td hidden><input class="form-control" type="text" value=""></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+    $('#id_popup_tbody').append(basic_add_new_html);
+    table_sort_filter('id_popup_table');
     $("#id_del_ind_checkbox").prop("hidden", true);
     document.getElementById("id_del_add_button").style.display = "block";
     $("#save_id").prop("hidden", false);
@@ -37,10 +42,7 @@ function onclick_copy_update_button() {
     for (var i = 1; i < checkBoxes.length; i++) {
         if (checkBoxes[i].checked) {
             var row = checkBoxes[i].parentNode.parentNode;
-            if (GLOBAL_ACTION == "COPY") {
-                guid = '';
-                edit_basic_data += '<tr ><td><input type="checkbox" required></td><td><input type="number" class="form-control" value="' + row.cells[1].innerHTML + '" name="sequence"  maxlength="2"  required></td><td><input class="form-control" value="' + row.cells[2].innerHTML + '" type="number"  name="starting"  maxlength="100000000"  required></td><td><input value="' + row.cells[3].innerHTML + '" type="number" class="form-control"  name="ending"  maxlength="100000000"  required></td><td><input value="' + row.cells[4].innerHTML + '" type="number" class="form-control"  name="current"  maxlength="100000000"  required></td><td hidden><input  type="text" class="form-control" value="' + guid + '"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
-            } else {
+            if (GLOBAL_ACTION == "UPDATE") {
                 guid = row.cells[5].innerHTML;
                 edit_basic_data += '<tr ><td><input type="checkbox" required></td><td><input type="number" class="form-control" value="' + row.cells[1].innerHTML + '" name="sequence"  maxlength="2"  disabled></td><td><input class="form-control" value="' + row.cells[2].innerHTML + '" type="number"  name="starting"  maxlength="100000000"  required></td><td><input value="' + row.cells[3].innerHTML + '" type="number" class="form-control"  name="ending"  maxlength="100000000"  required></td><td><input value="' + row.cells[4].innerHTML + '" type="number" class="form-control"  name="current"  maxlength="100000000"  required></td><td hidden><input  type="text" class="form-control" value="' + guid + '"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
             }
@@ -130,12 +132,10 @@ function inRange(x, min, max) {
     return !((x-min)*(x-max) <= 0);
 }
 
-var nextval = max_sequence ;
 // on click add icon display the row in to add the new entries
 function add_popup_row() {
     $("#error_msg_id").css("display", "none")
     basic_add_new_html = '';
-    var display_db_data = '';
     $('#id_popup_table').DataTable().destroy();
     $(".modal").on("hidden.bs.modal", function () {
         $("#id_error_msg").html("");
@@ -146,13 +146,6 @@ function add_popup_row() {
     if (GLOBAL_ACTION == "number_range") {
         $(".class_del_checkbox").prop("hidden", false);
     }
-    new_row_data(); // Function for add a new row data
-}
-
-// Function for add a new row data
-function new_row_data() {
-    basic_add_new_html = '<tr ><td class="number_range_checkbox"><input type="checkbox" required></td><td><input class="form-control"  type="number" maxlength="2" value = '+ nextval +'  name="sequence"  required></td><td><input class="form-control" type="number" maxlength="100000000"  name="starting"  required></td><td><input class="form-control" type="number" maxlength="100000000"  name="ending"  required></td><td><input class="form-control" type="number" maxlength="100000000"  name="current"  required></td>><td hidden><input class="form-control" type="text" value=""></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
-    $('#id_popup_tbody').append(basic_add_new_html);
     table_sort_filter('id_popup_table');
 }
 
@@ -208,6 +201,12 @@ function display_basic_db_data() {
 //****************************
 $('#save_id').click(function () {
     $('#poorder_Modal').modal('hide');
+    numberranges_data = read_popup_data();
+    $('#id_save_confirm_popup').modal('show');
+});
+
+//Read popup table data
+function read_popup_data() {
     numberranges_data = new Array();
     validate_add_attributes = [];
     $("#id_popup_table TBODY TR").each(function () {
@@ -229,8 +228,8 @@ $('#save_id').click(function () {
         validate_add_attributes.push(number_range.sequence);
         numberranges_data.push(number_range);
     });
-    $('#id_save_confirm_popup').modal('show');
-});
+    return numberranges_data;
+}
 
 //**************************************
 function display_error_message(error_message){
@@ -263,7 +262,6 @@ function display_error_message(error_message){
 // Function to get main table data
 function get_main_table_data(){
     main_table_low_value = [];
-    var main_table_data = [];
     $('#display_basic_table').DataTable().destroy();
     $("#display_basic_table TBODY TR").each(function () {
         var row = $(this);

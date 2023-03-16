@@ -1,7 +1,7 @@
 var transaction_types_data = new Array();
 var validate_add_attributes = [];
-var TransactionTypes={};
 var main_table_low_value = [];
+var TransactionTypes={};
 
 // on click add icon display the row in to add the new entries
 function add_popup_row() {
@@ -54,11 +54,9 @@ function eliminate_used_sequence() {
             return item != sequence_popup;
         });
     })
-    console.log("rendered_sequence_array",rendered_sequence_array);
     $.each(rendered_sequence_array, function (i, value) {
         sequence_dropdown += '<option value="' + value + '">' + value + '</option>'
     });
-    console.log("sequence_dropdown",sequence_dropdown)
 }
 
 // on click copy icon display the selected checkbox data
@@ -89,7 +87,6 @@ $(".remove_upload_data").click(() => {
     $("#id_check_success_messages").prop("hidden", true);
     $("#id_check_special_character_messages").prop("hidden", true)
     $("#id_check_data").prop("hidden", true);
-    sequence_dropdown = '';
     read_sequence()
     $('#id_popup_table').DataTable().destroy();
 });
@@ -105,6 +102,12 @@ function display_error_message(error_message){
 
 // Functtion to hide and display save related popups
 $('#save_id').click(function () {
+    transaction_types_data = read_popup_data();
+    $('#id_save_confirm_popup').modal('show');
+});
+
+//Read popup table data
+function read_popup_data() {
     transaction_types_data = new Array();
     validate_add_attributes = [];
     $('#myModal').modal('hide');
@@ -112,8 +115,8 @@ $('#save_id').click(function () {
         var row = $(this);
         transaction_types = {};
         transaction_types.del_ind = row.find("TD").eq(7).find('input[type="checkbox"]').is(':checked');
-        transaction_types.document_type = row.find("TD").eq(2).find("select option:selected").val();
         transaction_types.transaction_type = row.find("TD").eq(1).find('input[type="text"]').val();
+        transaction_types.document_type = row.find("TD").eq(2).find("select option:selected").val();
         transaction_types.sequence = row.find("TD").eq(3).find("select option:selected").val();
         transaction_types.description = row.find("TD").eq(4).find('input[type="text"]').val();
         transaction_types.active_inactive = row.find("TD").eq(5).find('input[type="checkbox"]').is(':checked');
@@ -125,11 +128,12 @@ $('#save_id').click(function () {
         if (transaction_types.guid == undefined){
             transaction_types.guid = ''
         }
-        validate_add_attributes.push(transaction_types.transaction_type);
+        var compare = transaction_types.transaction_type + '-' + transaction_types.document_type + '-' + transaction_types.sequence
+        validate_add_attributes.push(compare);
         transaction_types_data.push(transaction_types);
     });
-    $('#id_save_confirm_popup').modal('show');
-});
+    return transaction_types_data;
+}
 
 // Function for add a new row data
 function new_row_data() {
@@ -140,6 +144,7 @@ function new_row_data() {
 
 // Function to get main table data
 function get_main_table_data(){
+    main_table_low_value = [];
     $('#display_basic_table').DataTable().destroy();
     $("#display_basic_table TBODY TR").each(function() {
         var row = $(this);
@@ -148,7 +153,8 @@ function get_main_table_data(){
         main_attribute.document_type = row.find("TD").eq(2).html();
         main_attribute.sequence = row.find("TD").eq(3).html();
         main_attribute.description  = row.find("TD").eq(4).html();
-        main_table_low_value.push(main_attribute);
+        var compare_maintable = main_attribute.transaction_type + '-' + main_attribute.document_type + '-' + main_attribute.sequence
+        main_table_low_value.push(compare_maintable);
     });
     table_sort_filter('display_basic_table');
 }
@@ -157,7 +163,6 @@ function get_main_table_data(){
 function get_selected_row_data(){
     $("#display_basic_table TBODY TR").each(function() {
         var row = $(this);
-        var status;
         var transaction_types_arr_obj = {};
         transaction_types_arr_obj.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
         if( transaction_types_arr_obj.del_ind){
@@ -166,7 +171,7 @@ function get_selected_row_data(){
             transaction_types_arr_obj.sequence = row.find("TD").eq(3).html();
             transaction_types_arr_obj.description = row.find("TD").eq(4).html();
             transaction_types_arr_obj.active_inactive = row.find("TD").eq(5).find('input[type="checkbox"]').is(':checked');
-            transaction_types_arr_obj.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
+            // transaction_types_arr_obj.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
             transaction_types_arr_obj.guid = row.find("TD").eq(6).html();
             main_table_transaction_types_checked.push(transaction_types_arr_obj);
         }

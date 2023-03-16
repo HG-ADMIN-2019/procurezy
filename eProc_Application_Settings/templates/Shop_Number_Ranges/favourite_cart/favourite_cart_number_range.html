@@ -8,15 +8,15 @@
         <div class="elements-space-between">
             <h3>Maintain Favourite Cart Number Ranges</h3>
             <div>
-                    <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Application_Settings:extract_favourite_cart_number_range_data' %}'" type="button">
-                       <i class="fas fa-download"></i> extract
-                    </button>
-                    <button type="button" id="id_add_data" title="Add Favourite Cart Number Range" value="ADD" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="onclick_add_button(this)">
-                       <i class="fa fa-plus"></i> Add Favourite Cart Number Range
-                    </button>
-                    <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"  onclick="window_close();">
-                        <i class="fas fa-times"></i> close
-                    </button>
+                <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Application_Settings:extract_favourite_cart_number_range_data' %}'" type="button">
+                    <i class="fas fa-download"></i> extract
+                </button>
+                <button type="button" id="id_add_data" title="Add Favourite Cart Number Range" value="ADD" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="onclick_add_button(this)">
+                    <i class="fa fa-plus"></i> Add Favourite Cart Number Range
+                </button>
+                <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"  onclick="window_close();">
+                    <i class="fas fa-times"></i> close
+                </button>
             </div>
         </div>
         <hr>
@@ -117,7 +117,6 @@
                 <!-- Modal footer -->
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-primary remove_upload_data" title="Cancel" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
-                    <button id="id_delete_duplicate" class="btn btn-primary" style="display:none;" type="button" onclick="delete_duplicate()"><i class="fa fa-trash"></i> delete duplicates</button>
                     <button class="btn btn-primary" title="Save" id="save_id"><i class="fas fa-save"></i> save</button>
                 </div>
             </div>
@@ -172,7 +171,6 @@
                 [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value,numberranges_data,main_table_data)
             }
             if (((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y'))) {
-                var add_basic_data = '';
                 var number_range_data_array = numberranges_data;
                 $('#id_save_confirm_popup').modal('hide');
                 data = {'data':numberranges_data,'table_name':'NumberRanges','action':GLOBAL_ACTION}
@@ -275,13 +273,28 @@
                     no_duplicate_value = 'N'
                     return [no_duplicate_value,error_message]
                 }
+                // if (item.current <= item.starting) {
+                //     get_message_details("JMSG036"); // Get message details
+                //     no_duplicate_value = 'N'
+                //     return [no_duplicate_value,error_message]
+                // }
+                // if (item.current >= item.ending) {
+                //     get_message_details("JMSG037"); // Get message details
+                //     no_duplicate_value = 'N'
+                //     return [no_duplicate_value,error_message]
+                // }
+                // if (item.current >= item.starting && item.ending ) {
+                //     get_message_details("JMSG016"); // Get message details
+                //     no_duplicate_value = 'N'
+                //     return [no_duplicate_value,error_message]
+                // }
             });
             var range_check = list_out_of_range(number_range)
             if (range_check){
                 get_message_details("JMSG016"); // Get message details
                 no_duplicate_value = 'N'
                 return [no_duplicate_value,error_message]
-            }
+            } 
             else{
                 check_number_range = number_range
                 validation_error = range_check_function(number_range,check_number_range)

@@ -4,7 +4,6 @@ var main_table_low_value = [];
 var validate_add_attributes = [];
 var nextval = max_sequence ;
 var number_range={};
-var seq_array= [];
 
 //onclick of add button display myModal popup and set GLOBAL_ACTION button value
 function onclick_add_button(button) {
@@ -140,7 +139,6 @@ function inRange(x, min, max) {
 function add_popup_row() {
     $("#error_msg_id").css("display", "none")
     basic_add_new_html = '';
-    var display_db_data = '';
     $('#id_popup_table').DataTable().destroy();
     $(".modal").on("hidden.bs.modal", function () {
         $("#id_error_msg").html("");

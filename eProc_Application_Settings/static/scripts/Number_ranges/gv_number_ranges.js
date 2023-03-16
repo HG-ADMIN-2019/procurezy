@@ -1,12 +1,13 @@
 var numberranges_data = new Array();
 var main_table_data = new Array();
 var validate_add_attributes = [];
-var number_range={};
 var main_table_low_value = [];
+var number_range={};
 var seq_array= [];
 
 //onclick of add button display myModal popup and set GLOBAL_ACTION button value
 function onclick_add_button(button) {
+    nextval = max_sequence;
     $("#error_msg_id").css("display", "none")
     $("#header_select").prop( "hidden", false );
     GLOBAL_ACTION = button.value
@@ -20,13 +21,6 @@ function onclick_add_button(button) {
     document.getElementById("id_del_add_button").style.display = "block";
     $("#save_id").prop("hidden", false);
     nextval = max_sequence;
-}
-
-// on click copy icon display the selected checkbox data
-function onclick_copy_button() {
-    GLOBAL_ACTION = "COPY"
-    onclick_copy_update_button("copy")
-    document.getElementById("id_del_add_button").style.display = "block";
 }
 
 // on click update icon display the selected checkbox data to update
@@ -52,10 +46,7 @@ function onclick_copy_update_button() {
     for (var i = 1; i < checkBoxes.length; i++) {
         if (checkBoxes[i].checked) {
             var row = checkBoxes[i].parentNode.parentNode;
-            if (GLOBAL_ACTION == "COPY") {
-                guid = '';
-                edit_basic_data += '<tr ><td><input type="checkbox" required></td><td><input type="number" class="form-control" value="' + row.cells[1].innerHTML + '" name="sequence"  maxlength="5"  required></td><td><input class="form-control" value="' + row.cells[2].innerHTML + '" type="number"  name="starting"  maxlength="100000000"  required></td><td><input value="' + row.cells[3].innerHTML + '" type="number" class="form-control"  name="ending"  maxlength="10"  required></td><td><input value="' + row.cells[4].innerHTML + '" type="number" class="form-control"  name="current"  maxlength="10"  required></td><td hidden><input  type="text" class="form-control" value="' + guid + '"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
-            } else {
+            if (GLOBAL_ACTION == "UPDATE") {
                 guid = row.cells[5].innerHTML;
                 edit_basic_data += '<tr ><td><input type="checkbox" required></td><td><input type="number" class="form-control" value="' + row.cells[1].innerHTML + '" name="sequence"  maxlength="5"  disabled></td><td><input class="form-control" value="' + row.cells[2].innerHTML + '" type="number"  name="starting"  maxlength="100000000"  required></td><td><input value="' + row.cells[3].innerHTML + '" type="number" class="form-control"  name="ending"  maxlength="10"  required></td><td><input value="' + row.cells[4].innerHTML + '" type="number" class="form-control"  name="current"  maxlength="10"  required></td><td hidden><input  type="text" class="form-control" value="' + guid + '"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
             }
@@ -144,8 +135,8 @@ function main_range_check_function(number_range,check_number_range){
 function inRange(x, min, max) {
     return !((x-min)*(x-max) <= 0);
 }
-var nextval = max_sequence;
 
+var nextval = max_sequence;
 // on click add icon display the row in to add the new entries
 function add_popup_row() {
     $("#error_msg_id").css("display", "none")
@@ -216,6 +207,12 @@ function display_basic_db_data() {
 // Functtion to hide and display save related popups
 $('#save_id').click(function () {
     $('#myModal').modal('hide');
+    numberranges_data = read_popup_data();
+    $('#id_save_confirm_popup').modal('show');
+});
+
+//Read popup table data
+function read_popup_data() {
     numberranges_data = new Array();
     validate_add_attributes = [];
     $('#id_popup_table').DataTable().destroy();
@@ -238,9 +235,8 @@ $('#save_id').click(function () {
         validate_add_attributes.push(number_range.sequence);
         numberranges_data.push(number_range);
     });
-    table_sort_filter_popup('id_popup_table')
-    $('#id_save_confirm_popup').modal('show');
-});
+    return numberranges_data;
+}
 
 //*****************************************
 function display_error_message(error_message){
@@ -254,34 +250,34 @@ function display_error_message(error_message){
 // Function to get main table data
 function get_main_table_data(){
     main_table_low_value = [];
-$("#display_basic_table TBODY TR").each(function () {
-    var row = $(this);
-    var main_attribute = {};
-    main_attribute.sequence = row.find("TD").eq(1).html();
-    main_attribute.starting = row.find("TD").eq(2).html();
-    main_attribute.ending = row.find("TD").eq(3).html();
-    main_attribute.current = row.find("TD").eq(4).html();
-    main_attribute.guid = row.find("TD").eq(5).html();
-    main_table_low_value.push(main_attribute.sequence);
-    main_table_data.push(main_attribute)
-});
-table_sort_filter('display_basic_table');
+    $("#display_basic_table TBODY TR").each(function () {
+        var row = $(this);
+        var main_attribute = {};
+        main_attribute.sequence = row.find("TD").eq(1).html();
+        main_attribute.starting = row.find("TD").eq(2).html();
+        main_attribute.ending = row.find("TD").eq(3).html();
+        main_attribute.current = row.find("TD").eq(4).html();
+        main_attribute.guid = row.find("TD").eq(5).html();
+        main_table_low_value.push(main_attribute.sequence);
+        main_table_data.push(main_attribute)
+    });
+    table_sort_filter('display_basic_table');
 }
 
 // Function to get the selected row data
 function get_selected_row_data(){
-$("#display_basic_table TBODY TR").each(function () {
-    var row = $(this);
-    var number_range_arr_obj = {};
-    number_range_arr_obj.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
-    if(number_range_arr_obj.del_ind){
-    number_range_arr_obj.sequence = row.find("TD").eq(1).html();
-    number_range_arr_obj.starting = row.find("TD").eq(2).html();
-    number_range_arr_obj.ending = row.find("TD").eq(3).html();
-    number_range_arr_obj.current = row.find("TD").eq(4).html();
-    number_range_arr_obj.guid = row.find("TD").eq(5).html();
-    number_range_arr_obj.document_type = "DOC03";
-    main_table_number_range_checked.push(number_range_arr_obj);
-}
-});
+    $("#display_basic_table TBODY TR").each(function () {
+        var row = $(this);
+        var number_range_arr_obj = {};
+        number_range_arr_obj.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
+        if(number_range_arr_obj.del_ind){
+            number_range_arr_obj.sequence = row.find("TD").eq(1).html();
+            number_range_arr_obj.starting = row.find("TD").eq(2).html();
+            number_range_arr_obj.ending = row.find("TD").eq(3).html();
+            number_range_arr_obj.current = row.find("TD").eq(4).html();
+            number_range_arr_obj.guid = row.find("TD").eq(5).html();
+            number_range_arr_obj.document_type = "DOC03";
+            main_table_number_range_checked.push(number_range_arr_obj);
+        }
+    });
 }
