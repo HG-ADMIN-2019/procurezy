@@ -431,7 +431,7 @@
                         return language_exists_flag
                     }
                 }
-                else if(item.prod_cat_id == item.prod_cat_id){
+                else if(item.prod_cat_id == item1.prod_cat_id){
                    if(item1.language_id != "EN"){
                      language_exists_flag = true
                      return language_exists_flag
@@ -451,16 +451,37 @@
         var add_attr_unique_list = [];
         var no_duplicate_value = 'Y'
         var language_exists_flag
+        var unspsc_prod_cat_english_list = []
+        var unspsc_prod_cat_non_english_list = []
+        $.each(cusprodcatdesc, function(i, cust_prod_cat){
+            if(cust_prod_cat.language_id == 'EN'){
+                unspsc_prod_cat_english_list.push(cust_prod_cat.prod_cat_id)
+            }
+            else{
+                unspsc_prod_cat_non_english_list.push(cust_prod_cat.prod_cat_id)
+            }
 
-        $.each(cusprodcatdesc, function(i, item){
-            language_exists_flag = false
-            language_exists_flag = check_unspsc_desc(item)
-            if(!language_exists_flag){
-                        console.log("Please select default language English for new Product ID")
-                        error_message = ui_messeges("JMSG029")
+        });
+        // Find the common values
+        var commonValues = $.grep(unspsc_prod_cat_english_list, function(element) {
+          return $.inArray(element, unspsc_prod_cat_non_english_list) !== -1;
+        });
+        // Find the uncommon values
+        var uncommonValues = $.grep($.merge(unspsc_prod_cat_english_list, unspsc_prod_cat_non_english_list), function(element) {
+          return $.inArray(element, commonValues) === -1;
+        });
+        if (uncommonValues.length > 0){
+            $.each(cusprodcatdesc, function(i, item){
+                language_exists_flag = false
+                if(uncommonValues.includes(item.prod_cat_id)){
+                    language_exists_flag = check_unspsc_desc(item)
+                    if(!language_exists_flag){
+                            console.log("Please select default language English for new Product ID")
+                            error_message = ui_messeges("JMSG029")
                     }
-
-        })
+                }
+            })
+        }
         $.each(validate_add_attributes, function (index, value) {
             if ($.inArray(value, add_attr_unique_list) == -1) {
                 add_attr_unique_list.push(value);

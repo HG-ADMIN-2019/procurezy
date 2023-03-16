@@ -720,3 +720,13 @@ function row_color_no_highlight(row){
      $(row).css('background-color', '');
 }
 
+
+function get_particular_key_value(myList,myKey){
+
+    // Use jQuery to get the values for the key
+    var myValues = $.map(myList, function(obj) {
+      return obj[myKey];
+    });
+    return myValues
+
+}

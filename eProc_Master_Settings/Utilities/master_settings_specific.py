@@ -2,6 +2,7 @@ from django.db.models.query_utils import Q
 
 from eProc_Basic.Utilities.functions.camel_case import convert_to_camel_case
 from eProc_Basic.Utilities.functions.dictionary_key_to_list import dictionary_key_to_list
+from eProc_Basic.Utilities.functions.distinct_list import replace_none_with_empty_string
 from eProc_Basic.Utilities.functions.image_type_funtions import get_image_type
 from eProc_Basic.Utilities.functions.log_function import update_log_info
 from eProc_Basic.Utilities.functions.messages_config import get_msg_desc, get_message_desc
@@ -507,8 +508,10 @@ class MasterSettingsSave:
                                              'address_number': addresstype_detail['address_number'],
                                              'address_type': (addresstype_detail['address_type']).upper(),
                                              'company_id': addresstype_detail['company_id'],
-                                             'valid_from': datetime.strptime(addresstype_detail['valid_from'], '%m/%d/%Y %H:%M:%S'),
-                                             'valid_to': datetime.strptime(addresstype_detail['valid_to'], '%m/%d/%Y %H:%M:%S'),
+                                             'valid_from': datetime.strptime(addresstype_detail['valid_from'],
+                                                                             '%m/%d/%Y %H:%M:%S'),
+                                             'valid_to': datetime.strptime(addresstype_detail['valid_to'],
+                                                                           '%m/%d/%Y %H:%M:%S'),
                                              'org_address_map_created_at': self.current_date_time,
                                              'org_address_map_created_by': self.username,
                                              'org_address_map_changed_at': self.current_date_time,
@@ -528,8 +531,10 @@ class MasterSettingsSave:
                                                            'address_type': (
                                                                addresstype_detail['address_type']).upper(),
                                                            'company_id': addresstype_detail['company_id'],
-                                                           'valid_from': datetime.strptime(addresstype_detail['valid_from'], '%m/%d/%Y %H:%M:%S'),
-                                                           'valid_to': datetime.strptime(addresstype_detail['valid_to'], '%m/%d/%Y %H:%M:%S'),
+                                                           'valid_from': datetime.strptime(
+                                                               addresstype_detail['valid_from'], '%m/%d/%Y %H:%M:%S'),
+                                                           'valid_to': datetime.strptime(addresstype_detail['valid_to'],
+                                                                                         '%m/%d/%Y %H:%M:%S'),
                                                            'org_address_map_changed_at': self.current_date_time,
                                                            'org_address_map_changed_by': self.username,
                                                            'client': OrgClients.objects.get(client=self.client),
@@ -1333,35 +1338,17 @@ def get_unspsc_cat_custdesc_data():
                                                                                   'category_desc', 'language_id'])
     product_cat_list = dictionary_key_to_list(upload_cust_prod_desc_catogories, 'prod_cat_id')
     product_cat_list = list(set(product_cat_list))
-
-    product_cat_list = django_query_instance.django_filter_value_list_ordered_by_distinct_query(
-        UnspscCategoriesCustDesc,
-        {'client': client,
-         'del_ind': False},
-        'prod_cat_id',
-        None)
-    prod_cat_desc = django_query_instance.django_filter_query(UnspscCategoriesCustDesc,
-                                                              {'prod_cat_id__in': product_cat_list,
-                                                               'del_ind': False},
-                                                              None,
-                                                              ['prod_cat_id', 'language_id', 'category_desc'])
-
-    for prod_cat in upload_cust_prod_desc_catogories:
-        prod_cat['prod_cat_desc'] = ' '
-        for product_cat in prod_cat_desc:
-            if prod_cat['prod_cat_id'] == product_cat['prod_cat_id']:
-                if product_cat['language_id'] == global_variables.GLOBAL_USER_LANGUAGE.language_id:
-                    prod_cat['prod_cat_desc'] = product_cat['category_desc']
-                break
+    upload_cust_prod_desc_catogories = replace_none_with_empty_string(upload_cust_prod_desc_catogories)
 
     for prod in upload_cust_prod_desc_catogories:
-        if prod['prod_cat_desc'] is None:
-            prod['prod_cat_desc'] = ' '
+        if prod['category_desc'] is None:
+            prod['prod_cat_desc'] = ''
+        else:
+            prod['prod_cat_desc'] = prod['category_desc']
 
     upload_ProdCat = list(UnspscCategories.objects.filter(del_ind=False).values('prod_cat_id', 'prod_cat_desc'))
-
+    upload_ProdCat = replace_none_with_empty_string(upload_ProdCat)
     for prod_cat_desc in upload_ProdCat:
-
         if prod_cat_desc['prod_cat_desc'] == None:
             prod_cat_desc['prod_cat_desc'] = ''
 
