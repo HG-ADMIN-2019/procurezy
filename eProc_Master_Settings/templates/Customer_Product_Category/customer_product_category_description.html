@@ -806,6 +806,9 @@ function onclick_copy_update_button(data){
             for (var i = 1; i < checkBoxes.length; i++){
                 if (checkBoxes[i].checked){
                     var row = checkBoxes[i].parentNode.parentNode;
+                    var prod_cat_id_value = row.cells[1].innerHTML
+                    var language_id_value = row.cells[2].innerHTML
+                    dropdown_values.push([prod_cat_id_value, language_id_value])
                     if(GLOBAL_ACTION == "UPDATE"){
                         prod_cat_desc_guid = row.cells[4].innerHTML
                         unique_input = '<select class="form-control"  maxlength="20"disabled>' + prod_cat_id_dropdown + '</select>'
@@ -818,26 +821,24 @@ function onclick_copy_update_button(data){
                         edit_basic_data += '<tr><td><input type="checkbox" required></td><td>'+unique_input+'</td><td><input class="form-control" value="' + row.cells[2].innerHTML + '" type="text" onkeypress="return /[a-z ]/i.test(event.key)" name="description"  maxlength="200"  required></td><td><select class="form-control">' +language_id_dropdown + ' </select></td><td hidden><input value="' + prod_cat_desc_guid + '"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
                         $("#header_select").prop("hidden", false);
                     }
-                    var row = checkBoxes[i].parentNode.parentNode;
-                    var prod_cat_id_value = row.cells[1].innerHTML
-                    var language_id_value = row.cells[2].innerHTML
-                    dropdown_values.push([prod_cat_id_value, language_id_value])
+
                 }
             }
-            $('#id_popup_table').append(edit_basic_data);
+            $('#id_popup_tbody').append(edit_basic_data);
             var i =0;
             $("#id_popup_table TBODY TR").each(function() {
-            var row = $(this);
-            var prod_cat_id_value = dropdown_values[i][0]
-            var language_id_value = dropdown_values[i][1]
-            var lang_id;
-            for (i = 0; i < render_language_data.length; i++) {
-                    if (language_id_value == render_language_data[i].description)
-                        lang_id = render_language_data[i].language_id;
-                    }
-            $(row.find("TD").eq(1).find("select option[value="+prod_cat_id_value+"]")).attr('selected','selected');
-            $(row.find("TD").eq(2).find("select option[value="+lang_id+"]")).attr('selected','selected');
-            i++;
+                var row = $(this);
+                var prod_cat_id_value = dropdown_values[i][0]
+                var language_id_value = dropdown_values[i][1]
+                    var lang_id;
+                for (j = 0; j < render_language_data.length; j++) {
+                        if (language_id_value == render_language_data[j].description)
+                            lang_id = render_language_data[j].language_id;
+                }
+
+                $(row.find("TD").eq(1).find("select option[value="+prod_cat_id_value+"]")).attr('selected','selected');
+                $(row.find("TD").eq(2).find("select option[value="+lang_id+"]")).attr('selected','selected');
+                i++;
             });
             $("#id_del_ind_checkbox").prop("hidden", true);
             $('#myModal').modal('show');
