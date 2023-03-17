@@ -45,6 +45,17 @@ $("#error_msg_id").css("display", "none")
         $("#id_error_msg").html("");
     });
     new_row_data();   // Add a new row in popup
+    var company_num = '';
+    $("#id_popup_table TBODY TR").each(function () {
+        var row = $(this);
+        row.find("TD").eq(3).find("select").empty()
+        company_num = row.find("TD").eq(1).find("select option:selected").val();
+        var assign_val = approval_limit_find(company_num)
+        row.find("TD").eq(3).find("select").append(assign_val.app_code_id_dropdown)
+        $(row.find("TD").eq(1).find("select")).change(function () {
+              company_dropdwn_change(row);
+        })
+    })
     if (GLOBAL_ACTION == "UPLOAD") {
         $(".class_del_checkbox").prop("hidden", false);
     }

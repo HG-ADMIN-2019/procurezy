@@ -1285,7 +1285,9 @@ def approval_limit(request):
                                                                           'app_code_id', 'company_id'))
     upload_data_company = list(OrgCompanies.objects.filter(client=client, del_ind=False).values('company_id'))
     upload_data_app_code_id = list(
-        ApproverLimitValue.objects.filter(client=client, del_ind=False).values('app_code_id'))
+        ApproverLimitValue.objects.filter(client=client, del_ind=False).values('app_lim_dec_guid', 'app_types',
+                                                                               'app_code_id', 'currency_id',
+                                                                               'upper_limit_value', 'company_id'))
 
     user_details = list(UserData.objects.filter(is_active=True, client=client, del_ind=False).values('username'))
     messages_list = get_ui_messages(CONST_COFIG_UI_MESSAGE_LIST)

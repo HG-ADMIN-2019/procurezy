@@ -179,6 +179,14 @@
     var Tablename = uiConstants["CONST_TABLENAME_APPROVAL_LIMIT"]
     var appname = uiConstants["CONST_APPNAME01"]
     var db_header_data = uiConstants["CONST_HEADER_DATA_APPROVAL_LIMIT"]
+    var company_list = [] ; var arrDistinct = [];
+    var unique_user_name= [];
+    var unique_app_code = [];
+    var app_code_id_dropdown;
+    var approval_limit;
+    var app_limit_array = [];
+    var company_array = [];
+    var unique_app_limit = [];
 
     //*********************************************
     var user_name_dropdown ="";
@@ -187,21 +195,63 @@
     
     //******************************
     function applim_dropdown() {
-        user_name_dropdown ="";
-        $.each(rendered_user_data, function(i, item){
-            user_name_dropdown += '<option value="' + item.username + '">' + item.username + '</option>'
-        });
+    approval_limit = [];
+    user_name_dropdown = "";
+    $.each(rendered_user_data, function(i, item){
+        user_name_dropdown += '<option value="' + item.username + '">' + item.username + '</option>'
+    });
 
-        company_id_dropdown="";
-        $.each(rendered_company_data, function(i, item){
-            company_id_dropdown += '<option  value="' + item.company_id + '">' + item.company_id + '</option>'
-        });
+    company_id_dropdown = "";
+    $.each(rendered_company_data, function(i, item){
+        company_id_dropdown += '<option  value="' + item.company_id + '">' + item.company_id + '</option>'
+    });
 
-        app_code_id_dropdown = "";
-        $.each(rendered_app_code_id_data, function(i, item){
-            app_code_id_dropdown += '<option value="' + item.app_code_id + '">' + item.app_code_id + '</option>'
-        });
-    }
+    app_code_id_dropdown = "";
+    $.each(rendered_app_code_id_data, function(i, item){
+        app_code_id_dropdown += '<option value="' + item.app_code_id + '">' + item.app_code_id + '</option>';
+        app_limit_dict = {};
+        app_limit_dict.company_id = item.company_id;
+        app_limit_dict.app_code_id = item.app_code_id;
+        approval_limit.push(app_limit_dict);
+        app_limit_array.push(item.app_code_id);
+    });
+
+    company_dropdwn = "";
+    var unique_comp = [];
+    var unique_app = [];
+
+    // Filter rendered_approval_limit_data based on app_code_id and company_id in rendered_app_code_id_data
+    var filtered_approval_limit_data = rendered_app_code_id_data.filter(function(item) {
+        return app_limit_array.includes(item.app_code_id) &&
+            rendered_app_code_id_data.some(function(app_item) {
+                return app_item.app_code_id === item.app_code_id && app_item.company_id === item.company_id;
+            });
+    });
+
+    $.each(filtered_approval_limit_data, function(i, item) {
+        company_dropdwn += '<option value="' + item.company_id + '">' + item.company_id + '</option>';
+        company_dict = {};
+        company_dict.app_code_id = item.app_code_id;
+<!--        company_dict.username = item.username;-->
+        company_dict.company_id = item.company_id;
+        company_list.push(company_dict);
+        company_array.push(item.company_id);
+        unique_comp.push(item.company_id);
+        unique_app_limit.push(item.app_code_id);
+    });
+
+    $(unique_comp).each(function(index, item) {
+        if ($.inArray(item, arrDistinct) == -1) {
+            arrDistinct.push(item);
+        }
+    });
+
+    company_dropdwn = '';
+    $(arrDistinct).each(function(index, item) {
+        company_dropdwn += '<option value="' + item + '">' + item + '</option>'
+    });
+}
+
 
     //onclick of data Upload copy data to modal pop-up
     function onclick_display_csv_data() {
@@ -295,10 +345,19 @@
                             var user_id_list = dropdown_values[i][0]
                             var appid_id_list = dropdown_values[i][1]
                             var company_id_list = dropdown_values[i][2]
-                            
+                            var assign_val = approval_limit_find(company_num)
                             $(row.find("TD").eq(2).find("select option[value="+user_id_list+"]")).attr('selected','selected');
                             $(row.find("TD").eq(1).find("select option[value="+company_id_list+"]")).attr('selected','selected');
                             $(row.find("TD").eq(3).find("select option[value="+appid_id_list+"]")).attr('selected','selected');
+                            $(row.find("TD").eq(1).find("select")).change(function() {
+                                row.find("TD").eq(3).find("select").empty()
+                                row.find("TD").eq(4).find("select").empty()
+                                company_num = row.find("TD").eq(1).find("select option:selected").val();
+                                var assign_val = approval_limit_find(company_num)
+                                row.find("TD").eq(2).find("select").append(assign_val.user_name_dropdown)
+                                row.find("TD").eq(3).find("select").append(assign_val.app_code_id_dropdown)
+                                row.find("TD").eq(7).html("1")
+                            })
                             i++;
                         });
                         $("#id_del_ind_checkbox").prop("hidden", false);
@@ -513,6 +572,21 @@
                 $("#id_popup_tbody").empty();
                 $('#App_limt_Modal').modal('show');
                 new_row_data();   // Add a new row in popup
+                var account_assign = '';
+                $("#id_popup_table TBODY TR").each(function () {
+                    var row = $(this);
+                    row.find("TD").eq(3).find("select").empty()
+                    company_num = row.find("TD").eq(1).find("select option:selected").val();
+                    var assign_val = approval_limit_find(company_num)
+                    row.find("TD").eq(3).find("select").append(assign_val.app_code_id_dropdown)
+                    $(row.find("TD").eq(1).find("select")).change(function () {
+                        company_dropdwn_change(row);
+                    })
+                    $(row.find("TD").eq(2).find("select")).change(function () {
+                        company_num = row.find("TD").eq(1).find("select option:selected").val();
+                        approv_limit(row,company_num);
+                    })
+                })
                 $("#id_del_ind_checkbox").prop("hidden", true);
                 document.getElementById("id_del_add_button").style.display = "block";
                 $("#save_id").prop("hidden", false);
@@ -651,6 +725,73 @@
         });
     }
 
+    function approval_limit_find(company_num) {
+    corresponding_values = {};
+    corresponding_values.user_name_dropdown = '';
+    corresponding_values.app_code_id_dropdown = '';
+    corresponding_values.other_dropdn = '';
+    company_list = company_list;
+    unique_user_name= [];
+    unique_app_code = [];
+    for (var i = 0; i < company_list.length; i++) {
+        compare_dict = {};
+        compare_dict = company_list[i]
+        if (company_num == compare_dict.company_id) {
+<!--            unique_user_name.push(compare_dict.username);-->
+            unique_app_code.push(compare_dict.app_code_id);
+        }
+    }
+     for (var i = 0; i < arrDistinct.length; i++) {
+        corresponding_values.other_dropdn += '<option value="'+arrDistinct[i]+'">' + arrDistinct[i] + '</option>'
+     }
+<!--     usernameDistinct = [];-->
+<!--     $(unique_user_name).each(function (index, item) {-->
+<!--     if ($.inArray(item, usernameDistinct) == -1)-->
+<!--        usernameDistinct.push(item);-->
+<!--     });-->
+<!--     for (var i = 0; i < usernameDistinct.length; i++) {-->
+<!--        corresponding_values.user_name_dropdown += '<option value="'+usernameDistinct[i]+'">' + usernameDistinct[i] + '</option>'-->
+<!--     }-->
+     appcodeDistinct = [];
+     $(unique_app_code).each(function (index, item) {
+     if ($.inArray(item, appcodeDistinct) == -1)
+        appcodeDistinct.push(item);
+     });
+     for (var i = 0; i < appcodeDistinct.length; i++) {
+        corresponding_values.app_code_id_dropdown += '<option value="'+appcodeDistinct[i]+'">' + appcodeDistinct[i] + '</option>'
+     }
+    return corresponding_values
+}
+<!--function approv_limit(user_name, comp_num) {-->
+<!--    corresponding_values = {};-->
+<!--    corresponding_values.app_code_id_dropdown = '';-->
+<!--    company_list = company_list;-->
+<!--    unique_app_code = [];-->
+<!--    var appcodeDistinct = [];-->
+<!--     for (var i = 0; i < company_list.length; i++) {-->
+<!--        compare_dict = {};-->
+<!--        compare_dict = company_list[i]-->
+<!--        if ((user_name == compare_dict.username) && (comp_num == compare_dict.company_id)) {-->
+<!--            unique_app_code.push(compare_dict.app_code_id);-->
+<!--        }-->
+<!--        appcodeDistinct = [];-->
+<!--        $(unique_app_code).each(function (index, item) {-->
+<!--        if ($.inArray(item, appcodeDistinct) == -1)-->
+<!--            appcodeDistinct.push(item);-->
+<!--        });-->
+<!--    }-->
+<!--    for (var i = 0; i < appcodeDistinct.length; i++) {-->
+<!--            corresponding_values.app_code_id_dropdown += '<option value="'+appcodeDistinct[i]+'">'+appcodeDistinct[i]+'</option>'-->
+<!--    }-->
+<!--    return corresponding_values-->
+<!--}-->
+
+function company_dropdwn_change(row){
+    row.find("TD").eq(3).find("select").empty()
+    company_num = row.find("TD").eq(1).find("select option:selected").val();
+    var comp_val = approval_limit_find(company_num)
+    row.find("TD").eq(3).find("select").append(comp_val.app_code_id_dropdown)
+}
 </script>
 <script src="{% static 'scripts/approval_data/approval_limit.js' %}"></script>
 {% endblock %}
