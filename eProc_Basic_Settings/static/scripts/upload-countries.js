@@ -126,11 +126,14 @@ function add_popup_row() {
 
 //onclick of cancel display the table in display mode............
 function display_basic_db_data() {
+     OpenLoaderPopup();
+    document.location.reload();
+     CloseLoaderPopup();
     $('#display_basic_table').DataTable().destroy();
     $('#id_country_tbody').empty();
     var edit_basic_data = '';
     $.each(rendered_country_data, function (i, item) {
-        edit_basic_data += '<tr ><td class="class_select_checkbox"><input class="checkbox_check" onclick="valueChanged()" type="checkbox" required></td><td>' + item.country_code + '</td><td>' + item.country_name + '</td></tr>';
+        edit_basic_data += '<tr><td class="class_select_checkbox"><input class="checkbox_check" onclick="valueChanged()" type="checkbox" required></td><td>' + item.country_code + '</td><td>' + item.country_name + '</td></tr>';
     });
     $('#id_country_tbody').append(edit_basic_data);
     $("#hg_select_checkbox").prop("hidden", true);

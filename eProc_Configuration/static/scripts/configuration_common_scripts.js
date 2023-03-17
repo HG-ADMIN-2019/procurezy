@@ -3,43 +3,70 @@ $(document).ready(function () {
     $("body").css("padding-top", "3.7rem");
     table_sort_filter('display_basic_table');
 });
-var currPageStartIdx, currPageEndIdx;
-//var table = $('#display_basic_table').DataTable();
+
+var currPageStartIdx, currPageEndIdx, page_num=0, checked_flag=0;
+// Function called on pagination
+  $('#display_basic_table').on( 'page.dt', function () {
+      if(($('#selectAll').is(":checked")) && (checked_flag == 1)){
+        $('#selectAll').prop('checked', true);
+      }
+      else{
+        $('#selectAll').prop('checked', false);
+      }
+      var table = $('#display_basic_table').DataTable();
+      var info = table.page.info();
+      page_num = info.page;
+//      var res = table.rows({ page: 'current' }).data();
+//                var rows;
+//                rows = $('#display_basic_table').find('input[type="checkbox"]');
+     currPageStartIdx = info.start;
+     currPageEndIdx = info.end;
+});
+
 // on click edit icon display the data in edit mode
 function onclick_edit_button() {
     //display the add,cancel and upload buttons and select all checkbox,select heading and checkboxes for each row
     $('#display_basic_table').DataTable().destroy();
     $("#hg_select_checkbox").prop("hidden", false);
     $(".class_select_checkbox").prop("hidden", false);
-
+    if($('#selectAll').is(':checked')){
+         $("#selectAll").prop("checked", false);
+    }
     //hide the edit,delete,copy and update buttons
     $('#id_cancel_data').show();
     $('#id_edit_data').hide();
     $('#id_check_all').show();
     table_sort_filter('display_basic_table');
 }
-
+var table = $('#display_basic_table').DataTable();
 //onclick of select all checkbox
 function checkAll(ele) {
     $('#display_basic_table').DataTable().destroy();
+    var info = table.page.info();
+    var p = table.rows().nodes();
+    if(page_num == 0)
+    {
+        currPageStartIdx = info.start;
+        currPageEndIdx = info.end;
+    }
     var checkboxes = document.getElementsByTagName('input');
     if (ele.checked) {
-        for (var i = 0; i < checkboxes.length; i++) {
-            if (checkboxes[i].type == 'checkbox') {
-                checkboxes[i].checked = true;
-                $('#id_delete_data').show();
-                $('#id_copy_data').show();
-                $('#id_update_data').show();
-            }
+        for (var i = currPageStartIdx; i < currPageEndIdx; i++) {
+            p[i].children[0].childNodes[0].checked = true;
+             $('#id_delete_data').show();
+             $('#id_copy_data').show();
+             $('#id_update_data').show();
+            $('#selectAll').prop('checked', true);
+            if(page_num != 0)
+            { checked_flag = 1 }
         }
-    } else {
-        for (var i = 0; i < checkboxes.length; i++) {
-            if (checkboxes[i].type == 'checkbox') {
-                checkboxes[i].checked = false;
+    }
+    else {
+        for (var i = currPageStartIdx; i < currPageEndIdx; i++) {
+                p[i].children[0].childNodes[0].checked = false;
                 $('#id_delete_data').hide();
                 $('#id_copy_data').hide();
                 $('#id_update_data').hide();
-            }
         }
     }
     table_sort_filter('display_basic_table');

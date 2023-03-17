@@ -6,6 +6,18 @@ var message_id_desc={};
 $(document).ready(function () {
     $('#nav_menu_items').remove();
     $("body").css("padding-top", "3.7rem");
+    $("#display_basic_table").DataTable({
+           "columnDefs": [{
+           'searchable':false,
+            'orderable':false,
+            "bSort":false,
+            "selectAllPages": false,
+//           checkboxes: {
+//               selectRow: true,
+//               selectAllPages: false
+//           },
+       }],
+     })
     table_sort_filter('display_basic_table');
 });
 
@@ -73,30 +85,30 @@ function onclick_edit_button() {
 
 //********************************
 //onclick of select all checkbox
-function checkAll(ele) {
-    $('#display_basic_table').DataTable().destroy();
-    var checkboxes = document.getElementsByTagName('input');
-    if (ele.checked) {
-        for (var i = 0; i < checkboxes.length; i++) {
-            if (checkboxes[i].type == 'checkbox') {
-                checkboxes[i].checked = true;
-                $("#id_delete_data").show();
-                $("#id_copy_data").show();
-                $("#id_update_data").show();
-            }
-        }
-    } else {
-        for (var i = 0; i < checkboxes.length; i++) {
-            if (checkboxes[i].type == 'checkbox') {
-                checkboxes[i].checked = false;
-                $("#id_delete_data").hide();
-                $("#id_copy_data").hide();
-                $("#id_update_data").hide();
-            }
-        }
-    }
-    table_sort_filter('display_basic_table');
-}
+//function checkAll(ele) {
+//    $('#display_basic_table').DataTable().destroy();
+//    var checkboxes = document.getElementsByTagName('input');
+//    if (ele.checked) {
+//        for (var i = 0; i < checkboxes.length; i++) {
+//            if (checkboxes[i].type == 'checkbox') {
+//                checkboxes[i].checked = true;
+//                $("#id_delete_data").show();
+//                $("#id_copy_data").show();
+//                $("#id_update_data").show();
+//            }
+//        }
+//    } else {
+//        for (var i = 0; i < checkboxes.length; i++) {
+//            if (checkboxes[i].type == 'checkbox') {
+//                checkboxes[i].checked = false;
+//                $("#id_delete_data").hide();
+//                $("#id_copy_data").hide();
+//                $("#id_update_data").hide();
+//            }
+//        }
+//    }
+//    table_sort_filter('display_basic_table');
+//}
 
 
 //**********************************
