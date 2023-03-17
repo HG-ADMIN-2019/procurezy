@@ -241,9 +241,8 @@ def shopping_cart_first_step(request):
     """
     update_user_info(request)
 
-    cart_items = get_cart_items_detail()
+    cart_items,cart_length = get_cart_items_detail()
 
-    cart_length = len(cart_items)
     if cart_length == 0:
         return HttpResponseRedirect('/shop/products_services/All/create')
 

@@ -1,8 +1,10 @@
 <!--  Shipping details section card section  -->
 <div class="card card-shadow-1" style="height:100%;">
     <div class="card-body">
-        <h5 class="card-title">Shipping Address</h5>   
+        <h5 class="card-title">Shipping Address</h5>
         {% if is_second_step %}
+        {% if delivery_addr_desc %}
+        {% if addr_val_desc %}
         <div class="elements-space-between">
             <div>
                 {% for addr in addr_val_desc %}
@@ -16,20 +18,31 @@
             </div>
             <div>
                 {% if shipping_address_flag == '1'  %}
-                    <button type="button" class="hg_button_edit hg_display" data-toggle="modal" data-target="#ChngShipAddr"> change address</button>
-                 {% elif shipping_address_flag == '0' %}
-                    <button type="button" class="display-none" > change address</button>
+                <button type="button" class="hg_button_edit hg_display" data-toggle="modal" data-target="#ChngShipAddr"> change address</button>
+                {% elif shipping_address_flag == '0' %}
+                <button type="button" class="display-none" > change address</button>
                 {% endif %}
                 {% if edit_address_flag == '1'  %}
-                    <button type="button" class="hg_button_edit hg_display" data-toggle="modal" onclick="shippingAddress();">edit address</button>
+                <button type="button" class="hg_button_edit hg_display" data-toggle="modal" onclick="shippingAddress();">edit address</button>
                 {% elif edit_address_flag == '0' %}
-                    <button type="button" class="display-none" >edit address</button>
+                <button type="button" class="display-none" >edit address</button>
                 {% endif %}
             </div>
         </div>
+        {% else %}
+        <div class="alert alert-danger" role="alert">
+            <span class="error">No default address is maintained. Please maintain defaults in <a href="{% url 'eProc_User_Settings:purchase_settings' %}" target="_blank">Purchase Settings</a></span>
+        </div>
+
+        {% endif %}
+        {% else %}
+        <div class="alert alert-danger" role="alert">
+            <span class="error">Address is not maintained. Please Contact Admin</span>
+        </div>
+        {% endif %}
         <div class="alert alert-warning header-card-alert mt-2" role="alert" id="shipping_address_info" style="display: none;">
             <div class="header-card-alert__body">
-                <span class="material-icons">error_outline </span><span>Multiple shipping address maintained</span> 
+                <span class="material-icons">error_outline </span><span>Multiple shipping address maintained</span>
             </div>
         </div>
         <hr>
@@ -39,7 +52,7 @@
             </div>
             <div>
                 <button type="button" class="hg_button_edit hg_display" data-toggle="modal" onclick="ChangeGoodsReciever();"
-                    data-target="#ChangeGoodsReceiver"> change receiver</button>
+                        data-target="#ChangeGoodsReceiver"> change receiver</button>
             </div>
         </div>
         {% endif %}
@@ -55,14 +68,14 @@
                 <span id="ScAddresses-region-{{ header_level_addr.guid }}">{{ header_level_addr.region }}</span>
             </div>
             <div>
-                  {% if edit_address_flag == '1'  %}
-                    <button type="button" class="hg_button_edit editable_mode" data-toggle="modal" data-target="#ChngShipAddr"> change address</button>
-                  {% elif edit_address_flag == '0' %}
-                    <button type="button" class="display-none" > change address</button>
-                  {% endif %}
+                {% if edit_address_flag == '1'  %}
+                <button type="button" class="hg_button_edit editable_mode" data-toggle="modal" data-target="#ChngShipAddr"> change address</button>
+                {% elif edit_address_flag == '0' %}
+                <button type="button" class="display-none" > change address</button>
+                {% endif %}
                 {% if edit_address_flag == '1'  %}
                 <button type="button" class="hg_button_edit editable_mode" data-toggle="modal"
-                    onclick="shippingAddress();">edit address</button>
+                        onclick="shippingAddress();">edit address</button>
                 {% elif edit_address_flag == '0' %}
                 <button type="button" class="display-none" >edit address</button>
                 {% endif %}
@@ -75,7 +88,7 @@
             </div>
             <div>
                 <button type="button" class="hg_button_edit editable_mode" data-toggle="modal"
-                    onclick="ChangeGoodsReciever();" data-target="#ChangeGoodsReceiver"> change receiver</button>
+                        onclick="ChangeGoodsReciever();" data-target="#ChangeGoodsReceiver"> change receiver</button>
             </div>
         </div>
         {% endif %}

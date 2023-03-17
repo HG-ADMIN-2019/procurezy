@@ -414,7 +414,10 @@ function check_shopping_cart(type, sc_data, acc_default, acc_default_val){
             manager_detail = response.manager_detail.length
             sc_errors = response.sc_error
             sc_info_messsages_check = response.sc_info
-
+            if (shopping_cart_errors['error_msg_info']) {
+        error_messages += shopping_cart_errors['error_msg_info']
+    }
+            error_messages += response.error_msg_info + '<br>'
             // If SC has info
             if (sc_info_messsages_check.length > 0){
                 var info_messages = '';
@@ -514,26 +517,6 @@ function check_shopping_cart(type, sc_data, acc_default, acc_default_val){
     });
 
 }
-
-
-
-
-  // Function to check multiple purchasing Group
-<!--    function purchasing_group(){-->
-<!--        var error_messages = '';-->
-<!--        var multiple_purch_group = {{completion_work_flow|safe}}-->
-<!--        if(multiple_purch_group[0] == 'MULTIPLE')-->
-<!--        {-->
-<!--            error_messages += 'You have maintained multiple purchasing groups <br>'-->
-<!--            $('#sc_error_msg').html(error_messages);-->
-<!--            $('#sc_error_msg').show();-->
-<!--        } else $('sc_error_msg').hide()-->
-<!--        if(multiple_purch_group[0] == 'SINGLE'){-->
-<!--             warning_messages += 'You have maintained single Purchase groups <br>'-->
-<!--            $('#sc_warning_messages').html(warning_messages)-->
-<!--            $('#sc_warning_messages').show()-->
-<!--        }-->
-<!--    }-->
 
 // Function to save shopping cart
 function save_shopping_cart(){

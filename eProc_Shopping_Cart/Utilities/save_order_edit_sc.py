@@ -1230,13 +1230,41 @@ class CheckForScErrors:
         self.info = []
         self.sc_check_data = {}
         self.username = username
+        self.error_message_info = []
+
+    def header_level_delivery_address_check(self, address_number):
+        error_msg = None
+
+        if address_number == 'None' or address_number is None or address_number == '':
+            error_msg = get_message_desc('MSG163')[1]
+            self.error_message_info.append(error_msg)
+            return error_msg
+
+        check_for_address_number = django_query_instance.django_existence_check(OrgAddress, {
+            'client': self.client, 'del_ind': False, 'address_number': address_number
+        })
+
+        if not check_for_address_number:
+            error_msg = get_message_desc('MSG162')[1]
+            self.error_message_info.append(error_msg)
+            return error_msg
+        else:
+            return error_msg
+
+    def item_level_delivery_address_check(self,cart_items_count):
+        """
+
+        """
+        address_error = {}
+        for count in cart_items_count:
+            print(count)
 
     def delivery_address_check(self, address_number, item_num):
         address_error = {}
-        msgid = 'MSG162'
-        error_msg = get_message_desc(msgid)[1]
 
         if address_number == 'None' or address_number is None or address_number == '':
+            msgid = 'MSG162'
+            error_msg = get_message_desc(msgid)[1]
             address_error[item_num] = error_msg
             self.data.append(address_error)
             return False, self.data
@@ -1422,6 +1450,21 @@ class CheckForScErrors:
         if error_message:
             self.sc_check_data['msg_info'] = error_message
 
+    def update_approval_check(self, manager_details, approver_id, total_value,
+                              msg_info):
+        """
+        :param acc_default:
+        :param acc_default_val:
+        :param total_val:
+        :param company_code:
+        :return:
+        """
+        self.sc_check_data['total_value'] = total_value
+        self.sc_check_data['manager_detail'] = manager_details
+        self.sc_check_data['approver_id'] = approver_id
+        if msg_info:
+            self.sc_check_data['msg_info'] = msg_info
+
     def catalog_item_check(self, product_id, price, lead_time, item_num, item_guid, quantity):
         check_catalog_errors = {}
 
@@ -1532,11 +1575,13 @@ class CheckForScErrors:
 
     def get_shopping_cart_errors(self):
         self.sc_check_data['sc_error'] = self.data
+        self.sc_check_data['error_msg_info'] = self.error_message_info
         self.sc_check_data['sc_info'] = self.info
         return self.sc_check_data
 
 
-def check_sc_second_step_shopping_cart(sc_check_instance,object_id_list, default_calendar_id, company_code, cart_items):
+def check_sc_second_step_shopping_cart(sc_check_instance, object_id_list, default_calendar_id, company_code,
+                                       cart_items):
     """
 
     """
@@ -1548,7 +1593,7 @@ def check_sc_second_step_shopping_cart(sc_check_instance,object_id_list, default
         holiday_list = get_list_of_holidays(default_calendar_id, global_variables.GLOBAL_CLIENT)
 
     for loop_count, items in enumerate(cart_items):
-        item_number = loop_count+1
+        item_number = loop_count + 1
         sc_check_instance.check_for_prod_cat(items['prod_cat_id'], company_code, item_number)
         if items['call_off'] != CONST_PR_CALLOFF:
             sc_check_instance.check_for_supplier(items['supplier_id'], items['prod_cat_id'], company_code, item_number)

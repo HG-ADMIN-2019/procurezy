@@ -1030,43 +1030,12 @@ def upload_cust_prod_cat(request):
 
 def upload_cust_prod_cat_desc(request):
     update_user_info(request)
-    client = global_variables.GLOBAL_CLIENT
-    upload_cust_prod_desc_catogories = django_query_instance.django_filter_query(UnspscCategoriesCustDesc,
-                                                                                 {'client': client, 'del_ind': False},
-                                                                                 None,
-                                                                                 ['prod_cat_desc_guid', 'prod_cat_id',
-                                                                                  'category_desc', 'language_id'])
-
-    product_cat_list = django_query_instance.django_filter_value_list_ordered_by_distinct_query(
-        UnspscCategoriesCustDesc,
-        {'client': client,
-         'del_ind': False},
-        'prod_cat_id',
-        None)
-    prod_cat_desc = django_query_instance.django_filter_query(UnspscCategoriesCustDesc,
-                                                              {'prod_cat_id__in': product_cat_list,
-                                                               'del_ind': False},
-                                                              None,
-                                                              ['prod_cat_id', 'language_id', 'category_desc'])
-
+    upload_cust_prod_desc_catogories, product_cat_list = get_unspsc_cat_custdesc_data()
     upload_language = list(Languages.objects.filter(del_ind=False).values('language_id', 'description'))
-
-    for prod_cat in upload_cust_prod_desc_catogories:
-        prod_cat['prod_cat_desc'] = ' '
-        for product_cat in prod_cat_desc:
-            if prod_cat['prod_cat_id'] == product_cat['prod_cat_id']:
-                if product_cat['language_id'] == global_variables.GLOBAL_USER_LANGUAGE.language_id:
-                    prod_cat['prod_cat_desc'] = product_cat['category_desc']
-                break
-
-    for prod in upload_cust_prod_desc_catogories:
-        if prod['prod_cat_desc'] is None:
-            prod['prod_cat_desc'] = ' '
 
     upload_ProdCat = list(UnspscCategories.objects.filter(del_ind=False).values('prod_cat_id', 'prod_cat_desc'))
 
     for prod_cat_desc in upload_ProdCat:
-
         if prod_cat_desc['prod_cat_desc'] == None:
             prod_cat_desc['prod_cat_desc'] = ''
 
