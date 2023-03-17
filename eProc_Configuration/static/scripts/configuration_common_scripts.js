@@ -10,6 +10,9 @@ var currPageStartIdx, currPageEndIdx, page_num=0, checked_flag=0;
       if(($('#selectAll').is(":checked")) && (checked_flag == 1)){
         $('#selectAll').prop('checked', true);
       }
+      else if(checked_flag == 1){
+        $('#selectAll').prop('checked', true);
+      }
       else{
         $('#selectAll').prop('checked', false);
       }
@@ -58,7 +61,8 @@ function checkAll(ele) {
              $('#id_update_data').show();
             $('#selectAll').prop('checked', true);
             if(page_num != 0)
-            { checked_flag = 1 }
+            {
+            checked_flag = 1}
         }
     }
     else {
@@ -83,6 +87,9 @@ function valueChanged() {
         $('#id_copy_data').hide();
         $('#id_update_data').hide();
     }
+//     if(checked_flag == 1){
+//        $('#selectAll').prop('checked', true);
+//      }
 }
 
 //onclick of delete,delete the row.
