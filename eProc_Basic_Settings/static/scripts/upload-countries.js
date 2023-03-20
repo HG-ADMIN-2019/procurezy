@@ -126,9 +126,7 @@ function add_popup_row() {
 
 //onclick of cancel display the table in display mode............
 function display_basic_db_data() {
-     OpenLoaderPopup();
     document.location.reload();
-     CloseLoaderPopup();
     $('#display_basic_table').DataTable().destroy();
     $('#id_country_tbody').empty();
     var edit_basic_data = '';

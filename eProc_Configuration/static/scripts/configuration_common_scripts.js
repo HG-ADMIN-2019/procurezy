@@ -1,29 +1,37 @@
 $(document).ready(function () {
     $('#nav_menu_items').remove();
     $("body").css("padding-top", "3.7rem");
+    $('#display_basic_table').DataTable();
     table_sort_filter('display_basic_table');
 });
 
 var currPageStartIdx, currPageEndIdx, page_num=0, checked_flag=0;
 // Function called on pagination
   $('#display_basic_table').on( 'page.dt', function () {
-      if(($('#selectAll').is(":checked")) && (checked_flag == 1)){
-        $('#selectAll').prop('checked', true);
-      }
-      else if(checked_flag == 1){
-        $('#selectAll').prop('checked', true);
-      }
-      else{
-        $('#selectAll').prop('checked', false);
-      }
+  checked_flag =0;
+//    if($('#selectAll').is(":checked")){
+//        $('#selectAll').prop('checked', false);
+//    }
       var table = $('#display_basic_table').DataTable();
       var info = table.page.info();
       page_num = info.page;
-//      var res = table.rows({ page: 'current' }).data();
-//                var rows;
-//                rows = $('#display_basic_table').find('input[type="checkbox"]');
-     currPageStartIdx = info.start;
+      var res = table.rows().nodes();
+      currPageStartIdx = info.start;
      currPageEndIdx = info.end;
+      for (var i = currPageStartIdx; i < currPageEndIdx; i++) {
+            if(res[i].children[0].childNodes[0].checked){
+            checked_flag =1;
+            }
+       }
+      if(checked_flag){
+        $('#selectAll').prop('checked', true);
+      }
+      else
+      { $('#selectAll').prop('checked', false);}
+
+
+//     table.draw(false);
+
 });
 
 // on click edit icon display the data in edit mode
@@ -59,11 +67,7 @@ function checkAll(ele) {
              $('#id_delete_data').show();
              $('#id_copy_data').show();
              $('#id_update_data').show();
-            $('#selectAll').prop('checked', true);
-            if(page_num != 0)
-            {
-            checked_flag = 1}
-        }
+             }
     }
     else {
         for (var i = currPageStartIdx; i < currPageEndIdx; i++) {
@@ -73,7 +77,14 @@ function checkAll(ele) {
                 $('#id_update_data').hide();
         }
     }
-    table_sort_filter('display_basic_table');
+//    table.page(page_num).draw( 'page' );
+    $('#display_basic_table').dataTable({
+                initComplete: function () {
+                    this.api().page(page_num).draw( 'page' );
+                }
+    });
+
+//    table_sort_filter('display_basic_table');
 }
 
 //onclick of checkbox display delete,update and copy Buttons
