@@ -1,48 +1,98 @@
 $(document).ready(function () {
     $('#nav_menu_items').remove();
     $("body").css("padding-top", "3.7rem");
+    $('#display_basic_table').DataTable();
     table_sort_filter('display_basic_table');
 });
-var currPageStartIdx, currPageEndIdx;
-//var table = $('#display_basic_table').DataTable();
+
+var currPageStartIdx, currPageEndIdx, page_num=0, checked_flag=0;
+// Function called on pagination
+  $('#display_basic_table').on( 'page.dt', function () {
+  checked_flag =0;
+//    if($('#selectAll').is(":checked")){
+//        $('#selectAll').prop('checked', false);
+//    }
+      var table = $('#display_basic_table').DataTable();
+      var info = table.page.info();
+      page_num = info.page;
+      var res = table.rows().nodes();
+      currPageStartIdx = info.start;
+     currPageEndIdx = info.end;
+      for (var i = currPageStartIdx; i < currPageEndIdx; i++) {
+            if(res[i].children[0].childNodes[0].checked){
+            checked_flag =1;
+            }
+       }
+      if(checked_flag){
+        $('#selectAll').prop('checked', true);
+         $('#id_delete_data').show();
+         $('#id_copy_data').show();
+         $('#id_update_data').show();
+      }
+      else
+      {
+        $('#selectAll').prop('checked', false);
+         $('#id_delete_data').hide();
+         $('#id_copy_data').hide();
+         $('#id_update_data').hide();
+      }
+
+
+//     table.draw(false);
+
+});
+
 // on click edit icon display the data in edit mode
 function onclick_edit_button() {
     //display the add,cancel and upload buttons and select all checkbox,select heading and checkboxes for each row
     $('#display_basic_table').DataTable().destroy();
     $("#hg_select_checkbox").prop("hidden", false);
     $(".class_select_checkbox").prop("hidden", false);
-
+    if($('#selectAll').is(':checked')){
+         $("#selectAll").prop("checked", false);
+    }
     //hide the edit,delete,copy and update buttons
     $('#id_cancel_data').show();
     $('#id_edit_data').hide();
     $('#id_check_all').show();
     table_sort_filter('display_basic_table');
 }
-
+var table = $('#display_basic_table').DataTable();
 //onclick of select all checkbox
 function checkAll(ele) {
     $('#display_basic_table').DataTable().destroy();
+    var info = table.page.info();
+    var p = table.rows().nodes();
+    if(page_num == 0)
+    {
+        currPageStartIdx = info.start;
+        currPageEndIdx = info.end;
+    }
     var checkboxes = document.getElementsByTagName('input');
     if (ele.checked) {
-        for (var i = 0; i < checkboxes.length; i++) {
-            if (checkboxes[i].type == 'checkbox') {
-                checkboxes[i].checked = true;
-                $('#id_delete_data').show();
-                $('#id_copy_data').show();
-                $('#id_update_data').show();
-            }
-        }
-    } else {
-        for (var i = 0; i < checkboxes.length; i++) {
-            if (checkboxes[i].type == 'checkbox') {
-                checkboxes[i].checked = false;
+        for (var i = currPageStartIdx; i < currPageEndIdx; i++) {
+            p[i].children[0].childNodes[0].checked = true;
+             $('#id_delete_data').show();
+             $('#id_copy_data').show();
+             $('#id_update_data').show();
+             }
+    }
+    else {
+        for (var i = currPageStartIdx; i < currPageEndIdx; i++) {
+                p[i].children[0].childNodes[0].checked = false;
                 $('#id_delete_data').hide();
                 $('#id_copy_data').hide();
                 $('#id_update_data').hide();
-            }
         }
     }
-    table_sort_filter('display_basic_table');
+//    table.page(page_num).draw( 'page' );
+    $('#display_basic_table').dataTable({
+                initComplete: function () {
+                    this.api().page(page_num).draw( 'page' );
+                }
+    });
+
+//    table_sort_filter('display_basic_table');
 }
 
 //onclick of checkbox display delete,update and copy Buttons
@@ -56,6 +106,9 @@ function valueChanged() {
         $('#id_copy_data').hide();
         $('#id_update_data').hide();
     }
+//     if(checked_flag == 1){
+//        $('#selectAll').prop('checked', true);
+//      }
 }
 
 //onclick of delete,delete the row.
