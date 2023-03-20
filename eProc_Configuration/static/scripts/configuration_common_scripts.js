@@ -25,9 +25,17 @@ var currPageStartIdx, currPageEndIdx, page_num=0, checked_flag=0;
        }
       if(checked_flag){
         $('#selectAll').prop('checked', true);
+         $('#id_delete_data').show();
+         $('#id_copy_data').show();
+         $('#id_update_data').show();
       }
       else
-      { $('#selectAll').prop('checked', false);}
+      {
+        $('#selectAll').prop('checked', false);
+         $('#id_delete_data').hide();
+         $('#id_copy_data').hide();
+         $('#id_update_data').hide();
+      }
 
 
 //     table.draw(false);
