@@ -11,7 +11,7 @@
                 <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Application_Settings:extract_favourite_transaction_type_data' %}'" type="button">
                <i class="fas fa-download"></i> extract
             </button>
-                <button type="button" id="id_add_data" title="ADD" value="ADD"  class="btn btn-primary display_buttons " data-toggle="modal" data-target="#myModal" onclick="onclick_add_button(this)">
+                <button type="button" id="id_add_data" title="Add Favourite Transaction Type" value="Add Favourite Transaction Type"  class="btn btn-primary display_buttons " data-toggle="modal" data-target="#myModal" onclick="onclick_add_button(this)">
                    <i class="fa fa-plus"></i> Add Favourite Transaction Type
                 </button>
                 <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"  onclick="window_close();">
@@ -28,8 +28,8 @@
                 <button class="btn btn-secondary btn-sm" title="Edit" id="id_edit_data" onclick="onclick_edit_button()">
                     <i class="fas fa-edit"></i> edit
                 </button>
-               <button class="btn btn-outline-danger btn-sm" id="id_delete_data" value="transaction_types_delete" style="display:none;" data-toggle="modal" data-target="#id_delete_confirm_popup">
-                    <i class="fa fa-trash" aria-hidden="true" title="Delete Line"></i> delete
+               <button class="btn btn-outline-danger btn-sm" title="Delete" id="id_delete_data" value="transaction_types_delete" style="display:none;" data-toggle="modal" data-target="#id_delete_confirm_popup">
+                    <i class="fa fa-trash" aria-hidden="true"></i> delete
                 </button>
                  <button class="btn btn-primary btn-sm"  title="Copy" id="id_copy_data" style="display:none;" value="COPY"  type="button" onclick="onclick_copy_button()">
                     <i class="fa fa-copy"></i> copy
@@ -98,10 +98,10 @@
                         <div class="modal-body scrollbox">
 
                                 <div id="id_del_add_button" class="mb-4">
-                                    <button class="btn btn-primary" type="button" onclick="add_popup_row()">
+                                    <button class="btn btn-primary" title="Add New Row" type="button" onclick="add_popup_row()">
                                         <i class="fa fa-plus"></i> add new row
                                     </button>
-                                    <button class="btn btn-outline-danger" onclick="application_settings_delete_Row('id_popup_table')">
+                                    <button class="btn btn-outline-danger" title="Delete" onclick="application_settings_delete_Row('id_popup_table')">
                                         <i class="fa fa-trash"></i> delete
                                     </button>
                                 </div>
@@ -198,7 +198,6 @@
             success: function(response) {
                 rendered_active_inactive = response.rendered_active_inactive;
                 rendered_document_type = response.document_type_render;
-                rendered_sequence = response.number_range_sequence;
                 dropdown_value();
                 $("#error_msg_id").css("display", "none")
                 $( "#header_select").prop( "hidden", false );

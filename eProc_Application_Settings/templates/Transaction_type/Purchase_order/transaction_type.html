@@ -196,7 +196,6 @@
             success: function(response) {
                 rendered_active_inactive = response.rendered_active_inactive
                 rendered_document_type = response.document_type_render
-                rendered_sequence = response.upload_numberrange
                 dropdown_value();
                 $("#error_msg_id").css("display", "none")
                 $( "#header_select").prop( "hidden", false );

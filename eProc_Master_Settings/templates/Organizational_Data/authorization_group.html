@@ -1,6 +1,7 @@
 {% extends 'root/base.html' %}
 {% load static %}
 {% block maincontent %}
+{% block title %} Authorization Group (Application Settings) {% endblock %}
 {% include 'root/loader.html' %}
 
 <div class="container-fluid">
@@ -201,21 +202,20 @@
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
                     success: function(Response) {
-                    rendered_auth_group_data = Response[0];
-                    rendered_auth_group_field_data = Response[2];
-                    display_basic_db_data();
-                    $('#myModal').modal('hide');
-                    success_response(Response);  // Display Response data
-                    CloseLoaderPopup();
-                }
-            });
+                        rendered_auth_group_data = Response[0];
+                        rendered_auth_group_field_data = Response[2];
+                        display_basic_db_data();
+                        $('#myModal').modal('hide');
+                        success_response(Response);  // Display Response data
+                        CloseLoaderPopup();
+                    }
+                });
+            }
+            else if (error_message){
+                display_error_message(error_message)
+            }
         }
-        else if (error_message){
-        display_error_message(error_message)
     }
-}
-}
-   
    
     //delete the selected row in db................
     var main_table_auth_group_checked = [];
@@ -244,7 +244,6 @@
         });
     }
    
-
     //onclick of add button display myModal popup and set GLOBAL_ACTION button value
     function onclick_add_button(button) {
         OpenLoaderPopup();
@@ -340,10 +339,10 @@
             var row = $(this);
             auth_group = {}
             auth_group.auth_obj_grp = row.find("TD").eq(1).find('select[type="text"]').val();
-            auth_group.auth_grp_desc = row.find("TD").eq(2).find('input[type="text"]').val();
+            auth_group.auth_grp_desc = row.find("TD").eq(2).find('input[type="text"]').val().toUpperCase();
             auth_group.auth_level = row.find("TD").eq(3).find("select option:selected").val();
-            auth_group.auth_obj_id = row.find("TD").eq(4).find("select option:selected").val();
-            var compare = auth_group.auth_obj_grp+ ' - ' + auth_group.auth_grp_desc+ ' - ' +auth_group.auth_level+ ' - ' + auth_group.auth_obj_id
+            auth_group.auth_obj_id = row.find("TD").eq(4).find("select option:selected").val(); 
+            var compare = auth_group.auth_obj_grp + ' - ' + auth_group.auth_grp_desc+ ' - ' +auth_group.auth_level+ ' - ' + auth_group.auth_obj_id
             auth_group_check.push(compare);
             jQuery.grep(auth_group_check, function(el) {
                 if (jQuery.inArray(el, common) != -1) {

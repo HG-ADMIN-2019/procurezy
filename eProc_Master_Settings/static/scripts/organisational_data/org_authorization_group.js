@@ -68,8 +68,6 @@ $(".remove_upload_data").click(() => {
     $('#id_popup_table').DataTable().destroy();
 });
 
-
-
 //onclick of cancel display the table in display mode............
 function display_basic_db_data() {
     $('#display_basic_table').DataTable().destroy();
@@ -102,7 +100,7 @@ function delete_duplicate() {
         //*************** reading data from the pop-up ***************
         auth_obj_grp = row.find("TD").eq(1).find("select option:selected").val();
         auth_obj_id = row.find("TD").eq(4).find("select option:selected").val();
-        auth_grp_desc = row.find("TD").eq(2).find("select option:selected").val();
+        auth_grp_desc = row.find("TD").eq(2).find("select option:selected").val().toUpperCase();
         auth_level = row.find("TD").eq(3).find("select option:selected").val();
         var compare = auth_obj_grp+'-'+auth_grp_desc+'-'+auth_obj_id+'-'+auth_level
         if (auth_group_code_check.includes(compare)) {
@@ -116,15 +114,14 @@ function delete_duplicate() {
 
 //**********************************************
 function display_error_message(error_message){
-
-        $('#error_message').text(error_message);
-
-        document.getElementById("error_message").style.color = "Red";
-        $("#error_msg_id").css("display", "block")
-        $('#id_save_confirm_popup').modal('hide');
-        $('#myModal').modal('show');
-
+    $('#error_message').text(error_message);
+    document.getElementById("error_message").style.color = "Red";
+    $("#error_msg_id").css("display", "block")
+    $('#id_save_confirm_popup').modal('hide');
+    $('#myModal').modal('show');
 }
+
+// Onclick of save button in popup
 $('#save_id').click(function () {
     $('#myModal').modal('hide');
     auth_group_data = read_popup_data();
@@ -141,7 +138,7 @@ function read_popup_data() {
         auth_group = {};
         auth_group.del_ind = row.find("TD").eq(6).find('input[type="checkbox"]').is(':checked');
         auth_group.auth_obj_grp = row.find("TD").eq(1).find('select[type="text"]').val();
-        auth_group.auth_grp_desc = row.find("TD").eq(2).find('input[type="text"]').val();
+        auth_group.auth_grp_desc = row.find("TD").eq(2).find('input[type="text"]').val().toUpperCase();
         auth_group.auth_level = row.find("TD").eq(3).find("select option:selected").val();
         auth_group.auth_obj_id = row.find("TD").eq(4).find("select option:selected").val();
         auth_group.auth_grp_guid = row.find("TD").eq(5).find('input[type="text"]').val();
@@ -151,7 +148,7 @@ function read_popup_data() {
         if (auth_group.auth_grp_guid == undefined) {
             auth_group.auth_grp_guid = ''
         }
-        var compare = auth_group.auth_obj_grp+ ' - ' + auth_group.auth_grp_desc+ ' - ' +auth_group.auth_level+ ' - ' + auth_group.auth_obj_id
+        var compare = auth_group.auth_obj_grp + ' - ' + auth_group.auth_grp_desc + ' - ' + auth_group.auth_level+ ' - ' + auth_group.auth_obj_id
         validate_add_attributes.push(compare);
         auth_group_data.push(auth_group);
     });
@@ -166,10 +163,10 @@ function get_main_table_data() {
         var row = $(this);
         var main_attribute = {};
         main_attribute.auth_obj_grp = row.find("TD").eq(1).html();
-        main_attribute.auth_obj_id = row.find("TD").eq(4).html();
-        main_attribute.auth_grp_desc = row.find("TD").eq(2).html();
+        main_attribute.auth_grp_desc = row.find("TD").eq(2).html().toUpperCase();
         main_attribute.auth_level = row.find("TD").eq(3).html();
-        var main_attribute_compare = main_attribute.auth_obj_grp + ' - ' + main_attribute.auth_grp_desc+ ' - ' + main_attribute.auth_level+ ' - ' + main_attribute.auth_obj_id
+        main_attribute.auth_obj_id = row.find("TD").eq(4).html();
+        var main_attribute_compare = main_attribute.auth_obj_grp + ' - ' + main_attribute.auth_grp_desc + ' - ' + main_attribute.auth_level + ' - ' + main_attribute.auth_obj_id
         main_table_low_value.push(main_attribute_compare);
     });
     table_sort_filter('display_basic_table');
@@ -184,7 +181,7 @@ function get_selected_row_data(){
         if( auth_group_arr_obj.del_ind) {
         auth_group_arr_obj.auth_obj_grp = row.find("TD").eq(1).html();
         auth_group_arr_obj.auth_obj_id = row.find("TD").eq(4).html();
-        auth_group_arr_obj.auth_grp_desc = row.find("TD").eq(2).html();
+        auth_group_arr_obj.auth_grp_desc = row.find("TD").eq(2).html().toUpperCase();
         auth_group_arr_obj.auth_level = row.find("TD").eq(3).html();
         auth_group_arr_obj.auth_grp_guid = row.find("TD").eq(5).html();
         auth_group_arr_obj.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');

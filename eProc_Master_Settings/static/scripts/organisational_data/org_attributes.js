@@ -89,7 +89,7 @@ function onclick_copy_update_button(data) {
         }
     }
     $('#id_popup_tbody').append(edit_basic_data);
-    var i = 0;
+    // var i = 0;
     $("#id_popup_table TBODY TR").each(function () {
         var row = $(this);
         var attribute = dropdown_values[i][0];

@@ -33,12 +33,12 @@ function read_sequence() {
     $.each(rendered_sequence, function (i, item) {
         rendered_sequence_array.push(item.sequence)
     });
-    console.log(rendered_sequence_array);
 }
 
 //*************************************
-read_sequence()
+
 function eliminate_used_sequence() {
+    read_sequence()
     sequence_dropdown = '';
     $.each(rendered_sequence_array, function (i, item) {
         if (sequence_remove_array.includes(item)) {
@@ -87,7 +87,7 @@ $(".remove_upload_data").click(() => {
     $("#id_check_success_messages").prop("hidden", true);
     $("#id_check_special_character_messages").prop("hidden", true)
     $("#id_check_data").prop("hidden", true);
-    read_sequence()
+    // read_sequence();
     $('#id_popup_table').DataTable().destroy();
 });
 
