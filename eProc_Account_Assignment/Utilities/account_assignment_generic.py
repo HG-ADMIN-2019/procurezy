@@ -158,7 +158,10 @@ class AccountAssignmentCategoryDetails:
 
         acc_value_desc = ACCValueDesc.get_acc_value_desc(acc_value_list, self.default_company_code,
                                                          acc_details['default_acc'])
-        acc_value_list_desc, acc_default_val_desc = ACCValueDesc.append_acc_val_desc(acc_value_desc, default_acc_value)
+
+        acc_value_list_desc, acc_default_val_desc = ACCValueDesc.append_acc_val_desc_if_exists(acc_value_desc,
+                                                                                               default_acc_value,
+                                                                                               acc_value_list)
         gl_acc_item_level_default, header_level_gl_acc = AccountAssignmentCategoryDetails.get_gl_acc_default_value(self,
                                                                                                                    acc_details[
                                                                                                                        'default_acc'])

@@ -1295,14 +1295,14 @@ class CheckForScErrors:
         else:
             return True, ''
 
-    def header_level_acc_check(self, acc_list, default_acc, acc_value_list, default_acc_value):
+    def header_level_acc_check(self, acc_list, default_acc, acc_value_list, default_acc_value, company_code):
         """
 
         """
         if default_acc:
             if not django_query_instance.django_existence_check(AccountAssignmentCategory,
-                                                         {'account_assign_cat': default_acc,
-                                                          'del_ind': False}):
+                                                                {'account_assign_cat': default_acc,
+                                                                 'del_ind': False}):
                 msgid = 'MSG166'
                 errormsg = get_message_desc(msgid)[1]
                 self.error_message_info.append(errormsg)
@@ -1312,10 +1312,11 @@ class CheckForScErrors:
             self.error_message_info.append(error_msg)
         if default_acc_value:
             if not django_query_instance.django_existence_check(AccountingData,
-                                                            {'account_assign_cat': default_acc,
-                                                             'account_assign_value': default_acc_value,
-                                                             'client': self.client,
-                                                             'del_ind': False}):
+                                                                {'account_assign_cat': default_acc,
+                                                                 'account_assign_value': default_acc_value,
+                                                                 'client': self.client,
+                                                                 'del_ind': False,
+                                                                 'company_id': company_code}):
                 msgid = 'MSG165'
                 errormsg = get_message_desc(msgid)[1]
                 self.error_message_info.append(errormsg)
@@ -1329,7 +1330,6 @@ class CheckForScErrors:
         if len(acc_value_list) == 0:
             error_msg = "Account assignment category value is not maintained. Please contact admin"
             self.error_message_info.append(error_msg)
-
 
     def account_assignment_check(self, acc_assign_cat, acc_assign_value, gl_acc_num, item_num):
         account_assignment_errors = {}
@@ -1639,8 +1639,9 @@ def check_sc_second_step_shopping_cart(sc_check_instance, object_id_list, defaul
     error_msg = sc_check_instance.header_level_delivery_address_check(default_address_number)
     sc_check_instance.update_approval_check(manager_details, approver_id, total_value,
                                             msg_info)
-    sc_check_instance.header_level_acc_check( accounting_data['acc_list'], accounting_data['default_acc_ass_cat'],
-                                              accounting_data['acc_value_list'], accounting_data['default_acc'])
+    sc_check_instance.header_level_acc_check(accounting_data['acc_list'], accounting_data['default_acc_ass_cat'],
+                                             accounting_data['acc_value_list'], accounting_data['default_acc'],
+                                             company_code)
 
     # if error_msg:
     #     sc_check_instance.item_level_delivery_address_check(cart_items_count, error_msg)

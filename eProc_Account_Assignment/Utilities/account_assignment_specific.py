@@ -3,6 +3,8 @@ from django.db.models import Q
 from eProc_Attributes.Utilities.attributes_generic import OrgAttributeValues
 from eProc_Attributes.Utilities.attributes_specific import append_description_atrr_value_exists
 from eProc_Basic.Utilities.constants.constants import CONST_GLACC, CONST_DEFAULT_LANGUAGE
+from eProc_Basic.Utilities.functions.dictionary_check_value_based_for_key import dictionary_check_value_based_for_key, \
+    dictionary_check_get_value_based_for_key
 from eProc_Basic.Utilities.functions.insert_remove import list_remove_insert_first
 from eProc_Basic.Utilities.functions.str_concatenate import concatenate_str, concatenate_array_str
 from eProc_Basic.Utilities.global_defination import global_variables
@@ -252,6 +254,32 @@ class ACCValueDesc:
             if acc_append_default_val_desc:
                 acc_append_val_desc = remove_insert(acc_append_val_desc, acc_append_default_val_desc)
         return acc_append_val_desc, acc_append_default_val_desc
+
+    @staticmethod
+    def append_acc_val_desc_if_exists(acc_val_desc, acc_default_value,acc_value_list):
+        acc_append_val_desc = []
+        acc_append_default_val_desc = None
+        for acc_value in acc_value_list:
+            acc_value_detail = dictionary_check_get_value_based_for_key(acc_val_desc,'account_assign_value',acc_value)
+            if acc_value_detail:
+                concate_val_desc = concatenate_str(acc_value_detail['account_assign_value'],
+                                                              acc_value_detail['description'])
+                acc_append_val_desc.append(concate_val_desc)
+            else:
+                acc_append_val_desc.append(acc_value)
+        if acc_default_value:
+            acc_default_value_detail = dictionary_check_get_value_based_for_key(acc_val_desc,
+                                                                                'account_assign_value',
+                                                                                acc_default_value)
+            if acc_default_value_detail:
+                acc_append_default_val_desc = concatenate_str(acc_default_value_detail['account_assign_value'],
+                                               acc_default_value_detail['description'])
+            else:
+                acc_append_default_val_desc = acc_default_value
+        if acc_append_default_val_desc:
+            acc_append_val_desc = remove_insert(acc_append_val_desc, acc_append_default_val_desc)
+        return acc_append_val_desc, acc_append_default_val_desc
+
 
     @staticmethod
     def append_acc_desc(acc_val_desc):
