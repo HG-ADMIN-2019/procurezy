@@ -30,7 +30,7 @@ function account_assignment_value_find(company_num) {
         assmtCatDistinct.push(item);
      });
      for (var i = 0; i < assmtCatDistinct.length; i++) {
-        corresponding_values.acc_ass_dropdwn += '<option value="'+assmtCatDistinct[i]+'">' + assmtCatDistinct[i] + '</option>'
+        corresponding_values.acc_ass_dropdwn += '<option value="'+assmtCatDistinct[i]+'">'+assmtCatDistinct[i]+'</option>'
      }
      assmtValDistinct = [];
      $(unique_acct_assmt_val).each(function (index, item) {
@@ -160,8 +160,8 @@ function display_basic_db_data() {
     var edit_basic_data = '';
     $.each(rendered_accdatadescs_data, function (i, item) {
         edit_basic_data += '<tr><td class="class_select_checkbox"><input class="checkbox_check" onclick="valueChanged()" type="checkbox" required></td>'+
-        '<td >' + item.company_id + '</td>'+
-        '<td> ' + item.account_assign_cat + '</td>'+
+        '<td>' + item.company_id + '</td>'+
+        '<td>' + item.account_assign_cat + '</td>'+
         '<td>' + item.account_assign_value + '</td>'+
         '<td>' + item.description + '</td>'+
         '<td>' + item.language_id + '</td>'+

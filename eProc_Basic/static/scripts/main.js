@@ -390,14 +390,7 @@ function table_sort_filter_basic(class_name) {
 
 // Datatables script to generate sort and filter feature for tables
 function table_sort_filter(id_name) {
-    $('#' + id_name).DataTable(
-//     {
-//        checkboxes: {
-//               selectRow: true,
-//               selectAllPages: false
-//           }
-//     }
-    );
+    $('#' + id_name).DataTable();
 }
 
 function table_sort_filter_popup(id_name) {

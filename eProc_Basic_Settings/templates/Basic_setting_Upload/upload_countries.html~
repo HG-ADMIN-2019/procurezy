@@ -56,8 +56,8 @@
                                 <input id="selectAll" type="checkbox" onchange="checkAll(this)" name="chk[]">
                             </div>
                         </th>
-                        <th>Country Code</th>
-                        <th>Country Name</th>
+                        <th >Country Code</th>
+                        <th >Country Name</th>
                     </tr>
                     </thead>
                     <tbody id="id_country_tbody">
