@@ -45,32 +45,6 @@ function onclick_edit_button() {
     table_sort_filter('display_basic_table');
 }
 
-//onclick of select all checkbox
-function checkAll(ele) {
-    $('#display_basic_table').DataTable().destroy();
-    var checkboxes = document.getElementsByTagName('input');
-    if (ele.checked) {
-        for (var i = 0; i < checkboxes.length; i++) {
-            if (checkboxes[i].type == 'checkbox') {
-                checkboxes[i].checked = true;
-                $("#id_delete_data").show();
-                $("#id_copy_data").show();
-                $("#id_update_data").show();
-            }
-        }
-    } else {
-        for (var i = 0; i < checkboxes.length; i++) {
-            if (checkboxes[i].type == 'checkbox') {
-                checkboxes[i].checked = false;
-                $("#id_delete_data").hide();
-                $("#id_copy_data").hide();
-                $("#id_update_data").hide();
-            }
-        }
-    }
-    table_sort_filter('display_basic_table');
-}
-
 //onclick of checkbox display delete,update and copy Buttons
 function valueChanged() {
     if ($('.checkbox_check').is(":checked")) {
@@ -107,31 +81,6 @@ function add_popup_row() {
         $(".class_del_checkbox").prop("hidden", false);
     }
 }
-
-    //onclick of delete,delete the row.
-    // function application_settings_delete_Row(myTable) {
-    //     $('#id_popup_table').DataTable().destroy();
-    //     try {
-    //         var table = document.getElementById(myTable);
-    //         var rowCount = table.rows.length;
-    //         for (var i = 0; i < rowCount; i++) {
-    //             var row = table.rows[i];
-    //             var chkbox = row.cells[0].childNodes[0];
-    //             if (null != chkbox && true == chkbox.checked) {
-    //                 table.deleteRow(i);
-    //                 rowCount--;
-    //                 i--;
-    //             }
-    //         }
-    //         $("#id_delete_data").hide();
-    //         $("#id_copy_data").hide();
-    //         $("#id_update_data").hide();
-    //         table_sort_filter_popup_pagination('id_popup_table');
-    //         return rowCount;
-    //     } catch (e) {
-    //         alert(e);
-    //     }
-    // }
 
 //onclick of cancel display the table in display mode............
 function display_basic_db_data() {

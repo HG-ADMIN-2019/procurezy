@@ -262,7 +262,7 @@
         }
         else{
             if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
-                 // compare main table and pop up for duplicate values
+                // compare main table and pop up for duplicate values
                 [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
             }
             if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
@@ -280,7 +280,7 @@
                         rendered_message_id_data = Response[0];
                         display_basic_db_data();
                         $('#myModal').modal('hide');
-                        $('#id_error_msg').text(messageConstants["JMSG001"])
+                        // $('#id_error_msg').text(messageConstants["JMSG001"])
                         success_response(Response); // Function call to display response data
                         table_sort_filter('id_popup_table');
                         CloseLoaderPopup();

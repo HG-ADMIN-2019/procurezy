@@ -1,8 +1,10 @@
 var message_id_desc_data = new Array();
 var validate_add_attributes = [];
+var main_table_low_value = [];
 var duplicate_entry = [];
 var lang_values = [];
 var message_id_desc={};
+
 $(document).ready(function () {
     $('#nav_menu_items').remove();
     $("body").css("padding-top", "3.7rem");
@@ -232,65 +234,97 @@ function display_error_message(error_message){
         $('#myModal').modal('show');
 }
 
- // Functtion to hide and display save related popups
+// Functtion to hide and display save related popups
 $('#save_id').click(function () {
     $('#myModal').modal('hide');
-     message_id_desc_data = new Array();
-     validate_add_attributes = [];
-     lang_values = [];
-     duplicate_entry = [];
-    $("#id_popup_table TBODY TR").each(function () {
-            var row = $(this);
-            message_id_desc={};
-            message_id_desc.msg_id_desc_guid = row.find("TD").eq(5).find('input[type="text"]').val();
-            message_id_desc.del_ind = row.find("TD").eq(4).find('input[type="checkbox"]').is(':checked');
-            message_id_desc.language_id = row.find("TD").eq(3).find('select[type="text"]').val();
-            message_id_desc.messages_id_desc = row.find("TD").eq(2).find('input[type="text"]').val();
-            message_id_desc.messages_id = row.find("TD").eq(1).find('select[type="text"]').val();
-
-            if (message_id_desc == undefined){
-                message_id_desc.messages_id = row.find("TD").eq(1).find('select[type="text"]').val();
-             }
-            if(message_id_desc.msg_id_desc_guid == undefined) {
-                   message_id_desc.msg_id_desc_guid = ''
-                }
-            var desc='';
-            for (i = 0; i < render_language_data.length; i++) {
-                if (message_id_desc.language_id == render_language_data[i].language_id)
-                    desc = render_language_data[i].description;
-            }
-
-             var attribute_dup = {};
-            attribute_dup.messages_id = message_id_desc.messages_id;
-            attribute_dup.language_id = desc;
-            duplicate_entry.push(attribute_dup);
-
-             validate_add_attributes.push(message_id_desc.messages_id);
-            //lang_values.push(desc);
-            message_id_desc_data.push(message_id_desc);
-        });
+    message_id_desc_data = read_popup_data();
     $('#id_save_confirm_popup').modal('show');
 });
 
+//Read popup table data
+function read_popup_data() {
+    message_id_desc_data = new Array();
+    validate_add_attributes = [];
+    lang_values = [];
+    duplicate_entry = [];
+    $("#id_popup_table TBODY TR").each(function () {
+        var row = $(this);
+        message_id_desc={};
+        message_id_desc.msg_id_desc_guid = row.find("TD").eq(5).find('input[type="text"]').val();
+        message_id_desc.del_ind = row.find("TD").eq(4).find('input[type="checkbox"]').is(':checked');
+        message_id_desc.language_id = row.find("TD").eq(3).find('select[type="text"]').val();
+        message_id_desc.messages_id_desc = row.find("TD").eq(2).find('input[type="text"]').val();
+        message_id_desc.messages_id = row.find("TD").eq(1).find('select[type="text"]').val();
+        if (message_id_desc == undefined){
+            message_id_desc.messages_id = row.find("TD").eq(1).find('select[type="text"]').val();
+        }
+        if(message_id_desc.msg_id_desc_guid == undefined) {
+            message_id_desc.msg_id_desc_guid = ''
+        }
+        var desc='';
+        for (i = 0; i < render_language_data.length; i++) {
+            if (message_id_desc.language_id == render_language_data[i].language_id)
+                desc = render_language_data[i].description;
+        }
+        var attribute_dup = {};
+        attribute_dup.messages_id = message_id_desc.messages_id;
+        attribute_dup.language_id = desc;
+        duplicate_entry.push(attribute_dup);
+        validate_add_attributes.push(message_id_desc.messages_id);
+        message_id_desc_data.push(message_id_desc);
+    });
+    return message_id_desc_data;
+}
+
+// Function for add a new row data
+function new_row_data() {
+    basic_add_new_html = '<tr><td><input type="checkbox" required></td>'+
+    '<td><select id="messages_id" name="messages_id" title="Select.." class="form-control"  type="text">'+ message_id_dropdown +'</select></td>' +
+    '<td><input class="input form-control check_special_char" type="text" id="messages_desc" name="messages_desc"  required></td>'+
+    '<td><select id="language" name="language_id" title="Select..." class="form-control"  type="text">' + language_dropdown +'</select></td>' +
+    '<td hidden></td>'+
+    '<td class="class_del_checkbox" hidden><input type="checkbox" required></td>'+
+    '</tr>';
+    $('#id_popup_tbody').append(basic_add_new_html);
+    table_sort_filter('id_popup_table');
+}
+
+// Function to get main table data
+function get_main_table_data() {
+    main_table_low_value = [];
+    $('#display_basic_table').DataTable().destroy();
+    $("#display_basic_table TBODY TR").each(function () {
+        var row = $(this);
+        var main_attribute = {};
+        main_attribute.messages_id = row.find("TD").eq(1).html();
+        main_attribute.messages_desc = row.find("TD").eq(2).html();
+        main_attribute.language_id = row.find("TD").eq(3).html();
+        main_table_low_value.push(main_attribute);
+
+         main_table_low_value_lang.push(main_attribute.language_id);
+    });
+    table_sort_filter('display_basic_table');
+}
+
 // Function to get the selected row data
 function get_selected_row_data() {
-$("#display_basic_table TBODY TR").each(function () {
-            var row = $(this);
-            var message_id_desc_arr_obj = {};
-             var lang_desc;
-            var lang_code;
-            lang_desc = row.find("TD").eq(3).html();
-            for (i = 0; i < render_language_data.length; i++) {
-                if (lang_desc == render_language_data[i].description)
-                    lang_code = render_language_data[i].language_id
-            }
-            message_id_desc_arr_obj.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
-             if(message_id_desc_arr_obj.del_ind){
-                message_id_desc_arr_obj.messages_id = row.find("TD").eq(1).html();
-                message_id_desc_arr_obj.messages_id_desc = row.find("TD").eq(2).html();
-                message_id_desc_arr_obj.language_id = lang_code;
-                message_id_desc_arr_obj.msg_id_desc_guid = row.find("TD").eq(4).html();
-                main_table_message_id_desc_checked.push(message_id_desc_arr_obj);
-              }
-            });
+    $("#display_basic_table TBODY TR").each(function () {
+        var row = $(this);
+        var message_id_desc_arr_obj = {};
+        var lang_desc;
+        var lang_code;
+        lang_desc = row.find("TD").eq(3).html();
+        for (i = 0; i < render_language_data.length; i++) {
+            if (lang_desc == render_language_data[i].description)
+                lang_code = render_language_data[i].language_id
+        }
+        message_id_desc_arr_obj.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
+        if(message_id_desc_arr_obj.del_ind){
+            message_id_desc_arr_obj.messages_id = row.find("TD").eq(1).html();
+            message_id_desc_arr_obj.messages_id_desc = row.find("TD").eq(2).html();
+            message_id_desc_arr_obj.language_id = lang_code;
+            message_id_desc_arr_obj.msg_id_desc_guid = row.find("TD").eq(4).html();
+            main_table_message_id_desc_checked.push(message_id_desc_arr_obj);
+        }
+    });
 }
