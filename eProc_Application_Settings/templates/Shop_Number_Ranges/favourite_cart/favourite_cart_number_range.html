@@ -273,21 +273,6 @@
                     no_duplicate_value = 'N'
                     return [no_duplicate_value,error_message]
                 }
-                // if (item.current <= item.starting) {
-                //     get_message_details("JMSG036"); // Get message details
-                //     no_duplicate_value = 'N'
-                //     return [no_duplicate_value,error_message]
-                // }
-                // if (item.current >= item.ending) {
-                //     get_message_details("JMSG037"); // Get message details
-                //     no_duplicate_value = 'N'
-                //     return [no_duplicate_value,error_message]
-                // }
-                // if (item.current >= item.starting && item.ending ) {
-                //     get_message_details("JMSG016"); // Get message details
-                //     no_duplicate_value = 'N'
-                //     return [no_duplicate_value,error_message]
-                // }
             });
             var range_check = list_out_of_range(number_range)
             if (range_check){
@@ -325,7 +310,7 @@
         }
         validation_error = main_range_check_function(numberranges_data,main_table_data)
         if(!validation_error){
-            get_message_details("JMSG109"); // Get message details
+            get_message_details("JMSG002"); // Get message details
             no_duplicate_value = 'N'
             return [no_duplicate_value,error_message]
         }

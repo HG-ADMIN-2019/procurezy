@@ -8,7 +8,7 @@ $(".remove_upload_data").click(() => {
     $("#id_error_msg").html("");
     $("#id_popup_tbody").empty();
     $("#id_error_msg").empty();
-    $('#myModal').modal('hide');
+    $('#accasscat_Modal').modal('hide');
     $("#id_error_msg").prop("hidden", true);
     $("#id_error_msg_aac_code").prop("hidden", true);
     $("#id_error_msg_aac_name").prop("hidden", true);
@@ -25,7 +25,7 @@ function display_error_message(error_message){
     document.getElementById("error_message").style.color = "Red";
     $("#error_msg_id").css("display", "block")
     $('#id_save_confirm_popup').modal('hide');
-    $('#myModal').modal('show');
+    $('#accasscat_Modal').modal('show');
 }
 
 //onclick of cancel display the table in display mode............
@@ -99,8 +99,8 @@ function read_popup_data(){
 // Function for add a new row data
 function new_row_data() {
     basic_add_new_html = '<tr><td><input type="checkbox" required></td>'+
-        '<td><select type="text" class="input form-control acct_assignment_category" id="acct_assignment_category-1" name="acct_assignment_category" onchange="GetSelectedTextValue(this)"><option value="" disabled selected>Select your option</option>'+ aac_dropdown +'</select></td>'+
-        '<td><input class="form-control description check_special_char" type="text"  name="description"  id="description-1" disabled></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+    '<td><select type="text" class="input form-control acct_assignment_category" id="acct_assignment_category-1" name="acct_assignment_category" onchange="GetSelectedTextValue(this)"><option value="" disabled selected>Select your option</option>'+ aac_dropdown +'</select></td>'+
+    '<td><input class="form-control description check_special_char" type="text"  name="description"  id="description-1" disabled></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
     table_sort_filter('id_popup_table');
 }
