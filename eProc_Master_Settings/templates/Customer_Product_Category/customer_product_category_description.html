@@ -239,6 +239,7 @@
                         var edit_basic_data = '';
                         var del_ind = '';
                         var dropdown_values = [];
+                        var inc_index=0;
                         $("#id_popup_tbody").empty();
                         $.each(response.data, function (i, value) {
                             var prod_cat_id_value = value[1]
@@ -374,13 +375,14 @@
                 rendered_UNSPC_data = response.upload_ProdCat
                 render_language_data = response.upload_language
                 unspcdesc_dropdown();
+                var inc_index = 0;
                 $("#error_msg_id").css("display", "none")
                 $("#header_select").prop( "hidden", false );
                 GLOBAL_ACTION = button.value
                 $('#id_popup_table').DataTable().destroy();
                 $("#id_popup_tbody").empty();
                 $('#custproddescModal').modal('show');
-                new_row_data();   // Add a new row in popup
+                new_row_data(inc_index);   // Add a new row in popup
                 $("#id_del_ind_checkbox").prop("hidden", true);
                 document.getElementById('delete_data').style.visibility='hidden';
                 document.getElementById("id_del_add_button").style.display = "block";
@@ -544,7 +546,7 @@
 
 
     // onclick add icon display the row in to add the new entries
-    function add_popup_row(inc_index) {
+    function add_popup_row() {
         $("#error_msg_id").css("display", "none")
         basic_add_new_html = '';
         var display_db_data = '';
@@ -1033,12 +1035,6 @@ function onclick_copy_update_button(data){
         });
     }
 
-      //*********************
-    function get_inc_val(){
-        var getid = $(".prodid:last").attr("id");
-        var getindex = getid.split("-")[1];
-        var inc_index = Number(getindex)+1
-    }
 
   function onclick_delete_button() {
     GLOBAL_ACTION = "DELETE"
