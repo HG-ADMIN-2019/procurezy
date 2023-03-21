@@ -37,9 +37,6 @@ var currPageStartIdx, currPageEndIdx, page_num=0, checked_flag=0;
          $('#id_update_data').hide();
       }
 
-
-//     table.draw(false);
-
 });
 
 // on click edit icon display the data in edit mode
@@ -63,6 +60,7 @@ function checkAll(ele) {
     $('#display_basic_table').DataTable().destroy();
     var info = table.page.info();
     var p = table.rows().nodes();
+    var fl = table.rows( { search: 'applied' } ).nodes();
     if(page_num == 0)
     {
         currPageStartIdx = info.start;

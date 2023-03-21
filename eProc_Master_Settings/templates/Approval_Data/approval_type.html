@@ -240,13 +240,14 @@
             success: function(response) {
                 rendered_approval_type_values = response.dropdown_db_values
                 dropdown_value();
+                var inc_index = 0;
                 $("#error_msg_id").css("display", "none")
                 $( "#header_select").prop( "hidden", false );
                 GLOBAL_ACTION = button.value
                 $('#id_popup_table').DataTable().destroy();
                 $("#id_popup_tbody").empty();
                 $('#App_Type_Modal').modal('show');
-                new_row_data();   // Add a new row in popup
+                new_row_data(inc_index);   // Add a new row in popup
                 $("#id_del_ind_checkbox").prop("hidden", true);
                 document.getElementById("id_del_add_button").style.display = "block";
                 $("#save_id").prop("hidden", false);
