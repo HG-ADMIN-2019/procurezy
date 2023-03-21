@@ -472,19 +472,12 @@ def sc_second_step(request):
         call_off_list,
         prod_cat_list)
 
-    default_account_assignment_category, default_account_assignment_value = unpack_accounting_data(accounting_data,
-                                                                                                   sc_check_instance)
-    error_msg = sc_check_instance.header_level_delivery_address_check(default_address_number)
-    if error_msg:
-        sc_check_instance.item_level_delivery_address_check(cart_items_count)
-
-
-    sc_check_instance.update_approval_check(manager_details, approver_id, total_value,
-                                     msg_info)
-
     cart_items, shopping_cart_errors = check_sc_second_step_shopping_cart(sc_check_instance, object_id_list,
                                                                           default_calendar_id,
-                                                                          company_code, cart_items)
+                                                                          company_code, default_address_number,
+                                                                          accounting_data, manager_details,
+                                                                          approver_id, total_value, msg_info,
+                                                                          cart_items)
 
     # update images
     cart_items = update_image_for_catalog(cart_items)
@@ -494,12 +487,11 @@ def sc_second_step(request):
     currency, uom, currency_list, product_category, country_list = get_currency_uom_prod_cat_country()
 
     sys_attributes_instance = sys_attributes(global_variables.GLOBAL_CLIENT)
-
     request.session['total_value'] = total_item_value
     request.session['company_code'] = company_code
     context = {
         'shopping_cart_errors': shopping_cart_errors,
-        'cart_items_count':cart_items_count,
+        'cart_items_count': cart_items_count,
         'highest_item_number': highest_item_number + 1,
         'sc_completion_flag': sc_completion_flag,
         'requester_user_name': global_variables.GLOBAL_LOGIN_USERNAME,

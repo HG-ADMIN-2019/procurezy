@@ -10,7 +10,8 @@ from eProc_Basic.Utilities.messages.messages import MSG161, MSG162, MSG163, MSG1
 from eProc_Calendar_Settings.Utilities.calender_settings_generic import calculate_delivery_date, \
     calculate_delivery_date_base_on_lead_time, get_list_of_holidays
 from eProc_Chat.models import ChatContent
-from eProc_Configuration.models.master_data import OrgAddress
+from eProc_Configuration.models.development_data import *
+from eProc_Configuration.models.master_data import OrgAddress, AccountingDataDesc, DetermineGLAccount, AccountingData
 from eProc_Exchange_Rates.Utilities.exchange_rates_generic import convert_currency
 from eProc_Form_Builder.models.form_builder import EformData, EformFieldData
 from eProc_Notes_Attachments.models.notes_attachements_model import Attachments, Notes
@@ -1227,6 +1228,7 @@ class CheckForScErrors:
     def __init__(self, client, username):
         self.client = client
         self.data = []
+        self.addr_error = []
         self.info = []
         self.sc_check_data = {}
         self.username = username
@@ -1251,13 +1253,17 @@ class CheckForScErrors:
         else:
             return error_msg
 
-    def item_level_delivery_address_check(self,cart_items_count):
+    def item_level_delivery_address_check(self, cart_items_count, error_msg):
         """
 
         """
         address_error = {}
-        for count in cart_items_count:
-            print(count)
+        item_num = 1
+        cart_count = cart_items_count
+        while item_num <= cart_count:
+            address_error[item_num] = error_msg
+            item_num = item_num + 1
+        self.data.append(address_error)
 
     def delivery_address_check(self, address_number, item_num):
         address_error = {}
@@ -1288,6 +1294,42 @@ class CheckForScErrors:
             return False, self.data
         else:
             return True, ''
+
+    def header_level_acc_check(self, acc_list, default_acc, acc_value_list, default_acc_value):
+        """
+
+        """
+        if default_acc:
+            if not django_query_instance.django_existence_check(AccountAssignmentCategory,
+                                                         {'account_assign_cat': default_acc,
+                                                          'del_ind': False}):
+                msgid = 'MSG166'
+                errormsg = get_message_desc(msgid)[1]
+                self.error_message_info.append(errormsg)
+
+        else:
+            error_msg = "No default Account assignment category maintained.Please maintain defaults in Purchase settings"
+            self.error_message_info.append(error_msg)
+        if default_acc_value:
+            if not django_query_instance.django_existence_check(AccountingData,
+                                                            {'account_assign_cat': default_acc,
+                                                             'account_assign_value': default_acc_value,
+                                                             'client': self.client,
+                                                             'del_ind': False}):
+                msgid = 'MSG165'
+                errormsg = get_message_desc(msgid)[1]
+                self.error_message_info.append(errormsg)
+        else:
+            error_msg = "No default Account assignment category value maintained.Please maintain defaults in Purchase " \
+                        "settings "
+            self.error_message_info.append(error_msg)
+        if len(acc_list) == 0:
+            error_msg = "Account assignment category is not maintained. Please contact admin"
+            self.error_message_info.append(error_msg)
+        if len(acc_value_list) == 0:
+            error_msg = "Account assignment category value is not maintained. Please contact admin"
+            self.error_message_info.append(error_msg)
+
 
     def account_assignment_check(self, acc_assign_cat, acc_assign_value, gl_acc_num, item_num):
         account_assignment_errors = {}
@@ -1577,18 +1619,31 @@ class CheckForScErrors:
         self.sc_check_data['sc_error'] = self.data
         self.sc_check_data['error_msg_info'] = self.error_message_info
         self.sc_check_data['sc_info'] = self.info
+        self.sc_check_data['address_error'] = self.addr_error
         return self.sc_check_data
 
 
 def check_sc_second_step_shopping_cart(sc_check_instance, object_id_list, default_calendar_id, company_code,
+                                       default_address_number, accounting_data, manager_details,
+                                       approver_id, total_value,
+                                       msg_info,
                                        cart_items):
     """
 
     """
     holiday_list = []
+    cart_items_count = len(cart_items)
     sc_check_instance.document_sc_transaction_check(object_id_list)
     sc_check_instance.po_transaction_check(object_id_list)
     sc_check_instance.calender_id_check(default_calendar_id)
+    error_msg = sc_check_instance.header_level_delivery_address_check(default_address_number)
+    sc_check_instance.update_approval_check(manager_details, approver_id, total_value,
+                                            msg_info)
+    sc_check_instance.header_level_acc_check( accounting_data['acc_list'], accounting_data['default_acc_ass_cat'],
+                                              accounting_data['acc_value_list'], accounting_data['default_acc'])
+
+    # if error_msg:
+    #     sc_check_instance.item_level_delivery_address_check(cart_items_count, error_msg)
     if default_calendar_id is not None or default_calendar_id != '':
         holiday_list = get_list_of_holidays(default_calendar_id, global_variables.GLOBAL_CLIENT)
 
