@@ -168,7 +168,7 @@
         {% endif %}
     </div>
 </div>
-<script>
+    <script>
 
     var rendered_wfacc_data = {{ work_flow_accounting| safe}};
     var messages_list = {{messages_list|safe}};
@@ -192,9 +192,15 @@
     var currency_dropdwn = '';
     var company_id_dropdown = '';
     var supcompany_dropdwn = '';
+    var acc_ass_val_dropdwn;
+    var company_list = [] ; var arrDistinct = [];
+    var unique_acct_cat = []; var unique_acct_assmt_val = [];
+    var account_assign_array = [];
+    var company_array = []; var unique_acct_assmt_val = []; var acc_ass_val_list;
 
     //********************************
     function workflowacc_drp(){
+        acc_ass_val_list = [];
         user_dropdwn = '';
         $.each(rendered_user_data, function(i, item){
             user_dropdwn += '<option value="' + item.username + '">' + item.username + '</option>';
@@ -219,6 +225,73 @@
         $.each(rendered_currency_data, function(i, item){
             currency_dropdwn += '<option value="' + item.currency_id + '">' + item.currency_id + '</option>';
         })
+        sup_acc_ass_val_dropdwn = '';
+        $.each(rendered_wfacc_data, function (i, item) {
+            sup_acc_ass_val_dropdwn += '<option value="' + item.sup_acc_value + '">' + item.sup_acc_value + '</option>'
+            acc_ass_val_dict = {};
+            acc_ass_val_dict.acc_ass_val_dropdwn = item.sup_acc_value
+            acc_ass_val_dict.account_assign_cat = item.account_assign_cat
+            acc_ass_val_dict.company_id = item.company_id
+            acc_ass_val_list.push(acc_ass_val_dict)
+            account_assign_array.push(item.sup_acc_value)
+        });
+        company_dropdwn = '';
+        var unique_comp = [];
+
+         $.each(rendered_wfacc_data, function (i, item) {
+            company_dropdwn += '<option value="' + item.company_id + '">' + item.company_id + '</option>'
+            company_dict = {};
+            company_dict.acc_ass_val_dropdwn = item.sup_acc_value
+            company_dict.account_assign_cat = item.account_assign_cat
+            company_dict.company_id = item.company_id
+            company_list.push(company_dict)
+            company_array.push(item.company_id)
+            unique_comp.push(item.company_id);
+            unique_acct_assmt_val.push(item.sup_acc_value);
+        });
+
+        $(unique_comp).each(function (index, item) {
+            if ($.inArray(item, arrDistinct) == -1)
+                arrDistinct.push(item);
+        });
+        company_dropdwn = '';
+        $(arrDistinct).each(function (index, item) {
+            company_dropdwn += '<option value="' + item + '">' + item + '</option>'
+        });
+
+        acc_ass_val_dropdwn = '';
+        $.each(rendered_wfacc_data, function (i, item) {
+            acc_ass_val_dropdwn += '<option value="' + item.acc_value + '">' + item.acc_value + '</option>'
+            acc_ass_val_dict = {};
+            acc_ass_val_dict.acc_ass_val_dropdwn = item.acc_value
+            acc_ass_val_dict.account_assign_cat = item.account_assign_cat
+            acc_ass_val_dict.company_id = item.company_id
+            acc_ass_val_list.push(acc_ass_val_dict)
+            account_assign_array.push(item.acc_value)
+        });
+        company_dropdwn = '';
+        var unique_comp = [];
+
+         $.each(rendered_wfacc_data, function (i, item) {
+            company_dropdwn += '<option value="' + item.company_id + '">' + item.company_id + '</option>'
+            company_dict = {};
+            company_dict.acc_ass_val_dropdwn = item.acc_value
+            company_dict.account_assign_cat = item.account_assign_cat
+            company_dict.company_id = item.company_id
+            company_list.push(company_dict)
+            company_array.push(item.company_id)
+            unique_comp.push(item.company_id);
+            unique_acct_assmt_val.push(item.acc_value);
+        });
+
+        $(unique_comp).each(function (index, item) {
+            if ($.inArray(item, arrDistinct) == -1)
+                arrDistinct.push(item);
+        });
+        company_dropdwn = '';
+        $(arrDistinct).each(function (index, item) {
+            company_dropdwn += '<option value="' + item + '">' + item + '</option>'
+        });
     }
 
    //onclick of cancel display the table in display mode............
@@ -570,6 +643,23 @@ function onclick_add_button(button) {
             $("#id_popup_tbody").empty();
             $('#Wf_Acc_Modal').modal('show');
             new_row_data();   // Add a new row in popup
+            var account_assign = '';
+            $("#id_popup_table TBODY TR").each(function () {
+                var row = $(this);
+                row.find("TD").eq(2).find("select").empty()
+                row.find("TD").eq(3).find("select").empty()
+                company_num = row.find("TD").eq(1).find("select option:selected").val();
+                var assign_val = account_assignment_value_find(company_num)
+                row.find("TD").eq(2).find("select").append(assign_val.acc_ass_dropdwn)
+                row.find("TD").eq(3).find("select").append(assign_val.acc_ass_val_dropdwn)
+                $(row.find("TD").eq(1).find("select")).change(function () {
+                    company_dropdwn_change(row);
+                })
+                $(row.find("TD").eq(2).find("select")).change(function () {
+                    company_num = row.find("TD").eq(1).find("select option:selected").val();
+                    acc_ass_cat_dropdwn(row,company_num);
+                })
+            })
             $("#id_del_ind_checkbox").prop("hidden", true);
             document.getElementById("id_del_add_button").style.display = "block";
             $("#save_id").prop("hidden", false);
@@ -579,36 +669,36 @@ function onclick_add_button(button) {
     });
 }
 
-    //onclick of add button display Wf_Acc_Modal popup and set GLOBAL_ACTION button value
-    function onclick_add_button(button) {
-        OpenLoaderPopup();
-        var data = {'table_name':'WorkflowACC'}
-        $.ajax({
-            type: 'POST',
-            url: "{% url 'eProc_Configuration:get_dropdown_data' %}",
-            data: JSON.stringify(data),
-            success: function(response) {
-                rendered_accasscat_data = response.upload_data_acccat
-                rendered_user_data = response.user_details
-                rendered_accasscat_data = response.upload_data_acccat
-                rendered_currency_data = response.upload_data_currency
-                rendered_company_data = response.upload_data_company
-                rendered_super_company_data = response.upload_data_OrgCompanies
-                workflowacc_drp()
-                $("#error_msg_id").css("display", "none");
-                $( "#header_select").prop( "hidden", false );
-                GLOBAL_ACTION = button.value;
-                $('#id_popup_table').DataTable().destroy();
-                $("#id_popup_tbody").empty();
-                $('#Wf_Acc_Modal').modal('show');
-                new_row_data();   // Add a new row in popup
-                $("#id_del_ind_checkbox").prop("hidden", true);
-                document.getElementById("id_del_add_button").style.display = "block";
-                $("#save_id").prop("hidden", false);
-                CloseLoaderPopup();
-            }
-        });
-    }
+<!--    //onclick of add button display Wf_Acc_Modal popup and set GLOBAL_ACTION button value-->
+<!--    function onclick_add_button(button) {-->
+<!--        OpenLoaderPopup();-->
+<!--        var data = {'table_name':'WorkflowACC'}-->
+<!--        $.ajax({-->
+<!--            type: 'POST',-->
+<!--            url: "{% url 'eProc_Configuration:get_dropdown_data' %}",-->
+<!--            data: JSON.stringify(data),-->
+<!--            success: function(response) {-->
+<!--                rendered_accasscat_data = response.upload_data_acccat-->
+<!--                rendered_user_data = response.user_details-->
+<!--                rendered_accasscat_data = response.upload_data_acccat-->
+<!--                rendered_currency_data = response.upload_data_currency-->
+<!--                rendered_company_data = response.upload_data_company-->
+<!--                rendered_super_company_data = response.upload_data_OrgCompanies-->
+<!--                workflowacc_drp()-->
+<!--                $("#error_msg_id").css("display", "none");-->
+<!--                $( "#header_select").prop( "hidden", false );-->
+<!--                GLOBAL_ACTION = button.value;-->
+<!--                $('#id_popup_table').DataTable().destroy();-->
+<!--                $("#id_popup_tbody").empty();-->
+<!--                $('#Wf_Acc_Modal').modal('show');-->
+<!--                new_row_data();   // Add a new row in popup-->
+<!--                $("#id_del_ind_checkbox").prop("hidden", true);-->
+<!--                document.getElementById("id_del_add_button").style.display = "block";-->
+<!--                $("#save_id").prop("hidden", false);-->
+<!--                CloseLoaderPopup();-->
+<!--            }-->
+<!--        });-->
+<!--    }-->
 
     // on click add icon display the row in to add the new entries
     function add_popup_row() {
@@ -619,6 +709,23 @@ function onclick_add_button(button) {
             $("#id_error_msg").html(" ");
         });
         new_row_data();   // Add a new row in popup
+        var company_num = '';
+        $("#id_popup_table TBODY TR").each(function () {
+            var row = $(this);
+            row.find("TD").eq(2).find("select").empty()
+            row.find("TD").eq(3).find("select").empty()
+            company_num = row.find("TD").eq(1).find("select option:selected").val();
+            var assign_val = account_assignment_value_find(company_num)
+            row.find("TD").eq(2).find("select").append(assign_val.acc_ass_dropdwn)
+            row.find("TD").eq(3).find("select").append(assign_val.acc_ass_val_dropdwn)
+            $(row.find("TD").eq(1).find("select")).change(function () {
+                  company_dropdwn_change(row);
+            })
+            $(row.find("TD").eq(2).find("select")).change(function () {
+                company_num = row.find("TD").eq(1).find("select option:selected").val();
+                acc_ass_cat_dropdwn(row,company_num);
+            })
+        })
         if (GLOBAL_ACTION == "workflowacc_upload") {
             $(".class_del_checkbox").prop("hidden", false);
         }
@@ -661,7 +768,7 @@ function onclick_add_button(button) {
                             edit_basic_data += '<tr><td><input type="checkbox" required></td>'+
                             '<td>'+unique_input+'</td>'+
                             '<td><select type="text" class="form-control">'+acc_ass_dropdwn+'</select></td>'+
-                            '<td><input class="form-control" type="number" value="' + row.cells[3].innerHTML + '" name="aac_value"  maxlength="40"  required></td>'+
+                            '<td><select type="text" class="form-control">'+acc_ass_val_dropdwn+'</select></td>'+
                             '<td><select type="text" class="form-control">'+user_dropdwn+'</select></td>'+
                             '<td><select type="text" class="form-control">'+supcompany_dropdwn+'</select></td>'+
                             '<td><select type="text" class="form-control" >'+sup_acc_ass_dropdwn+'</select></td>'+
