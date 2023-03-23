@@ -44,7 +44,7 @@ function onclick_update_button() {
 //**********************************************************
 function onclick_copy_update_button(data) {
     $("#error_msg_id").css("display", "none")
-    $('#display_basic_table').DataTable().destroy();
+//    $('#display_basic_table').DataTable().destroy();
     $('#id_popup_table').DataTable().destroy();
     $("#id_popup_tbody").empty();
     //Reference the Table.
@@ -76,7 +76,7 @@ function onclick_copy_update_button(data) {
     $("#id_del_ind_checkbox").prop("hidden", true);
     $('#countriesModal').modal('show');
     table_sort_filter('id_popup_table');
-    table_sort_filter('display_basic_table');
+//    table_sort_filter('display_basic_table');
 }
 
  //************************currency code
@@ -143,7 +143,6 @@ function display_basic_db_data() {
     $('#id_update_data').hide();
     $('#id_save_confirm_popup').modal('hide');
     $('#id_delete_confirm_popup').modal('hide');
-//    document.getElementsByClassName("checkbox_check").checked = false;
     $('#id_check_all').hide();
     table_sort_filter('display_basic_table');
 }

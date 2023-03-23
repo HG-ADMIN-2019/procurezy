@@ -98,6 +98,7 @@ $('#display_basic_table tbody').on('click', 'input[type="checkbox"]', function(e
    table.on('draw', function(){
       // Update state of "Select all" control
       updateDataTableSelectAllCtrl(table);
+//      e.stopPropagation();
    });
     function updateDataTableSelectAllCtrl(table){
        var $table             = table.table().node();
