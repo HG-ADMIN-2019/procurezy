@@ -2,6 +2,7 @@ import datetime
 from eProc_Attributes.Utilities.attributes_generic import OrgAttributeValues
 from eProc_Basic.Utilities.functions.django_query_set import DjangoQueries
 from eProc_Basic.Utilities.functions.json_parser import JsonParser
+from eProc_Basic.Utilities.global_defination import global_variables
 from eProc_Calendar_Settings.Utilities.calender_settings_generic import get_list_of_holidays
 from eProc_Shopping_Cart.context_processors import update_user_info
 from django.http import JsonResponse
@@ -20,8 +21,8 @@ def check_shopping_cart(request):
     :param request:
     :return:
     """
-    client = getClients(request)
     update_user_info(request)
+    client = global_variables.GLOBAL_CLIENT
     holiday_list = []
     sc_check_data = JsonParser().get_json_from_req(request)
     username = sc_check_data['requester']
