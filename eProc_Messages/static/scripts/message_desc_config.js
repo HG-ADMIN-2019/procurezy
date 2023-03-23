@@ -134,31 +134,31 @@ function valueChanged() {
 
 
 //***************************
-//onclick of delete,delete the row.
-function application_settings_delete_Row(myTable) {
-    $('#id_popup_table').DataTable().destroy();
-    try {
-        var table = document.getElementById(myTable);
-        var rowCount = table.rows.length;
-        for (var i = 0; i < rowCount; i++) {
-            var row = table.rows[i];
-            var chkbox = row.cells[0].childNodes[0];
-            if (null != chkbox && true == chkbox.checked) {
-                table.deleteRow(i);
-                rowCount--;
-                i--;
-            }
-        }
+// //onclick of delete,delete the row.
+// function application_settings_delete_Row(myTable) {
+//     $('#id_popup_table').DataTable().destroy();
+//     try {
+//         var table = document.getElementById(myTable);
+//         var rowCount = table.rows.length;
+//         for (var i = 0; i < rowCount; i++) {
+//             var row = table.rows[i];
+//             var chkbox = row.cells[0].childNodes[0];
+//             if (null != chkbox && true == chkbox.checked) {
+//                 table.deleteRow(i);
+//                 rowCount--;
+//                 i--;
+//             }
+//         }
 
-        $("#id_delete_data").hide();
-        $("#id_copy_data").hide();
-        $("#id_update_data").hide();
-        table_sort_filter_popup_pagination('id_popup_table');
-        return rowCount;
-    } catch (e) {
-        alert(e);
-    }
-}
+//         $("#id_delete_data").hide();
+//         $("#id_copy_data").hide();
+//         $("#id_update_data").hide();
+//         table_sort_filter_popup_pagination('id_popup_table');
+//         return rowCount;
+//     } catch (e) {
+//         alert(e);
+//     }
+// }
 
 
 //***********************************
@@ -263,10 +263,10 @@ function read_popup_data() {
             if (message_id_desc.language_id == render_language_data[i].language_id)
                 desc = render_language_data[i].description;
         }
-        var attribute_dup = {};
-        attribute_dup.messages_id = message_id_desc.messages_id;
-        attribute_dup.language_id = desc;
-        duplicate_entry.push(attribute_dup);
+        // var attribute_dup = {};
+        // attribute_dup.messages_id = message_id_desc.messages_id;
+        // attribute_dup.language_id = desc;
+        // duplicate_entry.push(attribute_dup);
         validate_add_attributes.push(message_id_desc.messages_id);
         message_id_desc_data.push(message_id_desc);
     });

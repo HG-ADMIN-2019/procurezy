@@ -260,30 +260,30 @@
         });
     }
 
-//validate by comparing  main table values and popup table values
-function maintable_validation(message_data,main_table_low_value) {
- var no_duplicate_entries = 'Y'
-    var error_message =''
-    var dup_entry = "";
+// //validate by comparing  main table values and popup table values
+// function maintable_validation(message_data,main_table_low_value) {
+//  var no_duplicate_entries = 'Y'
+//     var error_message =''
+//     var dup_entry = "";
 
-     $.each(message_data, function (i, item) {
-        $.each(main_table_low_value, function (j, item1) {
-            if((item.messages_id == item1.messages_id) && (item.language_id == item1.language_id)){
-                dup_entry = "1"
-            }
-        });
-     });
-    if((dup_entry == "1"))
-    {     
-        var url_new = "{% url 'eProc_Basic:get_message_description' %}";
-        error_message = ui_messeges("MSG186")// Get message details
-        $('#id_save_confirm_popup').modal('hide');
-        $('#myModal').modal('show');
-        no_duplicate_entries = 'N'
-    }
-
-    return no_duplicate_entries
-}
+//      $.each(message_data, function (i, item) {
+//         $.each(main_table_low_value, function (j, item1) {
+//             if((item.messages_id == item1.messages_id) && (item.language_id == item1.language_id)){
+//                 dup_entry = "1"
+//             }
+//         });
+//      });
+//     if((dup_entry == "1"))
+//     {   
+//         display_duplicate_entry(common);
+//         var url_new = "{% url 'eProc_Basic:get_message_description' %}";
+//         error_message = ui_messeges("MSG186")// Get message details
+//         $('#id_save_confirm_popup').modal('hide');
+//         $('#myModal').modal('show');
+//         no_duplicate_entries = 'N'
+//     }
+//     return no_duplicate_entries
+// }
 
     //**********************************************************
     function onclick_copy_update_button(data) {
@@ -399,6 +399,27 @@ function maintable_validation(message_data,main_table_low_value) {
             no_duplicate_entries = 'N'
         }
         return [no_duplicate_value,error_message]
+    }
+
+    //Function to highlight duplicate records
+    function display_duplicate_entry(common) {
+        var  message_id_desc_check = new Array;
+        $("#id_popup_table TBODY TR").each(function() {
+            var row = $(this);
+            message_id_desc_dic = {}
+            message_id_desc_dic.messages_id = row.find("TD").eq(1).find('select[type="text"]').val();
+            var compare =message_id_desc_dic.messages_id
+            message_id_desc_check.push(compare);
+            jQuery.grep(message_id_desc_check, function(el) {
+                if (jQuery.inArray(el, common) != -1) {
+                    row_color_highlight(row);
+                }
+                else {
+                    row_color_no_highlight(row);
+                }
+            });
+
+        });
     }
 </script>
 <script src="{% static 'scripts/message_desc_config.js' %}"></script>

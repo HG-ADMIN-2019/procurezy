@@ -136,29 +136,6 @@ function get_main_table_data() {
     table_sort_filter_page('display_basic_table');
 }
 
-// Function to get the selected row data
-function get_selected_row_data() {
-    $("#display_basic_table TBODY TR").each(function () {
-        var row = $(this);
-        var purchase_contrl_type_dic = {};
-        purchase_contrl_type_dic.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
-         if (purchase_contrl_type_dic.del_ind) {
-            purchase_contrl_type_dic.company_code_id = row.find("TD").eq(1).html();
-            purchase_contrl_type_dic.call_off = row.find("TD").eq(2).html();
-            purchase_contrl_type_dic.purchase_ctrl_flag = row.find("TD").eq(3).html();
-            purchase_contrl_type_dic.purchase_control_guid = row.find("TD").eq(4).html();
-            var data = '';
-            if (purchase_contrl_type_dic.purchase_ctrl_flag == 'Activate'){
-                data = true
-            } else{
-                data = false
-            }
-            purchase_contrl_type_dic.purchase_ctrl_flag  = data;
-            main_table_purchase_contrl_checked.push(purchase_contrl_type_dic);
-        }
-    });
-}
-
 // Function for add a new row data
 function new_row_data(){
     basic_add_new_html +=
