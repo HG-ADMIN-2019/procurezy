@@ -163,26 +163,26 @@ function application_settings_delete_Row(myTable) {
 
 //***********************************
 
-function delete_duplicate() {
-    $('#id_popup_table').DataTable().destroy();
-    var message_id_check = new Array
-    $("#id_popup_table TBODY TR").each(function () {
-        var row = $(this);
+// function delete_duplicate() {
+//     $('#id_popup_table').DataTable().destroy();
+//     var message_id_check = new Array
+//     $("#id_popup_table TBODY TR").each(function () {
+//         var row = $(this);
 
-        //*************** reading data from the pop-up ***************
-        message_type = row.find("TD").eq(2).find('select[type="text"]').val();
-        message_id = row.find("TD").eq(1).find('input[type="text"]').val().toUpperCase();
-        checked_box = row.find("TD").eq(3).find('input[type="checkbox"]').is(':checked')
+//         //*************** reading data from the pop-up ***************
+//         message_type = row.find("TD").eq(2).find('select[type="text"]').val();
+//         message_id = row.find("TD").eq(1).find('input[type="text"]').val().toUpperCase();
+//         checked_box = row.find("TD").eq(3).find('input[type="checkbox"]').is(':checked')
 
 
-        if (message_id_check.includes(messages_id)) {
-            $(row).remove();
-        }
-        message_id_check.push(messages_id);
-    })
-    table_sort_filter_popup_pagination('id_popup_table')
-    check_data()
-}
+//         if (message_id_check.includes(messages_id)) {
+//             $(row).remove();
+//         }
+//         message_id_check.push(messages_id);
+//     })
+//     table_sort_filter_popup_pagination('id_popup_table')
+//     check_data()
+// }
 
 
 
@@ -224,14 +224,11 @@ function display_basic_db_data() {
 }
 
 function display_error_message(error_message){
-
-        $('#error_message').text(error_message);
-
-        document.getElementById("error_message").style.color = "Red";
-        $("#error_msg_id").css("display", "block");
-
-        $('#id_save_confirm_popup').modal('hide');
-        $('#myModal').modal('show');
+    $('#error_message').text(error_message);
+    document.getElementById("error_message").style.color = "Red";
+    $("#error_msg_id").css("display", "block");
+    $('#id_save_confirm_popup').modal('hide');
+    $('#myModal').modal('show');
 }
 
 // Functtion to hide and display save related popups
@@ -300,8 +297,6 @@ function get_main_table_data() {
         main_attribute.messages_desc = row.find("TD").eq(2).html();
         main_attribute.language_id = row.find("TD").eq(3).html();
         main_table_low_value.push(main_attribute);
-
-         main_table_low_value_lang.push(main_attribute.language_id);
     });
     table_sort_filter('display_basic_table');
 }
