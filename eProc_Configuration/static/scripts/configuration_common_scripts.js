@@ -9,9 +9,6 @@ var currPageStartIdx, currPageEndIdx, page_num=0, checked_flag=0;
 // Function called on pagination
   $('#display_basic_table').on( 'page.dt', function () {
   checked_flag =0;
-//    if($('#selectAll').is(":checked")){
-//        $('#selectAll').prop('checked', false);
-//    }
       var table = $('#display_basic_table').DataTable();
       var info = table.page.info();
       page_num = info.page;
@@ -36,7 +33,6 @@ var currPageStartIdx, currPageEndIdx, page_num=0, checked_flag=0;
          $('#id_copy_data').hide();
          $('#id_update_data').hide();
       }
-
 });
 
 // on click edit icon display the data in edit mode
@@ -47,6 +43,7 @@ function onclick_edit_button() {
     $(".class_select_checkbox").prop("hidden", false);
     if($('#selectAll').is(':checked')){
          $("#selectAll").prop("checked", false);
+         $(".checkbox_check").prop("checked", false);
     }
     //hide the edit,delete,copy and update buttons
     $('#id_cancel_data').show();
@@ -58,6 +55,7 @@ var table = $('#display_basic_table').DataTable();
  var rows_selected = [];
 //onclick of select all checkbox
 $('#display_basic_table tbody').on('click', 'input[type="checkbox"]', function(e){
+     var table = $('#display_basic_table').DataTable();
       var $row = $(this).closest('tr');
       // Get row data
       var data = table.row($row).data();
@@ -126,6 +124,7 @@ $('#display_basic_table tbody').on('click', 'input[type="checkbox"]', function(e
           }
    }
 }
+
 //------------------------------------------
 //onclick of checkbox display delete,update and copy Buttons
 function valueChanged() {

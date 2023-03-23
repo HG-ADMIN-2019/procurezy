@@ -525,7 +525,7 @@ function delete_user() {
     $.ajax({
         type: 'POST',
         url: "{% url 'eProc_Admin_Tool:delete_user' %}",
-        data:JSON.stringify(data),
+<!--        data:JSON.stringify(data),-->
         contentType: "application/json; charset=utf-8",
         dataType: "json",
         success: function (Response) {
