@@ -9,9 +9,6 @@ var currPageStartIdx, currPageEndIdx, page_num=0, checked_flag=0;
 // Function called on pagination
   $('#display_basic_table').on( 'page.dt', function () {
   checked_flag =0;
-//    if($('#selectAll').is(":checked")){
-//        $('#selectAll').prop('checked', false);
-//    }
       var table = $('#display_basic_table').DataTable();
       var info = table.page.info();
       page_num = info.page;
@@ -36,10 +33,6 @@ var currPageStartIdx, currPageEndIdx, page_num=0, checked_flag=0;
          $('#id_copy_data').hide();
          $('#id_update_data').hide();
       }
-
-
-//     table.draw(false);
-
 });
 
 // on click edit icon display the data in edit mode
@@ -50,6 +43,7 @@ function onclick_edit_button() {
     $(".class_select_checkbox").prop("hidden", false);
     if($('#selectAll').is(':checked')){
          $("#selectAll").prop("checked", false);
+         $(".checkbox_check").prop("checked", false);
     }
     //hide the edit,delete,copy and update buttons
     $('#id_cancel_data').show();
@@ -58,43 +52,80 @@ function onclick_edit_button() {
     table_sort_filter('display_basic_table');
 }
 var table = $('#display_basic_table').DataTable();
+ var rows_selected = [];
 //onclick of select all checkbox
-function checkAll(ele) {
-    $('#display_basic_table').DataTable().destroy();
-    var info = table.page.info();
-    var p = table.rows().nodes();
-    if(page_num == 0)
-    {
-        currPageStartIdx = info.start;
-        currPageEndIdx = info.end;
-    }
-    var checkboxes = document.getElementsByTagName('input');
-    if (ele.checked) {
-        for (var i = currPageStartIdx; i < currPageEndIdx; i++) {
-            p[i].children[0].childNodes[0].checked = true;
-             $('#id_delete_data').show();
-             $('#id_copy_data').show();
-             $('#id_update_data').show();
-             }
-    }
-    else {
-        for (var i = currPageStartIdx; i < currPageEndIdx; i++) {
-                p[i].children[0].childNodes[0].checked = false;
-                $('#id_delete_data').hide();
-                $('#id_copy_data').hide();
-                $('#id_update_data').hide();
-        }
-    }
-//    table.page(page_num).draw( 'page' );
-    $('#display_basic_table').dataTable({
-                initComplete: function () {
-                    this.api().page(page_num).draw( 'page' );
-                }
-    });
+$('#display_basic_table tbody').on('click', 'input[type="checkbox"]', function(e){
+     var table = $('#display_basic_table').DataTable();
+      var $row = $(this).closest('tr');
+      // Get row data
+      var data = table.row($row).data();
+      // Get row ID
+      var rowId = data[0];
+      // Determine whether row ID is in the list of selected row IDs
+      var index = $.inArray(rowId, rows_selected);
+      // If checkbox is checked and row ID is not in list of selected row IDs
+      if(this.checked && index === -1){
+         rows_selected.push(rowId);
+      // Otherwise, if checkbox is not checked and row ID is in list of selected row IDs
+      } else if (!this.checked && index !== -1){
+         rows_selected.splice(index, 1);
+      }
+      if(this.checked){
+         $row.addClass('selected');
+      } else {
+         $row.removeClass('selected');
+      }
+      // Update state of "Select all" control
+      updateDataTableSelectAllCtrl(table);
+      // Prevent click event from propagating to parent
+      e.stopPropagation();
+   });
+   // Handle click on table cells with checkboxes
+   $('#display_basic_table').on('click', 'tbody td, thead th:first-child', function(e){
+      $(this).parent().find('input[type="checkbox"]').trigger('click');
+   });
+   // Handle click on "Select all" control
+   $('thead input[id="selectAll"]', table.table().container()).on('click', function(e){
+      if(this.checked){
+         $('#display_basic_table tbody input[type="checkbox"]:not(:checked)').trigger('click');
+      } else {
+         $('#display_basic_table tbody input[type="checkbox"]:checked').trigger('click');
+      }
+      // Prevent click event from propagating to parent
+      e.stopPropagation();
+   });
+   // Handle table draw event
+   table.on('draw', function(){
+      // Update state of "Select all" control
+      updateDataTableSelectAllCtrl(table);
+   });
+    function updateDataTableSelectAllCtrl(table){
+       var $table             = table.table().node();
+       var $chkbox_all        = $('tbody input[type="checkbox"]', $table);
+       var $chkbox_checked    = $('tbody input[type="checkbox"]:checked', $table);
+       var chkbox_select_all  = $('thead input[id="selectAll"]', $table).get(0);
 
-//    table_sort_filter('display_basic_table');
+       // If none of the checkboxes are checked
+       if($chkbox_checked.length === 0){
+          chkbox_select_all.checked = false;
+          if('indeterminate' in chkbox_select_all){
+             chkbox_select_all.indeterminate = false;
+          }
+       // If all of the checkboxes are checked
+       } else if ($chkbox_checked.length === $chkbox_all.length){
+          chkbox_select_all.checked = true;
+          if('indeterminate' in chkbox_select_all){
+             chkbox_select_all.indeterminate = false;
+          }
+       } else {
+          chkbox_select_all.checked = true;
+          if('indeterminate' in chkbox_select_all){
+             chkbox_select_all.indeterminate = true;
+          }
+   }
 }
 
+//------------------------------------------
 //onclick of checkbox display delete,update and copy Buttons
 function valueChanged() {
     if ($('.checkbox_check').is(":checked")) {
@@ -106,9 +137,6 @@ function valueChanged() {
         $('#id_copy_data').hide();
         $('#id_update_data').hide();
     }
-//     if(checked_flag == 1){
-//        $('#selectAll').prop('checked', true);
-//      }
 }
 
 //onclick of delete,delete the row.

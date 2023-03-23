@@ -126,7 +126,6 @@ function add_popup_row() {
 
 //onclick of cancel display the table in display mode............
 function display_basic_db_data() {
-    document.location.reload();
     $('#display_basic_table').DataTable().destroy();
     $('#id_country_tbody').empty();
     var edit_basic_data = '';
@@ -144,7 +143,8 @@ function display_basic_db_data() {
     $('#id_update_data').hide();
     $('#id_save_confirm_popup').modal('hide');
     $('#id_delete_confirm_popup').modal('hide');
-    $('#id_check_all').hide(); 
+//    document.getElementsByClassName("checkbox_check").checked = false;
+    $('#id_check_all').hide();
     table_sort_filter('display_basic_table');
 }
 
