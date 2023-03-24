@@ -3,6 +3,7 @@
 {% block title %} Holiday Calendar (Application Settings) {% endblock %}
 {% block maincontent %}
 {% include 'root/loader.html' %}
+
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css" integrity="sha512-mSYUmp1HYZDFaVKK//63EcZq4iFWFjxSL+Z3T/aCt4IO9Cejm03q3NKKYN6pFQzY0SBOr8h+eCIAZHPXcpZaNw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <style>
@@ -257,7 +258,6 @@
         $('#success_msg_id').empty();
         $('#id_popup_table').DataTable().destroy();
         var calendar_data = new Array();
-        
         no_duplicate_entries = 'Y'
         no_duplicate_value = 'Y'
         var error_message = '';
@@ -453,7 +453,6 @@
         }
         return [no_duplicate_value,error_message]
     }
-
 </script>
 <script src="{% static 'scripts/holiday_calendar.js' %}"></script>
 {% endblock %}
