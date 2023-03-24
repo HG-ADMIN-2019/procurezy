@@ -89,7 +89,7 @@ function new_row_data()  {
     '<td><select type="text" class="form-control">'+ user_dropdwn +'</select></td>'+
     '<td><select type="text" class="form-control">'+ supcompany_dropdwn +'</select></td>'+
     '<td><select type="text" class="form-control">'+ sup_acc_ass_dropdwn +'</select></td>'+
-    '<td><input class="form-control" type="number" maxlength="40"  name="sup_acc_value"  required></td>'+
+    '<td><select type="text" class="form-control">'+ sup_acc_ass_val_dropdwn +'</select></td>'+
     '<td><select type="text" class="form-control">'+ currency_dropdwn +'</select></td>'+
     '<td class="class_del_checkbox" hidden> <input type="checkbox" required> </td>'+
     '<td hidden><input type="text" id="workflow_acc_guid"></td></tr>';
@@ -209,6 +209,16 @@ function company_dropdwn_change(row){
     row.find("TD").eq(2).find("select").append(comp_val.acc_ass_dropdwn)
     row.find("TD").eq(3).find("select").append(comp_val.acc_ass_val_dropdwn)
 }
+
+function supcompany_dropdwn_change(row) {
+    row.find("TD").eq(6).find("select").empty()
+    row.find("TD").eq(7).find("select").empty()
+    company_num = row.find("TD").eq(5).find("select option:selected").val();
+    var comp_val = account_assignment_value_find(company_num)
+    row.find("TD").eq(6).find("select").append(comp_val.acc_ass_dropdwn)
+    row.find("TD").eq(7).find("select").append(comp_val.acc_ass_val_dropdwn)
+}
+
 
 function acc_ass_cat_dropdwn(row,company_num){
     acct_cat = row.find("TD").eq(2).find("select option:selected").val();

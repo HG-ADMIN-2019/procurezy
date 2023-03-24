@@ -228,32 +228,7 @@
         sup_acc_ass_val_dropdwn = '';
         $.each(rendered_wfacc_data, function (i, item) {
             sup_acc_ass_val_dropdwn += '<option value="' + item.sup_acc_value + '">' + item.sup_acc_value + '</option>'
-            acc_ass_val_dict = {};
-            acc_ass_val_dict.acc_ass_val_dropdwn = item.sup_acc_value
-            acc_ass_val_dict.account_assign_cat = item.account_assign_cat
-            acc_ass_val_dict.company_id = item.company_id
-            acc_ass_val_list.push(acc_ass_val_dict)
-            account_assign_array.push(item.sup_acc_value)
-        });
-        company_dropdwn = '';
-        var unique_comp = [];
-
-         $.each(rendered_wfacc_data, function (i, item) {
-            company_dropdwn += '<option value="' + item.company_id + '">' + item.company_id + '</option>'
-            company_dict = {};
-            company_dict.acc_ass_val_dropdwn = item.sup_acc_value
-            company_dict.account_assign_cat = item.account_assign_cat
-            company_dict.company_id = item.company_id
-            company_list.push(company_dict)
-            company_array.push(item.company_id)
-            unique_comp.push(item.company_id);
-            unique_acct_assmt_val.push(item.sup_acc_value);
-        });
-
-        $(unique_comp).each(function (index, item) {
-            if ($.inArray(item, arrDistinct) == -1)
-                arrDistinct.push(item);
-        });
+        })
         company_dropdwn = '';
         $(arrDistinct).each(function (index, item) {
             company_dropdwn += '<option value="' + item + '">' + item + '</option>'
@@ -620,54 +595,58 @@
         });
     }
 
-//onclick of add button display Wf_Acc_Modal popup and set GLOBAL_ACTION button value
-function onclick_add_button(button) {
-    OpenLoaderPopup();
-    var data = {'table_name':'WorkflowACC'}
-    $.ajax({
-        type: 'POST',
-        url: "{% url 'eProc_Configuration:get_dropdown_data' %}",
-        data: JSON.stringify(data),
-        success: function(response) {
-            rendered_accasscat_data = response.upload_data_acccat
-            rendered_user_data = response.user_details
-            rendered_accasscat_data = response.upload_data_acccat
-            rendered_currency_data = response.upload_data_currency
-            rendered_company_data = response.upload_data_company
-            rendered_super_company_data = response.upload_data_OrgCompanies
-            workflowacc_drp()
-            $("#error_msg_id").css("display", "none");
-            $( "#header_select").prop( "hidden", false );
-            GLOBAL_ACTION = button.value;
-            $('#id_popup_table').DataTable().destroy();
-            $("#id_popup_tbody").empty();
-            $('#Wf_Acc_Modal').modal('show');
-            new_row_data();   // Add a new row in popup
-            var account_assign = '';
-            $("#id_popup_table TBODY TR").each(function () {
-                var row = $(this);
-                row.find("TD").eq(2).find("select").empty()
-                row.find("TD").eq(3).find("select").empty()
-                company_num = row.find("TD").eq(1).find("select option:selected").val();
-                var assign_val = account_assignment_value_find(company_num)
-                row.find("TD").eq(2).find("select").append(assign_val.acc_ass_dropdwn)
-                row.find("TD").eq(3).find("select").append(assign_val.acc_ass_val_dropdwn)
-                $(row.find("TD").eq(1).find("select")).change(function () {
-                    company_dropdwn_change(row);
-                })
-                $(row.find("TD").eq(2).find("select")).change(function () {
+    //*********************************
+    function onclick_add_button(button) {
+        OpenLoaderPopup();
+        var data = {'table_name':'WorkflowACC'}
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'eProc_Configuration:get_dropdown_data' %}",
+            data: JSON.stringify(data),
+            success: function(response) {
+                rendered_accasscat_data = response.upload_data_acccat
+                rendered_user_data = response.user_details
+                rendered_accasscat_data = response.upload_data_acccat
+                rendered_currency_data = response.upload_data_currency
+                rendered_company_data = response.upload_data_company
+                rendered_super_company_data = response.upload_data_OrgCompanies
+                workflowacc_drp()
+                $("#error_msg_id").css("display", "none");
+                $( "#header_select").prop( "hidden", false );
+                GLOBAL_ACTION = button.value;
+                $('#id_popup_table').DataTable().destroy();
+                $("#id_popup_tbody").empty();
+                $('#Wf_Acc_Modal').modal('show');
+                new_row_data();   // Add a new row in popup
+                var account_assign = '';
+                $("#id_popup_table TBODY TR").each(function () {
+                    var row = $(this);
+                    row.find("TD").eq(2).find("select").empty()
+                    row.find("TD").eq(3).find("select").empty()
                     company_num = row.find("TD").eq(1).find("select option:selected").val();
-                    acc_ass_cat_dropdwn(row,company_num);
+                    var assign_val = account_assignment_value_find(company_num)
+                    row.find("TD").eq(2).find("select").append(assign_val.acc_ass_dropdwn)
+                    row.find("TD").eq(3).find("select").append(assign_val.acc_ass_val_dropdwn)
+                    $(row.find("TD").eq(1).find("select")).change(function () {
+                        company_dropdwn_change(row);
+                    })
+                    $(row.find("TD").eq(5).find("select")).change(function () {
+                        supcompany_dropdwn_change(row);
+                    })
+                    $(row.find("TD").eq(2).find("select")).change(function () {
+                        company_num = row.find("TD").eq(1).find("select option:selected").val();
+                        acc_ass_cat_dropdwn(row,company_num);
+                    })
                 })
-            })
-            $("#id_del_ind_checkbox").prop("hidden", true);
-            document.getElementById("id_del_add_button").style.display = "block";
-            $("#save_id").prop("hidden", false);
-            CloseLoaderPopup();
+                $("#id_del_ind_checkbox").prop("hidden", true);
+                document.getElementById("id_del_add_button").style.display = "block";
+                $("#save_id").prop("hidden", false);
+                CloseLoaderPopup();
 
-        }
-    });
-}
+            }
+        });
+    }
+
 
 <!--    //onclick of add button display Wf_Acc_Modal popup and set GLOBAL_ACTION button value-->
 <!--    function onclick_add_button(button) {-->
@@ -711,7 +690,6 @@ function onclick_add_button(button) {
         new_row_data();   // Add a new row in popup
         var company_num = '';
         $("#id_popup_table TBODY TR").each(function () {
-            var row = $(this);
             row.find("TD").eq(2).find("select").empty()
             row.find("TD").eq(3).find("select").empty()
             company_num = row.find("TD").eq(1).find("select option:selected").val();
@@ -719,7 +697,10 @@ function onclick_add_button(button) {
             row.find("TD").eq(2).find("select").append(assign_val.acc_ass_dropdwn)
             row.find("TD").eq(3).find("select").append(assign_val.acc_ass_val_dropdwn)
             $(row.find("TD").eq(1).find("select")).change(function () {
-                  company_dropdwn_change(row);
+                company_dropdwn_change(row);
+            })
+            $(row.find("TD").eq(5).find("select")).change(function () {
+                supcompany_dropdwn_change(row);
             })
             $(row.find("TD").eq(2).find("select")).change(function () {
                 company_num = row.find("TD").eq(1).find("select option:selected").val();
@@ -805,6 +786,9 @@ function onclick_add_button(button) {
                     $(row.find("TD").eq(1).find("select option[value="+companyid_value+"]")).attr('selected','selected');
                     var acct_cat_value = dropdown_values[i][6]
                     var sup_cat_value = dropdown_values[i][7]
+                    var assign_val = account_assignment_value_find(acc_value)
+                    row.find("TD").eq(2).find("select").append(assign_val.acc_ass_dropdwn)
+                    row.find("TD").eq(3).find("select").append(assign_val.acc_ass_val_dropdwn)
                     $(row.find("TD").eq(4).find("select option[value="+appr_user_value+"]")).attr('selected','selected');
                     $(row.find("TD").eq(2).find("select option[value="+acct_cat_value+"]")).attr('selected','selected');
                     $(row.find("TD").eq(3).find("select option[value="+acc_value+"]")).attr('selected','selected');
@@ -813,17 +797,35 @@ function onclick_add_button(button) {
                     $(row.find("TD").eq(1).find("select option[value="+companyid_value+"]")).attr('selected','selected');
                     $(row.find("TD").eq(5).find("select option[value="+sup_compid_value+"]")).attr('selected','selected');
                     $(row.find("TD").eq(8).find("select option[value="+curr_value+"]")).attr('selected','selected');
-                    i++;
-                });
-                $("#id_del_ind_checkbox").prop("hidden", true);
-                $('#Wf_Acc_Modal').modal('show');
-                table_sort_filter('id_popup_table');
-                table_sort_filter('display_basic_table');
-                $('#Wf_Acc_Modal').modal('show');
-                CloseLoaderPopup();
-            }
-        });
-    }
+                    $(row.find("TD").eq(1).find("select")).change(function () {
+                    row.find("TD").eq(2).find("select").empty()
+                    row.find("TD").eq(3).find("select").empty()
+                    company_num = row.find("TD").eq(1).find("select option:selected").val();
+                    var assign_val = account_assignment_value_find(company_num)
+                    row.find("TD").eq(2).find("select").append(assign_val.acc_ass_dropdwn)
+                    row.find("TD").eq(3).find("select").append(assign_val.acc_ass_val_dropdwn)
+                    $(row.find("TD").eq(1).find("select")).change(function () {
+                        company_dropdwn_change(row);
+                    })
+                    $(row.find("TD").eq(5).find("select")).change(function () {
+                        supcompany_dropdwn_change(row);
+                    })
+                    $(row.find("TD").eq(2).find("select")).change(function () {
+                        company_num = row.find("TD").eq(1).find("select option:selected").val();
+                        acc_ass_cat_dropdwn(row,company_num);
+                    })
+                })
+                i++;
+            });
+            $("#id_del_ind_checkbox").prop("hidden", true);
+            $('#Wf_Acc_Modal').modal('show');
+            table_sort_filter('id_popup_table');
+            table_sort_filter('display_basic_table');
+            $('#Wf_Acc_Modal').modal('show');
+            CloseLoaderPopup();
+        }
+    });
+}
 
     //check function restricting special char and diaplay the data count of csv file
     function check_data() {
