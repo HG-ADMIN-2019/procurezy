@@ -76,7 +76,7 @@ $('#display_basic_table tbody').on('click', 'input[type="checkbox"]', function(e
          $row.removeClass('selected');
       }
       // Update state of "Select all" control
-      updateDataTableSelectAllCtrl(table);
+//      updateDataTableSelectAllCtrl(table);
       // Prevent click event from propagating to parent
       e.stopPropagation();
    });
@@ -97,7 +97,7 @@ $('#display_basic_table tbody').on('click', 'input[type="checkbox"]', function(e
    // Handle table draw event
    table.on('draw', function(){
       // Update state of "Select all" control
-      updateDataTableSelectAllCtrl(table);
+//      updateDataTableSelectAllCtrl(table);
    });
     function updateDataTableSelectAllCtrl(table){
        var $table             = table.table().node();
