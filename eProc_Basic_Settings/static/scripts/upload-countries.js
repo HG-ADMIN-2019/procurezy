@@ -44,17 +44,12 @@ function onclick_update_button() {
 //**********************************************************
 function onclick_copy_update_button(data) {
     $("#error_msg_id").css("display", "none")
-//    $('#display_basic_table').DataTable().destroy();
     $('#id_popup_table').DataTable().destroy();
     $("#id_popup_tbody").empty();
     //Reference the Table.
-    var grid = document.getElementById("display_basic_table");
-    var table = $('#display_basic_table').DataTable();
-    var $table = table.table().node();
-    var res = table.rows().nodes();
+    var res = get_all_checkboxes(); // Function to get all the checkboxes
      var $chkbox_all = $('td input[type="checkbox"]', res);
     //Reference the CheckBoxes in Table.
-//    var checkBoxes = grid.getElementsByTagName("INPUT");
     var edit_basic_data = "";
     var unique_input = '';
     //Loop through the CheckBoxes.
@@ -80,7 +75,6 @@ function onclick_copy_update_button(data) {
     $("#id_del_ind_checkbox").prop("hidden", true);
     $('#countriesModal').modal('show');
     table_sort_filter('id_popup_table');
-//    table_sort_filter('display_basic_table');
 }
 
  //************************currency code
