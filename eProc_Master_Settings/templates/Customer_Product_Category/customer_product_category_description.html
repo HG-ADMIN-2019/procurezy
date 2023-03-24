@@ -922,20 +922,19 @@ function onclick_copy_update_button(data){
                             {
                                 check = '<input type="checkbox">'
                                 document.getElementById('delete_data').style.visibility = 'visible'
-                                 $('#delete_data').prop('disabled', false);
+                                $('#delete_data').prop('disabled', false);
                             }
                              else if((row.cells[2].innerHTML!="English") && (count >= 2))
                             {
                                 check = '<input type="checkbox">'
                                 document.getElementById('delete_data').style.visibility = 'visible'
-                                 $('#delete_data').prop('disabled', false);
+                                $('#delete_data').prop('disabled', false);
                             }
                             else{
-                                check = '<input type="checkbox">'
-                                document.getElementById('delete_data').style.visibility = 'visible'
+                                 check = '<input type="checkbox">'
+                                 document.getElementById('delete_data').style.visibility = 'visible'
                                  $('#delete_data').prop('disabled', false);
                             }
-
                             unique_input = '<select class="form-control"  maxlength="20">' + prod_cat_id_dropdown + '</select>'
                             edit_basic_data += '<tr><td>'+check+'</td><td>'+unique_input+' </td><td><select class="form-control">' +language_id_dropdown + ' </select></td><td><input class="form-control" value="' + row.cells[3].innerHTML + '" type="text" onkeypress="return /[a-z ]/i.test(event.key)"  name="description"  maxlength="200"  required></td><td hidden><input value="' + prod_cat_desc_guid + '"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
                             $("#header_select").prop("hidden", false);
@@ -959,13 +958,14 @@ function onclick_copy_update_button(data){
                 $(row.find("TD").eq(1).find("select option[value="+prod_cat_id_value+"]")).attr('selected','selected');
                 $(row.find("TD").eq(2).find("select option[value="+lang_id+"]")).attr('selected','selected');
                 i++;
+
+
             });
             $("#id_del_ind_checkbox").prop("hidden", true);
             $('#custproddescModal').modal('show');
             table_sort_filter('id_popup_table');
             table_sort_filter('display_basic_table');
             CloseLoaderPopup();
-
         }
     });
 }
