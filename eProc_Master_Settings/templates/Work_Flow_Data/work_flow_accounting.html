@@ -637,6 +637,10 @@
                         company_num = row.find("TD").eq(1).find("select option:selected").val();
                         acc_ass_cat_dropdwn(row,company_num);
                     })
+                    $(row.find("TD").eq(6).find("select")).change(function () {
+                        company_num = row.find("TD").eq(5).find("select option:selected").val();
+                        sup_acc_ass_cat_dropdwn(row,company_num);
+                    })
                 })
                 $("#id_del_ind_checkbox").prop("hidden", true);
                 document.getElementById("id_del_add_button").style.display = "block";
@@ -706,6 +710,10 @@
                 company_num = row.find("TD").eq(1).find("select option:selected").val();
                 acc_ass_cat_dropdwn(row,company_num);
             })
+            $(row.find("TD").eq(2).find("select")).change(function () {
+                company_num = row.find("TD").eq(1).find("select option:selected").val();
+                sup_acc_ass_cat_dropdwn(row,company_num);
+            })
         })
         if (GLOBAL_ACTION == "workflowacc_upload") {
             $(".class_del_checkbox").prop("hidden", false);
@@ -753,7 +761,7 @@
                             '<td><select type="text" class="form-control">'+user_dropdwn+'</select></td>'+
                             '<td><select type="text" class="form-control">'+supcompany_dropdwn+'</select></td>'+
                             '<td><select type="text" class="form-control" >'+sup_acc_ass_dropdwn+'</select></td>'+
-                            '<td><input class="form-control" type="number" value="' + row.cells[7].innerHTML + '" name="sup_aac_value"  maxlength="40" required></td>'+
+                            '<td><select type="text" class="form-control" > '+sup_acc_ass_val_dropdwn+'</selct></td>'+
                             '<td><select type="text" class="form-control">'+currency_dropdwn+'</select></td>'+
                             '<td class="class_del_checkbox" hidden><input type="checkbox" required></td>'+
                             '<td hidden><input type="text" id="workflow_acc_guid" value="' + row.cells[9].innerHTML + '"></td></tr>';
@@ -786,7 +794,7 @@
                     $(row.find("TD").eq(1).find("select option[value="+companyid_value+"]")).attr('selected','selected');
                     var acct_cat_value = dropdown_values[i][6]
                     var sup_cat_value = dropdown_values[i][7]
-                    var assign_val = account_assignment_value_find(acc_value)
+                    var assign_val = account_assignment_value_find(sup_compid_value)
                     row.find("TD").eq(2).find("select").append(assign_val.acc_ass_dropdwn)
                     row.find("TD").eq(3).find("select").append(assign_val.acc_ass_val_dropdwn)
                     $(row.find("TD").eq(4).find("select option[value="+appr_user_value+"]")).attr('selected','selected');
@@ -813,6 +821,10 @@
                     $(row.find("TD").eq(2).find("select")).change(function () {
                         company_num = row.find("TD").eq(1).find("select option:selected").val();
                         acc_ass_cat_dropdwn(row,company_num);
+                    })
+                    $(row.find("TD").eq(6).find("select")).change(function () {
+                        company_num = row.find("TD").eq(5).find("select option:selected").val();
+                        sup_acc_ass_cat_dropdwn(row,company_num);
                     })
                 })
                 i++;

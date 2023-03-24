@@ -226,3 +226,34 @@ function acc_ass_cat_dropdwn(row,company_num){
     var acct_cat_val = account_assignment_cat(acct_cat,company_num)
     row.find("TD").eq(3).find("select").append(acct_cat_val.acc_ass_val_dropdwn)
 }
+
+//function account_assignment_cat(sup_acct_cat, comp_num) {
+//    corresponding_values = {};
+//    corresponding_values.acc_ass_val_dropdwn = '';
+//    company_list = company_list;
+//    unique_acct_assmt_val = [];
+//    var assmtValDistinct = [];
+//     for (var i = 0; i < company_list.length; i++) {
+//        compare_dict = {};
+//        compare_dict = company_list[i]
+//        if ((sup_acct_cat == compare_dict.account_assign_cat) && (comp_num == compare_dict.company_id)) {
+//            unique_acct_assmt_val.push(compare_dict.sup_acc_ass_val_dropdwn);
+//        }
+//        assmtValDistinct = [];
+//        $(unique_acct_assmt_val).each(function (index, item) {
+//        if ($.inArray(item, assmtValDistinct) == -1)
+//            assmtValDistinct.push(item);
+//        });
+//    }
+//    for (var i = 0; i < assmtValDistinct.length; i++) {
+//            corresponding_values.sup_acc_ass_val_dropdwn += '<option value="'+assmtValDistinct[i]+'">'+assmtValDistinct[i]+'</option>'
+//    }
+//    return corresponding_values
+//}
+//
+function sup_acc_ass_cat_dropdwn(row,company_num){
+    sup_acct_cat = row.find("TD").eq(6).find("select option:selected").val();
+    row.find("TD").eq(7).find("select").empty();
+    var acct_cat_val = account_assignment_cat(sup_acct_cat,company_num)
+    row.find("TD").eq(7).find("select").append(acct_cat_val.acc_ass_val_dropdwn)
+}
