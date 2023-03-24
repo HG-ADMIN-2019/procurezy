@@ -43,7 +43,7 @@
                     <tr>
                         <th id="hg_select_checkbox" hidden>
                             <div id="id_check_all" style="display:none;">
-                                <INPUT type="checkbox" onchange="checkAll(this)" name="chk[]">
+                                <input type="checkbox" id="selectAll" name="chk[]">
                             </div>
                         </th>
                         <th>Sequence</th>
@@ -265,21 +265,6 @@
                     no_duplicate_value = 'N'
                     return [no_duplicate_value,error_message]
                 }
-                // if (item.starting.length == 0) {
-                //     get_message_details("JMSG002"); // Get message details
-                //     no_duplicate_value = 'N'
-                //     return [no_duplicate_value,error_message]
-                // }
-                // if (item.ending.length == 0) {
-                //     get_message_details("JMSG002"); // Get message details
-                //     no_duplicate_value = 'N'
-                //     return [no_duplicate_value,error_message]
-                // }
-                // if (item.current.length == 0) {
-                //     get_message_details("JMSG002"); // Get message details
-                //     no_duplicate_value = 'N'
-                //     return [no_duplicate_value,error_message]
-                // }
                 var range_check = list_out_of_range(number_range)
                 if (range_check){
                     get_message_details("JMSG016"); // Get message details
