@@ -175,6 +175,8 @@
     var wrksch_types_dropdown_onload  = '';
     var approvar_types_dropdown = '';
     var company_id_dropdown = '';
+    var unique_work_flow = [];
+    var unique_appr_type = [];
 
     //*******************************
     function workflow_dropdown() {
@@ -331,7 +333,7 @@
             main_attribute.company_id = row.find("TD").eq(1).html();
             main_attribute.app_types = row.find("TD").eq(3).html();
             main_attribute.workflow_schema_guid = row.find("TD").eq(4).html();
-            var wfschm_compare_maintable = main_attribute.company_id +'-'+ main_attribute.workflow_schema
+            var wfschm_compare_maintable = main_attribute.workflow_schema +'-'+ main_attribute.company_id
             main_table_low_value.push(wfschm_compare_maintable);
         });
         table_sort_filter('display_basic_table');
@@ -573,7 +575,7 @@
             if (wfschema.workflow_schema_guid == undefined){
                 wfschema.workflow_schema_guid ='';
             }
-            var wfschema_compare = wfschema.company_id +'-'+ wfschema.workflow_schema
+            var wfschema_compare = wfschema.workflow_schema +'-'+ wfschema.company_id
            validate_add_attributes.push(wfschema_compare);
            wfschema_data.push(wfschema);
        });
@@ -804,6 +806,5 @@
 
         });
     }
-
 </script>
 {% endblock %}
