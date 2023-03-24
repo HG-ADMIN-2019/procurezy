@@ -114,10 +114,10 @@ function read_popup_data(){
         var row = $(this);
         org_node_type = {};
         org_node_type.del_ind_flag = row.find("TD").eq(5).find('input[type="checkbox"]').is(':checked');
-        org_node_type.del_ind = row.find("TD").eq(4).find('input[type="checkbox"]').is(':checked');
         org_node_type.node_type = row.find("TD").eq(1).find("select").val();
         org_node_type.description = row.find("TD").eq(2).find("input").val();
         org_node_type.node_type_guid = row.find("TD").eq(3).find('input').val();
+        org_node_type.del_ind = row.find("TD").eq(4).find('input[type="checkbox"]').is(':checked');
         if (org_node_type == undefined) {
             org_node_type.node_type = row.find("TD").eq(1).find("select").val();
         }

@@ -41,7 +41,7 @@
                         <tr>
                             <th id="hg_select_checkbox" hidden>
                                 <div id="id_check_all" style="display:none;">
-                                    <INPUT type="checkbox" onchange="checkAll(this)" name="chk[]">
+                                    <input type="checkbox" id="selectAll" name="chk[]">
                                 </div>
                             </th>
                             <th>Account Assignment Category</th>
@@ -304,6 +304,26 @@
             });
         }
         return [no_duplicate_value,error_message]
+    }
+
+    //Function to highlight duplicate records
+    function display_duplicate_entry(common) {
+        var aac_check = new Array;
+        $("#id_popup_table TBODY TR").each(function() {
+            var row = $(this);
+            aac_dic = {}
+            aac_dic.account_assign_cat = row.find("TD").eq(1).find('select[type="text"]').val();
+            var compare =  aac_dic.account_assign_cat
+            aac_check.push(compare);
+            jQuery.grep(aac_check, function(el) {
+                if (jQuery.inArray(el, common) != -1) {
+                    row_color_highlight(row);
+                }
+                else {
+                    row_color_no_highlight(row);
+                }
+            });
+        });
     }
 </script>
 <script src="{% static 'scripts/upload_acc_assign_cat.js' %}"></script>

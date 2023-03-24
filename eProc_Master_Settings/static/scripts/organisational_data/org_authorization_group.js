@@ -3,54 +3,6 @@ var validate_add_attributes = [];
 var main_table_low_value = [];
 var auth_group={};
 
-function onclick_copy_update_button() {
-    $("#error_msg_id").css("display", "none")
-    $("#id_popup_tbody").empty();
-    $('#display_basic_table').DataTable().destroy();
-    //Reference the Table.
-    var grid = document.getElementById("display_basic_table");
-    //Reference the CheckBoxes in Table.
-    var checkBoxes = grid.getElementsByTagName("INPUT");
-    var edit_basic_data = "";
-    var dropdown_values = [];
-    //Loop through the CheckBoxes.
-    for (var i = 1; i < checkBoxes.length; i++) {
-        if (checkBoxes[i].checked) {
-            var row = checkBoxes[i].parentNode.parentNode;
-            var auth_obj = row.cells[4].innerHTML
-            var auth_level = row.cells[3].innerHTML
-            var auth_group_id = row.cells[1].innerHTML
-            var auth_group_desc = row.cells[2].innerHTML
-            dropdown_values.push([auth_obj,auth_level,auth_group_id,auth_group_desc])
-            if(GLOBAL_ACTION == "COPY"){
-                guid = 'GUID';
-                edit_basic_data += '<tr ><td><input type="checkbox" required></td><td><select class="form-control">'+auth_group_id_dropdown+'</select></td><td><select class="form-control">'+auth_group_desc_dropdown+'</select></td><td><select class="form-control">'+auth_level_dropdown+'</select></td><td><select class="form-control">'+auth_obj_id_dropdown+'</select></td><td hidden><input type="text" value="'+guid+'"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>'
-            } else{
-                guid = row.cells[5].innerHTML;
-                edit_basic_data += '<tr ><td><input type="checkbox" required></td><td><select class="form-control">'+auth_group_id_dropdown+'</select></td><td><select class="form-control">'+auth_group_desc_dropdown+'</select></td><td><select class="form-control">'+auth_level_dropdown+'</select></td><td><select class="form-control">'+auth_obj_id_dropdown+'</select></td><td hidden><input type="text" value="'+guid+'"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>'
-            }
-        }
-    }
-    $('#id_popup_table').append(edit_basic_data);
-    var i =0;
-    $("#id_popup_table TBODY TR").each(function() {
-        var row = $(this);
-        var auth_obj = dropdown_values[i][0]
-        var auth_level = dropdown_values[i][1]
-        var auth_group_id = dropdown_values[i][2]
-        var auth_group_desc = dropdown_values[i][3]
-        $(row.find("TD").eq(4).find("select option[value="+auth_obj+"]")).attr('selected','selected');
-        $(row.find("TD").eq(3).find("select option[value="+auth_level+"]")).attr('selected','selected');
-        $(row.find("TD").eq(1).find("select option[value="+auth_group_id+"]")).attr('selected','selected');
-        $(row.find("TD").eq(2).find("select option[value='"+auth_group_desc+"']")).attr('selected','selected');
-        i++;
-    });
-    $("#id_del_ind_checkbox").prop("hidden", true);
-    $('#myModal').modal('show');
-    table_sort_filter('display_basic_table');
-    table_sort_filter('id_popup_table');
-}
-
 //onclick of cancel empty the popup table body and error messages
 $(".remove_upload_data").click(() => {
     $("#id_error_msg").html("");

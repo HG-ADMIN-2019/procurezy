@@ -47,7 +47,7 @@
                     <tr>
                         <th id="hg_select_checkbox" hidden>
                             <div id="id_check_all" style="display:none;">
-                                <INPUT type="checkbox" onchange="checkAll(this)" name="chk[]">
+                                <input type="checkbox" id="selectAll" name="chk[]">
                             </div>
                         </th>
                             <th>Transaction Type</th>
@@ -299,40 +299,34 @@
         // compare for duplicates in popup
         $("#id_error_msg").empty();
         [no_duplicate_value,error_message] = compare_table_for_duplicate_entries(validate_add_attributes, transaction_types_data)
-        if (error_message){
-            display_error_message(error_message)
+        if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
+            [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
         }
-        else{
-            if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
-                [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
-            }
-            if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
-                var transaction_types_data_array = transaction_types_data;
-                $('#id_save_confirm_popup').modal('hide');
-                data = {'data':transaction_types_data,'table_name':'TransactionTypes','action':GLOBAL_ACTION}
-                OpenLoaderPopup();
-                $.ajax({
-                    type: 'POST',
-                    url: "{% url 'eProc_Configuration:create_update_application_data' %}",
-                    data: JSON.stringify(data),
-                    contentType: "application/json; charset=utf-8",
-                    dataType: "json",
-                    success: function(Response) {
-                        rendered_transaction_types_data = Response[0];
-                        rendered_active_inactive = Response[2];
-                        display_basic_db_data();
-                        dropdown_value();
-                        $('#myModal').modal('hide');
-                        success_response(Response);  // Display Response data
-                        table_sort_filter('id_popup_table');
-                        CloseLoaderPopup();
-                    }
-                });
-
-            }
-            else if (error_message){
-                display_error_message(error_message)
-            }
+        if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
+            var transaction_types_data_array = transaction_types_data;
+            $('#id_save_confirm_popup').modal('hide');
+            data = {'data':transaction_types_data,'table_name':'TransactionTypes','action':GLOBAL_ACTION}
+            OpenLoaderPopup();
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'eProc_Configuration:create_update_application_data' %}",
+                data: JSON.stringify(data),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function(Response) {
+                    rendered_transaction_types_data = Response[0];
+                    rendered_active_inactive = Response[2];
+                    display_basic_db_data();
+                    dropdown_value();
+                    $('#myModal').modal('hide');
+                    success_response(Response);  // Display Response data
+                    table_sort_filter('id_popup_table');
+                    CloseLoaderPopup();
+                }
+            });
+        }
+        else if (error_message){
+            display_error_message(error_message)
         }
     }
 

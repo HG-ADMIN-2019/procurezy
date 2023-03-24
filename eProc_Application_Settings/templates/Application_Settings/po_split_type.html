@@ -160,38 +160,33 @@
         get_main_table_data(); //Read data from main table
         // compare for duplicates in popup
         [no_duplicate_value,error_message] = compare_table_for_duplicate_entries(validate_add_attributes, po_split_type_data)
-        if (error_message){
-            display_error_message(error_message)
+        if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
+            [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
         }
-        else{
-            if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
-                [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
-            }
-            if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
-                var add_basic_data = '';
-                var po_sp_ty_data_array = po_split_type_data;
-                $('#id_save_confirm_popup').modal('hide');
-                data = {'data':po_split_type_data,'table_name':'PoSplitType','action':GLOBAL_ACTION}
-                OpenLoaderPopup();
-                $.ajax({
-                    type: 'POST',
-                    url: "{% url 'eProc_Configuration:create_update_application_data' %}",
-                    data: JSON.stringify(data),
-                    contentType: "application/json; charset=utf-8",
-                    dataType: "json",
-                    success: function(Response) {
-                        rendered_aac_data = Response[0];
-                        rendered_aac_values = Response[2];
-                        display_basic_db_data();
-                        $('#myModal').modal('hide');
-                        success_response(Response); // Function call to display response data
-                        CloseLoaderPopup();
-                    }
-                });
-            }
-            else if (error_message){
-                display_error_message(error_message)
-            }
+        if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
+            var add_basic_data = '';
+            var po_sp_ty_data_array = po_split_type_data;
+            $('#id_save_confirm_popup').modal('hide');
+            data = {'data':po_split_type_data,'table_name':'PoSplitType','action':GLOBAL_ACTION}
+            OpenLoaderPopup();
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'eProc_Configuration:create_update_application_data' %}",
+                data: JSON.stringify(data),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function(Response) {
+                    rendered_aac_data = Response[0];
+                    rendered_aac_values = Response[2];
+                    display_basic_db_data();
+                    $('#myModal').modal('hide');
+                    success_response(Response); // Function call to display response data
+                    CloseLoaderPopup();
+                }
+            });
+        }
+        else if (error_message){
+            display_error_message(error_message)
         }
     }
 
@@ -321,6 +316,26 @@
             if(selectedValue == item.field_type_id){
                 $('#description-'+selectedId).val(item.field_type_desc);
             }
+        });
+    }
+
+    //Function to highlight duplicate records
+    function display_duplicate_entry(common) {
+        var po_split_types_check = new Array;
+        $("#id_popup_table TBODY TR").each(function() {
+            var row = $(this);
+            po_split_types_dic = {}
+            po_split_types_dic.po_split_type = row.find("TD").eq(1).find('select[type="text"]').val();
+            var compare =  po_split_types_dic.po_split_type
+            po_split_types_check.push(compare);
+            jQuery.grep(po_split_types_check, function(el) {
+                if (jQuery.inArray(el, common) != -1) {
+                    row_color_highlight(row);
+                }
+                else {
+                    row_color_no_highlight(row);
+                }
+            });
         });
     }
 </script>

@@ -3,13 +3,6 @@ var validate_add_attributes = [];
 var main_table_low_value = [];
 var doctype ={};
 
-//onclick of upload button display id_data_upload popup and set GLOBAL_ACTION button value
-function onclick_upload_button() {
-    GLOBAL_ACTION = "doctype_upload"
-    $("#id_popup_tbody").empty();
-    $('#id_data_upload').modal('show');
-}
-
 //onclick of cancel empty the popup table body and error messages
 $(".remove_upload_data").click(() => {
     $("#id_error_msg").html("");

@@ -1,5 +1,6 @@
 var orgattr_data = new Array();
 var validate_add_attributes = [];
+var main_table_low_value = [];
 var org_attr={};
 
     // on click update icon display the selected checkbox data to update
@@ -45,19 +46,6 @@ var org_attr={};
                     '<td class="class_del_checkbox" hidden><input type="checkbox" required></td>'+
                     '<td class="class_del_checkbox1" hidden><input type="checkbox" required></td></tr>';
                      $("#header_select").prop("hidden", true);
-                }
-                else if (GLOBAL_ACTION == "COPY"){
-                   edit_basic_data +=  '<tr><td><input type="checkbox" required></td>'+
-                                       '<td><select type="text" class="input form-control attribute" id="attribute-1"  name="attribute" onchange="GetSelectedTextValue(this)"><option value="" disabled selected>Select your option</option>'+ attribute_id_dropdown +'</select></td>'+
-                                       '<td><input class="form-control attribute_name" type="text" value="' + row.cells[2].innerHTML + '" name="attribute_name" id="attribute_name-1" disabled></td>'+
-                                       '<td><input type="checkbox"  name="range_indicator" required></td>'+
-                                       '<td><input type="checkbox"  name="multiple_value" required></td>'+
-                                       '<td><input type="checkbox"  name="allow_defaults" required></td>'+
-                                       '<td><input type="checkbox" name="inherit_values" required></td>'+
-                                       '<td><input type="number" value="' + row.cells[7].innerHTML + '" name="maxlength"></td>'+
-                                       '<td class="class_del_checkbox" hidden><input type="checkbox" required></td>'+
-                                       '<td class="class_del_checkbox1" hidden><input type="checkbox" required></td></tr>';
-                   $("#header_select").prop("hidden", false);
                 }
                 else if (GLOBAL_ACTION == "DELETE"){
                     if ((row.cells[8].innerHTML=="False") || (row.cells[8].innerHTML=="false")){
@@ -228,6 +216,12 @@ var org_attr={};
     // Function to hide and display save related popups
     $('#save_id').click(function () {
         $('#myModal').modal('hide');
+        orgattr_data = read_popup_data();
+        $('#id_save_confirm_popup').modal('show');
+    });
+
+    //Read popup table data
+    function read_popup_data() {
         validate_add_attributes = [];
         orgattr_data = [];
         $("#id_popup_table TBODY TR").each(function() {
@@ -248,8 +242,8 @@ var org_attr={};
             validate_add_attributes.push(org_attr.attribute_id);
             orgattr_data.push(org_attr);
         });
-        $('#id_save_confirm_popup').modal('show');
-    });
+        return orgattr_data;
+    }
 
     // Function to get main table data
     function get_main_table_data() {
