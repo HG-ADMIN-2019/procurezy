@@ -53,12 +53,12 @@ function onclick_copy_update_button(data) {
     var edit_basic_data = "";
     var unique_input = '';
     //Loop through the CheckBoxes.
-    for (var i = 1; i < $chkbox_all.length; i++) {
+    for (var i = 0; i < $chkbox_all.length; i++) {
         if ($chkbox_all[i].checked) {
             var row = $chkbox_all[i].parentNode.parentNode;
             if(GLOBAL_ACTION == "UPDATE"){
                 unique_input = '<input class="form-control check_special_char" type="text" value="' + row.cells[1].innerHTML + '" name=""  maxlength="2" style="text-transform:uppercase" disabled>'
-                edit_basic_data += '<tr ><td hidden><input type="checkbox" required></td>'+
+                edit_basic_data += '<tr><td hidden><input type="checkbox" required></td>'+
                     '<td>'+unique_input+'</td>'+
                     '<td><input class="form-control check_special_char" value="' + row.cells[2].innerHTML + '" type="text"  name="country description"  maxlength="100"  required></td>'+
                     '<td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
