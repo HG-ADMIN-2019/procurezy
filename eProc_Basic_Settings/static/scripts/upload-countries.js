@@ -150,7 +150,6 @@ function delete_duplicate() {
     var country_code_check = new Array
     $("#id_popup_table TBODY TR").each(function () {
         var row = $(this);
-
         //*************** reading data from the pop-up ***************
         country_name = row.find("TD").eq(2).find('input[type="text"]').val().toUpperCase();
         country_code = row.find("TD").eq(1).find('input[type="text"]').val().toUpperCase();
