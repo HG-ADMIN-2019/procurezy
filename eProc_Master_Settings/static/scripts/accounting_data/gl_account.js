@@ -29,6 +29,19 @@ function add_popup_row() {
         $("#id_error_msg").html("");
     });
     new_row_data();   // Add a new row in popup
+    var company_num = '';
+    $("#id_popup_table TBODY TR").each(function () {
+        var row = $(this);
+        row.find("TD").eq(3).find("select").empty()
+        row.find("TD").eq(4).find("select").empty()
+        company_num = row.find("TD").eq(2).find("select option:selected").val();
+        var assign_val = account_assignment_value_find(company_num)
+        row.find("TD").eq(3).find("select").append(assign_val.acc_ass_dropdwn)
+        row.find("TD").eq(4).find("select").append(assign_val.acc_ass_val_dropdwn)
+        $(row.find("TD").eq(2).find("select")).change(function () {
+              company_dropdwn_change(row);
+        })
+    })
     if (GLOBAL_ACTION == "detgl_upload") {
         $(".class_del_checkbox").prop("hidden", false);
     }
@@ -173,4 +186,43 @@ function get_selected_row_data() {
             main_table_detgl_checked.push(detgl_arr_obj);
         }
     });
+}
+
+//*********************************************************
+function account_assignment_value_find(company_num) {
+    corresponding_values = {};
+    corresponding_values.acc_ass_dropdwn = '';
+    corresponding_values.acc_ass_val_dropdwn = '';
+    corresponding_values.other_dropdn = '';
+    company_list = company_list;
+    unique_acct_cat= [];
+    unique_acct_assmt_val = [];
+    for (var i = 0; i < company_list.length; i++) {
+        compare_dict = {};
+        compare_dict = company_list[i]
+        if (company_num == compare_dict.company_id) {
+            unique_acct_cat.push(compare_dict.account_assign_cat);
+            unique_acct_assmt_val.push(compare_dict.account_assign_value);
+        }
+    }
+     for (var i = 0; i < arrDistinct.length; i++) {
+        corresponding_values.other_dropdn += '<option value="'+arrDistinct[i]+'">' + arrDistinct[i] + '</option>'
+     }
+     assmtCatDistinct = [];
+     $(unique_acct_cat).each(function (index, item) {
+     if ($.inArray(item, assmtCatDistinct) == -1)
+        assmtCatDistinct.push(item);
+     });
+     for (var i = 0; i < assmtCatDistinct.length; i++) {
+        corresponding_values.acc_ass_dropdwn += '<option value="'+assmtCatDistinct[i]+'">' + assmtCatDistinct[i] + '</option>'
+     }
+     assmtValDistinct = [];
+     $(unique_acct_assmt_val).each(function (index, item) {
+     if ($.inArray(item, assmtValDistinct) == -1)
+        assmtValDistinct.push(item);
+     });
+     for (var i = 0; i < assmtValDistinct.length; i++) {
+        corresponding_values.acc_ass_val_dropdwn += '<option value="'+assmtValDistinct[i]+'">' + assmtValDistinct[i] + '</option>'
+     }
+    return corresponding_values
 }

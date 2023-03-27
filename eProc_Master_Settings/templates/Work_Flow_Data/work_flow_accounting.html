@@ -173,6 +173,7 @@
     var rendered_wfacc_data = {{ work_flow_accounting| safe}};
     var messages_list = {{messages_list|safe}};
     var rendered_accasscat_data = {{upload_data_acccat|safe}};
+    var rendered_accassval_data;
     var rendered_currency_data = {{upload_data_currency|safe}};
     var rendered_company_data = {{upload_data_company|safe}};
     var rendered_super_company_data = {{upload_data_company|safe}};
@@ -235,10 +236,10 @@
         });
 
         acc_ass_val_dropdwn = '';
-        $.each(rendered_wfacc_data, function (i, item) {
+        $.each(rendered_accassval_data, function (i, item) {
             acc_ass_val_dropdwn += '<option value="' + item.acc_value + '">' + item.acc_value + '</option>'
             acc_ass_val_dict = {};
-            acc_ass_val_dict.acc_ass_val_dropdwn = item.acc_value
+            acc_ass_val_dict.acc_ass_val_dropdwn = item.account_assign_value
             acc_ass_val_dict.account_assign_cat = item.account_assign_cat
             acc_ass_val_dict.company_id = item.company_id
             acc_ass_val_list.push(acc_ass_val_dict)
@@ -247,10 +248,10 @@
         company_dropdwn = '';
         var unique_comp = [];
 
-         $.each(rendered_wfacc_data, function (i, item) {
+         $.each(rendered_accassval_data, function (i, item) {
             company_dropdwn += '<option value="' + item.company_id + '">' + item.company_id + '</option>'
             company_dict = {};
-            company_dict.acc_ass_val_dropdwn = item.acc_value
+            company_dict.acc_ass_val_dropdwn = item.account_assign_value
             company_dict.account_assign_cat = item.account_assign_cat
             company_dict.company_id = item.company_id
             company_list.push(company_dict)
@@ -559,6 +560,7 @@
                 rendered_accasscat_data = response.upload_data_acccat
                 rendered_user_data = response.user_details
                 rendered_accasscat_data = response.upload_data_acccat
+                rendered_accassval_data = response.upload_accassvalues
                 rendered_currency_data = response.upload_data_currency
                 rendered_company_data = response.upload_data_company
                 rendered_super_company_data = response.upload_data_OrgCompanies
@@ -656,12 +658,12 @@
             $(row.find("TD").eq(1).find("select")).change(function () {
                 company_dropdwn_change(row);
             })
-            $(row.find("TD").eq(5).find("select")).change(function () {
-                supcompany_dropdwn_change(row);
-            })
             $(row.find("TD").eq(2).find("select")).change(function () {
                 company_num = row.find("TD").eq(1).find("select option:selected").val();
                 acc_ass_cat_dropdwn(row,company_num);
+            })
+            $(row.find("TD").eq(5).find("select")).change(function () {
+                supcompany_dropdwn_change(row);
             })
             $(row.find("TD").eq(2).find("select")).change(function () {
                 company_num = row.find("TD").eq(1).find("select option:selected").val();

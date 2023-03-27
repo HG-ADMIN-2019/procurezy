@@ -1766,6 +1766,9 @@ def get_approvervalue_data():
 
 def get_workflowacc_dropdown():
     upload_data_acccat = list(AccountAssignmentCategory.objects.filter(del_ind=False).values('account_assign_cat'))
+    upload_accassvalues = get_configuration_data(AccountingData, {'del_ind': False},
+                                                 ['account_assign_value', 'account_assign_cat',
+                                                  'company_id'])
     upload_data_currency = list(Currency.objects.filter(del_ind=False).values('currency_id'))
     upload_data_company = list(
         OrgCompanies.objects.filter(client=global_variables.GLOBAL_CLIENT, del_ind=False).values('company_id'))
@@ -1780,6 +1783,7 @@ def get_workflowacc_dropdown():
         'upload_data_company': upload_data_company,
         'upload_data_OrgCompanies': upload_data_OrgCompanies,
         'user_details': user_details,
+        'upload_accassvalues' : upload_accassvalues,
 
     }
     return data
