@@ -520,6 +520,8 @@ def sc_second_step(request):
         'select_flag': True,
         'acc_default': accounting_data['acc_default'],
         'acc_value': accounting_data['acc_value'],
+        'account_assign_cat_list':accounting_data['account_assign_cat_list'],
+        'acc_desc_append_list':accounting_data['acc_desc_append_list'],
         'currency': currency,
         'unit': uom,
         'product_category': product_category,

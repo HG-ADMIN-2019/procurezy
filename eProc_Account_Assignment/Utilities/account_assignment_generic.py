@@ -3,6 +3,8 @@ from eProc_Attributes.Utilities.attributes_generic import OrgAttributeValues
 from eProc_Attributes.Utilities.attributes_specific import append_description_atrr_value_exists, \
     append_attribute_value_description
 from eProc_Basic.Utilities.constants.constants import *
+from eProc_Basic.Utilities.functions.dictionary_check_value_based_for_key import dictionary_check_value_based_for_key, \
+    dictionary_check_get_value_based_for_key
 from eProc_Basic.Utilities.functions.django_query_set import DjangoQueries
 from eProc_Basic.Utilities.functions.ignore_duplicates import remove_duplicates_in_dic_list, \
     remove_duplicate_element_array
@@ -124,7 +126,7 @@ class AccountAssignmentCategoryDetails:
         self.default_company_code = default_company_code
         self.item_detail_list = item_detail_list
 
-    def get_acc_list_and_default(self):
+    def get_acc_list_and_default1(self):
         """
 
         """
@@ -178,6 +180,69 @@ class AccountAssignmentCategoryDetails:
             'gl_acc_item_level_default': gl_acc_item_level_default,
             'header_level_gl_acc': header_level_gl_acc,
             'acct_assignment_category': acct_assignment_category
+        }
+        return acc_details
+
+    def get_acc_list_and_default(self):
+        """
+
+        """
+        acc_value_list = []
+        default_acc_value = []
+        acc_desc_list = []
+        acc_default_desc = []
+        acc_details = ACC_CAT.get_org_model_configured_acc_and_desc(self.user_parent_object_id_list,
+                                                                    CONST_ACC_CAT)
+        # get account assignment category list and its default from org attribute level table
+        acc_list, default_acc = OrgAttributeValues.get_user_default_attr_value_list_by_attr_id(
+            self.user_parent_object_id_list,
+            CONST_ACC_CAT)
+        acc_desc_append_list, default_acc_desc = ACC_CAT.get_acc_append_desc(acc_list, default_acc)
+
+        if default_acc_desc:
+            # get default account assignment categories value configured in org attribute level table
+            if default_acc_desc['account_assign_cat'] == CONST_CC:
+                acc_value_list, default_acc_value = OrgAttributeValues.get_user_default_attr_value_list_by_attr_id(
+                    self.user_parent_object_id_list,
+                    CONST_CT_CTR)
+            elif default_acc_desc['account_assign_cat'] == CONST_WBS:
+                acc_value_list, default_acc_value = OrgAttributeValues.get_user_default_attr_value_list_by_attr_id(
+                    self.user_parent_object_id_list,
+                    CONST_WBS_ELEM)
+            elif default_acc_desc['account_assign_cat'] == CONST_OR:
+                acc_value_list, default_acc_value = OrgAttributeValues.get_user_default_attr_value_list_by_attr_id(
+                    self.user_parent_object_id_list,
+                    CONST_INT_ORD)
+            elif default_acc_desc['account_assign_cat'] == CONST_AS:
+                acc_value_list, default_acc_value = OrgAttributeValues.get_user_default_attr_value_list_by_attr_id(
+                    self.user_parent_object_id_list,
+                    CONST_AS_SET)
+
+        acc_value_desc = ACCValueDesc.get_acc_value_desc(acc_value_list, self.default_company_code,
+                                                         acc_details['default_acc'])
+
+        acc_value_list_desc, acc_default_val_desc = ACCValueDesc.append_acc_val_desc_if_exists(acc_value_desc,
+                                                                                               default_acc_value,
+                                                                                               acc_value_list)
+        gl_acc_item_level_default, header_level_gl_acc = AccountAssignmentCategoryDetails.get_gl_acc_default_value(self,
+                                                                                                                   acc_details[
+                                                                                                                       'default_acc'])
+        client = global_variables.GLOBAL_CLIENT
+        sys_attributes_instance = sys_attributes(client)
+        acct_assignment_category = sys_attributes_instance.get_acct_assignment_category()
+        acc_details = {
+            'acc_list': acc_details['acc_desc_list'],
+            'acc_default': acc_details['acc_default_desc'],
+            'acc_value': [acc_default_val_desc],
+            'acc_value_list': acc_value_list_desc,
+            'default_acc': default_acc_value,
+            'default_acc_ass_cat': acc_details['default_acc'],
+            'gl_acc_item_level_default': gl_acc_item_level_default,
+            'header_level_gl_acc': header_level_gl_acc,
+            'acct_assignment_category': acct_assignment_category,
+            'acc_desc_append_list': acc_desc_append_list,
+            'default_acc_desc': default_acc_desc,
+            'account_assign_cat_list':acc_list
         }
         return acc_details
 
@@ -305,8 +370,7 @@ def get_prod_cat_value_guid(cart_items):
     """
     item_list = []
     for cart_item in cart_items:
-        item_list.append({'guid':cart_item['guid'],
-                          'prod_cat':cart_item['prod_cat_id'],
-                          'value':cart_item['value']})
+        item_list.append({'guid': cart_item['guid'],
+                          'prod_cat': cart_item['prod_cat_id'],
+                          'value': cart_item['value']})
     return item_list
-

@@ -59,6 +59,7 @@ from eProc_User_Settings.Utilities.user_settings_generic import get_attr_value
 from eProc_Shopping_Cart.Utilities.shopping_cart_specific import get_gl_account_default_value
 from eProc_Exchange_Rates.Utilities.exchange_rates_generic import convert_currency
 from eProc_Workflow.Utilities.work_flow_generic import save_sc_approval
+from eProc_Account_Assignment.Utilities.account_assignment_generic import *
 
 JsonParser_obj = JsonParser()
 
@@ -191,7 +192,7 @@ def my_order_doc_details(req, flag, type, guid, mode, access_type):
 
     ship_to_bill_to_address_instance = ShipToBillToAddress(requester_object_id)
     delivery_addr_list, addr_default, addr_val_desc = get_sc_comp_my_order(requester_object_id)
-    product_category = get_prod_cat(req, prod_det=None)
+    product_category = get_prod_cat()
     supplier_data = get_supplier_dropdown()
     GetAttachments.po_attachments = []
     sc_attachments = GetAttachments.get_sc_attachments(header_guid)
@@ -199,11 +200,10 @@ def my_order_doc_details(req, flag, type, guid, mode, access_type):
     addr_value, addr_default_value = ship_to_bill_to_address_instance.get_default_address_number_and_list()
     delivery_addr_desc = ship_to_bill_to_address_instance.get_all_addresses_with_descriptions(addr_value)
 
-    org_config_acc_desc = ACC_CAT.get_org_model_configured_acc_and_desc(object_id_list,
-                                                                        CONST_ACC_CAT)
+    org_config_acc_desc = get_acc_details(object_id_list, global_variables.GLOBAL_REQUESTER_COMPANY_CODE, item_detail_list)
     client = getClients(req)
     sys_attributes_instance = sys_attributes(client)
-    acc_list = org_config_acc_desc['acc_desc_list']
+    acc_list = org_config_acc_desc['acc_list']
     doc_number_encrypted = encrypt(sc_header_instance['doc_number'])
 
     if access_type == 'approvals':
@@ -240,6 +240,8 @@ def my_order_doc_details(req, flag, type, guid, mode, access_type):
                'pgrp_list': pgrp_list,
                'acc_list': acc_list,
                'supplier_details': get_supplier_first_second_name(global_variables.GLOBAL_CLIENT),
+               'account_assign_cat_list': org_config_acc_desc['account_assign_cat_list'],
+               'acc_desc_append_list': org_config_acc_desc['acc_desc_append_list'],
                'sc_completion_flag': flag,
                'supplier_data': supplier_data, 'del_addr': del_addr, 'delivery_addr_desc': delivery_addr_desc,
                'addr_val_desc': addr_val_desc, 'sc_attachements': sc_attachments,
