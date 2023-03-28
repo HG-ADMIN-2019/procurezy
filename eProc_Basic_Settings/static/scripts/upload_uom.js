@@ -53,7 +53,7 @@ function onclick_copy_update_button(data) {
     //Loop through the CheckBoxes.
     for (var i = 0; i < $chkbox_all.length; i++) {
         if ($chkbox_all[i].checked) {
-            var row = checkBo$chkbox_allxes[i].parentNode.parentNode;
+            var row = $chkbox_all[i].parentNode.parentNode;
             if(GLOBAL_ACTION == "UPDATE"){
                 unique_input = '<input class="form-control check_special_char" type="text" value="' + row.cells[1].innerHTML + '" name="uom_id"  maxlength="2" style="text-transform:uppercase" disabled>'
                  edit_basic_data += '<tr><td hidden><input type="checkbox" required></td><td><input class="form-control check_special_char" type="text" value="' + row.cells[1].innerHTML + '" name="uom_id"  maxlength="3" style="text-transform:uppercase" disabled></td><td><input class="form-control check_special_char" value="' + row.cells[2].innerHTML + '" type="text"  name="uomdescription"  maxlength="100" required></td><td><input class="form-control check_special_char" value="' + row.cells[3].innerHTML + '" type="text"  name="isocodeid"  maxlength="15" style="text-transform:uppercase" required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';

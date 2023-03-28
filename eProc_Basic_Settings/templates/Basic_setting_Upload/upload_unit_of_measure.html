@@ -236,7 +236,7 @@
         no_duplicate_value = 'Y'
         var error_message = '';
         get_main_table_data();  //Read data from main table
-        $("#id_error_msg").empty();
+        // compare for duplicates in popup
         [no_duplicate_value,error_message] = compare_table_for_duplicate_entries(validate_add_attributes, uom_data);
         if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
             [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
@@ -245,7 +245,6 @@
             }
         }
         if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
-            var add_basic_data = '';
             var uom_data_array = uom_data;
             $('#id_save_confirm_popup').modal('hide');
             data = {'data':uom_data,'table_name':'UnitOfMeasures','action':GLOBAL_ACTION}

@@ -18,7 +18,7 @@
             <h3>Maintain Holidays</h3>
             <div>
                   <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Basic_Settings:extract_calendar_holiday_data' %}'" type="button">
-                       <i class="fas fa-download"></i> extract
+                    <i class="fas fa-download"></i> extract
                   </button>
                   <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"  onclick="window_close();">
                     <i class="fas fa-times"></i> close
@@ -38,31 +38,21 @@
                         <i class="fas fa-times" title="Cancel"></i> cancel
                     </button>
                 </div>
-                <table id="display_basic_table" class="class_basic_calendar_table table table-bordered custom-table">
-                    <thead id="id_calendar_table_header">
                 <!--   display basic country table-->
                 <table id="display_basic_table" class="class_basic_calendar_table table table-bordered custom-table">
                     <thead id="id_calendar_table_header">
-                    <tr>
-                        <th>Calender Number</th>
-                        <th>Calender Description</th>
-                        <th>Country</th>
-                        <th>Year</th>
-                        <th hidden></th>
-                        <th hidden></th>
-                        <th>Action</th>
-                        <th hidden>GUID</th>
-                    </tr>
+                        <tr>
+                            <th>Calender Number</th>
+                            <th>Calender Description</th>
+                            <th>Country</th>
+                            <th>Year</th>
+                            <th hidden></th>
+                            <th hidden></th>
+                            <th>Action</th>
+                            <th hidden>GUID</th>
+                        </tr>
                     </thead>
                     <tbody id="id_calendar_tbody">
-                    {% for calendar in calendar_data %}
-                    <tr>
-                        <td>{{calendar.calender_id}}</td>
-                        <td>{{calendar.description}}</td>
-                        {% for ct in country_list %}
-                            {% if calendar.country_code == ct.country_code  %}
-                                <td>{{ct.country_name}}</td>
-                            {% endif %}
                         {% for calendar in calendar_data %}
                         <tr>
                             <td>{{calendar.calender_id}}</td>
@@ -117,16 +107,21 @@
                     <div id="id_info_msg_id" class="alert alert-primary display-none" role="alert"></div>
                     <table class="class_popup_table table table-bordered mt-2" id="id_popup_table" >
                         <thead>
-                        <tr>
-                            <th id="hg_select_checkbox"  hidden>Select</th>
-                            <th>Holiday Description</th>
-                            <th>From Date</th>
-                            <th>To Date</th>
-                            <th id="id_del_ind_checkbox" hidden>Del Indicator</th>
-                            <th hidden>GUID</th>
-                        </tr>
+                            <tr>
+                                <th id="hg_select_checkbox"  hidden>
+                                    <div id="id_check_all" style="display:none;">
+                                        <input type="checkbox" id="selectAll" name="chk[]">
+                                    </div>
+                                </th>
+                                <th>Holiday Description</th>
+                                <th>From Date</th>
+                                <th>To Date</th>
+                                <th id="id_del_ind_checkbox" hidden>Del Indicator</th>
+                                <th hidden>GUID</th>
+                            </tr>
                         </thead>
                         <tbody id="id_popup_tbody">
+
                         </tbody>
                     </table>
                 </div>
@@ -134,7 +129,7 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-primary remove_upload_data" data-dismiss="modal"><i class="fas fa-times"></i> Close</button>
                     <button class="btn btn-primary" id="save_id"><i class="fas fa-save"></i> save</button>
-                    <!-- <button class="btn btn-primary" style="display:none;" id="id_delete" data-toggle="modal" data-target="#id_delete_confirm_popup"><i class="fas fa-save"></i> delete</button> -->
+    
                 </div>
             </div>
         </div>
@@ -258,6 +253,7 @@
         $('#success_msg_id').empty();
         $('#id_popup_table').DataTable().destroy();
         var calendar_data = new Array();
+        
         no_duplicate_entries = 'Y'
         no_duplicate_value = 'Y'
         var error_message = '';
@@ -356,10 +352,11 @@
         $('#id_popup_table').DataTable().destroy();
         $("#id_popup_tbody").empty();   
         //Reference the Table.
-        var grid = document.getElementById("display_basic_table");
+        var res = get_all_checkboxes(); // Function to get all the checkboxes
+        var $chkbox_all = $('td input[type="checkbox"]', res);
         //Reference the CheckBoxes in Table.
-        var checkBoxes = grid.getElementsByTagName("INPUT");
         var edit_basic_data = "";
+        var unique_input = '';
         OpenLoaderPopup();
         $.ajax({
             type: 'POST',

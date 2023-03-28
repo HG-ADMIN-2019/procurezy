@@ -203,15 +203,7 @@ function get_selected_row_data() {
             calendar_arr_obj.calender_id = GLOBAL_CALENDER_ID;
             main_table_calendar_checked.push(calendar_arr_obj);
         }
-        $("#id_delete_currency").hide();
-        $("#id_copy_currency").hide();
-        $("#id_update_currency").hide();
-        $("#error_msg_id").css("display", "none");
-       // table_sort_filter_popup('id_popup_table');
-        return rowCount;
-    } catch (e) {
-        alert(e);
-    }
+    });
 }
 
 // Function to get main table data
@@ -232,18 +224,17 @@ $('#display_basic_table').DataTable().destroy();
 // Function to get the selected row data
 function get_selected_row_data(){
 $("#id_popup_table TBODY TR").each(function () {
-            var row = $(this);
-            var calendar_arr_obj = {};
-            var isSelect = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
-            if(isSelect){
-                calendar_arr_obj.holiday_description = row.find("TD").eq(1).find('input[type="text"]').val();
-                calendar_arr_obj.from_date = row.find("TD").eq(2).find('input[type="text"]').val();
-                calendar_arr_obj.to_date = row.find("TD").eq(3).find('input[type="text"]').val();
-                calendar_arr_obj.del_ind = isSelect;
-                calendar_arr_obj.calender_holiday_guid = row.find("TD").eq(5).find('input[type="text"]').val();
-                calendar_arr_obj.calender_id = GLOBAL_CALENDER_ID;
-                main_table_calendar_checked.push(calendar_arr_obj);
-            }
-        });
+        var row = $(this);
+        var calendar_arr_obj = {};
+        var isSelect = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
+        if(isSelect){
+            calendar_arr_obj.holiday_description = row.find("TD").eq(1).find('input[type="text"]').val();
+            calendar_arr_obj.from_date = row.find("TD").eq(2).find('input[type="text"]').val();
+            calendar_arr_obj.to_date = row.find("TD").eq(3).find('input[type="text"]').val();
+            calendar_arr_obj.del_ind = isSelect;
+            calendar_arr_obj.calender_holiday_guid = row.find("TD").eq(5).find('input[type="text"]').val();
+            calendar_arr_obj.calender_id = GLOBAL_CALENDER_ID;
+            main_table_calendar_checked.push(calendar_arr_obj);
+        }
     });
 }
