@@ -1286,9 +1286,9 @@ def get_unspsc_cat_cust_data():
         prod_cat['prod_cat_desc'] = ' '
         for product_cat in prod_cat_desc:
             if prod_cat['prod_cat_id'] == product_cat['prod_cat_id']:
-                if product_cat['language_id'] == global_variables.GLOBAL_USER_LANGUAGE.language_id:
+                # if product_cat['language_id'] == global_variables.GLOBAL_USER_LANGUAGE.language_id:
                     prod_cat['prod_cat_desc'] = product_cat['category_desc']
-                break
+                # break
 
     for prod in upload_cust_prod_catogories:
         if prod['prod_cat_desc'] is None:
