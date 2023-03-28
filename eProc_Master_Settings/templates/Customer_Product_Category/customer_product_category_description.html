@@ -398,7 +398,8 @@
         }
         else{
             $('#save_id').show();
-        document.getElementById('save_id').style.visibility = 'visible';
+            document.getElementById('save_id').style.visibility = 'visible';
+            $('#delete_data').hide();
         }
    }
 
@@ -664,7 +665,7 @@
         get_selected_row_data(); // Function call to get the selected row data
         if(disable_check){
             $('#delete_data').prop('disabled', true);
-                  var msg = "JMSG005";
+            var msg = "JMSG112";
             var msg_type ;
             msg_type = message_config_details(msg);
             $("#error_msg_id").prop("hidden", false);
@@ -898,7 +899,7 @@ function onclick_copy_update_button(data){
                         edit_basic_data += '<tr><td hidden><input type="checkbox"></td><td>'+unique_input+' </td><td><select class="form-control" disabled>' +language_id_dropdown + ' </select></td><td><input class="form-control" value="' + row.cells[3].innerHTML + '" type="text" onkeypress="return /[a-z ]/i.test(event.key)"  name="description"  maxlength="200"  required></td><td hidden><input value="' + prod_cat_desc_guid + '"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
                         $("#header_select").prop("hidden", true);
                     }
-                     else if (GLOBAL_ACTION == "COPY"){
+                    else if (GLOBAL_ACTION == "COPY"){
                         prod_cat_desc_guid = 'GUID';
                         unique_input = '<select class="form-control" maxlength="20">' + prod_cat_id_dropdown + '</select>'
                         edit_basic_data += '<tr><td><input type="checkbox" required></td><td>'+unique_input+'</td><td><input class="form-control" value="' + row.cells[2].innerHTML + '" type="text" onkeypress="return /[a-z ]/i.test(event.key)" name="description"  maxlength="200"  required></td><td><select class="form-control">' +language_id_dropdown + ' </select></td><td hidden><input value="' + prod_cat_desc_guid + '"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
@@ -914,7 +915,7 @@ function onclick_copy_update_button(data){
                             });
                             if((row.cells[2].innerHTML =="English") && (count >= 2)){
                                    check = '<input type="checkbox" disabled>'
-                                   document.getElementById('delete_data').style.visibility='visible';
+                                   document.getElementById('delete_data').style.visibility='hidden';
                                    $('#save_id').hide();
                                    $('#delete_data').prop('disabled', true);
                             }
@@ -924,7 +925,7 @@ function onclick_copy_update_button(data){
                                 document.getElementById('delete_data').style.visibility = 'visible'
                                 $('#delete_data').prop('disabled', false);
                             }
-                             else if((row.cells[2].innerHTML!="English") && (count >= 2))
+                            else if((row.cells[2].innerHTML!="English")||(row.cells[2].innerHTML =="English") && (count >= 2))
                             {
                                 check = '<input type="checkbox">'
                                 document.getElementById('delete_data').style.visibility = 'visible'
@@ -939,10 +940,14 @@ function onclick_copy_update_button(data){
                             edit_basic_data += '<tr><td>'+check+'</td><td>'+unique_input+' </td><td><select class="form-control">' +language_id_dropdown + ' </select></td><td><input class="form-control" value="' + row.cells[3].innerHTML + '" type="text" onkeypress="return /[a-z ]/i.test(event.key)"  name="description"  maxlength="200"  required></td><td hidden><input value="' + prod_cat_desc_guid + '"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
                             $("#header_select").prop("hidden", false);
                     }
+                    else{
+                        $('#save_id').show();
+                        document.getElementById('save_id').style.visibility = 'visible';
+                        $('#delete_data').hide();
+                    }
 
                 }
             }
-            display_button();
             $('#id_popup_tbody').append(edit_basic_data);
             var i =0;
             $("#id_popup_table TBODY TR").each(function() {
@@ -958,9 +963,8 @@ function onclick_copy_update_button(data){
                 $(row.find("TD").eq(1).find("select option[value="+prod_cat_id_value+"]")).attr('selected','selected');
                 $(row.find("TD").eq(2).find("select option[value="+lang_id+"]")).attr('selected','selected');
                 i++;
-
-
             });
+            display_button();
             $("#id_del_ind_checkbox").prop("hidden", true);
             $('#custproddescModal').modal('show');
             table_sort_filter('id_popup_table');
