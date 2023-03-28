@@ -497,6 +497,8 @@ function save_product_cat_images(event) {
                              var upload_id = "prod_img-"+GLOBAL_PROD_CAT_ID
                             $('#'+upload_id).attr('src', event.target.result);
                             $('#attachments_popup').modal('hide');
+                             rendered_cust_prod_cat_data= Response.upload_cust_prod_cat
+                             display_basic_db_data();
                         },
                         cache: false,
                         processData: false,
@@ -812,34 +814,33 @@ function display_cust_prod_cat(cust_prodcat_array) {
 //onclick of cancel display the table in display mode............
 
 function display_basic_db_data(){
-$('#display_basic_table').DataTable().destroy();
-    $('#id_cusprodcat_tbody').empty();
-    var edit_basic_data = '';
-    $.each(rendered_cust_prod_cat_data, function (i, item) {
-        edit_basic_data += '<tr><td class="class_select_checkbox"><input class="checkbox_check" onclick="valueChanged()" type="checkbox" required></td><td><a onclick="get_image_detail('+item.prod_cat_id+')" href="#"><div style="display: flex; flex-direction: row;"><div><img src="/media/'+item.image_url+'" onerror="this.src="/static/images/no-image-cropped.png""  id="prod_img-'+item.prod_cat_id+'" class="mr-3 catalog_img product-config-img" ></div></div></a></td><td>'+item.prod_cat_desc+'</td><td>' + item.prod_cat_id + '</td><td  class="hg_unspsc_td_column" hidden><a onclick="upload_unscpsc_prod_cat_image('+ item.prod_cat_id+')"><i class="fa fa-upload" aria-hidden="true"></i></a></td><td hidden>' + item.prod_cat_guid + '</td><td hidden>'+item.del_ind+'</td></tr>'
+        $('#display_basic_table').DataTable().destroy();
+        $('#id_cusprodcat_tbody').empty();
+        var edit_basic_data = '';
+        $.each(rendered_cust_prod_cat_data, function (i, item) {
+            edit_basic_data += '<tr><td class="class_select_checkbox"><input class="checkbox_check" onclick="valueChanged()" type="checkbox" required></td><td><a onclick="get_image_detail('+item.prod_cat_id+')" href="#"><div style="display: flex; flex-direction: row;"><div><img src="/media/'+item.image_url+'" onerror="this.src="/static/images/no-image-cropped.png""  id="prod_img-'+item.prod_cat_id+'" class="mr-3 catalog_img product-config-img" ></div></div></a></td><td>'+item.prod_cat_desc+'</td><td>' + item.prod_cat_id + '</td><td  class="hg_unspsc_td_column" hidden><a onclick="upload_unscpsc_prod_cat_image('+ item.prod_cat_id+')"><i class="fa fa-upload" aria-hidden="true"></i></a></td><td hidden>' + item.prod_cat_guid + '</td><td hidden>'+item.del_ind+'</td></tr>'
 
-    });
-    $('#id_cusprodcat_tbody').append(edit_basic_data);
-    $( "#hg_select_checkbox").prop( "hidden", true );
-    $( ".hg_unspsc_th_column").prop( "hidden", true );
-    $( ".hg_unspsc_td_column").prop( "hidden", true );
-    $(".hg_unspsc_td_column").show()
-    $(".hg_unspsc_td_column").show()
-    $( "#hg_select_checkbox").prop( "hidden", true );
-    $(".class_select_checkbox").prop("hidden", true);
-    $('input:checkbox').removeAttr('checked');
+        });
+        $('#id_cusprodcat_tbody').append(edit_basic_data);
+        $( "#hg_select_checkbox").prop( "hidden", true );
+        $( ".hg_unspsc_th_column").prop( "hidden", true );
+        $( ".hg_unspsc_td_column").prop( "hidden", true );
+        $(".hg_unspsc_td_column").show()
+        $(".hg_unspsc_td_column").show()
+        $( "#hg_select_checkbox").prop( "hidden", true );
+        $(".class_select_checkbox").prop("hidden", true);
+        $('input:checkbox').removeAttr('checked');
 
 
-    $('#id_edit_data').show();
-    $('#id_cancel_data').hide();
-    $('#id_delete_data').hide();
-    $('#id_copy_data').hide();
-    $('#id_update_data').hide();
-    $('#id_save_confirm_popup').modal('hide');
-    $('#id_delete_confirm_popup').modal('hide');
-    $('#id_check_all').hide();
-    table_sort_filter('display_basic_table');
-
+        $('#id_edit_data').show();
+        $('#id_cancel_data').hide();
+        $('#id_delete_data').hide();
+        $('#id_copy_data').hide();
+        $('#id_update_data').hide();
+        $('#id_save_confirm_popup').modal('hide');
+        $('#id_delete_confirm_popup').modal('hide');
+        $('#id_check_all').hide();
+        table_sort_filter('display_basic_table');
 }
 
 
@@ -851,7 +852,6 @@ var cusprodcat={};
 
 // on click edit icon display the data in edit mode
 function edit_basic(){
-     $('#id_cusprodcat_tbody').append(edit_basic_data);
      $('#display_basic_table').DataTable().destroy();
      $( "#hg_select_checkbox").prop( "hidden", false );
      $( ".hg_unspsc_th_column").prop( "hidden", false );
