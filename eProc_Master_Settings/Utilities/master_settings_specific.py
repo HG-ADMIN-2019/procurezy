@@ -1531,7 +1531,7 @@ def get_gl_acc_dropdown():
     upload_value_glacc = list(
         AccountingData.objects.filter(client=global_variables.GLOBAL_CLIENT, del_ind=False,
                                       account_assign_cat='GLACC').values(
-            'account_assign_value'))
+            'account_assign_value', 'company_id', 'account_assign_cat'))
     upload_value_accasscat = list(
         AccountAssignmentCategory.objects.filter(del_ind=False).values(
             'account_assign_cat'))

@@ -206,10 +206,10 @@
             prod_cat_dropdown += '<option value="' + item.prod_cat_id + '">' + item.prod_cat_id + '</option>'
         });
         accasscat_dropdown = '';
-        $.each(rendered_detgl_data, function (i, item) {
+        $.each(rendered_glacc_data, function (i, item) {
             accasscat_dropdown += '<option value="' + item.account_assign_cat + '">' + item.account_assign_cat + '</option>'
             acc_ass_val_dict = {};
-            acc_ass_val_dict.gl_acc_num = item.gl_acc_num
+            acc_ass_val_dict.account_assign_value = item.account_assign_value
             acc_ass_val_dict.account_assign_cat = item.account_assign_cat
             acc_ass_val_dict.company_id = item.company_id
             acc_ass_val_list.push(acc_ass_val_dict)
@@ -218,10 +218,10 @@
         company_dropdwn = '';
         var unique_comp = [];
 
-         $.each(rendered_detgl_data, function (i, item) {
+         $.each(rendered_glacc_data, function (i, item) {
             company_dropdwn += '<option value="' + item.company_id + '">' + item.company_id + '</option>'
             company_dict = {};
-            company_dict.gl_acc_num = item.gl_acc_num
+            company_dict.account_assign_value = item.account_assign_value
             company_dict.account_assign_cat = item.account_assign_cat
             company_dict.company_id = item.company_id
             company_list.push(company_dict)
@@ -857,6 +857,9 @@
                     var company_id = dropdown_array[i][1];
                     var gl_acc_default = dropdown_array[i][4];
                     var currency_id = dropdown_array[i][5];
+                    var assign_val = account_assignment_value_find(company_id)
+                    row.find("TD").eq(3).find("select").append(assign_val.acc_ass_dropdwn)
+                    row.find("TD").eq(4).find("select").append(assign_val.acc_ass_val_dropdwn)
                     $(row.find("TD").eq(1).find("select option[value=" + prod_cat + "]")).attr('selected', 'selected');
                     $(row.find("TD").eq(4).find("select option[value=" + gl_acc + "]")).attr('selected', 'selected');
                     if(gl_acc_default) {
@@ -865,6 +868,14 @@
                     $(row.find("TD").eq(3).find("select option[value=" + acc_ass_cat + "]")).attr('selected', 'selected');
                     $(row.find("TD").eq(2).find("select option[value=" +  company_id  + "]")).attr('selected', 'selected');
                     $(row.find("TD").eq(8).find("select option[value=" + currency_id  + "]")).attr('selected', 'selected');
+                    $(row.find("TD").eq(2).find("select")).change(function () {
+                        row.find("TD").eq(3).find("select").empty()
+                        row.find("TD").eq(4).find("select").empty()
+                        company_num = row.find("TD").eq(2).find("select option:selected").val();
+                        var comp_val = account_assignment_value_find(company_num)
+                        row.find("TD").eq(3).find("select").append(comp_val.acc_ass_dropdwn)
+                        row.find("TD").eq(4).find("select").append(comp_val.acc_ass_val_dropdwn)
+                    })
                     i++;
                 });
                 $("#id_del_ind_checkbox").prop("hidden", true);
