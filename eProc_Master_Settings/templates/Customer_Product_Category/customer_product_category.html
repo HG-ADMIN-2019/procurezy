@@ -851,13 +851,7 @@ var cusprodcat={};
 
 // on click edit icon display the data in edit mode
 function edit_basic(){
-       $('#id_cusprodcat_tbody').empty();
-       var edit_basic_data = '';
-    $.each(rendered_cust_prod_cat_data, function (i, item) {
-        edit_basic_data += '<tr><td class="class_select_checkbox"><input class="checkbox_check" onclick="valueChanged()" type="checkbox" required></td><td><a onclick="get_image_detail('+item.prod_cat_id+')" href="#"><div style="display: flex; flex-direction: row;"><div><img src="/media/'+item.image_url+'" onerror="this.src="/static/images/no-image-cropped.png"" class="mr-3 catalog_img product-config-img" ></div></div></a></td><td>'+item.prod_cat_desc+'</td><td>' + item.prod_cat_id + '</td><td  class="hg_unspsc_td_column" hidden><a onclick="upload_unscpsc_prod_cat_image('+item.prod_cat_id+')"><i class="fa fa-upload" aria-hidden="true"></i></a></td><td hidden>' + item.prod_cat_guid + '</td><td hidden>'+item.del_ind+'</td></tr>'
-
-    });
-    $('#id_cusprodcat_tbody').append(edit_basic_data);
+     $('#id_cusprodcat_tbody').append(edit_basic_data);
      $('#display_basic_table').DataTable().destroy();
      $( "#hg_select_checkbox").prop( "hidden", false );
      $( ".hg_unspsc_th_column").prop( "hidden", false );
