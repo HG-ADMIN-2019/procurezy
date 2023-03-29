@@ -178,8 +178,9 @@ function application_settings_delete_Row1(myTable) {
 
 // Function to get main table data
 function get_main_table_data() {
+    main_table_low_value = [];
+    $('#display_basic_table').DataTable().destroy();
     $("#display_basic_table TBODY TR").each(function () {
-        main_table_low_value = [];
         var row = $(this);
         var main_attribute = {};
         main_attribute.holiday_description = row.find("TD").eq(2).html();
@@ -191,39 +192,6 @@ function get_main_table_data() {
 // Function to get the selected row data
 function get_selected_row_data() {
     $("#id_popup_table TBODY TR").each(function () {
-        var row = $(this);
-        var calendar_arr_obj = {};
-        var isSelect = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
-        if(isSelect){
-            calendar_arr_obj.holiday_description = row.find("TD").eq(1).find('input[type="text"]').val();
-            calendar_arr_obj.from_date = row.find("TD").eq(2).find('input[type="text"]').val();
-            calendar_arr_obj.to_date = row.find("TD").eq(3).find('input[type="text"]').val();
-            calendar_arr_obj.del_ind = isSelect;
-            calendar_arr_obj.calender_holiday_guid = row.find("TD").eq(5).find('input[type="text"]').val();
-            calendar_arr_obj.calender_id = GLOBAL_CALENDER_ID;
-            main_table_calendar_checked.push(calendar_arr_obj);
-        }
-    });
-}
-
-// Function to get main table data
-function get_main_table_data(){
-main_table_low_value = [];
-$('#display_basic_table').DataTable().destroy();
-        var calendar = {};
-        $('#display_basic_table').DataTable().destroy();
-        $("#display_basic_table TBODY TR").each(function () {
-            var row = $(this);
-            var main_attribute = {};
-            main_attribute.holiday_description = row.find("TD").eq(2).html();
-            main_table_low_value.push(main_attribute.holiday_description);
-        });
-        table_sort_filter('display_basic_table');
-}
-
-// Function to get the selected row data
-function get_selected_row_data(){
-$("#id_popup_table TBODY TR").each(function () {
         var row = $(this);
         var calendar_arr_obj = {};
         var isSelect = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
