@@ -130,7 +130,7 @@ function get_main_table_data() {
         main_attribute.calender_id = row.find("TD").eq(1).html();
         main_table_low_value.push(main_attribute.calender_id);
     });
-    table_sort_filter('display_basic_table');
+    // table_sort_filter('display_basic_table');
 }
 
 // Function to get the selected row data

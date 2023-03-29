@@ -176,7 +176,7 @@
         var res = get_all_checkboxes(); // Function to get all the checkboxes
          var $chkbox_all = $('td input[type="checkbox"]', res);
         //Reference the CheckBoxes in Table.
-        // $("#id_popup_tbody").empty();       
+        $("#id_popup_tbody").empty();       
         var edit_basic_data = "";
         var unique_input = '';
         OpenLoaderPopup();
@@ -300,8 +300,6 @@
         GLOBAL_ACTION = 'DELETE';
         main_table_calendar_checked = [];
         var Tabledata = { "Dbl_clck_tbl_id": 'CalenderHolidays' };
-         $('#display_basic_table').DataTable().destroy();
-        get_selected_row_data(); // Function call to get the selected row data
         $('#display_basic_table').DataTable().destroy();
         get_selected_row_data(); // Function call to get the selected row data
         $('#id_delete_confirm_popup').modal('hide');
