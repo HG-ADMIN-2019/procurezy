@@ -194,7 +194,9 @@
     function acc_value_desc_dropdown() {
         acc_ass_val_list = [];
         acc_ass_dropdwn = '';
+        var temp;
         $.each(rendered_accasscat_data, function (i, item) {
+            temp = item.account_assign_cat;
             acc_ass_dropdwn += '<option value="'+item.account_assign_cat+'">' + item.account_assign_cat + '</option>'
         });
         company_dropdwn = '';
@@ -209,6 +211,7 @@
         });
         acc_ass_val_dropdwn = '';
         $.each(rendered_accasscat_values, function (i, item) {
+            if(temp){}
             acc_ass_val_dropdwn += '<option value="'+item.account_assign_value+'">'+item.account_assign_value+'</option>'
             acc_ass_val_dict = {};
             acc_ass_val_dict.account_assign_value = item.account_assign_value

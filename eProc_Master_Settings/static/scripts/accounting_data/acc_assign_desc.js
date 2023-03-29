@@ -274,7 +274,7 @@ function read_popup_data() {
 function new_row_data() {
     basic_add_new_html = '<tr> <td><input class="input" type="checkbox" required></td>'+
     '<td><select id="comp_id" class="form-control">' + company_dropdwn + ' </select></td>'+
-    '<td><select class="form-control"></select></td>'+
+    '<td><select id="acct_assmt_cat" class="form-control"></select></td>'+
     '<td><select class="form-control"></select></td>'+
     '<td><input class="form-control check_special_char" type="text"  maxlength="255" ></td>'+
     '<td><select class="form-control">' + language_dropdwn + '</select></td>'+

@@ -19,14 +19,17 @@ from eProc_Registration.models import UserData
 
 
 class RegForm(ModelForm):
-    username = forms.CharField(label='User Name', widget=forms.TextInput(attrs={'class': 'form-control check_special_char'}),
+    username = forms.CharField(label='User Name',
+                               widget=forms.TextInput(attrs={'class': 'form-control check_special_char'}),
                                required=True)
-    first_name = forms.CharField(label='First Name', widget=forms.TextInput(attrs={'class': 'form-control check_special_char'}),
+    first_name = forms.CharField(label='First Name',
+                                 widget=forms.TextInput(attrs={'class': 'form-control check_special_char'}),
                                  required=True)
     last_name = forms.CharField(label='Last Name', widget=forms.TextInput(attrs={'class': 'form-control '
                                                                                           'check_special_char'}),
                                 required=False)
-    phone_num = forms.CharField(label='Phone Number', widget=forms.TextInput(attrs={'class': 'form-control check_phone_number'}),
+    phone_num = forms.CharField(label='Phone Number',
+                                widget=forms.TextInput(attrs={'class': 'form-control check_phone_number'}),
                                 required=False)
     language_id = forms.ModelChoiceField(queryset=Languages.objects.all(), empty_label="None", widget=forms.Select(
         attrs={'class': 'form-control'}), label='Language')
@@ -80,7 +83,7 @@ class RegForm(ModelForm):
             raise forms.ValidationError("Your username must contain at least four alphanumeric characters")
         elif not (uname.isalnum() and re.match('[A-Za-z0-9]{4,16}', uname)):
             raise forms.ValidationError("Must contain min four alphanumeric characters without special characters")
-        elif UserData.objects.filter(username=uname, client=global_variables.GLOBAL_CLIENT,del_ind = False).exists():
+        elif UserData.objects.filter(username=uname, client=global_variables.GLOBAL_CLIENT, del_ind=False).exists():
             raise forms.ValidationError('Username already exists')
 
         return uname.upper()
@@ -117,13 +120,13 @@ class RegForm(ModelForm):
 
     def clean_email(self):
         email = self.cleaned_data.get('email')
-        if UserData.objects.filter(email=email, client=global_variables.GLOBAL_CLIENT,del_ind=False).exists():
+        if UserData.objects.filter(email=email, client=global_variables.GLOBAL_CLIENT, del_ind=False).exists():
             raise forms.ValidationError("User email already exists")
         return email
 
     def clean_empId(self):
         emp_id = self.cleaned_data.get('employee_id')
-        if UserData.objects.filter(employee_id=emp_id, client=global_variables.GLOBAL_CLIENT,del_ind=False).exists():
+        if UserData.objects.filter(employee_id=emp_id, client=global_variables.GLOBAL_CLIENT, del_ind=False).exists():
             raise forms.ValidationError("Employee Id already exists")
         return emp_id
 
@@ -136,13 +139,13 @@ class UserRegForm(ModelForm):
     last_name = forms.CharField(label='Last Name', widget=forms.TextInput(attrs={'class': 'form-control'}),
                                 required=False)
     phone_num = forms.CharField(label='Phone Number', widget=forms.TextInput(attrs={'class': 'form-control'}),
-                                required=False)
+                                required=True)
     language_id = forms.ModelChoiceField(queryset=Languages.objects.all(), empty_label="None", widget=forms.Select(
-        attrs={'class': 'form-control'}), label='Language')
+        attrs={'class': 'form-control'}), label='Language', required=True)
     currency_id = forms.ModelChoiceField(queryset=Currency.objects.all(), empty_label="None", widget=forms.Select(
-        attrs={'class': 'form-control'}), label='Currency')
+        attrs={'class': 'form-control'}), label='Currency', required=True)
     time_zone = forms.ModelChoiceField(queryset=TimeZone.objects.all(), empty_label="None", widget=forms.Select(
-        attrs={'class': 'form-control'}), label='TimeZone')
+        attrs={'class': 'form-control'}), label='TimeZone', required=True)
     email = forms.EmailField(label='E-mail', required=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
 
     # Meta data for UserData model
@@ -175,5 +178,4 @@ class UserRegForm(ModelForm):
                                              attrs={'class': 'form-control'}),
             'user_type': forms.Select(choices=USER_TYPE, attrs={'class': 'form-control'}),
             'employee_id': forms.TextInput(attrs={'class': 'form-control'}),
-
         }

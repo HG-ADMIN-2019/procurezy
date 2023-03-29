@@ -152,7 +152,7 @@
                             </div>
                             <div class="col-md">
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="pwd_locked" name="pwd_locked">
+                                    <input class="form-check-input" type="checkbox"  name="pwd_locked">
                                     <label class="form-check-label" for="">
                                         Password Locked
                                     </label>
@@ -259,9 +259,10 @@
                                     </label>
                                 </label>
                             </td>
-                            <td>
-                                <i class="fas fa-trash-alt hg-icon-blue-primary" title="Delete User" id="{{results.email}}"
-                                    onclick="get_user_detail_to_delete(this.id)" ></i>
+                            <td class="item-action-icon-section">
+                                <span title="Delete address" onclick="get_user_detail_to_delete(this.id)" id="{{results.email}}"
+                                    <i class="material-icons item-action-icons">delete_outline</i>
+                                </span>
                             </td>
                         </tr>
                         {% endfor %}
