@@ -494,11 +494,11 @@ function save_product_cat_images(event) {
                         url: "{% url 'eProc_Master_Settings:upload_prod_cat_images' %}",
                         data: data,
                         success: function (Response) {
-                             var upload_id = "prod_img-"+GLOBAL_PROD_CAT_ID
+                            var upload_id = "prod_img-"+GLOBAL_PROD_CAT_ID
                             $('#'+upload_id).attr('src', event.target.result);
                             $('#attachments_popup').modal('hide');
-                             rendered_cust_prod_cat_data= Response.upload_cust_prod_cat
-                             display_basic_db_data();
+                            rendered_cust_prod_cat_data = Response[0];
+                            display_basic_db_data
                         },
                         cache: false,
                         processData: false,
@@ -807,13 +807,11 @@ function display_cust_prod_cat(cust_prodcat_array) {
     document.getElementById("copy_line_up_div").style.display = "none";
    // $('#myModal').find('input:text').val('');
     table_sort_filter('display_basic_table');
-        }
+}
 
 
-
-//onclick of cancel display the table in display mode............
-
-function display_basic_db_data(){
+//onclick of display the table in display mode............
+ function display_basic_db_data(){
         $('#display_basic_table').DataTable().destroy();
         $('#id_cusprodcat_tbody').empty();
         var edit_basic_data = '';
