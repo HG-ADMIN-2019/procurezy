@@ -208,7 +208,8 @@
         });
         accasscat_dropdown = '';
         $.each(rendered_acc_value_list, function (i, item) {
-            accasscat_dropdown += '<option value="' + item.account_assign_cat + '">' + item.account_assign_cat + '</option>'
+            console.log(item.account_assign_cat_list[i]);
+            accasscat_dropdown += '<option value="' + item.account_assign_cat_list[i] + '">' + item.account_assign_cat_list[i] + '</option>'
             acc_ass_val_dict = {};
             acc_ass_val_dict.account_assign_value = item.account_assign_cat_value_list
             acc_ass_val_dict.account_assign_cat = item.account_assign_cat_list
