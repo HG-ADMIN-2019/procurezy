@@ -1561,8 +1561,8 @@ def get_gl_acc_dropdown():
         account_assign_cat_value_list = get_acc_asg_cat_value_list(gl_acc_details, company_id)
         account_assign_cat_list = distinct_list(account_assign_cat_list)
         acc_dic = {'company_id': company_id,
-                   'account_assign_cat_list': account_assign_cat_list,
-                   'account_assign_cat_value_list': account_assign_cat_value_list}
+                   'account_assign_cat_list': list(account_assign_cat_list),
+                   'account_assign_cat_value_list': list(account_assign_cat_value_list)}
         acc_value_list.append(acc_dic)
 
     upload_value_accasscat = list(

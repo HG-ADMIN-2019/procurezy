@@ -172,6 +172,7 @@
     var rendered_currency_data = {{upload_value_currency|safe}}
     var rendered_company_data = {{upload_value_company|safe}}
     var rendered_prod_category = {{prod_catogories|safe}}
+    var rendered_acc_value_list ;
     var detgl_data_array = {}
     var main_table_detgl_value = [];
     var detgl = '';
@@ -206,11 +207,11 @@
             prod_cat_dropdown += '<option value="' + item.prod_cat_id + '">' + item.prod_cat_id + '</option>'
         });
         accasscat_dropdown = '';
-        $.each(rendered_glacc_data, function (i, item) {
+        $.each(rendered_acc_value_list, function (i, item) {
             accasscat_dropdown += '<option value="' + item.account_assign_cat + '">' + item.account_assign_cat + '</option>'
             acc_ass_val_dict = {};
-            acc_ass_val_dict.account_assign_value = item.account_assign_value
-            acc_ass_val_dict.account_assign_cat = item.account_assign_cat
+            acc_ass_val_dict.account_assign_value = item.account_assign_cat_value_list
+            acc_ass_val_dict.account_assign_cat = item.account_assign_cat_list
             acc_ass_val_dict.company_id = item.company_id
             acc_ass_val_list.push(acc_ass_val_dict)
             account_assign_array.push(item.account_assign_value)
@@ -218,11 +219,11 @@
         company_dropdwn = '';
         var unique_comp = [];
 
-         $.each(rendered_glacc_data, function (i, item) {
+         $.each(rendered_acc_value_list, function (i, item) {
             company_dropdwn += '<option value="' + item.company_id + '">' + item.company_id + '</option>'
             company_dict = {};
-            company_dict.account_assign_value = item.account_assign_value
-            company_dict.account_assign_cat = item.account_assign_cat
+            company_dict.account_assign_value = item.account_assign_cat_value_list
+            company_dict.account_assign_cat = item.account_assign_cat_list
             company_dict.company_id = item.company_id
             company_list.push(company_dict)
             company_array.push(item.company_id)
@@ -769,6 +770,7 @@
                 rendered_currency_data = response.upload_value_currency
                 rendered_company_data = response.upload_value_company
                 rendered_prod_category = response.prod_catogories
+                rendered_acc_value_list = response.acc_value_list
                 gl_account_dropdown()
                 $("#error_msg_id").css("display", "none")
                 $( "#header_select").prop( "hidden", false );
