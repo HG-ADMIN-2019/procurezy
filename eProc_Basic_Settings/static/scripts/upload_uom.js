@@ -170,21 +170,23 @@ $('#save_id').click(function () {
 
 //Read popup table data
 function read_popup_data(){
+    $('#id_popup_table').DataTable().destroy();
     uom_data = new Array();
     validate_add_attributes = [];
    $("#id_popup_table TBODY TR").each(function () {
-           var row = $(this);
-           uom={};
-           uom.del_ind = row.find("TD").eq(4).find('input[type="checkbox"]').is(':checked');
-           uom.iso_code_id = row.find("TD").eq(3).find('input[type="text"]').val().toUpperCase();
-           uom.uom_description = row.find("TD").eq(2).find('input[type="text"]').val().toUpperCase();
-           uom.uom_id = row.find("TD").eq(1).find('input[type="text"]').val().toUpperCase();
-           if (uom == undefined){
-            uom.uom_id = row.find("TD").eq(1).find('input[type="text"]').val();
-            }
-           validate_add_attributes.push(uom.uom_id);
-           uom_data.push(uom);
-       });
+        var row = $(this);
+        uom={};
+        uom.del_ind = row.find("TD").eq(4).find('input[type="checkbox"]').is(':checked');
+        uom.iso_code_id = row.find("TD").eq(3).find('input[type="text"]').val().toUpperCase();
+        uom.uom_description = row.find("TD").eq(2).find('input[type="text"]').val().toUpperCase();
+        uom.uom_id = row.find("TD").eq(1).find('input[type="text"]').val().toUpperCase();
+        if (uom == undefined){
+        uom.uom_id = row.find("TD").eq(1).find('input[type="text"]').val();
+        }
+        validate_add_attributes.push(uom.uom_id);
+        uom_data.push(uom);
+    });
+    $('#id_popup_table').DataTable().destroy();
    return uom_data;
 }
 

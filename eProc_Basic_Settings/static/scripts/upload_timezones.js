@@ -179,6 +179,30 @@ $('#save_id').click(function () {
     $('#id_save_confirm_popup').modal('show');
 });
 
+//Read popup table data
+function read_popup_data(){
+    $('#id_popup_table').DataTable().destroy();
+    timezone_data = new Array();
+    validate_add_attributes = [];
+   $("#id_popup_table TBODY TR").each(function () {
+           var row = $(this);
+           timezone={};
+           timezone.time_zone = row.find("TD").eq(1).find('input[type="text"]').val().toUpperCase();
+           timezone.description = row.find("TD").eq(2).find('input[type="text"]').val().toUpperCase();
+           timezone.utc_difference = row.find("TD").eq(3).find('input[type="text"]').val().toUpperCase();
+           timezone.daylight_save_rule = row.find("TD").eq(4).find('input[type="text"]').val().toUpperCase();
+           timezone.del_ind = row.find("TD").eq(5).find('input[type="checkbox"]').is(':checked');
+
+           if (timezone == undefined) {
+                timezone.time_zone = row.find("TD").eq(1).find('input[type="text"]').val();
+           }
+           validate_add_attributes.push(timezone.time_zone);
+           timezone_data.push(timezone);
+       });
+       table_sort_filter('id_popup_table');
+       return timezone_data;
+}
+
 function get_main_table_data(){
     main_table_low_value = [];
     $('#display_basic_table').DataTable().destroy();
@@ -215,27 +239,6 @@ function new_row_data() {
     $('#id_popup_tbody').append(basic_add_new_html);
 }
 
-//Read popup table data
-function read_popup_data(){
-    timezone_data = new Array();
-    validate_add_attributes = [];
-   $("#id_popup_table TBODY TR").each(function () {
-           var row = $(this);
-           timezone={};
-           timezone.time_zone = row.find("TD").eq(1).find('input[type="text"]').val().toUpperCase();
-           timezone.description = row.find("TD").eq(2).find('input[type="text"]').val().toUpperCase();
-           timezone.utc_difference = row.find("TD").eq(3).find('input[type="text"]').val().toUpperCase();
-           timezone.daylight_save_rule = row.find("TD").eq(4).find('input[type="text"]').val().toUpperCase();
-           timezone.del_ind = row.find("TD").eq(5).find('input[type="checkbox"]').is(':checked');
-
-           if (timezone == undefined) {
-                timezone.time_zone = row.find("TD").eq(1).find('input[type="text"]').val();
-           }
-           validate_add_attributes.push(timezone.time_zone);
-           timezone_data.push(timezone);
-       });
-       return timezone_data;
-}
 //Get message for check data function
 function get_msg_desc_check_data(msg){
      var msg_type ;

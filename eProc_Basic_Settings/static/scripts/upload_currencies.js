@@ -56,6 +56,7 @@ function onclick_copy_update_button(data) {
     for (var i = 0; i < $chkbox_all.length; i++) {
         if ($chkbox_all[i].checked) {
             var row = $chkbox_all[i].parentNode.parentNode;
+            $("#hg_select_checkbox").prop("hidden", false);
             if(GLOBAL_ACTION == "UPDATE"){
                 unique_input = '<input class="form-control check_special_char" type="text" value="' + row.cells[1].innerHTML + '" name="currency code"  maxlength="3" style="text-transform:uppercase" disabled>'
                 edit_basic_data += '<tr><td hidden><input type="checkbox" required></td>'+
@@ -173,6 +174,7 @@ $('#save_id').click(function () {
 
 //Read popup table data
 function read_popup_data() {
+    $('#id_popup_table').DataTable().destroy();
     currency_data = new Array();
     validate_add_attributes = [];
     $("#id_popup_table TBODY TR").each(function () {
@@ -187,6 +189,7 @@ function read_popup_data() {
         validate_add_attributes.push(currency.currency_id);
         currency_data.push(currency);
     });
+    table_sort_filter('id_popup_table');
     return currency_data;
 }
 

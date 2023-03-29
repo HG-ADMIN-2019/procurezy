@@ -172,6 +172,7 @@ $('#save_id').click(function () {
 
 //Read popup table data
 function read_popup_data() {
+    $('#id_popup_table').DataTable().destroy();
     countries_data = new Array();
     validate_add_attributes = [];
     $("#id_popup_table TBODY TR").each(function () {
@@ -186,6 +187,7 @@ function read_popup_data() {
         validate_add_attributes.push(country.country_code);
         countries_data.push(country);
     });
+    table_sort_filter('id_popup_table');
     return countries_data;
 }
 
