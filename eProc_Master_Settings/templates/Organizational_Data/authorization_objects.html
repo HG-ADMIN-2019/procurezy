@@ -209,6 +209,7 @@
         else if (error_message){
             display_error_message(error_message)
         }
+        table_sort_filter('id_popup_table');
     }
 
     //delete the selected row in db................
@@ -337,19 +338,18 @@ function add_popup_row() {
                 dropdown_value();
                 $("#error_msg_id").css("display", "none")
                 $("#id_popup_tbody").empty();
-                $('#display_basic_table').DataTable().destroy();
                 $('#id_popup_table').DataTable().destroy();
                 $("#id_popup_tbody").empty();
                 //Reference the Table.
-                var grid = document.getElementById("display_basic_table");
+                var res = get_all_checkboxes(); // Function to get all the checkboxes
+                var $chkbox_all = $('td input[type="checkbox"]', res);
                 //Reference the CheckBoxes in Table.
-                var checkBoxes = grid.getElementsByTagName("INPUT");
                 var edit_basic_data = "";
                 var dropdown_values = [];
                 //Loop through the CheckBoxes.
-                for (var i = 1; i < checkBoxes.length; i++) {
-                    if (checkBoxes[i].checked) {
-                        var row = checkBoxes[i].parentNode.parentNode;
+                for (var i = 0; i < $chkbox_all.length; i++) {
+                    if ($chkbox_all[i].checked) {
+                        var row = $chkbox_all[i].parentNode.parentNode;
                         var auth_obj_id = row.cells[1].innerHTML;
                         var auth_level= row.cells[3].innerHTML;
                         dropdown_values.push([auth_obj_id, auth_level])
@@ -371,7 +371,6 @@ function add_popup_row() {
                 });
                 $("#id_del_ind_checkbox").prop("hidden", true);
                 $('#auth_obj_Modal').modal('show');
-                table_sort_filter('display_basic_table');
                 table_sort_filter('id_popup_table');
                 $('#auth_obj_Modal').modal('show');
                 CloseLoaderPopup();

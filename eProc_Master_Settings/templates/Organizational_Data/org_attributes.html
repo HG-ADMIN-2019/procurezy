@@ -235,7 +235,6 @@
                 dropdown_value();
                 $('#myModal').modal('hide');
                 success_response(Response);  // Display Response data
-                table_sort_filter('id_popup_table');
                 CloseLoaderPopup();
                 }
             });
@@ -243,6 +242,7 @@
         else if (error_message){
             display_error_message(error_message)
         }
+        table_sort_filter('id_popup_table');
     }
 
     //delete the selected row in db................
