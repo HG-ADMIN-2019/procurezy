@@ -8,6 +8,7 @@ var CONST_MULTIPLE = ''
 var manager_detail_initial = shopping_cart_errors.manager_detail.length
 var sc_errors_initial = shopping_cart_errors.sc_error
 var sc_info_messsages = shopping_cart_errors.sc_info
+var error_msg_info = shopping_cart_errors.error_msg_info
 var error_messages_initial = ''
 
 if (sc_info_messsages.length > 0){
@@ -26,7 +27,7 @@ if (sc_info_messsages.length > 0){
     $('#sc_info_messages').show()
 }
 
-if (sc_errors_initial.length == 0 && manager_detail_initial != 0) {
+if (sc_errors_initial.length == 0 && error_msg_info.length == 0 && manager_detail_initial != 0) {
 
                     var msg = "JMSG042";
                     var msg_type ;

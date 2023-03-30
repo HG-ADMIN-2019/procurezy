@@ -6,7 +6,7 @@ from eProc_Basic.Utilities.global_defination import global_variables
 from eProc_Calendar_Settings.Utilities.calender_settings_generic import get_list_of_holidays
 from eProc_Shopping_Cart.context_processors import update_user_info
 from django.http import JsonResponse
-from eProc_Shopping_Cart.Utilities.save_order_edit_sc import CheckForScErrors
+from eProc_Shopping_Cart.Utilities.save_order_edit_sc import CheckForScErrors, check_sc_second_step_shopping_cart
 from eProc_Basic.Utilities.functions.get_db_query import getClients, get_object_id_from_username
 from eProc_Basic.Utilities.constants.constants import CONST_CO_CODE, CONST_CALENDAR_ID
 from eProc_User_Settings.Utilities.user_settings_generic import get_attr_value
@@ -70,8 +70,7 @@ def check_shopping_cart(request):
                 sc_check_instance.delivery_date_check(delivery_date, data['item_num'], holiday_list,
                                                       default_calendar_id)
 
-            if address_number != '':
-                sc_check_instance.delivery_address_check(address_number, data['item_num'])
+            sc_check_instance.item_level_delivery_address_check(address_number, data['item_num'])
             sc_check_instance.account_assignment_check(data['acc_acc_cat'], data['acc_acc_val'], data['gl_acc_num'],
                                                        data['item_num'])
             sc_check_instance.check_for_prod_cat(data['prod_cat'], company_code, data['item_num'])

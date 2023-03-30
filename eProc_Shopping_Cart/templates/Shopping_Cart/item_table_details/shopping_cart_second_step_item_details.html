@@ -233,6 +233,7 @@
                             </span>
                         </div>
                         <div class="card-body">
+                            {% if addr_val_desc %}
                             {% for addr in addr_val_desc %}
                             <span id="address_number_{{ forloop.parentloop.counter }}" class="check_address_number" hidden>{{ addr.address_number }}</span>
                             <span id="street_output{{ forloop.parentloop.counter }}" >{{ addr.street }},</span><br>
@@ -242,6 +243,15 @@
                             - <span id="pcode_output{{ forloop.parentloop.counter }}">{{ addr.postal_code }}</span><br>
                             <span id="region_output{{ forloop.parentloop.counter }}">{{ addr.region }}</span><br>
                             {% endfor %}
+                            {% else %}
+                            <span id="address_number_{{ forloop.counter }}" class="check_address_number" hidden></span>
+                            <span id="street_output{{ forloop.counter }}" ></span><br>
+                            <span id="area_output{{ forloop.counter }}"></span><br>
+                            <span id="landmark_output{{ forloop.counter }}"></span><br>
+                            <span id="city_output{{ forloop.counter }}"></span>
+                            <span id="pcode_output{{ forloop.counter }}"></span><br>
+                            <span id="region_output{{ forloop.counter }}"></span><br>
+                            {% endif %}
 
                             {% if shipping_address_flag == '1'  %}
                             <button onclick="change_item_address(this.id)" class="btn btn-primary hg_display mt-2"  id="change_address_{{forloop.counter}}" ><i class="far fa-edit"></i> Change Address</button>

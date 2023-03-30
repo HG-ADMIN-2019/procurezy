@@ -402,18 +402,22 @@ function check_shopping_cart(type, sc_data, acc_default, acc_default_val){
             'requester': requester
     }
     OpenLoaderPopup();
+    var error_status = true
     $.ajax({
         type: 'POST',
         url: "{% url 'eProc_Shopping_Cart:check_shopping_cart' %}",
         data:JSON.stringify(data),
         success: function (response) {
+            document.getElementById('sc_error_msg').style.display = 'none';
+            $('#sc_error_msg').html('');
             console.log("CHECK RESPONSE ",response)
             manager_detail = response.manager_detail.length
             sc_errors = response.sc_error
             sc_info_messsages_check = response.sc_info
-            if (shopping_cart_errors['error_msg_info']) {
-        error_messages += shopping_cart_errors['error_msg_info']
-    }
+            var error_msg_info = response.error_msg_info
+          //  if (shopping_cart_errors['error_msg_info']) {
+      //  error_messages += shopping_cart_errors['error_msg_info']
+   // }
             error_messages += response.error_msg_info + '<br>'
             // If SC has info
             if (sc_info_messsages_check.length > 0){
@@ -433,8 +437,8 @@ function check_shopping_cart(type, sc_data, acc_default, acc_default_val){
             }
             console.log(sc_errors);
             // If the SC has no errorrs then call order SC function
-            if(sc_errors.length == 0 && manager_detail != 0 && internal_supplier_error_itemNumber.length == 0){
-
+            if(sc_errors.length == 0 && error_msg_info.length == 0 && manager_detail != 0 && internal_supplier_error_itemNumber.length == 0){
+                    error_status = false
                     var msg = "JMSG042";
                     var msg_type ;
                   msg_type = get_message_desc(msg);
@@ -502,8 +506,10 @@ function check_shopping_cart(type, sc_data, acc_default, acc_default_val){
 
             error_messages += check_manager_detail(response)
             error_messages += check_ui_errors_warnings(error_messages);
-            $('#sc_error_msg').html(error_messages);
-            document.getElementById('sc_error_msg').style.display = 'block';
+            if (error_status == false){
+                $('#sc_error_msg').html(error_messages);
+                document.getElementById('sc_error_msg').style.display = 'block';
+            }
             error_messages = ''
             internal_supplier_error_itemNumber = []
             if(type == 'check' || type == 'approval_workflow'){

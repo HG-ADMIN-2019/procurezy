@@ -388,7 +388,7 @@ def docDetails(req, flag, type, guid, mode, access_type):
 
     ship_to_bill_to_address_instance = ShipToBillToAddress(requester_object_id)
     delivery_addr_list, addr_default, addr_val_desc = get_sc_comp_my_order(requester_object_id)
-    product_category = get_prod_cat(req, prod_det=None)
+    product_category = get_prod_cat()
     supplier_data = get_supplier_dropdown()
 
     if flag == 'True':

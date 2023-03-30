@@ -1234,9 +1234,12 @@ class CheckForScErrors:
         self.username = username
         self.error_message_info = []
 
-    def header_level_delivery_address_check(self, address_number):
+    def header_level_delivery_address_check(self, address_number,address_number_list):
         error_msg = None
-
+        if len(address_number_list) == 0:
+            error_msg = get_message_desc('MSG203')[1]
+            self.error_message_info.append(error_msg)
+            return error_msg
         if address_number == 'None' or address_number is None or address_number == '':
             error_msg = get_message_desc('MSG163')[1]
             self.error_message_info.append(error_msg)
@@ -1253,7 +1256,27 @@ class CheckForScErrors:
         else:
             return error_msg
 
-    def item_level_delivery_address_check(self, cart_items_count, error_msg):
+    def item_level_delivery_address_check(self, address_number,item_num):
+        error_msg = None
+        address_error = {}
+        if address_number == 'None' or address_number is None or address_number == '':
+            error_msg = get_message_desc('MSG204')[1]
+            address_error[item_num] = error_msg
+            self.data.append(address_error)
+            return error_msg
+
+        check_for_address_number = django_query_instance.django_existence_check(OrgAddress, {
+            'client': self.client, 'del_ind': False, 'address_number': address_number
+        })
+
+        if not check_for_address_number:
+            error_msg = get_message_desc('MSG162')[1]
+            address_error[item_num] = error_msg
+            self.data.append(address_error)
+            return error_msg
+        else:
+            return error_msg
+    def item_level_delivery_address_first_check(self, cart_items_count, error_msg):
         """
 
         """
@@ -1624,7 +1647,7 @@ class CheckForScErrors:
 
 
 def check_sc_second_step_shopping_cart(sc_check_instance, object_id_list, default_calendar_id, company_code,
-                                       default_address_number, accounting_data, manager_details,
+                                       default_address_number,address_number_list, accounting_data, manager_details,
                                        approver_id, total_value,
                                        msg_info,
                                        cart_items):
@@ -1636,7 +1659,7 @@ def check_sc_second_step_shopping_cart(sc_check_instance, object_id_list, defaul
     sc_check_instance.document_sc_transaction_check(object_id_list)
     sc_check_instance.po_transaction_check(object_id_list)
     sc_check_instance.calender_id_check(default_calendar_id)
-    error_msg = sc_check_instance.header_level_delivery_address_check(default_address_number)
+    error_msg = sc_check_instance.header_level_delivery_address_check(default_address_number,address_number_list)
     sc_check_instance.update_approval_check(manager_details, approver_id, total_value,
                                             msg_info)
     sc_check_instance.header_level_acc_check(accounting_data['acc_list'], accounting_data['default_acc_ass_cat'],
