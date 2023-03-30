@@ -497,7 +497,7 @@ def extract_calendar_data(request):
 
     calendar_details = django_query_instance.django_filter_query(CalenderConfig,
                                                                  {'del_ind': False}, None,
-                                                                 ['calender_id', 'country_code', 'description',  'year',
+                                                                 ['calender_id', 'country_code', 'description', 'year',
                                                                   'working_days', 'del_ind'])
     calendar_details_data = query_update_del_ind(calendar_details)
 
@@ -582,6 +582,7 @@ def extract_currency_data(request):
 
     return response
 
+
 def read_pdf(request):
     pdfData = ''
     directory = os.path.join(str(settings.BASE_DIR), 'media', 'pdf_read')
@@ -594,8 +595,9 @@ def read_pdf(request):
             print(reader.numPages)
             pdfData = page1.extractText()
             print(pdfData)
-    data ={'pdf_data':pdfData}
+    data = {'pdf_data': pdfData}
     return JsonResponse(data)
+
 
 def srm_currency_converter_p02(request):
     response = HttpResponse(content_type='text/plain')

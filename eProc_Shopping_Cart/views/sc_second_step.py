@@ -472,19 +472,12 @@ def sc_second_step(request):
         call_off_list,
         prod_cat_list)
 
-    default_account_assignment_category, default_account_assignment_value = unpack_accounting_data(accounting_data,
-                                                                                                   sc_check_instance)
-    error_msg = sc_check_instance.header_level_delivery_address_check(default_address_number)
-    if error_msg:
-        sc_check_instance.item_level_delivery_address_check(cart_items_count)
-
-
-    sc_check_instance.update_approval_check(manager_details, approver_id, total_value,
-                                     msg_info)
-
     cart_items, shopping_cart_errors = check_sc_second_step_shopping_cart(sc_check_instance, object_id_list,
                                                                           default_calendar_id,
-                                                                          company_code, cart_items)
+                                                                          company_code, default_address_number,address_number_list,
+                                                                          accounting_data, manager_details,
+                                                                          approver_id, total_value, msg_info,
+                                                                          cart_items)
 
     # update images
     cart_items = update_image_for_catalog(cart_items)
@@ -494,12 +487,11 @@ def sc_second_step(request):
     currency, uom, currency_list, product_category, country_list = get_currency_uom_prod_cat_country()
 
     sys_attributes_instance = sys_attributes(global_variables.GLOBAL_CLIENT)
-
     request.session['total_value'] = total_item_value
     request.session['company_code'] = company_code
     context = {
         'shopping_cart_errors': shopping_cart_errors,
-        'cart_items_count':cart_items_count,
+        'cart_items_count': cart_items_count,
         'highest_item_number': highest_item_number + 1,
         'sc_completion_flag': sc_completion_flag,
         'requester_user_name': global_variables.GLOBAL_LOGIN_USERNAME,
@@ -524,10 +516,11 @@ def sc_second_step(request):
         'requester_currency': global_variables.GLOBAL_REQUESTER_CURRENCY,
         'gl_acc_item_level_default': accounting_data['gl_acc_item_level_default'],
         'receiver_name': receiver_name,
-        'rest_shipping_addr': delivery_addr_list,
         'select_flag': True,
         'acc_default': accounting_data['acc_default'],
         'acc_value': accounting_data['acc_value'],
+        'account_assign_cat_list':accounting_data['account_assign_cat_list'],
+        'acc_desc_append_list':accounting_data['acc_desc_append_list'],
         'currency': currency,
         'unit': uom,
         'product_category': product_category,
@@ -537,9 +530,11 @@ def sc_second_step(request):
         'prod_desc': prod_desc,
         'acc_list': accounting_data['acc_list'],
         'acc_value_list': accounting_data['acc_value_list'],
-        'addr_val_desc': addr_val_desc,
         'display_update_delete': False,
+        'rest_shipping_addr': delivery_addr_list,
+        'addr_val_desc': addr_val_desc,
         'delivery_addr_desc': delivery_addr_desc,
+        'default_address_number':default_address_number,
         'acc_cat_default_value': accounting_data['default_acc_ass_cat'],
         'country_list': get_country_data(),
         'is_second_step': True,

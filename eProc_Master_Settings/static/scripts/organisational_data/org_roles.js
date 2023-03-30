@@ -3,63 +3,6 @@ var validate_add_attributes = [];
 var main_table_low_value = [];
 var roles={};
 
-//onclick of upload button display id_data_upload popup and set GLOBAL_ACTION button value role_desc
-function onclick_upload_button() {
-    GLOBAL_ACTION = "roles_upload"
-    $("#id_popup_tbody").empty();
-    $('#id_data_upload').modal('show');
-    document.getElementById('id_file_data_upload').value = "";
-}
-
-//*************************************************
-function onclick_copy_update_button() {
-    $("#error_msg_id").css("display", "none")
-    $('#display_basic_table').DataTable().destroy();
-    $('#id_popup_table').DataTable().destroy();
-    $("#id_popup_tbody").empty();
-    $('#display_basic_table').DataTable().destroy();
-    //Reference the Table.
-    var grid = document.getElementById("display_basic_table");
-    //Reference the CheckBoxes in Table.
-    var checkBoxes = grid.getElementsByTagName("INPUT");
-    var edit_basic_data = "";
-     var dropdown_values = [];
-    //Loop through the CheckBoxes.
-    for (var i = 1; i < checkBoxes.length; i++) {
-        if (checkBoxes[i].checked) {
-            var row = checkBoxes[i].parentNode.parentNode;
-            if(GLOBAL_ACTION == "UPDATE"){
-                edit_basic_data += '<tr><td hidden><input type="checkbox" required></td>'+
-                '<td><select type="text" class="input form-control" id="roles" name="roles" disabled>'+ roles_type_dropdown +'</select></td>'+
-                '<td><input class="form-control" value="' + row.cells[2].innerHTML + '" type="text" onkeypress="return /[a-z ]/i.test(event.key)" name="roles_desc"  maxlength="30" style="text-transform:uppercase" required></td>'+
-                '<td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
-                $("#header_select").prop("hidden", true);
-            }
-            else{
-                edit_basic_data += '<tr><td><input type="checkbox" required></td>'+
-                '<td><select type="text" class="input form-control roles" id="roles-"+'+counter+'  name="roles" onchange="GetSelectedTextValue(this)">'+ roles_type_dropdown +'</select></td>'+
-                '<td><input class="input form-control description" id="description-1" value="' + row.cells[2].innerHTML + '" type="text"  name="roles_desc" disabled></td>'+
-                '<td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
-                $("#header_select").prop("hidden", false);
-            }
-            var roles_type_value = row.cells[1].innerHTML
-            dropdown_values.push([roles_type_value])
-        }
-    }
-    $('#id_popup_table').append(edit_basic_data);
-    var i =0;
-        $("#id_popup_table TBODY TR").each(function() {
-        var row = $(this);
-        var roletype_value = dropdown_values[i][0]
-        $(row.find("TD").eq(1).find("select option[value="+roletype_value+"]")).attr('selected','selected');
-        i++;
-    });
-    $("#id_del_ind_checkbox").prop("hidden", true);
-    $('#myModal').modal('show');
-    table_sort_filter('display_basic_table');
-    table_sort_filter('id_popup_table');
-}
-
 //onclick of cancel empty the popup table body and error messages
 $(".remove_upload_data").click(() => {
     $("#id_error_msg").html("");
@@ -76,24 +19,6 @@ $(".remove_upload_data").click(() => {
     $("#id_check_data").prop("hidden", true);
     $('#id_popup_table').DataTable().destroy();
 });
-
-// on click add icon display the row in to add the new entries
-function add_popup_row() {
-    $("#error_msg_id").css("display", "none")
-    basic_add_new_html = '';
-    var display_db_data = '';
-    var getid = $(".roles:last").attr("id");
-    var getindex = getid.split("-")[1]
-    var inc_index = Number(getindex)+1
-    $('#id_popup_table').DataTable().destroy();
-    $(".modal").on("hidden.bs.modal", function () {
-        $("#id_error_msg").html("");
-    });
-    new_row_data();  // Add a new row in popup
-    if (GLOBAL_ACTION == "roles_upload") {
-        $(".class_del_checkbox").prop("hidden", false);
-    }
-}
 
 //onclick of cancel display the table in display mode............
 function display_basic_db_data() {

@@ -43,7 +43,7 @@
                         <tr>
                             <th id="hg_select_checkbox" hidden>
                                 <div id="id_check_all" style="display:none;">
-                                    <INPUT type="checkbox" onchange="checkAll(this)" name="chk[]">
+                                    <input type="checkbox" id="selectAll" name="chk[]">
                                 </div>
                             </th>
                             <th>Authorization Object </th>
@@ -115,7 +115,6 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-primary remove_upload_data" title="Cancel" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
                     <button id="id_delete_duplicate" class="btn btn-primary" style="display:none;" type="button" onclick="delete_duplicate()"><i class="fa fa-trash"></i> delete duplicates</button>
-                    <button id="id_check_data" style="display:none;" class="btn btn-primary" type="button" onclick="check_data()"><i class="fas fa-check"></i> check</button>
                     <button class="btn btn-primary" title="Save" id="save_id"><i class="fas fa-save"></i> save</button>
                 </div>
             </div>
@@ -181,40 +180,36 @@
         get_main_table_data(); //Read data from main table
         // compare for duplicates in popup
         [no_duplicate_value,error_message] = compare_table_for_duplicate_entries(validate_add_attributes, authobj_data)
-        if (error_message){
+        if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
+            [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
+        }
+        if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
+            var add_basic_data = '';
+            var auth_obj_data_array = authobj_data;
+            $('#id_save_confirm_popup').modal('hide');
+            data = {'data':authobj_data,'table_name':'AuthorizationObject','action':GLOBAL_ACTION}
+            OpenLoaderPopup();
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'eProc_Configuration:create_update_application_data' %}",
+                data: JSON.stringify(data),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function(Response) {
+                    rendered_auth_obj_data = Response[0];
+                    rendered_auth_obj_id = Response[2];
+                    display_basic_db_data();
+                    dropdown_value();
+                    $('#auth_obj_Modal').modal('hide');
+                    success_response(Response);  // Display Response data
+                    CloseLoaderPopup();
+                }
+            });
+        }
+        else if (error_message){
             display_error_message(error_message)
         }
-        else{
-            if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
-                [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
-            }
-            if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
-                var add_basic_data = '';
-                var auth_obj_data_array = authobj_data;
-                $('#id_save_confirm_popup').modal('hide');
-                data = {'data':authobj_data,'table_name':'AuthorizationObject','action':GLOBAL_ACTION}
-                OpenLoaderPopup();
-                $.ajax({
-                    type: 'POST',
-                    url: "{% url 'eProc_Configuration:create_update_application_data' %}",
-                    data: JSON.stringify(data),
-                    contentType: "application/json; charset=utf-8",
-                    dataType: "json",
-                    success: function(Response) {
-                        rendered_auth_obj_data = Response[0];
-                        rendered_auth_obj_id = Response[2];
-                        display_basic_db_data();
-                        dropdown_value();
-                        $('#auth_obj_Modal').modal('hide');
-                        success_response(Response);  // Display Response data
-                        CloseLoaderPopup();
-                    }
-                });
-            }
-            else if (error_message){
-                display_error_message(error_message)
-            }
-        }
+        table_sort_filter('id_popup_table');
     }
 
     //delete the selected row in db................
@@ -309,6 +304,25 @@
         });
     }
 
+    // on click add icon display the row in to add the new entries
+function add_popup_row() {
+    dropdown_value();
+    $("#error_msg_id").css("display", "none")
+    basic_add_new_html = '';
+    var display_db_data = '';
+    var getid = $(".authobject:last").attr("id");
+    var getindex = getid.split("-")[1]
+    var inc_index = Number(getindex)+1
+    $('#id_popup_table').DataTable().destroy();
+    $(".modal").on("hidden.bs.modal", function () {
+        $("#id_error_msg").html("");
+    });
+    new_row_data(); // Function for add a new row data
+    if (GLOBAL_ACTION == "auth_obj_upload") {
+        $(".class_del_checkbox").prop("hidden", false);
+    }
+}
+
     //**********************************************************
     function onclick_copy_update_button() {
         OpenLoaderPopup();
@@ -324,30 +338,24 @@
                 dropdown_value();
                 $("#error_msg_id").css("display", "none")
                 $("#id_popup_tbody").empty();
-                $('#display_basic_table').DataTable().destroy();
                 $('#id_popup_table').DataTable().destroy();
                 $("#id_popup_tbody").empty();
                 //Reference the Table.
-                var grid = document.getElementById("display_basic_table");
+                var res = get_all_checkboxes(); // Function to get all the checkboxes
+                var $chkbox_all = $('td input[type="checkbox"]', res);
                 //Reference the CheckBoxes in Table.
-                var checkBoxes = grid.getElementsByTagName("INPUT");
                 var edit_basic_data = "";
                 var dropdown_values = [];
                 //Loop through the CheckBoxes.
-                for (var i = 1; i < checkBoxes.length; i++) {
-                    if (checkBoxes[i].checked) {
-                        var row = checkBoxes[i].parentNode.parentNode;
+                for (var i = 0; i < $chkbox_all.length; i++) {
+                    if ($chkbox_all[i].checked) {
+                        var row = $chkbox_all[i].parentNode.parentNode;
                         var auth_obj_id = row.cells[1].innerHTML;
                         var auth_level= row.cells[3].innerHTML;
                         dropdown_values.push([auth_obj_id, auth_level])
                         if (GLOBAL_ACTION == "UPDATE") {
                             edit_basic_data += '<tr><td hidden><input type="checkbox" required></td><td><select type="text" class="input form-control" id="authobjectid"  name="authobjectid" disabled><option>' + row.cells[1].innerHTML + '</option></select></td><td><input class="input form-control description" id="description-1" value="' + row.cells[2].innerHTML + '" type="text"  name="description" disabled></td><td><select id="authobject_type" name="authobject_type" class="input form-control" value="' + row.cells[3].innerHTML + '">' + auth_type_dropdown + '</select></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
                             $("#header_select").prop("hidden", true);
-                        }
-                        else{
-                            unique_input = '<select class="form-control">' + auth_obj_id_add_dropdown + '</select>'
-                            edit_basic_data += '<tr ><td><input type="checkbox" required></td><td><select class="form-control">' + auth_obj_id_dropdown + '</select></td><td><select class="form-control">' + auth_obj_level_dropdown + '</select></td><td><select class="form-control">' + auth_obj_level_id_dropdown + '</select></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
-                            $("#header_select").prop("hidden", false);
                         }
                     }
                 }
@@ -363,11 +371,30 @@
                 });
                 $("#id_del_ind_checkbox").prop("hidden", true);
                 $('#auth_obj_Modal').modal('show');
-                table_sort_filter('display_basic_table');
                 table_sort_filter('id_popup_table');
                 $('#auth_obj_Modal').modal('show');
                 CloseLoaderPopup();
             }
+        });
+    }
+
+    //Function to highlight duplicate records
+    function display_duplicate_entry(common) {
+        var auth_obj_check = new Array;
+        $("#id_popup_table TBODY TR").each(function() {
+            var row = $(this);
+            auth_obj_dic = {}
+            auth_obj_dic.auth_obj_id = row.find("TD").eq(1).find("select option:selected").val();
+            var compare =   auth_obj_dic.auth_obj_id
+            auth_obj_check.push(compare);
+            jQuery.grep(auth_obj_check, function(el) {
+                if (jQuery.inArray(el, common) != -1) {
+                    row_color_highlight(row);
+                }
+                else {
+                    row_color_no_highlight(row);
+                }
+            });
         });
     }
 </script>

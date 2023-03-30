@@ -44,7 +44,7 @@
                     <tr>
                         <th id="hg_select_checkbox" hidden>
                             <div id="id_check_all" style="display:none;">
-                                <input type="checkbox" onchange="checkAll(this)" name="chk[]">
+                                <input type="checkbox" id="selectAll" name="chk[]">
                             </div>
                         </th>
                         <th>Calendar Number</th>
@@ -229,11 +229,10 @@
     function onclick_copy_update_button(data) {
         $("#error_msg_id").css("display", "none")
         $("#id_popup_tbody").empty();
-        $('#display_basic_table').DataTable().destroy();
         //Reference the Table.
-        var grid = document.getElementById("display_basic_table");
+        var res = get_all_checkboxes(); // Function to get all the checkboxes
+        var $chkbox_all = $('td input[type="checkbox"]', res);
         //Reference the CheckBoxes in Table.
-        var checkBoxes = grid.getElementsByTagName("INPUT");
         var edit_basic_data = "";
         var guid = '';
         var dropdown_values = [];
@@ -241,9 +240,9 @@
         calendar_drpdown();
         var country_code, cntry_name;
         //Loop through the CheckBoxes.
-        for (var i = 1; i < checkBoxes.length; i++) {
-            if (checkBoxes[i].checked) {
-                var row = checkBoxes[i].parentNode.parentNode;
+        for (var i = 0; i < $chkbox_all.length; i++) {
+            if ($chkbox_all[i].checked) {
+                var row = $chkbox_all[i].parentNode.parentNode;
                 if(GLOBAL_ACTION == "UPDATE"){
                     guid = row.cells[6].innerHTML;
                     $("#calenderid").prop("hidden", false);
@@ -293,7 +292,6 @@
         $("#id_del_ind_checkbox").prop("hidden", true);
         $('#Calendar_Modal').modal('show');
         table_sort_filter('id_popup_table');
-        table_sort_filter('display_basic_table');
     }
 
     // validate and save for add,copy,update and upload data
@@ -301,44 +299,41 @@
 		$('#success_msg_id').empty();
         $('#id_popup_table').DataTable().destroy();
         var Tabledata = { "Dbl_clck_tbl_id": 'CalenderConfig' };
-        $('#display_basic_table').DataTable().destroy();
+        // $('#display_basic_table').DataTable().destroy();
         get_main_table_data(); //Read data from main table
         // compare for duplicates in popup
         [no_duplicate_value,error_message] = compare_table_for_duplicate_entries(validate_add_attributes, calendarconfig_data)
-        if (error_message) {
+        if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
+            // compare main table and pop up for duplicate values
+            [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
+        }
+        if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
+            var calendar_data_array = calendarconfig_data;
+            $('#id_save_confirm_popup').modal('hide');
+            data = {'data':calendarconfig_data,'table_name':'CalenderConfig','action':GLOBAL_ACTION}
+            OpenLoaderPopup();
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'eProc_Configuration:create_update_application_data' %}",
+                data: JSON.stringify(data),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (Response) {
+                    rendered_calendar_data = Response[0];
+                    display_basic_db_data();
+                    $('#Calendar_Modal').modal('hide');
+                    success_response(Response);
+                    DatePicker();
+                    MultipleSelect();
+                    CloseLoaderPopup();
+                }
+            });
+        }
+        else if (error_message) {
             display_error_message(error_message)
-        } else {
-            if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
-                // compare main table and pop up for duplicate values
-                [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
-            }
-            if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
-                var calendar_data_array = calendarconfig_data;
-                $('#id_save_confirm_popup').modal('hide');
-                data = {'data':calendarconfig_data,'table_name':'CalenderConfig','action':GLOBAL_ACTION}
-                OpenLoaderPopup();
-                $.ajax({
-                    type: 'POST',
-                    url: "{% url 'eProc_Configuration:create_update_application_data' %}",
-                    data: JSON.stringify(data),
-                    contentType: "application/json; charset=utf-8",
-                    dataType: "json",
-                    success: function (Response) {
-                        rendered_calendar_data = Response[0];
-                        display_basic_db_data();
-                        $('#Calendar_Modal').modal('hide');
-                        success_response(Response);
-                        DatePicker();
-                        MultipleSelect();
-                        CloseLoaderPopup();
-                    }
-                });
-            }
-            else if (error_message) {
-                display_error_message(error_message)
-            } 
         } 
-    }
+        table_sort_filter('id_popup_table');
+    } 
 
     // on click add icon display the row in to add the new entries
     function add_popup_row() {
@@ -376,7 +371,7 @@
         GLOBAL_ACTION = 'DELETE'
         main_table_country_checked = [];
         var Tabledata = { "Dbl_clck_tbl_id": 'CalenderConfig' };
-        $('#display_basic_table').DataTable().destroy();
+        // $('#display_basic_table').DataTable().destroy();
         get_selected_row_data(); // Function call to get the selected row data
         $('#id_delete_confirm_popup').modal('hide');
         data = {'data':main_table_calendar_checked, 'table_name': 'CalenderConfig', 'action': GLOBAL_ACTION }

@@ -3,6 +3,44 @@ var validate_add_attributes = [];
 var main_table_low_value = [];
 var approval_limit={};
 
+
+//**************************************
+function approval_limit_find(company_num) {
+    corresponding_values = {};
+    corresponding_values.app_code_id_dropdown = '';
+    corresponding_values.other_dropdn = '';
+    company_list = company_list;
+    unique_user_name= [];
+    unique_app_code = [];
+    for (var i = 0; i < company_list.length; i++) {
+        compare_dict = {};
+        compare_dict = company_list[i]
+        if (company_num == compare_dict.company_id) {
+            unique_app_code.push(compare_dict.app_code_id);
+        }
+    }
+    for (var i = 0; i < arrDistinct.length; i++) {
+        corresponding_values.other_dropdn += '<option value="'+arrDistinct[i]+'">' + arrDistinct[i] + '</option>'
+    }
+    appcodeDistinct = [];
+    $(unique_app_code).each(function (index, item) {
+        if ($.inArray(item, appcodeDistinct) == -1)
+        appcodeDistinct.push(item);
+    });
+    for (var i = 0; i < appcodeDistinct.length; i++) {
+        corresponding_values.app_code_id_dropdown += '<option value="'+appcodeDistinct[i]+'">' + appcodeDistinct[i] + '</option>'
+    }
+    return corresponding_values
+}
+
+//**********************************
+function company_dropdwn_change(row){
+    row.find("TD").eq(3).find("select").empty()
+    company_num = row.find("TD").eq(1).find("select option:selected").val();
+    var comp_val = approval_limit_find(company_num)
+    row.find("TD").eq(3).find("select").append(comp_val.app_code_id_dropdown)
+}
+
 //onclick of upload button display id_data_upload popup and set GLOBAL_ACTION button value
 function onclick_upload_button() {
     GLOBAL_ACTION = "approval_limit_upload"
@@ -45,6 +83,17 @@ $("#error_msg_id").css("display", "none")
         $("#id_error_msg").html("");
     });
     new_row_data();   // Add a new row in popup
+    var company_num = '';
+    $("#id_popup_table TBODY TR").each(function () {
+        var row = $(this);
+        row.find("TD").eq(3).find("select").empty()
+        company_num = row.find("TD").eq(1).find("select option:selected").val();
+        var assign_val = approval_limit_find(company_num)
+        row.find("TD").eq(3).find("select").append(assign_val.app_code_id_dropdown)
+        $(row.find("TD").eq(1).find("select")).change(function () {
+              company_dropdwn_change(row);
+        })
+    })
     if (GLOBAL_ACTION == "UPLOAD") {
         $(".class_del_checkbox").prop("hidden", false);
     }

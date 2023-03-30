@@ -934,7 +934,8 @@ def upload_prod_cat_images(request):
     file_name = request.POST.get('file_name')
     prod_cat = request.POST.get('prod_cat_id')
     save_prod_cat_image_to_db(prod_cat, file_name, attached_file)
-    return JsonResponse(status, safe=False)
+    status = get_unspsc_cat_cust_data()
+    return JsonResponse(status,safe=False)
 
 
 def extract_orgcompany_data(request):
@@ -1254,7 +1255,9 @@ def approval_limit(request):
                                                                           'app_code_id', 'company_id'))
     upload_data_company = list(OrgCompanies.objects.filter(client=client, del_ind=False).values('company_id'))
     upload_data_app_code_id = list(
-        ApproverLimitValue.objects.filter(client=client, del_ind=False).values('app_code_id'))
+        ApproverLimitValue.objects.filter(client=client, del_ind=False).values('app_lim_dec_guid', 'app_types',
+                                                                               'app_code_id', 'currency_id',
+                                                                               'upper_limit_value', 'company_id'))
 
     user_details = list(UserData.objects.filter(is_active=True, client=client, del_ind=False).values('username'))
     messages_list = get_ui_messages(CONST_COFIG_UI_MESSAGE_LIST)

@@ -125,7 +125,11 @@ function changeAccCat(element,loop_counter) {
         $('#gl_acc_change_id').css('display','none');
         var account_assignment_category = $('#ScAccounting-acc_cat-' + rendered_header_level_acc_guid[0]).html().trim()
         var account_assignment_value = $('#ScAccounting-acc_val-' + rendered_header_level_acc_guid[0]).html().trim()
-        update_accounting_popup_data(account_assignment_category,account_assignment_value,gl_acc_value)
+        var header_account_assignment_category = account_assignment_category.split(' - ')[0]
+        var data = {}
+        data.acc = header_account_assignment_category
+        data.acc_desc = account_assignment_category
+        update_accounting_popup_data(data, account_assignment_value, gl_acc_value)
     }
     else
     {
@@ -137,7 +141,11 @@ function changeAccCat(element,loop_counter) {
         var account_assignment_category = $('#ScAccounting-acc_cat-' + accounting_change_guid).html().trim()
         var account_assignment_value = $('#ScAccounting-acc_val-' + accounting_change_guid).html().trim()
         gl_acc_value = $('#ScAccounting-gl_acc_num-' + accounting_change_guid).html().trim()
-        update_accounting_popup_data(account_assignment_category,account_assignment_value,gl_acc_value)
+        var header_account_assignment_category = account_assignment_category.split(' - ')[0]
+        var data = {}
+        data.acc = header_account_assignment_category
+        data.acc_desc = account_assignment_category
+        update_accounting_popup_data(data, account_assignment_value, gl_acc_value)
 
     }
     $('#change_acc_cat').modal('show');

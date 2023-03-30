@@ -8,6 +8,7 @@ var CONST_MULTIPLE = ''
 var manager_detail_initial = shopping_cart_errors.manager_detail.length
 var sc_errors_initial = shopping_cart_errors.sc_error
 var sc_info_messsages = shopping_cart_errors.sc_info
+var error_msg_info = shopping_cart_errors.error_msg_info
 var error_messages_initial = ''
 
 if (sc_info_messsages.length > 0){
@@ -26,7 +27,7 @@ if (sc_info_messsages.length > 0){
     $('#sc_info_messages').show()
 }
 
-if (sc_errors_initial.length == 0 && manager_detail_initial != 0) {
+if (sc_errors_initial.length == 0 && error_msg_info.length == 0 && manager_detail_initial != 0) {
 
                     var msg = "JMSG042";
                     var msg_type ;
@@ -63,7 +64,9 @@ if (sc_errors_initial.length == 0 && manager_detail_initial != 0) {
         error_messages_initial += shopping_cart_errors['msg_info'] + '<br>'
     }
     if (shopping_cart_errors['error_msg_info']) {
-        error_messages_initial += shopping_cart_errors['error_msg_info']+ '<br>'
+        for (i = 0; i < shopping_cart_errors['error_msg_info'].length; i++) {
+        error_messages_initial += shopping_cart_errors['error_msg_info'][i]+ '<br>'
+        }
     }
     $('#sc_error_msg').html(error_messages_initial);
     document.getElementById('sc_success_messages').style.display = 'none';
@@ -527,7 +530,11 @@ function changeAccCat(acc_id) {
         $('#gl_acc_change_id').css('display', 'none');
         var account_assignment_category = $('#change_acc_type').html().trim()
         var account_assignment_value = $('#change_acc_value').html().trim()
-        update_accounting_popup_data(account_assignment_category, account_assignment_value, gl_acc_value)
+        var header_account_assignment_category = account_assignment_category.split(' - ')[0]
+        var data = {}
+        data.acc = header_account_assignment_category
+        data.acc_desc = account_assignment_category
+        update_accounting_popup_data(data, account_assignment_value, gl_acc_value)
     }
     else {
         //var gl_acc_id = 'gl_acc_val_'+edit_account_assignment_cat
@@ -536,17 +543,18 @@ function changeAccCat(acc_id) {
         var gl_acc_value = $('#gl_acc_val_' + edit_account_assignment_cat).text().trim();
         var html_option = ''
         var html_option_default = '';
+        var item_account_assignment_category = acc_cat.split(' - ')[0]
 
         // based on item acc type,put option in first place
-        $('#select_acc_type option[value="' + acc_cat + '"]').remove()
-        html_option_default = '<option value="' + acc_cat + '" selected>' + acc_cat + '</option>'
+        $('#select_acc_type option[value="' + item_account_assignment_category + '"]').remove()
+        html_option_default = '<option value="' + item_account_assignment_category + '" selected>' + acc_cat + '</option>'
         $("#select_acc_type").prepend(html_option_default);
         $("#select_acc_type")[0].options[0].selected = true;
 
         var acc_assign_value_field_class = document.getElementsByClassName('account_assignment_secondary');
         for (i = 0; i < acc_assign_value_field_class.length; i++) {
             acc_assign_value_field_id = acc_assign_value_field_class[i].id;
-            if (acc_cat != acc_assign_value_field_id) {
+            if (item_account_assignment_category != acc_assign_value_field_id) {
                 document.getElementById(acc_assign_value_field_id).value = ''
             } else {
                 document.getElementById(acc_assign_value_field_id).value = acc_cat_val

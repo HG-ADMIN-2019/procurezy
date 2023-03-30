@@ -18,6 +18,7 @@ from django.shortcuts import render
 from pymysql import NULL
 
 # from eProc_Application_Monitoring.Utilities.application_monitoring_generic import application_monitoring_docnum_search
+from eProc_Attributes.models.org_attribute_models import OrgAttributesLevel
 from eProc_Basic.Utilities.constants.constants import CONST_DATE_FORMAT, CONST_DECIMAL_NOTATION, \
     CONST_ERROR_SPLIT_CRITERIA, CONST_OTHER_ERROR
 from eProc_Basic.Utilities.functions.django_query_set import DjangoQueries
@@ -27,6 +28,7 @@ from eProc_Basic.Utilities.functions.json_parser import JsonParser
 from eProc_Basic.Utilities.functions.str_concatenate import concatenate_str
 from eProc_Basic_Settings.views import JsonParser_obj
 from eProc_Configuration.models import *
+from eProc_Configuration.models.basic_data import Country
 from eProc_Configuration.models.master_data import OrgPorg
 from eProc_Doc_Search_and_Display.Utilities.search_display_generic import get_hdr_data, get_hdr_data_app_monitoring
 from eProc_Emails.models import EmailUserMonitoring, EmailDocumentMonitoring, EmailSupplierMonitoring
@@ -34,8 +36,9 @@ from eProc_Org_Model.Utilities import client
 from eProc_Org_Model.models.org_model import OrgModel
 from eProc_Org_Support.models import OrgAnnouncements
 # from eProc_Org_Support.views import org_announcement_search
+from eProc_Org_Support.views import org_announcement_search
 from eProc_Purchase_Order.Utilities.purchase_order_generic import CreatePurchaseOrder, retrigger_po, check_po
-from eProc_Registration.models import UserData
+from eProc_Registration.models import UserData, UserDataHistory
 from eProc_Reports.Report_Forms.SearchDoc_forms import DocumentSearchForm, ApplicationMonitoringForm, \
     EmailUserMonitoringForm
 from eProc_Reports.Report_Forms.user_report_form import UserReportForm
@@ -46,7 +49,8 @@ from eProc_Shopping_Cart.models import ScHeader, ScItem, ScPotentialApproval, Sc
 from eProc_Suppliers.Utilities.supplier_generic import supplier_detail_search
 from eProc_Suppliers.Utilities.supplier_specific import get_supplier_data, update_country_encrypt
 from eProc_Suppliers.models import OrgSuppliers
-from eProc_Users.Utilities.user_generic import user_detail_search
+from eProc_Users.Utilities.user_generic import user_detail_search, get_usertype_values, \
+    get_emp_data, emp_search_data, set_search_data
 from django.http import QueryDict
 import sys
 from datetime import datetime
@@ -70,53 +74,44 @@ def admin_tool(req):
 
 def user_search(request):
     update_user_info(request)
-    dropdown_usertype_values = list(
-        FieldTypeDescription.objects.filter(field_name='user_type', del_ind=False,
-                                            client=global_variables.GLOBAL_CLIENT).values('field_type_id',
-                                                                                          'field_type_desc'
-                                                                                          ))
+    # dropdown_usertype_values = list(
+    #     FieldTypeDescription.objects.filter(field_name='user_type', del_ind=False,
+    #                                         client=global_variables.GLOBAL_CLIENT).values('field_type_id',
+    #                                                                                       'field_type_desc'
+    #                                                                                       ))
     context = {
         'inc_nav': True,
         'inc_footer': True,
         'is_slide_menu': True,
         'get_country_id': get_country_id(),
         'is_admin_active': True,
-        'dropdown_usertype_values': dropdown_usertype_values,
+        'dropdown_usertype_values': get_usertype_values(),
     }
 
     if request.method == 'GET':
         encrypted_email = []
 
-        employee_results = django_query_instance.django_filter_only_query(UserData, {
-            'client': global_variables.GLOBAL_CLIENT, 'del_ind': False
-        })
-        for emails in employee_results:
-            encrypted_email.append(encrypt(emails.email))
+        # employee_results = django_query_instance.django_filter_only_query(UserData, {
+        #     'client': global_variables.GLOBAL_CLIENT, 'del_ind': False
+        # })
+        employee_results = get_emp_data()
+        # for emails in employee_results:
+        #     encrypted_email.append(encrypt(emails.email))
         # to be put in function
 
-        context['employee_results'] = zip(employee_results, encrypted_email)  # remove zip
-
+        # context['employee_results'] = zip(employee_results, encrypted_email)  # remove zip
+        context['employee_results'] = employee_results
     if request.method == 'POST':
-        encrypted_email = []
         search_fields = {}
         for data in request.POST:
             if data != 'csrfmiddlewaretoken':
                 value = request.POST[data]
                 if data == 'user_locked':
-                    if value == 'on':
-                        value = True
-                    else:
-                        value = False
+                    value = set_search_data(data, value)
                 if data == 'pwd_locked':
-                    if value == 'on':
-                        value = True
-                    else:
-                        value = False
+                    value = set_search_data(data, value)
                 if data == 'is_active':
-                    if value == 'on':
-                        value = True
-                    else:
-                        value = False
+                    value = set_search_data(data, value)
                 if value != '':
                     search_fields[data] = value
 
@@ -127,13 +122,13 @@ def user_search(request):
         search_fields['user_type'] = request.POST.get('user_type')
         search_fields['employee_id'] = request.POST.get('employee_id')
 
-        employee_results = user_detail_search(**search_fields)
+        # employee_results = user_detail_search(**search_fields)
+        employee_results = emp_search_data(search_fields)
+        #
+        # for user_email in employee_results:
+        #     encrypted_email.append(encrypt(user_email['email']))
 
-        for user_email in employee_results:
-            encrypted_email.append(encrypt(user_email['email']))
-
-        print(employee_results)
-        context['employee_results'] = zip(employee_results, encrypted_email)
+        context['employee_results'] = employee_results
     #     funtion to define from 131 - 135
 
     return render(request, 'User Search/user_search.html', context)
@@ -1044,18 +1039,11 @@ def delete_user(request):
                                                           {'email__in': user_data['data'],
                                                            'del_ind': False}, None, None)
     for user in user_info:
-        if django_query_instance.django_existence_check(ScHeader,
-                                                        {'requester': user['username'],
-                                                         'del_ind': False}) and user['object_id_id'] is not NULL:
-
-            django_query_instance.django_update_query(UserData,
-                                                      {'email': user['email'],
-                                                       'client': global_variables.GLOBAL_CLIENT},
-                                                      {'del_ind': True})
-        else:
-            django_query_instance.django_filter_delete_query(UserData,
-                                                             {'email': user['email'],
-                                                              'client': global_variables.GLOBAL_CLIENT})
+        delete_org_model_emp_data(user)
+        delete_master_emp_data(user)
+        django_query_instance.django_filter_delete_query(UserData, {'email': user['email'],
+                                                                    'client': global_variables.GLOBAL_CLIENT})
+        create_emp_history_data(user)
         success_message = "User deleted"
 
     employee_results = django_query_instance.django_filter_query(UserData, {
@@ -1064,6 +1052,79 @@ def delete_user(request):
 
     response = {'employee_results': employee_results, 'success_message': success_message}
     return JsonResponse(response, safe=False)
+
+
+def create_emp_history_data(user):
+    django_query_instance.django_create_query(UserDataHistory, {
+        'client': global_variables.GLOBAL_CLIENT,
+        'username': user['username'],
+        'email': user['email'],
+        'person_no': user['person_no'],
+        'form_of_address': user['form_of_address'],
+        'first_name': user['first_name'],
+        'last_name': user['last_name'],
+        'gender': user['gender'],
+        'phone_num': user['phone_num'],
+        'password': user['password'],
+        'date_joined': user['date_joined'],
+        'first_login': user['first_login'],
+        'last_login': user['last_login'],
+        'is_active': user['is_active'],
+        'is_superuser': user['is_superuser'],
+        'is_staff': user['is_staff'],
+        'date_format': user['date_format'],
+        'employee_id': user['employee_id'],
+        'decimal_notation': user['decimal_notation'],
+        'user_type': user['user_type'],
+        'login_attempts': user['login_attempts'],
+        'user_locked': user['user_locked'],
+        'pwd_locked': user['pwd_locked'],
+        'sso_user': user['sso_user'],
+        'user_data_created_at': user['user_data_created_at'],
+        'user_data_created_by': user['user_data_created_by'],
+        'user_data_changed_at': user['user_data_changed_at'],
+        'user_data_changed_by': user['user_data_changed_by'],
+        'valid_from': user['valid_from'],
+        'valid_to': user['valid_to'],
+        'del_ind': user['del_ind'],
+        'object_id': user['object_id_id'],
+        'language_id': django_query_instance.django_get_query(Languages, {'language_id': user['language_id_id']}),
+        'time_zone': django_query_instance.django_get_query(TimeZone, {'time_zone': user['time_zone_id']}),
+        'currency_id': django_query_instance.django_get_query(Currency, {'currency_id': user['currency_id_id']})
+    })
+
+
+def delete_master_emp_data(user):
+    if django_query_instance.django_existence_check(WorkflowACC,
+                                                    {'app_username': user['username'],
+                                                     'del_ind': False}):
+        django_query_instance.django_filter_delete_query(WorkflowACC, {'app_username': user['username'],
+                                                                       'client': global_variables.GLOBAL_CLIENT})
+    if django_query_instance.django_existence_check(ApproverLimit,
+                                                    {'approver_username': user['username'],
+                                                     'del_ind': False}):
+        django_query_instance.django_filter_delete_query(ApproverLimit, {'approver_username': user['username'],
+                                                                         'client': global_variables.GLOBAL_CLIENT})
+    if django_query_instance.django_existence_check(SpendLimitId,
+                                                    {'spender_username': user['username'],
+                                                     'del_ind': False}):
+        django_query_instance.django_filter_delete_query(SpendLimitId, {'spender_username': user['username'],
+                                                                        'client': global_variables.GLOBAL_CLIENT})
+
+
+def delete_org_model_emp_data(user):
+    if django_query_instance.django_existence_check(OrgAttributesLevel,
+                                                    {'object_id': user['object_id_id'] and user[
+                                                        'object_id_id'] is not NULL,
+                                                     'del_ind': False}):
+        django_query_instance.django_filter_delete_query(OrgAttributesLevel, {'object_id': user['object_id_id'],
+                                                                              'client': global_variables.GLOBAL_CLIENT})
+    if django_query_instance.django_existence_check(OrgModel,
+                                                    {'object_id': user['object_id_id'] and user[
+                                                        'object_id_id'] is not NULL,
+                                                     'del_ind': False}):
+        django_query_instance.django_filter_delete_query(OrgModel, {'object_id': user['object_id_id'],
+                                                                    'client': global_variables.GLOBAL_CLIENT})
 
 
 def delete_supplier(request):

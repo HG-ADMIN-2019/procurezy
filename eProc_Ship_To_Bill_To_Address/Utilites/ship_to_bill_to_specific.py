@@ -25,7 +25,7 @@ class Address_desc:
             }, 'address_number')
 
             addr_detail = django_query_instance.django_filter_only_query(OrgAddress, {
-                'address_number__in': addr_values, 'client': client
+                'address_number__in': addr_values, 'client': client,'del_ind':False
             }).values()
 
         return addr_detail

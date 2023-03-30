@@ -3,79 +3,6 @@
 
 {% block title %} Employee Management (Admin Tool){% endblock %}
 {% block maincontent %}
-<style>
-.toggle {
-  -webkit-box-sizing: border-box;
-  -moz-box-sizing: border-box;
-  box-sizing: border-box;
-  display: block;
-  height: auto;
-  width: 7.5rem;
-  margin: auto;
-  cursor: pointer;
-}
-.toggle-input {
-  display: none;
-  margin: 0;
-}
-.toggle-off,
-.toggle-on {
-  height: 1.8125rem;
-  width: 1.8125rem;
-  color: rgba(46, 45, 44, 0.1);
-  vertical-align: top;
-  text-align: center;
-  line-height: 1.8125rem !important;
-}
-.toggle-input:checked + .toggle-controller.default-success {
-  border: 0.125rem solid rgba(108, 211, 61, 0.75);
-  background: rgba(108, 211, 61, 0.375);
-}
-.toggle-input:checked + .toggle-controller.default-success:after {
-  left: 1.5625rem;
-}
-.toggle-controller.default-success {
-  position: relative;
-  display: inline-block;
-  height: 1.5625rem;
-  width: 3.125rem;
-  border: 0.125rem solid rgba(46, 45, 44, 0.05);
-  -webkit-border-radius: 1.5625rem;
-  -moz-border-radius: 1.5625rem;
-  border-radius: 1.5625rem;
-  -webkit-box-shadow: inset 0 0 0.1875rem rgba(46, 45, 44, 0.25);
-  -moz-box-shadow: inset 0 0 0.1875rem rgba(46, 45, 44, 0.25);
-  box-shadow: inset 0 0 0.1875rem rgba(46, 45, 44, 0.25);
-  background: rgba(46, 45, 44, 0.025);
-  -webkit-transition: all 0.25s ease;
-  -moz-transition: all 0.25s ease;
-  -o-transition: all 0.25s ease;
-  transition: all 0.25s ease;
-}
-.toggle-controller.default-success:after {
-  position: absolute;
-  top: 0;
-  left: 0;
-  content: '';
-  display: block;
-  height: 1.5625rem;
-  width: 1.5625rem;
-  -webkit-border-radius: 1.5625rem;
-  -moz-border-radius: 1.5625rem;
-  border-radius: 1.5625rem;
-  -webkit-box-shadow: 0 0.0625rem 0.125rem rgba(46, 45, 44, 0.2);
-  -moz-box-shadow: 0 0.0625rem 0.125rem rgba(46, 45, 44, 0.2);
-  box-shadow: 0 0.0625rem 0.125rem rgba(46, 45, 44, 0.2);
-  background: white;
-  -webkit-transition: all 0.25s ease;
-  -moz-transition: all 0.25s ease;
-  -o-transition: all 0.25s ease;
-  transition: all 0.25s ease;
-}
-.toggle-off.active {color:red;}
-.toggle-on.active {color:blue;}
-
-</style>
 
 <div class="container-fluid">
     <div class="mep-form_wrapper">
@@ -144,7 +71,7 @@
                             </div>
                             <div class="col-md">
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="user_locked">
+                                    <input class="form-check-input checkbox-size" type="checkbox" name="user_locked">
                                     <label class="form-check-label" for="">
                                         User Locked
                                     </label>
@@ -152,7 +79,7 @@
                             </div>
                             <div class="col-md">
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" id="pwd_locked" name="pwd_locked">
+                                    <input class="form-check-input checkbox-size" type="checkbox"  name="pwd_locked">
                                     <label class="form-check-label" for="">
                                         Password Locked
                                     </label>
@@ -160,7 +87,7 @@
                             </div>
                             <div class="col-md">
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="is_active" checked>
+                                    <input class="form-check-input checkbox-size" type="checkbox" name="is_active" checked>
                                     <label class="form-check-label" for="">
                                         Active
                                     </label>
@@ -178,7 +105,6 @@
                 </form>
             </div>
         </div>
-
         {% if employee_results.count > 0 %}
         <div class="search_result_count_card card">
             <div class="card-body">
@@ -193,11 +119,8 @@
             </div>
         </div>
         {% endif %}
-
-        <div id="error_msg_div" class="alert alert-success" hidden><span id="success_msg_id"></span></div>
-
+        <div style="margin-top:25px" id="error_msg_div" class="alert alert-success" hidden><span id="success_msg_id"></span></div>
         {% if employee_results %}
-
         <div class="card mt-5">
             <div>
                  <button class="btn btn-primary  btn-sm mt-2 ml-2"  title="Delete" id="id_delete_emp" value="emp_delete" data-toggle="modal" data-target="#id_delete_confirm_popup" style="display:none;" >
@@ -220,10 +143,10 @@
                         </tr>
                         </thead>
                         <tbody id="user_tab_tbody">
-                        {% for results, encrypted_email in employee_results %}
+                        {% for results in employee_results %}
                         <tr id="tr_{{results.email}}">
                             <td><input type="checkbox" class="emp_checkbox" onclick="valueChanged();"></td>
-                            <td><a href="{% url 'eProc_Admin_Tool:user_details_page' encrypted_email %}" id="{{results.employee_id}}" class="deletepop" target="_blank">{{results.employee_id}}</a></td>
+                            <td><a href="{% url 'eProc_Admin_Tool:user_details_page' results.encrypted_email %}" id="{{results.employee_id}}" class="deletepop" target="_blank">{{results.employee_id}}</a></td>
                             <td>{{results.username}}</td>
                             <td>{{results.first_name}}</td>
                             <td>{{results.last_name}}</td>
@@ -259,9 +182,10 @@
                                     </label>
                                 </label>
                             </td>
-                            <td>
-                                <i class="fas fa-trash-alt hg-icon-blue-primary" title="Delete User" id="{{results.email}}"
-                                    onclick="get_user_detail_to_delete(this.id)" ></i>
+                            <td class="item-action-icon-section">
+                                <span title="Delete address" onclick="get_user_detail_to_delete(this.id)" id="{{results.email}}">
+                                    <i class="material-icons item-action-icons">delete_outline</i>
+                                </span>
                             </td>
                         </tr>
                         {% endfor %}
@@ -337,10 +261,8 @@
                         </button>
                         <button class="btn btn-outline-danger" onclick="application_settings_delete_Row('id_popup_table')">
                             <i class="fa fa-trash"></i> delete
-
                         </button>
                     </div>
-
                     <div id="id_check_success_messages" class="alert alert-success check_success_message" hidden></div>
                     <div id="id_check_error_messages" class="alert alert-danger check_error_messages" hidden></div>
                     <div id="id_check_special_character_messages" class="alert alert-danger check_special_character_messages" hidden>
@@ -348,11 +270,9 @@
                         <p id="id_error_msg2" ></p>
                         <p id="id_error_msg3" ></p>
                     </div>
-
                     <div id="error_msg_id" class="alert alert-danger display-none" role="alert"><span id="error_message"></span></div>
                     <div id="id_warning_msg_id" class="alert alert-warning display-none" role="alert"></div>
                     <div id="id_info_msg_id" class="alert alert-primary display-none" role="alert"></div>
-
                     <div style="overflow:auto;">
                     <table class="class_popup_table table table-bordered mt-2" id="id_popup_table" >
                         <thead>
@@ -394,18 +314,14 @@
 
                         </tbody>
                     </table>
-
                 </div>
                 </div>
-
                 <!-- Modal footer -->
                 <div class="modal-footer">
-
                     <button type="button" class="btn btn-outline-primary remove_upload_data" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
                     <button id="id_delete_duplicate" class="btn btn-primary" style="display:none;" type="button" onclick="delete_duplicate()"><i class="fa fa-trash"></i> delete duplicates</button>
                     <button id="id_check_data" style="display:none;" class="btn btn-primary" type="button" onclick="check_data()"><i class="fas fa-check"></i> check</button>
                     <button class="btn btn-primary" id="save_id"><i class="fas fa-save"></i> save</button>
-
                 </div>
             </div>
         </div>
@@ -417,13 +333,11 @@
     <div class="modal fade" id="id_data_upload">
         <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
             <div class="modal-content">
-
                 <!-- Modal Header -->
                 <div class="modal-header">
                     <h5 class="modal-title">Data Upload</h5>
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
-
                 <!-- Modal body -->
                 <div class="modal-body">
                     <div>
@@ -432,7 +346,6 @@
                     <div><label> Upload a file</label></div>
                     <input type="file" id="id_file_data_upload" name="file">
                 </div>
-
                 <!-- Modal footer -->
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-primary" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
@@ -481,7 +394,6 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-primary" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
                     <button type="button" onclick="lock_active_change()" class="btn btn-primary"><i class="fas fa-check"></i> yes </button>
-
                 </div>
             </div>
         </div>
@@ -499,22 +411,22 @@ var data_delete = '';
 
 function reload()
 {
-localStorage.setItem("username", document.getElementById("username").value);
-localStorage.setItem("first_name", document.getElementById("first_name").value);
-localStorage.setItem("last_name", document.getElementById("last_name").value);
-localStorage.setItem("email", document.getElementById("email").value);
-localStorage.setItem("user_type", document.getElementById("user_type").value);
-localStorage.setItem("employee_id", document.getElementById("employee_id").value);
-OpenLoaderPopup();
+    localStorage.setItem("username", document.getElementById("username").value);
+    localStorage.setItem("first_name", document.getElementById("first_name").value);
+    localStorage.setItem("last_name", document.getElementById("last_name").value);
+    localStorage.setItem("email", document.getElementById("email").value);
+    localStorage.setItem("user_type", document.getElementById("user_type").value);
+    localStorage.setItem("employee_id", document.getElementById("employee_id").value);
+    OpenLoaderPopup();
 }
 
-$('#pwd_locked').change(function(){
-     if($(this).attr('checked')){
-          $(this).val('True');
-     }else{
-          $(this).val('False');
-     }
-});
+<!--$('#pwd_locked').change(function(){-->
+<!--     if($(this).attr('checked')){-->
+<!--          $(this).val('True');-->
+<!--     }else{-->
+<!--          $(this).val('False');-->
+<!--     }-->
+<!--});-->
 
 // Function to delete User
 function delete_user() {
@@ -525,15 +437,13 @@ function delete_user() {
     $.ajax({
         type: 'POST',
         url: "{% url 'eProc_Admin_Tool:delete_user' %}",
-<!--        data:JSON.stringify(data),-->
+        data:JSON.stringify(data),
         contentType: "application/json; charset=utf-8",
         dataType: "json",
         success: function (Response) {
             display_emp_data(Response.employee_results);
             $('#success_msg_id').text(Response.success_message)
-           // document.getElementById("success_msg_id").text = Response.success_message;
             $("#error_msg_div").prop("hidden",false)
-<!--            setTimeout(function(){$("#error_msg_div").prop("hidden",true);},5000)-->
             message_display_time();
         }
     });
@@ -593,7 +503,9 @@ function display_emp_data(emp_data){
          '<td>' + emp.is_active + '</td>'+
          '<td>' + emp.user_locked + '</td>'+
          '<td>' + emp.pwd_locked + '</td>'+
-         '<td><i class="fas fa-trash-alt hg-icon-blue-primary" title="Delete User" id="'+ emp.email +'" onclick="get_user_detail_to_delete(this.id)" ></i></td></tr>';
+         '<td class="item-action-icon-section"><span title="Delete address" onclick="get_user_detail_to_delete(this.id)" id="'+ emp.email +'">'+
+          '<i class="material-icons item-action-icons">delete_outline</i></span></td>'+
+         '</tr>';
             });
     $("#user_tab_tbody").append(emp_detail_html);
     table_sort_filter('user_tab');
@@ -621,9 +533,8 @@ function main_table_delete(){
         success: function (Response) {
             display_emp_data(Response.employee_results);
             $('#success_msg_id').text(Response.success_message)
-            //document.getElementById("success_msg_id").text = Response.success_message;
-            $("#error_msg_div").prop("hidden",false)
-<!--            setTimeout(function(){$("#error_msg_div").prop("hidden",true);},5000)-->
+            $("#error_msg_div").prop("hidden",false);
+            $("#id_delete_emp").prop("hidden",true);
             message_display_time();
         }
     });
@@ -984,9 +895,6 @@ function check_data() {
 }
 var data = {};
  $('.toggle-input').change(function() {
-    console.log(this.id);
-  //  data = (this.id).split('-')[0];
-    // document.getElementById("form_id_del").innerHTML = data;
         $('#id_confirm_popup').modal('show')
         if($(this).is(':checked')) {
             console.log('This is firing');
@@ -1011,7 +919,6 @@ function lock_active_change(){
              $('#id_confirm_popup').modal('hide');
               $('#success_msg_id').text("Changed Successfully");
             $("#error_msg_div").prop("hidden",false)
-<!--            setTimeout(function(){$("#error_msg_div").prop("hidden",true);},5000);-->
             message_display_time();
        },
        error: function(xhr, resp, text) {

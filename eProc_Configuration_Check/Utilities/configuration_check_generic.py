@@ -261,7 +261,7 @@ def check_acc_assign_desc_data(ui_data, status):
             print(acc_desc['account_assign_value'])
             dependent_count = dependent_count + 1
 
-        print(acc_desc)
+        print("desc ",acc_desc)
     # append message with count
     message_count_dic = {'file_count': file_count, 'delete_count': delete_count, 'invalid_count': invalid_count,
                          'duplicate_count': duplicate_count, 'update_count': update_count,

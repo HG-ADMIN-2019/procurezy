@@ -1,8 +1,12 @@
 from django.db.models import Q
 from eProc_Basic.Utilities.functions.django_q_query import django_q_query
 from eProc_Basic.Utilities.functions.django_query_set import DjangoQueries
+from eProc_Basic.Utilities.functions.encryption_util import encrypt
 from eProc_Basic.Utilities.global_defination import global_variables
+from eProc_Configuration.models import FieldTypeDescription
 from eProc_Registration.models import UserData
+
+django_query_instance = DjangoQueries()
 
 
 def user_detail_search(**kwargs):
@@ -23,10 +27,6 @@ def user_detail_search(**kwargs):
     for key, value in kwargs.items():
         value_list = []
         if value:
-            # if key == 'supplier_id':
-            #     supp_query = get_supplier_id(value)
-            # if key == 'prod_cat_id':
-            #     product_category_query = get_product_category_id(value)
             if key == 'username':
                 if '*' not in value:
                     value_list = [value]
@@ -46,6 +46,8 @@ def user_detail_search(**kwargs):
             if key == 'user_type':
                 if '*' not in value:
                     value_list = [value]
+                if value == 'All':
+                    value_list = ['Buyer', 'Support']
                 user_type_query = django_q_query(value, value_list, 'user_type')
             if key == 'employee_id':
                 if '*' not in value:
@@ -71,9 +73,45 @@ def user_detail_search(**kwargs):
                                                                   pwd_locked_query,
                                                                   user_locked_query,
                                                                   ))
-    # user_details_query = list(
-    #     UserData.objects.filter(username_query, email_query, client=client,
-    #                             del_ind=False
-    #                             ).values().order_by('username'))
-    # print(user_details_query)
     return user_details_query
+
+
+def get_usertype_values():
+    dropdown_usertype_values = list(
+        FieldTypeDescription.objects.filter(field_name='user_type', del_ind=False,
+                                            client=global_variables.GLOBAL_CLIENT).values('field_type_id',
+                                                                                          'field_type_desc'
+                                                                                          ))
+    return dropdown_usertype_values
+
+
+def get_emp_data():
+    employee_results = django_query_instance.django_filter_query(UserData,
+                        {'client': global_variables.GLOBAL_CLIENT, 'del_ind': False},
+                        None, None)
+
+    for emails in employee_results:
+        encrypted_email1 = encrypt(emails['email'])
+        emails['encrypted_email'] = encrypted_email1
+    return employee_results
+
+
+global encrypted_email
+
+
+def emp_search_data(search_fields):
+    employee_results = user_detail_search(**search_fields)
+    for user_email in employee_results:
+        encrypted_email = encrypt(user_email['email'])
+        user_email['encrypted_email'] = encrypted_email
+
+    return employee_results
+
+
+def set_search_data(data, value):
+    if data == 'user_locked':
+        if value == 'on':
+            value = True
+        else:
+            value = False
+    return value
