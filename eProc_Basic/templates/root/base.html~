@@ -14,7 +14,6 @@
     <!-- review -->
     <link rel="stylesheet" href="{% static 'styles/sc.css' %}" />
     <link rel="stylesheet" href="{% static 'styles/search.css' %}" />
-    <link rel="stylesheet" href="{% static 'styles/toggle-button.css' %}" />
     <!-- review -->
     <script src="{% static 'scripts/script.js' %}"></script>
     <!-- Font awesome -->

@@ -80,33 +80,33 @@
                                 
                                 <div class="row">
                                     <div class="form-group col-md">
-                                        <label>User Name </label><span class="hg_required"></span><br>
+                                        <label>User Name:</label><span class="hg_required"></span><br>
                                         {{ reg_form.username }}
                                     </div>
                                     <div class="form-group col-md">
-                                        <label>Employee Id</label><span class="hg_required"></span><br>
+                                        <label>Employee Id:</label><span class="hg_required"></span><br>
                                         {{ reg_form.employee_id }}
                                     </div>
                                     <div class="form-group col-md">
-                                        <label>User Type</label><span class="hg_required"></span><br>
+                                        <label>User Type:</label><span class="hg_required"></span><br>
                                         {{ reg_form.user_type }}
                                     </div>
                                     
                                 </div>
                                 <div class="row">
                                     <div class="form-group col-md">
-                                        <label>First Name</label><span class="hg_required"></span><br>
+                                        <label>First Name:</label><span class="hg_required"></span><br>
                                         
                                         {{ reg_form.first_name }}
                                     </div>
                                     <div class="form-group col-md">
-                                        <label>Last Name</label><br>
+                                        <label>Last Name:</label><br>
                                         {{ reg_form.last_name }}
                                     </div>
                                 </div>
                                 <div class="row">
                                     <div class="form-group col-md">
-                                        <label> Currency</label><span class="hg_required"></span><br>
+                                        <label> Currency:</label><span class="hg_required"></span><br>
 <!--                                        {{ reg_form.currency_id }}-->
                                         <select name="currency_id" id="id_currency_id" class="form-control hg_edit_display_mode" required >
                                          <option value="" selected>Select</option>
@@ -116,7 +116,7 @@
                                         </select>
                                     </div>
                                     <div class="form-group col-md">
-                                        <label>Language</label><span class="hg_required"></span><br>
+                                        <label>Language:</label><span class="hg_required"></span><br>
 <!--                                        {{ reg_form.language_id }}-->
                                         <select name="language_id" id="id_language_id" class="form-control hg_edit_display_mode" >
                                         <option value="" selected>Select</option>
@@ -126,7 +126,7 @@
                                         </select>
                                     </div>
                                     <div class="form-group col-md">
-                                        <label> Time Zone</label><span class="hg_required"></span><br>
+                                        <label> Time Zone:</label><span class="hg_required"></span><br>
 <!--                                        {{ reg_form.time_zone }}-->
                                         <select name="time_zone" id="id_time_zone" class="form-control hg_edit_display_mode" >
                                         <option value="" selected>Select</option>
@@ -148,11 +148,11 @@
                                 <h5 class="card-title">Contact Information</h5>
                                 <div class="row">
                                     <div class="form-group col-md">
-                                        <label>E-mail</label><span class="hg_required"></span><br>
+                                        <label>E-mail:</label><span class="hg_required"></span><br>
                                         {{ reg_form.email }}
                                     </div>
                                     <div class="form-group col-md">
-                                        <label>Phone Number</label><span class="hg_required"></span><br>
+                                        <label>Phone Number:</label><span class="hg_required"></span><br>
                                         {{ reg_form.phone_num }}
                                         <small class="form-text text-muted help-text-phone-numbers"></small>
                                     </div>
@@ -167,15 +167,15 @@
                                 <h5 class="card-title">Extended Data</h5>
                                 <div class="row">
                                     <div class="form-group col-md">
-                                        <label>Date Format</label><span class="hg_required"></span><br>
+                                        <label>Date Format:</label><span class="hg_required"></span><br>
                                         {{ reg_form.date_format }}
                                     </div>
                                     <div class="form-group col-md">
-                                        <label>Decimal Notation</label><span class="hg_required"></span><br>
+                                        <label>Decimal Notation:</label><span class="hg_required"></span><br>
                                         {{ reg_form.decimal_notation }}
                                     </div>
                                     <div class="form-group col-md hg-mt-2rem" >
-                                        <label>SSO User</label>&nbsp;&nbsp;<input type="checkbox" name="SSO User" value="SSO User">
+                                        <label>SSO User:</label>&nbsp;&nbsp;<input type="checkbox" name="SSO User" value="SSO User">
                                     </div>
                                    
                                 </div>
@@ -193,7 +193,7 @@
                     <div class="card card-shadow-1 mt-3">
                         <div class="card-body">
                             <h3>Organizational data</h3>
-                            <p>Organizational data</p>
+                            <p>Organizational data.</p>   
                         </div>
 
                     </div>

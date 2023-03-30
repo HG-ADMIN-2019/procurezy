@@ -390,14 +390,7 @@ function table_sort_filter_basic(class_name) {
 
 // Datatables script to generate sort and filter feature for tables
 function table_sort_filter(id_name) {
-    $('#' + id_name).DataTable(
-     {
-       checkboxes: {
-              selectRow: true,
-               selectAllPages: false
-           }
-     }
-    );
+    $('#' + id_name).DataTable();
 }
 
 function table_sort_filter_popup(id_name) {
@@ -719,6 +712,7 @@ function row_color_highlight(row){
 function row_color_no_highlight(row){
      $(row).css('background-color', '');
 }
+<<<<<<< HEAD
 
 
 function get_particular_key_value(myList,myKey){
@@ -730,3 +724,12 @@ function get_particular_key_value(myList,myKey){
     return myValues
 
 }
+=======
+// Function to get all the checkboxes from main table
+function get_all_checkboxes(){
+    var table = $('#display_basic_table').DataTable();
+    var $table = table.table().node();
+    var res = table.rows().nodes();
+    return res;
+}
+>>>>>>> shilpailkal

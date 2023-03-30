@@ -194,10 +194,10 @@
     function acc_value_desc_dropdown() {
         acc_ass_val_list = [];
         acc_ass_dropdwn = '';
+        var temp;
         $.each(rendered_accasscat_data, function (i, item) {
-            acc_ass_dropdwn += '<option value="' + item.account_assign_cat + '">' + item.account_assign_cat + '</option>'
-<!--            $('drop_down_attr').empty()-->
-<!--            $('drop_down_attr').append(acc_ass_dropdwn)-->
+            temp = item.account_assign_cat;
+            acc_ass_dropdwn += '<option value="'+item.account_assign_cat+'">' + item.account_assign_cat + '</option>'
         });
         company_dropdwn = '';
         $.each(rendered_company_data, function (i, item) {
@@ -211,7 +211,8 @@
         });
         acc_ass_val_dropdwn = '';
         $.each(rendered_accasscat_values, function (i, item) {
-            acc_ass_val_dropdwn += '<option value="' + item.account_assign_value + '">' + item.account_assign_value + '</option>'
+            if(temp){}
+            acc_ass_val_dropdwn += '<option value="'+item.account_assign_value+'">'+item.account_assign_value+'</option>'
             acc_ass_val_dict = {};
             acc_ass_val_dict.account_assign_value = item.account_assign_value
             acc_ass_val_dict.account_assign_cat = item.account_assign_cat
@@ -657,7 +658,7 @@
                             edit_basic_data += '<tr><td><input class="input" type="checkbox" required></td>'+
                              '<td><select id="company_dropdw" class="form-control">'+ company_dropdwn +'</select></td>'+
                              '<td><select id="acc_ass_dropdw" class="form-control">'+ acc_ass_dropdwn +' </select></td>'+
-                             '<td><select class="form-control" id="acc_ass_val_dropdw">' + acc_ass_val_dropdwn + ' </select></td>'+
+                             '<td><select class="form-control" id="acc_ass_val_dropdw">'+acc_ass_val_dropdwn+' </select></td>'+
                              '<td><input class="form-control check_special_char" type="text" value="' + row.cells[4].innerHTML + '"  maxlength="255" ></td>'+
                              '<td><select id="language_dropdw" class="form-control">' + language_dropdwn + '</select></td>'+
                              '<td hidden><input value="' + guid + '"></td>'+
@@ -669,7 +670,7 @@
                             edit_basic_data += '<tr><td hidden><input class="input" type="checkbox" required></td>'+
                             '<td><select id="company_dropdw" class="form-control" disabled>'+ company_dropdwn +'</select></td>'+
                             '<td><select id="acc_ass_dropdw" class="form-control" disabled>'+acc_ass_dropdwn+'</select></td>'+
-                            '<td><select class="form-control" id="acc_ass_val_dropdw" disabled>' + acc_ass_val_dropdwn + ' </select></td>'+
+                            '<td><select class="form-control" id="acc_ass_val_dropdw" disabled>'+acc_ass_val_dropdwn+' </select></td>'+
                             '<td><input class="form-control check_special_char" type="text" value="' + row.cells[4].innerHTML + '"  maxlength="255" ></td>'+
                             '<td><select id="language_dropdw" class="form-control" disabled>' + language_dropdwn + '</select></td>'+
                             '<td hidden><input value="' + guid + '"></td>'+
