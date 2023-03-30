@@ -712,19 +712,7 @@ function row_color_highlight(row){
 function row_color_no_highlight(row){
      $(row).css('background-color', '');
 }
-<<<<<<< HEAD
 
-
-function get_particular_key_value(myList,myKey){
-
-    // Use jQuery to get the values for the key
-    var myValues = $.map(myList, function(obj) {
-      return obj[myKey];
-    });
-    return myValues
-
-}
-=======
 // Function to get all the checkboxes from main table
 function get_all_checkboxes(){
     var table = $('#display_basic_table').DataTable();
@@ -732,4 +720,3 @@ function get_all_checkboxes(){
     var res = table.rows().nodes();
     return res;
 }
->>>>>>> shilpailkal
