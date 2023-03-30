@@ -173,6 +173,7 @@
     var rendered_wfacc_data = {{ work_flow_accounting| safe}};
     var messages_list = {{messages_list|safe}};
     var rendered_accasscat_data = {{upload_data_acccat|safe}};
+    var rendered_accassval_data;
     var rendered_currency_data = {{upload_data_currency|safe}};
     var rendered_company_data = {{upload_data_company|safe}};
     var rendered_super_company_data = {{upload_data_company|safe}};
@@ -235,10 +236,10 @@
         });
 
         acc_ass_val_dropdwn = '';
-        $.each(rendered_wfacc_data, function (i, item) {
+        $.each(rendered_accassval_data, function (i, item) {
             acc_ass_val_dropdwn += '<option value="' + item.acc_value + '">' + item.acc_value + '</option>'
             acc_ass_val_dict = {};
-            acc_ass_val_dict.acc_ass_val_dropdwn = item.acc_value
+            acc_ass_val_dict.acc_ass_val_dropdwn = item.account_assign_value
             acc_ass_val_dict.account_assign_cat = item.account_assign_cat
             acc_ass_val_dict.company_id = item.company_id
             acc_ass_val_list.push(acc_ass_val_dict)
@@ -247,10 +248,10 @@
         company_dropdwn = '';
         var unique_comp = [];
 
-         $.each(rendered_wfacc_data, function (i, item) {
+         $.each(rendered_accassval_data, function (i, item) {
             company_dropdwn += '<option value="' + item.company_id + '">' + item.company_id + '</option>'
             company_dict = {};
-            company_dict.acc_ass_val_dropdwn = item.acc_value
+            company_dict.acc_ass_val_dropdwn = item.account_assign_value
             company_dict.account_assign_cat = item.account_assign_cat
             company_dict.company_id = item.company_id
             company_list.push(company_dict)
@@ -427,7 +428,7 @@
                             '<td><select type="text" class="form-control">'+ user_id_list +'</select></td>'+
                             '<td><select type="text" class="form-control" >'+ supcompany_id_list +'</select></td>'+
                             '<td><select type="text" class="form-control">'+ supaccasscat_id_list +'</select></td>'+
-                            '<td><input class="form-control" type="text" maxlength="8" onkeypress="return /[0-9]/i.test(event.key)" name="sup_acc_value"  value="' + value[7] + '"></td>'+
+                            '<td><input class="form-control" type="value" maxlength="8" onkeypress="return /[0-9]/i.test(event.key)" name="sup_acc_value"  value="' + value[7] + '"></td>'+
                             '<td><select type="text" class="form-control">'+ currency_id_list +'</select></td>'+
                             '<td hidden><input type="text" value=""></td>'+
                             '<td>' + del_ind + '</td></tr>';
@@ -518,54 +519,6 @@
                 display_error_message(error_message)
             }
         }
-      $('#success_msg_id').empty();
-      $('#id_popup_table').DataTable().destroy();
-      no_duplicate_entries = 'Y';
-      no_duplicate_value = 'Y';
-      var error_message = '';
-<!--      $('#display_basic_table').DataTable().destroy();-->
-      get_main_table_data(); //Read data from main table
-      // check for duplicates in popup table
-<!--      var duplicate_entries = check_duplicate_entry(validate_add_attributes, wfacc_data);-->
-<!--      if (duplicate_entries.length > 0) {-->
-<!--        display_duplicate_entry(duplicate_entries);-->
-<!--        error_message = ui_messeges("JMSG001");-->
-<!--        display_error_message(error_message);-->
-<!--        return;-->
-<!--      }-->
-    [no_duplicate_value,error_message] = compare_table_for_duplicate_entries(validate_add_attributes, wfacc_data)
-        if (error_message){
-            display_error_message(error_message)
-        }
-      if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
-        // compare main table and pop up for duplicate values
-        [no_duplicate_entries, error_message] = maintable_validation(validate_add_attributes, main_table_low_value);
-      }
-      if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
-        var add_basic_data = '';
-        var wfacc_data_array = wfacc_data;
-        console.log(wfacc_data);
-        $('#id_save_confirm_popup').modal('hide');
-        data = {'data': wfacc_data_array, 'table_name': 'WorkflowACC', 'action': GLOBAL_ACTION};
-        OpenLoaderPopup();
-        $.ajax({
-          type: 'POST',
-          url: "{% url 'eProc_Master_Settings:create_update_master_data' %}",
-          data: JSON.stringify(data),
-          contentType: "application/json; charset=utf-8",
-          dataType: "json",
-          success: function(Response) {
-            rendered_wfacc_data = Response[0];
-            display_basic_db_data();
-            $('#Wf_Acc_Modal').modal('hide');
-            success_response(Response); // Function call to display response data
-            CloseLoaderPopup();
-          }
-        });
-      }
-      if (error_message){
-        display_error_message(error_message)
-      }
     }
 
     //delete the selected row in db................
@@ -574,7 +527,7 @@
         $('#success_msg_id').empty();
         GLOBAL_ACTION = 'DELETE';
         main_table_workflowaccounting_checked = [];
-        $('#display_basic_table').DataTable().destroy();
+<!--        $('#display_basic_table').DataTable().destroy();-->
         get_selected_row_data(); // Function call to get the selected row data
         $('#id_delete_confirm_popup').modal('hide');
         data = {'data':main_table_workflowaccounting_checked,'table_name':'WorkflowACC','action':GLOBAL_ACTION}
@@ -606,6 +559,7 @@
                 rendered_accasscat_data = response.upload_data_acccat
                 rendered_user_data = response.user_details
                 rendered_accasscat_data = response.upload_data_acccat
+                rendered_accassval_data = response.upload_accassvalues
                 rendered_currency_data = response.upload_data_currency
                 rendered_company_data = response.upload_data_company
                 rendered_super_company_data = response.upload_data_OrgCompanies
@@ -635,6 +589,10 @@
                     $(row.find("TD").eq(2).find("select")).change(function () {
                         company_num = row.find("TD").eq(1).find("select option:selected").val();
                         acc_ass_cat_dropdwn(row,company_num);
+                    })
+                    $(row.find("TD").eq(6).find("select")).change(function () {
+                        company_num = row.find("TD").eq(5).find("select option:selected").val();
+                        sup_acc_ass_cat_dropdwn(row,company_num);
                     })
                 })
                 $("#id_del_ind_checkbox").prop("hidden", true);
@@ -689,6 +647,7 @@
         new_row_data();   // Add a new row in popup
         var company_num = '';
         $("#id_popup_table TBODY TR").each(function () {
+            var row = $(this);
             row.find("TD").eq(2).find("select").empty()
             row.find("TD").eq(3).find("select").empty()
             company_num = row.find("TD").eq(1).find("select option:selected").val();
@@ -698,12 +657,16 @@
             $(row.find("TD").eq(1).find("select")).change(function () {
                 company_dropdwn_change(row);
             })
+            $(row.find("TD").eq(2).find("select")).change(function () {
+                company_num = row.find("TD").eq(1).find("select option:selected").val();
+                acc_ass_cat_dropdwn(row,company_num);
+            })
             $(row.find("TD").eq(5).find("select")).change(function () {
                 supcompany_dropdwn_change(row);
             })
             $(row.find("TD").eq(2).find("select")).change(function () {
                 company_num = row.find("TD").eq(1).find("select option:selected").val();
-                acc_ass_cat_dropdwn(row,company_num);
+                sup_acc_ass_cat_dropdwn(row,company_num);
             })
         })
         if (GLOBAL_ACTION == "workflowacc_upload") {
@@ -752,7 +715,7 @@
                             '<td><select type="text" class="form-control">'+user_dropdwn+'</select></td>'+
                             '<td><select type="text" class="form-control">'+supcompany_dropdwn+'</select></td>'+
                             '<td><select type="text" class="form-control" >'+sup_acc_ass_dropdwn+'</select></td>'+
-                            '<td><input class="form-control" type="number" value="' + row.cells[7].innerHTML + '" name="sup_aac_value"  maxlength="40" required></td>'+
+                            '<td><select type="text" class="form-control" > '+sup_acc_ass_val_dropdwn+'</selct></td>'+
                             '<td><select type="text" class="form-control">'+currency_dropdwn+'</select></td>'+
                             '<td class="class_del_checkbox" hidden><input type="checkbox" required></td>'+
                             '<td hidden><input type="text" id="workflow_acc_guid" value="' + row.cells[9].innerHTML + '"></td></tr>';
@@ -785,7 +748,7 @@
                     $(row.find("TD").eq(1).find("select option[value="+companyid_value+"]")).attr('selected','selected');
                     var acct_cat_value = dropdown_values[i][6]
                     var sup_cat_value = dropdown_values[i][7]
-                    var assign_val = account_assignment_value_find(acc_value)
+                    var assign_val = account_assignment_value_find(sup_compid_value)
                     row.find("TD").eq(2).find("select").append(assign_val.acc_ass_dropdwn)
                     row.find("TD").eq(3).find("select").append(assign_val.acc_ass_val_dropdwn)
                     $(row.find("TD").eq(4).find("select option[value="+appr_user_value+"]")).attr('selected','selected');
@@ -812,6 +775,10 @@
                     $(row.find("TD").eq(2).find("select")).change(function () {
                         company_num = row.find("TD").eq(1).find("select option:selected").val();
                         acc_ass_cat_dropdwn(row,company_num);
+                    })
+                    $(row.find("TD").eq(6).find("select")).change(function () {
+                        company_num = row.find("TD").eq(5).find("select option:selected").val();
+                        sup_acc_ass_cat_dropdwn(row,company_num);
                     })
                 })
                 i++;
@@ -979,11 +946,11 @@
             wfacc_dic = {}
             wfacc_dic.company_id = row.find("TD").eq(1).find('select[type="text"]').val();
             wfacc_dic.account_assign_cat = row.find("TD").eq(2).find('select[type="text"]').val();
-            wfacc_dic.acc_value = row.find("TD").eq(3).find('input[type="number"]').val();
+            wfacc_dic.acc_value = row.find("TD").eq(3).find('select[type="text"]').val();
             wfacc_dic.app_username = row.find("TD").eq(4).find('select[type="text"]').val();
             wfacc_dic.sup_company_id = row.find("TD").eq(5).find('select[type="text"]').val();
             wfacc_dic.sup_account_assign_cat = row.find("TD").eq(6).find('select[type="text"]').val();
-            wfacc_dic.sup_acc_value = row.find("TD").eq(7).find('input[type="number"]').val();
+            wfacc_dic.sup_acc_value = row.find("TD").eq(7).find('select[type="text"]').val();
             wfacc_dic.sup_currency_id = row.find("TD").eq(8).find('select[type="text"]').val();
             var compare = wfacc_dic.company_id+'-'+wfacc_dic.account_assign_cat+'-'+wfacc_dic.acc_value+'-'+wfacc_dic.app_username+'-'+wfacc_dic.sup_company_id+'-'+wfacc_dic.sup_account_assign_cat+'-'+wfacc_dic.sup_acc_value+'-'+wfacc_dic.sup_currency_id
             wfacc_check.push(compare);

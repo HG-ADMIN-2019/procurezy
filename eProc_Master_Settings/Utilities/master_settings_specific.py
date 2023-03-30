@@ -2,7 +2,8 @@ from django.db.models.query_utils import Q
 
 from eProc_Basic.Utilities.functions.camel_case import convert_to_camel_case
 from eProc_Basic.Utilities.functions.dictionary_key_to_list import dictionary_key_to_list
-from eProc_Basic.Utilities.functions.distinct_list import replace_none_with_empty_string
+
+from eProc_Basic.Utilities.functions.distinct_list import *
 from eProc_Basic.Utilities.functions.image_type_funtions import get_image_type
 from eProc_Basic.Utilities.functions.log_function import update_log_info
 from eProc_Basic.Utilities.functions.messages_config import get_msg_desc, get_message_desc
@@ -575,12 +576,12 @@ class MasterSettingsSave:
                                            'gl_acc_num': glaccount_detail['gl_acc_num'],
                                            'gl_acc_default': glaccount_detail['gl_acc_default'],
                                            'account_assign_cat': AccountAssignmentCategory.objects.
-                                           get(account_assign_cat=glaccount_detail['account_assign_cat']),
+                                               get(account_assign_cat=glaccount_detail['account_assign_cat']),
                                            'company_id': glaccount_detail['company_id'],
                                            'item_from_value': glaccount_detail['from_value'],
                                            'item_to_value': glaccount_detail['to_value'],
                                            'currency_id': Currency.objects.
-                                           get(currency_id=glaccount_detail['currency_id']),
+                                               get(currency_id=glaccount_detail['currency_id']),
                                            'determine_gl_account_created_at': self.current_date_time,
                                            'determine_gl_account_created_by': self.username,
                                            'determine_gl_account_changed_at': self.current_date_time,
@@ -1515,10 +1516,45 @@ def get_acc_value_desc_data():
 def get_gl_acc_dropdown():
     prod_catogories = list(
         UnspscCategoriesCust.objects.filter(client=global_variables.GLOBAL_CLIENT, del_ind=False).values('prod_cat_id'))
-    upload_value_glacc = list(
-        AccountingData.objects.filter(client=global_variables.GLOBAL_CLIENT, del_ind=False,
-                                      account_assign_cat='GLACC').values(
-            'account_assign_value'))
+    upload_value_glacc = list(AccountingData.objects.filter(client=global_variables.GLOBAL_CLIENT,
+                                                            del_ind=False,
+                                                            account_assign_cat='GLACC').values('account_assign_value',
+                                                                                               'company_id',
+                                                                                               'account_assign_cat'))
+    gl_acc_details = django_query_instance.django_filter_query(AccountingData,
+                                                               {'client': global_variables.GLOBAL_CLIENT,
+                                                                'del_ind': False,
+                                                                'account_assign_cat': CONST_GLACC},
+                                                               ['company_id'],
+                                                               ['account_assign_value',
+                                                                'company_id'])
+    filter_queue = ~Q(account_assign_cat=CONST_GLACC)
+    acc_details = django_query_instance.django_queue_query(AccountingData,
+                                                           {'client': global_variables.GLOBAL_CLIENT,
+                                                            'del_ind': False},
+                                                           filter_queue,
+                                                           ['company_id'],
+                                                           ['account_assign_cat',
+                                                            'company_id'])
+    company_id_list = django_query_instance.django_filter_value_list_ordered_by_distinct_query(AccountingData,
+                                                                                               {
+                                                                                                   'client': global_variables.GLOBAL_CLIENT,
+                                                                                                   'del_ind': False},
+                                                                                               'company_id',
+                                                                                               ['company_id'])
+    acc_value_list = []
+    for company_id in company_id_list:
+        account_assign_cat_list = get_acc_list(acc_details, company_id)
+        account_assign_cat_value_list = get_acc_asg_cat_value_list(gl_acc_details, company_id)
+        if account_assign_cat_list:
+            account_assign_cat_list = distinct_list(account_assign_cat_list)
+        if account_assign_cat_value_list:
+            account_assign_cat_value_list = distinct_list(account_assign_cat_value_list)
+        acc_dic = {'company_id': company_id,
+                   'account_assign_cat_list': list(account_assign_cat_list),
+                   'account_assign_cat_value_list': list(account_assign_cat_value_list)}
+        acc_value_list.append(acc_dic)
+
     upload_value_accasscat = list(
         AccountAssignmentCategory.objects.filter(del_ind=False).values(
             'account_assign_cat'))
@@ -1532,9 +1568,32 @@ def get_gl_acc_dropdown():
         'upload_value_currency': upload_value_currency,
         'upload_value_company': upload_value_company,
         'prod_catogories': prod_catogories,
+        'acc_value_list': acc_value_list
     }
 
     return data
+
+
+def get_acc_asg_cat_value_list(gl_acc_details, company_id):
+    """
+
+    """
+    acc_list = []
+    for gl_acc_detail in gl_acc_details:
+        if gl_acc_detail['company_id'] == company_id:
+            acc_list.append(gl_acc_detail['account_assign_value'])
+    return acc_list
+
+
+def get_acc_list(acc_details, company_id):
+    """
+
+    """
+    acc_list = []
+    for acc_detail in acc_details:
+        if acc_detail['company_id'] == company_id:
+            acc_list.append(acc_detail['account_assign_cat'])
+    return acc_list
 
 
 def get_gl_acc_data():
@@ -1753,6 +1812,9 @@ def get_approvervalue_data():
 
 def get_workflowacc_dropdown():
     upload_data_acccat = list(AccountAssignmentCategory.objects.filter(del_ind=False).values('account_assign_cat'))
+    upload_accassvalues = get_configuration_data(AccountingData, {'del_ind': False},
+                                                 ['account_assign_value', 'account_assign_cat',
+                                                  'company_id'])
     upload_data_currency = list(Currency.objects.filter(del_ind=False).values('currency_id'))
     upload_data_company = list(
         OrgCompanies.objects.filter(client=global_variables.GLOBAL_CLIENT, del_ind=False).values('company_id'))
@@ -1767,6 +1829,7 @@ def get_workflowacc_dropdown():
         'upload_data_company': upload_data_company,
         'upload_data_OrgCompanies': upload_data_OrgCompanies,
         'user_details': user_details,
+        'upload_accassvalues': upload_accassvalues,
 
     }
     return data
