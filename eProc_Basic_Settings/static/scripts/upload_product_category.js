@@ -38,8 +38,9 @@ function onclick_update_button() {
 
 function onclick_delete_button() {
     GLOBAL_ACTION = "DELETE"
+    $('#delete_data').show();
+    $('#save_id').hide();
     onclick_copy_update_button("DELETE")
-    document.getElementById("id_del_add_button").style.display = "none";
 }
 
 function onclick_copy_update_button(data) {
@@ -69,15 +70,23 @@ function onclick_copy_update_button(data) {
                 if ((row.cells[3].innerHTML=="False") || (row.cells[3].innerHTML=="false")){
                     check = '<input type="checkbox" disabled>'
                     document.getElementById('delete_data').style.visibility='hidden';
+                    $('#save_id').hide();
+                    $('#delete_data').prop('disabled', true);
                 }
                 else
                 {
                     check = '<input type="checkbox">'
                     document.getElementById('delete_data').style.visibility = 'visible'
+                    $('#delete_data').prop('disabled', false);
                 }
                 unique_input = '<input class="form-control" type="text" value="' + row.cells[1].innerHTML + '" name="prod_cat_id" onkeypress="return /[0-9]/i.test(event.key)" maxlength="20" style="text-transform:uppercase" required>'
                 edit_basic_data += '<tr><td>'+check+'</td><td>'+unique_input+'</td><td><input type="text" class="form-control" value="' + row.cells[2].innerHTML + '" name="prod_cat_desc" onkeypress="return /[a-z ]/i.test(event.key)" maxlength="100" required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td><td class="id_del_ind_checkbox1" hidden><input type="checkbox" name = "del_ind_flag" required></td></tr>';
                 $("#header_select").prop("hidden", false);
+            }
+            else {
+                $('#save_id').show();
+                document.getElementById('save_id').style.visibility = 'visible';
+                $('#delete_data').hide();
             }
         }
     }
@@ -94,8 +103,9 @@ function display_button(){
         $('#save_id').hide();
     }
     else{
-        $('#delete_data').hide();
         $('#save_id').show();
+         document.getElementById('save_id').style.visibility = 'visible';
+         $('#delete_data').hide();
     }
 }
 

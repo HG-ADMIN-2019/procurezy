@@ -179,7 +179,7 @@ def get_unspsc_data():
                                                                                             'prod_cat_desc'
                                                                                             ])
     for prod_cat_desc in upload_product_category:
-        if django_query_instance.django_existence_check(UnspscCategoriesCust,
+        if django_query_instance.django_existence_check(UnspscCategoriesCustDesc,
                                                         {'del_ind': False,
                                                          'prod_cat_id': prod_cat_desc['prod_cat_id']}):
             prod_cat_desc["del_ind_flag"] = False

@@ -74,6 +74,10 @@ class MasterSettingsSave:
                     django_query_instance.django_filter_delete_query(UnspscCategoriesCust,
                                                                      {'prod_cat_id': prodcat_detail['prod_cat_id'],
                                                                       'client': self.client})
+                if prodcat_detail['del_ind'] in ['1', True]:
+                    prod_cat = prodcat_detail['prod_cat_id']
+
+                    delete_prod_cat_image_to_db(prod_cat)
 
         if prodcat_db_list:
             bulk_create_entry_db(UnspscCategoriesCust, prodcat_db_list)
@@ -1922,3 +1926,15 @@ def save_prod_cat_image_to_db(prod_cat, file_name, attached_file):
         'created_by': global_variables.GLOBAL_LOGIN_USERNAME,
         'del_ind': False
     })
+
+
+def delete_prod_cat_image_to_db(prod_cat):
+    if django_query_instance.django_existence_check(ImagesUpload,
+                                                    {'client': global_variables.GLOBAL_CLIENT,
+                                                     'image_id': prod_cat}):
+        django_query_instance.django_get_query(ImagesUpload,
+                                               {'client': global_variables.GLOBAL_CLIENT,
+                                                'image_id': prod_cat}).image_url.delete(save=True)
+        django_query_instance.django_filter_delete_query(ImagesUpload,
+                                                         {'client': global_variables.GLOBAL_CLIENT,'image_default': False,
+                                                          'image_id': prod_cat})

@@ -111,10 +111,12 @@
                     </table>
                     </div>
                 </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-primary remove_upload_data" title="cancel" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
-                    <button class="btn btn-primary" title="save" id="save_id"><i class="fas fa-save"></i> save</button>
-                    <button class="btn btn-primary btn-sm" title="delete" id="delete_data" value="DELETE" data-toggle="modal" data-target="#id_delete_confirm_popup">
+                  <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-primary remove_upload_data" title="Cancel" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
+                    <button id="id_delete_duplicate" class="btn btn-primary" style="display:none;" type="button" onclick="display_buttonp()"><i class="fa fa-trash"></i> delete duplicates</button>
+                    <button id="id_check_data" style="display:none;" class="btn btn-primary" type="button" onclick="check_data()"><i class="fas fa-check"></i> check</button>
+                    <button class="btn btn-primary" title="Save" id="save_id"><i class="fas fa-save"></i> save</button>
+                    <button class="btn btn-primary btn-sm" title="Delete" id="delete_data" value="DELETE" data-toggle="modal" data-target="#id_delete_confirm_popup">
                         <i class="fa fa-trash"></i> Delete
                     </button>
                 </div>
@@ -189,15 +191,24 @@
     //delete the selected row in db................
     var main_table_prodcat_checked = [];
     function main_table_delete() {
-        $('#success_msg_id').empty()           
         GLOBAL_ACTION = 'DELETE'
+         document.getElementById('delete_data').style.visibility = 'visible';
+         $('#success_msg_id').empty()
         main_table_prodcat_checked = [];
         var prodcat_arr_obj = {};
         $('#display_basic_table').DataTable().destroy(); // to be checked
+        var disable_check = '';
         get_selected_row_data(); // Function call to get the selected row data
-        if (main_table_prodcat_checked.length == "0"){
-            get_message_details("JMSG005"); // Get message details
+         if(disable_check){
+            $('#delete_data').prop('disabled', true);
+            error_message = ui_messeges("JMSG112")// Get message details
+            var display4 = msg_type.messages_id_desc;
+            document.getElementById("id_error_msg_checkbox").innerHTML = display4+ "Checkbox";
             $('#id_delete_confirm_popup').modal('hide');
+        }
+        else if(main_table_prodcat_checked.length == "0"){
+                get_message_details("JMSG005"); // Get message details
+                $('#id_delete_confirm_popup').modal('hide');
         }
         else{
             $('#id_save_confirm_popup').modal('hide');
