@@ -179,14 +179,14 @@ function application_settings_delete_Row1(myTable) {
 // Function to get main table data
 function get_main_table_data() {
     main_table_low_value = [];
-    // $('#display_basic_table').DataTable().destroy();
+    $('#display_basic_table').DataTable().destroy();
     $("#display_basic_table TBODY TR").each(function () {
         var row = $(this);
         var main_attribute = {};
         main_attribute.holiday_description = row.find("TD").eq(2).html();
         main_table_low_value.push(main_attribute.holiday_description);
     });
-    // table_sort_filter('display_basic_table');
+    table_sort_filter('display_basic_table');
 }
 
 // Function to get the selected row data
