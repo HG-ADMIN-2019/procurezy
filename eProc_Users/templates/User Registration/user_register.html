@@ -40,7 +40,7 @@
                     <!-- Display the success message upon successful registration--> 
                     <div>
                         {% if messages %}
-                        <div class="alert alert-success">
+                        <div  class="alert alert-success">
                             {% for message in messages %}
                             <div class="{{ message.tags }} ">{{ message }}</div>
                             {% endfor %}
@@ -257,10 +257,11 @@ $(document).ready(function(){
   $('#nav_menu_items').remove();
   $("body").css("padding-top", "4rem");
   NavigateTabs(); // Custom function to switch tabs
+  message_display_time();
 });
 
 // Get the element with id="defaultOpen" and click on it
-document.getElementById("defaultOpen").click();
+<!--document.getElementById("defaultOpen").click();-->
 
 $('#user_registration_submit').click(function () {
     OpenLoaderPopup();
