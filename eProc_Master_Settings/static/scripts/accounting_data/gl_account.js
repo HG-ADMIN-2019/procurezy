@@ -194,17 +194,23 @@ function account_assignment_value_find(company_num) {
     corresponding_values.acc_ass_dropdwn = '';
     corresponding_values.acc_ass_val_dropdwn = '';
     corresponding_values.other_dropdn = '';
-    company_list = company_list;
+    acc_ass_val_list = acc_ass_val_list;
     unique_acct_cat= [];
     unique_acct_assmt_val = [];
-    for (var i = 0; i < company_list.length; i++) {
+    for (var i = 0; i < acc_ass_val_list.length; i++) {
         compare_dict = {};
-        compare_dict = company_list[i]
+        compare_dict = acc_ass_val_list[i]
         if (company_num == compare_dict.company_id) {
             unique_acct_cat.push(compare_dict.account_assign_cat);
             unique_acct_assmt_val.push(compare_dict.account_assign_value);
         }
     }
+    unique_acct_cat = unique_acct_cat.filter(function(item) {
+        return item !== undefined;
+    });
+    unique_acct_assmt_val = unique_acct_assmt_val.filter(function(item) {
+        return item !== undefined;
+    });
      for (var i = 0; i < arrDistinct.length; i++) {
         corresponding_values.other_dropdn += '<option value="'+arrDistinct[i]+'">' + arrDistinct[i] + '</option>'
      }
@@ -226,6 +232,7 @@ function account_assignment_value_find(company_num) {
      }
     return corresponding_values
 }
+
 
 //***********************************88
 function company_dropdwn_change(row){
