@@ -42,18 +42,18 @@ function onclick_add_button(button) {
 //******************************************************
 function onclick_copy_update_button(data) {
     $("#error_msg_id").css("display", "none")
+    $('#id_popup_table').DataTable().destroy();
     $("#id_popup_tbody").empty();
-     $('#display_basic_table').DataTable().destroy();
     //Reference the Table
-    var grid = document.getElementById("display_basic_table");
+    var res = get_all_checkboxes(); // Function to get all the checkboxes
+    var $chkbox_all = $('td input[type="checkbox"]', res);
     //Reference the CheckBoxes in Table.
-    var checkBoxes = grid.getElementsByTagName("INPUT");
     var edit_basic_data = "";
     var unique_input = '';
     //Loop through the CheckBoxes.
-    for (var i = 1; i < checkBoxes.length; i++) {
-        if (checkBoxes[i].checked) {
-            var row = checkBoxes[i].parentNode.parentNode;
+    for (var i = 0; i < $chkbox_all.length; i++) {
+        if ($chkbox_all[i].checked) {
+            var row = $chkbox_all[i].parentNode.parentNode;
             if(GLOBAL_ACTION == "UPDATE"){
                 unique_input = '<input class="form-control check_special_char" type="text" value="' + row.cells[1].innerHTML + '" name="uom_id"  maxlength="2" style="text-transform:uppercase" disabled>'
                  edit_basic_data += '<tr><td hidden><input type="checkbox" required></td><td><input class="form-control check_special_char" type="text" value="' + row.cells[1].innerHTML + '" name="uom_id"  maxlength="3" style="text-transform:uppercase" disabled></td><td><input class="form-control check_special_char" value="' + row.cells[2].innerHTML + '" type="text"  name="uomdescription"  maxlength="100" required></td><td><input class="form-control check_special_char" value="' + row.cells[3].innerHTML + '" type="text"  name="isocodeid"  maxlength="15" style="text-transform:uppercase" required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
@@ -69,7 +69,6 @@ function onclick_copy_update_button(data) {
     $('#id_popup_table').append(edit_basic_data);
     $("#id_del_ind_checkbox").prop("hidden", true);
     $('#uomModal').modal('show');
-    table_sort_filter('display_basic_table');
     table_sort_filter('id_popup_table');
 }
 
@@ -171,21 +170,23 @@ $('#save_id').click(function () {
 
 //Read popup table data
 function read_popup_data(){
+    $('#id_popup_table').DataTable().destroy();
     uom_data = new Array();
     validate_add_attributes = [];
    $("#id_popup_table TBODY TR").each(function () {
-           var row = $(this);
-           uom={};
-           uom.del_ind = row.find("TD").eq(4).find('input[type="checkbox"]').is(':checked');
-           uom.iso_code_id = row.find("TD").eq(3).find('input[type="text"]').val().toUpperCase();
-           uom.uom_description = row.find("TD").eq(2).find('input[type="text"]').val().toUpperCase();
-           uom.uom_id = row.find("TD").eq(1).find('input[type="text"]').val().toUpperCase();
-           if (uom == undefined){
-            uom.uom_id = row.find("TD").eq(1).find('input[type="text"]').val();
-            }
-           validate_add_attributes.push(uom.uom_id);
-           uom_data.push(uom);
-       });
+        var row = $(this);
+        uom={};
+        uom.del_ind = row.find("TD").eq(4).find('input[type="checkbox"]').is(':checked');
+        uom.iso_code_id = row.find("TD").eq(3).find('input[type="text"]').val().toUpperCase();
+        uom.uom_description = row.find("TD").eq(2).find('input[type="text"]').val().toUpperCase();
+        uom.uom_id = row.find("TD").eq(1).find('input[type="text"]').val().toUpperCase();
+        if (uom == undefined){
+        uom.uom_id = row.find("TD").eq(1).find('input[type="text"]').val();
+        }
+        validate_add_attributes.push(uom.uom_id);
+        uom_data.push(uom);
+    });
+    $('#id_popup_table').DataTable().destroy();
    return uom_data;
 }
 

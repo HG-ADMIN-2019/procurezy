@@ -3,6 +3,7 @@
 {% block title %} Holiday Calendar (Application Settings) {% endblock %}
 {% block maincontent %}
 {% include 'root/loader.html' %}
+
 <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.4.1/js/bootstrap-datepicker.min.js"></script>
 <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.9.0/css/bootstrap-datepicker.min.css" integrity="sha512-mSYUmp1HYZDFaVKK//63EcZq4iFWFjxSL+Z3T/aCt4IO9Cejm03q3NKKYN6pFQzY0SBOr8h+eCIAZHPXcpZaNw==" crossorigin="anonymous" referrerpolicy="no-referrer" />
 <style>
@@ -17,7 +18,7 @@
             <h3>Maintain Holidays</h3>
             <div>
                   <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Basic_Settings:extract_calendar_holiday_data' %}'" type="button">
-                       <i class="fas fa-download"></i> extract
+                    <i class="fas fa-download"></i> extract
                   </button>
                   <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"  onclick="window_close();">
                     <i class="fas fa-times"></i> close
@@ -30,38 +31,28 @@
             <div id="err_msg_app_settings_t" class="alert alert-success" hidden> <span id="success_msg_id"></span></div>
             <div class="table-container tcw-80">
                 <div class="edit-button-section mb-4">
-                    <button id="id_edit_data" class="btn btn-secondary btn-sm" onclick=" onclick_holiday_edit_button()">
+                    <button id="id_edit_data" title="Edit" class="btn btn-secondary btn-sm" onclick=" onclick_holiday_edit_button()">
                         <i class="fas fa-edit"></i> edit
                     </button>
                     <button class="btn btn-secondary btn-sm" id="id_cancel_data" style="display:none;" type="button" onclick="display_basic_db_data()">
                         <i class="fas fa-times" title="Cancel"></i> cancel
                     </button>
                 </div>
-                <table id="display_basic_table" class="class_basic_calendar_table table table-bordered custom-table">
-                    <thead id="id_calendar_table_header">
                 <!--   display basic country table-->
                 <table id="display_basic_table" class="class_basic_calendar_table table table-bordered custom-table">
                     <thead id="id_calendar_table_header">
-                    <tr>
-                        <th>Calender Number</th>
-                        <th>Calender Description</th>
-                        <th>Country</th>
-                        <th>Year</th>
-                        <th hidden></th>
-                        <th hidden></th>
-                        <th>Action</th>
-                        <th hidden>GUID</th>
-                    </tr>
+                        <tr>
+                            <th>Calender Number</th>
+                            <th>Calender Description</th>
+                            <th>Country</th>
+                            <th>Year</th>
+                            <th hidden></th>
+                            <th hidden></th>
+                            <th>Action</th>
+                            <th hidden>GUID</th>
+                        </tr>
                     </thead>
                     <tbody id="id_calendar_tbody">
-                    {% for calendar in calendar_data %}
-                    <tr>
-                        <td>{{calendar.calender_id}}</td>
-                        <td>{{calendar.description}}</td>
-                        {% for ct in country_list %}
-                            {% if calendar.country_code == ct.country_code  %}
-                                <td>{{ct.country_name}}</td>
-                            {% endif %}
                         {% for calendar in calendar_data %}
                         <tr>
                             <td>{{calendar.calender_id}}</td>
@@ -75,8 +66,8 @@
                             <td hidden></td>
                             <td hidden></td>
                             <td>
-                                <button class="badge badge-pill badge-button-blue maintain-calendar-holiday-config"  hidden><a href="#" id="{{calendar.calender_id}}"  onclick="onclick_create(this.id)">Maintain Holidays</a></button>
-                                <button class="badge badge-pill badge-button-blue view-calendar-holiday-config"><a href="#" id="{{calendar.calender_id}}-Delete"  onclick="onclick_View(this.id)"> View Holidays</a></button>
+                                <button class="badge badge-pill badge-button-blue maintain-calendar-holiday-config" title="Maintain Holidays"  hidden><a href="#" id="{{calendar.calender_id}}"  onclick="onclick_create(this.id)">Maintain Holidays</a></button>
+                                <button class="badge badge-pill badge-button-blue view-calendar-holiday-config" title="View Holidays"><a href="#" id="{{calendar.calender_id}}-Delete"  onclick="onclick_View(this.id)"> View Holidays</a></button>
                             </td>
                             <td hidden></td>
                         </tr>
@@ -100,8 +91,8 @@
                 <!-- Modal body -->
                 <div class="modal-body scrollbox">
                     <div id="id_del_add_button" class="mb-4">
-                        <button type="button" class="btn btn-primary" id="new-row" onclick="add_popup_row()"> add new row</button>
-                        <button class="btn btn-outline-danger" onclick="application_settings_delete_Row1('id_popup_table')"><i class="fa fa-trash"></i> delete
+                        <button type="button" class="btn btn-primary" title="Add New Row" id="new-row" onclick="add_popup_row()"> add new row</button>
+                        <button class="btn btn-outline-danger" title="Delete" onclick="application_settings_delete_Row1('id_popup_table')"><i class="fa fa-trash"></i> delete
                         </button>
                     </div>
                     <div id="id_check_success_messages" class="alert alert-success check_success_message" hidden></div>
@@ -116,24 +107,28 @@
                     <div id="id_info_msg_id" class="alert alert-primary display-none" role="alert"></div>
                     <table class="class_popup_table table table-bordered mt-2" id="id_popup_table" >
                         <thead>
-                        <tr>
-                            <th id="hg_select_checkbox"  hidden>Select</th>
-                            <th>Holiday Description</th>
-                            <th>From Date</th>
-                            <th>To Date</th>
-                            <th id="id_del_ind_checkbox" hidden>Del Indicator</th>
-                            <th hidden>GUID</th>
-                        </tr>
+                            <tr>
+                                <th id="hg_select_checkbox"  hidden>
+                                    <div id="id_check_all" style="display:none;">
+                                        <input type="checkbox" id="selectAll" name="chk[]">
+                                    </div>
+                                </th>
+                                <th>Holiday Description</th>
+                                <th>From Date</th>
+                                <th>To Date</th>
+                                <th id="id_del_ind_checkbox" hidden>Del Indicator</th>
+                                <th hidden>GUID</th>
+                            </tr>
                         </thead>
                         <tbody id="id_popup_tbody">
+
                         </tbody>
                     </table>
                 </div>
                 <!-- Modal footer -->
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-primary remove_upload_data" data-dismiss="modal"><i class="fas fa-times"></i> Close</button>
-                    <button class="btn btn-primary" id="save_id"><i class="fas fa-save"></i> save</button>
-                    <!-- <button class="btn btn-primary" style="display:none;" id="id_delete" data-toggle="modal" data-target="#id_delete_confirm_popup"><i class="fas fa-save"></i> delete</button> -->
+                    <button type="button" class="btn btn-outline-primary remove_upload_data" title="Close" data-dismiss="modal"><i class="fas fa-times"></i> Close</button>
+                    <button class="btn btn-primary" title="Save" id="save_id"><i class="fas fa-save"></i> save</button>
                 </div>
             </div>
         </div>
@@ -177,13 +172,13 @@
         GLOBAL_CALENDER_ID = calender_id.split('-')[0];
         $("#hg_select_checkbox").prop("hidden", false);
         $('#id_popup_table').DataTable().destroy();
-        $('#display_basic_table').DataTable().destroy();
         //Reference the Table.
-        var grid = document.getElementById("display_basic_table");
+        var res = get_all_checkboxes(); // Function to get all the checkboxes
+         var $chkbox_all = $('td input[type="checkbox"]', res);
         //Reference the CheckBoxes in Table.
-        var checkBoxes = grid.getElementsByTagName("INPUT");
         $("#id_popup_tbody").empty();       
         var edit_basic_data = "";
+        var unique_input = '';
         OpenLoaderPopup();
         $.ajax({
             type: 'POST',
@@ -240,7 +235,6 @@
                         }
                     });
                 } 
-                table_sort_filter('display_basic_table');
                 CloseLoaderPopup();
             },
             error: function (error) {
@@ -257,55 +251,45 @@
         $('#success_msg_id').empty();
         $('#id_popup_table').DataTable().destroy();
         var calendar_data = new Array();
-        
         no_duplicate_entries = 'Y'
         no_duplicate_value = 'Y'
         var error_message = '';
-        get_main_table_data();  //Read data from main table
-        $('#display_basic_table').DataTable().destroy();
         var calendar = {};
-        $('#display_basic_table').DataTable().destroy();
         get_main_table_data(); //Read data from main table
         // compare for duplicates in popup
-        $("#id_error_msg").empty();
         [no_duplicate_value,validDate,error_message] = compare_table_for_duplicate_entries(validate_add_attributes, calendar_data_array)
         [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
         var dateValid ;
         [dateValid,error_message] = check_date(calendar_data_array);
-        if (error_message){
-            display_error_message(error_message)
+        if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y') && (dateValid == 'Y') ) {
+            var add_basic_data = '';
+            var calendar_data = calendar_data_array;
+            $('#id_save_confirm_popup').modal('hide');
+            data = {'data':calendar_data,'table_name':'CalenderHolidays','action':GLOBAL_ACTION}
+            OpenLoaderPopup();
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'eProc_Configuration:create_update_application_data' %}",
+                data:
+                    JSON.stringify(data),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (Response) {
+                    render_holiday_data = Response[0];
+                    display_basic_db_data();
+                    $('#holidayModal').modal('hide');
+                    success_response(Response); // Function call to display response data
+                    table_sort_filter('render_holiday_data');
+                    success_response(Response);
+                    DatePicker();
+                    MultipleSelect();
+                    HolidayDatePicker();
+                    CloseLoaderPopup();
+                }
+            });
         }
-        else{
-            if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y') && (dateValid == 'Y') ) {
-                var add_basic_data = '';
-                var calendar_data = calendar_data_array;
-                $('#id_save_confirm_popup').modal('hide');
-                data = {'data':calendar_data,'table_name':'CalenderHolidays','action':GLOBAL_ACTION}
-                OpenLoaderPopup();
-                $.ajax({
-                    type: 'POST',
-                    url: "{% url 'eProc_Configuration:create_update_application_data' %}",
-                    data:
-                        JSON.stringify(data),
-                    contentType: "application/json; charset=utf-8",
-                    dataType: "json",
-                    success: function (Response) {
-                        render_holiday_data = Response[0];
-                        display_basic_db_data();
-                        $('#holidayModal').modal('hide');
-                       success_response(Response); // Function call to display response data
-                        table_sort_filter('render_holiday_data');
-                        success_response(Response);
-                        DatePicker();
-                        MultipleSelect();
-                        HolidayDatePicker();
-                        CloseLoaderPopup();
-                    }
-                });
-            }
-            else if (error_message){
-                display_error_message(error_message)
-            }
+        else if (error_message){
+            display_error_message(error_message)
         }
     }
 
@@ -316,8 +300,6 @@
         GLOBAL_ACTION = 'DELETE';
         main_table_calendar_checked = [];
         var Tabledata = { "Dbl_clck_tbl_id": 'CalenderHolidays' };
-         $('#display_basic_table').DataTable().destroy();
-        get_selected_row_data(); // Function call to get the selected row data
         $('#display_basic_table').DataTable().destroy();
         get_selected_row_data(); // Function call to get the selected row data
         $('#id_delete_confirm_popup').modal('hide');
@@ -356,10 +338,11 @@
         $('#id_popup_table').DataTable().destroy();
         $("#id_popup_tbody").empty();   
         //Reference the Table.
-        var grid = document.getElementById("display_basic_table");
+        var res = get_all_checkboxes(); // Function to get all the checkboxes
+        var $chkbox_all = $('td input[type="checkbox"]', res);
         //Reference the CheckBoxes in Table.
-        var checkBoxes = grid.getElementsByTagName("INPUT");
         var edit_basic_data = "";
+        var unique_input = '';
         OpenLoaderPopup();
         $.ajax({
             type: 'POST',
@@ -398,7 +381,7 @@
                         HolidayDatePicker();      
                     });
                 }
-                table_sort_filter('display_basic_table');
+                // table_sort_filter('display_basic_table');
                 CloseLoaderPopup();
             },
             error: function (error) {
@@ -453,7 +436,6 @@
         }
         return [no_duplicate_value,error_message]
     }
-
 </script>
 <script src="{% static 'scripts/holiday_calendar.js' %}"></script>
 {% endblock %}

@@ -3,13 +3,6 @@ var validate_add_attributes = [];
 var main_table_low_value = [];
 var auth_obj={};
 
-// on click copy icon display the selected checkbox data
-function onclick_copy_button() {
-    GLOBAL_ACTION = "COPY"
-    onclick_copy_update_button("copy")
-    document.getElementById("id_del_add_button").style.display = "block";
-}
-
 // on click update icon display the selected checkbox data to update
 function onclick_update_button() {
     GLOBAL_ACTION = "UPDATE"
@@ -41,25 +34,6 @@ function display_error_message(error_message){
     $("#error_msg_id").css("display", "block")
     $('#id_save_confirm_popup').modal('hide');
     $('#auth_obj_Modal').modal('show');
-}
-
-// on click add icon display the row in to add the new entries
-function add_popup_row() {
-    dropdown_value();
-    $("#error_msg_id").css("display", "none")
-    basic_add_new_html = '';
-    var display_db_data = '';
-    var getid = $(".authobject:last").attr("id");
-    var getindex = getid.split("-")[1]
-    var inc_index = Number(getindex)+1
-    $('#id_popup_table').DataTable().destroy();
-    $(".modal").on("hidden.bs.modal", function () {
-        $("#id_error_msg").html("");
-    });
-    new_row_data(); // Function for add a new row data
-    if (GLOBAL_ACTION == "auth_obj_upload") {
-        $(".class_del_checkbox").prop("hidden", false);
-    }
 }
 
 //onclick of cancel display the table in display mode............
@@ -110,6 +84,8 @@ $('#save_id').click(function () {
 
 //Read popup table data
 function read_popup_data() {
+    $('#id_popup_table').DataTable().destroy();
+    authobj_data = new Array();
     validate_add_attributes = [];
     $("#id_popup_table TBODY TR").each(function() {
         var row = $(this);
@@ -124,6 +100,7 @@ function read_popup_data() {
         validate_add_attributes.push(auth_obj.auth_obj_id);
         authobj_data.push(auth_obj);
     });
+    table_sort_filter('id_popup_table');
     return authobj_data;
 }
 

@@ -571,12 +571,12 @@ class MasterSettingsSave:
                                            'gl_acc_num': glaccount_detail['gl_acc_num'],
                                            'gl_acc_default': glaccount_detail['gl_acc_default'],
                                            'account_assign_cat': AccountAssignmentCategory.objects.
-                                               get(account_assign_cat=glaccount_detail['account_assign_cat']),
+                                           get(account_assign_cat=glaccount_detail['account_assign_cat']),
                                            'company_id': glaccount_detail['company_id'],
                                            'item_from_value': glaccount_detail['from_value'],
                                            'item_to_value': glaccount_detail['to_value'],
                                            'currency_id': Currency.objects.
-                                               get(currency_id=glaccount_detail['currency_id']),
+                                           get(currency_id=glaccount_detail['currency_id']),
                                            'determine_gl_account_created_at': self.current_date_time,
                                            'determine_gl_account_created_by': self.username,
                                            'determine_gl_account_changed_at': self.current_date_time,
@@ -1694,7 +1694,8 @@ def get_approverid_dropdown():
     upload_data_company = list(
         OrgCompanies.objects.filter(client=global_variables.GLOBAL_CLIENT, del_ind=False).values('company_id'))
     upload_data_app_code_id = list(
-        ApproverLimitValue.objects.filter(client=global_variables.GLOBAL_CLIENT, del_ind=False).values('app_code_id'))
+        ApproverLimitValue.objects.filter(client=global_variables.GLOBAL_CLIENT, del_ind=False).values('app_code_id',
+                                                                                                       'company_id'))
 
     user_details = list(
         UserData.objects.filter(is_active=True, client=global_variables.GLOBAL_CLIENT, del_ind=False).values(

@@ -4,9 +4,7 @@
 {% block maincontent %}
 {% include 'root/loader.html' %}
 
-
 <div class="container-fluid">
-
     <div class="configuration-table_wrapper">
         <div class="elements-space-between">
             <h3>Maintain Spending Limit Values</h3>
@@ -28,12 +26,10 @@
                 </button>
             </div>
         </div>
-
         <hr>
         <div class="configuration-table_section">
             <div id="err_msg_app_settings" class="hg_spacing"> </div>
             <div id="err_msg_app_settings_t" class="alert alert-success" hidden><span id="success_msg_id"></span> </div>
-
             <div class="table-container">
                 <div class="edit-button-section mb-4">
                     <button class="btn btn-secondary btn-sm" title="Edit" id="id_edit_data" onclick="onclick_edit_button();">
@@ -51,7 +47,6 @@
                     <button class="btn btn-secondary btn-sm" title="Cancel"  id="id_cancel_data" style="display:none;" type="button" onclick="display_basic_db_data()">
                         <i class="fas fa-times"></i> cancel
                     </button>
-
                 </div>
             </div>
             <table id="display_basic_table" class="class_master_spendlimitvalue_table table table-bordered custom-table" >
@@ -127,7 +122,6 @@
                         </tr>
                         </thead>
                         <tbody id="id_popup_tbody">
-
                         </tbody>
                     </table>
                 </div>
@@ -142,10 +136,8 @@
         </div>
     </div>
 </div>
-
 <!-- modal popup to upload the csv file; save confirmation popup; delete confirmation popup -->
 {% include 'configuration_common_pop_up.html' %}
-
 <div>
     {% if messages %}
     {% for message in messages %}
@@ -161,15 +153,12 @@
     {% endfor %}
     {% endif %}
 </div>
-
 <div style="display: none">
     <select id="drop_down_attr"> </select>
     <select id="drop_down_attr1"> </select>
 </div>
 </div>
-
 {{ spend_limit_value|json_script:"spend_limit_value" }}
-
 <script>
     var master_data_settings = '{{master_data_settings|safe}}';
     var rendered_spndlimval_data = JSON.parse(document.getElementById('spend_limit_value').textContent);
@@ -917,6 +906,6 @@
 
         });
     }
-  
+
 </script>
 {% endblock %}

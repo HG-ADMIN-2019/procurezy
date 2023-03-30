@@ -11,7 +11,7 @@
                 <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Application_Settings:extract_message_id_data' %}'"type="button">
                     <i class="fas fa-download"></i> extract data
                 </button>
-                <button type="button" id="id_add_data" value="ADD" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="onclick_add_button(this)">
+                <button type="button" title="Add Message Number" id="id_add_data" value="ADD" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="onclick_add_button(this)">
                     <i class="fa fa-plus"></i> add message number
                 </button>
                 <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"  onclick="window_close();">
@@ -25,16 +25,16 @@
             <div id="err_msg_app_settings_t" class="alert alert-success" hidden><span id="success_msg_id"></span></div>
             <div class="table-container tcw-80">
                 <div class="edit-button-section mb-4">
-                    <button id="id_edit_data" class="btn btn-secondary btn-sm" onclick="onclick_edit_button()">
-                        <i class="fas fa-edit" id="edit" title="Edit"></i> edit
+                    <button id="id_edit_data" class="btn btn-secondary btn-sm" title="Edit" onclick="onclick_edit_button()">
+                        <i class="fas fa-edit" id="edit"></i> edit
                     </button>
-                    <button class="btn btn-outline-danger btn-sm" id="id_delete_data" value="DELETE" style="display:none;" data-toggle="modal" data-target="#id_delete_confirm_popup">
+                    <button class="btn btn-outline-danger btn-sm" title="Delete" id="id_delete_data" value="DELETE" style="display:none;" data-toggle="modal" data-target="#id_delete_confirm_popup">
                         <i class="fa fa-trash" ></i> delete
                     </button>
-                    <button class="btn btn-primary btn-sm" id="id_update_data" style="display:none;" value="UPDATE" type="button" onclick="onclick_update_button()">
+                    <button class="btn btn-primary btn-sm" title="Update" id="id_update_data" style="display:none;" value="UPDATE" type="button" onclick="onclick_update_button()">
                         <i class="far fa-edit"></i> update
                     </button>
-                    <button class="btn btn-secondary btn-sm" id="id_cancel_data" style="display:none;" type="button" onclick="display_basic_db_data()">
+                    <button class="btn btn-secondary btn-sm" title="Cancel" id="id_cancel_data" style="display:none;" type="button" onclick="display_basic_db_data()">
                         <i class="fas fa-times"></i> cancel
                     </button>
                 </div>
@@ -44,7 +44,7 @@
                     <tr>
                         <th id="hg_select_checkbox" hidden>
                             <div id="id_check_all" style="display:none;">
-                                <INPUT type="checkbox" onchange="checkAll(this)" name="chk[]">
+                                <input type="checkbox" id="selectAll" name="chk[]">
                             </div>
                         </th>
                         <th>Message Number</th>
@@ -81,8 +81,8 @@
                 <!-- Modal body -->
                 <div class="modal-body scrollbox">
                     <div id="id_del_add_button" class="mb-4">
-                        <button type="button" class="btn btn-primary" onclick="add_popup_row()"><i class="fa fa-plus"></i> add new row</button>
-                        <button class="btn btn-outline-danger" onclick="application_settings_delete_Row('id_popup_table')"><i class="fa fa-trash"></i> delete</button>
+                        <button type="button" class="btn btn-primary" title="Add New Row" onclick="add_popup_row()"><i class="fa fa-plus"></i> add new row</button>
+                        <button class="btn btn-outline-danger" title="Delete" onclick="application_settings_delete_Row('id_popup_table')"><i class="fa fa-trash"></i> delete</button>
                     </div>
                     <div id="id_check_success_messages" class="alert alert-success check_success_message" hidden></div>
                     <div id="id_check_error_messages" class="alert alert-danger check_error_messages" hidden></div>
@@ -108,8 +108,8 @@
                 </div>
                 <!-- Modal footer -->
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-primary remove_upload_data" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
-                    <button class="btn btn-primary" id="save_id"><i class="fas fa-save"></i> save</button>
+                    <button type="button" class="btn btn-outline-primary remove_upload_data" title="Cancel" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
+                    <button class="btn btn-primary" title="Save" id="save_id"><i class="fas fa-save"></i> save</button>
                 </div>
             </div>
         </div>
@@ -178,14 +178,7 @@
                 $( "#header_select").prop( "hidden", false );
                 GLOBAL_ACTION=button.value
                 $("#id_popup_tbody").empty();
-                basic_add_new_html = '<tr><td><input type="checkbox" required></td>'+
-                '<td><select class="form-control" type="text" name="message_id">'+ msg_id_dropdown +'</select></td>'+
-                '<td><select id="message_type" name="message_type" class="form-control" type="text" >'+ msg_type_dropdown +'</select> </td>'+
-                '<td class="class_del_checkbox" hidden><input type="checkbox" required></td>'+
-                '<td hidden></td>'+
-                '</tr>';
-                $('#id_popup_tbody').append(basic_add_new_html);
-                table_sort_filter('id_popup_table');
+                new_row_data();   // Add a new row in popup
                 $("#id_del_ind_checkbox").prop( "hidden", true );
                 document.getElementById("id_del_add_button").style.display = "block";
                 $("#save_id").prop("hidden", false);
@@ -258,55 +251,47 @@
         $('#success_msg_id').empty()
         var Tabledata = { "Dbl_clck_tbl_id": 'MessagesId' };
         $('#id_popup_table').DataTable().destroy();
-        var main_table_low_value = [];
         no_duplicate_entries = 'Y'
         no_duplicate_value = 'Y'
         var error_message = '';
-        $('#display_basic_table').DataTable().destroy();
-        // read data from main table
-        $("#display_basic_table TBODY TR").each(function() {
-            var row = $(this);
-            var main_attribute = {};
-            main_attribute.messages_id = row.find("TD").eq(1).html();
-            main_table_low_value.push(main_attribute.messages_id);
-        });
-        table_sort_filter('display_basic_table');
-        $("#id_error_msg").empty();
+        get_main_table_data(); //Read data from main table
+        // compare for duplicates in popup
         [no_duplicate_value,error_message] = compare_table_for_duplicate_entries(validate_add_attributes, message_id_data)
         if (error_message){
             display_error_message(error_message)
         }
         else{
             if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
+                // compare main table and pop up for duplicate values
                 [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
             }
             if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
                 message_id_data_array = message_id_data ;
                 $('#id_save_confirm_popup').modal('hide');
-            data = {'data':message_id_data,'table_name':'MessagesId','action':GLOBAL_ACTION}
-            OpenLoaderPopup();
-            $.ajax({
-                type: 'POST',
-                url: "{% url 'eProc_Configuration:create_update_application_data' %}",
-                data:JSON.stringify(data),
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                success: function (Response) {
-                    rendered_message_id_data = Response[0];
-                    display_basic_db_data();
-                    $('#myModal').modal('hide');
-				    $('#id_error_msg').text(messageConstants["JMSG001"])
-                    success_response(Response); // Function call to display response data
-                    table_sort_filter('id_popup_table');
-                    CloseLoaderPopup();
-                }
-            });
-        }
-        else if (error_message){
-            display_error_message(error_message)
+                data = {'data':message_id_data,'table_name':'MessagesId','action':GLOBAL_ACTION}
+                OpenLoaderPopup();
+                $.ajax({
+                    type: 'POST',
+                    url: "{% url 'eProc_Configuration:create_update_application_data' %}",
+                    data:JSON.stringify(data),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (Response) {
+                        rendered_message_id_data = Response[0];
+                        display_basic_db_data();
+                        $('#myModal').modal('hide');
+                        // $('#id_error_msg').text(messageConstants["JMSG001"])
+                        success_response(Response); // Function call to display response data
+                        table_sort_filter('id_popup_table');
+                        CloseLoaderPopup();
+                    }
+                });
+            }
+            else if (error_message){
+                display_error_message(error_message)
+            }
         }
     }
-}
 
     //delete the selected row in db................
     var main_table_message_id_checked = [];
@@ -333,52 +318,6 @@
                 CloseLoaderPopup();
             }
         });
-    }
-
-    // validating the  popup table for duplicate entries
-    function compare_duplicate(validate_add_attributes,main_table_low_value, main_table_low_value_type){
-        var error_message = ''
-        var table_one = [];
-        var table_two = [];
-        var no_duplicate_value = 'Y';
-        for (i = 0; i < main_table_low_value.length; i++) {
-            table_two_cell_one = validate_add_attributes[0];
-            table_two_cell_two = validate_add_attributes[1];
-            for (j = 0; j < main_table_low_value.length; j++) {
-                table_one_cell_one = main_table_low_value[j];
-                table_one_cell_two = main_table_low_value_type[j];
-                if ((table_two_cell_one == table_one_cell_one) && (table_one_cell_two == table_two_cell_two)) {
-                    var url_new = "{% url 'eProc_Basic:get_message_description' %}";
-                    console.log(url_new);
-                    var msg = "MSG186";
-                    var msg_type, str ;
-                    str = "Message Id & Message Type";
-                    msg_type = message_config_details(msg);
-                    console.log("msg_type == ",msg_type.message_type);
-                    if(msg_type.message_type == "Error"){
-                        display_message_UI("id_error_msg_id", msg_type.messages_id_desc, str)
-                    }
-                    else if(msg_type.message_type == "Warning"){
-                        display_message_UI("id_warning_msg_id", msg_type.messages_id_desc, str)
-                    }
-                    else if(msg_type.message_type == "Information"){
-                        display_message_UI("id_info_msg_id", msg_type.messages_id_desc, str)
-                    }
-                    error_message =  msg_type.messages_id_desc;
-                    $('#id_save_confirm_popup').modal('hide');
-                    $('#myModal').modal('show');
-                    no_duplicate_value = 'N'
-                }
-            }
-        }
-        $.each(validate_add_attributes, function (i, item) {
-            if (item == '') {
-                get_message_details("JMSG001"); // Get message details
-                no_duplicate_value = 'N'
-                return [no_duplicate_value,error_message]
-            }
-        });
-        return [no_duplicate_value,error_message];
     }
 
     // validating the  popup table for duplicate entries
@@ -420,22 +359,25 @@
         return [no_duplicate_value,error_message]
     }
 
-    //validate by comparing  main table values and popup table values
-    function maintable_validation(validate_add_attributes, main_table_low_value) {
-        var no_duplicate_entries = 'Y'
-        var error_message =''
-        var common = [];
-        jQuery.grep(validate_add_attributes, function (el) {
-            if (jQuery.inArray(el, main_table_low_value) != -1) {
-                common.push(el);
-            }
+    //Function to highlight duplicate records
+    function display_duplicate_entry(common) {
+        var message_id_check = new Array;
+        $("#id_popup_table TBODY TR").each(function() {
+            var row = $(this);
+            message_id_dic = {}
+            message_id_dic.message_id = row.find("TD").eq(1).find('select[type="text"]').val();
+            var compare = message_id_dic.message_id
+            message_id_check.push(compare);
+            jQuery.grep(message_id_check, function(el) {
+                if (jQuery.inArray(el, common) != -1) {
+                    row_color_highlight(row);
+                }
+                else {
+                    row_color_no_highlight(row);
+                }
+            });
+
         });
-        if (common.length != 0) {
-            get_message_details("JMSG001"); // Get message details
-            no_duplicate_value = 'N'
-            return [no_duplicate_value,error_message]
-        }
-        return [no_duplicate_entries,error_message]
     }
 </script>
 <script src="{% static 'scripts/message_config.js' %}"></script>

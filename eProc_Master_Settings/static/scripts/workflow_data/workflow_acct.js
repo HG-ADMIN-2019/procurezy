@@ -85,11 +85,11 @@ function new_row_data()  {
     basic_add_new_html = '<tr><td><input type="checkbox" required></td>'+
     '<td><select type="text" class="form-control">'+ company_id_dropdown +'</select></td>'+
     '<td><select type="text" class="form-control">'+ acc_ass_dropdwn+'</select></td>'+
-    '<td><input class="form-control" type="number" maxlength="40"  name="acc_value" required></td>'+
+    '<td><select type="text" class="form-control">'+acc_ass_val_dropdwn+'</select></td>'+
     '<td><select type="text" class="form-control">'+ user_dropdwn +'</select></td>'+
     '<td><select type="text" class="form-control">'+ supcompany_dropdwn +'</select></td>'+
     '<td><select type="text" class="form-control">'+ sup_acc_ass_dropdwn +'</select></td>'+
-    '<td><input class="form-control" type="number" maxlength="40"  name="sup_acc_value"  required></td>'+
+    '<td><select type="text" class="form-control">'+ sup_acc_ass_val_dropdwn +'</select></td>'+
     '<td><select type="text" class="form-control">'+ currency_dropdwn +'</select></td>'+
     '<td class="class_del_checkbox" hidden> <input type="checkbox" required> </td>'+
     '<td hidden><input type="text" id="workflow_acc_guid"></td></tr>';
@@ -137,4 +137,92 @@ function get_selected_row_data() {
             main_table_workflowaccounting_checked.push(workflowaccounting_arr_obj);
         }
     });
+}
+
+//*********************************************************
+function account_assignment_value_find(company_num) {
+    corresponding_values = {};
+    corresponding_values.acc_ass_dropdwn = '';
+    corresponding_values.acc_ass_val_dropdwn = '';
+    corresponding_values.other_dropdn = '';
+    company_list = company_list;
+    unique_acct_cat= [];
+    unique_acct_assmt_val = [];
+    for (var i = 0; i < company_list.length; i++) {
+        compare_dict = {};
+        compare_dict = company_list[i]
+        if (company_num == compare_dict.company_id) {
+            unique_acct_cat.push(compare_dict.account_assign_cat);
+            unique_acct_assmt_val.push(compare_dict.acc_ass_val_dropdwn);
+        }
+    }
+     for (var i = 0; i < arrDistinct.length; i++) {
+        corresponding_values.other_dropdn += '<option value="'+arrDistinct[i]+'">' + arrDistinct[i] + '</option>'
+     }
+     assmtCatDistinct = [];
+     $(unique_acct_cat).each(function (index, item) {
+     if ($.inArray(item, assmtCatDistinct) == -1)
+        assmtCatDistinct.push(item);
+     });
+     for (var i = 0; i < assmtCatDistinct.length; i++) {
+        corresponding_values.acc_ass_dropdwn += '<option value="'+assmtCatDistinct[i]+'">' + assmtCatDistinct[i] + '</option>'
+     }
+     assmtValDistinct = [];
+     $(unique_acct_assmt_val).each(function (index, item) {
+     if ($.inArray(item, assmtValDistinct) == -1)
+        assmtValDistinct.push(item);
+     });
+     for (var i = 0; i < assmtValDistinct.length; i++) {
+        corresponding_values.acc_ass_val_dropdwn += '<option value="'+assmtValDistinct[i]+'">' + assmtValDistinct[i] + '</option>'
+     }
+    return corresponding_values
+}
+function account_assignment_cat(acct_cat, comp_num) {
+    corresponding_values = {};
+    corresponding_values.acc_ass_val_dropdwn = '';
+    company_list = company_list;
+    unique_acct_assmt_val = [];
+    var assmtValDistinct = [];
+     for (var i = 0; i < company_list.length; i++) {
+        compare_dict = {};
+        compare_dict = company_list[i]
+        if ((acct_cat == compare_dict.account_assign_cat) && (comp_num == compare_dict.company_id)) {
+            unique_acct_assmt_val.push(compare_dict.acc_ass_val_dropdwn);
+        }
+        assmtValDistinct = [];
+        $(unique_acct_assmt_val).each(function (index, item) {
+        if ($.inArray(item, assmtValDistinct) == -1)
+            assmtValDistinct.push(item);
+        });
+    }
+    for (var i = 0; i < assmtValDistinct.length; i++) {
+            corresponding_values.acc_ass_val_dropdwn += '<option value="'+assmtValDistinct[i]+'">'+assmtValDistinct[i]+'</option>'
+    }
+    return corresponding_values
+}
+
+function company_dropdwn_change(row){
+    row.find("TD").eq(2).find("select").empty()
+    row.find("TD").eq(3).find("select").empty()
+    company_num = row.find("TD").eq(1).find("select option:selected").val();
+    var comp_val = account_assignment_value_find(company_num)
+    row.find("TD").eq(2).find("select").append(comp_val.acc_ass_dropdwn)
+    row.find("TD").eq(3).find("select").append(comp_val.acc_ass_val_dropdwn)
+}
+
+function supcompany_dropdwn_change(row) {
+    row.find("TD").eq(6).find("select").empty()
+    row.find("TD").eq(7).find("select").empty()
+    company_num = row.find("TD").eq(5).find("select option:selected").val();
+    var comp_val = account_assignment_value_find(company_num)
+    row.find("TD").eq(6).find("select").append(comp_val.acc_ass_dropdwn)
+    row.find("TD").eq(7).find("select").append(comp_val.acc_ass_val_dropdwn)
+}
+
+
+function acc_ass_cat_dropdwn(row,company_num){
+    acct_cat = row.find("TD").eq(2).find("select option:selected").val();
+    row.find("TD").eq(3).find("select").empty();
+    var acct_cat_val = account_assignment_cat(acct_cat,company_num)
+    row.find("TD").eq(3).find("select").append(acct_cat_val.acc_ass_val_dropdwn)
 }
