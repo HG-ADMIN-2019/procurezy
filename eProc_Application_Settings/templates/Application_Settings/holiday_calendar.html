@@ -300,7 +300,7 @@
         GLOBAL_ACTION = 'DELETE';
         main_table_calendar_checked = [];
         var Tabledata = { "Dbl_clck_tbl_id": 'CalenderHolidays' };
-        $('#display_basic_table').DataTable().destroy();
+        // $('#display_basic_table').DataTable().destroy();
         get_selected_row_data(); // Function call to get the selected row data
         $('#id_delete_confirm_popup').modal('hide');
          data = {'data':main_table_calendar_checked,'table_name':'CalenderHolidays','action':GLOBAL_ACTION}

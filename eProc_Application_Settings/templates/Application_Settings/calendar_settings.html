@@ -134,7 +134,7 @@
     <!--end of modal popup for Add,copy,update and upload-->
 
     <!-- modal popup to upload the csv file; save confirmation popup; delete confirmation popup -->
-    {% include 'configuration_common_pop_up.html' %}onclick_add_button
+    {% include 'configuration_common_pop_up.html' %}
     <div>
         {% if messages %}
         {% for message in messages %}
@@ -303,40 +303,37 @@
         get_main_table_data(); //Read data from main table
         // compare for duplicates in popup
         [no_duplicate_value,error_message] = compare_table_for_duplicate_entries(validate_add_attributes, calendarconfig_data)
-        if (error_message) {
+        if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
+            // compare main table and pop up for duplicate values
+            [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
+        }
+        if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
+            var calendar_data_array = calendarconfig_data;
+            $('#id_save_confirm_popup').modal('hide');
+            data = {'data':calendarconfig_data,'table_name':'CalenderConfig','action':GLOBAL_ACTION}
+            OpenLoaderPopup();
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'eProc_Configuration:create_update_application_data' %}",
+                data: JSON.stringify(data),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (Response) {
+                    rendered_calendar_data = Response[0];
+                    display_basic_db_data();
+                    $('#Calendar_Modal').modal('hide');
+                    success_response(Response);
+                    DatePicker();
+                    MultipleSelect();
+                    CloseLoaderPopup();
+                }
+            });
+        }
+        else if (error_message) {
             display_error_message(error_message)
-        } else {
-            if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
-                // compare main table and pop up for duplicate values
-                [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
-            }
-            if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
-                var calendar_data_array = calendarconfig_data;
-                $('#id_save_confirm_popup').modal('hide');
-                data = {'data':calendarconfig_data,'table_name':'CalenderConfig','action':GLOBAL_ACTION}
-                OpenLoaderPopup();
-                $.ajax({
-                    type: 'POST',
-                    url: "{% url 'eProc_Configuration:create_update_application_data' %}",
-                    data: JSON.stringify(data),
-                    contentType: "application/json; charset=utf-8",
-                    dataType: "json",
-                    success: function (Response) {
-                        rendered_calendar_data = Response[0];
-                        display_basic_db_data();
-                        $('#Calendar_Modal').modal('hide');
-                        success_response(Response);
-                        DatePicker();
-                        MultipleSelect();
-                        CloseLoaderPopup();
-                    }
-                });
-            }
-            else if (error_message) {
-                display_error_message(error_message)
-            } 
         } 
-    }
+        table_sort_filter('id_popup_table');
+    } 
 
     // on click add icon display the row in to add the new entries
     function add_popup_row() {

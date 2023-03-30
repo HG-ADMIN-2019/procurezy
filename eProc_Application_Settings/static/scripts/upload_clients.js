@@ -34,19 +34,18 @@ function onclick_update_button() {
 //**********************************************************
 function onclick_copy_update_button() {
     $("#error_msg_id").css("display", "none")
-    $('#display_basic_table').DataTable().destroy();
-    $('#id_popup_table').DataTable().destroy();
+    // $('#id_popup_table').DataTable().destroy();
     $("#id_popup_tbody").empty();
     //Reference the Table.
-    var grid = document.getElementById("display_basic_table");
+    var res = get_all_checkboxes(); // Function to get all the checkboxes
+    var $chkbox_all = $('td input[type="checkbox"]', res);
     //Reference the CheckBoxes in Table.
-    var checkBoxes = grid.getElementsByTagName("INPUT");
     var edit_basic_data = "";
     var unique_input = '';
     //Loop through the CheckBoxes.
-    for (var i = 1; i < checkBoxes.length; i++) {
-        if (checkBoxes[i].checked) {
-            var row = checkBoxes[i].parentNode.parentNode;
+    for (var i = 0; i < $chkbox_all.length; i++) {
+        if ($chkbox_all[i].checked) {
+            var row = $chkbox_all[i].parentNode.parentNode;
             if(GLOBAL_ACTION == "UPDATE"){
                unique_input = '<input class="form-control check_special_char" type="text" value="' + row.cells[1].innerHTML + '" name="client code"  maxlength="8" style="text-transform:uppercase" disabled>'
                edit_basic_data += '<tr ><td hidden><input type="checkbox" required></td><td><input class="form-control check_special_char" type="text" value="' + row.cells[1].innerHTML + '" name="client code"  maxlength="4" style="text-transform:uppercase" disabled></td><td><input class="form-control check_special_char" value="' + row.cells[2].innerHTML + '" type="text"  name="description"  maxlength="30"  required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
@@ -63,7 +62,6 @@ function onclick_copy_update_button() {
     $("#id_del_ind_checkbox").prop("hidden", true);
     $('#upload_client_Modal').modal('show');
     table_sort_filter('id_popup_table');
-    table_sort_filter('display_basic_table');
 }
 
 //onclick of cancel empty the popup table body and error messages
@@ -127,6 +125,7 @@ $('#save_id').click(function () {
 
 //Read popup table data
 function read_popup_data() {
+    $('#id_popup_table').DataTable().destroy();
     clients_data = new Array();
     validate_add_attributes = [];
     $("#id_popup_table TBODY TR").each(function () {
@@ -141,6 +140,7 @@ function read_popup_data() {
         validate_add_attributes.push(client.client);
         clients_data.push(client);
     });
+    table_sort_filter('id_popup_table');
     return clients_data;
 }
 
