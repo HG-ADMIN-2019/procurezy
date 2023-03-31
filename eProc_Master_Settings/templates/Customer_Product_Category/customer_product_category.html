@@ -56,10 +56,10 @@
                     <thead id="id_cusprodcat_table_header">
                         <tr>
                             <th id="hg_select_checkbox" hidden>
-                                <div id="id_check_all" style="display:none;">
-                                    <input type="checkbox" onchange="checkAll(this)" name="chk[]">
+                               <div id="id_check_all" style="display:none;">
+                                    <input type="checkbox" id="selectAll" name="chk[]">
                                 </div>
-                                </th>
+                            </th>
                             <th style="width: 25%;">Image</th>
                             <th style="width: 35%;">Description</th>
                             <th>UNSPSC Code</th>
@@ -1150,7 +1150,7 @@ function main_table_delete(){
          cusprodcat = {};
          var main_table_low_value = [];
 
-        $('#display_basic_table').DataTable().destroy();
+       $('#display_basic_table').DataTable().destroy();
         $("#display_basic_table TBODY TR").each(function() {
             var row = $(this);
 
@@ -1161,7 +1161,7 @@ function main_table_delete(){
            main_table_low_value.push(main_attribute.prod_cat_id);
         });
 
-        table_sort_filter('display_basic_table');
+       table_sort_filter('display_basic_table');
           $("#id_error_msg").empty();
         [no_duplicate_value,error_message] = compare_table_for_duplicate_entries(validate_add_attributes, cust_prod_cat_data)
           if (error_message){

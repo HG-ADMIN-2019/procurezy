@@ -50,9 +50,9 @@
                     <thead id="id_cusprodcatdesc_table_header">
                         <tr>
                             <th id="hg_select_checkbox" hidden>
-                                <div id="id_check_all" style="display:none;">
-                                    <INPUT type="checkbox" onchange="checkAll(this)" name="chk[]">
-                                </div>
+                              <div id="id_check_all" style="display:none;">
+                                  <input type="checkbox" id="selectAll" name="chk[]">
+                              </div>
                             </th>
                             <th>UNSPSC Code</th>
                             <th>Language</th>
@@ -874,12 +874,14 @@ function onclick_copy_update_button(data){
             render_language_data = response.upload_language
             unspcdesc_dropdown()
             $("#error_msg_id").css("display", "none")
-            $('#display_basic_table').DataTable().destroy();
+<!--            $('#display_basic_table').DataTable().destroy();-->
             $("#id_popup_tbody").empty();
             //Reference the Table.
-            var grid = document.getElementById("display_basic_table");
+<!--            var grid = document.getElementById("display_basic_table");-->
+            var res = get_all_checkboxes(); // Function to get all the checkboxes
+            var $chkbox_all = $('td input[type="checkbox"]', res);
             //Reference the CheckBoxes in Table.
-            var checkBoxes = grid.getElementsByTagName("INPUT");
+<!--            var checkBoxes = grid.getElementsByTagName("INPUT");-->
             var edit_basic_data = "";
             var unique_input = '';
             var prod_cat_desc_guid= '';
@@ -887,9 +889,9 @@ function onclick_copy_update_button(data){
             var cusprodcatdesc = {};
             var guid ='';
             //Loop through the CheckBoxes.
-            for (var i = 1; i < checkBoxes.length; i++){
-                if (checkBoxes[i].checked){
-                    var row = checkBoxes[i].parentNode.parentNode;
+            for (var i = 0; i < $chkbox_all.length; i++){
+                if ($chkbox_all[i].checked){
+                    var row = $chkbox_all[i].parentNode.parentNode;
                     var prod_cat_id_value = row.cells[1].innerHTML
                     var language_id_value = row.cells[2].innerHTML
                     dropdown_values.push([prod_cat_id_value, language_id_value])
@@ -968,7 +970,7 @@ function onclick_copy_update_button(data){
             $("#id_del_ind_checkbox").prop("hidden", true);
             $('#custproddescModal').modal('show');
             table_sort_filter('id_popup_table');
-            table_sort_filter('display_basic_table');
+<!--         table_sort_filter('display_basic_table');-->
             CloseLoaderPopup();
         }
     });
@@ -996,7 +998,7 @@ function onclick_copy_update_button(data){
     // Function to get main table data
     function get_main_table_data() {
         main_table_low_value = [];
-        $('#display_basic_table').DataTable().destroy();
+       $('#display_basic_table').DataTable().destroy();
         $("#display_basic_table TBODY TR").each(function() {
             var row = $(this);
             var main_attribute = {};
@@ -1005,7 +1007,7 @@ function onclick_copy_update_button(data){
             var cusprodcatdesc_compare =  main_attribute.prod_cat_id +'-'+ main_attribute.language_id
             main_table_low_value.push(cusprodcatdesc_compare);
         });
-        table_sort_filter('display_basic_table');
+          table_sort_filter('display_basic_table');
     }
 
     // Function to get the selected row data
