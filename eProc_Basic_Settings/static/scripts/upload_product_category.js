@@ -38,24 +38,24 @@ function onclick_update_button() {
 
 function onclick_delete_button() {
     GLOBAL_ACTION = "DELETE"
+    $('#delete_data').show();
+    $('#save_id').hide();
     onclick_copy_update_button("DELETE")
-    document.getElementById("id_del_add_button").style.display = "none";
 }
 
 function onclick_copy_update_button(data) {
     $("#error_msg_id").css("display", "none")
     $("#id_popup_tbody").empty();
-    $('#display_basic_table').DataTable().destroy();
     //Reference the Table.
-    var grid = document.getElementById("display_basic_table");
+    var res = get_all_checkboxes(); // Function to get all the checkboxes
+    var $chkbox_all = $('td input[type="checkbox"]', res);
     //Reference the CheckBoxes in Table.
-    var checkBoxes = grid.getElementsByTagName("INPUT");
     var edit_basic_data = "";
     var unique_input = '';
     //Loop through the CheckBoxes.
-    for (var i = 1; i < checkBoxes.length; i++) {
-        if (checkBoxes[i].checked) {
-            var row = checkBoxes[i].parentNode.parentNode;
+    for (var i = 0; i < $chkbox_all.length; i++) {
+        if ($chkbox_all[i].checked) {
+            var row = $chkbox_all[i].parentNode.parentNode;
             if(GLOBAL_ACTION == "UPDATE"){
                 unique_input = '<input class="form-control" type="text" value="' + row.cells[1].innerHTML + '" name="prod_cat_id"  maxlength="20"  disabled>'
                 edit_basic_data += '<tr><td hidden><input type="checkbox" required></td><td>'+unique_input+'</td><td><input type="text" class="form-control check_special_char" value="' + row.cells[2].innerHTML + '" name="prod_cat_desc"  maxlength="100" required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td><td class="id_del_ind_checkbox1" hidden><input type="checkbox" name = "del_ind_flag" required></td></tr>';
@@ -70,15 +70,23 @@ function onclick_copy_update_button(data) {
                 if ((row.cells[3].innerHTML=="False") || (row.cells[3].innerHTML=="false")){
                     check = '<input type="checkbox" disabled>'
                     document.getElementById('delete_data').style.visibility='hidden';
+                    $('#save_id').hide();
+                    $('#delete_data').prop('disabled', true);
                 }
                 else
                 {
                     check = '<input type="checkbox">'
                     document.getElementById('delete_data').style.visibility = 'visible'
+                    $('#delete_data').prop('disabled', false);
                 }
                 unique_input = '<input class="form-control" type="text" value="' + row.cells[1].innerHTML + '" name="prod_cat_id" onkeypress="return /[0-9]/i.test(event.key)" maxlength="20" style="text-transform:uppercase" required>'
                 edit_basic_data += '<tr><td>'+check+'</td><td>'+unique_input+'</td><td><input type="text" class="form-control" value="' + row.cells[2].innerHTML + '" name="prod_cat_desc" onkeypress="return /[a-z ]/i.test(event.key)" maxlength="100" required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td><td class="id_del_ind_checkbox1" hidden><input type="checkbox" name = "del_ind_flag" required></td></tr>';
                 $("#header_select").prop("hidden", false);
+            }
+            else {
+                $('#save_id').show();
+                document.getElementById('save_id').style.visibility = 'visible';
+                $('#delete_data').hide();
             }
         }
     }
@@ -87,7 +95,6 @@ function onclick_copy_update_button(data) {
     $("#id_del_ind_checkbox").prop("hidden", true);
     $('#unspscModal').modal('show');
     table_sort_filter('id_popup_table');
-    table_sort_filter('display_basic_table');
 }
 
 function display_button(){
@@ -96,8 +103,9 @@ function display_button(){
         $('#save_id').hide();
     }
     else{
-        $('#delete_data').hide();
         $('#save_id').show();
+         document.getElementById('save_id').style.visibility = 'visible';
+         $('#delete_data').hide();
     }
 }
 
@@ -174,6 +182,7 @@ $('#save_id').click(function () {
 
 //Read popup table data
 function read_popup_data(){
+    $('#id_popup_table').DataTable().destroy();
     prodcat_data = new Array();
     validate_add_attributes = [];
     $("#id_popup_table TBODY TR").each(function () {
@@ -189,6 +198,7 @@ function read_popup_data(){
         validate_add_attributes.push(prodcat.prod_cat_id);
         prodcat_data.push(prodcat);
     });
+    table_sort_filter('id_popup_table');
     return prodcat_data;
 }
 

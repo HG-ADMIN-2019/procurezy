@@ -1,9 +1,9 @@
 var numberranges_data = new Array();
 var main_table_data = new Array();
+var main_table_low_value = [];
 var validate_add_attributes = [];
 var nextval = max_sequence ;
 var number_range={};
-var seq_array= [];
 
 //onclick of add button display myModal popup and set GLOBAL_ACTION button value
 function onclick_add_button(button) {
@@ -45,10 +45,7 @@ function onclick_copy_update_button() {
     for (var i = 1; i < checkBoxes.length; i++) {
         if (checkBoxes[i].checked) {
             var row = checkBoxes[i].parentNode.parentNode;
-            if (GLOBAL_ACTION == "COPY") {
-                guid = '';
-                edit_basic_data += '<tr ><td><input type="checkbox" required></td><td><input type="number" class="form-control" value="' + row.cells[1].innerHTML + '" name="sequence"  maxlength="5" style="text-transform:uppercase" required></td><td><input class="form-control" value="' + row.cells[2].innerHTML + '" type="number"  name="starting"  maxlength="100000000"  required></td><td><input value="' + row.cells[3].innerHTML + '" type="number" class="form-control"  name="ending"  maxlength="10"  required></td><td><input value="' + row.cells[4].innerHTML + '" type="number" class="form-control"  name="current"  maxlength="10"  required></td><td hidden><input  type="text" class="form-control" value="' + guid + '"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
-            } else {
+            if (GLOBAL_ACTION == "UPDATE") {
                 guid = row.cells[5].innerHTML;
                 edit_basic_data += '<tr ><td><input type="checkbox" required></td><td><input type="number" class="form-control" value="' + row.cells[1].innerHTML + '" name="sequence"  maxlength="5" style="text-transform:uppercase" disabled></td><td><input class="form-control" value="' + row.cells[2].innerHTML + '" type="number"  name="starting"  maxlength="100000000"  required></td><td><input value="' + row.cells[3].innerHTML + '" type="number" class="form-control"  name="ending"  maxlength="10"  required></td><td><input value="' + row.cells[4].innerHTML + '" type="number" class="form-control"  name="current"  maxlength="10"  required></td><td hidden><input  type="text" class="form-control" value="' + guid + '"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
             }
@@ -142,7 +139,6 @@ function inRange(x, min, max) {
 function add_popup_row() {
     $("#error_msg_id").css("display", "none")
     basic_add_new_html = '';
-    var display_db_data = '';
     $('#id_popup_table').DataTable().destroy();
     $(".modal").on("hidden.bs.modal", function () {
         $("#id_error_msg").html("");

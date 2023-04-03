@@ -53,7 +53,7 @@
                     <tr>
                         <th id="hg_select_checkbox"  hidden>
                             <div id="id_check_all" style="display:none;">
-                                <input id="selectAll" type="checkbox"  name="chk[]">
+                                <input type="checkbox" id="selectAll" name="chk[]">
                             </div>
                         </th>
                         <th>Country Code</th>
@@ -247,43 +247,39 @@
         get_main_table_data(); //Read data from main table
         // compare for duplicates in popup
         [no_duplicate_value,error_message] = compare_table_for_duplicate_entries(validate_add_attributes, countries_data)
-        if (error_message){
+        if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
+            // compare main table and pop up for duplicate values
+            [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
+            if(no_duplicate_entries == 'N'){
+                $('#countriesModal').modal('show');
+            }
+        }
+        if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
+            var add_basic_data = '';
+            var country_data_array = countries_data;
+            $('#id_save_confirm_popup').modal('hide');
+            data = {'data':countries_data,'table_name':'Country','action':GLOBAL_ACTION}
+            OpenLoaderPopup();
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'eProc_Basic_Settings:create_update_basic_data' %}",
+                data: JSON.stringify(data),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function(Response) {
+                    rendered_country_data = Response[0];
+                    display_basic_db_data();
+                    $('#countriesModal').modal('hide');
+                    success_response(Response); // Function call to display response data
+                    $("#id_check_data").prop("hidden", true);
+                    CloseLoaderPopup();
+                }
+            });
+        }
+        else if (error_message){
             display_error_message(error_message)
         }
-        else{
-            if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
-                // compare main table and pop up for duplicate values
-                [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
-                if(no_duplicate_entries == 'N'){
-                    $('#countriesModal').modal('show');
-                }
-            }
-            if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
-                var add_basic_data = '';
-                var country_data_array = countries_data;
-                $('#id_save_confirm_popup').modal('hide');
-                data = {'data':countries_data,'table_name':'Country','action':GLOBAL_ACTION}
-                OpenLoaderPopup();
-                $.ajax({
-                    type: 'POST',
-                    url: "{% url 'eProc_Basic_Settings:create_update_basic_data' %}",
-                    data: JSON.stringify(data),
-                    contentType: "application/json; charset=utf-8",
-                    dataType: "json",
-                    success: function(Response) {
-                        rendered_country_data = Response[0];
-                        display_basic_db_data();
-                        $('#countriesModal').modal('hide');
-                        success_response(Response); // Function call to display response data
-                        $("#id_check_data").prop("hidden", true);
-                        CloseLoaderPopup();
-                    }
-                });
-            }
-            else if (error_message){
-                display_error_message(error_message)
-            }
-        }
+        table_sort_filter('id_popup_table');
     }
 
     //delete the selected row in db................
@@ -343,12 +339,31 @@
             }
             country_list.push([country_code, country_name, del_ind])
             var format = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
-            //*************** checking for max length for country code (max length = 2) ***************
+              //*************** checking for empty for country code (length = 0) ***************
+            if(country_code.length == 0){
+                error_message = ui_messeges("JMSG002")// Get message details
+                var display8 = error_message;
+                document.getElementById("id_error_msg_country_length").innerHTML = display8+ "Country Code";
+                $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
+                row_color_highlight(row);
+                count = count +1;
+            }
+            //*************** checking for empty for country code (length = 0) ***************
+            if(country_name.length == 0){
+                error_message = ui_messeges("JMSG002")// Get message details
+                var display8 = error_message;
+                document.getElementById("id_error_msg_country_length").innerHTML = display8+ "Country Name";
+                $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
+                row_color_highlight(row);
+                count = count +1;
+            }
+            //*************** checking for minimum length for country code (max length = 2) ***************
             if(country_code.length <2){
                 error_message = ui_messeges("JMSG113")// Get message details
                 var display8 = error_message;
                 document.getElementById("id_error_msg_country_length").innerHTML = display8+ "Country Code";
                 $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
+                row_color_highlight(row);
                 count = count +1;
             }
             //*************** checking for special characters for country code ***************
@@ -357,6 +372,7 @@
                 var display4 = error_message;
                 document.getElementById("id_error_msg_country_code").innerHTML = display4+ "Country Code";
                 $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
+                row_color_highlight(row);
                 count = count +1;
             }else{
                 $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "none");
@@ -367,13 +383,15 @@
                 var display3 = error_message;
                 document.getElementById("id_error_msg_country_name").innerHTML = display3+ "Country Name";
                 $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "1px solid #FF0000");
+                row_color_highlight(row);
                 count = count +1;
             }
             else{
-            $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "none");
+                $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "none");
             }
             if(country_code_check.includes(country_code)){
                 $(row).css("border", "#f8d7da");
+                 row_color_highlight(row);
             }
             else{
                 $(row).css("border", "");

@@ -14,8 +14,7 @@
                         type="button">
                     <i class="fas fa-download"></i> extract
                 </button>
-                <button type="button" id="id_add_data" value="ADD" class="btn btn-primary" data-toggle="modal"
-                        data-target="#myModal" onclick="onclick_add_button(this)">
+                <button type="button" id="id_add_data" title="Add Purchase Order Slit Criteria" value="ADD" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="onclick_add_button(this)">
                     <i class="fa fa-plus"></i> add purchase order slit criteria
                 </button>
                 <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"
@@ -30,19 +29,16 @@
             <div id="err_msg_app_settings_t" class="alert alert-success" hidden><span id="success_msg_id"></span></div>
             <div class="table-container tcw-60">
                 <div class="edit-button-section mb-4">
-                    <button class="btn btn-secondary btn-sm" id="id_edit_data" onclick="onclick_edit_button()">
+                    <button class="btn btn-secondary btn-sm" title="Edit" id="id_edit_data" onclick="onclick_edit_button()">
                         <i class="fas fa-edit"></i> edit
                     </button>
-                    <button class="btn btn-outline-danger btn-sm" id="id_delete_data" value="DELETE"
-                            style="display:none;" data-toggle="modal" data-target="#id_delete_confirm_popup">
+                    <button class="btn btn-outline-danger btn-sm" title="Delete" id="id_delete_data" value="DELETE" style="display:none;" data-toggle="modal" data-target="#id_delete_confirm_popup">
                         <i class="fa fa-trash"></i> delete
                     </button>
-                    <button class="btn btn-primary btn-sm" id="id_update_data" style="display:none;" value="UPDATE"
-                            type="button" onclick="onclick_update_button()">
+                    <button class="btn btn-primary btn-sm" title="Update" id="id_update_data" style="display:none;" value="UPDATE" type="button" onclick="onclick_update_button()">
                         <i class="far fa-edit"></i> update
                     </button>
-                    <button class="btn btn-secondary btn-sm" id="id_cancel_data" style="display:none;" type="button"
-                            onclick="display_basic_db_data()">
+                    <button class="btn btn-secondary btn-sm" title="Cancel" id="id_cancel_data" style="display:none;" type="button"  onclick="display_basic_db_data()">
                         <i class="fas fa-times"></i> cancel
                     </button>
                 </div>
@@ -51,7 +47,7 @@
                     <tr>
                         <th id="hg_select_checkbox" hidden>
                             <div id="id_check_all" style="display:none;">
-                                <INPUT type="checkbox" onchange="checkAll(this)" name="chk[]">
+                                <input type="checkbox" id="selectAll" name="chk[]">
                             </div>
                         </th>
                         <th>Split Type</th>
@@ -97,11 +93,10 @@
                 <!-- Modal body -->
                 <div class="modal-body scrollbox">
                     <div id="id_del_add_button" class="mb-4">
-                        <button class="btn btn-primary" type="button" onclick="add_popup_row()"><i
+                        <button class="btn btn-primary" title="Add New Row" type="button" onclick="add_popup_row()"><i
                                 class="fa fa-plus"></i> add new row
                         </button>
-                        <button class="btn btn-outline-danger"
-                                onclick="application_settings_delete_Row('id_popup_table')"><i class="fa fa-trash"></i>
+                        <button class="btn btn-outline-danger" title="Delete" onclick="application_settings_delete_Row('id_popup_table')"><i class="fa fa-trash"></i>
                             delete
                         </button>
                     </div>
@@ -134,10 +129,10 @@
                 </div>
                 <!-- Modal footer -->
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-primary remove_upload_data" data-dismiss="modal"><i
-                            class="fas fa-times"></i> cancel
+                    <button type="button" class="btn btn-outline-primary remove_upload_data" title="Cancel" data-dismiss="modal">
+                        <i class="fas fa-times"></i> cancel
                     </button>
-                    <button class="btn btn-primary" id="save_id"><i class="fas fa-save"></i> save</button>
+                    <button class="btn btn-primary" title="Save" id="save_id"><i class="fas fa-save"></i> save</button>
                 </div>
             </div>
         </div>
@@ -159,11 +154,11 @@
 {{ dropdown_activate|json_script:"dropdown_activate" }}
 <script>
     var rendered_aac_data = JSON.parse(document.getElementById('upload_acc_assign_categories').textContent);
+    var messages_list = {{messages_list|safe}};
     var rendered_po_split_types_data = {{po_split_typ|safe}};
     var rendered_company_data = {{upload_data_company|safe}};
     var rendered_activate =  JSON.parse(document.getElementById('dropdown_activate').textContent);
     var aac_data_array = {}
-    var main_table_aac_value = [];
     var po_spl_crit = '';
     var edit_basic_data = '';
     var GLOBAL_ACTION = '';
@@ -171,8 +166,7 @@
     var Tablename = uiConstants["CONST_TABLENAME_AAC"]
     var appname = uiConstants["CONST_APPNAME01"]
     var db_header_data = uiConstants["CONST_HEADER_DATA_ACC"]
-    var messages_list = {{messages_list|safe}};
-
+   
     //***************************
     var po_split_type_dropdown='';
     function dropdown_value(){
@@ -233,60 +227,38 @@
     function popup_save_data() {
         $('#success_msg_id').empty()
         $('#id_popup_table').DataTable().destroy();
-        var main_table_low_value = [];
         no_duplicate_entries = 'Y'
         no_duplicate_value = 'Y'
         var error_message = '';
-        $('#display_basic_table').DataTable().destroy();
-        $("#display_basic_table TBODY TR").each(function() {
-            var row = $(this);
-            var main_attribute = {};
-            main_attribute.po_split_type = row.find("TD").eq(1).attr('id');
-            main_attribute.company_code_id = row.find("TD").eq(2).html();
-            main_attribute.activate = row.find("TD").eq(3).html();
-            var data = '';
-            if (main_attribute.activate == 'Activate'){
-                data = true
-            } else{
-                data = false
-            }
-            main_attribute.activate  = data;
-            main_attribute.po_split_criteria_guid = row.find("TD").eq(4).html();
-            main_table_low_value.push(main_attribute);
-        });
-        table_sort_filter_page('display_basic_table');
+        get_main_table_data(); //Read data from main table
+        // compare for duplicates in popup
         [no_duplicate_value,error_message] = compare_table_for_duplicate_entries(validate_add_attributes, po_split_criteria_data)
-        if (error_message){
-            display_error_message(error_message)
+        if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
+            [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
         }
-        else{
-            if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
-                [no_duplicate_entries,error_message] = maintable_validation(po_split_criteria_data, main_table_low_value)
-            }
-            if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
-                var add_basic_data = '';
-                var aac_data_array = po_split_criteria_data;
-                $('#id_save_confirm_popup').modal('hide');
-                data = {'data':po_split_criteria_data,'table_name':'PoSplitCriteria','action':GLOBAL_ACTION}
-                OpenLoaderPopup();
-                $.ajax({
-                    type: 'POST',
-                    url: "{% url 'eProc_Configuration:create_update_application_data' %}",
-                    data: JSON.stringify(data),
-                    contentType: "application/json; charset=utf-8",
-                    dataType: "json",
-                    success: function(Response) {
-                        rendered_aac_data = Response[0].upload_account_assign_cat;
-                        display_basic_db_data();
-                        $('#myModal').modal('hide');
-                        success_response(Response); // Function call to display response data
-                        CloseLoaderPopup();
-                    }
-                });
-            }
-            else if (error_message){
-                display_error_message(error_message)
-            }
+        if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
+            var add_basic_data = '';
+            var aac_data_array = po_split_criteria_data;
+            $('#id_save_confirm_popup').modal('hide');
+            data = {'data':po_split_criteria_data,'table_name':'PoSplitCriteria','action':GLOBAL_ACTION}
+            OpenLoaderPopup();
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'eProc_Configuration:create_update_application_data' %}",
+                data: JSON.stringify(data),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function(Response) {
+                    rendered_aac_data = Response[0].upload_account_assign_cat;
+                    display_basic_db_data();
+                    $('#myModal').modal('hide');
+                    success_response(Response); // Function call to display response data
+                    CloseLoaderPopup();
+                }
+            });
+        }
+        else if (error_message){
+            display_error_message(error_message)
         }
     }
 
@@ -299,14 +271,10 @@
         $(".modal").on("hidden.bs.modal", function () {
         $("#id_error_msg").html("");
         });
-        basic_add_new_html = '<tr><td><input type="checkbox" required></td>'+
-        '<td><select type="text" class="input form-control">'+ po_split_type_dropdown +'</select></td>'+
-        '<td><select type="text" class="input form-control">'+ company_dropdown +'</select></td><td><select type="text" class="input form-control">'+ activate_dropdown +'</select></td><td hidden><input type="text" class= "form-control" name="po_split_criteria_guid"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
-        $('#id_popup_tbody').append(basic_add_new_html);
+        new_row_data();   // Add a new row in popup
         if (GLOBAL_ACTION == "aac_upload") {
             $(".class_del_checkbox").prop("hidden", false);
         }
-        table_sort_filter('id_popup_table');
     }
     
     //*************************
@@ -343,12 +311,7 @@
                 GLOBAL_ACTION = button.value
                 $("#id_popup_tbody").empty();
                 $('#myModal').modal('show');
-                basic_add_new_html =
-                    '<tr><td><input type="checkbox" required></td>'+
-                    '<td><select type="text" class="input form-control">'+ po_split_type_dropdown +'</select></td>'+
-                    '<td><select type="text" class="input form-control">'+ company_dropdown +'</select></td><td><select type="text" class="input form-control">'+ activate_dropdown +'</select></td><td hidden><input type="text" class= "form-control" name="po_split_criteria_guid"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
-                $('#id_popup_tbody').append(basic_add_new_html);
-                table_sort_filter('id_popup_table');
+                new_row_data();   // Add a new row in popup
                 $("#header_select").prop("hidden", false);
                 $("#id_del_ind_checkbox").prop("hidden", true);
                 document.getElementById("id_del_add_button").style.display = "block";
@@ -356,67 +319,6 @@
                 CloseLoaderPopup();
             }
         });
-    }
-
-    //*************************************
-    function onclick_copy_update_button(data) {
-        OpenLoaderPopup();
-        var data = {'table_name':'PoSplitCriteria'}
-        $.ajax({
-            type: 'POST',
-            url: "{% url 'eProc_Configuration:get_dropdown_data' %}",
-            data: JSON.stringify(data),
-            success: function(response) {
-                rendered_po_split_types_data = response.po_split_typ
-                 rendered_activate = response.dropdown_activate
-                rendered_company_data = response.upload_data_company
-                dropdown_value()
-                $("#error_msg_id").css("display", "none")
-                $('#display_basic_table').DataTable().destroy();
-                $('#id_popup_table').DataTable().destroy();
-                $("#id_popup_tbody").empty();
-                //Reference the Table.
-                var grid = document.getElementById("display_basic_table");
-                //Reference the CheckBoxes in Table.
-                var checkBoxes = grid.getElementsByTagName("INPUT");
-                var edit_basic_data = "";
-                var unique_input = '';
-                 var dropdown_val = [];
-                //Loop through the CheckBoxes.
-                for (var i = 1; i < checkBoxes.length; i++) {
-                    if (checkBoxes[i].checked) {
-                        var row = checkBoxes[i].parentNode.parentNode;
-                        var activate = row.cells[3].innerHTML
-                        dropdown_val.push([activate])
-                        if(GLOBAL_ACTION == "UPDATE"){
-                            guid = row.cells[4].innerHTML;
-                            edit_basic_data += '<tr><td hidden><input type="checkbox" required></td><td><select class="form-control"   type="text" disabled><option>' + row.cells[1].innerHTML + '</option></select></td><td><input class="form-control"  value="' + row.cells[2].innerHTML + '" type="text" disabled></td><td><select type="text" class="input form-control">'+ activate_dropdown +'</select></td><td hidden><input type="text" class= "form-control" value="' +  guid  + '"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
-                           $("#header_select").prop("hidden", true);
-                        }
-                        else{
-                           unique_input = '<select class="form-control" type="text"  name="client code" onkeypress="return /[A-Z0-9]/i.test(event.key)" maxlength="8" style="text-transform:uppercase" required><option value="' + row.cells[1].id + '">' + row.cells[1].innerHTML + '</option></select>'
-                           edit_basic_data += '<tr><td><input type="checkbox" required></td><td>'+unique_input+'</td><td><input class="form-control" value="' + row.cells[2].innerHTML + '" type="text" onkeypress="return /[a-z 0-9]/i.test(event.key)" name="description"  maxlength="30"  required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
-                           $("#header_select").prop("hidden", false);
-                        }
-                    }
-                }
-                $('#id_popup_tbody').append(edit_basic_data);
-                var i = 0;
-                $("#id_popup_table TBODY TR").each(function () {
-                    var row = $(this);
-                   var activate = dropdown_val[i][0]
-                   $(row.find("TD").eq(3).find("select option[value=" + activate + "]")).attr('selected', 'selected');
-                   i++;
-                })
-                $("#id_del_ind_checkbox").prop("hidden", true);
-                $('#myModal').modal('show');
-                table_sort_filter('display_basic_table');
-                table_sort_filter('id_popup_table');
-                $('#myModal').modal('show');
-                CloseLoaderPopup();
-            }
-        });
-
     }
 
     //delete the selected row in db................
@@ -447,16 +349,15 @@
 
     //**********************
     function GetReferrer() {
-            window.history.back();
-            var preUrl = document.referrer;
-            console.log(preUrl);
-            window.open('', '_self', '').close();
-            if (preUrl == null)
-            return "The previous page url is empty";
-            else
-            return preUrl;
-        }
-
+        window.history.back();
+        var preUrl = document.referrer;
+        console.log(preUrl);
+        window.open('', '_self', '').close();
+        if (preUrl == null)
+        return "The previous page url is empty";
+        else
+        return preUrl;
+    }
 
     // validating the  popup table for duplicate entries
     function compare_table_for_duplicate_entries(validate_add_attributes, po_spl_crit) {
@@ -491,34 +392,88 @@
         return [no_duplicate_value,error_message]
     }
 
-    ///validate by comparing  main table values and popup table values
-    function maintable_validation(po_split_criteria_data, main_table_low_value) {
-        var no_duplicate_entries = 'Y'
-        var error_message =''
-        var dup_entry = "";
-        $.each(po_split_criteria_data, function (i, item) {
-            $.each(main_table_low_value, function (j, item1) {
-                if((item.po_split_type == item1.po_split_type)
-                && (item.company_code_id == item1.company_code_id))
-                {
-                    dup_entry = "1"
-                }
-            });
-        });
-        if((dup_entry == "1"))
-        {
-            get_message_details("JMSG001"); // Get message details
-            no_duplicate_value = 'N'
-            return [no_duplicate_value,error_message]
-        }
-        return [no_duplicate_entries,error_message]
-    }
-
     // on click update icon display the selected checkbox data to update
     function onclick_update_button() {
         GLOBAL_ACTION = "UPDATE"
         onclick_copy_update_button("UPDATE");
         document.getElementById("id_del_add_button").style.display = "none";
+    }
+
+    //*************************************
+    function onclick_copy_update_button(data) {
+        OpenLoaderPopup();
+        var data = {'table_name':'PoSplitCriteria'}
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'eProc_Configuration:get_dropdown_data' %}",
+            data: JSON.stringify(data),
+            success: function(response) {
+                rendered_po_split_types_data = response.po_split_typ
+                rendered_activate = response.dropdown_activate
+                rendered_company_data = response.upload_data_company
+                dropdown_value()
+                $("#error_msg_id").css("display", "none")
+                $('#display_basic_table').DataTable().destroy();
+                $('#id_popup_table').DataTable().destroy();
+                $("#id_popup_tbody").empty();
+                //Reference the Table.
+                var grid = document.getElementById("display_basic_table");
+                //Reference the CheckBoxes in Table.
+                var checkBoxes = grid.getElementsByTagName("INPUT");
+                var edit_basic_data = "";
+                var unique_input = '';
+                var dropdown_val = [];
+                //Loop through the CheckBoxes.
+                for (var i = 1; i < checkBoxes.length; i++) {
+                    if (checkBoxes[i].checked) {
+                        var row = checkBoxes[i].parentNode.parentNode;
+                        var activate = row.cells[3].innerHTML
+                        dropdown_val.push([activate])
+                        if(GLOBAL_ACTION == "UPDATE"){
+                            guid = row.cells[4].innerHTML;
+                            edit_basic_data += '<tr><td hidden><input type="checkbox" required></td><td><select class="form-control"   type="text" disabled><option>' + row.cells[1].innerHTML + '</option></select></td><td><input class="form-control"  value="' + row.cells[2].innerHTML + '" type="text" disabled></td><td><select type="text" class="input form-control">'+ activate_dropdown +'</select></td><td hidden><input type="text" class= "form-control" value="' +  guid  + '"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+                        $("#header_select").prop("hidden", true);
+                        }
+                    }
+                }
+                $('#id_popup_tbody').append(edit_basic_data);
+                var i = 0;
+                $("#id_popup_table TBODY TR").each(function () {
+                    var row = $(this);
+                var activate = dropdown_val[i][0]
+                $(row.find("TD").eq(3).find("select option[value=" + activate + "]")).attr('selected', 'selected');
+                i++;
+                })
+                $("#id_del_ind_checkbox").prop("hidden", true);
+                $('#myModal').modal('show');
+                table_sort_filter('display_basic_table');
+                table_sort_filter('id_popup_table');
+                $('#myModal').modal('show');
+                CloseLoaderPopup();
+            }
+        });
+    }
+
+    //Function to highlight duplicate records
+    function display_duplicate_entry(common) {
+        var po_split_criteria_check = new Array;
+        $("#id_popup_table TBODY TR").each(function() {
+            var row = $(this);
+            po_split_criteria_dic = {}
+            po_split_criteria_dic.po_split_type = row.find("TD").eq(1).find('select[type="text"]').val();
+            po_split_criteria_dic.company_code_id = row.find("TD").eq(2).find('select[type="text"]').val();
+            var compare = po_split_criteria_dic.po_split_type + '-' + po_split_criteria_dic.company_code_id
+            po_split_criteria_check.push(compare);
+            jQuery.grep(po_split_criteria_check, function(el) {
+                if (jQuery.inArray(el, common) != -1) {
+                    row_color_highlight(row);
+                }
+                else {
+                    row_color_no_highlight(row);
+                }
+            });
+
+        });
     }
 </script>
 <script src="{% static 'scripts/po_split_criteria.js' %}"></script>

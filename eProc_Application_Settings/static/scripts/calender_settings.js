@@ -94,13 +94,13 @@ $('#save_id').click(function () {
 
 //Read popup table data
 function read_popup_data() {
+    $('#id_popup_table').DataTable().destroy();
     calendarconfig_data = new Array();
     validate_add_attributes = [];
     $("#id_popup_table TBODY TR").each(function () {
         var row = $(this);
         calendar = {};
         var workingDay;
-        var guid;
         calendar.calender_id = (row.find("TD").eq(1).find('input[type="text"]').val())
         calendar.country = (row.find("TD").eq(2).find('select[type="text"]').val())
         calendar.description = (row.find("TD").eq(3).find('input[type="text"]').val())
@@ -118,6 +118,7 @@ function read_popup_data() {
         validate_add_attributes.push(calendar.calender_id);
         calendarconfig_data.push(calendar);
     });
+    table_sort_filter('id_popup_table');
     return calendarconfig_data;
 }
 
@@ -130,7 +131,7 @@ function get_main_table_data() {
         main_attribute.calender_id = row.find("TD").eq(1).html();
         main_table_low_value.push(main_attribute.calender_id);
     });
-    table_sort_filter('display_basic_table');
+    // table_sort_filter('display_basic_table');
 }
 
 // Function to get the selected row data

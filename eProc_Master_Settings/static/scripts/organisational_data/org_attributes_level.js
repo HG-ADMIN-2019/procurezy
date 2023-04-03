@@ -38,6 +38,7 @@ $('#save_id').click(function () {
 
 //Read popup table data
 function read_popup_data() {
+    $('#id_popup_table').DataTable().destroy();
     validate_add_attributes = [];
     duplicate_entry = [];
     $("#id_popup_table TBODY TR").each(function() {
@@ -56,6 +57,7 @@ function read_popup_data() {
         validate_add_attributes.push(compare);
         org_attr_level_data.push(org_attr_level);
     });
+    table_sort_filter('id_popup_table');
     return org_attr_level_data;
 }
 

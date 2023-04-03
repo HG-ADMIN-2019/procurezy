@@ -712,6 +712,7 @@ function row_color_highlight(row){
 function row_color_no_highlight(row){
      $(row).css('background-color', '');
 }
+
 // Function to get all the checkboxes from main table
 function get_all_checkboxes(){
     var table = $('#display_basic_table').DataTable();

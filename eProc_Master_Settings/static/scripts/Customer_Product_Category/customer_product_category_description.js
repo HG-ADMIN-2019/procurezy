@@ -40,7 +40,7 @@ function onclick_update_button() {
 }
 
 //**********************************************************
-function onclick_copy_update_button(data){
+function onclick_copy_update_button(){
         $("#id_popup_tbody").empty();
         $('#display_basic_table').DataTable().destroy();
         //Reference the Table.
