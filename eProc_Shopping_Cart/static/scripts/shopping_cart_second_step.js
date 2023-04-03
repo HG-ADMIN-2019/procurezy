@@ -319,6 +319,38 @@ function get_sc_data(){
     data.append('requester', $('#shopping_cart_requester').val())
     return data;
 }
+function get_sc_header_data(){
+    data = {}
+    var address_number_element = document.getElementById("address_number")
+    var street_element = document.getElementById("street_output")
+    var area_element = document.getElementById("area_output")
+    var landmark_element = document.getElementById("landmark_output")
+    var city_element = document.getElementById("city_output")
+    var pcode_element = document.getElementById("pcode_output")
+    var region_element = document.getElementById("region_output")
+    var account_assignment_category = $('#change_acc_type').html().trim()
+    var account_assignment_value = $('#change_acc_value').html().trim()
+    var acc_asg_cat = account_assignment_category.split(' - ')[0]
+    var acc_asg_cat_value = account_assignment_value.split(' - ')[0]
+    adr_num   = address_number_element ? address_number_element.innerHTML : 'None'
+    street    = street_element ? street_element.innerHTML : 'None'
+    area      = area_element ? area_element.innerHTML : 'None'
+    landmark  = landmark_element ? landmark_element.innerHTML : 'None'
+    city      = city_element ? city_element.innerHTML : 'None'
+    pcode     = pcode_element ? pcode_element.innerHTML : 'None'
+    region    = region_element ? region_element.innerHTML : 'None'
+
+    data.append('adr_num' , adr_num)
+    data.append('street' , street)
+    data.append('area' , area)
+    data.append('landmark' , landmark)
+    data.append('city' , city)
+    data.append('pcode' , pcode)
+    data.append('region' , region)
+    data.append('acc_asg_cat',acc_asg_cat)
+    data.append('acc_asg_cat_value',acc_asg_cat_value)
+
+}
 
 // Function called on trigger of order-shopping-cart-button 
 function order_shopping_cart(){
