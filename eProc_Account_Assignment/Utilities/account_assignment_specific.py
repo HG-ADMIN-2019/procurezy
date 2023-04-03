@@ -3,6 +3,8 @@ from django.db.models import Q
 from eProc_Attributes.Utilities.attributes_generic import OrgAttributeValues
 from eProc_Attributes.Utilities.attributes_specific import append_description_atrr_value_exists
 from eProc_Basic.Utilities.constants.constants import CONST_GLACC, CONST_DEFAULT_LANGUAGE
+from eProc_Basic.Utilities.functions.dictionary_check_value_based_for_key import dictionary_check_value_based_for_key, \
+    dictionary_check_get_value_based_for_key
 from eProc_Basic.Utilities.functions.insert_remove import list_remove_insert_first
 from eProc_Basic.Utilities.functions.str_concatenate import concatenate_str, concatenate_array_str
 from eProc_Basic.Utilities.global_defination import global_variables
@@ -112,6 +114,31 @@ class ACC_CAT:
                           'acc_default_desc': acc_default_desc}
         return acc_dictionary
 
+    @staticmethod
+    def get_acc_append_desc(acc_list, default_acc):
+        """
+
+        """
+        default_acc_desc = None
+        acc_desc_append_list = []
+        if acc_list:
+            acc_val_desc = ACC_CAT.get_acc_cat_description(acc_list)
+            for acc in acc_list:
+                acc_desc_detail = dictionary_check_get_value_based_for_key(acc_val_desc, 'account_assign_cat', acc)
+                if acc_desc_detail:
+                    acc_dic = {'account_assign_cat': acc,
+                               'account_assign_cat_desc': concatenate_str(acc_desc_detail['account_assign_cat'],
+                                                           acc_desc_detail['description'])}
+                else:
+                    acc_dic = {'account_assign_cat': acc,
+                               'account_assign_cat_desc': acc}
+                if default_acc == acc:
+                    acc_desc_append_list.insert(0, acc_dic)
+                    default_acc_desc = acc_dic
+                else:
+                    acc_desc_append_list.append(acc_dic)
+        return acc_desc_append_list, default_acc_desc
+
 
 class ACCValueDesc:
 
@@ -169,11 +196,11 @@ class ACCValueDesc:
                                                                 Q(client=global_variables.GLOBAL_CLIENT) &
                                                                 Q(del_ind=False)).values()
         elif AccountingDataDesc.objects.filter(Q(account_assign_value__in=attr_value_list) &
-                                             Q(account_assign_cat=account_assign_cat) &
-                                             Q(language_id=CONST_DEFAULT_LANGUAGE) &
-                                             Q(company_id=company_code) &
-                                             Q(client=global_variables.GLOBAL_CLIENT) &
-                                             Q(del_ind=False)).exists():
+                                               Q(account_assign_cat=account_assign_cat) &
+                                               Q(language_id=CONST_DEFAULT_LANGUAGE) &
+                                               Q(company_id=company_code) &
+                                               Q(client=global_variables.GLOBAL_CLIENT) &
+                                               Q(del_ind=False)).exists():
             acc_description = AccountingDataDesc.objects.filter(Q(account_assign_value__in=attr_value_list) &
                                                                 Q(account_assign_cat=account_assign_cat) &
                                                                 Q(language_id=CONST_DEFAULT_LANGUAGE) &
@@ -201,11 +228,11 @@ class ACCValueDesc:
                                                                 Q(client=global_variables.GLOBAL_CLIENT) &
                                                                 Q(del_ind=False)).values()
         elif AccountingDataDesc.objects.filter(Q(account_assign_value=attr_value) &
-                                             Q(account_assign_cat=account_assign_cat) &
-                                             Q(language_id=CONST_DEFAULT_LANGUAGE) &
-                                             Q(company_id=company_code) &
-                                             Q(client=global_variables.GLOBAL_CLIENT) &
-                                             Q(del_ind=False)).exists():
+                                               Q(account_assign_cat=account_assign_cat) &
+                                               Q(language_id=CONST_DEFAULT_LANGUAGE) &
+                                               Q(company_id=company_code) &
+                                               Q(client=global_variables.GLOBAL_CLIENT) &
+                                               Q(del_ind=False)).exists():
             acc_description = AccountingDataDesc.objects.filter(Q(account_assign_value=attr_value) &
                                                                 Q(account_assign_cat=account_assign_cat) &
                                                                 Q(language_id=CONST_DEFAULT_LANGUAGE) &
@@ -251,6 +278,31 @@ class ACCValueDesc:
             acc_append_val_desc = concatenate_array_str(attr_val, attr_desc)
             if acc_append_default_val_desc:
                 acc_append_val_desc = remove_insert(acc_append_val_desc, acc_append_default_val_desc)
+        return acc_append_val_desc, acc_append_default_val_desc
+
+    @staticmethod
+    def append_acc_val_desc_if_exists(acc_val_desc, acc_default_value, acc_value_list):
+        acc_append_val_desc = []
+        acc_append_default_val_desc = None
+        for acc_value in acc_value_list:
+            acc_value_detail = dictionary_check_get_value_based_for_key(acc_val_desc, 'account_assign_value', acc_value)
+            if acc_value_detail:
+                concate_val_desc = concatenate_str(acc_value_detail['account_assign_value'],
+                                                   acc_value_detail['description'])
+                acc_append_val_desc.append(concate_val_desc)
+            else:
+                acc_append_val_desc.append(acc_value)
+        if acc_default_value:
+            acc_default_value_detail = dictionary_check_get_value_based_for_key(acc_val_desc,
+                                                                                'account_assign_value',
+                                                                                acc_default_value)
+            if acc_default_value_detail:
+                acc_append_default_val_desc = concatenate_str(acc_default_value_detail['account_assign_value'],
+                                                              acc_default_value_detail['description'])
+            else:
+                acc_append_default_val_desc = acc_default_value
+        if acc_append_default_val_desc:
+            acc_append_val_desc = remove_insert(acc_append_val_desc, acc_append_default_val_desc)
         return acc_append_val_desc, acc_append_default_val_desc
 
     @staticmethod

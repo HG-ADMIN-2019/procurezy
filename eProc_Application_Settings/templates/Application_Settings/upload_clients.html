@@ -31,8 +31,8 @@ m {% extends 'root/base.html' %}
                     <button class="btn btn-outline-danger btn-sm"  title="Delete" id="id_delete_data" value="DELETE" data-toggle="modal" data-target="#id_delete_confirm_popup" style="display:none;">
                         <i class="fa fa-trash"></i> delete
                     </button>
-                    <button class="btn btn-primary  btn-sm" title="Copy" id="id_copy_data" value="COPY" onclick="onclick_copy_button()" style="display:none;" >
-                        <i class="fa fa-copy"></i> copy
+                    <button class="btn btn-primary btn-sm " title="Copy" id="id_copy_data" style="display:none;" value="COPY" type="button" onclick="onclick_copy_button()">
+                        <i class="fa fa-copy"></i> Copy
                     </button>
                     <button class="btn btn-primary btn-sm" title="Update" id="id_update_data" style="display:none;"  value="UPDATE" type="button" onclick="onclick_update_button()">
                         <i class="far fa-edit"></i> update
@@ -47,7 +47,7 @@ m {% extends 'root/base.html' %}
                         <tr>
                             <th id="hg_select_checkbox" hidden>
                                 <div id="id_check_all" style="display:none;">
-                                    <INPUT type="checkbox" onchange="checkAll(this)" name="chk[]">
+                                    <input type="checkbox" id="selectAll" name="chk[]">
                                 </div>
                             </th>
                             <th>Client</th>
@@ -80,40 +80,42 @@ m {% extends 'root/base.html' %}
                 </div>
                 <!-- Modal body -->
                 <div class="modal-body scrollbox">
-                    <div id="id_del_add_button" class="mb-4">
-                        <button class="btn btn-primary" title="Add New Wow" type="button" onclick="add_popup_row()">
-                            <i class="fa fa-plus"></i> Add New Row
-                        </button>
-                        <button class="btn btn-outline-danger" title="Delete" onclick="application_settings_delete_Row('id_popup_table')">
-                            <i class="fa fa-trash"></i> delete
-                        </button>
+                    <div class="popup-vertical-scroll">
+                        <div id="id_del_add_button" class="mb-4">
+                            <button class="btn btn-primary" title="Add New Wow" type="button" onclick="add_popup_row()">
+                                <i class="fa fa-plus"></i> Add New Row
+                            </button>
+                            <button class="btn btn-outline-danger" title="Delete" onclick="application_settings_delete_Row('id_popup_table')">
+                                <i class="fa fa-trash"></i> delete
+                            </button>
+                        </div>
+                        <div id="id_check_success_messages" class="alert alert-success check_success_message" hidden></div>
+                        <div id="id_check_error_messages" class="alert alert-danger check_error_messages" hidden></div>
+                        <div id="id_check_special_character_messages" class="alert alert-danger check_special_character_messages" hidden>
+                            <p id="id_error_msg_client"></p>
+                            <p id="id_error_msg_description"></p>
+                            <p id="id_error_msg_client_length"></p>
+                        </div>
+                        <div>
+                            <p id="id_error_msg" class="alert alert-danger" hidden></p>
+                        </div>
+                        <div id="error_msg_id" class="alert alert-danger display-none" role="alert"><span id="error_message"></span></div>
+                        <div id="id_warning_msg_id" class="alert alert-warning display-none" role="alert"></div>
+                        <div id="id_info_msg_id" class="alert alert-primary display-none" role="alert"></div>
+                        <table class="class_popup_table table table-bordered mt-2" id="id_popup_table">
+                            <thead>
+                                <tr>
+                                    <th id="header_select">Select</th>
+                                    <th>Client</th>
+                                    <th>Description</th>
+                                    <th id="id_del_ind_checkbox" hidden>Del Indicator</th>
+                                </tr>
+                            </thead>
+                            <tbody id=id_popup_tbody>
+                            </tbody>
+                        </table>
                     </div>
-                    <div id="id_check_success_messages" class="alert alert-success check_success_message" hidden></div>
-                    <div id="id_check_error_messages" class="alert alert-danger check_error_messages" hidden></div>
-                    <div id="id_check_special_character_messages" class="alert alert-danger check_special_character_messages" hidden>
-                        <p id="id_error_msg_client"></p>
-                        <p id="id_error_msg_description"></p>
-                        <p id="id_error_msg_client_length"></p>
-                    </div>
-                    <div>
-                        <p id="id_error_msg" class="alert alert-danger" hidden></p>
-                    </div>
-                    <div id="error_msg_id" class="alert alert-danger display-none" role="alert"><span id="error_message"></span></div>
-                    <div id="id_warning_msg_id" class="alert alert-warning display-none" role="alert"></div>
-                    <div id="id_info_msg_id" class="alert alert-primary display-none" role="alert"></div>
-                    <table class="class_popup_table table table-bordered mt-2" id="id_popup_table">
-                        <thead>
-                            <tr>
-                                <th id="header_select">Select</th>
-                                <th>Client</th>
-                                <th>Description</th>
-                                <th id="id_del_ind_checkbox" hidden>Del Indicator</th>
-                            </tr>
-                        </thead>
-                        <tbody id=id_popup_tbody>
-                        </tbody>
-                    </table>
-                 </div>
+                </div>
                 <!-- Modal footer -->
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-primary remove_upload_data" title="Cancel" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
@@ -158,37 +160,33 @@ m {% extends 'root/base.html' %}
         get_main_table_data();  //Read data from main table
         // compare for duplicates in popup
         [no_duplicate_value,error_message] = compare_table_for_duplicate_entries(validate_add_attributes, clients_data)
-        if (error_message){
+        if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
+            // compare main table and pop up for duplicate values
+            [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
+        }
+        if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
+            var add_basic_data = '';
+            $('#id_save_confirm_popup').modal('hide');
+            data = {'data':clients_data,'table_name':'OrgClients','action':GLOBAL_ACTION}
+            OpenLoaderPopup();
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'eProc_Configuration:create_update_application_data' %}",
+                data: JSON.stringify(data),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function(Response) {
+                    rendered_client_data = Response[0];
+                    display_basic_db_data();
+                    success_response(Response); // Function call to display response data
+                    CloseLoaderPopup();
+                }
+            });
+        }
+        else if (error_message){
             display_error_message(error_message)
         }
-        else{
-            if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
-                // compare main table and pop up for duplicate values
-                [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
-            }
-            if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
-                var add_basic_data = '';
-                $('#id_save_confirm_popup').modal('hide');
-                data = {'data':clients_data,'table_name':'OrgClients','action':GLOBAL_ACTION}
-                OpenLoaderPopup();
-                $.ajax({
-                    type: 'POST',
-                    url: "{% url 'eProc_Configuration:create_update_application_data' %}",
-                    data: JSON.stringify(data),
-                    contentType: "application/json; charset=utf-8",
-                    dataType: "json",
-                    success: function(Response) {
-                        rendered_client_data = Response[0];
-                        display_basic_db_data();
-                        success_response(Response); // Function call to display response data
-                        CloseLoaderPopup();
-                    }
-                });
-            }
-            else if (error_message){
-                display_error_message(error_message)
-            }
-        }
+        table_sort_filter('id_popup_table');
     }
 
     //delete the selected row in db................
@@ -270,24 +268,6 @@ m {% extends 'root/base.html' %}
             });
         });
     }
-
-    //validate by comparing  main table values and popup table values
-function maintable_validation(validate_add_attributes, main_table_low_value) {
-    var no_duplicate_entries = 'Y'
-    var error_message =''
-    var common = [];
-    jQuery.grep(validate_add_attributes, function (el) {
-        if (jQuery.inArray(el, main_table_low_value) != -1) {
-            common.push(el);
-        }
-    });
-    if (common.length != 0) {
-        get_message_details("JMSG001"); // Get message details
-        no_duplicate_value = 'N'
-        return [no_duplicate_value,error_message]
-    }
-    return [no_duplicate_entries,error_message]
-}
 </script>
 <script src="{% static 'scripts/upload_clients.js' %}"></script>
 {% endblock %}

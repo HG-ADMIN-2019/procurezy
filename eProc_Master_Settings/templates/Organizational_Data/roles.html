@@ -41,7 +41,7 @@
                         <tr>
                             <th id="hg_select_checkbox" hidden>
                                 <div id="id_check_all" style="display:none;">
-                                    <INPUT type="checkbox" onchange="checkAll(this)" name="chk[]">
+                                    <input type="checkbox" id="selectAll" name="chk[]">
                                 </div>
                             </th>
                             <th>Role</th>
@@ -101,22 +101,18 @@
                         <tbody id=id_popup_tbody>
                         </tbody>
                     </table>
-                    </div>
+                </div>
                 <!-- Modal footer -->
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-primary remove_upload_data" title="Cancel" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
-                    <button id="id_delete_duplicate" class="btn btn-primary" style="display:none;" type="button" onclick="delete_duplicate()"><i class="fa fa-trash"></i> delete duplicates</button>
-                    <button id="id_check_data" style="display:none;" class="btn btn-primary" type="button" onclick="check_data()"><i class="fas fa-check"></i> check</button>
                     <button class="btn btn-primary" title="Save" id="save_id"><i class="fas fa-save"></i> save</button>
                 </div>
             </div>
         </div>
     </div>
     <!--end of modal popup for Add,copy,update and upload-->
-    
-     <!-- modal popup to upload the csv file; save confirmation popup; delete confirmation popup -->
-     {% include 'configuration_common_pop_up.html' %}  
-
+    <!-- modal popup to upload the csv file; save confirmation popup; delete confirmation popup -->
+    {% include 'configuration_common_pop_up.html' %}  
     <div>
         {% if messages %} {% for message in messages %} {% if message.tags == 'success' %}
         <div style="color: green; ">{{ message }}</div>
@@ -132,7 +128,6 @@
     var rendered_roles_data = JSON.parse(document.getElementById('roles').textContent);
     var rendered_roles_type_values
     var roles_data_array = {}
-    var main_table_roles_value = [];
     var roles = '';
     var edit_basic_data = '';
     var GLOBAL_ACTION = '';
@@ -150,58 +145,6 @@
         });
     }
 
-    //onclick of data Upload copy data to modal pop-up
-    function onclick_display_csv_data() {
-        formdata = new FormData();
-        formdata.append("file_attach", $('#id_file_data_upload').prop('files')[0]);
-        formdata.append("Tablename", Tablename);
-        formdata.append("appname", appname);
-        db_header_data = db_header_data
-        formdata.append("db_header_data", db_header_data);
-        $('#id_data_upload').modal('hide');
-        $.ajax({
-            type: 'POST',
-            url: "{% url 'eProc_Basic_Settings:data_upload' %}",
-            data: formdata,
-            contentType: "application/json; charset=utf-8",
-            success: function(response) {
-                if (response == "Please check the uploaded csv file") {
-                    $("#id_error_msg_upload").prop("hidden", false)
-                    document.getElementById("id_error_msg_upload").innerHTML = response;
-                    document.getElementById("id_error_msg_upload").style.color = "Red";
-                    $('#id_data_upload').modal('show');
-                } else {
-                    roles_data_array = response;
-                    var edit_basic_data = '';
-                    var del_ind = '';
-                    $("#id_popup_tbody").empty();
-                    $.each(response, function(i, value) {
-                        del_ind = '<td>' + value[2] + '</td>'
-                        if (value[2] == 1) {
-                            del_ind = ' <input type="checkbox" value="' + value[2] + '" checked>'
-                        } else {
-                            del_ind = '<input type="checkbox" value="' + value[2] + '" required>'
-                        }
-                        edit_basic_data += '<tr ><td class="class_select_checkbox"><input type="checkbox" required></td><td><input type="text" value="' + value[0] + '" maxlength="40" onkeypress="return /[A-Z]/i.test(event.key)" required></td><td><input class="form-control" type="text" value="' + value[1] + '" maxlength="60" onkeypress="return /[A-Z]/i.test(event.key)" required></td><td>' + del_ind + '</td></tr>';
-                    });
-                    $('#id_popup_tbody').append(edit_basic_data);
-                    $("#id_del_ind_checkbox").prop("hidden", false);
-                    $(".class_del_checkbox").prop("hidden", false);
-                    $('#myModal').modal('show');
-                    $('#id_data_upload').modal('hide');
-                    document.getElementById("id_del_add_button").style.display = "block";
-                    document.getElementById("id_check_data").style.display = "block";
-                    $("#id_check_data").prop("hidden", false);
-                    $("#save_id").prop("hidden", true);
-                    table_sort_filter_popup_pagination('id_popup_table')
-                }
-            },
-            cache: false,
-            processData: false,
-            contentType: false,
-        });
-    }
-
     // validate and save for add,copy,update and upload data
     function popup_save_data() {
         $('#success_msg_id').empty()
@@ -213,40 +156,35 @@
         get_main_table_data(); //Read data from main table
         // compare for duplicates in popup
         [no_duplicate_value,error_message] = compare_table_for_duplicate_entries(validate_add_attributes, roles_data)
-        if (error_message){
-            display_error_message(error_message)
+        if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
+            // compare main table and pop up for duplicate values
+            [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
         }
-        else{
-            if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
-                // compare main table and pop up for duplicate values
-                [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
-            }
-            if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
-                var add_basic_data = '';
-                var roles_data_array = roles_data;
-                $('#id_save_confirm_popup').modal('hide');
-                data  = {'data':roles_data,'table_name':'UserRoles','action':GLOBAL_ACTION}
-                OpenLoaderPopup();
-                $.ajax({
-                    type: 'POST',
-                    url: "{% url 'eProc_Configuration:create_update_application_data' %}",
-                    data: JSON.stringify(data),
-                    contentType: "application/json; charset=utf-8",
-                    dataType: "json",
-                    success: function(Response) {
-                        rendered_roles_data = Response[0];
-                        rendered_roles_type_values = Response[2];
-                        display_basic_db_data();
-                        dropdown_value();
-                        $('#myModal').modal('hide');
-                        success_response(Response); // Function call to display response data
-                        CloseLoaderPopup();
-                    }
-                });
-            }
-            else if (error_message){
-                display_error_message(error_message)
-            }
+        if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
+            var add_basic_data = '';
+            var roles_data_array = roles_data;
+            $('#id_save_confirm_popup').modal('hide');
+            data  = {'data':roles_data,'table_name':'UserRoles','action':GLOBAL_ACTION}
+            OpenLoaderPopup();
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'eProc_Configuration:create_update_application_data' %}",
+                data: JSON.stringify(data),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function(Response) {
+                    rendered_roles_data = Response[0];
+                    rendered_roles_type_values = Response[2];
+                    display_basic_db_data();
+                    // dropdown_value();
+                    $('#myModal').modal('hide');
+                    success_response(Response); // Function call to display response data
+                    CloseLoaderPopup();
+                }
+            });
+        }
+        else if (error_message){
+            display_error_message(error_message)
         }
     }
 
@@ -276,176 +214,7 @@
         });
     }
    
-    //check function restricting special char and diaplay the data count of csv file
-    function check_data() {
-        $('#id_popup_table').DataTable().destroy();
-        $("#id_check_success_messages").empty()
-        $("#id_check_error_messages").empty()
-        $("#id_check_success_messages").prop("hidden", true)
-        $("#id_check_error_messages").prop("hidden", true)
-        $("#id_check_special_character_messages").prop("hidden", true)
-        document.getElementById("id_error_msg_roles_code").innerHTML = "";
-        document.getElementById("id_error_msg_roles_name").innerHTML = "";
-        document.getElementById("id_error_msg_roles_length").innerHTML = "";
-        count = 0;
-        var roles_array = new Array
-        var DB_array = new Array
-        var roles_list = new Array
-        var roles_code_check = new Array
-        del_ind = ''
-        $("#id_popup_table TBODY TR").each(function() {
-            var row = $(this);
-            //*************** reading data from the pop-up ***************
-            role = row.find("TD").eq(1).find("select option:selected").val();
-            role_desc = row.find("TD").eq(2).find('input[type="text"]').val().toUpperCase();
-            checked_box = row.find("TD").eq(3).find('input[type="checkbox"]').is(':checked')
-            if (checked_box) {
-                del_ind = '1'
-            } else {
-                del_ind = '0'
-            }
-            roles_list.push([role, role_desc, del_ind])
-            var format = /[`!@#$%^&*()+\-=\[\]{};':"\\|,.<>\/?~]/;
-            //*************** checking for max length for roles code (max length = 40) ***************
-            if (role.length > 40) {
-                messages_id = "JMSG004"
-                error_message = ui_messeges(messages_id)
-                var display = msg_type.messages_id_desc;
-                document.getElementById("id_error_msg_roles_length").innerHTML = display + "Roles";
-                $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
-                count = count + 1;
-            }
-            //*************** checking for special characters for roles code ***************
-            else if (format.test(role)) {
-                messages_id = "JMSG003"
-                error_message = ui_messeges(messages_id)
-                var display = msg_type.messages_id_desc ;
-                document.getElementById("id_error_msg_roles_code").innerHTML = display + "Roles Code";
-                $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
-                count = count + 1;
-            } else {
-                $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "none");
-            }
-            //*************** checking for special characters for roles name ***************
-            if (format.test(role_desc)) {
-                messages_id = "JMSG003"
-                error_message = ui_messeges(messages_id)
-                var display = msg_type.messages_id_desc;
-                document.getElementById("id_error_msg_roles_name").innerHTML = display + "Role Description";
-                $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "1px solid #FF0000");
-                count = count + 1;
-            } else {
-                $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "none");
-            }
-            if (roles_code_check.includes(role)) {
-                $(row).css("border", "#f8d7da");
-            } else {
-                $(row).css("border", "");
-            }
-            roles_code_check.push(role)
-        });
-        //*************** shows save button if there are no errors(special characters and max length) ***************
-        if (count == 0) {
-            $("#id_check_special_character_messages").prop("hidden", true)
-            $("#save_id").prop("hidden", false);
-        }
-        popup_data_dict = {
-            'data_list': roles_list,
-            'Tablename': Tablename,
-            'appname': appname,
-            'db_header_data': db_header_data
-        }
-        $.ajax({
-            type: 'POST',
-            url: "{% url 'eProc_Basic_Settings:check_data' %}",
-            data: JSON.stringify(popup_data_dict),
-            success: function(response) {
-                table_sort_filter_popup_pagination('id_popup_table')
-                $("#id_check_special_character_messages").prop("hidden", false)
-                if (count == 0) {
-                    $("#id_check_special_character_messages").prop("hidden", true)
-                }
-                //*************** retrieving data counts from views ***************
-                check_messages = response
-                var newArrayDataOfOjbect = Object.values(check_messages)
-                $("#id_check_success_messages").prop("hidden", false)
-                  //*************** if pop-up data count is greater than zero ***************
-                    if (newArrayDataOfOjbect[1] > 0) {
-                        var msg = "JMSG010";
-                        var msg_type ;
-                        msg_type = message_config_details(msg);
-                        $("#error_msg_id").prop("hidden", false)
-                        var display = msg_type.messages_id_desc;
-                        $("#id_check_success_messages").append('<p>' + display + newArrayDataOfOjbect[0] + '</p>')
-                        var msg = "JMSG011";
-                        var msg_type ;
-                        msg_type = message_config_details(msg);
-                        $("#error_msg_id").prop("hidden", false)
-                        var display1 = msg_type.messages_id_desc;
-                        $("#id_check_success_messages").append('<p>' + display1 + newArrayDataOfOjbect[1] + '</p>')
-                        var msg = "JMSG012";
-                        var msg_type ;
-                        msg_type = message_config_details(msg);
-                        $("#error_msg_id").prop("hidden", false)
-                        var display2 = msg_type.messages_id_desc;
-                        $("#id_check_success_messages").append('<p>' + display2 + newArrayDataOfOjbect[3] + '</p>')
-                        var msg = "JMSG013";
-                        var msg_type ;
-                        msg_type = message_config_details(msg);
-                        $("#error_msg_id").prop("hidden", false)
-                        var display3 = msg_type.messages_id_desc;
-                        $("#id_check_success_messages").append('<p>' + display3 + newArrayDataOfOjbect[4] + '</p>')
-                        var msg = "JMSG014";
-                        var msg_type ;
-                        msg_type = message_config_details(msg);
-                        $("#error_msg_id").prop("hidden", false)
-                        var display4 = msg_type.messages_id_desc;
-                        $("#id_check_success_messages").append('<p>' + display4 + newArrayDataOfOjbect[5] + '</p>')
-                        var msg = "JMSG053";
-                        var msg_type ;
-                        msg_type = message_config_details(msg);
-                        $("#error_msg_id").prop("hidden", false)
-                        var display5 = msg_type.messages_id_desc;
-	   				    $("#id_check_success_messages").append('<p>' + display5 + newArrayDataOfOjbect[6] + '</p>')
-                        //*************** if duplicate data data count is greater than zero ***************
-                        if(newArrayDataOfOjbect[2]>0){
-                            $("#id_check_error_messages").prop("hidden",false)
-                            var msg = "JMSG015";
-                            var msg_type ;
-                            msg_type = message_config_details(msg);
-                            $("#error_msg_id").prop("hidden", false)
-                            var display6 = msg_type.messages_id_desc;
-                            $("#id_check_error_messages").append('<p>' + display6 + newArrayDataOfOjbect[2] + '</p>')
-                            var msg = "JMSG001";
-                            var msg_type ;
-                            msg_type = message_config_details(msg);
-                            $("#error_msg_id").prop("hidden", false)
-                            var display7 = msg_type.messages_id_desc;
-                            $("#id_check_error_messages").append('<p style = "font-weight: bold;">' + display7 + ' </p>')
-                            $("#save_id").prop("hidden", true);
-                            $("#id_delete_duplicate").show()
-                        }
-                        else{
-                            $("#id_check_error_messages").prop("hidden",true)
-                            $("#id_delete_duplicate").hide()
-                        }
-                    }
-                    //*************** if pop-up data count is zero ***************
-                    else {
-                        $("#id_check_success_messages").hide()
-                        $("#id_check_error_messages").prop("hidden", false)
-                        var msg = "JMSG006";
-                        var msg_type ;
-                        msg_type = message_config_details(msg);
-                        $("#error_msg_id").prop("hidden", false)
-                        var display8 = msg_type.messages_id_desc;
-                        $("#id_check_error_messages").append('<p>' + display8 + '</p>')
-                        $("#save_id").prop("hidden", true);
-                    }
-                }
-            });
-        }
-
+    // *****************************************
     function GetSelectedTextValue(roles) {
         var selectedText = roles.options[roles.selectedIndex].innerHTML;
         var selectedValue = roles.value;
@@ -517,6 +286,50 @@
                 $("#save_id").prop("hidden", false);
                 CloseLoaderPopup();
             }
+        });
+    }
+
+    // on click add icon display the row in to add the new entries
+    function add_popup_row() {
+        dropdown_value();
+        $("#error_msg_id").css("display", "none")
+        basic_add_new_html = '';
+        var display_db_data = '';
+        var getid = $(".roles:last").attr("id");
+        var getindex = getid.split("-")[1]
+        var inc_index = Number(getindex)+1
+        $('#id_popup_table').DataTable().destroy();
+        $(".modal").on("hidden.bs.modal", function () {
+            $("#id_error_msg").html("");
+        });
+        basic_add_new_html='<tr><td><input type="checkbox" required></td>'+
+            '<td><select type="text" class="input form-control roles" id="roles-'+inc_index+'"  name="role" onchange="GetSelectedTextValue(this)"><option value="" disabled selected>Select your option</option>'+ roles_type_dropdown +'</select></td>'+
+            '<td><input class="form-control description" type="text"  name="role_desc"  id="description-'+inc_index+'" disabled></td>'+
+            '<td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+        $('#id_popup_tbody').append(basic_add_new_html);
+        if (GLOBAL_ACTION == "roles_upload") {
+            $(".class_del_checkbox").prop("hidden", false);
+        }
+        table_sort_filter('id_popup_table');
+    }
+
+    //Function to highlight duplicate records
+    function display_duplicate_entry(common) {
+        var roles_check = new Array;
+        $("#id_popup_table TBODY TR").each(function() {
+            var row = $(this);
+            roles_dic = {}
+            roles_dic.role = row.find("TD").eq(1).find('select[type="text"]').val();
+            var compare = roles_dic.role
+            roles_check.push(compare);
+            jQuery.grep(roles_check, function(el) {
+                if (jQuery.inArray(el, common) != -1) {
+                    row_color_highlight(row);
+                }
+                else {
+                    row_color_no_highlight(row);
+                }
+            });
         });
     }
 </script>

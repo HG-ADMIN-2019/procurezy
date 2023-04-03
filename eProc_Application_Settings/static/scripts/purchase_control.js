@@ -1,5 +1,6 @@
 var purhcase_control_data = new Array();
 var validate_add_attributes = [];
+var main_table_low_value = [];
 var purchase_control = {};
 
 // on click update icon display the selected checkbox data to update
@@ -87,6 +88,12 @@ function delete_duplicate() {
 // Functtion to hide and display save related popups
 $('#save_id').click(function () {
     $('#myModal').modal('hide');
+    purhcase_control_data = read_popup_data();
+    $('#id_save_confirm_popup').modal('show');
+});
+
+//Read popup table data
+function read_popup_data() {
     purhcase_control_data = new Array();
     validate_add_attributes = [];
     $("#id_popup_table TBODY TR").each(function () {
@@ -107,11 +114,12 @@ $('#save_id').click(function () {
         if (purchase_contrl == undefined) {
             purchase_contrl.company_code_id = row.find("TD").eq(1).find('select[type="text"]').val();
         }
-        validate_add_attributes.push(purchase_contrl.company_code_id);
+        var compare = purchase_contrl.company_code_id + '-' + purchase_contrl.call_off
+        validate_add_attributes.push(compare);
         purhcase_control_data.push(purchase_contrl);
     });
-    $('#id_save_confirm_popup').modal('show');
-});
+    return purhcase_control_data;
+}
 
 // Function to get main table data
 function get_main_table_data() {
@@ -131,7 +139,8 @@ function get_main_table_data() {
         }
         main_attribute.purchase_ctrl_flag = data;
         main_attribute.purchase_control_guid = row.find("TD").eq(4).html();
-        main_table_low_value.push(main_attribute);
+        var compare_maintable = main_attribute.company_code_id + '-' + main_attribute.call_off
+        main_table_low_value.push(compare_maintable);
     });
     table_sort_filter_page('display_basic_table');
 }

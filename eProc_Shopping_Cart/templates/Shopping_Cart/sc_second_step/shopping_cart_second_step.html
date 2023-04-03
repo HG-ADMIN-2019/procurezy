@@ -340,13 +340,13 @@
 
 
     if(acc_cat_type == 'CC') {
-        document.getElementById('CC - Cost Center').value = acc_cat_values;
+        document.getElementById('CC').value = acc_cat_values;
     } else if (acc_cat_type == 'AS') {
-        document.getElementById('AS - Asset').value = acc_cat_values;
+        document.getElementById('AS').value = acc_cat_values;
     } else if (acc_cat_type == 'WBS') {
-        document.getElementById('WBS - Project').value = acc_cat_values;
+        document.getElementById('WBS').value = acc_cat_values;
     }else if (acc_cat_type == 'OR') {
-        document.getElementById('OR - Internal Order').value = acc_cat_values;
+        document.getElementById('OR').value = acc_cat_values;
     }
 
 const check_manager_detail = (response) => {
@@ -377,44 +377,51 @@ const check_manager_detail = (response) => {
 
 // Check for shopping cart errors
 function check_shopping_cart(type, sc_data, acc_default, acc_default_val){
-
     var error_messages = ''
     $('#sc_error_msg').hide();
     $('#sc_warning_messages').hide();
     $('#sc_success_messages').hide();
     $('#sc_info_messages').hide();
     var default_address = "{{addr_val_desc|safe}}";
-    var default_account_asignment_category = "{{acc_default|safe}}";
-    var default_account_asignment_value = {{acc_value|safe}}
-    default_account_asignment_value = default_account_asignment_value[0]
+    //var default_account_asignment_category = "{{acc_default|safe}}";
+    //var default_account_asignment_value = {{acc_value|safe}}
+    //default_account_asignment_value = default_account_asignment_value[0]
     var error_messages = '';
     var check_sc_data = '';
     if(type != 'approval_workflow'){
         check_sc_data = get_data_for_check()
     }
-    acc_default = acc_default
-    acc_default_val = acc_default_val
     var total_val = $('#total_cart_value').text();
     var requester = $('#shopping_cart_requester').val()
     data = {
-            'acc_default': default_account_asignment_category.split(' - ')[0],
-            'acc_default_val': default_account_asignment_value.split(' - ')[0],
+            'acc_default': acc_default.split(' - ')[0],
+            'acc_default_val': acc_default_val.split(' - ')[0],
             'total_val':total_val,
             'check_sc_data': check_sc_data,
             'type': type,
             'requester': requester
     }
     OpenLoaderPopup();
+
     $.ajax({
         type: 'POST',
         url: "{% url 'eProc_Shopping_Cart:check_shopping_cart' %}",
         data:JSON.stringify(data),
         success: function (response) {
+            var error_status = true;
+            document.getElementById('sc_error_msg').style.display = 'none';
+            $('#sc_error_msg').html('');
             console.log("CHECK RESPONSE ",response)
             manager_detail = response.manager_detail.length
             sc_errors = response.sc_error
             sc_info_messsages_check = response.sc_info
-
+            var error_msg_info = response.error_msg_info
+          //  if (shopping_cart_errors['error_msg_info']) {
+      //  error_messages += shopping_cart_errors['error_msg_info']
+   // }
+            if (response.error_msg_info){
+            error_messages += response.error_msg_info + '<br>'
+            }
             // If SC has info
             if (sc_info_messsages_check.length > 0){
                 var info_messages = '';
@@ -433,10 +440,10 @@ function check_shopping_cart(type, sc_data, acc_default, acc_default_val){
             }
             console.log(sc_errors);
             // If the SC has no errorrs then call order SC function
-            if(sc_errors.length == 0 && manager_detail != 0 && internal_supplier_error_itemNumber.length == 0){
-
+            if(sc_errors.length == 0 && error_msg_info.length == 0 && manager_detail != 0 && internal_supplier_error_itemNumber.length == 0){
                     var msg = "JMSG042";
                     var msg_type ;
+                    error_status = false
                   msg_type = get_message_desc(msg);
                   $("#error_msg_id").prop("hidden", false)
 
@@ -502,7 +509,10 @@ function check_shopping_cart(type, sc_data, acc_default, acc_default_val){
 
             error_messages += check_manager_detail(response)
             error_messages += check_ui_errors_warnings(error_messages);
-            $('#sc_error_msg').html(error_messages);
+                $('#sc_error_msg').html(error_messages);
+            if (error_status){
+                document.getElementById('sc_error_msg').style.display = 'block';
+                }
             error_messages = ''
             internal_supplier_error_itemNumber = []
             if(type == 'check' || type == 'approval_workflow'){
@@ -514,26 +524,6 @@ function check_shopping_cart(type, sc_data, acc_default, acc_default_val){
     });
 
 }
-
-
-
-
-  // Function to check multiple purchasing Group
-<!--    function purchasing_group(){-->
-<!--        var error_messages = '';-->
-<!--        var multiple_purch_group = {{completion_work_flow|safe}}-->
-<!--        if(multiple_purch_group[0] == 'MULTIPLE')-->
-<!--        {-->
-<!--            error_messages += 'You have maintained multiple purchasing groups <br>'-->
-<!--            $('#sc_error_msg').html(error_messages);-->
-<!--            $('#sc_error_msg').show();-->
-<!--        } else $('sc_error_msg').hide()-->
-<!--        if(multiple_purch_group[0] == 'SINGLE'){-->
-<!--             warning_messages += 'You have maintained single Purchase groups <br>'-->
-<!--            $('#sc_warning_messages').html(warning_messages)-->
-<!--            $('#sc_warning_messages').show()-->
-<!--        }-->
-<!--    }-->
 
 // Function to save shopping cart
 function save_shopping_cart(){

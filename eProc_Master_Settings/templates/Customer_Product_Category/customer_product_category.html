@@ -56,11 +56,12 @@
                     <thead id="id_cusprodcat_table_header">
                         <tr>
                             <th id="hg_select_checkbox" hidden>
-                                <div id="id_check_all" style="display:none;">
-                                    <input type="checkbox" onchange="checkAll(this)" name="chk[]">
+                               <div id="id_check_all" style="display:none;">
+                                    <input type="checkbox" id="selectAll" name="chk[]">
                                 </div>
-                                </th>
-                            <th style="width: 30%;">Description</th>
+                            </th>
+                            <th style="width: 25%;">Image</th>
+                            <th style="width: 35%;">Description</th>
                             <th>UNSPSC Code</th>
                             <th class="hg_unspsc_th_column" hidden> Upload Images</th>
                             <th hidden>Guid</th>
@@ -77,10 +78,10 @@
                                         <div> 
                                                  <img src="/media/{{cust_prod_cat.image_url}}" onerror='this.src="/static/images/no-image-cropped.png"' id='prod_img-{{cust_prod_cat.prod_cat_id}}' class="mr-3 catalog_img product-config-img" >
                                         </div>
-                                        <span>{{cust_prod_cat.prod_cat_desc}}</span> 
                                     </div> 
                                 </a>
                             </td>
+                            <td>{{cust_prod_cat.prod_cat_desc}}</td>
                             <td>{{ cust_prod_cat.prod_cat_id}}</td>
                             <td class="hg_unspsc_td_column" hidden><a onclick="upload_unscpsc_prod_cat_image({{cust_prod_cat.prod_cat_id}})"><i class="fa fa-upload" aria-hidden="true"></i></a></td>
                             <td hidden>{{cust_prod_cat.prod_cat_guid}}</td>
@@ -256,27 +257,27 @@
     var db_header_data = uiConstants["CONST_HEADER_DATA_CUSTPRODCAT"]
 
 
-<!--    var prod_cat_id_dropdown = '';-->
-<!--     function  unspsc_dropdown(){-->
-<!--        prod_cat_id_dropdown = '';-->
-<!--          $.each(rendered_UNSPC_data, function(j, item1){-->
-<!--                            prod_cat_id_dropdown += '<option value="' + item1.prod_cat_id + '">' + item1.prod_cat_id + '</option>';-->
-<!--          })-->
-
-<!--          }-->
-
-     var prod_cat_id_dropdown = '';
-    function  unspsc_dropdown(){
+    var prod_cat_id_dropdown = '';
+     function  unspsc_dropdown(){
         prod_cat_id_dropdown = '';
-        $.each(rendered_cust_prod_cat_data, function(i, item){
-        $.each(rendered_UNSPC_data, function(j, item1){
-             prod_cat_id_dropdown = '';
-            if(item.prod_cat_id != item1.prod_cat_id){
-                prod_cat_id_dropdown += '<option value="' + item1.prod_cat_id + '">' + item1.prod_cat_id + '</option>';
-            }
-        })
-        })
-    }
+          $.each(rendered_UNSPC_data, function(j, item1){
+                            prod_cat_id_dropdown += '<option value="' + item1.prod_cat_id + '">' + item1.prod_cat_id + '</option>';
+          })
+
+     }
+
+<!--     var prod_cat_id_dropdown = '';-->
+<!--    function  unspsc_dropdown(){-->
+<!--        prod_cat_id_dropdown = '';-->
+<!--        $.each(rendered_cust_prod_cat_data, function(i, item){-->
+<!--        $.each(rendered_UNSPC_data, function(j, item1){-->
+<!--             prod_cat_id_dropdown = '';-->
+<!--            if(item.prod_cat_id != item1.prod_cat_id){-->
+<!--                prod_cat_id_dropdown += '<option value="' + item1.prod_cat_id + '">' + item1.prod_cat_id + '</option>';-->
+<!--            }-->
+<!--        })-->
+<!--        })-->
+<!--    }-->
 
 
 //#################################### START UPLOAD POPUP ##############################################################
@@ -493,9 +494,11 @@ function save_product_cat_images(event) {
                         url: "{% url 'eProc_Master_Settings:upload_prod_cat_images' %}",
                         data: data,
                         success: function (Response) {
-                             var upload_id = "prod_img-"+GLOBAL_PROD_CAT_ID
+                            var upload_id = "prod_img-"+GLOBAL_PROD_CAT_ID
                             $('#'+upload_id).attr('src', event.target.result);
                             $('#attachments_popup').modal('hide');
+                            rendered_cust_prod_cat_data = Response[0];
+                            display_basic_db_data
                         },
                         cache: false,
                         processData: false,
@@ -804,41 +807,38 @@ function display_cust_prod_cat(cust_prodcat_array) {
     document.getElementById("copy_line_up_div").style.display = "none";
    // $('#myModal').find('input:text').val('');
     table_sort_filter('display_basic_table');
-        }
+}
 
 
+//onclick of display the table in display mode............
+ function display_basic_db_data(){
+        $('#display_basic_table').DataTable().destroy();
+        $('#id_cusprodcat_tbody').empty();
+        var edit_basic_data = '';
+        $.each(rendered_cust_prod_cat_data, function (i, item) {
+            edit_basic_data += '<tr><td class="class_select_checkbox"><input class="checkbox_check" onclick="valueChanged()" type="checkbox" required></td><td><a onclick="get_image_detail('+item.prod_cat_id+')" href="#"><div style="display: flex; flex-direction: row;"><div><img src="/media/'+item.image_url+'" onerror="this.src="/static/images/no-image-cropped.png""  id="prod_img-'+item.prod_cat_id+'" class="mr-3 catalog_img product-config-img" ></div></div></a></td><td>'+item.prod_cat_desc+'</td><td>' + item.prod_cat_id + '</td><td  class="hg_unspsc_td_column" hidden><a onclick="upload_unscpsc_prod_cat_image('+ item.prod_cat_id+')"><i class="fa fa-upload" aria-hidden="true"></i></a></td><td hidden>' + item.prod_cat_guid + '</td><td hidden>'+item.del_ind+'</td></tr>'
 
-//onclick of cancel display the table in display mode............
-
-function display_basic_db_data(){
-$('#display_basic_table').DataTable().destroy();
-    $('#id_cusprodcat_tbody').empty();
-    var edit_basic_data = '';
-    $.each(rendered_cust_prod_cat_data, function (i, item) {
-        edit_basic_data += '<tr><td class="class_select_checkbox"><input class="checkbox_check" onclick="valueChanged()" type="checkbox" required></td><td><a onclick="get_image_detail('+item.prod_cat_id+')" href="#"><div style="display: flex; flex-direction: row;"><div><img src="/media/'+item.image_url+'" onerror="this.src="/static/images/no-image-cropped.png"" class="mr-3 catalog_img product-config-img" ></div><span>'+item.prod_cat_desc+'</span></div></a></td><td>' + item.prod_cat_id + '</td><td  class="hg_unspsc_td_column" hidden><a onclick="upload_unscpsc_prod_cat_image({{cust_prod_cat.prod_cat_id}})"><i class="fa fa-upload" aria-hidden="true"></i></a></td><td hidden>' + item.prod_cat_guid + '</td><td hidden>'+item.del_ind+'</td></tr>'
-
-    });
-    $('#id_cusprodcat_tbody').append(edit_basic_data);
-    $( "#hg_select_checkbox").prop( "hidden", true );
-    $( ".hg_unspsc_th_column").prop( "hidden", true );
-    $( ".hg_unspsc_td_column").prop( "hidden", true );
-    $(".hg_unspsc_td_column").show()
-    $(".hg_unspsc_td_column").show()
-    $( "#hg_select_checkbox").prop( "hidden", true );
-    $(".class_select_checkbox").prop("hidden", true);
-    $('input:checkbox').removeAttr('checked');
+        });
+        $('#id_cusprodcat_tbody').append(edit_basic_data);
+        $( "#hg_select_checkbox").prop( "hidden", true );
+        $( ".hg_unspsc_th_column").prop( "hidden", true );
+        $( ".hg_unspsc_td_column").prop( "hidden", true );
+        $(".hg_unspsc_td_column").show()
+        $(".hg_unspsc_td_column").show()
+        $( "#hg_select_checkbox").prop( "hidden", true );
+        $(".class_select_checkbox").prop("hidden", true);
+        $('input:checkbox').removeAttr('checked');
 
 
-    $('#id_edit_data').show();
-    $('#id_cancel_data').hide();
-    $('#id_delete_data').hide();
-    $('#id_copy_data').hide();
-    $('#id_update_data').hide();
-    $('#id_save_confirm_popup').modal('hide');
-    $('#id_delete_confirm_popup').modal('hide');
-    $('#id_check_all').hide();
-    table_sort_filter('display_basic_table');
-
+        $('#id_edit_data').show();
+        $('#id_cancel_data').hide();
+        $('#id_delete_data').hide();
+        $('#id_copy_data').hide();
+        $('#id_update_data').hide();
+        $('#id_save_confirm_popup').modal('hide');
+        $('#id_delete_confirm_popup').modal('hide');
+        $('#id_check_all').hide();
+        table_sort_filter('display_basic_table');
 }
 
 
@@ -1106,8 +1106,9 @@ function main_table_delete(){
     var row = $(this);
     checked = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
     if(checked){
-        cusprodcat_arr_obj.prod_cat_id = row.find("TD").eq(2).html();
-        cusprodcat_arr_obj.prod_cat_guid = row.find("TD").eq(4).html();
+        cusprodcat_arr_obj.prod_cat_desc = row.find("TD").eq(2).html();
+        cusprodcat_arr_obj.prod_cat_id = row.find("TD").eq(3).html();
+        cusprodcat_arr_obj.prod_cat_guid = row.find("TD").eq(5).html();
         cusprodcat_arr_obj.del_ind = checked
         main_table_cusprodcat_checked.push(cusprodcat_arr_obj);
     }
@@ -1123,7 +1124,7 @@ function main_table_delete(){
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             success: function (Response) {
-            rendered_cust_prod_cat_data = Response[0];
+            rendered_cust_prod_cat_data = Response[0][0];
             display_basic_db_data();
             $('#success_msg_id').text(Response[1])
             if(Response[1].message_type== 'SUCCESS'){
@@ -1149,7 +1150,7 @@ function main_table_delete(){
          cusprodcat = {};
          var main_table_low_value = [];
 
-        $('#display_basic_table').DataTable().destroy();
+       $('#display_basic_table').DataTable().destroy();
         $("#display_basic_table TBODY TR").each(function() {
             var row = $(this);
 
@@ -1160,7 +1161,7 @@ function main_table_delete(){
            main_table_low_value.push(main_attribute.prod_cat_id);
         });
 
-        table_sort_filter('display_basic_table');
+       table_sort_filter('display_basic_table');
           $("#id_error_msg").empty();
         [no_duplicate_value,error_message] = compare_table_for_duplicate_entries(validate_add_attributes, cust_prod_cat_data)
           if (error_message){
@@ -1187,7 +1188,7 @@ function main_table_delete(){
                         contentType: "application/json; charset=utf-8",
                         dataType: "json",
                         success: function(Response) {
-                             rendered_cust_prod_cat_data = Response[0];
+                             rendered_cust_prod_cat_data = Response[0][0];
                              rendered_UNSPC_data = Response.upload_ProdCat
                             display_basic_db_data();
                             $('#success_msg_id').text(Response[1])

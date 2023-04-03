@@ -40,7 +40,7 @@
                         <tr>
                             <th id="hg_select_checkbox" hidden>
                                 <div id="id_check_all" style="display:none;">
-                                    <INPUT type="checkbox" onchange="checkAll(this)" name="chk[]">
+                                    <input type="checkbox" id="selectAll" name="chk[]">
                                 </div>
                             </th>
                             <th>Document Type</th>
@@ -199,40 +199,35 @@
         get_main_table_data();  //Read data from main table
         // compare for duplicates in popup
         [no_duplicate_value,error_message] = compare_table_for_duplicate_entries(validate_add_attributes, doctype_data)
-        if (error_message){
-            display_error_message(error_message)
+        if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
+            [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
         }
-        else{
-            if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
-                [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
-            }
-            if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
-                var add_basic_data = '';
-                var doctype_data_array = doctype_data;
-                $('#id_save_confirm_popup').modal('hide');    
-                data = {'data':doctype_data,'table_name':'DocumentType','action':GLOBAL_ACTION}
-                OpenLoaderPopup();
-                $.ajax({
-                    type: 'POST',
-                    url: "{% url 'eProc_Configuration:create_update_application_data' %}",
-                    data: JSON.stringify(data),
-                    contentType: "application/json; charset=utf-8",
-                    dataType: "json",
-                    success: function (Response) {
-                        rendered_doctype_data = Response[0];
-                        rendered_dropdown_db_values = Response[2];
-                        display_basic_db_data();
-                        dropdown_value();
-                        $('#doc_Modal').modal('hide');
-                        success_response(Response); // Function call to display response data
-                        CloseLoaderPopup();
-                    }
-                });
+        if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
+            var add_basic_data = '';
+            var doctype_data_array = doctype_data;
+            $('#id_save_confirm_popup').modal('hide');    
+            data = {'data':doctype_data,'table_name':'DocumentType','action':GLOBAL_ACTION}
+            OpenLoaderPopup();
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'eProc_Configuration:create_update_application_data' %}",
+                data: JSON.stringify(data),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (Response) {
+                    rendered_doctype_data = Response[0];
+                    rendered_dropdown_db_values = Response[2];
+                    display_basic_db_data();
+                    dropdown_value();
+                    $('#doc_Modal').modal('hide');
+                    success_response(Response); // Function call to display response data
+                    CloseLoaderPopup();
+                }
+            });
 
-            }
-            else if (error_message){
-                display_error_message(error_message)
-            }
+        }
+        else if (error_message){
+            display_error_message(error_message)
         }
     }
 
@@ -276,7 +271,6 @@
         });
     }
 
-
     // validating the  popup table for duplicate entries
     function compare_table_for_duplicate_entries(validate_add_attributes, doctype) {
         add_attr_duplicates = false;
@@ -313,6 +307,26 @@
             });
         }
         return [no_duplicate_value,error_message]
+    }
+
+    //Function to highlight duplicate records
+    function display_duplicate_entry(common) {
+        var doctype_check = new Array;
+        $("#id_popup_table TBODY TR").each(function() {
+            var row = $(this);
+            doctype_dic = {}
+            doctype_dic.document_type = row.find("TD").eq(1).find('select[type="text"]').val();;
+            var compare =  doctype_dic.document_type
+            doctype_check.push(compare);
+            jQuery.grep(doctype_check, function(el) {
+                if (jQuery.inArray(el, common) != -1) {
+                    row_color_highlight(row);
+                }
+                else {
+                    row_color_no_highlight(row);
+                }
+            });
+        });
     }
 </script>
 <script src="{% static 'scripts/upload_doc_type.js' %}"></script>

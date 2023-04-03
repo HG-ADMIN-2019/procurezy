@@ -12,7 +12,7 @@
                 <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Application_Settings:extract_account_assignment_category_data' %}'" type="button">
                         <i class="fas fa-download"></i> extract
                 </button>
-                <button type="button" id="id_add_data" title="Add Account Assignment Category" value="ADD" class="btn btn-primary" data-toggle="modal" data-target="#myModal" onclick="onclick_add_button(this)">
+                <button type="button" id="id_add_data" title="Add Account Assignment Category" value="ADD" class="btn btn-primary" data-toggle="modal" data-target="#accasscat_Modal" onclick="onclick_add_button(this)">
                     <i class="fa fa-plus"></i> add account assignment category
                 </button>
                     <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"  onclick="window_close();">
@@ -41,7 +41,7 @@
                         <tr>
                             <th id="hg_select_checkbox" hidden>
                                 <div id="id_check_all" style="display:none;">
-                                    <INPUT type="checkbox" onchange="checkAll(this)" name="chk[]">
+                                    <input type="checkbox" id="selectAll" name="chk[]">
                                 </div>
                             </th>
                             <th>Account Assignment Category</th>
@@ -63,7 +63,7 @@
         </div>
     </div>
     <!--modal popup for Add,copy,update and upload-->
-    <div class="modal fade" id="myModal" style="overflow:auto;">
+    <div class="modal fade" id="accasscat_Modal" style="overflow:auto;">
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content">
                 <div class="modal-header">
@@ -181,7 +181,7 @@
                         rendered_aac_data = Response[0];
                         rendered_aac_values = Response[2];
                         display_basic_db_data();
-                        $('#myModal').modal('hide');
+                        $('#accasscat_Modal').modal('hide');
                         success_response(Response); // Function call to display response data
                         CloseLoaderPopup();
                     }
@@ -220,7 +220,7 @@
         });
     }
 
-    //onclick of add button display myModal popup and set GLOBAL_ACTION button value
+    //onclick of add button display accasscat_Modal popup and set GLOBAL_ACTION button value
     function onclick_add_button(button) {
         OpenLoaderPopup();
         var data = {'table_name':'AccountAssignmentCategory'}
@@ -236,7 +236,7 @@
                 $( "#header_select").prop( "hidden", false );
                 GLOBAL_ACTION = button.value
                 $("#id_popup_tbody").empty();
-                $('#myModal').modal('show');
+                $('#accasscat_Modal').modal('show');
                 new_row_data();  // Add a new row in popup
                 $("#id_del_ind_checkbox").prop("hidden", true);
                 document.getElementById("id_del_add_button").style.display = "block";
@@ -259,7 +259,10 @@
         $(".modal").on("hidden.bs.modal", function () {
             $("#id_error_msg").html("");
         });
-        new_row_data();  // Add a new row in popup
+        basic_add_new_html = '<tr><td><input type="checkbox" required></td>'+
+        '<td><select type="text" class="input form-control acct_assignment_category" id="acct_assignment_category-'+inc_index+'" name="acct_assignment_category" onchange="GetSelectedTextValue(this)"><option value="" disabled selected>Select your option</option>'+ aac_dropdown +'</select></td>'+
+        '<td><input class="form-control description check_special_char" type="text"  name="description"  id="description-'+inc_index+'" disabled></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+        $('#id_popup_tbody').append(basic_add_new_html);
         if (GLOBAL_ACTION == "aac_upload") {
             $(".class_del_checkbox").prop("hidden", false);
         }
@@ -301,6 +304,26 @@
             });
         }
         return [no_duplicate_value,error_message]
+    }
+
+    //Function to highlight duplicate records
+    function display_duplicate_entry(common) {
+        var aac_check = new Array;
+        $("#id_popup_table TBODY TR").each(function() {
+            var row = $(this);
+            aac_dic = {}
+            aac_dic.account_assign_cat = row.find("TD").eq(1).find('select[type="text"]').val();
+            var compare =  aac_dic.account_assign_cat
+            aac_check.push(compare);
+            jQuery.grep(aac_check, function(el) {
+                if (jQuery.inArray(el, common) != -1) {
+                    row_color_highlight(row);
+                }
+                else {
+                    row_color_no_highlight(row);
+                }
+            });
+        });
     }
 </script>
 <script src="{% static 'scripts/upload_acc_assign_cat.js' %}"></script>

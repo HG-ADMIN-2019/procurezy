@@ -46,6 +46,12 @@ function display_basic_db_data() {
 //Functtion to hide and display save related popups
 $('#save_id').click(function () {
     $('#myModal').modal('hide');
+    po_split_type_data = read_popup_data();
+    $('#id_save_confirm_popup').modal('show');
+});
+
+//Read popup table data
+function read_popup_data() {
     po_split_type_data = new Array();
     validate_add_attributes = [];
     $("#id_popup_table TBODY TR").each(function () {
@@ -60,8 +66,8 @@ $('#save_id').click(function () {
         validate_add_attributes.push(po_split_types.po_split_type);
         po_split_type_data.push(po_split_types);
     });
-    $('#id_save_confirm_popup').modal('show');
-});
+    return po_split_type_data;
+}
 
 // function to display erroe msg
 function display_error_message(error_message){

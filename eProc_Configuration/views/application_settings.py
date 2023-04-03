@@ -26,6 +26,7 @@ from eProc_Master_Settings.Utilities.master_settings_specific import *
 from eProc_Shopping_Cart.context_processors import update_user_info
 from eProc_Upload.Utilities.upload_data.upload_basic_pk_fk_tables import UploadPkFkTables
 from eProc_Upload.Utilities.upload_data.upload_pk_tables import CompareTableHeader, MSG048
+
 JsonParser_obj = JsonParser()
 django_query_instance = DjangoQueries()
 
@@ -206,12 +207,13 @@ def save_catalog_data(request):
                 Catalogs.objects.filter(catalog_id=data['catalog_id'], name=data['name'],
                                         description=data['description'],
                                         product_type=data['product_type']).exists()):
-            obj, created = Catalogs.objects.update_or_create(client=OrgClients.objects.get(client=global_variables.GLOBAL_CLIENT),
-                                                             catalog_guid=guid_generator(),
-                                                             catalog_id=data['catalog_id'],
-                                                             name=data['name'],
-                                                             description=data['description'],
-                                                             prod_type=data['product_type'])
+            obj, created = Catalogs.objects.update_or_create(
+                client=OrgClients.objects.get(client=global_variables.GLOBAL_CLIENT),
+                catalog_guid=guid_generator(),
+                catalog_id=data['catalog_id'],
+                name=data['name'],
+                description=data['description'],
+                prod_type=data['product_type'])
     catalog_data_response = Catalogs.objects.filter(del_ind=False)
     return JsonParser_obj.get_json_from_obj(catalog_data_response)
 

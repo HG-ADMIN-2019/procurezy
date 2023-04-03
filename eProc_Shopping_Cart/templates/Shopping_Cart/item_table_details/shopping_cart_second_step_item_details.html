@@ -233,6 +233,7 @@
                             </span>
                         </div>
                         <div class="card-body">
+                            {% if addr_val_desc %}
                             {% for addr in addr_val_desc %}
                             <span id="address_number_{{ forloop.parentloop.counter }}" class="check_address_number" hidden>{{ addr.address_number }}</span>
                             <span id="street_output{{ forloop.parentloop.counter }}" >{{ addr.street }},</span><br>
@@ -242,6 +243,15 @@
                             - <span id="pcode_output{{ forloop.parentloop.counter }}">{{ addr.postal_code }}</span><br>
                             <span id="region_output{{ forloop.parentloop.counter }}">{{ addr.region }}</span><br>
                             {% endfor %}
+                            {% else %}
+                            <span id="address_number_{{ forloop.counter }}" class="check_address_number" hidden></span>
+                            <span id="street_output{{ forloop.counter }}" ></span><br>
+                            <span id="area_output{{ forloop.counter }}"></span><br>
+                            <span id="landmark_output{{ forloop.counter }}"></span><br>
+                            <span id="city_output{{ forloop.counter }}"></span>
+                            <span id="pcode_output{{ forloop.counter }}"></span><br>
+                            <span id="region_output{{ forloop.counter }}"></span><br>
+                            {% endif %}
 
                             {% if shipping_address_flag == '1'  %}
                             <button onclick="change_item_address(this.id)" class="btn btn-primary hg_display mt-2"  id="change_address_{{forloop.counter}}" ><i class="far fa-edit"></i> Change Address</button>
@@ -266,7 +276,6 @@
                             </span>
                         </div>
                         <div class="card-body">
-                            {% if acc_default %}
                             <div>
                                 <span class="h6">Account Assignment Category :</span> <span id="change_acc_type_{{ forloop.counter }}" class="change_account_type">{{ acc_default }}</span><br>
                                 <span class="h6">Value :</span> <span id="change_acc_value_{{ forloop.counter }}" class="check_account_assignment_values">{{acc_value.0}}</span><br>
@@ -288,7 +297,6 @@
                             <button id="change_acc_asign-item-{{forloop.counter}}" onclick="edit_account_assign(this.id)" class="btn btn-primary hg_display"><i class="far fa-edit"></i> change account assignment</button>
                             {% elif acct_assignment_category == '0' %}
                             <button id="change_acc_asign-item-{{forloop.counter}}" onclick="edit_account_assign(this.id)" class="btn btn-secondary" disabled><i class="far fa-edit"></i> change account assignment</button>
-                            {% endif %}
                             {% endif %}
                         </div>
 

@@ -436,7 +436,7 @@
             if (format.test(purchasegrp_dic.pgroup_id)) {
                   error_message = ui_messeges("JMSG003") // Get message details
                 var display = error_message;
-                document.getElementById("id_error_msg_purgrp_id").innerHTML = display + "Purchase organisation Code";
+                document.getElementById("id_error_msg_purgrp_id").innerHTML = display + "Purchase Group Code";
                  $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
                 count = count + 1;
             } else {
@@ -446,7 +446,7 @@
             if(format.test(purchasegrp_dic.description)){
                 error_message = ui_messeges("JMSG003")// Get message details
                 var display3 = error_message;
-                document.getElementById("id_error_msg_description").innerHTML = display3+ "Purchasegrp Name";
+                document.getElementById("id_error_msg_description").innerHTML = display3+ "Purchase grp Name";
                 $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "1px solid #FF0000");
                 count = count +1;
             }

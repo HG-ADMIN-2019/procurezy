@@ -46,7 +46,6 @@ def register_page(request):
     reg_form = RegForm()
     if request.method == 'POST':
         reg_form = RegForm(request.POST or None)
-
         if reg_form.is_valid():
             new_user = reg_form.save(commit=False)
             password = random_alpha_numeric(8)
@@ -56,7 +55,7 @@ def register_page(request):
             if django_query_instance.django_existence_check(UserData,
                                                             {'employee_id': emp_id,
                                                              'del_ind': False,
-                                                             'client':global_variables.GLOBAL_CLIENT}):
+                                                             'client': global_variables.GLOBAL_CLIENT}):
                 error_msg = 'Employee Id exists'
             else:
                 is_created = RegFncts.create_user(request, new_user, global_variables.GLOBAL_CLIENT, password)
