@@ -332,15 +332,17 @@
                 var display4 = error_message;
                 document.getElementById("id_error_msg_currency_length").innerHTML = display4+ "Currency Code";
                 $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
+                row_color_highlight(row);
                 count = count + 1;
             }
             //*************** checking for special characters for currency code ***************
             else if (format.test(currency_id)) {
                 var url_new = "{% url 'eProc_Basic:get_message_description' %}";
-                 error_message = ui_messeges("JMSG003")// Get message details
+                error_message = ui_messeges("JMSG003")// Get message details
                 var display4 = error_message;
                 document.getElementById("id_error_msg_currency_id").innerHTML = display4+ "Currency Code";
                 $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
+                row_color_highlight(row);
                 count = count + 1;
             } else {
                 $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "none");
@@ -352,23 +354,25 @@
                 var display4 = error_message;
                 document.getElementById("id_error_msg_description").innerHTML = display4+ "Currency Name";
                 $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "1px solid #FF0000");
+                row_color_highlight(row);
                 count = count + 1;
             } else {
                 $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "none");
             }
+            if(currency_id_check.includes(currency_id)){
+                $(row).css("border", "#f8d7da");
+                 row_color_highlight(row);
+            }
+            else{
+                $(row).css("border", "");
+            }
+            currency_id_check.push(currency_id);
         });
-        if(currency_id_check.includes(currency_id)){
-            $(row).css("border", "#f8d7da");
-        }
-        else{
-            //$(row).css("border", "");
-        }
-        currency_id_check.push(currency_id);
+        $("#id_check_special_character_messages").prop("hidden",false)
         //*************** shows save button if there are no errors(special characters and max length) ***************
         if (count == 0) {
             $("#id_check_special_character_messages").prop("hidden", true)
             $("#save_id").prop("hidden", false);
-        }
         popup_data_dict = {
             'data_list': currency_list,
             'Tablename': Tablename,
@@ -421,6 +425,7 @@
                 CloseLoaderPopup();
             }
         });
+        }
     }
 
     // validating the  popup table for duplicate entries

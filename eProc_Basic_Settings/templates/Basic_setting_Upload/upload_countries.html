@@ -339,24 +339,6 @@
             }
             country_list.push([country_code, country_name, del_ind])
             var format = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
-              //*************** checking for empty for country code (length = 0) ***************
-            if(country_code.length == 0){
-                error_message = ui_messeges("JMSG002")// Get message details
-                var display8 = error_message;
-                document.getElementById("id_error_msg_country_length").innerHTML = display8+ "Country Code";
-                $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
-                row_color_highlight(row);
-                count = count +1;
-            }
-            //*************** checking for empty for country code (length = 0) ***************
-            if(country_name.length == 0){
-                error_message = ui_messeges("JMSG002")// Get message details
-                var display8 = error_message;
-                document.getElementById("id_error_msg_country_length").innerHTML = display8+ "Country Name";
-                $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
-                row_color_highlight(row);
-                count = count +1;
-            }
             //*************** checking for minimum length for country code (max length = 2) ***************
             if(country_code.length <2){
                 error_message = ui_messeges("JMSG113")// Get message details
@@ -398,58 +380,59 @@
             }
             country_code_check.push(country_code)
         });
+        $("#id_check_special_character_messages").prop("hidden",false)
         //*************** shows save button if there are no errors(special characters and max length) ***************
         if(count == 0){
             $("#id_check_special_character_messages").prop("hidden",true)
             $("#save_id").prop("hidden", false);
-        }
-        popup_data_dict ={'data_list' : country_list, 'Tablename' : Tablename, 'appname' : appname, 'db_header_data' : ["COUNTRY_CODE", "COUNTRY_NAME", "del_ind"]}
-        OpenLoaderPopup();
-        $.ajax({
-            type: 'POST',
-            url: "{% url 'eProc_Basic_Settings:check_data' %}",
-            data: JSON.stringify(popup_data_dict),
-            success: function(response) {
-                table_sort_filter('id_popup_table');
-                $("#id_check_special_character_messages").prop("hidden",false)
-                if(count == 0){
-                    $("#id_check_special_character_messages").prop("hidden",true)
-                }
-                //*************** retrieving data counts from views ***************
-                check_messages = response
-                var newArrayDataOfOjbect = Object.values(check_messages)
-                $("#id_check_success_messages").prop("hidden",false)
-                //*************** if pop-up data count is greater than zero ***************
-                if (newArrayDataOfOjbect[1] > 0) {                           
-                    $.each(response['messages'], function(i, item) {
-                        $("#id_check_success_messages").append('<p>' + item + '</p>');
-                    });
-                    //*************** if duplicate data data count is greater than zero ***************
-                    if(newArrayDataOfOjbect[2]>0){
-                        $("#id_check_error_messages").prop("hidden",false)         
-                        var display6 = get_msg_desc_check_data("JMSG015");    
-                        $("#id_check_error_messages").append('<p>' + display6 + newArrayDataOfOjbect[2] + '</p>')  
-                        var display7 = get_msg_desc_check_data("JMSG001");
-                        $("#id_check_error_messages").append('<p style = "font-weight: bold;">' + display7 + ' </p>')
-                        $("#save_id").prop("hidden", true);
-                        $("#id_delete_duplicate").show()
+            popup_data_dict ={'data_list' : country_list, 'Tablename' : Tablename, 'appname' : appname, 'db_header_data' : ["COUNTRY_CODE", "COUNTRY_NAME", "del_ind"]}
+            OpenLoaderPopup();
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'eProc_Basic_Settings:check_data' %}",
+                data: JSON.stringify(popup_data_dict),
+                success: function(response) {
+                    table_sort_filter('id_popup_table');
+                    $("#id_check_special_character_messages").prop("hidden",false)
+                    if(count == 0){
+                        $("#id_check_special_character_messages").prop("hidden",true)
                     }
+                    //*************** retrieving data counts from views ***************
+                    check_messages = response
+                    var newArrayDataOfOjbect = Object.values(check_messages)
+                    $("#id_check_success_messages").prop("hidden",false)
+                    //*************** if pop-up data count is greater than zero ***************
+                    if (newArrayDataOfOjbect[1] > 0) {
+                        $.each(response['messages'], function(i, item) {
+                            $("#id_check_success_messages").append('<p>' + item + '</p>');
+                        });
+                        //*************** if duplicate data data count is greater than zero ***************
+                        if(newArrayDataOfOjbect[2]>0){
+                            $("#id_check_error_messages").prop("hidden",false)
+                            var display6 = get_msg_desc_check_data("JMSG015");
+                            $("#id_check_error_messages").append('<p>' + display6 + newArrayDataOfOjbect[2] + '</p>')
+                            var display7 = get_msg_desc_check_data("JMSG001");
+                            $("#id_check_error_messages").append('<p style = "font-weight: bold;">' + display7 + ' </p>')
+                            $("#save_id").prop("hidden", true);
+                            $("#id_delete_duplicate").show()
+                        }
+                        else{
+                            $("#id_check_error_messages").prop("hidden",true)
+                            $("#id_delete_duplicate").hide()
+                        }
+                    }
+                    //*************** if pop-up data count is zero ***************
                     else{
-                        $("#id_check_error_messages").prop("hidden",true)
-                        $("#id_delete_duplicate").hide()
+                        $("#id_check_success_messages").hide()
+                        $("#id_check_error_messages").prop("hidden", false)
+                        var display8 = get_msg_desc_check_data("JMSG006");
+                        $("#id_check_error_messages").append('<p>' + display8 + '</p>')
+                        $("#save_id").prop("hidden", true);
                     }
+                    CloseLoaderPopup();
                 }
-                //*************** if pop-up data count is zero ***************
-                else{
-                    $("#id_check_success_messages").hide()
-                    $("#id_check_error_messages").prop("hidden", false)                        
-                    var display8 = get_msg_desc_check_data("JMSG006");    
-                    $("#id_check_error_messages").append('<p>' + display8 + '</p>')
-                    $("#save_id").prop("hidden", true);
-                }
-                CloseLoaderPopup();
-            }
-        });
+            });
+        }
     }
 
     // validating the  popup table for duplicate entries
