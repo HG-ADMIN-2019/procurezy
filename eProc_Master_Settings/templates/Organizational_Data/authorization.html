@@ -69,7 +69,7 @@
         </div>
     </div>
     <!--modal popup for Add,copy,update and upload-->
-    <div class="modal fade" id="myModal">
+    <div class="modal fade" id="auth_Modal">
         <div class="modal-dialog modal-dialog-centered modal-xl" style="overflow:auto;">
             <div class="modal-content">
                 <div class="modal-header">
@@ -148,9 +148,9 @@
     var roles_dropdown;
     var auth_val_list = [];
     var auth_group_dropdown;
-    function dropdown_value(){
+    function dropdown_value() {
         auth_group_dropdown = '';
-            $.each(rendered_auth_group_data, function(i, item){
+        $.each(rendered_auth_group_data, function(i, item){
             auth_group_dropdown += '<option value="' + item.auth_obj_grp + '">' + item.auth_obj_grp +'</option>';
         });
         roles_dropdown = '';
@@ -199,7 +199,7 @@
                     rendered_auth_data = Response[0];
                     display_basic_db_data();
                     dropdown_value()
-                    $('#myModal').modal('hide');
+                    $('#auth_Modal').modal('hide');
                     success_response(Response);  // Display Response data
                     CloseLoaderPopup();
                 }
@@ -260,7 +260,7 @@
         return [no_duplicate_value,error_message]
     }
 
-    //onclick of add button display myModal popup and set GLOBAL_ACTION button value
+    //onclick of add button display auth_Modal popup and set GLOBAL_ACTION button value
     function onclick_add_button(button) {
         OpenLoaderPopup();
         var data = {'table_name':'Authorization'}
@@ -277,7 +277,7 @@
                 $("#header_select").prop( "hidden", false );
                 GLOBAL_ACTION = button.value
                 $("#id_popup_tbody").empty();
-                $('#myModal').modal('show');
+                $('#auth_Modal').modal('show');
                 new_row_data();   // Add a new row in popup
                 $("#id_del_ind_checkbox").prop("hidden", true);
                 document.getElementById("id_del_add_button").style.display = "block";

@@ -5,18 +5,18 @@ var main_table_low_value = [];
 var auth={};
 
 //**************************************************
-function corresponding_auth_group(auth_type_val) {
-    corresponding_values = {};
-    corresponding_values.auth_group_dropdown = '';
-    for (var i = 0; i < auth_val_list.length; i++) {
-        compare_dict = {};
-        compare_dict = auth_val_list[i]
-        if (auth_type_val == compare_dict.auth_type) {
-            corresponding_values.auth_group_dropdown += '<option value="' + compare_dict.auth_obj_grp + '">' + compare_dict.auth_obj_grp + '</option>'
-        }
-    }
-    return corresponding_values
-}
+// function corresponding_auth_group(auth_type_val) {
+//     corresponding_values = {};
+//     corresponding_values.auth_group_dropdown = '';
+//     for (var i = 0; i < auth_val_list.length; i++) {
+//         compare_dict = {};
+//         compare_dict = auth_val_list[i]
+//         if (auth_type_val == compare_dict.auth_type) {
+//             corresponding_values.auth_group_dropdown += '<option value="' + compare_dict.auth_obj_grp + '">' + compare_dict.auth_obj_grp + '</option>'
+//         }
+//     }
+//     return corresponding_values
+// }
 
 // on click update icon display the selected checkbox data to update
 function onclick_update_button() {
@@ -30,7 +30,7 @@ $(".remove_upload_data").click(() => {
     $("#id_error_msg").html("");
     $("#id_popup_tbody").empty();
     $("#id_error_msg").empty();
-    $('#myModal').modal('hide');
+    $('#auth_Modal').modal('hide');
     $("#id_error_msg").prop("hidden", true);
     $("#id_error_msg_auth_code").prop("hidden", true);
     $("#id_error_msg_auth_name").prop("hidden", true);
@@ -44,8 +44,8 @@ $(".remove_upload_data").click(() => {
 
 // on click add icon display the row in to add the new entries
 function add_popup_row() {
-    $("#error_msg_id").css("display", "none")
     basic_add_new_html = '';
+    $("#error_msg_id").css("display", "none")
     $('#id_popup_table').DataTable().destroy();
     $(".modal").on("hidden.bs.modal", function () {
         $("#id_error_msg").html("");
@@ -53,19 +53,20 @@ function add_popup_row() {
     new_row_data();   // Add a new row in popup
     if (GLOBAL_ACTION == "auth_upload") {
         $(".class_del_checkbox").prop("hidden", false);
+        $("#id_del_ind_checkbox").prop("hidden", false);
     }
-    var auth_type_val = '';
-    $("#id_popup_table TBODY TR").each(function () {
-        var row = $(this);
-        row.find("TD").eq(2).find("select").empty()
-        var assign_val = corresponding_auth_group(auth_type_val)
-        row.find("TD").eq(2).find("select").append(assign_val.auth_group_dropdown)
-        $(row.find("TD").eq(1).find("select")).change(function () {
-            row.find("TD").eq(2).find("select").empty()
-            var assign_val = corresponding_auth_group(auth_type_val)
-            row.find("TD").eq(2).find("select").append(assign_val.auth_group_dropdown)
-        })
-    })
+    // var auth_type_val = '';
+    // $("#id_popup_table TBODY TR").each(function () {
+    //     var row = $(this);
+    //     row.find("TD").eq(2).find("select").empty()
+    //     var assign_val = corresponding_auth_group(auth_type_val)
+    //     row.find("TD").eq(2).find("select").append(assign_val.auth_group_dropdown)
+    //     $(row.find("TD").eq(1).find("select")).change(function () {
+    //         row.find("TD").eq(2).find("select").empty()
+    //         var assign_val = corresponding_auth_group(auth_type_val)
+    //         row.find("TD").eq(2).find("select").append(assign_val.auth_group_dropdown)
+    //     })
+    // })
 }
 
 //onclick of cancel display the table in display mode............
@@ -117,13 +118,13 @@ function display_error_message(error_message){
     document.getElementById("error_message").style.color = "Red";
     $("#error_msg_id").css("display", "block")
     $('#id_save_confirm_popup').modal('hide');
-    $('#myModal').modal('show');
+    $('#auth_Modal').modal('show');
 
 }
 
 //Onclick of save button 
 $('#save_id').click(function () {
-    $('#myModal').modal('hide');
+    $('#auth_Modal').modal('hide');
     auth_data = read_popup_data();
     $('#id_save_confirm_popup').modal('show');
 });
@@ -155,19 +156,19 @@ function read_popup_data() {
 function onclick_copy_update_button() {
     OpenLoaderPopup();
     $("#error_msg_id").css("display", "none")
+    $('#id_popup_table').DataTable().destroy();
     $("#id_popup_tbody").empty();
-    $('#display_basic_table').DataTable().destroy();
     //Reference the Table.
-    var grid = document.getElementById("display_basic_table");
+    var res = get_all_checkboxes(); // Function to get all the checkboxes
+    var $chkbox_all = $('td input[type="checkbox"]', res);
     //Reference the CheckBoxes in Table.
-    var checkBoxes = grid.getElementsByTagName("INPUT");
     var edit_basic_data = "";
     var dropdown_values = [];
     dropdown_value();
     //Loop through the CheckBoxes.
-    for (var i = 1; i < checkBoxes.length; i++) {
-        if (checkBoxes[i].checked) {
-            var row = checkBoxes[i].parentNode.parentNode;
+    for (var i = 0; i < $chkbox_all.length; i++) {
+        if ($chkbox_all[i].checked) {
+            var row = $chkbox_all[i].parentNode.parentNode;
             if(GLOBAL_ACTION == "UPDATE"){
                 guid = row.cells[3].innerHTML;
                 edit_basic_data += '<tr ><td><input type="checkbox" required></td><td><select class="form-control" disable>'+roles_dropdown+'</select></td><td><select class="form-control">'+auth_group_dropdown+'</select></td><td hidden><input type="text" value="'+guid+'"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>'
@@ -188,8 +189,7 @@ function onclick_copy_update_button() {
         i++;
     });
     $("#id_del_ind_checkbox").prop("hidden", true);
-    $('#myModal').modal('show');
-    table_sort_filter('display_basic_table');
+    $('#auth_Modal').modal('show');
     table_sort_filter('id_popup_table');
     CloseLoaderPopup();
 }
