@@ -25,6 +25,7 @@ from eProc_Basic.Utilities.functions.django_query_set import DjangoQueries
 from eProc_Basic.Utilities.functions.encryption_util import encrypt, decrypt
 from eProc_Basic.Utilities.functions.get_db_query import get_country_id, getClients, get_user_id_by_email_id
 from eProc_Basic.Utilities.functions.json_parser import JsonParser
+from eProc_Basic.Utilities.functions.messages_config import get_message_desc
 from eProc_Basic.Utilities.functions.str_concatenate import concatenate_str
 from eProc_Basic_Settings.views import JsonParser_obj
 from eProc_Configuration.models import *
@@ -1044,7 +1045,7 @@ def delete_user(request):
         django_query_instance.django_filter_delete_query(UserData, {'email': user['email'],
                                                                     'client': global_variables.GLOBAL_CLIENT})
         create_emp_history_data(user)
-        success_message = "User deleted"
+        success_message = get_message_desc('MSG206')[1]
 
     employee_results = django_query_instance.django_filter_query(UserData, {
         'client': global_variables.GLOBAL_CLIENT, 'del_ind': False

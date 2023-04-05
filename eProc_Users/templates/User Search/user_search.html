@@ -494,6 +494,19 @@ function display_emp_data(emp_data){
         else{
             checkbox_input = '<input type="checkbox" class="emp_checkbox" onclick="valueChanged()" >'
         }
+        var lock_id, pwd_lock;
+        if(emp.user_locked){
+            lock_id = '<input type="checkbox" id="'+emp.employee_id.concat("-LOCKED")+'" class="toggle-input" checked>';
+            }
+        else {
+            lock_id = '<input type="checkbox" id="'+emp.employee_id.concat("-UNLOCKED")+'" class="toggle-input">';
+        }
+        if(emp.pwd_locked){
+            pwd_lock = '<input type="checkbox" id="'+emp.employee_id.concat("-PWDLOCKED")+'" class="toggle-input" checked>';
+        }
+        else {
+            pwd_lock = '<input type="checkbox" id="'+emp.employee_id.concat("-PWDUNLOCKED")+'" class="toggle-input">';
+            }
         emp_detail_html += '<tr id="'+emp.employee_id+'"><td>'+checkbox_input+'</td> '+
         '<td><a href="#" id="'+ emp.employee_id +'" class="deletepop" target="_blank">'+ emp.employee_id +'</a></td>'+
          '<td>'+ emp.username +'</td>'+
@@ -501,8 +514,8 @@ function display_emp_data(emp_data){
          '<td>'+ emp.last_name +'</td>'+
          '<td>'+ emp.email +'</td>'+
          '<td>' + emp.is_active + '</td>'+
-         '<td>' + emp.user_locked + '</td>'+
-         '<td>' + emp.pwd_locked + '</td>'+
+         '<td><label class="switch"><label class="toggle">' + lock_id + '<div class="toggle-controller default-success"></div></label></label></td>'+
+         '<td><label class="switch"><label class="toggle">' + pwd_lock + '<div class="toggle-controller default-success"></div></label></label></td>'+
          '<td class="item-action-icon-section"><span title="Delete address" onclick="get_user_detail_to_delete(this.id)" id="'+ emp.email +'">'+
           '<i class="material-icons item-action-icons">delete_outline</i></span></td>'+
          '</tr>';

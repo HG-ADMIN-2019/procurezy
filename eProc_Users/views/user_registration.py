@@ -56,18 +56,13 @@ def register_page(request):
                                                             {'employee_id': emp_id,
                                                              'del_ind': False,
                                                              'client': global_variables.GLOBAL_CLIENT}):
-                error_msg = 'Employee Id exists'
+                message_desc = get_message_desc('MSG205')[1]
+                messages.error(request, message_desc)
             else:
                 is_created = RegFncts.create_user(request, new_user, global_variables.GLOBAL_CLIENT, password)
                 if is_created:
-                    # msgid = 'MSG017'
-                    # error_msg = get_msg_desc(msgid)
-                    # msg = error_msg['message_desc'][0]
-                    # error_msg = msg
                     message_desc = get_message_desc('MSG017')[1]
                 messages.success(request, message_desc)
-
-            # messages.success(request, MSG017)
                 return redirect('eProc_Users:register_page')
 
     context = {
