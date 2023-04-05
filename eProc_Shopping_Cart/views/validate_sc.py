@@ -25,6 +25,9 @@ def check_shopping_cart(request):
     client = global_variables.GLOBAL_CLIENT
     holiday_list = []
     sc_check_data = JsonParser().get_json_from_req(request)
+    header_level_data = sc_check_data['header_level_data']
+    header_level_addr = header_level_data['header_level_addr']
+    header_level_acc = header_level_data['header_level_acc']
     username = sc_check_data['requester']
     if 'sc_header_guid' in sc_check_data:
         sc_header_guid = sc_check_data['sc_header_guid']
@@ -71,8 +74,11 @@ def check_shopping_cart(request):
                                                       default_calendar_id)
 
             sc_check_instance.item_level_delivery_address_check(address_number, data['item_num'])
-            sc_check_instance.account_assignment_check(data['acc_acc_cat'], data['acc_acc_val'], data['gl_acc_num'],
-                                                       data['item_num'])
+            sc_check_instance.item_level_acc_check(data['acc_acc_cat'],
+                                                   data['acc_acc_val'],
+                                                   header_level_acc['acc_desc_list'],
+                                                   data['gl_acc_num'],company_code,
+                                                   data['item_num'])
             sc_check_instance.check_for_prod_cat(data['prod_cat'], company_code, data['item_num'])
             sc_check_instance.check_for_supplier(data['supplier_name'], data['prod_cat'], company_code,
                                                  data['item_num'])
@@ -82,7 +88,11 @@ def check_shopping_cart(request):
                                                      data['item_num'], data['item_guid'],data['quantity'])
 
         sc_check_instance.approval_check(acc_default, acc_default_val, total_val, company_code)
-
+        sc_check_instance.header_level_delivery_address_check(header_level_addr['adr_num'],None,False)
+        sc_check_instance.header_acc_check(header_level_acc['acc_asg_cat'],
+                                           header_level_acc['acc_asg_cat_value'],
+                                           header_level_acc['acc_desc_list'],
+                                           company_code)
         sc_check_instance.calender_id_check(default_calendar_id)
         data = sc_check_instance.get_shopping_cart_errors()
         return JsonResponse(data)

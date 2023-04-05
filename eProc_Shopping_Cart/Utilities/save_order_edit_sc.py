@@ -81,6 +81,12 @@ class SaveShoppingCart:
         self.shipping_address = get_attr_value(self.client, CONST_DEL_ADDR, self.object_id_list, self.edit_flag)
         self.invoice_address = get_attr_value(self.client, CONST_INV_ADDR, self.object_id_list, self.edit_flag)
         self.subtype = ''
+        self.header_level_addr = self.sc_ui_data['header_level_addr']
+        self.header_level_acc = self.sc_ui_data['header_level_acc']
+        if  self.header_level_addr['adr_num']:
+            self.ship_addr_num = self.header_level_addr['adr_num']
+        else:
+            self.ship_addr_num = 0
 
     # Method to save header details
     def save_header_details(self, status):
@@ -129,6 +135,7 @@ class SaveShoppingCart:
         if self.save_type == 'Order':
             ordered_at = datetime.datetime.today()
         self.header_status = status
+
         sc_header_save_data = {
             'guid': self.header_guid,
             'client': django_query_instance.django_get_query(OrgClients, {'client': self.client, 'del_ind': False}),
@@ -140,7 +147,7 @@ class SaveShoppingCart:
             'status': status,
             'created_at': datetime.datetime.now(),
             'created_by': self.username,
-            'ship_addr_num': self.shipping_address,
+            'ship_addr_num': self.ship_addr_num,
             'inv_addr_num': self.invoice_address,
             'time_zone': get_timezone,
             'time_zone_difference': time_diff,
@@ -479,7 +486,7 @@ class SaveShoppingCart:
                 'gr_ind': gr_ind,
                 'call_off': cart_item_details.call_off,
                 'bill_to_addr_num': self.invoice_address,
-                'ship_to_addr_num': self.shipping_address,
+                'ship_to_addr_num': self.ship_addr_num,
                 'del_ind': False,
                 'created_at': datetime.datetime.now(),
                 'created_by': self.username,
@@ -938,7 +945,7 @@ class EditShoppingCart(SaveShoppingCart):
         item_data['prod_cat_desc'] = get_prod_by_id(prod_cat_id)
         item_data['comp_code'] = self.company_code
         item_data['bill_to_addr_num'] = self.invoice_address
-        item_data['ship_to_addr_num'] = self.shipping_address
+        item_data['ship_to_addr_num'] = self.ship_addr_num
         item_data['created_by'] = self.username
         item_data['goods_recep'] = self.username
         item_data['silent_po'] = get_silent_po[0]
@@ -1234,12 +1241,13 @@ class CheckForScErrors:
         self.username = username
         self.error_message_info = []
 
-    def header_level_delivery_address_check(self, address_number,address_number_list):
+    def header_level_delivery_address_check(self, address_number, address_number_list, check_flag):
         error_msg = None
-        if len(address_number_list) == 0:
-            error_msg = get_message_desc('MSG203')[1]
-            self.error_message_info.append(error_msg)
-            return error_msg
+        if check_flag:
+            if len(address_number_list) == 0:
+                error_msg = get_message_desc('MSG203')[1]
+                self.error_message_info.append(error_msg)
+                return error_msg
         if address_number == 'None' or address_number is None or address_number == '':
             error_msg = get_message_desc('MSG163')[1]
             self.error_message_info.append(error_msg)
@@ -1256,7 +1264,7 @@ class CheckForScErrors:
         else:
             return error_msg
 
-    def item_level_delivery_address_check(self, address_number,item_num):
+    def item_level_delivery_address_check(self, address_number, item_num):
         error_msg = None
         address_error = {}
         if address_number == 'None' or address_number is None or address_number == '':
@@ -1276,6 +1284,7 @@ class CheckForScErrors:
             return error_msg
         else:
             return error_msg
+
     def item_level_delivery_address_first_check(self, cart_items_count, error_msg):
         """
 
@@ -1317,6 +1326,85 @@ class CheckForScErrors:
             return False, self.data
         else:
             return True, ''
+
+    def header_acc_check(self, acc, acc_val, acc_desc_list, company_code):
+        """"
+        """
+        if len(acc_desc_list) == 0:
+            error_msg = "Account assignment category is not maintained. Please contact admin"
+            self.error_message_info.append(error_msg)
+        if not acc:
+            error_msg = "Please select relevant account assignment category"
+            self.error_message_info.append(error_msg)
+        else:
+            if not django_query_instance.django_existence_check(AccountingData,
+                                                                {'account_assign_cat': acc,
+                                                                 'account_assign_value': acc_val,
+                                                                 'client': self.client,
+                                                                 'del_ind': False,
+                                                                 'company_id': company_code}):
+                msgid = 'MSG165'
+                errormsg = get_message_desc(msgid)[1]
+                self.error_message_info.append(errormsg)
+            if not django_query_instance.django_existence_check(AccountAssignmentCategory,
+                                                                {'account_assign_cat': acc,
+                                                                 'del_ind': False}):
+                msgid = 'MSG166'
+                errormsg = get_message_desc(msgid)[1]
+                self.error_message_info.append(errormsg)
+        if not acc_val:
+            error_msg = "Please select relevant account assignment category value"
+            self.error_message_info.append(error_msg)
+
+    def item_level_acc_check(self, acc, acc_val, acc_desc_list, gl_acc_num, company_code, item_num):
+        """
+
+        """
+        account_assignment_errors = {}
+        if len(acc_desc_list) == 0:
+            account_assignment_errors = {}
+            error_msg = "Account assignment category is not maintained. Please contact admin"
+            account_assignment_errors[item_num] = error_msg
+            self.data.append(account_assignment_errors)
+        if not acc:
+            account_assignment_errors = {}
+            error_msg = "Please select relevant account assignment category"
+            account_assignment_errors[item_num] = error_msg
+            self.data.append(account_assignment_errors)
+        else:
+            if not django_query_instance.django_existence_check(AccountingData,
+                                                                {'account_assign_cat': acc,
+                                                                 'account_assign_value': acc_val,
+                                                                 'client': self.client,
+                                                                 'del_ind': False,
+                                                                 'company_id': company_code}):
+                account_assignment_errors = {}
+                msgid = 'MSG165'
+                error_msg = get_message_desc(msgid)[1]
+                account_assignment_errors[item_num] = error_msg
+                self.data.append(account_assignment_errors)
+            if not django_query_instance.django_existence_check(AccountAssignmentCategory,
+                                                                {'account_assign_cat': acc,
+                                                                 'del_ind': False}):
+                account_assignment_errors = {}
+                msgid = 'MSG166'
+                error_msg = get_message_desc(msgid)[1]
+                account_assignment_errors[item_num] = error_msg
+                self.data.append(account_assignment_errors)
+        if not acc_val:
+            account_assignment_errors = {}
+            error_msg = "Please select relevant account assignment category value"
+            account_assignment_errors[item_num] = error_msg
+            self.data.append(account_assignment_errors)
+        if not django_query_instance.django_existence_check(DetermineGLAccount,
+                                                            {'account_assign_cat': acc,
+                                                             'gl_acc_num': gl_acc_num,
+                                                             'del_ind': False,
+                                                             'client': self.client}):
+            account_assignment_errors = {}
+            error_msg = get_message_desc('MSG164')[1]
+            account_assignment_errors[item_num] = error_msg
+            self.data.append(account_assignment_errors)
 
     def header_level_acc_check(self, acc_list, default_acc, acc_value_list, default_acc_value, company_code):
         """
@@ -1647,7 +1735,7 @@ class CheckForScErrors:
 
 
 def check_sc_second_step_shopping_cart(sc_check_instance, object_id_list, default_calendar_id, company_code,
-                                       default_address_number,address_number_list, accounting_data, manager_details,
+                                       default_address_number, address_number_list, accounting_data, manager_details,
                                        approver_id, total_value,
                                        msg_info,
                                        cart_items):
@@ -1659,7 +1747,7 @@ def check_sc_second_step_shopping_cart(sc_check_instance, object_id_list, defaul
     sc_check_instance.document_sc_transaction_check(object_id_list)
     sc_check_instance.po_transaction_check(object_id_list)
     sc_check_instance.calender_id_check(default_calendar_id)
-    error_msg = sc_check_instance.header_level_delivery_address_check(default_address_number,address_number_list)
+    error_msg = sc_check_instance.header_level_delivery_address_check(default_address_number, address_number_list, True)
     sc_check_instance.update_approval_check(manager_details, approver_id, total_value,
                                             msg_info)
     sc_check_instance.header_level_acc_check(accounting_data['acc_list'], accounting_data['default_acc_ass_cat'],

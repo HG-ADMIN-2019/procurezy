@@ -559,8 +559,6 @@ def save_shopping_cart(request):
     :param request:
     :return:
     """
-    username = getUsername(request)
-    client = getClients(request)
     manager_details = []
     if request.method == 'POST':
         attachments_data = request.FILES

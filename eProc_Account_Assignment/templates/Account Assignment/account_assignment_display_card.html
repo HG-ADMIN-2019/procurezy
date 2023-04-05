@@ -6,8 +6,9 @@
                 <div class="elements-space-between">
                     <div>
                         <div class="mb-3">
-                            <span class="h6"> Account Assignment Category :</span><span id="change_acc_type">{{ acc_default }}</span>
-                            <span class="h6"> Value :</span><span id="change_acc_value">{{acc_value.0}}</span> <span class="badge badge-pill badge_primary_acc">Primary</span>
+                            <span class="h6"> Account Assignment Category :</span>
+                            <span id="change_acc_type">{% if acc_default %}{{ acc_default }}{% endif %}</span><br>
+                            <span class="h6"> Value :</span><span id="change_acc_value">{% if acc_default %}{{ acc_value.0 }}{% endif %}</span> <span class="badge badge-pill badge_primary_acc">Primary</span>
                             <div id="secondary_acc_ass_cat_section"> </div>
                             <div id="item_secondary_acc_assign_category"></div>
                         </div>
