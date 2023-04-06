@@ -108,7 +108,7 @@
                     <table class="class_popup_table table table-bordered mt-2" id="id_popup_table" >
                         <thead>
                             <tr>
-                                <th id="hg_select_checkbox" >
+                                <th id="hg_select_checkbox"  hidden>
                                     <div id="id_check_all" style="display:none;">
                                         <input type="checkbox" id="selectAll" name="chk[]">
                                     </div>
