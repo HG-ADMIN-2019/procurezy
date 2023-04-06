@@ -53,7 +53,7 @@
                     <tr>
                         <th id="hg_select_checkbox" hidden>
                             <div id="id_check_all" style="display:none;">
-                                <input type="checkbox" onchange="checkAll(this)" name="chk[]">
+                                <input type="checkbox" id="selectAll" name="chk[]">
                             </div>
                         </th>
                          <th> Company Number</th>
@@ -692,21 +692,19 @@
                 rendered_super_company_data = response.upload_data_OrgCompanies
                 workflowacc_drp()
                 $("#error_msg_id").css("display", "none")
-                $('#display_basic_table').DataTable().destroy();
                 $('#id_popup_table').DataTable().destroy();
                 $("#id_popup_tbody").empty();
                 //Reference the Table.
-                var grid = document.getElementById("display_basic_table");
-
+                var res = get_all_checkboxes(); // Function to get all the checkboxes
+                var $chkbox_all = $('td input[type="checkbox"]', res);
                 //Reference the CheckBoxes in Table.
-                var checkBoxes = grid.getElementsByTagName("INPUT");
                 var edit_basic_data = "";
                 var dropdown_values = [];
                 var unique_input = '';
                 //Loop through the CheckBoxes.
-                for (var i = 1; i < checkBoxes.length; i++) {
-                    if (checkBoxes[i].checked) {
-                        var row = checkBoxes[i].parentNode.parentNode;
+                for (var i = 0; i < $chkbox_all.length; i++) {
+                    if ($chkbox_all[i].checked) {
+                        var row = $chkbox_all[i].parentNode.parentNode;
                         if(GLOBAL_ACTION == "COPY") {
                             unique_input = '<select type="text" class="form-control">'+company_id_dropdown+'</select>'
                             edit_basic_data += '<tr><td><input type="checkbox" required></td>'+
@@ -787,7 +785,6 @@
             $("#id_del_ind_checkbox").prop("hidden", true);
             $('#Wf_Acc_Modal').modal('show');
             table_sort_filter('id_popup_table');
-            table_sort_filter('display_basic_table');
             $('#Wf_Acc_Modal').modal('show');
             CloseLoaderPopup();
         }
