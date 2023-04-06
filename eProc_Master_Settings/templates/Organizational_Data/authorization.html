@@ -163,7 +163,7 @@
     //**************************
     function dropdown_value(){
         roles_dropdown = '';
-        $.each(rendered_auth_data, function(i, item){
+        $.each(rendered_roles_data, function(i, item){
             roles_dropdown += '<option value="' + item.field_type_id + '">' + item.field_type_id +'</option>';
         });
     }
@@ -292,7 +292,7 @@
             success: function(response) {
                 rendered_roles_data = response.upload_data_roles
                 rendered_auth_group_data = response.upload_data_auth_grp_obj
-                rendered_auth_type = response.auth_type_values
+                rendered_auth_type = response.auth
                 dropdown_value();
                 $("#error_msg_id").css("display", "none")
                 $("#header_select").prop( "hidden", false );
