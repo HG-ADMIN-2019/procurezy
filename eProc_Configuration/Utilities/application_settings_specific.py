@@ -1405,10 +1405,15 @@ def user_roles_data():
 
 
 def authorization_dropdown():
-    upload_data_roles = django_query_instance.django_filter_query(UserRoles, {'del_ind': False}, ['role'], ['role'])
+    upload_data_roles = list(
+        FieldTypeDescription.objects.filter(field_name='roles', del_ind=False,
+                                            client=global_variables.GLOBAL_CLIENT).values('field_type_id',
+                                                                                          'field_type_desc'))
 
-    upload_data_auth_grp_obj = django_query_instance.django_filter_query(AuthorizationGroup, {'del_ind': False},
-                                                                         ['auth_obj_grp'], ['auth_obj_grp'])
+    upload_data_auth_grp_obj = list(
+        FieldTypeDescription.objects.filter(field_name='auth_obj_grp', used_flag=0, del_ind=False,
+                                            client=global_variables.GLOBAL_CLIENT).values('field_type_id',
+                                                                                          'field_type_desc'))
 
     data = {
         'upload_data_roles': upload_data_roles,

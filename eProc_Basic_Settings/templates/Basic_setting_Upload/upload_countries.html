@@ -239,6 +239,9 @@
 
     // validate and save for add,copy,update and upload data
     function popup_save_data() {
+        if(GLOBAL_ACTION = "country_upload"){
+         $('#check_upload_save').modal('show');
+        }
         $('#success_msg_id').empty()
         $('#id_popup_table').DataTable().destroy();
         no_duplicate_entries = 'Y'
@@ -327,69 +330,83 @@
         del_ind = ''
         $("#id_popup_table TBODY TR").each(function() {
             var row = $(this);
+            country_dic = {}
             //*************** reading data from the pop-up ***************
-            country_name = row.find("TD").eq(2).find('input[type="text"]').val().toUpperCase();
-            country_code = row.find("TD").eq(1).find('input[type="text"]').val().toUpperCase();
+            country_dic.country_name = row.find("TD").eq(2).find('input[type="text"]').val().toUpperCase();
+            country_dic.country_code = row.find("TD").eq(1).find('input[type="text"]').val().toUpperCase();
             checked_box = row.find("TD").eq(3).find('input[type="checkbox"]').is(':checked')
             if (checked_box){
-                del_ind = '1'
+                country_dic.del_ind = '1'
             }
             else{
-                del_ind = '0'    
+                country_dic.del_ind = '0'
             }
-            country_list.push([country_code, country_name, del_ind])
+            country_list.push(country_dic)
             var format = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
             //*************** checking for minimum length for country code (max length = 2) ***************
-            if(country_code.length <2){
+            if(country_dic.country_code.length <2){
                 error_message = ui_messeges("JMSG113")// Get message details
                 var display8 = error_message;
                 document.getElementById("id_error_msg_country_length").innerHTML = display8+ "Country Code";
                 $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
-                row_color_highlight(row);
+                row_color_highlight2(row);
                 count = count +1;
+                if (count!=0){
+                    $('#myModal').modal('hide');
+                    $('#check_upload_validation').modal('show');
+                }
             }
             //*************** checking for special characters for country code ***************
-            else if(format.test(country_code)){
+            else if(format.test(country_dic.country_code)){
                 error_message = ui_messeges("JMSG003")// Get message details
                 var display4 = error_message;
                 document.getElementById("id_error_msg_country_code").innerHTML = display4+ "Country Code";
                 $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
-                row_color_highlight(row);
+                row_color_highlight1(row);
                 count = count +1;
+                 if (count!=0){
+                    $('#myModal').modal('hide');
+                    $('#check_upload_validation').modal('show');
+                 }
             }else{
                 $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "none");
             }
             //*************** checking for special characters for country name ***************
-            if(format.test(country_name)){
+            if(format.test(country_dic.country_name)){
                 error_message = ui_messeges("JMSG003")// Get message details
                 var display3 = error_message;
                 document.getElementById("id_error_msg_country_name").innerHTML = display3+ "Country Name";
                 $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "1px solid #FF0000");
-                row_color_highlight(row);
+                row_color_highlight1(row);
                 count = count +1;
+                if (count!=0){
+                    $('#myModal').modal('hide');
+                    $('#delete_not_possible').modal('show');
+                }
             }
             else{
                 $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "none");
             }
-            if(country_code_check.includes(country_code)){
+            if(country_code_check.includes(country_dic.country_code)){
                 $(row).css("border", "#f8d7da");
                  row_color_highlight(row);
             }
             else{
                 $(row).css("border", "");
             }
-            country_code_check.push(country_code)
+            country_code_check.push(country_dic.country_code)
         });
         $("#id_check_special_character_messages").prop("hidden",false)
         //*************** shows save button if there are no errors(special characters and max length) ***************
         if(count == 0){
             $("#id_check_special_character_messages").prop("hidden",true)
             $("#save_id").prop("hidden", false);
-            popup_data_dict ={'data_list' : country_list, 'Tablename' : Tablename, 'appname' : appname, 'db_header_data' : ["COUNTRY_CODE", "COUNTRY_NAME", "del_ind"]}
+
+            popup_data_dict ={'data_list' : country_list}
             OpenLoaderPopup();
             $.ajax({
                 type: 'POST',
-                url: "{% url 'eProc_Basic_Settings:check_data' %}",
+                url: "{% url 'eProc_Configuration_Check:check_country' %}",
                 data: JSON.stringify(popup_data_dict),
                 success: function(response) {
                     table_sort_filter('id_popup_table');
@@ -409,7 +426,7 @@
                         //*************** if duplicate data data count is greater than zero ***************
                         if(newArrayDataOfOjbect[2]>0){
                             $("#id_check_error_messages").prop("hidden",false)
-                            var display6 = get_msg_desc_check_data("JMSG015");
+                            var display6 = get_msg_desc_check_data("R");
                             $("#id_check_error_messages").append('<p>' + display6 + newArrayDataOfOjbect[2] + '</p>')
                             var display7 = get_msg_desc_check_data("JMSG001");
                             $("#id_check_error_messages").append('<p style = "font-weight: bold;">' + display7 + ' </p>')
