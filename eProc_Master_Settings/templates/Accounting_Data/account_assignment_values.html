@@ -605,8 +605,8 @@
                 acc_value_dropdown()
                 $("#error_msg_id").css("display", "none")
                 var dropdown_select_array = []
+                $('#id_popup_table').DataTable().destroy();
                 $("#id_popup_tbody").empty();
-<!--                $('#display_basic_table').DataTable().destroy();-->
                 //Reference the Table.
                 var res = get_all_checkboxes(); // Function to get all the checkboxes
                 var $chkbox_all = $('td input[type="checkbox"]', res);
