@@ -132,31 +132,52 @@
 </div>
 {{ auth_type_values|json_script:"auth_type_values" }}
 <script>
-    var rendered_auth_data = {{auth|safe}};
-    var rendered_auth_group_data
-    var rendered_roles_data
+    var rendered_auth_data = {{auth|safe}}; 
+    var rendered_auth_group_data = {{upload_data_auth_grp_obj|safe}}; 
+    var rendered_roles_data = {{upload_data_roles|safe}};
     var auth_data_array = {}
     var auth = '';
     var edit_basic_data = '';
     var GLOBAL_ACTION = '';
     var no_duplicate_entries = 'Y'
+    var roles_dropdown;
     var Tablename = uiConstants["CONST_TABLENAME_AUTH"]
     var appname = uiConstants["CONST_APPNAME02"]
     var db_header_data = uiConstants["CONST_HEADER_DATA_AUTH"]
    
     //Dropdown function
-    var roles_dropdown;
+    // var roles_dropdown;
     var auth_val_list = [];
-    var auth_group_dropdown;
-    function dropdown_value() {
-        auth_group_dropdown = '';
-        $.each(rendered_auth_group_data, function(i, item){
-            auth_group_dropdown += '<option value="' + item.auth_obj_grp + '">' + item.auth_obj_grp +'</option>';
-        });
+    // var auth_group_dropdown;
+    // function dropdown_value() {
+    //     auth_group_dropdown = '';
+    //     $.each(rendered_auth_group_data, function(i, item){
+    //         auth_group_dropdown += '<option value="' + item.auth_obj_grp + '">' + item.auth_obj_grp +'</option>';
+    //     });
+    //     roles_dropdown = '';
+    //     $.each(rendered_roles_data, function(i, item){
+    //         roles_dropdown += '<option value="' + item.role + '">' + item.role +'</option>';
+    //     })
+    // }
+
+    //**************************
+    function dropdown_value(){
         roles_dropdown = '';
-        $.each(rendered_roles_data, function(i, item){
-            roles_dropdown += '<option value="' + item.role + '">' + item.role +'</option>';
-        })
+        $.each(rendered_auth_data, function(i, item){
+            roles_dropdown += '<option value="' + item.field_type_id + '">' + item.field_type_id +'</option>';
+        });
+    }
+
+    //*********************
+    function GetSelectedTextValue(roles_dropdon) {
+        var selectedText = roles_dropdon.options[roles_dropdon.selectedIndex].innerHTML;
+        var selectedValue = roles_dropdon.value;
+        var selectedId = (roles_dropdon.id).split('-')[1];
+        $.each (rendered_roles_data,function(i, item){
+            if(selectedValue == item.field_type_id){
+                $('#auth_obj_grp-'+selectedId).val(item.field_type_desc);
+            }
+        });
     }
 
     $.each(rendered_auth_data, function (i, item) {
@@ -276,6 +297,7 @@
                 $("#error_msg_id").css("display", "none")
                 $("#header_select").prop( "hidden", false );
                 GLOBAL_ACTION = button.value
+                $('#id_popup_table').DataTable().destroy();
                 $("#id_popup_tbody").empty();
                 $('#auth_Modal').modal('show');
                 new_row_data();   // Add a new row in popup

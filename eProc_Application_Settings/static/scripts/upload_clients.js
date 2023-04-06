@@ -139,8 +139,8 @@ function read_popup_data() {
         }
         validate_add_attributes.push(client.client);
         clients_data.push(client);
+        table_sort_filter('id_popup_table');
     });
-    table_sort_filter('id_popup_table');
     return clients_data;
 }
 

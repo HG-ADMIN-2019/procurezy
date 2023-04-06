@@ -195,8 +195,14 @@ function onclick_copy_update_button() {
 }
 
 // Function for add a new row data
-function new_row_data() {
-    basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select class="form-control">' + roles_dropdown + '</select></td><td><select class="form-control">' + auth_group_dropdown + '</select></td><td hidden><input class="input" type="text"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+// function new_row_data() {
+//     basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select class="form-control">' + roles_dropdown + '</select></td><td><select class="form-control">' + auth_group_dropdown + '</select></td><td hidden><input class="input" type="text"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+//     $('#id_popup_tbody').append(basic_add_new_html);
+//     table_sort_filter('id_popup_table');
+// }
+
+function new_row_data(){
+    basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select type="text" class="input form-control roles_dropdon" id="roles_dropdon-1"  name="roles_dropdon" onchange="GetSelectedTextValue(this)"><option value="" disabled selected>Select your option</option>'+ roles_dropdown +'</select></td><td><input class="form-control auth_obj_grp" type="text"  name="auth_obj_grp"  id="auth_obj_grp-1" disabled></td><td hidden>guid</td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
     table_sort_filter('id_popup_table');
 }
