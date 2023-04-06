@@ -46,7 +46,7 @@ def update_suppliers_basic_details(request):
             supplier_image_name = request.FILES['supplier_image'].name
             save_supplier_image(supplier_file, supplier_id, supplier_image_name)
 
-    return JsonResponse({'message': message, 'encrypted_supplier': encrypted_supp})
+    return JsonResponse({'message': message,'encrypted_supplier':encrypted_supp})
 
 
 @transaction.atomic
@@ -74,5 +74,6 @@ def update_supplier_purch_details(request):
         django_query_instance.django_update_or_create_query(OrgSuppliers, {'guid': guid}, defaults)
         msgid = 'MSG178'
         error_msg = get_message_desc(msgid)[1]
+
 
     return JsonResponse({'message': error_msg})
