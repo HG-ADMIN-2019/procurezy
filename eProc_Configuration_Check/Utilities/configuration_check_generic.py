@@ -2744,9 +2744,7 @@ def get_valid_country_data(ui_data, status):
     dependent_count = 0
     valid_data_list = []
     for country_dictionary in ui_data:
-
         if country_dictionary['del_ind'] in ['1', True]:
-
             if status == 'SAVE':
                 if django_query_instance.django_existence_check(Country,
                                                                 {'country_code': country_dictionary[

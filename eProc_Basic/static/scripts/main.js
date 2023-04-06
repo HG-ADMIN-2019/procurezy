@@ -709,6 +709,12 @@ function ui_messeges(messages_id){
 function row_color_highlight(row){
      $(row).css('background-color', '#ff6633');
 }
+function row_color_highlight1(row){
+     $(row).css('background-color', '#008000');
+}
+function row_color_highlight2(row){
+     $(row).css('background-color', '#FFFF00');
+}
 function row_color_no_highlight(row){
      $(row).css('background-color', '');
 }

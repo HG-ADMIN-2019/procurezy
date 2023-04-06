@@ -249,7 +249,7 @@ MSG190,Supplier Id Already Exists,B,EN,0
 MSG191,Supplier Registration Number Already Exists,B,EN,0
 MSG192,No Po Transaction Type Is Maintained. Contact Your Admin,B,EN,0
 MSG193,Number of Active Records in Database :,B,EN,0
-MSG194,Number of Records in Input file : ,B,EN,0
+MSG194,Total no of Records : ,B,EN,0
 MSG195,Number of Records to be Inserted : ,B,EN,0
 MSG196,Number of Records to be Updated : ,B,EN,0
 MSG197,Number of Records to be Deleted :,B,EN,0

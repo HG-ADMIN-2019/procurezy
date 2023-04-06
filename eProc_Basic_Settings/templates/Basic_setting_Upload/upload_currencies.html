@@ -303,11 +303,11 @@
     //check function restricting special char and diaplay the data count of csv file
     function check_data() {
         $('#id_popup_table').DataTable().destroy();
-        $("#id_check_success_messages").empty()
-        $("#id_check_error_messages").empty()
-        $("#id_check_success_messages").prop("hidden", true)
-        $("#id_check_error_messages").prop("hidden", true)
-        $("#id_check_special_character_messages").prop("hidden", true)
+        $("#id_check_success_messages").empty();
+        $("#id_check_error_messages").empty();
+        $("#id_check_success_messages").prop("hidden", true);
+        $("#id_check_error_messages").prop("hidden", true);
+        $("#id_check_special_character_messages").prop("hidden", true);
         document.getElementById("id_error_msg_currency_id").innerHTML = "";
         document.getElementById("id_error_msg_description").innerHTML = "";
         document.getElementById("id_error_msg_currency_length").innerHTML = "";
@@ -331,101 +331,103 @@
             currency_list.push([currency_id, description, del_ind])
             var format = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
             //*************** checking for max length for currency code (max length = 3) ***************
-            if (currency_id.length > 4) {
-                var url_new = "{% url 'eProc_Basic:get_message_description' %}";
+            if (currency_id.length > 4) {                
                 error_message = ui_messeges("JMSG003")// Get message details
                 var display4 = error_message;
                 document.getElementById("id_error_msg_currency_length").innerHTML = display4+ "Currency Code";
                 $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
+                row_color_highlight(row);
                 count = count + 1;
             }
             //*************** checking for special characters for currency code ***************
-            else if (format.test(currency_id)) {
-                var url_new = "{% url 'eProc_Basic:get_message_description' %}";
-                 error_message = ui_messeges("JMSG003")// Get message details
+            else if (format.test(currency_id)) {               
+                error_message = ui_messeges("JMSG003")// Get message details
                 var display4 = error_message;
                 document.getElementById("id_error_msg_currency_id").innerHTML = display4+ "Currency Code";
                 $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
+                row_color_highlight(row);
                 count = count + 1;
             } else {
                 $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "none");
             }
             //*************** checking for special characters for currency name ***************
-            if (format.test(description)) {
-                var url_new = "{% url 'eProc_Basic:get_message_description' %}";
+            if (format.test(description)) {                
                 error_message = ui_messeges("JMSG003")// Get message details
                 var display4 = error_message;
                 document.getElementById("id_error_msg_description").innerHTML = display4+ "Currency Name";
                 $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "1px solid #FF0000");
+                row_color_highlight(row);
                 count = count + 1;
             } else {
                 $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "none");
             }
+            if(currency_id_check.includes(currency_id)){
+                $(row).css("border", "#f8d7da");
+                 row_color_highlight(row);
+            }
+            else{
+                $(row).css("border", "");
+            }
+            currency_id_check.push(currency_id);
         });
-        if(currency_id_check.includes(currency_id)){
-            $(row).css("border", "#f8d7da");
-        }
-        else{
-            //$(row).css("border", "");
-        }
-        currency_id_check.push(currency_id);
+        $("#id_check_special_character_messages").prop("hidden",false)
         //*************** shows save button if there are no errors(special characters and max length) ***************
         if (count == 0) {
             $("#id_check_special_character_messages").prop("hidden", true)
             $("#save_id").prop("hidden", false);
-        }
-        popup_data_dict = {
-            'data_list': currency_list,
-            'Tablename': Tablename,
-            'appname': appname,
-            'db_header_data': ["CURRENCY_ID", "DESCRIPTION", "del_ind"]
-        }
-        OpenLoaderPopup();
-        $.ajax({
-            type: 'POST',
-            url: "{% url 'eProc_Basic_Settings:check_data' %}",
-            data: JSON.stringify(popup_data_dict),
-            success: function(response) {
-                table_sort_filter('id_popup_table');
-                $("#id_check_special_character_messages").prop("hidden", false)
-                if (count == 0) {
-                    $("#id_check_special_character_messages").prop("hidden", true)
-                }
-                //*************** retrieving data counts from views ***************
-                check_messages = response
-                var newArrayDataOfOjbect = Object.values(check_messages)
-                $("#id_check_success_messages").prop("hidden", false)
-                //*************** if pop-up data count is greater than zero ***************
-                if (newArrayDataOfOjbect[1] > 0) {
-                    $.each(response['messages'], function(i, item) {
-                        $("#id_check_success_messages").append('<p>' + item + '</p>');
-                    });
-                    //*************** if duplicate data data count is greater than zero ***************
-                    if(newArrayDataOfOjbect[2]>0){
-                        $("#id_check_error_messages").prop("hidden",false)
-                        var display6 = get_msg_desc_check_data("JMSG015");
-                        $("#id_check_error_messages").append('<p>' + display6 + newArrayDataOfOjbect[2] + '</p>')
-                        var display7 = get_msg_desc_check_data("JMSG001");
-                        $("#id_check_error_messages").append('<p style = "font-weight: bold;">' + display7 + ' </p>')
-                        $("#save_id").prop("hidden", true);
-                        $("#id_delete_duplicate").show()
-                    }
-                    else{
-                        $("#id_check_error_messages").prop("hidden",true)
-                        $("#id_delete_duplicate").hide()
-                    }
-                }
-                //*************** if pop-up data count is zero ***************
-                else {
-                    $("#id_check_success_messages").hide()
-                    $("#id_check_error_messages").prop("hidden", false)
-                    var display8 = get_msg_desc_check_data("JMSG006");
-                    $("#id_check_error_messages").append('<p>' + display8 + '</p>')
-                    $("#save_id").prop("hidden", true);
-                }
-                CloseLoaderPopup();
+            popup_data_dict = {
+                'data_list': currency_list,
+                'Tablename': Tablename,
+                'appname': appname,
+                'db_header_data': ["CURRENCY_ID", "DESCRIPTION", "del_ind"]
             }
-        });
+            OpenLoaderPopup();
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'eProc_Basic_Settings:check_data' %}",
+                data: JSON.stringify(popup_data_dict),
+                success: function(response) {
+                    table_sort_filter('id_popup_table');
+                    $("#id_check_special_character_messages").prop("hidden", false)
+                    if (count == 0) {
+                        $("#id_check_special_character_messages").prop("hidden", true)
+                    }
+                    //*************** retrieving data counts from views ***************
+                    check_messages = response
+                    var newArrayDataOfOjbect = Object.values(check_messages)
+                    $("#id_check_success_messages").prop("hidden", false)
+                    //*************** if pop-up data count is greater than zero ***************
+                    if (newArrayDataOfOjbect[1] > 0) {
+                        $.each(response['messages'], function(i, item) {
+                            $("#id_check_success_messages").append('<p>' + item + '</p>');
+                        });
+                        //*************** if duplicate data data count is greater than zero ***************
+                        if(newArrayDataOfOjbect[2]>0){
+                            $("#id_check_error_messages").prop("hidden",false)
+                            var display6 = get_msg_desc_check_data("JMSG015");
+                            $("#id_check_error_messages").append('<p>' + display6 + newArrayDataOfOjbect[2] + '</p>')
+                            var display7 = get_msg_desc_check_data("JMSG001");
+                            $("#id_check_error_messages").append('<p style = "font-weight: bold;">' + display7 + ' </p>')
+                            $("#save_id").prop("hidden", true);
+                            $("#id_delete_duplicate").show()
+                        }
+                        else{
+                            $("#id_check_error_messages").prop("hidden",true)
+                            $("#id_delete_duplicate").hide()
+                        }
+                    }
+                    //*************** if pop-up data count is zero ***************
+                    else {
+                        $("#id_check_success_messages").hide()
+                        $("#id_check_error_messages").prop("hidden", false)
+                        var display8 = get_msg_desc_check_data("JMSG006");
+                        $("#id_check_error_messages").append('<p>' + display8 + '</p>')
+                        $("#save_id").prop("hidden", true);
+                    }
+                    CloseLoaderPopup();
+                }
+            });
+        }
     }
 
     // validating the  popup table for duplicate entries
