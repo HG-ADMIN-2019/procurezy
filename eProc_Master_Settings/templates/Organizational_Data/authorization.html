@@ -137,6 +137,8 @@
     var rendered_roles_data = {{upload_data_roles|safe}};
     var messages_list = {{messages_list|safe}};
     var auth_data_array = {}
+    var auth_val_dict = {}
+    var auth_val_list = {}
     var auth = '';
     var edit_basic_data = '';
     var GLOBAL_ACTION = '';
@@ -185,10 +187,10 @@
         get_main_table_data(); //Read data from main table
         // compare for duplicates in popup
         [no_duplicate_value,error_message] = compare_table_for_duplicate_entries(validate_add_attributes, auth_data)
-        // if (error_message){
-        //     display_error_message(error_message)
-        // }
-        // else {
+        if (error_message){
+            display_error_message(error_message)
+        }
+        else {
             if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
                 // compare main table and pop up for duplicate values
                 [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
@@ -219,7 +221,7 @@
             else if (error_message){
                 display_error_message(error_message)
             }
-        // }
+        }
     }
     
     //delete the selected row in db................
@@ -296,7 +298,6 @@
                 $("#error_msg_id").css("display", "none")
                 $("#header_select").prop( "hidden", false );
                 GLOBAL_ACTION = button.value
-<!--                $('#id_popup_table').DataTable().destroy();-->
                 $("#id_popup_tbody").empty();
                 $('#auth_Modal').modal('show');
                 new_row_data();   // Add a new row in popup

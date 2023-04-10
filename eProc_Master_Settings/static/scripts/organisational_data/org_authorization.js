@@ -117,13 +117,10 @@ function read_popup_data() {
         auth.role = row.find("TD").eq(1).find("select option:selected").val();
         auth.auth_obj_grp = row.find("TD").eq(2).find('input[type="text"]').val();
         auth.auth_guid = row.find("TD").eq(3).find('input[type="text"]').val();
-        if (auth == undefined) {
-            auth.auth_obj_grp = row.find("TD").eq(2).find('input[type="text"]').val();
-        }
         if (auth.auth_guid == undefined) {
             auth.auth_guid = ''
         }
-        validate_add_attributes.push( auth.auth_obj_grp);
+        validate_add_attributes.push( auth.role);
         auth_data.push(auth);
     });
     return auth_data;
