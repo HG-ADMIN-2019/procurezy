@@ -27,6 +27,16 @@ function onclick_upload_button() {
     document.getElementById('id_file_data_upload').value = "";
 }
 
+//**************************************
+function update_check_message(messages) {
+     check_messages = response
+     var newArrayDataOfOjbect = Object.values(check_messages)
+    $.each(response['messages'], function (i, item) {
+        $("#id_check_success_messages").append('<p>' + item + '</p>')
+    });
+    $("#id_check_success_messages").prop("hidden",false)
+}
+
 // on click copy icon display the selected checkbox data
 function onclick_copy_button() {
     GLOBAL_ACTION = "COPY"

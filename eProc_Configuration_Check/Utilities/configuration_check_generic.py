@@ -12,6 +12,7 @@ django_query_instance = DjangoQueries()
 
 
 def get_check_message(message_count_dic):
+    db_count_message = get_message_desc('MSG193')[1] + str(message_count_dic['db_count'])
     file_count_message = get_message_desc('MSG194')[1] + str(message_count_dic['file_count'])
     delete_count_message = get_message_desc('MSG197')[1] + str(message_count_dic['delete_count'])
     invalid_count_message = get_message_desc('MSG199')[1] + str(message_count_dic['invalid_count'])
@@ -19,8 +20,7 @@ def get_check_message(message_count_dic):
     update_count_message = get_message_desc('MSG196')[1] + str(message_count_dic['update_count'])
     insert_count_message = get_message_desc('MSG195')[1] + str(message_count_dic['insert_count'])
     dependent_count_message = get_message_desc('MSG200')[1] + str(message_count_dic['dependent_count'])
-    db_count_message = get_message_desc('MSG200')[1] + str(message_count_dic['db_count'])
-    message = [db_count_message, file_count_message, insert_count_message, update_count_message,
+    message = [db_count_message,file_count_message, insert_count_message, update_count_message,
                duplicate_count_message, delete_count_message, invalid_count_message, dependent_count_message]
     return message
 
@@ -2737,6 +2737,7 @@ def get_valid_country_data(ui_data, status):
     file_count = len(ui_data)
     duplicate_count = 0
     message = {}
+    db_count= 0
     update_count = 0
     insert_count = 0
     delete_count = 0

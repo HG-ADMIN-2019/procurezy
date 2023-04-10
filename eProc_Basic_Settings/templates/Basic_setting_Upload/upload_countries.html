@@ -405,47 +405,17 @@
             popup_data_dict ={'data_list' : country_list}
             OpenLoaderPopup();
             $.ajax({
-                type: 'POST',
-                url: "{% url 'eProc_Configuration_Check:check_country' %}",
-                data: JSON.stringify(popup_data_dict),
-                success: function(response) {
-                    table_sort_filter('id_popup_table');
-                    $("#id_check_special_character_messages").prop("hidden",false)
+                    type: 'POST',
+                    url: "{% url 'eProc_Configuration_Check:check_country' %}",
+                    data: JSON.stringify(popup_data_dict),
+                    success: function(response) {
+                     table_sort_filter_popup_pagination('id_popup_table')
+                   $("#id_check_special_character_messages").prop("hidden",false)
                     if(count == 0){
                         $("#id_check_special_character_messages").prop("hidden",true)
                     }
-                    //*************** retrieving data counts from views ***************
-                    check_messages = response
-                    var newArrayDataOfOjbect = Object.values(check_messages)
-                    $("#id_check_success_messages").prop("hidden",false)
-                    //*************** if pop-up data count is greater than zero ***************
-                    if (newArrayDataOfOjbect[1] > 0) {
-                        $.each(response['messages'], function(i, item) {
-                            $("#id_check_success_messages").append('<p>' + item + '</p>');
-                        });
-                        //*************** if duplicate data data count is greater than zero ***************
-                        if(newArrayDataOfOjbect[2]>0){
-                            $("#id_check_error_messages").prop("hidden",false)
-                            var display6 = get_msg_desc_check_data("R");
-                            $("#id_check_error_messages").append('<p>' + display6 + newArrayDataOfOjbect[2] + '</p>')
-                            var display7 = get_msg_desc_check_data("JMSG001");
-                            $("#id_check_error_messages").append('<p style = "font-weight: bold;">' + display7 + ' </p>')
-                            $("#save_id").prop("hidden", true);
-                            $("#id_delete_duplicate").show()
-                        }
-                        else{
-                            $("#id_check_error_messages").prop("hidden",true)
-                            $("#id_delete_duplicate").hide()
-                        }
-                    }
-                    //*************** if pop-up data count is zero ***************
-                    else{
-                        $("#id_check_success_messages").hide()
-                        $("#id_check_error_messages").prop("hidden", false)
-                        var display8 = get_msg_desc_check_data("JMSG006");
-                        $("#id_check_error_messages").append('<p>' + display8 + '</p>')
-                        $("#save_id").prop("hidden", true);
-                    }
+                    var message = ''
+                    update_check_message(response.messages)
                     CloseLoaderPopup();
                 }
             });
