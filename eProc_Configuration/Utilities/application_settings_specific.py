@@ -1425,7 +1425,7 @@ def authorization_data():
                                                                                                   'auth_obj_grp'
                                                                                                   'role'))
     for auth_fd in upload_auth:
-        if django_query_instance.django_existence_check(Authorization,
+        if django_query_instance.django_existence_check(UserRoles,
                                                         {'del_ind': False,
                                                          'role': auth_fd['role']}):
             auth_fd["del_ind_flag"] = False
