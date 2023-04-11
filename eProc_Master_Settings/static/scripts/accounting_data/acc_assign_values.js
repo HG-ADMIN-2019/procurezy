@@ -200,18 +200,21 @@ function check_date(aav_data) {
     var error_message = ''
     $.each(aav_data, function (i, item) {
         if ((Date.parse(item.valid_to) < Date.parse(item.valid_from)) == true) {
-            $("#id_error_msg").prop("hidden", false)
-            get_message_details("JMSG017"); // Get message details
-//            var display = msg_type.messages_id_desc;
-//            error_message = display;
-            $('#id_save_confirm_popup').modal('hide');
-//            onclick_copy_update_button(item.account_assign_value);
-            $('#myModal').modal('show');
-            validDate = 'N'
+            error_message = 'From Date Is Greater Than To Date'; // set the error message
+            validDate = 'N';
+            return false; // exit the loop as soon as an invalid date range is found
         }
     });
-    return [validDate,error_message]
+
+    if (validDate == 'N') {
+        display_error_message(error_message); // display the error message
+    } else {
+        $('#error_msg_id').css('display', 'none'); // hide the error message if no invalid date ranges were found
+    }
+
+    return [validDate, error_message];
 }
+
 
 // Function to get main table data
 function get_main_table_data() {

@@ -208,7 +208,7 @@
     function popup_save_data() {
         $('#success_msg_id').empty()
         $('#id_popup_table').DataTable().destroy();
-        var countries_data = new Array();
+<!--        var countries_data = new Array();-->
         var aav = {};
 <!--        var check_dates = []-->
         no_duplicate_entries = 'Y'
@@ -258,6 +258,7 @@
         }
         }
     }
+
 
     //delete the selected row in db................
     var main_table_aav_checked = [];
@@ -593,6 +594,9 @@
 
     //*****************************************
     function onclick_copy_update_button() {
+        $("#error_msg_id").css("display", "none")
+        $('#id_popup_table').DataTable().destroy();
+        $("#id_popup_tbody").empty();
         OpenLoaderPopup();
         var data = {'table_name':'AccountingData'}
         $.ajax({
@@ -602,9 +606,9 @@
             success: function(response) {
                 rendered_aac_data = response.upload_data_acccat
                 rendered_company_data = response.upload_company_data
-                acc_value_dropdown()
-                $("#error_msg_id").css("display", "none")
                 var dropdown_select_array = []
+                $("#error_msg_id").css("display", "none")
+                acc_value_dropdown()
                 $('#id_popup_table').DataTable().destroy();
                 $("#id_popup_tbody").empty();
                 //Reference the Table.
@@ -666,9 +670,9 @@
                 });
                 display_button();
                 $("#id_del_ind_checkbox").prop("hidden", true);
+                $('#myModal').modal('show');
 <!--                table_sort_filter('display_basic_table');-->
                 table_sort_filter('id_popup_table');
-                $('#myModal').modal('show');
                 CloseLoaderPopup();
             }
         });
