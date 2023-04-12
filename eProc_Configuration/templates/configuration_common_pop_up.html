@@ -31,7 +31,7 @@
                 <!-- Modal footer -->
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-primary" onclick="cancel_upload()"><i class="fas fa-times"></i> cancel</button>
-                    <button id="popup_save"  class="btn btn-primary" onclick="onclick_display_csv_data()"><i class="fas fa-save"></i> save</button>
+                    <button id="popup_save"  class="btn btn-primary" onclick="onclick_display_csv_data()"><i class="fas fa-save"></i> Upload File</button>
                 </div>
             </div>
         </div>
@@ -95,31 +95,6 @@
             </div>
         </div>
     </div>
-   <!-----------------------check for upload feature--------------------------------->
-   <div class="modal fade" id="check_upload_validation">
-        <div class="modal-dialog modal-dialog-centered ">
-            <div class="modal-content">
-                <div class="modal-body">
-                    <p>Please delete Highlight duplicate and empty records</p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary"  onclick="display_popup1()" > Ok</button>
-                </div>
-            </div>
-        </div>
-    </div>
-   <!-----------------------check for upload save feature--------------------------------->
-   <div class="modal fade" id="check_upload_save">
-        <div class="modal-dialog modal-dialog-centered ">
-            <div class="modal-content">
-                <div class="modal-body">
-                    <p> Only valid entries will be saved </p>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-primary"  onclick="display_popup2()" > Ok</button>
-                </div>
-            </div>
-        </div>
-    </div>
+   <!-------------------------------------end of delete--------------------------->
     <script src="{% static 'scripts/configuration_common_scripts.js' %}"></script>
 

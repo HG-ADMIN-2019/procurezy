@@ -189,16 +189,6 @@ function display_popup(){
 
 }
 
-function display_popup1(){
-    $('#check_upload_validation').modal('hide');
-    $('#myModal').modal('show');
-}
-
-function display_popup2(){
-    $('#check_upload_save').modal('hide');
-    $('#myModal').modal('show');
-}
-
 // Function to display Description based on element Id
 function display_message(id, description){
                 $('#'+id).html(description);

@@ -93,7 +93,6 @@
                             </button>
                             <button class="btn btn-outline-danger" title="Delete" onclick="application_settings_delete_Row('id_popup_table')">
                                 <i class="fa fa-trash"></i> delete
-
                             </button>
                         </div>
                         <div id="id_check_success_messages" class="alert alert-success check_success_message" hidden></div>
@@ -165,7 +164,13 @@
 
     //onclick of data Upload copy data to modal pop-up
     function onclick_display_csv_data() {
-         $("#error_msg_id").css("display", "none")
+        $("#id_delete_duplicate").hide()
+        $("#id_check_success_messages").empty();
+        $("#id_check_error_messages").empty();
+        $("#id_check_success_messages").prop("hidden", true);
+        $("#id_check_error_messages").prop("hidden", true);
+        $("#id_check_special_character_messages").prop("hidden", true);
+        $("#error_msg_id").css("display", "none")
         $('#id_popup_table').DataTable().destroy();
         formdata = new FormData();
         attached_file = $('#id_file_data_upload').prop('files')[0]
@@ -239,9 +244,6 @@
 
     // validate and save for add,copy,update and upload data
     function popup_save_data() {
-        if(GLOBAL_ACTION = "country_upload"){
-         $('#check_upload_save').modal('show');
-        }
         $('#success_msg_id').empty()
         $('#id_popup_table').DataTable().destroy();
         no_duplicate_entries = 'Y'
@@ -250,6 +252,9 @@
         get_main_table_data(); //Read data from main table
         // compare for duplicates in popup
         [no_duplicate_value,error_message] = compare_table_for_duplicate_entries(validate_add_attributes, countries_data)
+        if(error_message){
+            display_error_message(error_message)
+        }
         if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
             // compare main table and pop up for duplicate values
             [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
@@ -343,64 +348,82 @@
             }
             country_list.push(country_dic)
             var format = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
+             //*************** checking for empty records for country code (max length = 2) ***************
+            if(country_dic.country_code.length == 0){
+                $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
+                row_color_highlight2(row);
+                $("#id_check_error_messages").prop("hidden",false)
+                error_message = ui_messeges("JMSG002")// Get message details
+                var display8 = error_message;
+                document.getElementById("id_error_msg_country_length").innerHTML = display8+ "Country Code";
+                count = count +1;
+            }
             //*************** checking for minimum length for country code (max length = 2) ***************
-            if(country_dic.country_code.length <2){
+            if(country_dic.country_code.length == 1){
+                $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
+                row_color_highlight2(row);
+                $("#id_check_error_messages").prop("hidden",false)
                 error_message = ui_messeges("JMSG113")// Get message details
                 var display8 = error_message;
                 document.getElementById("id_error_msg_country_length").innerHTML = display8+ "Country Code";
+                count = count +1;
+            }
+               //*************** checking for empty records for country name (max length = 2) ***************
+            if(country_dic.country_name.length == 0){
                 $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
                 row_color_highlight2(row);
+                $("#id_check_error_messages").prop("hidden",false)
+                error_message = ui_messeges("JMSG002")// Get message details
+                var display8 = error_message;
+                document.getElementById("id_error_msg_country_length").innerHTML = display8+ "Country Name";
                 count = count +1;
-                if (count!=0){
-                    $('#myModal').modal('hide');
-                    $('#check_upload_validation').modal('show');
-                }
             }
             //*************** checking for special characters for country code ***************
             else if(format.test(country_dic.country_code)){
+                $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
+                row_color_highlight1(row);
+                $("#id_check_error_messages").prop("hidden",false)
                 error_message = ui_messeges("JMSG003")// Get message details
                 var display4 = error_message;
                 document.getElementById("id_error_msg_country_code").innerHTML = display4+ "Country Code";
-                $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
-                row_color_highlight1(row);
                 count = count +1;
-                 if (count!=0){
-                    $('#myModal').modal('hide');
-                    $('#check_upload_validation').modal('show');
-                 }
             }else{
                 $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "none");
             }
             //*************** checking for special characters for country name ***************
             if(format.test(country_dic.country_name)){
+                $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "1px solid #FF0000");
+                row_color_highlight1(row);
+                $("#id_check_error_messages").prop("hidden",false)
                 error_message = ui_messeges("JMSG003")// Get message details
                 var display3 = error_message;
                 document.getElementById("id_error_msg_country_name").innerHTML = display3+ "Country Name";
-                $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "1px solid #FF0000");
-                row_color_highlight1(row);
                 count = count +1;
-                if (count!=0){
-                    $('#myModal').modal('hide');
-                    $('#delete_not_possible').modal('show');
-                }
             }
             else{
                 $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "none");
             }
             if(country_code_check.includes(country_dic.country_code)){
-                $(row).css("border", "#f8d7da");
+                 $(row).css("border", "#f8d7da");
                  row_color_highlight(row);
+                 $("#id_check_error_messages").prop("hidden",false)
+                 var display7 = get_msg_desc_check_data("JMSG001");
+                 $("#id_check_error_messages").append('<p style = "font-weight: bold;">' + display7 + ' </p>')
+                 $("#save_id").prop("hidden", true);
+                 $("#id_delete_duplicate").show()
+                 $("#id_check_data").prop("hidden", false);
             }
             else{
                 $(row).css("border", "");
+                $("#id_delete_duplicate").hide()
             }
             country_code_check.push(country_dic.country_code)
         });
-        $("#id_check_special_character_messages").prop("hidden",false)
-        //*************** shows save button if there are no errors(special characters and max length) ***************
+         $("#id_check_special_character_messages").prop("hidden",false)
+    //*************** shows save button if there are no errors(special characters and max length) ***************
         if(count == 0){
-            $("#id_check_special_character_messages").prop("hidden",true)
             $("#save_id").prop("hidden", false);
+            $("#id_check_data").prop("hidden", true);
 
             popup_data_dict ={'data_list' : country_list}
             OpenLoaderPopup();
@@ -410,14 +433,14 @@
                     data: JSON.stringify(popup_data_dict),
                     success: function(response) {
                      table_sort_filter_popup_pagination('id_popup_table')
-                   $("#id_check_special_character_messages").prop("hidden",false)
-                    if(count == 0){
-                        $("#id_check_special_character_messages").prop("hidden",true)
-                    }
+                     $("#id_check_special_character_messages").prop("hidden",false)
+                     if (count == 0) {
+                        $("#id_check_special_character_messages").prop("hidden", true)
+                     }
                     var message = ''
-                    update_check_message(response.messages)
+                    update_check_message(response.messages[1])
                     CloseLoaderPopup();
-                }
+                    }
             });
         }
     }

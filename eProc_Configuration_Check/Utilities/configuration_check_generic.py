@@ -2737,7 +2737,6 @@ def get_valid_country_data(ui_data, status):
     file_count = len(ui_data)
     duplicate_count = 0
     message = {}
-    db_count= 0
     update_count = 0
     insert_count = 0
     delete_count = 0
@@ -2781,7 +2780,7 @@ def get_valid_country_data(ui_data, status):
     message_count_dic = {'file_count': file_count, 'delete_count': delete_count, 'invalid_count': invalid_count,
                          'duplicate_count': duplicate_count, 'update_count': update_count,
                          'insert_count': insert_count,
-                         'dependent_count': dependent_count, 'db_count': db_count}
+                         'dependent_count': dependent_count,'db_count':db_count}
     message = get_check_message(message_count_dic)
     return valid_data_list, message
 

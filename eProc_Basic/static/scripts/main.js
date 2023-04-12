@@ -710,10 +710,10 @@ function row_color_highlight(row){
      $(row).css('background-color', '#ff6633');
 }
 function row_color_highlight1(row){
-     $(row).css('background-color', '#008000');
+     $(row).css('background-color', '#FFCCCB');
 }
 function row_color_highlight2(row){
-     $(row).css('background-color', '#FFFF00');
+     $(row).css('background-color', '#FFB6C1');
 }
 function row_color_no_highlight(row){
      $(row).css('background-color', '');
