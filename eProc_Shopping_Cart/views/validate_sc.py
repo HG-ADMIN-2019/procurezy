@@ -8,7 +8,7 @@ from eProc_Shopping_Cart.context_processors import update_user_info
 from django.http import JsonResponse
 from eProc_Shopping_Cart.Utilities.save_order_edit_sc import CheckForScErrors, check_sc_second_step_shopping_cart
 from eProc_Basic.Utilities.functions.get_db_query import getClients, get_object_id_from_username
-from eProc_Basic.Utilities.constants.constants import CONST_CO_CODE, CONST_CALENDAR_ID
+from eProc_Basic.Utilities.constants.constants import CONST_CO_CODE, CONST_CALENDAR_ID, CONST_INV_ADDR
 from eProc_User_Settings.Utilities.user_settings_generic import get_attr_value
 from eProc_User_Settings.Utilities.user_settings_generic import get_object_id_list_user
 from eProc_Shopping_Cart.models import ScHeader
@@ -39,6 +39,8 @@ def check_shopping_cart(request):
     object_id_list = get_object_id_list_user(client, user_object_id)
     default_calendar_id = org_attr_value_instance.get_user_default_attr_value_list_by_attr_id(object_id_list,
                                                                                               CONST_CALENDAR_ID)[1]
+    default_invoice_adr = org_attr_value_instance.get_user_default_attr_value_list_by_attr_id(object_id_list,
+                                                                                              CONST_INV_ADDR)[1]
 
     if default_calendar_id is not None or default_calendar_id != '':
         holiday_list = get_list_of_holidays(default_calendar_id, client)
@@ -88,7 +90,8 @@ def check_shopping_cart(request):
                                                      data['item_num'], data['item_guid'],data['quantity'])
 
         sc_check_instance.approval_check(acc_default, acc_default_val, total_val, company_code)
-        sc_check_instance.header_level_delivery_address_check(header_level_addr['adr_num'],None,False)
+        sc_check_instance.header_level_delivery_address_check(header_level_addr['adr_num'],company_code,None,False)
+        sc_check_instance.invoice_address_check(default_invoice_adr, company_code)
         sc_check_instance.header_acc_check(header_level_acc['acc_asg_cat'],
                                            header_level_acc['acc_asg_cat_value'],
                                            header_level_acc['acc_desc_list'],

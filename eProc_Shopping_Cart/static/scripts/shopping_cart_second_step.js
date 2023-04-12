@@ -306,16 +306,6 @@ function get_sc_data(){
         var item_level_gl = ($("#gl_acc_val_"+i).html()).trim()
         data.append("gl_acc_val" + i, item_level_gl.split(' - ')[0])
     }
-    var header_level_addr = {'adr_num':adr_num,
-                             'street':street,
-                             'area': area,
-                             'landmark':landmark,
-                             'city': city,
-                              'pcode': pcode,
-                              'region' : region}
-    var header_level_acc = {'acc_asg_cat':acc_asg_cat,
-                            'acc_asg_cat_value':acc_asg_cat_value,
-                            'acc_desc_list':acc_desc_list}
     data.append('total_value' , total_value)
     data.append('receiver' , receiver)
     data.append('cart_name' , cart_name)
@@ -333,8 +323,6 @@ function get_sc_data(){
 	data.append('manger_detail' , JSON.stringify(GLOBAL_MANAGER_DETAIL))
     data.append('sc_completion_flag', sc_completion_flag)
     data.append('requester', $('#shopping_cart_requester').val())
-    data.append('header_level_addr' , header_level_addr)
-    data.append('header_level_acc' , header_level_acc)
     return data;
 }
 function get_sc_header_data(){

@@ -60,6 +60,23 @@ def get_item_notes(guid, note_type, item_flag):
     return item_note
 
 
+def get_notes(header_guid,sc_item_guid_list,note_type, item_flag):
+    if item_flag:
+        item_note = django_query_instance.django_filter_query(Notes,
+                                                              {'item_guid__in':sc_item_guid_list,
+                                                               'note_type':note_type,
+                                                               'client':global_variables.GLOBAL_CLIENT},
+                                                              None,
+                                                              ['item_num'])
+    else:
+        item_note = django_query_instance.django_filter_query(Notes,
+                                                              {'header_guid': header_guid,
+                                                               'note_type': note_type,
+                                                               'client': global_variables.GLOBAL_CLIENT},
+                                                              None,
+                                                              None)
+    return item_note
+
 def get_del_addr(guid):
     """
 

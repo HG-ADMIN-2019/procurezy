@@ -13,7 +13,6 @@ from eProc_Basic.Utilities.functions.str_concatenate import concatenate_array_st
 from eProc_Basic.Utilities.global_defination import global_variables
 from eProc_Basic.Utilities.messages.messages import MSG115
 from eProc_Configuration.models import AccountingDataDesc, DetermineGLAccount
-from eProc_Doc_Details.Utilities.details_specific import get_acc_value, get_acc_value_acc_level
 from eProc_Shopping_Cart.Utilities.shopping_cart_specific import get_gl_account_default_value
 from eProc_System_Settings.Utilities.system_settings_generic import sys_attributes
 from eProc_User_Settings.Utilities.user_settings_generic import get_attr_value

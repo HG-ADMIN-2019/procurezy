@@ -11,7 +11,8 @@ from eProc_Calendar_Settings.Utilities.calender_settings_generic import calculat
     calculate_delivery_date_base_on_lead_time, get_list_of_holidays
 from eProc_Chat.models import ChatContent
 from eProc_Configuration.models.development_data import *
-from eProc_Configuration.models.master_data import OrgAddress, AccountingDataDesc, DetermineGLAccount, AccountingData
+from eProc_Configuration.models.master_data import OrgAddress, AccountingDataDesc, DetermineGLAccount, AccountingData, \
+    OrgAddressMap
 from eProc_Exchange_Rates.Utilities.exchange_rates_generic import convert_currency
 from eProc_Form_Builder.models.form_builder import EformData, EformFieldData
 from eProc_Notes_Attachments.models.notes_attachements_model import Attachments, Notes
@@ -56,9 +57,9 @@ class SaveShoppingCart:
         self.cart_item_guid = []
         self.save_sc_data_to_db = SaveSoppingCartDataToDb()
         self.header_guid = sc_header_guid
-        self.client = getClients(request)
-        self.username = getUsername(request)
-        self.login_user_obj_id = get_login_obj_id(request)
+        self.client = global_variables.GLOBAL_CLIENT
+        self.username = global_variables.GLOBAL_LOGIN_USERNAME
+        self.login_user_obj_id = global_variables.GLOBAL_LOGIN_USER_OBJ_ID
         self.object_id_list = get_object_id_list_user(self.client, self.login_user_obj_id)
         self.edit_flag = False
         self.supplier_note_existence_data = ''
@@ -75,16 +76,17 @@ class SaveShoppingCart:
         self.attachments_data = attachments_data
         self.requester = self.sc_ui_data['requester']
         if self.requester:
-            self.currency = get_requester_currency(self.requester)
-            self.timezone = get_user_info(self.requester).time_zone
+            self.currency = global_variables.GLOBAL_USER_CURRENCY
+            self.timezone = global_variables.GLOBAL_USER_TIMEZONE
         self.company_code = get_attr_value(self.client, CONST_CO_CODE, self.object_id_list, self.edit_flag)
-        self.shipping_address = get_attr_value(self.client, CONST_DEL_ADDR, self.object_id_list, self.edit_flag)
         self.invoice_address = get_attr_value(self.client, CONST_INV_ADDR, self.object_id_list, self.edit_flag)
         self.subtype = ''
-        self.header_level_addr = self.sc_ui_data['header_level_addr']
-        self.header_level_acc = self.sc_ui_data['header_level_acc']
-        if  self.header_level_addr['adr_num']:
-            self.ship_addr_num = self.header_level_addr['adr_num']
+
+        if not self.invoice_address:
+            self.invoice_address = 0
+
+        if  self.sc_ui_data['adr_num']:
+            self.ship_addr_num = self.sc_ui_data['adr_num']
         else:
             self.ship_addr_num = 0
 
@@ -118,17 +120,15 @@ class SaveShoppingCart:
             return False, error_msg
         self.subtype = get_document_number[2]
         self.doc_number = get_document_number[0]
+        if not django_query_instance.django_existence_check(Currency,
+                                                        {'currency_id': self.currency,
+                                                         'del_ind': False}):
+            self.currency = None
 
-        try:
-            currency = django_query_instance.django_get_query(Currency,
-                                                              {'currency_id': self.currency, 'del_ind': False})
-            timezone = django_query_instance.django_get_query(TimeZone, {'time_zone': self.timezone, 'del_ind': False})
-            get_currency = currency.pk
-            get_timezone = timezone.pk
-
-        except ObjectDoesNotExist:
-            get_currency = None
-            get_timezone = None
+        if not django_query_instance.django_existence_check(TimeZone,
+                                                        {'time_zone': self.timezone,
+                                                         'del_ind': False}):
+            self.timezone = None
 
         header_guid = self.header_guid
         ordered_at = None
@@ -138,22 +138,22 @@ class SaveShoppingCart:
 
         sc_header_save_data = {
             'guid': self.header_guid,
-            'client': django_query_instance.django_get_query(OrgClients, {'client': self.client, 'del_ind': False}),
+            'client': global_variables.GLOBAL_CLIENT,
             'doc_number': get_document_number[0],
             'co_code': self.company_code,
             'description': self.sc_ui_data['cart_name'],
-            'currency': get_currency,
+            'currency': self.currency,
             'requester': self.sc_ui_data['requester'],
             'status': status,
             'created_at': datetime.datetime.now(),
             'created_by': self.username,
             'ship_addr_num': self.ship_addr_num,
             'inv_addr_num': self.invoice_address,
-            'time_zone': get_timezone,
+            'time_zone': self.timezone,
             'time_zone_difference': time_diff,
             'ordered_at': ordered_at,
             'transaction_type': self.subtype,
-            'language_id': requester_field_info(self.username, 'language_id')
+            'language_id': global_variables.GLOBAL_USER_LANGUAGE
         }
 
         self.save_sc_data_to_db.save_header_to_db(header_guid, sc_header_save_data)
@@ -689,6 +689,8 @@ class SaveShoppingCart:
         """
         get_address_detail = None
         print(address_number)
+        if not address_number:
+            address_number = 0
         if django_query_instance.django_existence_check(OrgAddress,
                                                         {'address_number': address_number, 'client': self.client}):
             get_address_detail = django_query_instance.django_get_query(OrgAddress, {'address_number': address_number,
@@ -733,13 +735,22 @@ class SaveShoppingCart:
             save_address_data['postal_code'] = pcode_output
             save_address_data['region'] = region_output
         else:
-            save_address_data['address_number'] = get_address_detail.address_number
-            save_address_data['street'] = get_address_detail.street
-            save_address_data['area'] = get_address_detail.area
-            save_address_data['landmark'] = get_address_detail.landmark
-            save_address_data['city'] = get_address_detail.city
-            save_address_data['postal_code'] = get_address_detail.postal_code
-            save_address_data['region'] = get_address_detail.region
+            if get_address_detail:
+                save_address_data['address_number'] = get_address_detail.address_number
+                save_address_data['street'] = get_address_detail.street
+                save_address_data['area'] = get_address_detail.area
+                save_address_data['landmark'] = get_address_detail.landmark
+                save_address_data['city'] = get_address_detail.city
+                save_address_data['postal_code'] = get_address_detail.postal_code
+                save_address_data['region'] = get_address_detail.region
+            else:
+                save_address_data['address_number'] = 0
+                save_address_data['street'] = ''
+                save_address_data['area'] = ''
+                save_address_data['landmark'] = ''
+                save_address_data['city'] = ''
+                save_address_data['postal_code'] = ''
+                save_address_data['region'] = ''
 
         return save_address_data, guid
 
@@ -1241,7 +1252,33 @@ class CheckForScErrors:
         self.username = username
         self.error_message_info = []
 
-    def header_level_delivery_address_check(self, address_number, address_number_list, check_flag):
+    def invoice_address_check(self,address_number,company_code):
+        """
+
+        """
+        error_msg = ''
+        if address_number == 'None' or address_number is None or address_number == '':
+            error_msg = 'Default invoice address is not maintained please contact your admin'
+            self.error_message_info.append(error_msg)
+            return error_msg
+        check_for_address_number_map = django_query_instance.django_existence_check(OrgAddressMap,
+                                                                                    {'client': self.client,
+                                                                                     'del_ind': False,
+                                                                                     'address_type': 'I',
+                                                                                     'address_number': address_number,
+                                                                                     'company_id': company_code})
+        check_for_address_number = django_query_instance.django_existence_check(OrgAddress, {
+            'client': self.client, 'del_ind': False, 'address_number': address_number
+        })
+
+        if not check_for_address_number and check_for_address_number_map:
+            error_msg = 'Invoice address is not valid'
+            self.error_message_info.append(error_msg)
+            return error_msg
+        else:
+            return error_msg
+
+    def header_level_delivery_address_check(self, address_number,company_code, address_number_list, check_flag):
         error_msg = None
         if check_flag:
             if len(address_number_list) == 0:
@@ -1252,12 +1289,17 @@ class CheckForScErrors:
             error_msg = get_message_desc('MSG163')[1]
             self.error_message_info.append(error_msg)
             return error_msg
-
+        check_for_address_number_map = django_query_instance.django_existence_check(OrgAddressMap,
+                                                                                    {'client': self.client,
+                                                                                     'del_ind': False,
+                                                                                     'address_type':'D',
+                                                                                     'address_number': address_number,
+                                                                                     'company_id': company_code})
         check_for_address_number = django_query_instance.django_existence_check(OrgAddress, {
             'client': self.client, 'del_ind': False, 'address_number': address_number
         })
 
-        if not check_for_address_number:
+        if not check_for_address_number and check_for_address_number_map:
             error_msg = get_message_desc('MSG162')[1]
             self.error_message_info.append(error_msg)
             return error_msg
@@ -1734,7 +1776,7 @@ class CheckForScErrors:
         return self.sc_check_data
 
 
-def check_sc_second_step_shopping_cart(sc_check_instance, object_id_list, default_calendar_id, company_code,
+def check_sc_second_step_shopping_cart(sc_check_instance, object_id_list, default_calendar_id,default_invoice_adr, company_code,
                                        default_address_number, address_number_list, accounting_data, manager_details,
                                        approver_id, total_value,
                                        msg_info,
@@ -1747,12 +1789,13 @@ def check_sc_second_step_shopping_cart(sc_check_instance, object_id_list, defaul
     sc_check_instance.document_sc_transaction_check(object_id_list)
     sc_check_instance.po_transaction_check(object_id_list)
     sc_check_instance.calender_id_check(default_calendar_id)
-    error_msg = sc_check_instance.header_level_delivery_address_check(default_address_number, address_number_list, True)
+    error_msg = sc_check_instance.header_level_delivery_address_check(default_address_number,company_code, address_number_list, True)
     sc_check_instance.update_approval_check(manager_details, approver_id, total_value,
                                             msg_info)
     sc_check_instance.header_level_acc_check(accounting_data['acc_list'], accounting_data['default_acc_ass_cat'],
                                              accounting_data['acc_value_list'], accounting_data['default_acc'],
                                              company_code)
+    sc_check_instance.invoice_address_check(default_invoice_adr, company_code)
 
     # if error_msg:
     #     sc_check_instance.item_level_delivery_address_check(cart_items_count, error_msg)

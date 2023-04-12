@@ -3,7 +3,9 @@ sys_attributes: gets the respective attribute values for the logged in client an
 functionality.
 
 """
+from eProc_Basic.Utilities.constants.constants import *
 from eProc_Basic.Utilities.functions.django_query_set import DjangoQueries
+from eProc_Basic.Utilities.global_defination import global_variables
 from eProc_Configuration.models import SystemSettingsConfig
 
 django_query_instance = DjangoQueries()
@@ -141,3 +143,41 @@ class sys_attributes:
             'client': self.client, 'del_ind': False, 'sys_attr_type': sys_attr_type,
             'sys_settings_default_flag': True})
         return attributes
+
+
+def get_system_attributes_value(sys_attr_type):
+    """
+
+    """
+    system_attribute_value = ''
+    if django_query_instance.django_existence_check(SystemSettingsConfig,
+                                                    {'client': global_variables.GLOBAL_CLIENT,
+                                                     'del_ind': False, 'sys_attr_type': sys_attr_type,
+                                                     'sys_settings_default_flag': True}):
+        system_attribute_value = django_query_instance.django_filter_value_list_query(SystemSettingsConfig,
+                                                                                      {
+                                                                                          'client': global_variables.GLOBAL_CLIENT,
+                                                                                          'del_ind': False,
+                                                                                          'sys_attr_type': sys_attr_type,
+                                                                                          'sys_settings_default_flag': True},
+                                                                                      'sys_attr_value')[0]
+    return system_attribute_value
+
+
+def get_system_settings_data():
+    """
+
+    """
+    acct_assignment_category = get_system_attributes_value(CONST_ACCOUNT_ASSIGNMENT_CATEGORY)
+    purchase_group = get_system_attributes_value(CONST_PURCHASE_GROUPS)
+    edit_address_flag = get_system_attributes_value(CONST_EDIT_ADDRESS)
+    shipping_address_flag = get_system_attributes_value(CONST_CHANGE_SHIPPING_ADDRESS)
+    attachment_size = get_system_attributes_value(CONST_SYSTEM_ATTACHMENT_SIZE)
+    attachment_extension = get_system_attributes_value(CONST_ATTACHMENT_EXTENSION)
+    data = {'acct_assignment_category': acct_assignment_category,
+            'purchase_group': purchase_group,
+            'edit_address_flag': edit_address_flag,
+            'shipping_address_flag': shipping_address_flag,
+            'attachment_size': attachment_size,
+            'attachment_extension': attachment_extension}
+    return data
