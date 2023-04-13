@@ -975,7 +975,7 @@ class ApplicationSettingsSave:
         message = get_message_detail_based_on_action(auth_data['action'])
 
         upload_response = get_configuration_data(Authorization, {'del_ind': False, 'client': self.client},
-                                                 ['auth_guid', 'role', 'auth_obj_grp'])
+                                                 ['role', 'auth_obj_grp', 'auth_guid'])
 
         upload_fieldtypedesc = fieldtypedesc_instance.get_field_type_desc_values(FieldTypeDescription,
                                                                                  {'del_ind': False, 'used_flag': False,

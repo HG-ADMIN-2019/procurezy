@@ -138,7 +138,7 @@
     var messages_list = {{messages_list|safe}};
     var auth_data_array = {}
     var auth_val_dict = {}
-    var auth_val_list = {}
+    var auth_val_list = [];
     var auth = '';
     var edit_basic_data = '';
     var GLOBAL_ACTION = '';
@@ -243,6 +243,7 @@
             dataType: "json",
             success: function(Response) {
                 rendered_auth_data = Response[0];
+                rendered_roles_dropdwn = Response[2];
                 display_basic_db_data();
                 success_response(Response); // Function call to display response data
                 CloseLoaderPopup();
