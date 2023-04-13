@@ -188,7 +188,7 @@
     var address_number_dropdwn = "";
     var address_type_dropdown= '';
     var company_dropdwn = "";
-    
+
     //***************************
     function addtype_drp(){
         address_number_dropdwn = "";
@@ -205,12 +205,12 @@
         });
     }
 
-    //Date format
-    function DateFormat() {
-        $(".from_to_date").datepicker({
-            dateFormat: 'yyyy-mm-dd',
-        });
-    }
+<!--    //Date format-->
+<!--    function DateFormat() {-->
+<!--        $(".from_to_date").datepicker({-->
+<!--            dateFormat: 'yyyy-mm-dd',-->
+<!--        });-->
+<!--    }-->
 
     //onclick of add button display Adrs_Type_Modal popup and set GLOBAL_ACTION button value
     function onclick_add_button(button) {
@@ -242,6 +242,9 @@
 
     //*****************************************
     function onclick_copy_update_button() {
+        $("#error_msg_id").css("display", "none")
+        $('#id_popup_table').DataTable().destroy();
+        $("#id_popup_tbody").empty();
         OpenLoaderPopup();
         var data = {'table_name':'OrgAddressMap'}
         $.ajax({
@@ -265,7 +268,7 @@
                 var address_guid= '';
                 var dropdown_array = [];
                 //Loop through the CheckBoxes.
-                for (var i = 1; i < $chkbox_all.length; i++) {
+                for (var i = 0; i < $chkbox_all.length; i++) {
                     if ($chkbox_all[i].checked) {
                         var row = $chkbox_all[i].parentNode.parentNode;
                         if(GLOBAL_ACTION == "COPY"){
@@ -288,7 +291,7 @@
                     }
                 }
                 $('#id_popup_table').append(edit_basic_data);
-                DateFormat();
+<!--                DateFormat();-->
                 var i = 0;
                 $("#id_popup_table TBODY TR").each(function () {
                     var row = $(this);
@@ -301,8 +304,8 @@
                     i++;
                 });
                 $("#id_del_ind_checkbox").prop("hidden", true);
-                table_sort_filter('id_popup_table');
                 $('#Adrs_Type_Modal').modal('show');
+                table_sort_filter('id_popup_table');
                 CloseLoaderPopup();
             }
         });
@@ -310,27 +313,25 @@
 
     // validate and save for add,copy,update and upload data
     function popup_save_data() {
-        $('#success_msg_id').empty()
-        $('#id_popup_table').DataTable().destroy();
-        no_duplicate_entries = 'Y'
-        no_duplicate_value = 'Y'
-        var error_message = '';
-<!--        $('#display_basic_table').DataTable().destroy();-->
-        get_main_table_data(); //Read data from main table
-        // compare for duplicates in popup
-        [no_duplicate_value,error_message] = compare_table_for_duplicate_entries(validate_add_attributes, addresstype_data)
-         if(error_message){
-            display_error_message(error_message)
-        }
-        else{
-         var dateValid ;
-        [dateValid,error_message] = check_date(addresstype_data);
-        if(error_message){
+    $('#success_msg_id').empty()
+    $('#id_popup_table').DataTable().destroy();
+    no_duplicate_entries = 'Y'
+    no_duplicate_value = 'Y'
+    var error_message = '';
+    get_main_table_data(); //Read data from main table
+    // compare for duplicates in popup
+    [no_duplicate_value, error_message] = compare_table_for_duplicate_entries(validate_add_attributes, addresstype_data)
+    if (error_message) {
+        display_error_message(error_message)
+    } else {
+        var dateValid;
+        [dateValid, error_message] = check_date(addresstype_data);
+        if (error_message) {
             display_error_message(error_message)
         } else {
             if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
                 // compare main table and pop up for duplicate values
-                [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
+                [no_duplicate_entries, error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
             }
             if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y') && (dateValid == 'Y')) {
                 var add_basic_data = '';
@@ -354,13 +355,13 @@
                         CloseLoaderPopup();
                     }
                 });
+            } else if (error_message) {
+                display_error_message(error_message)
             }
-            else if (error_message){
-                    display_error_message(error_message)
-            }
-        }
         }
     }
+}
+
 
     //delete the selected row in db................
     var main_table_address_type_checked = [];
@@ -592,7 +593,7 @@
     }
 
     // validating the  popup table for duplicate entries
-    function compare_table_for_duplicate_entries(validate_add_attributes, address_type) {
+        function compare_table_for_duplicate_entries(validate_add_attributes, address_type) {
         add_attr_duplicates = false;
         var error_message = ''
         var add_attr_duplicates_list = [];
@@ -621,7 +622,7 @@
                     return [no_duplicate_value,error_message]
                 }
                 if ((item.valid_from == '') || (item.valid_to == '')) {
-                    error_message = ui_messeges("JMSG002") // Get message details
+                    error_message = ui_messeges("JMSG002") + " For Date "// Get message details
                     no_duplicate_value = 'N'
                     return [no_duplicate_value,error_message]
                 }

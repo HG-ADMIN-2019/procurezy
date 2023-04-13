@@ -88,7 +88,7 @@ function check_date_error(check_dates) {
     return date_error
 }
 
- //onclick of cancel empty the popup table body and error messages
+//onclick of cancel empty the popup table body and error messages
 $(".remove_upload_data").click(() => {
     $("#id_error_msg").html("");
     $("#id_popup_tbody").empty();
@@ -105,8 +105,7 @@ $(".remove_upload_data").click(() => {
     $('#id_popup_table').DataTable().destroy();
 });
 
-
- //**********************************************
+//**********************************************
 function delete_duplicate() {
     $('#id_popup_table').DataTable().destroy();
     var aav_code_check = new Array
@@ -193,7 +192,6 @@ function display_error_message(error_message){
     $('#myModal').modal('show');
 }
 
-
 //*****************************
 function check_date(aav_data) {
     var validDate = 'Y';
@@ -205,16 +203,13 @@ function check_date(aav_data) {
             return false; // exit the loop as soon as an invalid date range is found
         }
     });
-
     if (validDate == 'N') {
         display_error_message(error_message); // display the error message
     } else {
         $('#error_msg_id').css('display', 'none'); // hide the error message if no invalid date ranges were found
     }
-
     return [validDate, error_message];
 }
-
 
 // Function to get main table data
 function get_main_table_data() {

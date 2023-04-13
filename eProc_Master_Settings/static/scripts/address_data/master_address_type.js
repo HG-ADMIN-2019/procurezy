@@ -79,10 +79,9 @@ function display_basic_db_data() {
         if(item.valid_from == ''){
             from_date = '';
             to_date = '';
-        }
-        else{
-            from_date = new Date(item.valid_from).toLocaleDateString();
-            to_date = new Date(item.valid_to).toLocaleDateString();
+        } else {
+            from_date = new Date(item.valid_from).toLocaleDateString('en-CA', {year: 'numeric', month: '2-digit', day: '2-digit'});
+            to_date = new Date(item.valid_to).toLocaleDateString('en-CA', {year: 'numeric', month: '2-digit', day: '2-digit'});
         }
         edit_basic_data += '<tr><td class="class_select_checkbox"><input class="checkbox_check" onclick="valueChanged()" type="checkbox" required></td>' +
         '<td>'+ item.company_id +'</td>'+
@@ -212,17 +211,18 @@ function check_date(addresstype_data) {
     var validDate = 'Y';
     var error_message = ''
     $.each(addresstype_data, function (i, item) {
-        if (item.valid_to && item.valid_from) {
-            if ((Date.parse(item.valid_to) < Date.parse(item.valid_from)) == true) {
-                $("#id_error_msg").prop("hidden", false)
-                get_message_details("JMSG017"); // Get message details
-                $('#id_save_confirm_popup').modal('hide');
-                $('#Adrs_Type_Modal').modal('show');
-                validDate = 'N'
-            }
+        if ((Date.parse(item.valid_to) < Date.parse(item.valid_from)) == true) {
+            error_message = 'From Date Is Greater Than To Date'; // set the error message
+            validDate = 'N';
+            return false; // exit the loop as soon as an invalid date range is found
         }
     });
-    return [validDate,error_message]
+    if (validDate == 'N') {
+        display_error_message(error_message); // display the error message
+    } else {
+        $('#error_msg_id').css('display', 'none'); // hide the error message if no invalid date ranges were found
+    }
+    return [validDate, error_message];
 }
 
 //*******************************************
