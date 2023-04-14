@@ -324,7 +324,6 @@
         $("#id_check_success_messages").prop("hidden",true);
         $("#id_check_error_messages").prop("hidden",true);
         $("#id_check_special_character_messages").prop("hidden",true);
-        $("#id_check_error_messages").prop("hidden",true);
         document.getElementById("id_error_msg_country_code").innerHTML = "";
         document.getElementById("id_error_msg_country_name").innerHTML = "";
         document.getElementById("id_error_msg_country_length").innerHTML = "";
@@ -334,6 +333,7 @@
         var country_list = new Array
         var country_code_check = new Array
         del_ind = ''
+        var duplicate_flag = true
         $("#id_popup_table TBODY TR").each(function() {
             var row = $(this);
             country_dic = {}
@@ -352,7 +352,8 @@
             //*************** checking for empty records for country code ***************
             if(country_dic.country_code.length == 0){
                 $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
-                row_color_highlight2(row);
+                row_color_highlight_empty(row);
+                $("#id_error_msg_country_length").prop("hidden",false);
                 error_message = ui_messeges("JMSG002")// Get message details
                 var display8 = error_message;
                 document.getElementById("id_error_msg_country_length").innerHTML = display8+ "Country Code";
@@ -361,7 +362,8 @@
             //*************** checking for minimum length for country code (max length = 2) ***************
             else if(country_dic.country_code.length == 1){
                     $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
-                    row_color_highlight2(row);
+                    row_color_highlight_minlength(row);
+                    $("#id_error_msg_country_length").prop("hidden",false);
                     error_message = ui_messeges("JMSG113")// Get message details
                     var display8 = error_message;
                     document.getElementById("id_error_msg_country_length").innerHTML = display8+ "Country Code";
@@ -370,19 +372,24 @@
             //*************** checking for special characters for country code ***************
             else if(format.test(country_dic.country_code)){
                 $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
-                row_color_highlight1(row);
+                row_color_highlight_special(row);
+                $("#id_error_msg_country_code").prop("hidden",false);
                 error_message = ui_messeges("JMSG003")// Get message details
                 var display4 = error_message;
                 document.getElementById("id_error_msg_country_code").innerHTML = display4+ "Country Code";
                 count = count +1;
-            }else{
-                $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "none");
+            }
+            else{
+                $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "none");
                 row_color_no_highlight(row);
+                $(row).css("border", "");
+                $("#id_delete_duplicate").hide()
             }
             //*************** checking for empty records for country name (max length = 2) ***************
             if(country_dic.country_name.length == 0){
                 $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
-                row_color_highlight2(row);
+                row_color_highlight_empty(row);
+                $("#id_error_msg_country_name").prop("hidden",false);
                 error_message = ui_messeges("JMSG002")// Get message details
                 var display8 = error_message;
                 document.getElementById("id_error_msg_country_length").innerHTML = display8+ "Country Name";
@@ -391,7 +398,8 @@
             //*************** checking for special characters for country name ***************
             else if(format.test(country_dic.country_name)){
                 $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "1px solid #FF0000");
-                row_color_highlight1(row);
+                row_color_highlight_special(row);
+                $("#id_error_msg_country_name").prop("hidden",false);
                 error_message = ui_messeges("JMSG003")// Get message details
                 var display3 = error_message;
                 document.getElementById("id_error_msg_country_name").innerHTML = display3+ "Country Name";
@@ -402,7 +410,7 @@
                  row_color_highlight(row);
                  $("#id_check_error_messages").prop("hidden",false);
                  var display7 = get_msg_desc_check_data("JMSG001");
-                 $("#id_check_error_messages").append('<p style = "font-weight: bold;">' + display7 + ' </p>')
+                 document.getElementById("id_check_error_messages").innerHTML = display7;
                  $("#save_id").prop("hidden", true);
                  $("#id_delete_duplicate").show()
                  $("#id_check_data").prop("hidden", false);
@@ -420,7 +428,7 @@
             $("#id_popup_table").find("input,button,textarea,select").attr("disabled", "disabled");
             document.getElementById("id_del_add_button").style.display = "none";
          }
-    //*************** shows save button if there are no errors(special characters and max length) ***************
+    //*************** shows save button if there are no errors(special characters and max length) ***************//
         if(count == 0){
             $("#save_id").prop("hidden", false);
             $("#id_check_data").prop("hidden", true);
