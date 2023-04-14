@@ -108,7 +108,7 @@
                     <table class="class_popup_table table table-bordered mt-2" id="id_popup_table" >
                         <thead>
                             <tr>
-                                <th id="hg_select_checkbox" >
+                                <th id="hg_select_checkbox">
                                     <div id="id_check_all" style="display:none;">
                                         <input type="checkbox" id="selectAll" name="chk[]">
                                     </div>
@@ -170,13 +170,13 @@
     function onclick_Maintain_holiday_button(calender_id) {
         $("#error_msg_id").css("display", "none")
         GLOBAL_CALENDER_ID = calender_id.split('-')[0];
-        $("#hg_select_checkbox").prop("hidden", false);
-        $('#id_popup_table').DataTable().destroy();
+        $("#id_check_all").show();
+<!--        $('#id_popup_table').DataTable().destroy();-->
         //Reference the Table.
         var res = get_all_checkboxes(); // Function to get all the checkboxes
          var $chkbox_all = $('td input[type="checkbox"]', res);
         //Reference the CheckBoxes in Table.
-        $("#id_popup_tbody").empty();       
+        $("#id_popup_tbody").empty();
         var edit_basic_data = "";
         var unique_input = '';
         OpenLoaderPopup();
@@ -189,6 +189,7 @@
             success: function (response) {
                 if (response.length == 0) {
                     empty_resp = '';
+                    $("#id_popup_tbody").html();
                     empty_resp += '<tr>';
                     empty_resp += '<td><input type="checkbox" name="hg_checkbox" required></td>';
                     empty_resp += '<td><input class="holiday_description input" type="text" id="holiday_description1"  name="holiday_description"  required></td>';
@@ -197,12 +198,13 @@
                     empty_resp += '<td hidden><input type="checkbox" name="del_ind"></td>';
                     empty_resp += '<td hidden><input type="text" class="input" name="calender_holiday_guid"></td>';
                     empty_resp += '</tr>';
-                    table_content = empty_resp;
+<!--                    table_content = empty_resp;-->
                     $('#id_popup_table tbody').html(empty_resp);
                     HolidayDatePicker();
                 } else {
                     var i = 0;
                     content = ''
+                    $("#id_popup_tbody").html();
                     $.each(response, function (key, value) {
                         var from_date =  value.fields.from_date;
                         if(from_date < currentDate){
@@ -216,10 +218,11 @@
                             content += '<td hidden><input class="input"  type="text"  name="calender_holiday_guid"  value="' + value.pk + '" / disabled></td>';
                             content += '</tr>';
                             $('#id_popup_tbody').html(content);
-                            table_content = content;
+<!--                            table_content = content;-->
                             HolidayDatePicker();
                         }
                         else {
+                            $("#id_popup_tbody").html();
                             i = i + 1;
                             content += '<tr>';
                             content += '<td><input type="checkbox" name="hg_checkbox" required></td>';
@@ -230,7 +233,7 @@
                             content += '<td hidden><input class="input"  type="text"  name="calender_holiday_guid"  value="' + value.pk + '" /></td>';
                             content += '</tr>';
                             $('#id_popup_tbody').html(content);
-                            table_content = content;
+<!--                            table_content = content;-->
                             HolidayDatePicker();
                         }
                     });
@@ -279,7 +282,7 @@
                     display_basic_db_data();
                     $('#holidayModal').modal('hide');
                     success_response(Response); // Function call to display response data
-                    table_sort_filter('render_holiday_data');
+                    table_sort_filter('id_popup_table');
                     success_response(Response);
                     DatePicker();
                     MultipleSelect();
@@ -315,7 +318,7 @@
                 render_holiday_data = Response[0];
                 display_basic_db_data();
                 success_response(Response); // Function call to display response data
-                table_sort_filter('render_holiday_data');
+                table_sort_filter('id_popup_table');
                 CloseLoaderPopup();
             }
         });

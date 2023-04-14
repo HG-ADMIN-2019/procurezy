@@ -150,7 +150,13 @@
                             </div>
                             <div class="col-md">
                                 <label for="">Purchasing Organization</label>
-                                <input type="text" class="form-control check_for_search" id="porg" name="purchasing_org">
+<!--                                <input type="text" class="form-control check_for_search" id="porg" name="purchasing_org">-->
+                                <select name="purchasing_org" id="porg" class="form-control">
+                                    <option value="">select</option>
+                                    {% for porg in purch_org_list %}
+                                    <option value="{{porg}}">{{porg}}</option>
+                                    {% endfor %}
+                                </select>
                             </div>
                             <div class="col-md">
                                 <div class="form-check">
@@ -244,7 +250,12 @@
                                     </label>
                                 </label>
                             </td>
-                            <td> <i class="fas fa-trash-alt hg-icon-blue-primary" title="Delete User" id="{{results.supp_guid}}-{{results.supplier_id}}" onclick="get_supplier_detail_to_delete(this.id)"></i></td>
+                            <td class="item-action-icon-section">
+<!--                                <i class="fas fa-trash-alt hg-icon-blue-primary" title="Delete User" id="{{results.supp_guid}}-{{results.supplier_id}}" onclick="get_supplier_detail_to_delete(this.id)"></i>-->
+                                 <span title="Delete supplier" onclick="get_supplier_detail_to_delete(this.id)" id="{{results.supp_guid}}-{{results.supplier_id}}">
+                                    <i class="material-icons item-action-icons">delete_outline</i>
+                                </span>
+                            </td>
                         </tr>
                         {% endfor %}
                         </tbody>
@@ -500,7 +511,8 @@
                     '<td> '+ supplier_detail.country_code_id +'</td>'+
                     '<td>'+ supplier_detail.registration_number +'</td>'+
                     '<td><label class="switch"><label class="toggle">'+ block_input +'<div class="toggle-controller default-success"></div></label></label></td>'+
-                    '<td><i class="fas fa-trash-alt hg-icon-blue-primary" title="Delete User" id="'+ supplier_detail.supp_guid +'-'+ supplier_detail.supplier_id +'"data-toggle="modal"  data-target="#confirm_delete_pop_up" onclick="get_supplier_detail_to_delete(this.id)" ></i></td>'+
+                    '<td class="item-action-icon-section"><span title="Delete supplier" onclick="get_user_detail_to_delete(this.id)" id="'+ supplier_detail.supp_guid +'-'+ supplier_detail.supplier_id +'" data-toggle="modal"  data-target="#confirm_delete_pop_up" onclick="get_supplier_detail_to_delete(this.id)">'+
+                        '<i class="material-icons item-action-icons">delete_outline</i></span></td>'+
                     '</tr> '
         });
         $("#supplier_detail_tbody").append(supplier_detail_html);

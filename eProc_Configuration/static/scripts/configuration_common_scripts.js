@@ -41,6 +41,8 @@ function onclick_edit_button() {
     $('#display_basic_table').DataTable().destroy();
     $("#hg_select_checkbox").prop("hidden", false);
     $(".class_select_checkbox").prop("hidden", false);
+    $(".checkbox_check").prop("hidden", false);
+    $(".checkbox_check").show();
     if($('#selectAll').is(':checked')){
          $("#selectAll").prop("checked", false);
          $(".checkbox_check").prop("checked", false);
@@ -232,9 +234,9 @@ function window_close() {
 // Success response function
 function success_response(Response){
      $('#success_msg_id').text(Response[1])
-      if(Response[1].message_type== 'SUCCESS'){
-         $('#success_msg_id').text(Response[1].message_desc)
-      }
+//      if(Response[1].message_type== 'SUCCESS'){
+//         $('#success_msg_id').text(Response[1].message_desc)
+//      }
     $("#err_msg_app_settings_t").prop("hidden", false)
     table_sort_filter('id_popup_table');
      // function to display success msg based on sys setting msg interval time

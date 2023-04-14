@@ -149,6 +149,9 @@ def supplier_search(request):
         'inc_footer': True,
         'is_slide_menu': True,
         'get_country_id': country_dictionary_list,
+        'purch_org_list': django_query_instance.django_filter_value_list_query(OrgPorg, {
+            'client': global_variables.GLOBAL_CLIENT,
+            'del_ind': False}, 'porg_id'),
         'is_admin_active': True
     }
 
@@ -182,6 +185,7 @@ def supplier_search(request):
         search_fields['country_code'] = request.POST.get('country_code')
         search_fields['city'] = request.POST.get('city')
         search_fields['block'] = request.POST.get('block')
+        search_fields['purchasing_org'] = request.POST.get('purchasing_org')
 
         supplier_results = supplier_detail_search(**search_fields)
         print("supplier_results", supplier_results)
@@ -242,9 +246,9 @@ def sup_details(req, supplier_id):
     supplier_info = django_query_instance.django_get_query(SupplierMaster, {'supplier_id': supplier_id,
                                                                             'client': global_variables.GLOBAL_CLIENT})
 
-    supplier_org_info = django_query_instance.django_filter_only_query(OrgSuppliers, {'supplier_id': supplier_id,
+    supplier_org_info = django_query_instance.django_filter_query(OrgSuppliers, {'supplier_id': supplier_id,
                                                                                       'client': getClients(req),
-                                                                                      'del_ind': False})
+                                                                                      'del_ind': False}, None, None)
 
     django_query_instance.django_filter_value_list_query(Languages, {'del_ind': False}, 'language_id')
 

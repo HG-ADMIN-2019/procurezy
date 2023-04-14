@@ -131,5 +131,4 @@ def supplier_registration_second_step(request):
         msgid = 'MSG179'
         error_msg = get_message_desc(msgid)[1]
 
-
     return JsonResponse({'message': error_msg})
