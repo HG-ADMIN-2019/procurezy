@@ -61,6 +61,7 @@ $('#save_id').click(function () {
 
 //Read popup table data
 function read_popup_data() {
+    $('#id_popup_table').DataTable().destroy();
     validate_add_attributes = [];
     var roles = {};
     $("#id_popup_table TBODY TR").each(function () {
@@ -75,6 +76,7 @@ function read_popup_data() {
         validate_add_attributes.push(roles.role);
         roles_data.push(roles);
     });
+    table_sort_filter('id_popup_table');
     return roles_data;
 }
 

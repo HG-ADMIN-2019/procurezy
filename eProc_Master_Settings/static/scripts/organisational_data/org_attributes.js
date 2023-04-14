@@ -222,6 +222,7 @@ var org_attr={};
 
     //Read popup table data
     function read_popup_data() {
+        $('#id_popup_table').DataTable().destroy();
         validate_add_attributes = [];
         orgattr_data = [];
         $("#id_popup_table TBODY TR").each(function() {
@@ -242,6 +243,7 @@ var org_attr={};
             validate_add_attributes.push(org_attr.attribute_id);
             orgattr_data.push(org_attr);
         });
+        table_sort_filter('id_popup_table');
         return orgattr_data;
     }
 
