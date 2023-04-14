@@ -262,43 +262,6 @@
                                 </div>
                             </div>
                         </div>
-
-                        <!-- Additional Contact -->
-<!--                        <div class="card card-shadow-1 mt-3">-->
-<!--                            -->
-<!--                            <div class="card-body">-->
-<!--                                <h5 class="card-title">Additional Contact</h5>-->
-<!--                                <div class="row">-->
-<!--                                    <div class="form-group col-md">-->
-<!--                                        <label> E-mail 1</label><br>-->
-<!--                                        <input type="text" class="form-control hg_edit_display_mode" id="email1_id" value="{{supplier_info.email1}}" disabled>-->
-<!--                                    </div>-->
-
-<!--                                    <div class="form-group col-md">-->
-<!--                                        <label> E-mail 2</label><br>-->
-<!--                                        <input type="text" class="form-control hg_edit_display_mode" id="email2_id" value="{{supplier_info.email2}}" disabled>-->
-<!--                                    </div>-->
-
-<!--                                    <div class="form-group col-md">-->
-<!--                                        <label> E-mail 3</label><br>-->
-<!--                                        <input type="text" class="form-control hg_edit_display_mode" id="email3_id" value="{{supplier_info.email3}}" disabled>-->
-<!--                                    </div>-->
-<!--                                </div>-->
-
-<!--                                <div class="row">-->
-<!--                                    <div class="form-group col-md-4">-->
-<!--                                        <label> E-mail 4</label><br>-->
-<!--                                        <input type="text" class="form-control hg_edit_display_mode" id="email4_id" value="{{supplier_info.email4}}" disabled>-->
-<!--                                    </div>-->
-
-<!--                                    <div class="form-group col-md-4">-->
-<!--                                        <label> E-mail 5</label><br>-->
-<!--                                        <input type="text" class="form-control hg_edit_display_mode" id="email5_id" value="{{supplier_info.email5}}" disabled>-->
-<!--                                    </div>-->
-<!--                                </div>-->
-<!--                            </div> -->
-<!--                        </div>-->
-  
                     </form>
 
                 </div>
@@ -329,9 +292,9 @@
                     <button class="btn btn-outline-danger btn-sm"  title="Delete" id="id_delete_data" value="DELETE" data-toggle="modal" data-target="#id_delete_confirm_popup" style="display:none;">
                         <i class="fa fa-trash"></i> delete
                     </button>
-                    <button class="btn btn-primary  btn-sm" title="Copy" id="id_copy_data" value="COPY" onclick="onclick_copy_button()" style="display:none;" >
-                        <i class="fa fa-copy"></i> copy
-                    </button>
+<!--                    <button class="btn btn-primary  btn-sm" title="Copy" id="id_copy_data" value="COPY" onclick="onclick_copy_button()" style="display:none;" >-->
+<!--                        <i class="fa fa-copy"></i> copy-->
+<!--                    </button>-->
                     <button class="btn btn-primary btn-sm" title="Update" id="id_update_data" style="display:none;"  value="UPDATE" type="button" onclick="onclick_update_button()">
                         <i class="far fa-edit"></i> update
                     </button>
@@ -417,90 +380,6 @@
                                     </tbody>
                                 </table>
                         </div>
-<!--                       -----------------     -->
-<!--                            <div class="mt-4">-->
-<!--                                <div id="supp_org_edit" class="mb-3" style="display: block;">-->
-<!--                                    <button class="btn btn-primary" onclick="edit_supp_org(this);"><i class="fas fa-edit" title="Edit Organizational data" ></i> Edit</button>-->
-<!--                                </div>-->
-<!--                                <div id="supp_org_add_delete_line" class="mb-3 display-none">-->
-<!--                                    -->
-<!--                                    <button class="btn btn-outline-danger" onclick="delete_supplier_purch_data()">-->
-<!--                                        <i class="fa fa-trash" aria-hidden="true" id="delete_line" title="Delete Line" ></i> Delete</button>-->
-<!--                                    <button class="btn btn-primary" onclick="supp_org_add_new_line()">-->
-<!--                                        <i class="fa fa-plus" aria-hidden="true" id="add_line" title="Add Line"></i> Add</button>-->
-<!--                                </div>-->
-<!--                            </div>-->
-<!--                            <div>-->
-<!--                                <table id="supp_org_details_table" class="org_registration_table">-->
-<!--                                    <thead id="supp_org_header" class="thead-light">-->
-<!--                                    <tr>-->
-<!--                                        <th>Purchasing organization </th>-->
-<!--                                        <th>PO Currency</th>-->
-<!--                                        <th>Payment Terms</th>-->
-<!--                                        <th>INCO Term </th>-->
-<!--                                        <th>Confirmation Based Invoice</th>-->
-<!--                                        <th>Confirmation & Invoice</th>-->
-<!--                                        <th>Confirmation Only </th>-->
-<!--                                        <th>PO Response</th>-->
-<!--                                        <th>Shipping Notification</th>-->
-<!--                                        <th>Purchase Block</th>-->
-<!--                                    </tr>-->
-<!--                                    </thead>-->
-<!--                                    <tbody id="supp_org_body">-->
-<!--                                    {% for data in supplier_org_info %}-->
-<!--                                    <tr>-->
-<!--                                        <td hidden>{{data.guid}}</td>-->
-<!--                                        <td>{{data.porg_id}}</td>-->
-<!--                                        <td>{{data.currency_id}}</td>-->
-<!--                                        <td>{{data.payment_term_key}}</td>-->
-<!--                                        <td>{{data.incoterm_key}}</td>-->
-<!--                                        <td>-->
-<!--                                            {% if data.gr_ind %}-->
-<!--                                            <input type="checkbox" name="gr_inv_vrf" value="" checked disabled>-->
-<!--                                            {% else %}-->
-<!--                                            <input type="checkbox" name="gr_inv_vrf" value="" disabled>-->
-<!--                                            {% endif %}-->
-<!--                                        </td>-->
-<!--                                        <td>-->
-<!--                                            {% if data.ir_ind %}-->
-<!--                                            <input type="checkbox" name="inv_conf_exp" value="" checked disabled>-->
-<!--                                            {% else %}-->
-<!--                                            <input type="checkbox" name="inv_conf_exp" value="" disabled>-->
-<!--                                            {% endif %}-->
-<!--                                        </td>-->
-<!--                                        <td>-->
-<!--                                            {% if data.gr_ind %}-->
-<!--                                            <input type="checkbox" name="gr_conf_exp" value="" checked disabled>-->
-<!--                                            {% else %}-->
-<!--                                            <input type="checkbox" name="gr_conf_exp" value="" disabled>-->
-<!--                                            {% endif %}-->
-<!--                                        </td>-->
-<!--                                        <td>-->
-<!--                                            {% if data.po_resp %}-->
-<!--                                            <input type="checkbox" name="po_resp" value="" checked disabled>-->
-<!--                                            {% else %}-->
-<!--                                            <input type="checkbox" name="po_resp" value="" disabled>-->
-<!--                                            {% endif %}-->
-<!--                                        </td>-->
-<!--                                        <td>-->
-<!--                                            {% if data.ship_notif_exp %}-->
-<!--                                            <input type="checkbox" name="ship_notif_exp" value="" checked disabled>-->
-<!--                                            {% else %}-->
-<!--                                            <input type="checkbox" name="ship_notif_exp" value="" disabled>-->
-<!--                                            {% endif %}-->
-<!--                                        </td>-->
-<!--                                        <td>-->
-<!--                                            {% if data.purch_block %}-->
-<!--                                            <input type="checkbox" name="purch_block" value="" checked disabled>-->
-<!--                                            {% else %}-->
-<!--                                            <input type="checkbox" name="purch_block" value="" disabled>-->
-<!--                                            {% endif %}-->
-<!--                                        </td>-->
-<!--                                    </tr>-->
-<!--                                    {% endfor %}-->
-<!--                                    </tbody>-->
-<!--                                </table>-->
-<!--                            </div>-->
                             <div id="supp_org_cancel_save" class="display-none">
                                 <button class="btn btn-primary hg_button_margin" onclick="cancel_supp_org_data()"><i class="fas fa-times"></i> cancel</button>
                                 <button id="save" name="save" onclick="supp_org_data_save()" class="btn btn-primary hg_button_margin"> <i class="fas fa-save"></i> save</button>
@@ -582,42 +461,6 @@
                 </div>
             </div>
         </div>
-
-        <!--Register type drop down-->
-        <!-- <div class="card card-margin">
-
-            <div class="card-header">
-                <ul class="nav nav-tabs card-header-tabs">
-                    <li class="nav-item">
-                        <a class="nav-link active" data-toggle="tab" href="#basic_data_tab">Supplier Information</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" data-toggle="tab" href="#org_data_tab">Organizational Information</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" data-toggle="tab" href="#buisness_doc_tab">Business Document</a>
-                    </li>
-                </ul>
-            </div>
-
-            <div class="tab-content">
-
-                <div id="basic_data_tab" class="tab-pane active p-3" >
-
-                </div>
-
-
-                <div id="org_data_tab" class="tab-pane fade p-3">
-
-
-                </div>
-
-                <div id="buisness_doc_tab" class="tab-pane fade p-3">
-                    
-                </div>
-            </div>
-        </div> -->
-
     </div>
     </div>
     <div class="hg_spacer2"> &nbsp; </div>
@@ -642,29 +485,13 @@ $(document).ready(function(){
 
     GLOBAL_ACTION = '{{supplier_action}}';
     if(GLOBAL_ACTION == 'CREATE'){
-<!--        message_type-->
       $("#org_info_tab").hide();
       $("#business_doc_tab").hide();
     }
     $("#country_code_id").val(country_id).attr('selected', 'selected');
     $("#language_id").val(lang_id).attr('selected', 'selected');
     $("#currency_id").val(curr_id).attr('selected', 'selected');
-
     MultipleSelect();
-<!--    $('#working_days_id').multiselect({-->
-<!--        buttonText: function(options, select) {-->
-<!--          if (options.length == 0) {-->
-<!--              return 'Select Groups';-->
-<!--          }-->
-<!--          else {-->
-<!--              var selected = '';-->
-<!--              options.each(function() {-->
-<!--                  selected += $(this).text() + ', ';-->
-<!--              });-->
-<!--              return selected.substr(0, selected.length -2);-->
-<!--          }-->
-<!--    }-->
-<!--  });-->
     var wday_array = [];
     wday_array = w_days.split(",");
     $("select[name=working_days]").val(wday_array);
@@ -913,21 +740,13 @@ function onclick_add_button(button) {
 }
 //**********************************************************
 function onclick_copy_update_button(data) {
-    OpenLoaderPopup();
-    var data = {'table_name':'OrgPorg'}
-        $.ajax({
-            type: 'POST',
-            url: "{% url 'eProc_Suppliers:get_supp_org_dropdown' %}",
-            data: JSON.stringify(data),
-            success: function(response) {
-                rendered_porg_data = response.porg_data;
                 get_dropdown();
                 $("#error_msg_id").css("display", "none")
                 $('#id_popup_table').DataTable().destroy();
                 $("#id_popup_tbody").empty();
                 //Reference the Table.
                 var res = get_all_checkboxes(); // Function to get all the checkboxes
-                var $chkbox_all = $('td input[type="checkbox"]', res);
+                var $chkbox_all = $('td input[class="checkbox_check"]', res);
                 //Reference the CheckBoxes in Table.
                 var edit_basic_data = "";
                 var unique_input = '';
@@ -952,23 +771,6 @@ function onclick_copy_update_button(data) {
                                 '<td><input class="checkbox-size" type="checkbox"  name="purch_block_checkbox" required></td>'+
                                 '<td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
                             $("#header_select").prop("hidden", true);
-                        }
-                        else{
-                            unique_input = '<select class="form-control"  type="text"  name="porg_id">'+porg_opt_onload+'</select>'
-                            edit_basic_data += '<tr><td><input type="checkbox" required></td>'+
-                                '<td hidden><input type="text" name="supp_org_guid"></td>'+
-                                '<td>'+unique_input+'</td>'+
-                                '<td><select class="form-control" type="text"  name="currency_id">'+currency_opt1+'</select></td>'+
-                                '<td><select class="form-control" type="text"  name="payment_term">'+payterm_opt+'</select></td>'+
-                                '<td><select class="form-control" type="text"  name="incoterm">'+incoterm_opt+'</select></td>'+
-                                '<td><input class="checkbox-size" type="checkbox"  name="gr_inv_vrf_checkbox" required></td>'+
-                                '<td><input class="checkbox-size" type="checkbox"  name="inv_conf_exp_checkbox" required></td>'+
-                                '<td><input class="checkbox-size" type="checkbox"  name="gr_conf_exp_checkbox" required></td>'+
-                                '<td><input class="checkbox-size" type="checkbox"  name="po_resp_checkbox" required></td>'+
-                                '<td><input class="checkbox-size" type="checkbox"  name="ship_notif_exp_checkbox" required></td>'+
-                                '<td><input class="checkbox-size" type="checkbox"  name="purch_block_checkbox" required></td>'+
-                                '<td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
-                            $("#header_select").prop("hidden", false);
                         }
                         var porg_id = row.cells[2].innerHTML
                         var payterm = row.cells[4].innerHTML
@@ -1023,9 +825,6 @@ function onclick_copy_update_button(data) {
                 $("#id_del_ind_checkbox").prop("hidden", true);
                 $('#supplierOrgModal').modal('show');
                 table_sort_filter('id_popup_table');
-                CloseLoaderPopup();
-            }
-        });
 }
 
 </script>

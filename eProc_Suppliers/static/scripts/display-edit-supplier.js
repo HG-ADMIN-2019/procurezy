@@ -68,33 +68,33 @@ function edit_supp_org(){
     $.each(rendered_supp_org_data, function (i, item) {
          var gr_inv_vrf_checkbox = '';
         if (item.ir_gr_ind){
-            gr_inv_vrf_checkbox += '<input type="checkbox"  checked>'
-        } else gr_inv_vrf_checkbox += '<input type="checkbox">'
+            gr_inv_vrf_checkbox += '<input type="checkbox"  checked disabled>'
+        } else gr_inv_vrf_checkbox += '<input type="checkbox" disabled>'
 
         var inv_conf_exp_checkbox = '';
         if(item.ir_ind){
-            inv_conf_exp_checkbox += '<input type="checkbox"  checked>'
-        } else inv_conf_exp_checkbox += '<input type="checkbox">'
+            inv_conf_exp_checkbox += '<input type="checkbox"  checked disabled>'
+        } else inv_conf_exp_checkbox += '<input type="checkbox" disabled>'
 
         var gr_conf_exp_checkbox = '';
         if(item.gr_ind){
-            gr_conf_exp_checkbox += '<input type="checkbox"  checked>'
-        } else gr_conf_exp_checkbox += '<input type="checkbox">'
+            gr_conf_exp_checkbox += '<input type="checkbox"  checked disabled>'
+        } else gr_conf_exp_checkbox += '<input type="checkbox" disabled>'
 
         var po_resp_checkbox = '';
         if(item.po_resp){
-            po_resp_checkbox += '<input type="checkbox"  checked>'
-        } else po_resp_checkbox += '<input type="checkbox">'
+            po_resp_checkbox += '<input type="checkbox"  checked disabled>'
+        } else po_resp_checkbox += '<input type="checkbox" disabled>'
 
         var ship_notif_exp_checkbox = ''
         if(item.ship_notif_exp){
-            ship_notif_exp_checkbox += '<input type="checkbox"  checked>'
-        } else ship_notif_exp_checkbox += '<input type="checkbox">'
+            ship_notif_exp_checkbox += '<input type="checkbox"  checked disabled>'
+        } else ship_notif_exp_checkbox += '<input type="checkbox" disabled>'
 
         var purch_block_checkbox = ''
         if(item.purch_block){
-            purch_block_checkbox += '<input type="checkbox"  checked>'
-        } else purch_block_checkbox += '<input type="checkbox">'
+            purch_block_checkbox += '<input type="checkbox"  checked disabled>'
+        } else purch_block_checkbox += '<input type="checkbox" disabled>'
 
         edit_basic_data += '<tr><td class="class_select_checkbox"><input class="checkbox_check" onclick="valueChanged()" type="checkbox"></td>'+
          '<td hidden>'+item.guid+'</td>'+
@@ -500,12 +500,6 @@ function get_selected_row_data(){
             main_table_supp_checked.push(supp_arr_obj);
         }
     });
-}
-// on click copy icon display the selected checkbox data
-function onclick_copy_button() {
-    GLOBAL_ACTION = "COPY"
-    onclick_copy_update_button("COPY")
-    document.getElementById("id_del_add_button").style.display = "block";
 }
 
 // on click update icon display the selected checkbox data to update
