@@ -15,7 +15,7 @@ from django.contrib.auth.decorators import login_required
 from django.db import transaction
 from django.http import JsonResponse
 from django.shortcuts import render
-from eProc_Basic.Utilities.functions.django_query_set import DjangoQueries
+from eProc_Basic.Utilities.functions.django_query_set import DjangoQueries, bulk_create_entry_db
 from eProc_Basic.Utilities.functions.encryption_util import decrypt
 from eProc_Basic.Utilities.functions.get_db_query import getClients
 from eProc_Basic.Utilities.functions.json_parser import JsonParser
@@ -55,26 +55,74 @@ def update_supplier_purch_details(request):
     error_msg = ''
     supp_org_data = JsonParser().get_json_from_req(request)
     # supplier_id = org_data['supp_id']
+    org_sup_db_list = []
     for org_data in supp_org_data:
-        django_query_instance.django_filter_delete_query(OrgSuppliers, {'guid__in': org_data['delete_supplier']})
-        guid = org_data['supp_org_guid']
-        if guid == '':
+        if not django_query_instance.django_existence_check(OrgSuppliers,
+                                                            {'porg_id': org_data['porg_id'],
+                                                             'del_ind': False
+                                                             }):
             guid = guid_generator()
-        defaults = {
-            'supplier_id': org_data['supp_id'],
-            'payment_term_key': org_data['payment_term'],
-            'incoterm_key': django_query_instance.django_get_query(Incoterms, {'incoterm_key': org_data['incoterm']}),
-            'currency_id': django_query_instance.django_get_query(Currency, {'pk': org_data['currency_id']}),
-            'ir_gr_ind': org_data['gr_inv_vrf'],
-            'ir_ind': org_data['inv_conf_exp'],
-            'gr_ind': org_data['gr_conf_exp'],
-            'po_resp': org_data['po_resp'],
-            'ship_notif_exp': org_data['ship_notif_exp'],
-            'purch_block': org_data['purch_block'],
-            'porg_id': org_data['porg_id'],
-            'client_id': getClients(request)
-        }
-        django_query_instance.django_update_or_create_query(OrgSuppliers, {'guid': guid}, defaults)
+            org_sup_db_dictionary = {'guid': guid,
+                                     'supplier_id': org_data['supp_id'],
+                                     'payment_term_key': org_data['payment_term'],
+                                     'incoterm_key': django_query_instance.django_get_query(Incoterms, {
+                                         'incoterm_key': org_data['incoterm']}),
+                                     'currency_id': django_query_instance.django_get_query(Currency, {
+                                         'pk': org_data['currency_id']}),
+                                     'ir_gr_ind': org_data['gr_inv_vrf'],
+                                     'ir_ind': org_data['inv_conf_exp'],
+                                     'gr_ind': org_data['gr_conf_exp'],
+                                     'po_resp': org_data['po_resp'],
+                                     'ship_notif_exp': org_data['ship_notif_exp'],
+                                     'purch_block': org_data['purch_block'],
+                                     'porg_id': org_data['porg_id'],
+                                     'client_id': getClients(request)
+                                     }
+            org_sup_db_list.append(org_sup_db_dictionary)
+        else:
+            django_query_instance.django_update_query(OrgSuppliers,
+                                                      {'porg_id': org_data['porg_id'],
+                                                       'client': getClients(request)},
+                                                      {'supplier_id': org_data['supp_id'],
+                                                       'payment_term_key': org_data['payment_term'],
+                                                       'incoterm_key': django_query_instance.django_get_query(Incoterms,
+                                                                                                              {
+                                                                                                                  'incoterm_key':
+                                                                                                                      org_data[
+                                                                                                                          'incoterm']}),
+                                                       'currency_id': django_query_instance.django_get_query(Currency, {
+                                                           'pk': org_data['currency_id']}),
+                                                       'ir_gr_ind': org_data['gr_inv_vrf'],
+                                                       'ir_ind': org_data['inv_conf_exp'],
+                                                       'gr_ind': org_data['gr_conf_exp'],
+                                                       'po_resp': org_data['po_resp'],
+                                                       'ship_notif_exp': org_data['ship_notif_exp'],
+                                                       'purch_block': org_data['purch_block'],
+                                                       'porg_id': org_data['porg_id'],
+                                                       'client_id': getClients(request),
+                                                       })
+        if org_sup_db_list:
+            bulk_create_entry_db(OrgSuppliers, org_sup_db_list)
+
+        # django_query_instance.django_filter_delete_query(OrgSuppliers, {'guid__in': org_data['delete_supplier']})
+        # guid = org_data['supp_org_guid']
+        # if guid == '':
+        #     guid = guid_generator()
+        # defaults = {
+        #     'supplier_id': org_data['supp_id'],
+        #     'payment_term_key': org_data['payment_term'],
+        #     'incoterm_key': django_query_instance.django_get_query(Incoterms, {'incoterm_key': org_data['incoterm']}),
+        #     'currency_id': django_query_instance.django_get_query(Currency, {'pk': org_data['currency_id']}),
+        #     'ir_gr_ind': org_data['gr_inv_vrf'],
+        #     'ir_ind': org_data['inv_conf_exp'],
+        #     'gr_ind': org_data['gr_conf_exp'],
+        #     'po_resp': org_data['po_resp'],
+        #     'ship_notif_exp': org_data['ship_notif_exp'],
+        #     'purch_block': org_data['purch_block'],
+        #     'porg_id': org_data['porg_id'],
+        #     'client_id': getClients(request)
+        # }
+        # django_query_instance.django_update_or_create_query(OrgSuppliers, {'guid': guid}, defaults)
         supp_org_data = get_data(org_data['supp_id'])
     response = {'supp_org_data': supp_org_data}
     return JsonResponse(supp_org_data, safe=False)
@@ -83,7 +131,9 @@ def update_supplier_purch_details(request):
 def get_data(supplier_id):
     msgid = 'MSG112'
     message = get_message_desc(msgid)[1]
-    upload_response = django_query_instance.django_filter_query(OrgSuppliers, {'del_ind': False, 'supplier_id': supplier_id}, None, None)
+    upload_response = django_query_instance.django_filter_query(OrgSuppliers,
+                                                                {'del_ind': False, 'supplier_id': supplier_id}, None,
+                                                                None)
     print(upload_response)
     return upload_response, message
 
@@ -113,7 +163,9 @@ def delete_supplier_org_info(request):
 def get_supp_org_data(supplier_id):
     msgid = 'MSG113'
     message = get_message_desc(msgid)[1]
-    upload_response = django_query_instance.django_filter_query(OrgSuppliers, {'del_ind': False, 'supplier_id': supplier_id}, None, None)
+    upload_response = django_query_instance.django_filter_query(OrgSuppliers,
+                                                                {'del_ind': False, 'supplier_id': supplier_id}, None,
+                                                                None)
     return upload_response, message
 
 

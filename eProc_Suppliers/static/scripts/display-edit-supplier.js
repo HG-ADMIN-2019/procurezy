@@ -1,5 +1,4 @@
 
-
 var encrypted_supplier
 
 // Global variable - supplier id
@@ -37,9 +36,6 @@ function edit_basic_supp_data(){
     if(GLOBAL_ACTION != 'CREATE'){
             $("#supplier_id").prop( "disabled", true );
     }
-//    $("#currency_id").append(currency_opt1)
-//    $("#country_code_id").append(country_opt)
-//    $("#language_id").append(language_opt)
     $("#edit_mode").show();
     $("#working_days").hide();
     document.getElementById('sbd_edit_button').style.display = 'none'
@@ -55,7 +51,6 @@ function cancel_basic_details(){
     $('#image-preview3').show();
     var output = document.getElementById('image-preview3');
     output.src = img_url;
-
 }
 
 // Function to edit supplier purchasing details data
@@ -121,17 +116,8 @@ function edit_supp_org(){
     $('#id_update_data').hide();
     $('#id_save_confirm_popup').modal('hide');
     $('#id_delete_confirm_popup').modal('hide');
-//    $('#id_check_all').hide();
     table_sort_filter('display_basic_table');
 }
-
-// Function add a new row of supplier purchasing data
-function supp_org_add_new_line(){
-    add_new_supp_org_data = ''
-    add_new_supp_org_data = '<tr><td><input type="checkbox" name="supplier_checkbox"></td> <td hidden></td> <td><select class="form-control"><option selected="true" disabled="disabled"> Select </option>'+porg_opt+'</select></td> <td><select class="form-control"><option selected="true" disabled="disabled"> Select </option>'+ +'</select></td> <td><select class="form-control"><option selected="true" disabled="disabled"> Select </option>'+payterm_opt+'</select></td> <td><select class="form-control"><option selected="true" disabled="disabled"> Select </option>'+incoterm_opt+'</select></td> <td><input type="checkbox"></td> <td><input type="checkbox"></td> <td><input type="checkbox"></td> <td><input type="checkbox"></td> <td><input type="checkbox"></td> <td><input type="checkbox"></td> </tr>'
-    $("#supp_org_body").append(add_new_supp_org_data);
-}
-
 
 // Function to cancel Edit operation
 function cancel_supp_org_data(){
@@ -139,11 +125,8 @@ function cancel_supp_org_data(){
     display_supp_org_body = ''
     $('#supp_org_header').empty();
     $('#supp_org_body').empty();
-
     display_supp_org_header = '<tr> <th>Purchasing organisation</th> <th>PO Currency</th> <th>Payment Terms</th> <th>Incoterm</th> <th>GR based invoice verification</th> <th>Invoice confirmation expected</th> <th>GR confirmation expected</th> <th>PO response</th> <th>Shipping notification expected</th> <th>Purchase block</th></tr>'
-
     $.each(supplier_org_data, function(index, data){
-
         var gr_inv_vrf_checkbox = ''
         if (data.gr_inv_vrf==true){
             gr_inv_vrf_checkbox += '<input type="checkbox" checked disabled>'
@@ -180,45 +163,29 @@ function cancel_supp_org_data(){
     $('#supp_org_header').append(display_supp_org_header);
     $('#supp_org_body').append(display_supp_org_body);
     document.getElementById("id_edit_data").style.display = "block";
-//    document.getElementById("supp_org_add_delete_line").style.display = "none";
     document.getElementById("supp_org_cancel_save").style.display = "none";
 }
 
-
-// Function to delete row
-function delete_supplier_purch_data() {
-    delete_supp_purch_data = []
-        del_seq = document.getElementsByName("supplier_checkbox")
-        for (index = 0; index < del_seq.length; index++) {
-            if (del_seq[index].checked) {
-                delete_supp_purch_data.push(del_seq[index].id)
-            }
-        }
-        application_settings_delete_Row('display_basic_table')
-        console.log(delete_supp_purch_data)
-}
-
-
 // Function to delete rows from UI
-function application_settings_delete_Row(myTable) {
-    try {
-        var table = document.getElementById(myTable);
-        var rowCount = table.rows.length;
-
-        for (var i = 0; i < rowCount; i++) {
-            var row = table.rows[i];
-            var chkbox = row.cells[0].childNodes[0];
-            if (null != chkbox && true == chkbox.checked) {
-                table.deleteRow(i);
-                rowCount--;
-                i--;
-            }
-        }
-        return rowCount;
-    } catch (e) {
-        alert(e);
-    }
-}
+//function application_settings_delete_Row(myTable) {
+//    try {
+//        var table = document.getElementById(myTable);
+//        var rowCount = table.rows.length;
+//
+//        for (var i = 0; i < rowCount; i++) {
+//            var row = table.rows[i];
+//            var chkbox = row.cells[0].childNodes[0];
+//            if (null != chkbox && true == chkbox.checked) {
+//                table.deleteRow(i);
+//                rowCount--;
+//                i--;
+//            }
+//        }
+//        return rowCount;
+//    } catch (e) {
+//        alert(e);
+//    }
+//}
 
 // Function to save edited supplier basic details data
 function save_basic_details() {
@@ -284,7 +251,6 @@ function save_basic_details() {
         $('#supplier_basic_update_success').hide();
         CloseLoaderPopup();
     }
-
     $('html, body').animate({ scrollTop: 0 }, 'slow');
     cancel_basic_details();
     if(GLOBAL_ACTION == 'CREATE'){
@@ -300,7 +266,7 @@ function supp_org_data_save(){
     var save_supplier_purch_details = new Array();
     $('#success_msg_id').empty()
     $('#id_popup_table').DataTable().destroy();
-    if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
+//    if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
     $("#id_popup_table TBODY TR").each(function() {
         var row = $(this);
         var get_supp_purch_data = {};
@@ -326,21 +292,9 @@ function supp_org_data_save(){
         contentType: "application/json; charset=utf-8",
         dataType: 'json',
         success: function (response) {
-//            document.getElementById('supplier_org_update_success').innerHTML = response.message;
             success_response(response); // Function call to display response data
-//            $('#supplier_org_update_success').show();
             rendered_supp_org_data = response[0];
             edit_supp_org();
-//            if (save_supplier_purch_details.length==0){
-//                edit_supp_org();
-//            } else{
-//                supplier_org_data = []
-//                for (i = 0; i < save_supplier_purch_details.length; i++){
-//                    supplier_org_data.push(save_supplier_purch_details[i])
-//                }
-//                cancel_supp_org_data();
-//                delete_supp_purch_data = []
-//            }
             $('#supplierOrgModal').modal('hide');
             CloseLoaderPopup();
         },
@@ -348,7 +302,7 @@ function supp_org_data_save(){
             console.log(error);
         }
     })
-    }
+//    }
 }
    // Validation function
    const save_basic_form_validation = (name1, city_id, email_id, mobile,search_term1, search_term2) => {
