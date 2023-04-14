@@ -715,11 +715,11 @@ function row_color_highlight_special(row){              //for special entries
 function row_color_highlight_empty(row){                //for empty entries
      $(row).css('background-color', '#FFB6C1');
 }
-function row_color_no_highlight(row){               //not highlighting
-     $(row).css('background-color', '');
-}
 function row_color_highlight_minlength(row){
-    $(row).css('background-color', '#EE4B2B');    //for minimum
+    $(row).css('background-color', '#FFCCCB');        //for minimum
+}
+function row_color_no_highlight(row){                 //not highlighting
+     $(row).css('background-color', '');
 }
 
 // Function to get all the checkboxes from main table
