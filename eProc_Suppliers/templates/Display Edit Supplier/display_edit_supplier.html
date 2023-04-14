@@ -700,7 +700,7 @@ function loadFile3(event) {
         OpenLoaderPopup();
         $.ajax({
             type: 'POST',
-            url: "{% url 'eProc_Suppliers:delete_supplier_org_info' %}",
+            url: "{% url 'eProc_Suppliers:update_supplier_purch_details' %}",
             data:JSON.stringify(data),
             contentType: "application/json; charset=utf-8",
             dataType: "json",

@@ -272,6 +272,7 @@ function supp_org_data_save(){
         var get_supp_purch_data = {};
         get_supp_purch_data.delete_supplier = delete_supp_purch_data;
         get_supp_purch_data.supp_id = supplierid;
+        get_supp_purch_data.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
         get_supp_purch_data.supp_org_guid = row.find("TD").eq(1).text();
         get_supp_purch_data.porg_id = row.find("TD").eq(2).find("select option:selected").val();
         get_supp_purch_data.currency_id = row.find("TD").eq(3).find("select option:selected").val();
@@ -285,10 +286,11 @@ function supp_org_data_save(){
         get_supp_purch_data.purch_block = row.find("TD").eq(11).find('input[type="checkbox"]').is(':checked');
         save_supplier_purch_details.push(get_supp_purch_data)
     })
+    data = {'data':save_supplier_purch_details,'table_name':'OrgSuppliers','action':GLOBAL_ACTION}
     $.ajax({
         type: 'POST',
         url: ajax_update_supplier_org_details_url,
-        data: JSON.stringify(save_supplier_purch_details),
+        data: JSON.stringify(data),
         contentType: "application/json; charset=utf-8",
         dataType: 'json',
         success: function (response) {
