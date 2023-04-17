@@ -19,37 +19,8 @@
                     <i class="fas fa-info-circle"></i><span> Basic Data</span>
                 </div>
             </li>
-<!--            <li data-tab-target="#org_data_tab" class="sub-tab">-->
-<!--                <div class="sub-tab-link">-->
-<!--                    <i class="fas fa-sitemap"></i><span> Organizational Data</span>-->
-<!--                </div>-->
-<!--            </li>-->
-<!--            <li data-tab-target="#buisness_doc_tab" class="sub-tab">-->
-<!--                <div class="sub-tab-link">-->
-<!--                    <i class="fas fa-file-alt"></i><span> Business Document</span>-->
-<!--                </div>-->
-<!--            </li>-->
         </ul>
 
-        <div class="tab-content">
-            <div id="basic_data_tab" data-tab-content class="active">
-                <div class="mt-3">
-
-                </div>
-            </div>
-
-<!--            <div id="org_data_tab" data-tab-content>-->
-<!--                <div class="mt-3">-->
-
-<!--                </div>-->
-<!--            </div>-->
-
-<!--            <div id="buisness_doc_tab" data-tab-content>-->
-<!--                <div class="mt-3">-->
-
-<!--                </div>-->
-<!--            </div>-->
-        </div>
 
         <div class="card card-margin">
 
@@ -211,7 +182,7 @@
                                 <div class="row">
                                     <div class="form-group col-md">
                                         <label> Working days:</label><br>
-                                        {{ supplier_form.delivery_days }}
+                                        {{ supplier_form.working_days }}
                                     </div>
                                     <div class="form-group col-md">
                                         <label> Duns number:</label><br>
@@ -266,91 +237,6 @@
                         
                     </form>
                 </div>
-
-            
-<!--                <div id="org_data_tab" class="tab-pane fade p-3">-->
-<!--                    <div class="alert alert-success display-none" id="supplier_org_success" role="alert"></div>-->
-<!--                    <div class="card">-->
-<!--                        <h5 class="card-header">Organizational data</h5>-->
-<!--                        <div class="card-body">-->
-<!--                            <div class="mb-4">-->
-<!--                                <button class="btn btn-primary" onclick="purch_org_add_new_line()">-->
-<!--                                    <i class="fa fa-plus" aria-hidden="true" id="add_line" title="Add Line"></i> add</button>-->
-<!--                                &lt;!&ndash;<button class="button" onclick="">&ndash;&gt;-->
-<!--                                &lt;!&ndash;   <i class="fa fa-trash" aria-hidden="true" id="delete_line" title="Delete Line" ></i> Delete</button>&ndash;&gt;-->
-<!--                                <button type="submit" class="btn btn-primary" onclick="save_supplier_org_details()"><i class="fas fa-save"></i> save</button>-->
-<!--                            </div>-->
-<!--                            <div>-->
-<!--                                <table class="org_registration_table mb-4" id="supp_org_details" >-->
-<!--                                    <thead>-->
-<!--                                        <tr>-->
-<!--                                            <th>Purchasing organisation </th>-->
-<!--                                            <th>PO Currency</th>-->
-<!--                                            <th>Payment Terms</th>-->
-<!--                                            <th>Incoterm </th>-->
-<!--                                            <th>GR based invoice verification</th>-->
-<!--                                            <th>Invoice confirmation expected</th>-->
-<!--                                            <th>GR confirmation expected</th>-->
-<!--                                            <th>PO response</th>-->
-<!--                                            <th>Shipping notification expected</th>-->
-<!--                                            <th>Purchase block</th>-->
-<!--                                        </tr>-->
-<!--                                    </thead>-->
-<!--                                    <tbody id="add_new_purch_org">-->
-<!--                                        <tr>-->
-<!--                                            <td>-->
-<!--                                                <select class="form-control">-->
-<!--                                                    <option selected="true" disabled>Select</option>-->
-<!--                                                    {% for porg in purch_org%}-->
-<!--                                                    <option>{{porg}}</option>-->
-<!--                                                    {% endfor %}-->
-<!--                                                </select>-->
-<!--                                            </td>-->
-<!--                                            <td>-->
-<!--                                                <select class="form-control">-->
-<!--                                                    <option selected="true" disabled>Select</option>-->
-<!--                                                    {% for currency in currency_id%}-->
-<!--                                                    <option>{{currency}}</option>-->
-<!--                                                    {% endfor %}-->
-<!--                                                </select>-->
-<!--                                            </td>-->
-<!--                                            <td>-->
-<!--                                                <select class="form-control">-->
-<!--                                                    <option selected="true" disabled>Select</option>-->
-<!--                                                    {% for payterms in payterm_list %}-->
-<!--                                                    <option>{{payterms}}</option>-->
-<!--                                                    {% endfor %}-->
-<!--                                                </select>-->
-<!--                                            </td>-->
-<!--                                            <td>-->
-<!--                                                <select class="form-control">-->
-<!--                                                    <option selected="true" disabled>Select</option>-->
-<!--                                                    {% for incoterms in incoterm_list %}-->
-<!--                                                    <option>{{incoterms}}</option>-->
-<!--                                                    {% endfor %}-->
-<!--                                                </select>-->
-<!--                                            </td>-->
-<!--                                            <td><input type="checkbox" name="gr_inv_vrf"></td>-->
-<!--                                            <td><input type="checkbox" name="inv_conf_exp"></td>-->
-<!--                                            <td><input type="checkbox" name="gr_conf_exp"></td>-->
-<!--                                            <td><input type="checkbox" name="po_resp"></td>-->
-<!--                                            <td><input type="checkbox" name="ship_notif_exp"></td>-->
-<!--                                            <td><input type="checkbox" name="purch_block"></td>-->
-<!--                                        </tr>-->
-<!--                                    </tbody>-->
-<!--                                </table>-->
-<!--                            </div>-->
-
-<!--                        </div>-->
-<!--                    </div>-->
-<!--                    -->
-<!--                </div>-->
-
-
-<!--                <div id="buisness_doc_tab" class="tab-pane fade p-3"><br>-->
-<!--                    <h3>buisness document tab</h3>-->
-<!--                    <p></p>-->
-<!--                </div>-->
             </div>
 
         </div>

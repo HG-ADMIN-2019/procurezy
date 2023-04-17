@@ -489,7 +489,7 @@ function display_emp_data(emp_data){
     $("#user_tab_tbody").empty();
     $.each(emp_data, function (i, emp) {
         if(emp.employee_id){
-            checkbox_input = '<input type="checkbox" class="emp_checkbox" onclick="valueChanged()" disabled >'
+            checkbox_input = '<input type="checkbox" class="emp_checkbox" onclick="valueChanged()">'
         }
         else{
             checkbox_input = '<input type="checkbox" class="emp_checkbox" onclick="valueChanged()" >'
@@ -910,7 +910,6 @@ var data = {};
  $('.toggle-input').change(function() {
         $('#id_confirm_popup').modal('show')
         if($(this).is(':checked')) {
-            console.log('This is firing');
             $('.toggle-off').removeClass('active');
             $('.toggle-on').addClass('active');
             data.flag = true

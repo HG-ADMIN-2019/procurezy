@@ -233,9 +233,9 @@
                                 <div class="row">
                                     <div class="form-group col-md">
                                         <label> Working Days</label><span class="hg_required"></span><br>
-                                        <input type="text" class="form-control hg_edit_display_mode" id="working_days" value="{{supplier_info.delivery_days}}">
-                                        <div class="display-none" id="edit_mode">
-                                        <select type="text" class="multiple_select form-control hg_edit_display_mode " id="working_days_id" name="working_days" multiple data-selected-text-format="count" data-actions-box="true" title='Select...'>
+<!--                                        <input type="text" class="form-control hg_edit_display_mode" id="working_days" value="{{supplier_info.delivery_days}}">-->
+                                        <div  id="edit_mode">
+                                        <select type="text" class="multiple_select form-control hg_edit_display_mode"  id="working_days_id" name="working_days" multiple data-selected-text-format="count" data-actions-box="true" title='Select...'>
                                             <option value="1">Sunday</option> <option value="2">Monday</option> <option value="3">Tuesday</option> <option value="4">Wednesday</option> <option value="5">Thursday</option> <option value="6">Friday</option> <option value="7">Saturday</option>
                                         </select>
                                         </div>
@@ -477,6 +477,7 @@ var curr_id = '{{supplier_info.currency_id | safe}}';
 var lang_id = '{{supplier_info.language_id | safe}}';
 var w_days = "{{supplier_info.delivery_days | safe}}";
 var img_url = '{{img_url.url | safe}}';
+
 $(document).ready(function(){
     $('#nav_menu_items').remove();
     $("body").css("padding-top", "4rem");
@@ -658,7 +659,6 @@ function loadFile3(event) {
     $('#image-upload-errors').hide();
     var img_extension_list = ['PNG','JPG', 'JPEG', 'BMP', 'TIF', 'TIFF', 'GIF']
     var reader = new FileReader();
-
     reader.onload = function(){
         const uploadfile = document.getElementById('supplier_image_id');
 <!--        if (uploadfile.files.length > 0) {-->

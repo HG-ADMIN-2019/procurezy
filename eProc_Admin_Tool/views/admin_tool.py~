@@ -108,11 +108,11 @@ def user_search(request):
             if data != 'csrfmiddlewaretoken':
                 value = request.POST[data]
                 if data == 'user_locked':
-                    value = set_search_data(value)
+                    value = set_search_data(data, value)
                 if data == 'pwd_locked':
-                    value = set_search_data(value)
+                    value = set_search_data(data, value)
                 if data == 'is_active':
-                    value = set_search_data(value)
+                    value = set_search_data(data, value)
                 if value != '':
                     search_fields[data] = value
 
