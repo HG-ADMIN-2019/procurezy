@@ -52,9 +52,9 @@
             <table id="display_basic_table" class="class_master_spendlimitvalue_table table table-bordered custom-table" >
                 <thead id="id_spendlimitvalue_table_header">
                 <tr>
-                    <th id="hg_select_checkbox" hidden>
+                    <th id="hg_select_checkbox"  hidden>
                         <div id="id_check_all" style="display:none;">
-                            <input type="checkbox" onchange="checkAll(this)" name="chk[]">
+                            <input type="checkbox" id="selectAll" name="chk[]">
                         </div>
                     </th>
                     <th>Company Number</th>
@@ -694,22 +694,19 @@
                 rendered_currency_data = response.upload_data_currency
                 spend_limit_value_drp()
                 $("#error_msg_id").css("display", "none")
-                $('#display_basic_table').DataTable().destroy();
+                $('#id_popup_table').DataTable().destroy();
                 $("#id_popup_tbody").empty();
-                $('#display_basic_table').DataTable().destroy();
                 //Reference the Table.
-                var grid = document.getElementById("display_basic_table");
-
+                var res = get_all_checkboxes(); // Function to get all the checkboxes
+                var $chkbox_all = $('td input[type="checkbox"]', res);
                 //Reference the CheckBoxes in Table.
-                var checkBoxes = grid.getElementsByTagName("INPUT");
                 var edit_basic_data = "";
                 var guid = '';
                 var dropdown_values = [];
-
                 //Loop through the CheckBoxes.
-                for (var i = 1; i < checkBoxes.length; i++) {
-                    if (checkBoxes[i].checked) {
-                    var row = checkBoxes[i].parentNode.parentNode;
+                for (var i = 0; i < $chkbox_all.length; i++) {
+                    if ($chkbox_all[i].checked) {
+                    var row = $chkbox_all[i].parentNode.parentNode;
                         if(GLOBAL_ACTION == "COPY"){
                             guid = 'GUID';
                             edit_basic_data += '<tr><td><input type="checkbox" required></td><td><select class="form-control" value="' + row.cells[1].innerHTML + '">'+company_dropdwn+'</select></td><td><input class="form-control check_special_char" type="text" value="'+row.cells[2].innerHTML+'" maxlength="8"  name="spend_code_id" style="text-transform:uppercase;" required></td><td><input class="form-control" type="number" value="'+row.cells[3].innerHTML+'" maxlength="16"  name="upper_limit_value" style="text-transform:uppercase;" required></td><td><select class="form-control value="' + row.cells[4].innerHTML + '" ">'+currency_dropdwn+'</select></td><td hidden><input type="text" value="'+guid+'" hidden></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
@@ -720,7 +717,7 @@
                             edit_basic_data += '<tr><td hidden><input type="checkbox" required></td><td><select class="form-control" disabled>'+company_dropdwn+'</select></td><td><input class="form-control check_special_char" type="text" value="'+row.cells[2].innerHTML+'" maxlength="8"  name="spend_code_id" style="text-transform:uppercase;" disabled></td><td><input class="form-control" type="number" value="'+row.cells[3].innerHTML+'" maxlength="16"  name="upper_limit_value" style="text-transform:uppercase;" required></td><td><select class="form-control" disabled>'+currency_dropdwn+'</select></td><td hidden><input type="text" value="'+guid+'" hidden></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
                             $("#header_select").prop("hidden", true);
                         }
-                        var row = checkBoxes[i].parentNode.parentNode;
+                        var row = $chkbox_all[i].parentNode.parentNode;
                         var company_type_value = row.cells[1].innerHTML
                         var currency_type_value = row.cells[4].innerHTML
                         dropdown_values.push([company_type_value,currency_type_value])
@@ -738,7 +735,6 @@
                 });
                 $("#id_del_ind_checkbox").prop("hidden", true);
                 $('#Spnd_Lim_Val_Modal').modal('show');
-                table_sort_filter('display_basic_table');
                 table_sort_filter('id_popup_table');
                 $('#Spnd_Lim_Val_Modal').modal('show');
                 CloseLoaderPopup();
