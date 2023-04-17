@@ -49,8 +49,8 @@
                     <thead id="id_detgl_table_header">
                     <tr>
                         <th id="hg_select_checkbox" hidden>
-                            <div id="id_check_all" style="overflow:auto;">
-                                <INPUT type="checkbox" onchange="checkAll(this)" name="chk[]">
+                            <div id="id_check_all" style="display:none;">
+                                <input type="checkbox" id="selectAll" name="chk[]">
                             </div>
                         </th>
                         <th>UNSPSC Code</th>
@@ -808,20 +808,18 @@
                 rendered_acc_value_list = response.acc_value_list
                 gl_account_dropdown()
                 $("#error_msg_id").css("display", "none")
-                $('#display_basic_table').DataTable().destroy();
+                $('#id_popup_table').DataTable().destroy();
                 $("#id_popup_tbody").empty();
                 //Reference the Table.
-                var grid = document.getElementById("display_basic_table");
-
+                var res = get_all_checkboxes(); // Function to get all the checkboxes
+                var $chkbox_all = $('td input[type="checkbox"]', res);
                 //Reference the CheckBoxes in Table.
-                var checkBoxes = document.getElementsByClassName("checkbox_check");
                 var edit_basic_data = "";
                 var dropdown_array = [];
-
                 //Loop through the CheckBoxes.
-                for (var i = 0; i < checkBoxes.length; i++) {
-                    if (checkBoxes[i].checked) {
-                        var row = checkBoxes[i].parentNode.parentNode;
+                for (var i = 0; i < $chkbox_all.length; i++) {
+                    if ($chkbox_all[i].checked) {
+                        var row = $chkbox_all[i].parentNode.parentNode;
                             guid = row.cells[9].innerHTML;
                             unique_input = '<select class="form-control">' + prod_cat_dropdown + ' </select>'
                             edit_basic_data += '<tr ><td><input type="checkbox" required></td>'+
@@ -874,7 +872,6 @@
                 });
                 $("#id_del_ind_checkbox").prop("hidden", true);
                 $("#Detgl_Modal").modal('show');
-                table_sort_filter('display_basic_table');
                 table_sort_filter('id_popup_table');
                 $('#Detgl_Modal').modal('show');
                 CloseLoaderPopup();

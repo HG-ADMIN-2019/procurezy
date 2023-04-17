@@ -60,21 +60,20 @@ function add_popup_row() {
 
 //**********************************************************
 function onclick_copy_update_button() {
-    $("#error_msg_id").css("display", "none")
     var dropdown_select_array = []
+    $("#error_msg_id").css("display", "none")
+    $('#id_popup_table').DataTable().destroy();
     $("#id_popup_tbody").empty();
-    $('#display_basic_table').DataTable().destroy();
     //Reference the Table.
-    var grid = document.getElementById("display_basic_table");
-
+    var res = get_all_checkboxes(); // Function to get all the checkboxes
+    var $chkbox_all = $('td input[type="checkbox"]', res);
     //Reference the CheckBoxes in Table.
-    var checkBoxes = grid.getElementsByTagName("INPUT");
     var edit_basic_data = "";
     var guid= '';
     //Loop through the CheckBoxes.
-    for (var i = 1; i < checkBoxes.length; i++) {
-        if (checkBoxes[i].checked) {
-        var row = checkBoxes[i].parentNode.parentNode;
+    for (var i = 0; i <  $chkbox_all.length; i++) {
+        if ($chkbox_all[i].checked) {
+        var row = $chkbox_all[i].parentNode.parentNode;
             if(GLOBAL_ACTION == "COPY"){
                 guid = 'GUID';
                 edit_basic_data += '<tr><td><input type="checkbox"></td><td><input class="form-control check_special_char" type="text" value="' + row.cells[1].innerHTML + '" minlength="4" maxlength="08" name="company_id" required></td><td><input class="form-control check_special_char" type="text" value="' + row.cells[2].innerHTML + '" maxlength="100" name="name1" required></td><td><input class="form-control check_special_char" type="text" value="' + row.cells[3].innerHTML + '" maxlength="100" name="name2" required></td><td hidden><input value="' + guid + '"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';;
@@ -87,7 +86,7 @@ function onclick_copy_update_button() {
 
                 $("#header_select").prop("hidden",true);
             }
-            var row = checkBoxes[i].parentNode.parentNode;
+            var row = $chkbox_all[i].parentNode.parentNode;
             var company_id = row.cells[1].innerHTML
             dropdown_select_array.push([company_id])
         }
