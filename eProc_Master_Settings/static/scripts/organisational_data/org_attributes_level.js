@@ -39,10 +39,11 @@ $('#save_id').click(function () {
 //Read popup table data
 function read_popup_data() {
     $('#id_popup_table').DataTable().destroy();
+    org_attr_level_data = new Array();
     validate_add_attributes = [];
-    duplicate_entry = [];
     $("#id_popup_table TBODY TR").each(function() {
         var row = $(this);
+        org_attr_level = {};
         org_attr_level.node_type = row.find("TD").eq(1).find('select').val();
         org_attr_level.node_values = row.find("TD").eq(2).find('select').val();
         org_attr_level.org_model_nodetype_config_guid = row.find("TD").eq(3).find('input').val();
@@ -104,6 +105,7 @@ function new_row_data(){
 // Function to get main table data
 function get_main_table_data(){
     main_table_low_value = [];
+    $('#display_basic_table').DataTable().destroy();
     $("#display_basic_table TBODY TR").each(function() {
         var row = $(this);
         var main_attribute = {};

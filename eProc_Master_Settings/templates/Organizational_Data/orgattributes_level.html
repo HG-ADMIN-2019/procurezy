@@ -273,12 +273,7 @@
         }
         else{
             $.each(org_attr_level, function (i, item) {
-                if (item.node_type.length == 0) {
-                    error_message = ui_messeges("JMSG002")// Get message details
-                    no_duplicate_value = 'N'
-                    return [no_duplicate_value,error_message]
-                }
-                if (item.node_values.length == 0) {
+                if ((item.node_type.length == 0) || (item.node_values.length == 0)) {
                     error_message = ui_messeges("JMSG002")// Get message details
                     no_duplicate_value = 'N'
                     return [no_duplicate_value,error_message]

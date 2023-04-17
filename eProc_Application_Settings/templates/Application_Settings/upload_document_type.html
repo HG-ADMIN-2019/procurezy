@@ -127,6 +127,7 @@
 </div>
 <script>
     var rendered_doctype_data = {{ upload_document_type| safe}};
+    var messages_list = {{messages_list|safe}};
     var rendered_dropdown_db_values
     var doctype_data_array = {}
     var main_table_doctype_value = [];
@@ -239,6 +240,7 @@
             else if (error_message){
                 display_error_message(error_message)
             }
+            table_sort_filter('id_popup_table');
         } 
     }
 
@@ -299,22 +301,22 @@
             }
         });
         if (add_attr_duplicates_list.length != 0) {
-            get_message_details("JMSG001"); // Get message details
+            error_message = ui_messeges("JMSG001")// Get message details
             no_duplicate_value = 'N'
             return [no_duplicate_value,error_message]
         }
         else {
             $.each(doctype, function (i, item) {
-                if (item && item.document_type && item.document_type.length == 0) {
-                    get_message_details("JMSG002"); // Get message details
+                if ((item.document_type == null) || (item.document_type_desc.length == 0)) {
+                    error_message = ui_messeges("JMSG002")// Get message details
                     no_duplicate_value = 'N'
                     return [no_duplicate_value,error_message]
                 }
-                if (item.document_type_desc.length == 0) {
-                    get_message_details("JMSG002"); // Get message details
-                    no_duplicate_value = 'N'
-                    return [no_duplicate_value,error_message]
-                }
+                // if (item.document_type_desc.length == 0) {
+                //     get_message_details("JMSG002"); // Get message details
+                //     no_duplicate_value = 'N'
+                //     return [no_duplicate_value,error_message]
+                // }
             });
         }
         return [no_duplicate_value,error_message]
