@@ -106,16 +106,11 @@ function get_main_table_data(){
 }
 
 // Function for add a new row data
-var inc_index = 0;
 function new_row_data() {
-    basic_add_new_html = '<tr ><td><input type="checkbox" required></td>'+
-        '<td><select type="text" class="input form-control documenttype" id="documenttype-'+inc_index+'" name="documenttype" onchange="GetSelectedTextValue(this)"><option value="" disabled selected>Select your option</option>'+ document_type_dropdown +'</select></td>'+
-        '<td><input class="form-control description" type="text" id="description-'+inc_index+'" name="description" disabled></td>'+
-        '<td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
-        $('#id_popup_tbody').append(basic_add_new_html);
-        if (GLOBAL_ACTION == "doctype_upload") {
-            $(".class_del_checkbox").prop("hidden", false);
-        }
-        table_sort_filter_popup('id_popup_table');
-        inc_index += 1;
+    basic_add_new_html = '<tr><td><input type="checkbox" required></td>'+
+    '<td><select type="text" class="input form-control documenttype" id="documenttype-1" name="documenttype" onchange="GetSelectedTextValue(this)"><option value="" disabled selected>Select your option</option>'+ document_type_dropdown +'</select></td>'+
+    '<td><input class="form-control description" type="text" id="description-1" name="description" disabled></td>'+
+    '<td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+    $('#id_popup_tbody').append(basic_add_new_html);
+    table_sort_filter('id_popup_table');
 }

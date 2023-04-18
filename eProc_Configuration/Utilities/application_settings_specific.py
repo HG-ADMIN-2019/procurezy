@@ -975,15 +975,21 @@ class ApplicationSettingsSave:
         message = get_message_detail_based_on_action(auth_data['action'])
 
         upload_response = get_configuration_data(Authorization, {'del_ind': False, 'client': self.client},
-                                                 ['auth_guid', 'auth_obj_grp', 'role'
-                                                  ])
-        return upload_response, message
+                                                 ['role', 'auth_obj_grp', 'auth_guid'])
+
+        upload_fieldtypedesc = fieldtypedesc_instance.get_field_type_desc_values(FieldTypeDescription,
+                                                                                 {'del_ind': False, 'used_flag': False,
+                                                                                  'field_name': 'roles',
+                                                                                  'client': self.client},
+                                                                                 ['field_type_id', 'field_type_desc'])
+        return upload_response, message, upload_fieldtypedesc
 
     def save_auth(self, auth_data):
         """
 
         """
         auth_db_list = []
+        roles_type_field = ''
         used_flag_set = []
         used_flag_reset = []
         for auth_detail in auth_data:
@@ -995,8 +1001,8 @@ class ApplicationSettingsSave:
 
                 guid = guid_generator()
                 auth_db_dictionary = {'auth_guid': guid,
-                                      'auth_obj_grp': auth_detail['auth_obj_grp'],
                                       'role': UserRoles.objects.get(role=auth_detail['role']),
+                                      'auth_obj_grp': auth_detail['auth_obj_grp'],
                                       'del_ind': False,
                                       'client': self.client,
                                       'authorization_changed_at': self.current_date_time,
@@ -1005,6 +1011,7 @@ class ApplicationSettingsSave:
                                       'authorization_created_by': self.username,
                                       }
                 auth_db_list.append(auth_db_dictionary)
+                fieldtypedesc_instance.update_usedFlag(roles_type_field)
             else:
                 django_query_instance.django_update_query(Authorization,
                                                           {'role': auth_detail['role'],
@@ -1017,11 +1024,11 @@ class ApplicationSettingsSave:
                                                            'client': self.client,
                                                            'del_ind': auth_detail['del_ind']})
             if auth_detail['del_ind']:
-                used_flag_reset.append(auth_detail['auth_obj_grp'])
+                used_flag_reset.append(auth_detail['role'])
             else:
-                used_flag_set.append(auth_detail['auth_obj_grp'])
+                used_flag_set.append(auth_detail['role'])
         bulk_create_entry_db(Authorization, auth_db_list)
-        set_reset_field(used_flag_reset, used_flag_set, 'auth_obj_grp')
+        set_reset_field(used_flag_reset, used_flag_set, 'roles')
 
     def save_orgattributes_level_data(self, orgattlevel_data):
         orgattlevel_db_list = []
@@ -1405,19 +1412,9 @@ def user_roles_data():
 
 
 def authorization_dropdown():
-    upload_data_roles = list(
-        FieldTypeDescription.objects.filter(field_name='roles', del_ind=False,
-                                            client=global_variables.GLOBAL_CLIENT).values('field_type_id',
-                                                                                          'field_type_desc'))
-
-    upload_data_auth_grp_obj = list(
-        FieldTypeDescription.objects.filter(field_name='auth_obj_grp', used_flag=0, del_ind=False,
-                                            client=global_variables.GLOBAL_CLIENT).values('field_type_id',
-                                                                                          'field_type_desc'))
-
+    upload_dropdown_db_values = get_field_unused_list_values('authorization')
     data = {
-        'upload_data_roles': upload_data_roles,
-        'upload_data_auth_grp_obj': upload_data_auth_grp_obj
+        'dropdown_db_values': upload_dropdown_db_values
     }
     return data
 
@@ -1427,6 +1424,13 @@ def authorization_data():
         Authorization.objects.filter(client=global_variables.GLOBAL_CLIENT, del_ind=False).values('auth_guid',
                                                                                                   'auth_obj_grp'
                                                                                                   'role'))
+    for auth_fd in upload_auth:
+        if django_query_instance.django_existence_check(UserRoles,
+                                                        {'del_ind': False,
+                                                         'role': auth_fd['role']}):
+            auth_fd["del_ind_flag"] = False
+        else:
+            auth_fd["del_ind_flag"] = True
     return upload_auth
 
 

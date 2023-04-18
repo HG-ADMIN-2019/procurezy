@@ -27,19 +27,17 @@ function onclick_upload_button() {
 //**********************************************************
 function onclick_copy_update_button(data) {
     $("#error_msg_id").css("display", "none")
+    $('#id_popup_table').DataTable().destroy();
     $("#id_popup_tbody").empty();
-    $('#display_basic_table').DataTable().destroy();
     //Reference the Table.
-    var grid = document.getElementById("display_basic_table");
-
+    var res = get_all_checkboxes(); // Function to get all the checkboxes
+    var $chkbox_all = $('td input[type="checkbox"]', res);
     //Reference the CheckBoxes in Table.
-    var checkBoxes = grid.getElementsByTagName("INPUT");
     var edit_basic_data = "";
-    var dropdown_values = [];
     //Loop through the CheckBoxes.
-    for (var i = 1; i < checkBoxes.length; i++) {
-       if (checkBoxes[i].checked) {
-            var row = checkBoxes[i].parentNode.parentNode;
+    for (var i = 0; i < $chkbox_all.length; i++) {
+       if ($chkbox_all[i].checked) {
+            var row = $chkbox_all[i].parentNode.parentNode;
             if(GLOBAL_ACTION == "UPDATE"){
                unique_input = '<input class="form-control" value = "'+ row.cells[1].innerHTML +'" name="incoterm_key" maxlength="3"  type="text" readonly>'
                  edit_basic_data += '<tr><td hidden><input type="checkbox"></td>'+
@@ -61,7 +59,6 @@ function onclick_copy_update_button(data) {
     $('#id_popup_tbody').append(edit_basic_data);
     $("#id_del_ind_checkbox").prop("hidden", true);
     $('#Incoterms_Modal').modal('show');
-    table_sort_filter('display_basic_table');
     table_sort_filter('id_popup_table');
 }
 

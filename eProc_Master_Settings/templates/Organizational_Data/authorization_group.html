@@ -77,36 +77,38 @@
                     </button>
                 </div>
                 <!-- Modal body -->
-                <div class="modal-body scrollbox">
-                    <div id="id_del_add_button">
-                        <button class="btn btn-primary" type="button" title="Add New Row " onclick="add_popup_row()"><i class="fa fa-plus"></i> Add New Row   </button>
-                        <button class="btn btn-outline-danger" title="Delete" onclick="application_settings_delete_Row('id_popup_table')"><i class="fa fa-trash" aria-hidden="true" title="Delete Line"></i> Delete</button>
+                <div class="modal-body">
+                    <div class="popup-vertical-scroll">
+                        <div id="id_del_add_button">
+                            <button class="btn btn-primary" type="button" title="Add New Row " onclick="add_popup_row()"><i class="fa fa-plus"></i> Add New Row   </button>
+                            <button class="btn btn-outline-danger" title="Delete" onclick="application_settings_delete_Row('id_popup_table')"><i class="fa fa-trash" aria-hidden="true" title="Delete Line"></i> Delete</button>
+                        </div>
+                        <div id="id_check_success_messages" class="alert alert-success check_success_message" hidden></div>
+                        <div id="id_check_error_messages" class="alert alert-danger check_error_messages" hidden></div>
+                        <div id="id_check_special_character_messages" class="alert alert-danger check_special_character_messages" hidden>
+                            <p id="id_error_msg_auth_group_code"></p>
+                            <p id="id_error_msg_auth_group_name"></p>
+                            <p id="id_error_msg_auth_group_length"></p>
+                        </div>
+                        <div id="error_msg_id" class="alert alert-danger display-none" role="alert"><span id="error_message"></span></div>
+                        <div id="id_warning_msg_id" class="alert alert-warning display-none" role="alert"></div>
+                        <div id="id_info_msg_id" class="alert alert-primary display-none" role="alert"></div>
+                        <table class="class_popup_table table table-bordered mt-2" id="id_popup_table">
+                            <thead>
+                            <tr>
+                                <th>Select</th>
+                                <th>Authorization Group</th>
+                                <th>Authorization Group Description</th>
+                                <th>Authorization Type</th>
+                                <th>Authorization Object </th>
+                                <th hidden>GUID</th>
+                                <th id="id_del_ind_checkbox" hidden>Del Indicator</th>
+                            </tr>
+                            </thead>
+                            <tbody id=id_popup_tbody>
+                            </tbody>
+                        </table>
                     </div>
-                    <div id="id_check_success_messages" class="alert alert-success check_success_message" hidden></div>
-                    <div id="id_check_error_messages" class="alert alert-danger check_error_messages" hidden></div>
-                    <div id="id_check_special_character_messages" class="alert alert-danger check_special_character_messages" hidden>
-                        <p id="id_error_msg_auth_group_code"></p>
-                        <p id="id_error_msg_auth_group_name"></p>
-                        <p id="id_error_msg_auth_group_length"></p>
-                    </div>
-                    <div id="error_msg_id" class="alert alert-danger display-none" role="alert"><span id="error_message"></span></div>
-                    <div id="id_warning_msg_id" class="alert alert-warning display-none" role="alert"></div>
-                    <div id="id_info_msg_id" class="alert alert-primary display-none" role="alert"></div>
-                    <table class="class_popup_table table table-bordered mt-2" id="id_popup_table">
-                        <thead>
-                        <tr>
-                            <th>Select</th>
-                            <th>Authorization Group</th>
-                            <th>Authorization Group Description</th>
-                            <th>Authorization Type</th>
-                            <th>Authorization Object </th>
-                            <th hidden>GUID</th>
-                            <th id="id_del_ind_checkbox" hidden>Del Indicator</th>
-                        </tr>
-                        </thead>
-                        <tbody id=id_popup_tbody>
-                        </tbody>
-                    </table>
                 </div>
                 <!-- Modal footer -->
                 <div class="modal-footer">
@@ -181,35 +183,40 @@
         get_main_table_data(); //Read data from main table
         // compare for duplicates in popup
         [no_duplicate_value,error_message] = compare_table_for_duplicate_entries(validate_add_attributes, auth_group_data)
-        if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
-            [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
-        }
-        if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
-            var add_basic_data = '';
-            var auth_group_data_array = auth_group_data;
-            $('#id_save_confirm_popup').modal('hide');
-            data = {'data':auth_group_data,'table_name':'AuthorizationGroup','action':GLOBAL_ACTION}
-            OpenLoaderPopup();
-            $.ajax({
-                type: 'POST',
-                url: "{% url 'eProc_Configuration:create_update_application_data'%}",
-                data: JSON.stringify(data),
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                success: function(Response) {
-                    rendered_auth_group_data = Response[0];
-                    rendered_auth_group_field_data = Response[2];
-                    display_basic_db_data();
-                    $('#myModal').modal('hide');
-                    success_response(Response);  // Display Response data
-                    CloseLoaderPopup();
-                }
-            });
-        }
-        else if (error_message){
+        if (error_message){
             display_error_message(error_message)
         }
-        table_sort_filter('id_popup_table');
+        else {
+            if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
+                [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
+            }
+            if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
+                var add_basic_data = '';
+                var auth_group_data_array = auth_group_data;
+                $('#id_save_confirm_popup').modal('hide');
+                data = {'data':auth_group_data,'table_name':'AuthorizationGroup','action':GLOBAL_ACTION}
+                OpenLoaderPopup();
+                $.ajax({
+                    type: 'POST',
+                    url: "{% url 'eProc_Configuration:create_update_application_data'%}",
+                    data: JSON.stringify(data),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function(Response) {
+                        rendered_auth_group_data = Response[0];
+                        rendered_auth_group_field_data = Response[2];
+                        display_basic_db_data();
+                        $('#myModal').modal('hide');
+                        success_response(Response);  // Display Response data
+                        CloseLoaderPopup();
+                    }
+                });
+            }
+            else if (error_message){
+                display_error_message(error_message)
+            }
+            table_sort_filter('id_popup_table');
+        }
     }
    
     //delete the selected row in db................
@@ -317,7 +324,7 @@
         }
         else {
             $.each(auth_group, function (i, item){
-                if (item.auth_obj_grp.length == 0){
+                if ((item.auth_obj_grp == null) || (item.auth_grp_desc.length == 0 )){
                     error_message = ui_messeges("JMSG002")// Get message details
                     no_duplicate_value = 'N'
                     return [no_duplicate_value,error_message]

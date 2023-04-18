@@ -85,7 +85,7 @@ function read_popup_data(){
         var row = $(this);
         aac = {};
         aac.del_ind = row.find("TD").eq(3).find('input[type="checkbox"]').is(':checked');
-        aac.description = row.find("TD").eq(2).find('input[type="text"]').val().toUpperCase();
+        aac.description = row.find("TD").eq(2).find('input[type="text"]').val();
         aac.account_assign_cat = row.find("TD").eq(1).find('select[type="text"]').val();
         if (aac == undefined) {
             aac.account_assign_cat= row.find("TD").eq(1).find('select[type="text"]').val();
