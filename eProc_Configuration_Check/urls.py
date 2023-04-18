@@ -24,5 +24,7 @@ urlpatterns = [
     path('check_inco_terms', views.check_inco_terms, name='check_inco_terms'),
     path('check_paymentterm_desc', views.check_paymentterm_desc, name='check_paymentterm_desc'),
     path('check_country', views.check_country, name='check_country'),
+    path('check_currency', views.check_currency, name='check_currency'),
+    path('check_language', views.check_language, name='check_language'),
 
 ]
