@@ -72,13 +72,14 @@ function delete_duplicate() {
 
 //Functtion to hide and display save related popups
 $('#save_id').click(function () {
-    $('#myModal').modal('hide');
+    $('#accasscat_Modal').modal('hide');
     accasscat_data = read_popup_data();
     $('#id_save_confirm_popup').modal('show');
 });
 
 //Read popup table data
 function read_popup_data(){
+    $('#id_popup_table').DataTable().destroy();
     accasscat_data = new Array();
     validate_add_attributes = [];
     $("#id_popup_table TBODY TR").each(function() {
@@ -93,6 +94,7 @@ function read_popup_data(){
         validate_add_attributes.push(aac.account_assign_cat);
         accasscat_data.push(aac);
     });
+    table_sort_filter('id_popup_table');
     return accasscat_data;
 }
 
