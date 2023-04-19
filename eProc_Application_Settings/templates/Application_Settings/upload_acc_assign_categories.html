@@ -150,7 +150,6 @@
     function popup_save_data() {
         $('#success_msg_id').empty()
         $('#id_popup_table').DataTable().destroy();
-        var main_table_low_value = [];
         no_duplicate_entries = 'Y'
         no_duplicate_value = 'Y'
         var error_message = '';
@@ -166,7 +165,6 @@
                 [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
             }
             if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
-                var add_basic_data = '';
                 var aac_data_array = accasscat_data;
                 $('#id_save_confirm_popup').modal('hide');
                 data = {'data':accasscat_data,'table_name':'AccountAssignmentCategory','action':GLOBAL_ACTION}
@@ -190,6 +188,7 @@
             else if (error_message){
                 display_error_message(error_message)
             }
+            table_sort_filter('id_popup_table');
         }
     }
 
@@ -291,13 +290,8 @@
         }
         else {
             $.each(aac, function (i, item) {
-                if (item.account_assign_cat.length == 0) {
-                    get_message_details("JMSG002"); //// Get message details
-                    no_duplicate_value = 'N'
-                    return [no_duplicate_value,error_message]
-                }
-                if (item.description.length == 0) {
-                    get_message_details("JMSG002"); //// Get message details
+                if ((item.account_assign_cat == null) || (item.description.length == 0)){
+                    error_message = ui_messeges("JMSG002")// Get message details
                     no_duplicate_value = 'N'
                     return [no_duplicate_value,error_message]
                 }

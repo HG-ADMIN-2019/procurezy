@@ -52,8 +52,8 @@
             <table id="display_basic_table" class="class_master_spendlimitvalue_table table table-bordered custom-table" >
                 <thead id="id_spendlimitvalue_table_header">
                 <tr>
-                    <th id="hg_select_checkbox" hidden>
-                     <div id="id_check_all" style="display:none;">
+                    <th id="hg_select_checkbox"  hidden>
+                        <div id="id_check_all" style="display:none;">
                             <input type="checkbox" id="selectAll" name="chk[]">
                         </div>
                     </th>
@@ -694,8 +694,8 @@
                 rendered_currency_data = response.upload_data_currency
                 spend_limit_value_drp()
                 $("#error_msg_id").css("display", "none")
+                $('#id_popup_table').DataTable().destroy();
                 $("#id_popup_tbody").empty();
-                $('#display_basic_table').DataTable().destroy();
                 //Reference the Table.
                 var res = get_all_checkboxes(); // Function to get all the checkboxes
                 var $chkbox_all = $('td input[type="checkbox"]', res);
@@ -704,7 +704,7 @@
                 var guid = '';
                 var dropdown_values = [];
                 //Loop through the CheckBoxes.
-                for (var i = 1; i < $chkbox_all.length; i++) {
+                for (var i = 0; i < $chkbox_all.length; i++) {
                     if ($chkbox_all[i].checked) {
                     var row = $chkbox_all[i].parentNode.parentNode;
                         if(GLOBAL_ACTION == "COPY"){

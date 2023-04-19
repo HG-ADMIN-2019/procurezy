@@ -9,7 +9,7 @@ $(".remove_upload_data").click(() => {
     $("#id_error_msg").html("");
     $("#id_popup_tbody").empty();
     $("#id_error_msg").empty();
-    $('#myModal').modal('hide');
+    $('#po_criteria_Modal').modal('hide');
     $("#id_error_msg").prop("hidden", true);
     $("#id_error_msg_client").prop("hidden", true);
     $("#id_error_msg_description").prop("hidden", true);
@@ -23,7 +23,7 @@ $(".remove_upload_data").click(() => {
 
 //Functtion to hide and display save related popups
 $('#save_id').click(function () {
-    $('#myModal').modal('hide');
+    $('#po_criteria_Modal').modal('hide');
     po_split_criteria_data = read_popup_data();
     $('#id_save_confirm_popup').modal('show');
 });
@@ -63,7 +63,7 @@ function display_error_message(error_message){
     document.getElementById("error_message").style.color = "Red";
     $("#error_msg_id").css("display", "block")
     $('#id_save_confirm_popup').modal('hide');
-    $('#myModal').modal('show');
+    $('#po_criteria_Modal').modal('show');
 }
 
 // Function for add a new row data
@@ -83,7 +83,7 @@ function get_main_table_data() {
     $("#display_basic_table TBODY TR").each(function() {
         var row = $(this);
         var main_attribute = {};
-        main_attribute.po_split_type = row.find("TD").eq(1).attr('id');
+        main_attribute.po_split_type = row.find("TD").eq(1).html();
         main_attribute.company_code_id = row.find("TD").eq(2).html();
         main_attribute.activate = row.find("TD").eq(3).html();
         var data = '';

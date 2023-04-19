@@ -209,6 +209,7 @@ $('#save_id').click(function () {
 function read_popup_data() {
     numberranges_data = new Array();
     validate_add_attributes = [];
+    $('#id_popup_table').DataTable().destroy();
     $("#id_popup_table TBODY TR").each(function () {
         var row = $(this);
         number_range={};

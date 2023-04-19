@@ -36,7 +36,7 @@ $(".remove_upload_data").click(() => {
     $("#id_check_success_messages").prop("hidden", true);
     $("#id_check_special_character_messages").prop("hidden", true)
     $("#id_check_data").prop("hidden", true);
-    $('#id_popup_table').DataTable().destroy();
+    $('#id_popup_table').DataTable().destroy();Please delete Highlight duplicate and empty records
 });
 
 // on click edit icon display the data in edit mode

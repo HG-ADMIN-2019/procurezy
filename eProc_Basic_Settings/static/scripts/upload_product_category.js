@@ -125,8 +125,13 @@ $(".remove_upload_data").click(() => {
 });
 
 function display_error_message(error_message){
-        $('#error_message').text(error_message);
-        document.getElementById("error_message").style.color = "Red";
+        // $('#error_message').text(error_message);
+        // document.getElementById("error_message").style.color = "Red";
+        var errorElement = document.getElementById("error_message");
+        if (errorElement) {
+            errorElement.textContent = error_message;
+            errorElement.style.color = "Red";
+        }
         $("#error_msg_id").css("display", "block");
         $('#id_save_confirm_popup').modal('hide');
         $('#unspscModal').modal('show');
@@ -210,7 +215,7 @@ function get_main_table_data(){
         var row = $(this);
         var main_attribute = {};
         main_attribute.prod_cat_id = row.find("TD").eq(1).html();
-        main_attribute.prod_cat_desc = row.find("TD").eq(2).html();
+        // main_attribute.prod_cat_desc = row.find("TD").eq(2).html();
         main_table_low_value.push(main_attribute.prod_cat_id);
     });
     table_sort_filter('display_basic_table');

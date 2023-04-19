@@ -706,10 +706,19 @@ function ui_messeges(messages_id){
        return error_message
 }
 
-function row_color_highlight(row){
+function row_color_highlight(row){                  //for duplicate entries
      $(row).css('background-color', '#ff6633');
 }
-function row_color_no_highlight(row){
+function row_color_highlight_special(row){              //for special entries
+     $(row).css('background-color', '#FFCCCB');
+}
+function row_color_highlight_empty(row){                //for empty entries
+     $(row).css('background-color', '#FFB6C1');
+}
+function row_color_highlight_minlength(row){
+    $(row).css('background-color', '#FFCCCB');        //for minimum
+}
+function row_color_no_highlight(row){                 //not highlighting
      $(row).css('background-color', '');
 }
 

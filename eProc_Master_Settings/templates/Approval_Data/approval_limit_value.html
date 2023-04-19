@@ -53,8 +53,13 @@
                 <table id="display_basic_table" class="class_basic_alv_table table table-bordered custom-table">
                     <thead id="id_alv_table_header">
                     <tr>
+<<<<<<< HEAD
                         <th id="hg_select_checkbox" hidden>
                              <div id="id_check_all" style="display:none;">
+=======
+                        <th id="hg_select_checkbox"  hidden>
+                            <div id="id_check_all" style="display:none;">
+>>>>>>> adarshg
                                 <input type="checkbox" id="selectAll" name="chk[]">
                             </div>
                         </th>
@@ -202,6 +207,7 @@
                 rendered_company_data = response.upload_data_company
                 applimval_drpdown()
                 $("#error_msg_id").css("display", "none")
+                $('#id_popup_table').DataTable().destroy();
                 $("#id_popup_tbody").empty();
                 //Reference the Table.
                 var res = get_all_checkboxes(); // Function to get all the checkboxes
@@ -211,7 +217,11 @@
                 var guid = '';
                 var dropdown_values = [];
                 //Loop through the CheckBoxes.
+<<<<<<< HEAD
                 for (var i = 1; i < $chkbox_all.length; i++) {
+=======
+                for (var i = 0; i < $chkbox_all.length; i++) {
+>>>>>>> adarshg
                     if ($chkbox_all[i].checked) {
                     var row = $chkbox_all[i].parentNode.parentNode;
                         if(GLOBAL_ACTION == "COPY"){

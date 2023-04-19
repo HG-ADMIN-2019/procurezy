@@ -34,9 +34,9 @@
                     <button class="btn btn-outline-danger btn-sm" title="Delete" id="id_delete_data" value="auth_delete" style="display:none;" data-toggle="modal" data-target="#id_delete_confirm_popup">
                         <i class="fa fa-trash" ></i> Delete
                     </button>
-                    <button class="btn btn-primary btn-sm" title="Update" id="id_update_data" style="display:none;" value="UPDATE" type="button" onclick="onclick_update_button()">
-                        <i class="far fa-edit"></i> Update
-                    </button>
+<!--                    <button class="btn btn-primary btn-sm" title="Update" id="id_update_data" style="display:none;" value="UPDATE" type="button" onclick="onclick_update_button()">-->
+<!--                        <i class="far fa-edit"></i> Update-->
+<!--                    </button>-->
                     <button class="btn btn-secondary btn-sm" title="Cancel" id="id_cancel_data" style="display:none;" type="button"  onclick="display_basic_db_data()">
                         <i class="fas fa-times"></i> cancel
                     </button>
@@ -69,7 +69,7 @@
         </div>
     </div>
     <!--modal popup for Add,copy,update and upload-->
-    <div class="modal fade" id="myModal">
+    <div class="modal fade" id="auth_Modal">
         <div class="modal-dialog modal-dialog-centered modal-xl" style="overflow:auto;">
             <div class="modal-content">
                 <div class="modal-header">
@@ -132,31 +132,40 @@
 </div>
 {{ auth_type_values|json_script:"auth_type_values" }}
 <script>
-    var rendered_auth_data = {{auth|safe}};
-    var rendered_auth_group_data
-    var rendered_roles_data
+    var rendered_auth_data = {{auth|safe}}; 
+    var rendered_auth_group_data = {{upload_data_auth_grp_obj|safe}}; 
+    var rendered_roles_data = {{upload_data_roles|safe}};
+    var messages_list = {{messages_list|safe}};
     var auth_data_array = {}
+    var auth_val_dict = {}
+    var auth_val_list = [];
     var auth = '';
     var edit_basic_data = '';
     var GLOBAL_ACTION = '';
     var no_duplicate_entries = 'Y'
+    var roles_dropdown;
     var Tablename = uiConstants["CONST_TABLENAME_AUTH"]
     var appname = uiConstants["CONST_APPNAME02"]
     var db_header_data = uiConstants["CONST_HEADER_DATA_AUTH"]
-   
-    //Dropdown function
-    var roles_dropdown;
-    var auth_val_list = [];
-    var auth_group_dropdown;
+
+    //**************************
     function dropdown_value(){
-        auth_group_dropdown = '';
-            $.each(rendered_auth_group_data, function(i, item){
-            auth_group_dropdown += '<option value="' + item.auth_obj_grp + '">' + item.auth_obj_grp +'</option>';
-        });
         roles_dropdown = '';
         $.each(rendered_roles_data, function(i, item){
-            roles_dropdown += '<option value="' + item.role + '">' + item.role +'</option>';
-        })
+            roles_dropdown += '<option value="' + item.field_type_id + '">' + item.field_type_id +'</option>';
+        });
+    }
+
+    //*********************
+    function GetSelectedTextValue(roles) {
+        var selectedText = roles.options[roles.selectedIndex].innerHTML;
+        var selectedValue = roles.value;
+        var selectedId = (roles.id).split('-')[1];
+        $.each (rendered_roles_data,function(i, item) {
+            if(selectedValue == item.field_type_id) {
+                $('#auth_obj_grp-'+selectedId).val(item.field_type_desc);
+            }
+        });
     }
 
     $.each(rendered_auth_data, function (i, item) {
@@ -175,38 +184,43 @@
         no_duplicate_entries = 'Y'
         no_duplicate_value = 'Y'
         var error_message = '';
-        $('#display_basic_table').DataTable().destroy();
         get_main_table_data(); //Read data from main table
         // compare for duplicates in popup
         [no_duplicate_value,error_message] = compare_table_for_duplicate_entries(validate_add_attributes, auth_data)
-        if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
-            // compare main table and pop up for duplicate values
-            [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
-        }
-        if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
-            var add_basic_data = '';
-            var auth_data_array = auth_data;
-            $('#id_save_confirm_popup').modal('hide');
-            data = {'data':auth_data,'table_name':'Authorization','action':GLOBAL_ACTION}
-            OpenLoaderPopup();
-            $.ajax({
-                type: 'POST',
-                url: "{% url 'eProc_Configuration:create_update_application_data' %}",
-                data: JSON.stringify(data),
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                success: function(Response) {
-                    rendered_auth_data = Response[0];
-                    display_basic_db_data();
-                    dropdown_value()
-                    $('#myModal').modal('hide');
-                    success_response(Response);  // Display Response data
-                    CloseLoaderPopup();
-                }
-            });
-        }
-        else if (error_message){
+        if (error_message){
             display_error_message(error_message)
+        }
+        else {
+            if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
+                // compare main table and pop up for duplicate values
+                [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
+            }
+            if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
+                var add_basic_data = '';
+                var auth_data_array = auth_data;
+                $('#id_save_confirm_popup').modal('hide');
+                data = {'data':auth_data,'table_name':'Authorization','action':GLOBAL_ACTION}
+                OpenLoaderPopup();
+                $.ajax({
+                    type: 'POST',
+                    url: "{% url 'eProc_Configuration:create_update_application_data' %}",
+                    data: JSON.stringify(data),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function(Response) {
+                        rendered_auth_data = Response[0];
+                        rendered_roles_data = Response[2];
+                        display_basic_db_data();
+                        dropdown_value()
+                        $('#auth_Modal').modal('hide');
+                        success_response(Response);  // Display Response data
+                        CloseLoaderPopup();
+                    }
+                });
+            }
+            else if (error_message){
+                display_error_message(error_message)
+            }
         }
     }
     
@@ -229,6 +243,7 @@
             dataType: "json",
             success: function(Response) {
                 rendered_auth_data = Response[0];
+                rendered_roles_dropdwn = Response[2];
                 display_basic_db_data();
                 success_response(Response); // Function call to display response data
                 CloseLoaderPopup();
@@ -257,10 +272,20 @@
             no_duplicate_value = 'N'
             return [no_duplicate_value,error_message]
         }
+        else {
+            $.each(auth, function (i, item) {
+                if ((item.role.length == 0) || (item.auth_obj_grp.length == 0)) {
+                    $('#auth_Modal').modal('show');
+                    error_message = ui_messeges("JMSG002")// Get message details
+                    no_duplicate_value = 'N'
+                    return [no_duplicate_value,error_message]
+                }
+            });
+        }
         return [no_duplicate_value,error_message]
     }
 
-    //onclick of add button display myModal popup and set GLOBAL_ACTION button value
+    //onclick of add button display auth_Modal popup and set GLOBAL_ACTION button value
     function onclick_add_button(button) {
         OpenLoaderPopup();
         var data = {'table_name':'Authorization'}
@@ -269,24 +294,20 @@
             url: "{% url 'eProc_Configuration:get_dropdown_data' %}",
             data: JSON.stringify(data),
             success: function(response) {
-                rendered_roles_data = response.upload_data_roles
-                rendered_auth_group_data = response.upload_data_auth_grp_obj
-                rendered_auth_type = response.auth_type_values
+                rendered_roles_data = response.dropdown_db_values
                 dropdown_value();
                 $("#error_msg_id").css("display", "none")
                 $("#header_select").prop( "hidden", false );
                 GLOBAL_ACTION = button.value
                 $("#id_popup_tbody").empty();
-                $('#myModal').modal('show');
+                $('#auth_Modal').modal('show');
                 new_row_data();   // Add a new row in popup
                 $("#id_del_ind_checkbox").prop("hidden", true);
                 document.getElementById("id_del_add_button").style.display = "block";
                 $("#save_id").prop("hidden", false);
                 CloseLoaderPopup();
-
             }
         });
-
     }
 
     //Function to highlight duplicate records
