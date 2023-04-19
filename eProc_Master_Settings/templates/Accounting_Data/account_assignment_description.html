@@ -192,26 +192,29 @@
 
     //************************************************
     function acc_value_desc_dropdown() {
-        acc_ass_val_list = [];
-        acc_ass_dropdwn = '';
-        var temp;
-        $.each(rendered_accasscat_data, function (i, item) {
-            temp = item.account_assign_cat;
-            acc_ass_dropdwn += '<option value="'+item.account_assign_cat+'">' + item.account_assign_cat + '</option>'
-        });
-        company_dropdwn = '';
-        $.each(rendered_company_data, function (i, item) {
-            company_dropdwn += '<option  value="' + item.company_id + '">' + item.company_id + '</option>'
-            $('drop_down_attr1').empty()
-            $('drop_down_attr1').append(company_dropdwn)
-        });
-        language_dropdwn = '';
-        $.each(rendered_language_data, function (i, item) {
-            language_dropdwn += '<option value="' + item.language_id + '">' + item.description + '</option>'
-        });
-        acc_ass_val_dropdwn = '';
-        $.each(rendered_accasscat_values, function (i, item) {
-            if(temp){}
+    acc_ass_val_list = [];
+    acc_ass_dropdwn = '';
+    var temp;
+    $.each(rendered_accasscat_data, function (i, item) {
+        temp = item.account_assign_cat;
+        acc_ass_dropdwn += '<option value="'+item.account_assign_cat+'">' + item.account_assign_cat + '</option>'
+    });
+    company_dropdwn = '';
+    $.each(rendered_company_data, function (i, item) {
+        company_dropdwn += '<option  value="' + item.company_id + '">' + item.company_id + '</option>'
+        $('drop_down_attr1').empty()
+        $('drop_down_attr1').append(company_dropdwn)
+    });
+    language_dropdwn = '';
+    $.each(rendered_language_data, function (i, item) {
+        language_dropdwn += '<option value="' + item.language_id + '">' + item.description + '</option>'
+    });
+    acc_ass_val_dropdwn = '';
+    $.each(rendered_accasscat_values, function (i, item) {
+        var validFrom = new Date(item.valid_from);
+        var validTo = new Date(item.valid_to);
+        var today = new Date();
+        if (validFrom <= today && validTo >= today) {
             acc_ass_val_dropdwn += '<option value="'+item.account_assign_value+'">'+item.account_assign_value+'</option>'
             acc_ass_val_dict = {};
             acc_ass_val_dict.account_assign_value = item.account_assign_value
@@ -219,11 +222,14 @@
             acc_ass_val_dict.company_id = item.company_id
             acc_ass_val_list.push(acc_ass_val_dict)
             account_assign_array.push(item.account_assign_value)
-        });
-        company_dropdwn = '';
-        var unique_comp = [];
-
-         $.each(rendered_accasscat_values, function (i, item) {
+        }
+    });
+    company_dropdwn = '';
+    var unique_comp = [];
+    var today = new Date();
+    $.each(rendered_accasscat_values, function (i, item) {
+        var validTo = new Date(item.valid_to);
+        if (validTo >= today) {
             company_dropdwn += '<option value="' + item.company_id + '">' + item.company_id + '</option>'
             company_dict = {};
             company_dict.account_assign_value = item.account_assign_value
@@ -233,18 +239,19 @@
             company_array.push(item.company_id)
             unique_comp.push(item.company_id);
             unique_acct_assmt_val.push(item.account_assign_value);
-        });
+        }
+    });
 
-        $(unique_comp).each(function (index, item) {
-            if ($.inArray(item, arrDistinct) == -1)
-                arrDistinct.push(item);
-        });
-        company_dropdwn = '';
-        $(arrDistinct).each(function (index, item) {
-            company_dropdwn += '<option value="' + item + '">' + item + '</option>'
-        });
+    $(unique_comp).each(function (index, item) {
+        if ($.inArray(item, arrDistinct) == -1)
+            arrDistinct.push(item);
+    });
+    company_dropdwn = '';
+    $(arrDistinct).each(function (index, item) {
+        company_dropdwn += '<option value="' + item + '">' + item + '</option>'
+    });
 
-    }
+}
 
     //onclick of data Upload copy data to modal pop-up
     function onclick_display_csv_data() {
