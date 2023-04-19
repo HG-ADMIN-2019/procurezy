@@ -16,7 +16,7 @@
                     <i class="fas fa-download"></i> extract data
                 </button>
                 <button class="btn btn-outline-primary modal_upload"  title="Data Upload" id="id_upload_redirect_data" value="timezone_upload" onclick="onclick_upload_button();" type="button">
-                    <i class="fas fa-cloud-upload-alt"></i> data upload
+                    <i class="fas fa-cloud-upload-alt"></i> upload data
                 </button>
                 <button type="button" id="id_add_data" value="ADD"  class="btn btn-primary" title="Add Timezone" data-toggle="modal" data-target="#timezoneModal" onclick="onclick_add_button(this)">
                     <i class="fa fa-plus"></i> add timezone
@@ -168,6 +168,7 @@
 
     //onclick of data Upload copy data to modal pop-up
     function onclick_display_csv_data() {
+         $("#id_delete_duplicate").hide()
         $("#error_msg_id").css("display", "none");
         $("#id_error_msg_upload").prop("hidden",true);
         $('#id_popup_table').DataTable().destroy();
@@ -334,119 +335,128 @@
         del_ind = ''
         $("#id_popup_table TBODY TR").each(function() {
             var row = $(this);
+            timezone_dic = {}
             //*************** reading data from the pop-up ***************
-            time_zone = row.find("TD").eq(1).find('input[type="text"]').val().toUpperCase();
-            description = row.find("TD").eq(2).find('input[type="text"]').val().toUpperCase();
-            utc_difference = row.find("TD").eq(3).find('input[type="text"]').val().toUpperCase();
-            daylight_save_rule = row.find("TD").eq(4).find('input[type="text"]').val().toUpperCase();
+            timezone_dic.time_zone = row.find("TD").eq(1).find('input[type="text"]').val().toUpperCase();
+            timezone_dic.description = row.find("TD").eq(2).find('input[type="text"]').val().toUpperCase();
+            timezone_dic.utc_difference = row.find("TD").eq(3).find('input[type="text"]').val().toUpperCase();
+            timezone_dic.daylight_save_rule = row.find("TD").eq(4).find('input[type="text"]').val().toUpperCase();
             checked_box = row.find("TD").eq(5).find('input[type="checkbox"]').is(':checked')
             if (checked_box) {
-                del_ind = '1'
+                timezone_dic.del_ind = '1'
             } else {
-                del_ind = '0'
+                timezone_dic.del_ind = '0'
             }
-            timezone_list.push([time_zone, description, utc_difference, daylight_save_rule, del_ind])
+            timezone_list.push(timezone_dic)
             var format = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
             var utc_format = /[`!@#$%^&*_\=\[\]{};'"\\|,.<>\?~]/;
-            //*************** checking for max length for timezone code (max length = 4) ***************
-            if (time_zone.length > 4) {
-                 error_message = ui_messeges("JMSG004")// Get message details
-                var display5 = error_message;
-                document.getElementById("id_error_msg_timezone_length").innerHTML = display5+ "Timezone code";
+            //*************** checking for empty records for timezone code ***************
+            if(timezone_dic.time_zone.length == 0){
                 $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
-                row_color_highlight(row);
-                count = count + 1;
+                row_color_highlight_empty(row);
+                $("#id_error_msg_timezone_length").prop("hidden",false);
+                error_message = ui_messeges("JMSG002")// Get message details
+                var display8 = error_message;
+                document.getElementById("id_error_msg_timezone_length").innerHTML = display8+ "Timezone Code";
+                count = count +1;
             }
-            //*************** checking for special characters for timezone code ***************
-            else if (format.test(time_zone)) {
-                 error_message = ui_messeges( "JMSG003")// Get message details
-                var display5 = error_message;
-                document.getElementById("id_error_msg_timezone_code").innerHTML = display5+ "Timezone Code";
+            //*************** checking for minimum length for timezone code (max length = 2) ***************
+            else if(timezone_dic.time_zone.length == 1){
+                   $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
+                    row_color_highlight_minlength(row);
+                    $("#id_error_msg_timezone_length").prop("hidden",false);
+                    error_message = ui_messeges("JMSG113")// Get message details
+                    var display8 = error_message;
+                    document.getElementById("id_error_msg_timezone_length").innerHTML = display8+ "Timezone Code";
+                    count = count +1;
+            }
+            ///*************** checking for special characters for timezone code ***************
+            else if (format.test(timezone_dic.time_zone)) {
+                 $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
+                row_color_highlight_special(row);
+                $("#id_error_msg_timezone_code").prop("hidden",false);
+                error_message = ui_messeges("JMSG003")// Get message details
+                var display4 = error_message;
+                document.getElementById("id_error_msg_timezone_code").innerHTML = display4+ "Timezone Code";
+                count = count +1;
+            }
+            else {
+                $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "none");
+                row_color_no_highlight(row);
+                $(row).css("border", "");
+                $("#id_delete_duplicate").hide()
+            }
+            //*************** checking for empty records for timezone name  ***************
+            if(timezone_dic.description.length == 0){
                 $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
-                row_color_highlight(row);
-                count = count + 1;
-            } else {
-                $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "none");
+                row_color_highlight_empty(row);
+                $("#id_error_msg_timezone_name").prop("hidden",false);
+                error_message = ui_messeges("JMSG002")// Get message details
+                var display8 = error_message;
+                document.getElementById("id_error_msg_timezone_name").innerHTML = display8+ "Timezone Name";
+                count = count +1;
             }
             //*************** checking for special characters for description ***************
-            if (format.test(description)) {
-                 error_message = ui_messeges("JMSG003")// Get message details
-                var display5 = error_message;
-                document.getElementById("id_error_msg_timezone_name").innerHTML = display5+ "Description";
+            else if (format.test(timezone_dic.description)) {
+                $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
+                row_color_highlight_empty(row);
+                $("#id_error_msg_timezone_name").prop("hidden",false);
+                error_message = ui_messeges("JMSG003")// Get message details
+                var display8 = error_message;
+                document.getElementById("id_error_msg_timezone_name").innerHTML = display8+ "Timezone Name";
+                count = count +1;
+            }
+            //*************** checking for special characters for utc_difference ***************
+            else if(format.test(timezone_dic.utc_difference)){
                 $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "1px solid #FF0000");
-                row_color_highlight(row);
-                count = count + 1;
-            } else {
+                row_color_highlight_special(row);
+                $("#id_error_msg_timezone_utc").prop("hidden",false);
+                error_message = ui_messeges("JMSG003")// Get message details
+                var display3 = error_message;
+                document.getElementById("id_error_msg_timezone_utc").innerHTML = display3+ "Timezone Utc";
+                count = count +1;
+            }
+           else if(time_zone_check.includes(timezone_dic.time_zone)){
+                 $(row).css("border", "#f8d7da");
+                 row_color_highlight(row);
+                 $("#id_check_error_messages").prop("hidden",false);
+                 var display7 = get_msg_desc_check_data("JMSG001");
+                 document.getElementById("id_check_error_messages").innerHTML = display7;
+                 $("#save_id").prop("hidden", true);
+                 $("#id_delete_duplicate").show()
+                 $("#id_check_data").prop("hidden", false);
+            }
+            else{
                 $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "none");
+                row_color_no_highlight(row);
+                $(row).css("border", "");
+                $("#id_delete_duplicate").hide()
             }
-            if (time_zone_check.includes(time_zone)) {
-                $(row).css({
-                    $(row).css("border", "#f8d7da");
-                    row_color_highlight(row);
-                });
-            } else {
-                $(row).css("background-color", "");
-            }
-            time_zone_check.push(time_zone)
+           time_zone_check.push(timezone_dic.time_zone)
         });
-        $("#id_check_special_character_messages").prop("hidden",false)
-        //*************** shows save button if there are no errors(special characters and max length) ***************
-        if (count == 0) {
-            $("#id_check_special_character_messages").prop("hidden", true)
+         $("#id_check_special_character_messages").prop("hidden",false);
+    //*************** shows save button if there are no errors(special characters and max length) ***************
+        if(count == 0){
+            $("#id_popup_table").find("input,button,textarea,select").attr("disabled", "disabled");
+            document.getElementById("id_del_add_button").style.display = "none";
             $("#save_id").prop("hidden", false);
-       
-            popup_data_dict = {
-                'data_list': timezone_list,
-                'Tablename': Tablename,
-                'appname': appname,
-                'db_header_data': ["TIME_ZONE", "DESCRIPTION", "UTC_DIFFERENCE", "DAYLIGHT_SAVE_RULE", "del_ind"]
-            }
+            $("#id_check_data").prop("hidden", true);
+            popup_data_dict ={'data_list' : timezone_list}
             OpenLoaderPopup();
             $.ajax({
-                type: 'POST',
-                url: "{% url 'eProc_Basic_Settings:check_data' %}",
-                data: JSON.stringify(popup_data_dict),
-                success: function(response) {
-                    table_sort_filter('id_popup_table');
-                    $("#id_check_special_character_messages").prop("hidden", false)
-                    if (count == 0) {
-                        $("#id_check_special_character_messages").prop("hidden", true)
-                    }
-                    //*************** retrieving data counts from views ***************
-                    check_messages = response;
-                    var newArrayDataOfOjbect = Object.values(check_messages)
-                    $("#id_check_success_messages").prop("hidden", false)
-                //*************** if pop-up data count is greater than zero ***************
-                    if (newArrayDataOfOjbect[1] > 0) {
-                            $.each(response['messages'], function(i, item) {
-                            $("#id_check_success_messages").append('<p>' + item + '</p>');
-                            });
-                        //*************** if duplicate data data count is greater than zero ***************
-                        if(newArrayDataOfOjbect[2]>0){
-                            $("#id_check_error_messages").prop("hidden",false)
-                            var display6 = get_msg_desc_check_data("JMSG015");
-                            $("#id_check_error_messages").append('<p>' + display6 + newArrayDataOfOjbect[2] + '</p>')
-                            var display7 = get_msg_desc_check_data("JMSG001");
-                            $("#id_check_error_messages").append('<p style = "font-weight: bold;">' + display7 + ' </p>')
-                            $("#save_id").prop("hidden", true);
-                            $("#id_delete_duplicate").show()
-                        }
-                        else{
-                            $("#id_check_error_messages").prop("hidden",true)
-                            $("#id_delete_duplicate").hide()
-                        }
-                    }
-                    //*************** if pop-up data count is zero ***************
-                    else {
-                        $("#id_check_success_messages").hide();
-                        $("#id_check_error_messages").prop("hidden", false);
-                        $("#error_msg_id").prop("hidden", false);
-                        var display8 = get_msg_desc_check_data("JMSG006");
-                        $("#id_check_error_messages").append('<p>' + display8 + '</p>');
-                        $("#save_id").prop("hidden", true);
-                    }
+                    type: 'POST',
+                    url: "{% url 'eProc_Configuration_Check:check_Timezone' %}",
+                    data: JSON.stringify(popup_data_dict),
+                    success: function(response) {
+                     table_sort_filter_popup_pagination('id_popup_table')
+                     $("#id_check_special_character_messages").prop("hidden", false);
+                     if (count == 0) {
+                        $("#id_check_special_character_messages").prop("hidden", true);
+                     }
+                    var message = ''
+                    update_check_message(response.messages[1])
                     CloseLoaderPopup();
-                }
+                    }
             });
         }
     }

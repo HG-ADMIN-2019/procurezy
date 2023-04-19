@@ -109,12 +109,26 @@ function add_popup_row() {
     $(".modal").on("hidden.bs.modal", function() {
         $("#id_error_msg").html("");
     });
-    new_row_data();  // Add a new row in popup
-    table_sort_filter('id_popup_table');
     if (GLOBAL_ACTION == "uom_upload") {
+        basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><input class="form-control check_special_char" type="text"  title="Minimum length is 1" minlength="1" maxlength="3"  name="uomcode" style="text-transform:uppercase;" required></td><td><input class="form-control check_special_char" type="text" maxlength="100"  name="uomdescription" required></td><td><input class="form-control check_special_char" type="text" title="Minimum length is 1"  minlength="1" maxlength="3"  name="isocodeid"  style="text-transform:uppercase;" required></td><td class="class_del_checkbox"><input type="checkbox" required></td></tr>';
+        $('#id_popup_tbody').append(basic_add_new_html);
+        table_sort_filter('id_popup_table');
         $(".class_del_checkbox").prop("hidden", false);
         $("#id_del_ind_checkbox").prop("hidden", false);
     }
+    else{
+    new_row_data();  // Add a new row in popup
+    table_sort_filter('id_popup_table');
+    }
+    $('#delete_data').hide()
+}
+
+//**************************************
+function update_check_message(messages) {
+     $.each(messages, function (i, message) {
+        $("#id_check_success_messages").append('<p>' + message + '</p>')
+     });
+    $("#id_check_success_messages").prop("hidden",false)
 }
 
 //onclick of cancel display the table in display mode............

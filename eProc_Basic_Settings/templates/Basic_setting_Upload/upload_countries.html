@@ -334,7 +334,6 @@
         var country_list = new Array
         var country_code_check = new Array
         del_ind = ''
-        var duplicate_flag = true
         $("#id_popup_table TBODY TR").each(function() {
             var row = $(this);
             country_dic = {}
@@ -425,12 +424,10 @@
             country_code_check.push(country_dic.country_code)
         });
          $("#id_check_special_character_messages").prop("hidden",false);
-         if (count == 0) {
-            $("#id_popup_table").find("input,button,textarea,select").attr("disabled", "disabled");
-            document.getElementById("id_del_add_button").style.display = "none";
-         }
     //*************** shows save button if there are no errors(special characters and max length) ***************
         if(count == 0){
+            $("#id_popup_table").find("input,button,textarea,select").attr("disabled", "disabled");
+            document.getElementById("id_del_add_button").style.display = "none";
             $("#save_id").prop("hidden", false);
             $("#id_check_data").prop("hidden", true);
             popup_data_dict ={'data_list' : country_list}
