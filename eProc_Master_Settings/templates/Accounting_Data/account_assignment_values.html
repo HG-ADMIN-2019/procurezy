@@ -58,11 +58,7 @@
                     <thead id="id_aav_table_header">
                         <tr>
                             <th id="hg_select_checkbox" hidden>
-<<<<<<< HEAD
-                                 <div id="id_check_all" style="display:none;">
-=======
                                 <div id="id_check_all" style="display:none;">
->>>>>>> adarshg
                                     <input type="checkbox" id="selectAll" name="chk[]">
                                 </div>
                             </th>
@@ -610,15 +606,9 @@
             success: function(response) {
                 rendered_aac_data = response.upload_data_acccat
                 rendered_company_data = response.upload_company_data
-<<<<<<< HEAD
-                var dropdown_select_array = []
-                $("#error_msg_id").css("display", "none")
-                acc_value_dropdown()
-=======
                 acc_value_dropdown()
                 var dropdown_select_array = []
                 $("#error_msg_id").css("display", "none")
->>>>>>> adarshg
                 $('#id_popup_table').DataTable().destroy();
                 $("#id_popup_tbody").empty();
                 //Reference the Table.
@@ -629,15 +619,9 @@
                 var guid= '';
                 var unique_input = '';
                 //Loop through the CheckBoxes.
-<<<<<<< HEAD
-                for (var i = 0; i < $chkbox_all.length; i++) {
-                    if ($chkbox_all[i].checked) {
-                        var row = $chkbox_all[i].parentNode.parentNode;
-=======
                 for (var i = 0; i <  $chkbox_all.length; i++) {
                     if ( $chkbox_all[i].checked) {
                         var row =  $chkbox_all[i].parentNode.parentNode;
->>>>>>> adarshg
                         if(GLOBAL_ACTION == "COPY"){
                             guid = 'GUID';
 <!--                            edit_basic_data += '<tr><td><input type="checkbox" required></td><td > <select class="form-control" id="company_dropdw">' + company_dropdwn + '</select>  </td><td><select id="acc_dropdwn" class="form-control" id="acc_ass_val_dropdw">' + acc_ass_dropdwn + ' </select></td> <td ><input class="form-control check_number" type="number" value="' + row.cells[3].innerHTML + '" name="Account Assignment Value" maxlength="40" required> </td> <td><input class="form-control" type="date" value="' + row.cells[4].innerHTML + '" maxlength="10" name="Valid From Date" required></td> <td><input class="form-control" type="date" value="' + row.cells[5].innerHTML + '" maxlength="10" name="Valid To Date" required></td> <td hidden><input value="' + guid + '"></td> <td class="class_del_checkbox" hidden><input type="checkbox" required></td>'+-->
@@ -686,10 +670,7 @@
                 });
                 display_button();
                 $("#id_del_ind_checkbox").prop("hidden", true);
-<<<<<<< HEAD
-=======
                 table_sort_filter('id_popup_table');
->>>>>>> adarshg
                 $('#myModal').modal('show');
 <!--                table_sort_filter('display_basic_table');-->
                 table_sort_filter('id_popup_table');

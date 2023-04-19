@@ -53,13 +53,8 @@
                 <table id="display_basic_table" class="class_basic_approval_limit_table table table-bordered custom-table">
                     <thead id="id_approval_limit_table_header">
                     <tr>
-<<<<<<< HEAD
-                        <th id="hg_select_checkbox" hidden>
-                             <div id="id_check_all" style="display:none;">
-=======
                         <th id="hg_select_checkbox"  hidden>
                             <div id="id_check_all" style="display:none;">
->>>>>>> adarshg
                                 <input type="checkbox" id="selectAll" name="chk[]">
                             </div>
                         </th>
@@ -649,17 +644,10 @@
                 var guid = '';
                 var dropdown_values = [];
                 //Loop through the CheckBoxes.
-<<<<<<< HEAD
-                for (var i = 1; i < $chkbox_all.length; i++) {
-                    if ($chkbox_all[i].checked) {
-                        var row = $chkbox_all[i].parentNode.parentNode;
-                        if(GLOBAL_ACTION == "COPY"){
-=======
                 for (var i = 0; i < $chkbox_all.length; i++) {
                     if ($chkbox_all[i].checked) {
                         var row = $chkbox_all[i].parentNode.parentNode;
                         if(GLOBAL_ACTION == "COPY") {
->>>>>>> adarshg
                             guid = 'GUID';
                             edit_basic_data += '<tr><td><input type="checkbox" required></td><td><select class="form-control" disabled>'+company_id_dropdown+'</select></td><td><select class="form-control">'+user_name_dropdown+'</select></td><td><select class="form-control">'+app_code_id_dropdown+'</select></td><td hidden><input type="text" value="'+guid+'"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
                             $("#header_select").prop("hidden", false);
