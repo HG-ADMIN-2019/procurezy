@@ -96,6 +96,7 @@ INSTALLED_APPS = [
     'eProc_New_Client_Setup',
     'eProc_Time_Sheet',
     'eProc_Projects',
+    'eProc_Supplier_Order_Management'
 ]
 
 AUTHENTICATION_BACKENDS = [

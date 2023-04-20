@@ -1,3 +1,5 @@
+import time
+
 from django.db.models.query_utils import Q
 
 from eProc_Basic.Utilities.functions.camel_case import convert_to_camel_case
@@ -1514,6 +1516,8 @@ def get_acc_value_desc_data():
 
 
 def get_gl_acc_dropdown():
+    datetime_datetime_object = ''
+    today_date = datetime.today().strftime('%Y-%m-%d')
     prod_catogories = list(
         UnspscCategoriesCust.objects.filter(client=global_variables.GLOBAL_CLIENT, del_ind=False).values('prod_cat_id'))
     upload_value_glacc = list(AccountingData.objects.filter(client=global_variables.GLOBAL_CLIENT,
@@ -1524,18 +1528,27 @@ def get_gl_acc_dropdown():
     gl_acc_details = django_query_instance.django_filter_query(AccountingData,
                                                                {'client': global_variables.GLOBAL_CLIENT,
                                                                 'del_ind': False,
-                                                                'account_assign_cat': CONST_GLACC},
+                                                                'account_assign_cat': CONST_GLACC,
+                                                                'valid_from__lte': str(today_date),
+                                                                'valid_to__gte': str(today_date)},
                                                                ['company_id'],
                                                                ['account_assign_value',
                                                                 'company_id'])
     filter_queue = ~Q(account_assign_cat=CONST_GLACC)
+
     acc_details = django_query_instance.django_queue_query(AccountingData,
                                                            {'client': global_variables.GLOBAL_CLIENT,
-                                                            'del_ind': False},
+                                                            'del_ind': False,
+                                                            'valid_from__lte': str(today_date),
+                                                            'valid_to__gte': str(today_date)},
                                                            filter_queue,
                                                            ['company_id'],
                                                            ['account_assign_cat',
-                                                            'company_id'])
+                                                            'company_id',
+                                                            'valid_from',
+                                                            'valid_to',
+                                                            'account_assign_value'])
+
     company_id_list = django_query_instance.django_filter_value_list_ordered_by_distinct_query(AccountingData,
                                                                                                {
                                                                                                    'client': global_variables.GLOBAL_CLIENT,
@@ -1999,5 +2012,6 @@ def delete_prod_cat_image_to_db(prod_cat):
                                                {'client': global_variables.GLOBAL_CLIENT,
                                                 'image_id': prod_cat}).image_url.delete(save=True)
         django_query_instance.django_filter_delete_query(ImagesUpload,
-                                                         {'client': global_variables.GLOBAL_CLIENT,'image_default': False,
+                                                         {'client': global_variables.GLOBAL_CLIENT,
+                                                          'image_default': False,
                                                           'image_id': prod_cat})
