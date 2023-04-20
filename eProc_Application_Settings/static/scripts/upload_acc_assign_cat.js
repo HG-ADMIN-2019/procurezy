@@ -72,20 +72,21 @@ function delete_duplicate() {
 
 //Functtion to hide and display save related popups
 $('#save_id').click(function () {
-    $('#myModal').modal('hide');
+    $('#accasscat_Modal').modal('hide');
     accasscat_data = read_popup_data();
     $('#id_save_confirm_popup').modal('show');
 });
 
 //Read popup table data
 function read_popup_data(){
+    $('#id_popup_table').DataTable().destroy();
     accasscat_data = new Array();
     validate_add_attributes = [];
     $("#id_popup_table TBODY TR").each(function() {
         var row = $(this);
         aac = {};
         aac.del_ind = row.find("TD").eq(3).find('input[type="checkbox"]').is(':checked');
-        aac.description = row.find("TD").eq(2).find('input[type="text"]').val().toUpperCase();
+        aac.description = row.find("TD").eq(2).find('input[type="text"]').val();
         aac.account_assign_cat = row.find("TD").eq(1).find('select[type="text"]').val();
         if (aac == undefined) {
             aac.account_assign_cat= row.find("TD").eq(1).find('select[type="text"]').val();
@@ -93,6 +94,7 @@ function read_popup_data(){
         validate_add_attributes.push(aac.account_assign_cat);
         accasscat_data.push(aac);
     });
+    table_sort_filter('id_popup_table');
     return accasscat_data;
 }
 

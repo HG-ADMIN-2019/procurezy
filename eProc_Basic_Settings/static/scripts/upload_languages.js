@@ -21,6 +21,7 @@ function onclick_add_button(button) {
 //onclick of upload button display id_data_upload popup and set GLOBAL_ACTION button value
 function onclick_upload_button() {
     GLOBAL_ACTION = "language_upload"
+    $("#id_error_msg_upload").prop("hidden",true)
     $("#id_popup_tbody").empty();
     $('#id_data_upload').modal('show');
     document.getElementById('id_file_data_upload').value = "";
@@ -110,11 +111,16 @@ function add_popup_row() {
     $(".modal").on("hidden.bs.modal", function() {
         $("#id_error_msg").html(" ");
     });
-    new_row_data();   // Add a new row in popup
-    table_sort_filter('id_popup_table');
-    if (GLOBAL_ACTION == "language_upload") {
+     if (GLOBAL_ACTION == "language_upload") {
+        basic_add_new_html = '<tr ><td><input type="checkbox" required></td><td><input class="form-control check_special_char" type="text"  title="Minimum length is 2" minlength="2" maxlength="2"  name="languageid" style="text-transform:uppercase;" required></td><td><input class="form-control check_special_char" type="text" maxlength="100"  name="description"  required></td><td class="class_del_checkbox"><input type="checkbox" required></td></tr>';
+        $('#id_popup_tbody').append(basic_add_new_html);
+        table_sort_filter('id_popup_table');
         $(".class_del_checkbox").prop("hidden", false);
         $("#id_del_ind_checkbox").prop("hidden", false);
+    }
+    else{
+    new_row_data();   // Add a new row in popup
+    table_sort_filter('id_popup_table');
     }
     $('#delete_data').hide()
 }
@@ -228,4 +234,12 @@ function get_msg_desc_check_data(msg){
     msg_type = message_config_details(msg);
     $("#error_msg_id").prop("hidden", false);
     return msg_type.messages_id_desc;
+}
+
+//**************************************
+function update_check_message(messages) {
+     $.each(messages, function (i, message) {
+        $("#id_check_success_messages").append('<p>' + message + '</p>')
+     });
+    $("#id_check_success_messages").prop("hidden",false)
 }

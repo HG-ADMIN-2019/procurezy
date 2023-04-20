@@ -150,7 +150,13 @@
                             </div>
                             <div class="col-md">
                                 <label for="">Purchasing Organization</label>
-                                <input type="text" class="form-control check_for_search" id="porg" name="purchasing_org">
+<!--                                <input type="text" class="form-control check_for_search" id="porg" name="purchasing_org">-->
+                                <select name="purchasing_org" id="porg" class="form-control">
+                                    <option value="">select</option>
+                                    {% for porg in purch_org_list %}
+                                    <option value="{{porg}}">{{porg}}</option>
+                                    {% endfor %}
+                                </select>
                             </div>
                             <div class="col-md">
                                 <div class="form-check">
@@ -201,7 +207,8 @@
                     <table id="sup_tab" class="table table_sort_filter_export_excel">
                         <thead class="thead-light">
                         <tr>
-                            <th scope="col"> <input type="checkbox" onclick="checkAll(this)"></th>
+<!--                            <th scope="col"> <input type="checkbox" onclick="checkAll(this)"></th>-->
+                            <th id="hg_select_checkbox" scope="col"> <div id="id_check_all"> <input type="checkbox" id="selectAll" onclick="checkAll(this)"></div></th>
                             <th> Supplier Number  </th>
                             <th> First Name </th>
                             <th> Last Name </th>
@@ -244,7 +251,12 @@
                                     </label>
                                 </label>
                             </td>
-                            <td> <i class="fas fa-trash-alt hg-icon-blue-primary" title="Delete User" id="{{results.supp_guid}}-{{results.supplier_id}}" onclick="get_supplier_detail_to_delete(this.id)"></i></td>
+                            <td class="item-action-icon-section">
+<!--                                <i class="fas fa-trash-alt hg-icon-blue-primary" title="Delete User" id="{{results.supp_guid}}-{{results.supplier_id}}" onclick="get_supplier_detail_to_delete(this.id)"></i>-->
+                                 <span title="Delete supplier" onclick="get_supplier_detail_to_delete(this.id)" id="{{results.supp_guid}}-{{results.supplier_id}}">
+                                    <i class="material-icons item-action-icons">delete_outline</i>
+                                </span>
+                            </td>
                         </tr>
                         {% endfor %}
                         </tbody>
@@ -278,22 +290,29 @@
     </div>
 </div>
 
-<div class="modal fade" id="id_block_confirm_popup" data-backdrop="static" data-keyboard="false">
-    <div class="modal-dialog modal-dialog-centered">
-        <div class="modal-content">
-            <div class="modal-header" >
-                <h5 class="modal-title">Please Confirm</h5>
+<!--change confirmation popup-->
+    <div class="modal fade" id="id_block_confirm_popup" data-backdrop="static" data-keyboard="false">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header" >
+                    <h5 class="modal-title">Please Confirm</h5>
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Are you sure you want to Change?.</p>
+                </div>
+                <div class="modal-footer">
+<!--                    <button type="button" class="btn btn-outline-primary" data-dismiss="modal" onclick="reload_previous_state()"><i class="fas fa-times"></i> cancel</button>-->
+<!--                    <button type="button" onclick="lock_active_change()" class="btn btn-primary"><i class="fas fa-check"></i> yes </button>-->
+                    <button type="button" class="btn btn-outline-primary" data-dismiss="modal" onclick="toggle()"><i class="fas fa-times"></i> cancel</button>
+                    <button type="button" onclick="block_unblock_supplier()" class="btn btn-primary"><i class="fas fa-check"></i> yes </button>
+                </div>
             </div>
-            <div class="modal-body">
-                <p>Are You Sure You Want To Block Supplier?</p>
-
-                <button type="button" onclick="block_unblock_supplier()" class="btn btn-primary"><i class="fas fa-check"></i> yes </button>
-                <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="toggle()"><i class="fas fa-times"></i> No</button>
-            </div>
-
         </div>
     </div>
-</div>
+    <!--end of delete confirmation popup-->
 
 <!--delete confirmation popup-->
 <div class="modal fade" id="id_delete_confirm_popup">
@@ -350,9 +369,7 @@
         $('#confirm_delete_pop_up').modal('hide');
         if(action == 'individual'){
             var user_data = [data_delete[1]]
-
             data = {'data':user_data}
-
         }else{
             main_table_product_checked = [];
             $("#sup_tab TBODY TR").each(function () {
@@ -381,20 +398,15 @@
                 //document.getElementById("success_msg_id").text = Response.success_message;
                 $("#error_msg_div").prop("hidden",false);
                 CloseLoaderPopup();
-<!--                setTimeout(function(){$("#error_msg_div").prop("hidden",true);},5000)-->
                 message_display_time();
             }
         });
     };
 
-
     var data = {}
     var block_id = '';
     $('.toggle-input').change(function() {
-
-
         if($(this).is(':checked')) {
-            console.log('This is firing');
             $('.toggle-off').removeClass('active');
             $('.toggle-on').addClass('active');
             data.flag = true
@@ -500,7 +512,8 @@
                     '<td> '+ supplier_detail.country_code_id +'</td>'+
                     '<td>'+ supplier_detail.registration_number +'</td>'+
                     '<td><label class="switch"><label class="toggle">'+ block_input +'<div class="toggle-controller default-success"></div></label></label></td>'+
-                    '<td><i class="fas fa-trash-alt hg-icon-blue-primary" title="Delete User" id="'+ supplier_detail.supp_guid +'-'+ supplier_detail.supplier_id +'"data-toggle="modal"  data-target="#confirm_delete_pop_up" onclick="get_supplier_detail_to_delete(this.id)" ></i></td>'+
+                    '<td class="item-action-icon-section"><span title="Delete supplier" onclick="get_user_detail_to_delete(this.id)" id="'+ supplier_detail.supp_guid +'-'+ supplier_detail.supplier_id +'" data-toggle="modal"  data-target="#confirm_delete_pop_up" onclick="get_supplier_detail_to_delete(this.id)">'+
+                        '<i class="material-icons item-action-icons">delete_outline</i></span></td>'+
                     '</tr> '
         });
         $("#supplier_detail_tbody").append(supplier_detail_html);
@@ -513,6 +526,10 @@
         var href_link = url.replace('123', id)
         window.open(href_link,'_blank');
     });
+
+    <!-- ----------------------------------------------------   -->
+
+
 </script>
 
 {% endblock %}

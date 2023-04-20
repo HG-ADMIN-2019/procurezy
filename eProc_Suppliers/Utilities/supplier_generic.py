@@ -2,7 +2,7 @@ from django.core.exceptions import ObjectDoesNotExist
 from django.db.models import Q
 from eProc_Basic.Utilities.functions.django_query_set import DjangoQueries
 from eProc_Basic.Utilities.global_defination import global_variables
-from eProc_Configuration.models import SupplierMaster
+from eProc_Configuration.models import SupplierMaster, OrgPorg
 from eProc_Basic.Utilities.functions.django_q_query import django_q_query
 from eProc_Suppliers.models import OrgSuppliers
 
@@ -55,12 +55,23 @@ def supplier_detail_search(**kwargs):
     org_supplier_query = Q()
     city_query = Q()
     instance = SupplierMaster()
+    purch_org_list = django_query_instance.django_filter_value_list_query(OrgPorg, {
+            'client': global_variables.GLOBAL_CLIENT,
+            'del_ind': False,}, 'porg_id')
+    porg_array = []
+    for porg in purch_org_list:
+        if porg != '*':
+            porg_array.append(porg)
+
     for key, value in kwargs.items():
         value_list = []
         if value:
             if key == 'purchasing_org':
                 if '*' not in value:
                     value_list = [value]
+                if value == '*':
+                    # value_list = porg_array
+                    value = value
                 org_supplier_query = django_q_query(value, value_list, 'porg_id')
                 supplier_id_query = django_query_instance.django_queue_query_value_list(OrgSuppliers, {
                     'client': global_variables.GLOBAL_CLIENT,

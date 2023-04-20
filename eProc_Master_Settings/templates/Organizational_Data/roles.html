@@ -156,36 +156,42 @@
         get_main_table_data(); //Read data from main table
         // compare for duplicates in popup
         [no_duplicate_value,error_message] = compare_table_for_duplicate_entries(validate_add_attributes, roles_data)
-        if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
-            // compare main table and pop up for duplicate values
-            [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
-        }
-        if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
-            var add_basic_data = '';
-            var roles_data_array = roles_data;
-            $('#id_save_confirm_popup').modal('hide');
-            data  = {'data':roles_data,'table_name':'UserRoles','action':GLOBAL_ACTION}
-            OpenLoaderPopup();
-            $.ajax({
-                type: 'POST',
-                url: "{% url 'eProc_Configuration:create_update_application_data' %}",
-                data: JSON.stringify(data),
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                success: function(Response) {
-                    rendered_roles_data = Response[0];
-                    rendered_roles_type_values = Response[2];
-                    display_basic_db_data();
-                    // dropdown_value();
-                    $('#myModal').modal('hide');
-                    success_response(Response); // Function call to display response data
-                    CloseLoaderPopup();
-                }
-            });
-        }
-        else if (error_message){
+        if (error_message){
             display_error_message(error_message)
         }
+        else {
+            if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
+                // compare main table and pop up for duplicate values
+                [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
+            }
+            if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
+                var add_basic_data = '';
+                var roles_data_array = roles_data;
+                $('#id_save_confirm_popup').modal('hide');
+                data  = {'data':roles_data,'table_name':'UserRoles','action':GLOBAL_ACTION}
+                OpenLoaderPopup();
+                $.ajax({
+                    type: 'POST',
+                    url: "{% url 'eProc_Configuration:create_update_application_data' %}",
+                    data: JSON.stringify(data),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function(Response) {
+                        rendered_roles_data = Response[0];
+                        rendered_roles_type_values = Response[2];
+                        display_basic_db_data();
+                        // dropdown_value();
+                        $('#myModal').modal('hide');
+                        success_response(Response); // Function call to display response data
+                        CloseLoaderPopup();
+                    }
+                });
+            }
+            else if (error_message){
+                display_error_message(error_message)
+            }
+            table_sort_filter('id_popup_table');
+        } 
     }
 
     //delete the selected row in db................
@@ -249,16 +255,16 @@
         }
         else {
             $.each(roles, function (i, item) {
-                if (item.role.length == 0) {
+                if ((item.role == null) || (item.role_desc.length == 0)){
                     get_message_details("JMSG002"); // Get message details
                     no_duplicate_value = 'N'
                     return [no_duplicate_value,error_message]
                 }
-                if (item.role_desc.length == 0) {
-                    get_message_details("JMSG002"); // Get message details
-                    no_duplicate_value = 'N'
-                    return [no_duplicate_value,error_message]
-                }
+                // if  {
+                //     get_message_details("JMSG002"); // Get message details
+                //     no_duplicate_value = 'N'
+                //     return [no_duplicate_value,error_message]
+                // }
             });
         }
         return [no_duplicate_value,error_message]
@@ -294,7 +300,6 @@
         dropdown_value();
         $("#error_msg_id").css("display", "none")
         basic_add_new_html = '';
-        var display_db_data = '';
         var getid = $(".roles:last").attr("id");
         var getindex = getid.split("-")[1]
         var inc_index = Number(getindex)+1

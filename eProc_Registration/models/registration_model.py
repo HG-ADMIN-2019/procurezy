@@ -11,10 +11,10 @@ class DBQueriesUser:
 
     @staticmethod
     def get_user_details_by_fields(client, obj, username_query, first_name_query, last_name_query, email_query,
-                                   user_type_query, employee_id_query, pwd_locked_query, user_locked_query):
+                                   user_type_query, employee_id_query, pwd_locked_query, user_locked_query, is_active_query):
         return list(UserData.objects.filter(username_query, first_name_query, last_name_query, email_query,
                                             user_type_query, employee_id_query, pwd_locked_query,
-                                            user_locked_query, client=client,
+                                            user_locked_query, is_active_query, client=client,
                                             del_ind=False).values().order_by('username'))
 
 

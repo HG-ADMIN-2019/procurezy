@@ -40,9 +40,13 @@
                     <!-- Display the success message upon successful registration--> 
                     <div>
                         {% if messages %}
-                        <div class="alert alert-success">
+                        <div>
                             {% for message in messages %}
-                            <div class="{{ message.tags }} ">{{ message }}</div>
+                            {% if message.tags == 'error'%}
+                                <div class="alert alert-danger">{{ message }}</div>
+                            {% else %}
+                                <div class="alert alert-success">{{ message }}</div>
+                            {% endif %}
                             {% endfor %}
                         </div>
                         {% endif %}
@@ -50,7 +54,6 @@
 
                     <form method="POST" id="user_register_forms">
                         {% csrf_token %}
-
                         <!-- Display the eror messages during registration -->
                         {% if reg_form.errors %}
                         <div class="alert alert-danger">
@@ -225,9 +228,6 @@
                     <button type="button" class="close" data-dismiss="modal">&times;</button>
                 </div>
             </div>
-            
-                
-            
 
             <!-- Modal body -->
             <div class="modal-body">
@@ -257,13 +257,17 @@ $(document).ready(function(){
   $('#nav_menu_items').remove();
   $("body").css("padding-top", "4rem");
   NavigateTabs(); // Custom function to switch tabs
+<!--  message_display_time();-->
+  setTimeout(function() {
+                    $('.alert-danger').prop("hidden", true);
+     }, msg_display_interval*1000);
 });
 
 // Get the element with id="defaultOpen" and click on it
-document.getElementById("defaultOpen").click();
+<!--document.getElementById("defaultOpen").click();-->
 
 $('#user_registration_submit').click(function () {
-    OpenLoaderPopup();
+<!--    OpenLoaderPopup();-->
 });
 
 </script>

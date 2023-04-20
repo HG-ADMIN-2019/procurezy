@@ -108,6 +108,7 @@ $('#save_id').click(function () {
 
 //Read popup table data
 function read_popup_data() {
+    $('#id_popup_table').DataTable().destroy();
     transaction_types_data = new Array();
     validate_add_attributes = [];
     $('#myModal').modal('hide');
@@ -132,6 +133,7 @@ function read_popup_data() {
         validate_add_attributes.push(compare);
         transaction_types_data.push(transaction_types);
     });
+    table_sort_filter('id_popup_table');
     return transaction_types_data;
 }
 
@@ -171,7 +173,6 @@ function get_selected_row_data(){
             transaction_types_arr_obj.sequence = row.find("TD").eq(3).html();
             transaction_types_arr_obj.description = row.find("TD").eq(4).html();
             transaction_types_arr_obj.active_inactive = row.find("TD").eq(5).find('input[type="checkbox"]').is(':checked');
-            // transaction_types_arr_obj.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
             transaction_types_arr_obj.guid = row.find("TD").eq(6).html();
             main_table_transaction_types_checked.push(transaction_types_arr_obj);
         }

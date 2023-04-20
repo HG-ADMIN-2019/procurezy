@@ -31,11 +31,22 @@ class SupplierRegForm(forms.Form):
         ('Mail Supplier', 'Mail Supplier'),
         ('Integrated Supplier', 'Integrated Supplier'),
     )
+    working_days_choices = (
+        ('1', 'Sunday'),
+        ('2', 'Monday'),
+        ('3', 'Tuesday'),
+        ('4', 'Wednesday'),
+        ('5', 'Thursday'),
+        ('6', 'Friday'),
+        ('7', 'Saturday')
+    )
     supp_type = forms.CharField(label='Communication Type', required=True,
                                 widget=forms.Select(choices=supplier_types, attrs={'class': 'form-control'}))
-    name1 = forms.CharField(label='Name 1', required=True, widget=forms.TextInput(attrs={'class': 'form-control check_special_char',
+    name1 = forms.CharField(label='Name 1', required=True, widget=forms.TextInput(attrs={'class': 'form-control '
+                                                                                                  'check_special_char',
                                                                                          'onkeyup': 'test()'}))
-    name2 = forms.CharField(label='Name 2', required=False, widget=forms.TextInput(attrs={'class': 'form-control check_special_char'}))
+    name2 = forms.CharField(label='Name 2', required=False, widget=forms.TextInput(attrs={'class': 'form-control '
+                                                                                                   'check_special_char'}))
     email = forms.EmailField(label='E-mail', required=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
     # email1 = forms.EmailField(label='E-mail 1', required=False, widget=forms.TextInput(attrs={'class':
     # 'form-control'})) email2 = forms.EmailField(label='E-mail 2', required=False, widget=forms.TextInput(attrs={
@@ -68,8 +79,8 @@ class SupplierRegForm(forms.Form):
                                    widget=forms.TextInput(attrs={'class': 'form-control'}))
     search_term2 = forms.CharField(label='Search Term 2', required=True,
                                    widget=forms.TextInput(attrs={'class': 'form-control'}))
-    working_days = forms.CharField(label='Working Days', required=True,
-                                   widget=forms.TextInput(attrs={'class': 'form-control'}))
+    working_days = forms.CharField(widget=forms.Select(choices=working_days_choices, attrs={'class': 'form-control'}),
+                                   required=True)
     duns_number = forms.CharField(label='Duns Number', required=False,
                                   widget=forms.TextInput(attrs={'class': 'form-control'}))
     lockdate = forms.DateField(

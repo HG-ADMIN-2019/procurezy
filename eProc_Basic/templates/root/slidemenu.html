@@ -61,8 +61,14 @@
             </a>
         </li>
         {% endif %}
-
-
+        <li class="sidenav__listitem {% if is_content_mgmnt_active %} sidenav__listitem-active {% endif %}" title="Content Management" id="sidenav__listitem-contentmgmt">
+            <a href="{% url 'eProc_Supplier_Order_Management:po_extract' %}">
+                <div>
+                    <div class="sidenav__icon-container"><i class="fas fa-list fa-lg" ></i></div>
+                </div>
+                <p class="hg_link_text">Supplier Order Management</p>
+            </a>
+        </li>
         {% if slide_menu.TIME_SHEET %}
         <li class="sidenav__listitem {% if is_content_mgmnt_active %} sidenav__listitem-active {% endif %}" title="Content Management" id="sidenav__listitem-timesheet">
             <a href="{% url 'eProc_Projects:proj_user_search' %}">

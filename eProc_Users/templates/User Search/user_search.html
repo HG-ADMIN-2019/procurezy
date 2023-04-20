@@ -87,9 +87,9 @@
                             </div>
                             <div class="col-md">
                                 <div class="form-check">
-                                    <input class="form-check-input checkbox-size" type="checkbox" name="is_active" checked>
+                                    <input class="form-check-input checkbox-size" type="checkbox" name="is_active">
                                     <label class="form-check-label" for="">
-                                        Active
+                                        In Active
                                     </label>
                                 </div>
                             </div>
@@ -130,7 +130,7 @@
                     <table id="user_tab" class="table table_sort_filter_basic">
                         <thead class="thead-light">
                         <tr>
-                        <th> <input type="checkbox" onclick="checkAll(this)"></th>
+                        <th id="hg_select_checkbox"> <div id="id_check_all"> <input type="checkbox" id="selectAll" onclick="checkAll(this)"></div></th>
                         <th> employee no </th>
                         <th> username </th>
                         <th> first name </th>
@@ -145,7 +145,7 @@
                         <tbody id="user_tab_tbody">
                         {% for results in employee_results %}
                         <tr id="tr_{{results.email}}">
-                            <td><input type="checkbox" class="emp_checkbox" onclick="valueChanged();"></td>
+                            <td class="class_select_checkbox"><input type="checkbox" class="checkbox_check" onclick="valueChanged();"></td>
                             <td><a href="{% url 'eProc_Admin_Tool:user_details_page' results.encrypted_email %}" id="{{results.employee_id}}" class="deletepop" target="_blank">{{results.employee_id}}</a></td>
                             <td>{{results.username}}</td>
                             <td>{{results.first_name}}</td>
@@ -183,7 +183,7 @@
                                 </label>
                             </td>
                             <td class="item-action-icon-section">
-                                <span title="Delete address" onclick="get_user_detail_to_delete(this.id)" id="{{results.email}}">
+                                <span title="Delete employee" onclick="get_user_detail_to_delete(this.id)" id="{{results.email}}">
                                     <i class="material-icons item-action-icons">delete_outline</i>
                                 </span>
                             </td>
@@ -392,21 +392,24 @@
                     <p>Are you sure you want to Change?.</p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-primary" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
+                    <button type="button" class="btn btn-outline-primary" data-dismiss="modal" onclick="toggle()"><i class="fas fa-times"></i> cancel</button>
                     <button type="button" onclick="lock_active_change()" class="btn btn-primary"><i class="fas fa-check"></i> yes </button>
                 </div>
             </div>
         </div>
     </div>
     <!--end of delete confirmation popup-->
+    {{ employee_results|json_script:"employee_results" }}
 
 <script src="{% static 'scripts/user-search.js' %}"></script>
+
 <script>
 var emp_data_array = {}
 var Tablename = uiConstants["CONST_TABLENAME_EMPLOYEE"]
 var appname = uiConstants["CONST_APPNAME03"]
 var db_header_data = uiConstants['EMAIL','USERNAME','PERSON_NO','FORM_OF_ADDRESS','FIRST_NAME','LAST_NAME','PHONE_NUM','PASSWORD','DATE_JOINED','FIRST_LOGIN','LAST_LOGIN','IS_ACTIVE','IS_SUPERUSER','IS_STAFF','DATE_FORMAT','EMPLOYEE_ID','DECIMAL_NOTATION','USER_TYPE','LOGIN_ATTEMPTS','USER_LOCKED','PWD_LOCKED','SSO_USER','VALID_FROM','VALID_TO','del_ind','CURRENCY_ID','LANGUAGE_ID','OBJECT_ID', 'TIME_ZONE']
 var data_delete = '';
+var rendered_emp_data = JSON.parse(document.getElementById('employee_results').textContent);
 
 
 function reload()
@@ -420,20 +423,13 @@ function reload()
     OpenLoaderPopup();
 }
 
-<!--$('#pwd_locked').change(function(){-->
-<!--     if($(this).attr('checked')){-->
-<!--          $(this).val('True');-->
-<!--     }else{-->
-<!--          $(this).val('False');-->
-<!--     }-->
-<!--});-->
-
 // Function to delete User
 function delete_user() {
         var user_info = [];
         user_info.push(data_delete);
         $('#confirm_delete_pop_up').modal('hide');
         data = {'data': user_info}
+        OpenLoaderPopup();
     $.ajax({
         type: 'POST',
         url: "{% url 'eProc_Admin_Tool:delete_user' %}",
@@ -445,9 +441,9 @@ function delete_user() {
             $('#success_msg_id').text(Response.success_message)
             $("#error_msg_div").prop("hidden",false)
             message_display_time();
+            CloseLoaderPopup();
         }
     });
-
 }
 function get_user_detail_to_delete(element) {
         data_delete = element;
@@ -461,7 +457,6 @@ function valueChanged() {
         $("#id_delete_emp").hide();
     }
 }
-
 //onclick of select all checkbox
 function checkAll(ele) {
     if (ele.checked) {
@@ -489,11 +484,24 @@ function display_emp_data(emp_data){
     $("#user_tab_tbody").empty();
     $.each(emp_data, function (i, emp) {
         if(emp.employee_id){
-            checkbox_input = '<input type="checkbox" class="emp_checkbox" onclick="valueChanged()" disabled >'
+            checkbox_input = '<input type="checkbox" class="emp_checkbox" onclick="valueChanged()">'
         }
         else{
             checkbox_input = '<input type="checkbox" class="emp_checkbox" onclick="valueChanged()" >'
         }
+        var lock_id, pwd_lock;
+        if(emp.user_locked){
+            lock_id = '<input type="checkbox" id="'+emp.employee_id.concat("-LOCKED")+'" class="toggle-input" checked>';
+            }
+        else {
+            lock_id = '<input type="checkbox" id="'+emp.employee_id.concat("-UNLOCKED")+'" class="toggle-input">';
+        }
+        if(emp.pwd_locked){
+            pwd_lock = '<input type="checkbox" id="'+emp.employee_id.concat("-PWDLOCKED")+'" class="toggle-input" checked>';
+        }
+        else {
+            pwd_lock = '<input type="checkbox" id="'+emp.employee_id.concat("-PWDUNLOCKED")+'" class="toggle-input">';
+            }
         emp_detail_html += '<tr id="'+emp.employee_id+'"><td>'+checkbox_input+'</td> '+
         '<td><a href="#" id="'+ emp.employee_id +'" class="deletepop" target="_blank">'+ emp.employee_id +'</a></td>'+
          '<td>'+ emp.username +'</td>'+
@@ -501,9 +509,9 @@ function display_emp_data(emp_data){
          '<td>'+ emp.last_name +'</td>'+
          '<td>'+ emp.email +'</td>'+
          '<td>' + emp.is_active + '</td>'+
-         '<td>' + emp.user_locked + '</td>'+
-         '<td>' + emp.pwd_locked + '</td>'+
-         '<td class="item-action-icon-section"><span title="Delete address" onclick="get_user_detail_to_delete(this.id)" id="'+ emp.email +'">'+
+         '<td><label class="switch"><label class="toggle">' + lock_id + '<div class="toggle-controller default-success"></div></label></label></td>'+
+         '<td><label class="switch"><label class="toggle">' + pwd_lock + '<div class="toggle-controller default-success"></div></label></label></td>'+
+         '<td class="item-action-icon-section"><span title="Delete employee" onclick="get_user_detail_to_delete(this.id)" id="'+ emp.email +'">'+
           '<i class="material-icons item-action-icons">delete_outline</i></span></td>'+
          '</tr>';
             });
@@ -524,6 +532,7 @@ function main_table_delete(){
     });
     $('#id_delete_confirm_popup').modal('hide');
     data = {'data':main_table_emp_checked}
+    OpenLoaderPopup();
     $.ajax({
         type: 'POST',
         url: "{% url 'eProc_Admin_Tool:delete_user' %}",
@@ -536,6 +545,7 @@ function main_table_delete(){
             $("#error_msg_div").prop("hidden",false);
             $("#id_delete_emp").prop("hidden",true);
             message_display_time();
+            CloseLoaderPopup();
         }
     });
 }
@@ -894,10 +904,10 @@ function check_data() {
     });
 }
 var data = {};
+var block_id = '';
  $('.toggle-input').change(function() {
         $('#id_confirm_popup').modal('show')
         if($(this).is(':checked')) {
-            console.log('This is firing');
             $('.toggle-off').removeClass('active');
             $('.toggle-on').addClass('active');
             data.flag = true
@@ -908,7 +918,11 @@ var data = {};
         }
         var id = this.id;
         data.employee_id = id;
+        var id = this.id
+        block_id = id
+        data.employee_id = id.split('-')[0]
   });
+  var previous_state;
 function lock_active_change(){
         jQuery.ajax({
        type: 'POST',
@@ -918,6 +932,7 @@ function lock_active_change(){
        success: function(result){
              $('#id_confirm_popup').modal('hide');
               $('#success_msg_id').text("Changed Successfully");
+            previous_state = data.flag;
             $("#error_msg_div").prop("hidden",false)
             message_display_time();
        },
@@ -926,8 +941,104 @@ function lock_active_change(){
        cache: false,
        processData: false,
        contentType: false,
-   });
-
+        });
     }
+
+    function reload_previous_state(){
+        var emp_id = data.employee_id ;
+         $.each(rendered_emp_data, function(index, data){
+            var emp_num = emp_id.substring(0,emp_id.indexOf("-"));
+            if(data.employee_id == emp_num){
+                previous_state = data.user_locked;
+            }
+         });
+        document.getElementById(emp_id).checked = previous_state;
+    }
+   function toggle(){
+        var abc = $('#'+block_id)
+        if($('#'+block_id).is(':checked')) {
+            $('#'+block_id).prop("checked", false);
+        }
+        else{
+            $('#'+block_id).prop("checked", true);
+        }
+    }
+
+<!-- ----------------------------------------------------   -->
+var table = $('#user_tab').DataTable();
+ var rows_selected = [];
+//onclick of select all checkbox
+$('#user_tab tbody').on('click', 'input[type="checkbox"]', function(e){
+     var table = $('#user_tab').DataTable();
+      var $row = $(this).closest('tr');
+      // Get row data
+      var data = table.row($row).data();
+      // Get row ID
+      var rowId = data[0];
+      // Determine whether row ID is in the list of selected row IDs
+      var index = $.inArray(rowId, rows_selected);
+      // If checkbox is checked and row ID is not in list of selected row IDs
+      if(this.checked && index === -1){
+         rows_selected.push(rowId);
+      // Otherwise, if checkbox is not checked and row ID is in list of selected row IDs
+      } else if (!this.checked && index !== -1){
+         rows_selected.splice(index, 1);
+      }
+      if(this.checked){
+         $row.addClass('selected');
+      } else {
+         $row.removeClass('selected');
+      }
+      // Update state of "Select all" control
+//      updateDataTableSelectAllCtrl(table);
+      // Prevent click event from propagating to parent
+      e.stopPropagation();
+   });
+   // Handle click on table cells with checkboxes
+   $('#user_tab').on('click', 'tbody td, thead th:first-child', function(e){
+      $(this).parent().find('input[class="checkbox_check"]').trigger('click');
+   });
+   // Handle click on "Select all" control
+   $('thead input[id="selectAll"]', table.table().container()).on('click', function(e){
+      if(this.checked){
+         $('#user_tab tbody input[class="checkbox_check"]:not(:checked)').trigger('click');
+      } else {
+         $('#user_tab tbody input[class="checkbox_check"]:checked').trigger('click');
+      }
+      // Prevent click event from propagating to parent
+      e.stopPropagation();
+   });
+   // Handle table draw event
+   table.on('draw', function(){
+      // Update state of "Select all" control
+      updateDataTableSelectAllCtrl(table);
+//      e.stopPropagation();
+   });
+    function updateDataTableSelectAllCtrl(table){
+       var $table             = table.table().node();
+       var $chkbox_all        = $('tbody input[class="checkbox_check"]', $table);
+       var $chkbox_checked    = $('tbody input[class="checkbox_check"]:checked', $table);
+       var chkbox_select_all  = $('thead input[id="selectAll"]', $table).get(0);
+
+       // If none of the checkboxes are checked
+       if($chkbox_checked.length === 0){
+          chkbox_select_all.checked = false;
+          if('indeterminate' in chkbox_select_all){
+             chkbox_select_all.indeterminate = false;
+          }
+       // If all of the checkboxes are checked
+       } else if ($chkbox_checked.length === $chkbox_all.length){
+          chkbox_select_all.checked = true;
+          if('indeterminate' in chkbox_select_all){
+             chkbox_select_all.indeterminate = false;
+          }
+       } else {
+          chkbox_select_all.checked = true;
+          if('indeterminate' in chkbox_select_all){
+             chkbox_select_all.indeterminate = true;
+          }
+   }
+}
+
 </script>
 {% endblock %}

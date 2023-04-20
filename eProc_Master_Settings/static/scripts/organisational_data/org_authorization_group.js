@@ -83,10 +83,9 @@ $('#save_id').click(function () {
 //Read popup table data
 function read_popup_data() {
     $('#id_popup_table').DataTable().destroy();
-    var auth_group = {};
+    auth_group_data = new Array();
     validate_add_attributes = [];
     $("#id_popup_table TBODY TR").each(function () {
-        var row = $(this);
         var row = $(this);
         auth_group = {};
         auth_group.del_ind = row.find("TD").eq(6).find('input[type="checkbox"]').is(':checked');
@@ -95,9 +94,9 @@ function read_popup_data() {
         auth_group.auth_level = row.find("TD").eq(3).find("select option:selected").val();
         auth_group.auth_obj_id = row.find("TD").eq(4).find("select option:selected").val();
         auth_group.auth_grp_guid = row.find("TD").eq(5).find('input[type="text"]').val();
-        if (auth_group == undefined) {
-            auth_group.auth_obj_grp = row.find("TD").eq(1).find('input[type="text"]').val();
-        }
+        // if (auth_group == undefined) {
+        //     auth_group.auth_obj_grp = row.find("TD").eq(1).find('input[type="text"]').val();
+        // }
         if (auth_group.auth_grp_guid == undefined) {
             auth_group.auth_grp_guid = ''
         }

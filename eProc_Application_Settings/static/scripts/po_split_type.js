@@ -8,7 +8,7 @@ $(".remove_upload_data").click(() => {
     $("#id_error_msg").html("");
     $("#id_popup_tbody").empty();
     $("#id_error_msg").empty();
-    $('#myModal').modal('hide');
+    $('#potype_Modal').modal('hide');
     $("#id_error_msg").prop("hidden", true);
     $("#id_error_msg_client").prop("hidden", true);
     $("#id_error_msg_description").prop("hidden", true);
@@ -45,13 +45,14 @@ function display_basic_db_data() {
 
 //Functtion to hide and display save related popups
 $('#save_id').click(function () {
-    $('#myModal').modal('hide');
+    $('#potype_Modal').modal('hide');
     po_split_type_data = read_popup_data();
     $('#id_save_confirm_popup').modal('show');
 });
 
 //Read popup table data
 function read_popup_data() {
+    $('#id_popup_table').DataTable().destroy();
     po_split_type_data = new Array();
     validate_add_attributes = [];
     $("#id_popup_table TBODY TR").each(function () {
@@ -66,6 +67,7 @@ function read_popup_data() {
         validate_add_attributes.push(po_split_types.po_split_type);
         po_split_type_data.push(po_split_types);
     });
+    table_sort_filter('id_popup_table');
     return po_split_type_data;
 }
 
@@ -75,7 +77,7 @@ function display_error_message(error_message){
     document.getElementById("error_message").style.color = "Red";
     $("#error_msg_id").css("display", "block")
     $('#id_save_confirm_popup').modal('hide');
-    $('#myModal').modal('show');
+    $('#potype_Modal').modal('show');
 }
 
 // Function to get main table data

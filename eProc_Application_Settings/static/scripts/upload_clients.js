@@ -133,14 +133,14 @@ function read_popup_data() {
         client={};
         client.del_ind = row.find("TD").eq(3).find('input[type="checkbox"]').is(':checked');
         client.client = row.find("TD").eq(1).find('input[type="text"]').val().toUpperCase();
-        client.description = row.find("TD").eq(2).find('input[type="text"]').val().toUpperCase();
+        client.description = row.find("TD").eq(2).find('input[type="text"]').val();
         if (client == undefined){
             client.client = row.find("TD").eq(1).find('input[type="text"]').val();
         }
         validate_add_attributes.push(client.client);
         clients_data.push(client);
+        table_sort_filter('id_popup_table');
     });
-    table_sort_filter('id_popup_table');
     return clients_data;
 }
 

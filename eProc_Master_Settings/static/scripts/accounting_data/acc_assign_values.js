@@ -75,7 +75,7 @@ function check_date_error(check_dates) {
     $.each(check_dates, function(index, value){
         var d1=new Date(value[0]); //yyyy-mm-dd
         var d2=new Date(value[1]); //yyyy-mm-dd
-        if (d2< d1) {  
+        if (d2< d1) {
             get_message_details("JMSG017"); // Get message details
             var display = msg_type.messages_id_desc;
             document.getElementById("id_error_msg").innerHTML = display;
@@ -88,7 +88,7 @@ function check_date_error(check_dates) {
     return date_error
 }
 
- //onclick of cancel empty the popup table body and error messages
+//onclick of cancel empty the popup table body and error messages
 $(".remove_upload_data").click(() => {
     $("#id_error_msg").html("");
     $("#id_popup_tbody").empty();
@@ -105,8 +105,7 @@ $(".remove_upload_data").click(() => {
     $('#id_popup_table').DataTable().destroy();
 });
 
-
- //**********************************************
+//**********************************************
 function delete_duplicate() {
     $('#id_popup_table').DataTable().destroy();
     var aav_code_check = new Array
@@ -154,10 +153,24 @@ function read_popup_data() {
         aav.account_assign_value = row.find("TD").eq(3).find('input[type="number"]').val();
         aav.valid_from = row.find("TD").eq(4).find('input[type="date"]').val()
         aav.valid_to = row.find("TD").eq(5).find('input[type="date"]').val()
-        aav.account_assign_guid = row.find("TD").eq(6).find('input[type="text"]').val();
+        if((aav.valid_from == undefined) || (aav.valid_from == '')){
+            aav.valid_from = '';
+        }
+        else
+        {
+            var from_date = new Date(aav.valid_from).toISOString().slice(0, 10);
+            aav.valid_from = from_date;
+        }
+        if((aav.valid_to == undefined) || (aav.valid_to == '')){
+            aav.valid_to = '';
+        }
+        else{
+            var to_date = new Date(aav.valid_to).toISOString().slice(0, 10);
+            aav.valid_to = to_date;
+        }
         var compare = aav.company_id + '-' + aav.account_assign_cat + '-' + aav.account_assign_value;
         if (aav == undefined) {
-            aav.account_assign_value = row.find("TD").eq(3).find('input[type="text"]').val();
+            aav.account_assign_value = row.find("TD").eq(3).find('input[type="number"]').val();
         }
         if(aav.account_assign_guid == undefined) {
             aav.account_assign_guid = ''
@@ -169,32 +182,33 @@ function read_popup_data() {
     return aav_data;
 }
 
-//*************************************************** 
+
+//***************************************************
 function display_error_message(error_message){
     $('#error_message').text(error_message);
-    document.getElementById("error_message").style.color = "Red";
-    $("#error_msg_id").css("display", "block")
+    $('#error_message').css('color', 'red');
+    $('#error_msg_id').css('display', 'block');
     $('#id_save_confirm_popup').modal('hide');
     $('#myModal').modal('show');
 }
 
 //*****************************
-function check_date(aav) {
+function check_date(aav_data) {
     var validDate = 'Y';
     var error_message = ''
-    $.each(aav, function (i, item) {
+    $.each(aav_data, function (i, item) {
         if ((Date.parse(item.valid_to) < Date.parse(item.valid_from)) == true) {
-            $("#id_error_msg").prop("hidden", false)
-            get_message_details("JMSG017"); // Get message details
-            var display = msg_type.messages_id_desc;
-            error_message = display;
-            $('#id_save_confirm_popup').modal('hide');
-            onclick_copy_update_button(item.account_assign_value);
-            $('#myModal').modal('show');
-            validDate = 'N'
+            error_message = 'From Date Is Greater Than To Date'; // set the error message
+            validDate = 'N';
+            return false; // exit the loop as soon as an invalid date range is found
         }
     });
-    return [validDate,error_message]
+    if (validDate == 'N') {
+        display_error_message(error_message); // display the error message
+    } else {
+        $('#error_msg_id').css('display', 'none'); // hide the error message if no invalid date ranges were found
+    }
+    return [validDate, error_message];
 }
 
 // Function to get main table data

@@ -12,6 +12,7 @@ django_query_instance = DjangoQueries()
 
 
 def get_check_message(message_count_dic):
+    db_count_message = get_message_desc('MSG193')[1] + str(message_count_dic['db_count'])
     file_count_message = get_message_desc('MSG194')[1] + str(message_count_dic['file_count'])
     delete_count_message = get_message_desc('MSG197')[1] + str(message_count_dic['delete_count'])
     invalid_count_message = get_message_desc('MSG199')[1] + str(message_count_dic['invalid_count'])
@@ -19,8 +20,7 @@ def get_check_message(message_count_dic):
     update_count_message = get_message_desc('MSG196')[1] + str(message_count_dic['update_count'])
     insert_count_message = get_message_desc('MSG195')[1] + str(message_count_dic['insert_count'])
     dependent_count_message = get_message_desc('MSG200')[1] + str(message_count_dic['dependent_count'])
-    db_count_message = get_message_desc('MSG200')[1] + str(message_count_dic['db_count'])
-    message = [db_count_message, file_count_message, insert_count_message, update_count_message,
+    message = [db_count_message,file_count_message, insert_count_message, update_count_message,
                duplicate_count_message, delete_count_message, invalid_count_message, dependent_count_message]
     return message
 
@@ -2744,9 +2744,7 @@ def get_valid_country_data(ui_data, status):
     dependent_count = 0
     valid_data_list = []
     for country_dictionary in ui_data:
-
         if country_dictionary['del_ind'] in ['1', True]:
-
             if status == 'SAVE':
                 if django_query_instance.django_existence_check(Country,
                                                                 {'country_code': country_dictionary[
@@ -2782,7 +2780,7 @@ def get_valid_country_data(ui_data, status):
     message_count_dic = {'file_count': file_count, 'delete_count': delete_count, 'invalid_count': invalid_count,
                          'duplicate_count': duplicate_count, 'update_count': update_count,
                          'insert_count': insert_count,
-                         'dependent_count': dependent_count, 'db_count': db_count}
+                         'dependent_count': dependent_count,'db_count':db_count}
     message = get_check_message(message_count_dic)
     return valid_data_list, message
 

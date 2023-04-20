@@ -5,7 +5,7 @@ from eProc_Basic.Utilities.functions.django_query_set import DjangoQueries
 from eProc_Basic.Utilities.functions.get_db_query import requester_field_info
 from eProc_Basic.Utilities.functions.json_parser import JsonParser
 from eProc_Basic.Utilities.global_defination import global_variables
-from eProc_Configuration.models import MessagesIdDesc, MessagesId
+from eProc_Configuration.models.development_data import *
 from eProc_Registration.models import UserData
 
 django_query_instance = DjangoQueries()
