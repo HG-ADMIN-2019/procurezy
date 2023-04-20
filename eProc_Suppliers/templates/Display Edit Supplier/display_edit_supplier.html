@@ -302,7 +302,7 @@
                     </button>
                 </div>
                 <div>
-                <table id="display_basic_table" class="org_registration_table" style="width: 1405px;">
+                <table id="display_basic_table" class="org_registration_table " style="width:1400px;">
                                     <thead id="supp_org_header" class="thead-light">
                                     <tr>
                                         <th id="hg_select_checkbox"  hidden>
@@ -495,6 +495,7 @@ $(document).ready(function(){
     else{
          document.getElementById('sbd_edit_button').style.display = 'block';
         $("#sbd_save_cancel_button").prop("hidden", true);
+        $(".hg_edit_display_mode").prop( "disabled", true );
     }
 
     $("#country_code_id").val(country_id).attr('selected', 'selected');
