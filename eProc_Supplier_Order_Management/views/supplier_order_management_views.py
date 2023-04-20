@@ -41,6 +41,7 @@ def po_extract(request):
                 for count, item_data in enumerate(data['data']):
                     if count != 0:
                         for text_data in item_data:
+                            item_dictionary = {}
                             text_value = text_data['text']
                             if text_value:
                                 if text_value.find("Additional comments on the line item") != -1:
@@ -52,10 +53,11 @@ def po_extract(request):
                                     cost_obj_data.append({'item_num':count+1,'data':text_value})
                                 elif text_value.find("External Product ID") != -1:
                                     print("External Product ID:", text_value)
-                                    ext_prod_id = text_value
+                                    item_data.append({'ext':text_value})
                                 else:
                                     text_value = text_value.replace('\r', '')
-                                    print("item data:", text_value)
+                                    item_data.append({count:text_value})
+                                    print("item data:", item_data)
 
         # data = {'pdf_data': pdfData}
     context = {'inc_nav': True,
