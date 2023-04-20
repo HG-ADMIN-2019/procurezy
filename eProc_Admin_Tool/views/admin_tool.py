@@ -25,6 +25,7 @@ from eProc_Basic.Utilities.functions.django_query_set import DjangoQueries
 from eProc_Basic.Utilities.functions.encryption_util import encrypt, decrypt
 from eProc_Basic.Utilities.functions.get_db_query import get_country_id, getClients, get_user_id_by_email_id
 from eProc_Basic.Utilities.functions.json_parser import JsonParser
+from eProc_Basic.Utilities.functions.messages_config import get_message_desc
 from eProc_Basic.Utilities.functions.str_concatenate import concatenate_str
 from eProc_Basic_Settings.views import JsonParser_obj
 from eProc_Configuration.models import *
@@ -91,15 +92,7 @@ def user_search(request):
     if request.method == 'GET':
         encrypted_email = []
 
-        # employee_results = django_query_instance.django_filter_only_query(UserData, {
-        #     'client': global_variables.GLOBAL_CLIENT, 'del_ind': False
-        # })
         employee_results = get_emp_data()
-        # for emails in employee_results:
-        #     encrypted_email.append(encrypt(emails.email))
-        # to be put in function
-
-        # context['employee_results'] = zip(employee_results, encrypted_email)  # remove zip
         context['employee_results'] = employee_results
     if request.method == 'POST':
         search_fields = {}
@@ -107,11 +100,11 @@ def user_search(request):
             if data != 'csrfmiddlewaretoken':
                 value = request.POST[data]
                 if data == 'user_locked':
-                    value = set_search_data(data, value)
+                    value = set_search_data(value)
                 if data == 'pwd_locked':
-                    value = set_search_data(data, value)
+                    value = set_search_data(value)
                 if data == 'is_active':
-                    value = set_search_data(data, value)
+                    value = set_search_data(value)
                 if value != '':
                     search_fields[data] = value
 
@@ -122,14 +115,8 @@ def user_search(request):
         search_fields['user_type'] = request.POST.get('user_type')
         search_fields['employee_id'] = request.POST.get('employee_id')
 
-        # employee_results = user_detail_search(**search_fields)
         employee_results = emp_search_data(search_fields)
-        #
-        # for user_email in employee_results:
-        #     encrypted_email.append(encrypt(user_email['email']))
-
         context['employee_results'] = employee_results
-    #     funtion to define from 131 - 135
 
     return render(request, 'User Search/user_search.html', context)
 
@@ -148,6 +135,9 @@ def supplier_search(request):
         'inc_footer': True,
         'is_slide_menu': True,
         'get_country_id': country_dictionary_list,
+        'purch_org_list': django_query_instance.django_filter_value_list_query(OrgPorg, {
+            'client': global_variables.GLOBAL_CLIENT,
+            'del_ind': False}, 'porg_id'),
         'is_admin_active': True
     }
 
@@ -181,6 +171,7 @@ def supplier_search(request):
         search_fields['country_code'] = request.POST.get('country_code')
         search_fields['city'] = request.POST.get('city')
         search_fields['block'] = request.POST.get('block')
+        search_fields['purchasing_org'] = request.POST.get('purchasing_org')
 
         supplier_results = supplier_detail_search(**search_fields)
         print("supplier_results", supplier_results)
@@ -241,9 +232,9 @@ def sup_details(req, supplier_id):
     supplier_info = django_query_instance.django_get_query(SupplierMaster, {'supplier_id': supplier_id,
                                                                             'client': global_variables.GLOBAL_CLIENT})
 
-    supplier_org_info = django_query_instance.django_filter_only_query(OrgSuppliers, {'supplier_id': supplier_id,
+    supplier_org_info = django_query_instance.django_filter_query(OrgSuppliers, {'supplier_id': supplier_id,
                                                                                       'client': getClients(req),
-                                                                                      'del_ind': False})
+                                                                                      'del_ind': False}, None, None)
 
     django_query_instance.django_filter_value_list_query(Languages, {'del_ind': False}, 'language_id')
 
@@ -1044,7 +1035,7 @@ def delete_user(request):
         django_query_instance.django_filter_delete_query(UserData, {'email': user['email'],
                                                                     'client': global_variables.GLOBAL_CLIENT})
         create_emp_history_data(user)
-        success_message = "User deleted"
+        success_message = get_message_desc('MSG206')[1]
 
     employee_results = django_query_instance.django_filter_query(UserData, {
         'client': global_variables.GLOBAL_CLIENT, 'del_ind': False
@@ -1087,7 +1078,7 @@ def create_emp_history_data(user):
         'valid_from': user['valid_from'],
         'valid_to': user['valid_to'],
         'del_ind': user['del_ind'],
-        'object_id': user['object_id_id'],
+        'object_id': django_query_instance.django_get_query(OrgModel, {'object_id': user['object_id_id']}),
         'language_id': django_query_instance.django_get_query(Languages, {'language_id': user['language_id_id']}),
         'time_zone': django_query_instance.django_get_query(TimeZone, {'time_zone': user['time_zone_id']}),
         'currency_id': django_query_instance.django_get_query(Currency, {'currency_id': user['currency_id_id']})
@@ -1225,6 +1216,7 @@ def lock_unlock_emp(request):
     """
     """
     emp_lock_flag_detail = JsonParser_obj.get_json_from_req(request)
+    employee_id = emp_lock_flag_detail['employee_id']
     status = emp_lock_flag_detail['employee_id'].split('-')[1]
     empId = emp_lock_flag_detail['employee_id'].split('-')[0]
     if status in ('LOCKED', 'UNLOCKED'):
