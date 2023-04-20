@@ -84,14 +84,14 @@ $('#display_basic_table tbody').on('click', 'input[type="checkbox"]', function(e
    });
    // Handle click on table cells with checkboxes
    $('#display_basic_table').on('click', 'tbody td, thead th:first-child', function(e){
-      $(this).parent().find('class="checkbox_check"').trigger('click');
+      $(this).parent().find('input[type="checkbox"]').trigger('click');
    });
    // Handle click on "Select all" control
    $('thead input[id="selectAll"]', table.table().container()).on('click', function(e){
       if(this.checked){
-         $('#display_basic_table tbody class="checkbox_check":not(:checked)').trigger('click');
+         $('#display_basic_table tbody input[type="checkbox"]:not(:checked)').trigger('click');
       } else {
-         $('#display_basic_table tbody class="checkbox_check":checked').trigger('click');
+         $('#display_basic_table tbody input[type="checkbox"]:checked').trigger('click');
       }
       // Prevent click event from propagating to parent
       e.stopPropagation();
@@ -104,8 +104,8 @@ $('#display_basic_table tbody').on('click', 'input[type="checkbox"]', function(e
    });
     function updateDataTableSelectAllCtrl(table){
        var $table             = table.table().node();
-       var $chkbox_all        = $('tbody class="checkbox_check"', $table);
-       var $chkbox_checked    = $('tbody class="checkbox_check":checked', $table);
+       var $chkbox_all        = $('tbody input[class="checkbox_check"]', $table);
+       var $chkbox_checked    = $('tbody input[class="checkbox_check"]:checked', $table);
        var chkbox_select_all  = $('thead input[id="selectAll"]', $table).get(0);
 
        // If none of the checkboxes are checked

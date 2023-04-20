@@ -53,17 +53,17 @@
                         <th hidden>guid</th>
                     </tr>
                     </thead>
-                     <tbody id="id_number_range_tbody">
-                    {% for numberrange in upload_numberrange %}
-                    <tr>
-                        <td class="class_select_checkbox" hidden><input type="checkbox" class="checkbox_check" onclick="valueChanged()" required></td>
-                        <td>{{numberrange.sequence}}</td>
-                        <td>{{numberrange.starting}}</td>
-                        <td>{{numberrange.ending}}</td>
-                        <td>{{numberrange.current}}</td>
-                        <td hidden>{{numberrange.guid}}</td>
-                    </tr>
-                    {% endfor %}
+                    <tbody id="id_number_range_tbody">
+                        {% for numberrange in upload_numberrange %}
+                        <tr>
+                            <td class="class_select_checkbox" hidden><input type="checkbox" class="checkbox_check" onclick="valueChanged()" required></td>
+                            <td>{{numberrange.sequence}}</td>
+                            <td>{{numberrange.starting}}</td>
+                            <td>{{numberrange.ending}}</td>
+                            <td>{{numberrange.current}}</td>
+                            <td hidden>{{numberrange.guid}}</td>
+                        </tr>
+                        {% endfor %}
                     </tbody>
                 </table>
             </div>
@@ -256,15 +256,10 @@
                     no_duplicate_value = 'N'
                     return [no_duplicate_value,error_message]
                 } else if (item.starting >= item.ending) {
-                    error_message = ui_messeges("JMSG009")// Get message details
-                    no_duplicate_value = 'N'
-                    return [no_duplicate_value,error_message]
-                } else if (item.ending <= item.starting) {
                     error_message = ui_messeges("JMSG035")// Get message details
                     no_duplicate_value = 'N'
                     return [no_duplicate_value,error_message]
-                }  
-                else if (item.current <= item.starting) {
+                } else if (item.current <= item.starting) {
                     error_message = ui_messeges("JMSG036")// Get message details
                     no_duplicate_value = 'N'
                     return [no_duplicate_value,error_message]
