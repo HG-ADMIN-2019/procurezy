@@ -70,8 +70,8 @@ def supplier_detail_search(**kwargs):
                 if '*' not in value:
                     value_list = [value]
                 if value == '*':
-                    value_list = porg_array
-                    value = [value]
+                    # value_list = porg_array
+                    value = value
                 org_supplier_query = django_q_query(value, value_list, 'porg_id')
                 supplier_id_query = django_query_instance.django_queue_query_value_list(OrgSuppliers, {
                     'client': global_variables.GLOBAL_CLIENT,
