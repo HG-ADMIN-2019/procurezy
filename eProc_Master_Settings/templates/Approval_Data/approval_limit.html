@@ -2,7 +2,6 @@
 {% load static %}
 {% block title %} Approval Limits (Master Settings) {% endblock %}
 {% block maincontent %}
-
 {% include 'root/loader.html' %}
 
 <div class="container-fluid">
@@ -197,12 +196,10 @@
     $.each(rendered_user_data, function(i, item){
         user_name_dropdown += '<option value="' + item.username + '">' + item.username + '</option>'
     });
-
     company_id_dropdown = "";
     $.each(rendered_company_data, function(i, item){
         company_id_dropdown += '<option  value="' + item.company_id + '">' + item.company_id + '</option>'
     });
-
     app_code_id_dropdown = "";
     $.each(rendered_app_code_id_data, function(i, item){
         app_code_id_dropdown += '<option value="' + item.app_code_id + '">' + item.app_code_id + '</option>';
@@ -212,11 +209,9 @@
         approval_limit.push(app_limit_dict);
         app_limit_array.push(item.app_code_id);
     });
-
     company_dropdwn = "";
     var unique_comp = [];
     var unique_app = [];
-
     // Filter rendered_approval_limit_data based on app_code_id and company_id in rendered_app_code_id_data
     var filtered_approval_limit_data = rendered_app_code_id_data.filter(function(item) {
         return app_limit_array.includes(item.app_code_id) &&
@@ -224,7 +219,6 @@
                 return app_item.app_code_id === item.app_code_id && app_item.company_id === item.company_id;
             });
     });
-
     $.each(filtered_approval_limit_data, function(i, item) {
         company_dropdwn += '<option value="' + item.company_id + '">' + item.company_id + '</option>';
         company_dict = {};
@@ -235,13 +229,11 @@
         unique_comp.push(item.company_id);
         unique_app_limit.push(item.app_code_id);
     });
-
     $(unique_comp).each(function(index, item) {
         if ($.inArray(item, arrDistinct) == -1) {
             arrDistinct.push(item);
         }
     });
-
     company_dropdwn = '';
     $(arrDistinct).each(function(index, item) {
         company_dropdwn += '<option value="' + item + '">' + item + '</option>'
@@ -578,10 +570,6 @@
                     $(row.find("TD").eq(1).find("select")).change(function () {
                         company_dropdwn_change(row);
                     })
-<!--                    $(row.find("TD").eq(2).find("select")).change(function () {-->
-<!--                        company_num = row.find("TD").eq(1).find("select option:selected").val();-->
-<!--                        approv_limit(row,company_num);-->
-<!--                    })-->
                 })
                 $("#id_del_ind_checkbox").prop("hidden", true);
                 document.getElementById("id_del_add_button").style.display = "block";

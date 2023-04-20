@@ -197,22 +197,22 @@
             url: "{% url 'eProc_Configuration:get_dropdown_data' %}",
             data: JSON.stringify(data),
             success: function(response) {
-            rendered_msgtype_values = response.dropdown_msg_type_values
-            rendered_msgid_values = response.dropdown_msg_id_values
-            drop_down()
+                rendered_msgtype_values = response.dropdown_msg_type_values
+                rendered_msgid_values = response.dropdown_msg_id_values
+                drop_down()
                 $("#error_msg_id").css("display", "none")
+                $('#id_popup_table').DataTable().destroy();
                 $("#id_popup_tbody").empty();
-                $('#display_basic_table').DataTable().destroy();
                 //Reference the Table.
-                var grid = document.getElementById("display_basic_table");
+                var res = get_all_checkboxes(); // Function to get all the checkboxes
+                var $chkbox_all = $('td input[type="checkbox"]', res);;
                 //Reference the CheckBoxes in Table.
-                var checkBoxes = grid.getElementsByTagName("INPUT");
                 var edit_basic_data = "";
                 var dropdown_values = [];
                 //Loop through the CheckBoxes.
-                for (var i = 1; i < checkBoxes.length; i++) {
-                    if (checkBoxes[i].checked) {
-                        var row = checkBoxes[i].parentNode.parentNode;
+                for (var i = 0; i < $chkbox_all.length; i++) {
+                    if ($chkbox_all[i].checked) {
+                        var row = $chkbox_all[i].parentNode.parentNode;
                         if(GLOBAL_ACTION == "UPDATE"){
                         unique_input = '<select class="form-control" type="text" value="' + row.cells[1].innerHTML + '" name="message_id"  disabled>'+ msg_id_dropdown +'</select>'
                         edit_basic_data += '<tr><td hidden><input type="checkbox" required></td>' +
@@ -239,7 +239,6 @@
                 $("#id_del_ind_checkbox").prop("hidden", true);
                 $('#myModal').modal('show');
                 table_sort_filter('id_popup_table');
-                table_sort_filter('display_basic_table');
                 $('#myModal').modal('show');
                 CloseLoaderPopup();
             }
@@ -280,7 +279,6 @@
                         rendered_message_id_data = Response[0];
                         display_basic_db_data();
                         $('#myModal').modal('hide');
-                        // $('#id_error_msg').text(messageConstants["JMSG001"])
                         success_response(Response); // Function call to display response data
                         table_sort_filter('id_popup_table');
                         CloseLoaderPopup();
@@ -290,6 +288,7 @@
             else if (error_message){
                 display_error_message(error_message)
             }
+            table_sort_filter('id_popup_table');
         }
     }
 

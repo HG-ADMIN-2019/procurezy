@@ -14,7 +14,7 @@
                         type="button">
                     <i class="fas fa-download"></i> extract
                 </button>
-                <button type="button" id="id_add_data" value="ADD" class="btn btn-primary" title="Add Purchase Control" data-toggle="modal" data-target="#myModal" onclick="onclick_add_button(this)">
+                <button type="button" id="id_add_data" value="ADD" class="btn btn-primary" title="Add Purchase Control" data-toggle="modal" data-target="#purchase_ctrl_Modal" onclick="onclick_add_button(this)">
                     <i class="fa fa-plus"></i> add purchase control
                 </button>
                 <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close" onclick="window_close();">
@@ -83,7 +83,7 @@
         </div>
     </div>
     <!-- The Modal -->
-    <div class="modal fade" id="myModal" style="overflow:auto;">
+    <div class="modal fade" id="purchase_ctrl_Modal" style="overflow:auto;">
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content">
                 <!-- Modal Header -->
@@ -193,32 +193,38 @@
         get_main_table_data(); //Read data from main table
         // compare for duplicates in popup
         [no_duplicate_value, error_message] = compare_table_for_duplicate_entries(validate_add_attributes, purhcase_control_data)
-        if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
-            [no_duplicate_entries, error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
-        }
-        if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
-            var add_basic_data = '';
-            var purchase_control_data_array = purhcase_control_data;
-            $('#id_save_confirm_popup').modal('hide');
-            data = { 'data': purhcase_control_data, 'table_name': 'PurchaseControl', 'action': GLOBAL_ACTION }
-            OpenLoaderPopup();
-            $.ajax({
-                type: 'POST',
-                url: "{% url 'eProc_Configuration:create_update_application_data' %}",
-                data: JSON.stringify(data),
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                success: function (Response) {
-                    rendered_pc_data = Response[0];
-                    display_basic_db_data();
-                    $('#myModal').modal('hide');
-                    success_response(Response); // Function call to display response data
-                    CloseLoaderPopup();
-                }
-            });
-        }
-        else if (error_message) {
+        if (error_message){
             display_error_message(error_message)
+        }
+        else {
+            if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
+                [no_duplicate_entries, error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
+            }
+            if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
+                var add_basic_data = '';
+                var purchase_control_data_array = purhcase_control_data;
+                $('#id_save_confirm_popup').modal('hide');
+                data = { 'data': purhcase_control_data, 'table_name': 'PurchaseControl', 'action': GLOBAL_ACTION }
+                OpenLoaderPopup();
+                $.ajax({
+                    type: 'POST',
+                    url: "{% url 'eProc_Configuration:create_update_application_data' %}",
+                    data: JSON.stringify(data),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (Response) {
+                        rendered_pc_data = Response[0];
+                        display_basic_db_data();
+                        $('#purchase_ctrl_Modal').modal('hide');
+                        success_response(Response); // Function call to display response data
+                        CloseLoaderPopup();
+                    }
+                });
+            }
+            else if (error_message) {
+                display_error_message(error_message)
+            }
+            table_sort_filter('id_popup_table');
         }
     }
 
@@ -242,14 +248,14 @@
             success: function (Response) {
                 rendered_pc_data = Response[0];
                 display_basic_db_data();
-                $('#myModal').modal('hide');
+                $('#purchase_ctrl_Modal').modal('hide');
                 success_response(Response); // Function call to display response data
                 CloseLoaderPopup();;
             }
         });
     }
 
-    //onclick of add button display myModal popup and set GLOBAL_ACTION button value
+    //onclick of add button display purchase_ctrl_Modal popup and set GLOBAL_ACTION button value
     function onclick_add_button(button) {
         OpenLoaderPopup();
         var data = {'table_name':'PurchaseControl'}
@@ -266,7 +272,7 @@
                 GLOBAL_ACTION = button.value
                 basic_add_new_html = '';
                 $("#id_popup_tbody").empty();
-                $('#myModal').modal('show');
+                $('#purchase_ctrl_Modal').modal('show');
                 new_row_data();   // Add a new row in popup
                 $("#header_select").prop("hidden", false);
                 $("#id_del_ind_checkbox").prop("hidden", true);
@@ -278,7 +284,7 @@
     }
 
     // on click copy icon display the selected checkbox data
-    function onclick_copy_update_button() {
+    function onclick_copy_update_button(data) {
         OpenLoaderPopup();
         var data = {'table_name':'PurchaseControl'}
         $.ajax({
@@ -290,20 +296,19 @@
                 rendered_pc_company_data = response.upload_company_code
                 drop_down();
                 $("#error_msg_id").css("display", "none")
-                $('#display_basic_table').DataTable().destroy();
                 $('#id_popup_table').DataTable().destroy();
                 $("#id_popup_tbody").empty();
                 //Reference the Table.
-                var grid = document.getElementById("display_basic_table");
+                var res = get_all_checkboxes(); // Function to get all the checkboxes
+                var $chkbox_all = $('td input[type="checkbox"]', res);
                 //Reference the CheckBoxes in Table.
-                var checkBoxes = grid.getElementsByTagName("INPUT");
                 var edit_basic_data = "";
                 var unique_input = '';
                 var dropdown_val = [];
                 //Loop through the CheckBoxes.
-                for (var i = 1; i < checkBoxes.length; i++) {
-                    if (checkBoxes[i].checked) {
-                        var row = checkBoxes[i].parentNode.parentNode;
+                for (var i = 0; i < $chkbox_all.length; i++) {
+                    if ($chkbox_all[i].checked) {   
+                        var row = $chkbox_all[i].parentNode.parentNode;
                         var Status = row.cells[3].innerHTML;
                         dropdown_val.push([ Status ])
                         if (GLOBAL_ACTION == "UPDATE") {
@@ -321,29 +326,28 @@
                                         <option>${row.cells[2].innerHTML}</option>
                                     </select>
                                 </td>
-                                    <td><select type="text" class="input form-control">${activate_dropdown}</select></td>
-                                    <td hidden><input type="text" class= "form-control" value= ${guid}></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td>
-                                </tr>`;
-                                $("#header_select").prop("hidden", true);
-                            }
+                                <td><select type="text" class="input form-control">${activate_dropdown}</select></td>
+                                <td hidden><input type="text" class= "form-control" value= ${guid}></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td>
+                            </tr>`;
+                            $("#header_select").prop("hidden", true);
                         }
                     }
-                    $('#id_popup_table').append(edit_basic_data);
-                    var i = 0;
-                    $("#id_popup_table TBODY TR").each(function () {
-                        var row = $(this);
-                        var Status = dropdown_val[i][0]
-                        $(row.find("TD").eq(3).find("select option[value=" + Status + "]")).attr('selected', 'selected');
-                        i++;
-                    });
-                    $("#id_del_ind_checkbox").prop("hidden", true);
-                    $('#myModal').modal('show');
-                    table_sort_filter('display_basic_table');
-                    table_sort_filter('id_popup_table');
-                    CloseLoaderPopup();
                 }
-            });
-        }
+                $('#id_popup_table').append(edit_basic_data);
+                var i = 0;
+                $("#id_popup_table TBODY TR").each(function () {
+                    var row = $(this);
+                    var Status = dropdown_val[i][0]
+                    $(row.find("TD").eq(3).find("select option[value=" + Status + "]")).attr('selected', 'selected');
+                    i++;
+                });
+                $("#id_del_ind_checkbox").prop("hidden", true);
+                $('#purchase_ctrl_Modal').modal('show');
+                table_sort_filter('id_popup_table');
+                CloseLoaderPopup();
+            }
+        });
+    }
 
     // on click add icon display the row in to add the new entries
     function add_popup_row() {
@@ -374,21 +378,15 @@
         });
         if (add_attr_duplicates_list.length != 0) {
             var url_new = "{% url 'eProc_Basic:get_message_description' %}";
-            get_message_details("JMSG001"); // Get message details
+            error_message = ui_messeges("JMSG001")// Get message details
             no_duplicate_value = 'N'
             return [no_duplicate_value, error_message]
         }
         else {
             $.each(purchse_control, function (i, item) {
-                if (item.purchase_ctrl_flag.length == 0) {
-                    var url_new = "{% url 'eProc_Basic:get_message_description' %}";
-                    get_message_details("JMSG002"); // Get message details
-                    no_duplicate_value = 'N'
-                    return [no_duplicate_value, error_message]
-                }
-                if (item.purchase_ctrl_flag.length == 0) {
-                    var url_new = "{% url 'eProc_Basic:get_message_description' %}";
-                    get_message_details("JMSG002"); // Get message details
+                if ((item.company_code_id == null) || (item.call_off == null) || 
+                    (item.purchase_ctrl_flag.length == null) ) {
+                    error_message = ui_messeges("JMSG002")// Get message detailss
                     no_duplicate_value = 'N'
                     return [no_duplicate_value, error_message]
                 }

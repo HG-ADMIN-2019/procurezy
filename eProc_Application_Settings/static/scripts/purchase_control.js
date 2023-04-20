@@ -45,7 +45,7 @@ $(".remove_upload_data").click(() => {
     $("#id_error_msg").html("");
     $("#id_popup_tbody").empty();
     $("#id_error_msg").empty();
-    $('#myModal').modal('hide');
+    $('#purchase_ctrl_Modal').modal('hide');
     $("#id_error_msg").prop("hidden", true);
     $("#id_error_msg_pc_code").prop("hidden", true);
     $("#id_error_msg_pc_name").prop("hidden", true);
@@ -62,7 +62,7 @@ function display_error_message(error_message) {
     document.getElementById("error_message").style.color = "Red";
     $("#error_msg_id").css("display", "block")
     $('#id_save_confirm_popup').modal('hide');
-    $('#myModal').modal('show');
+    $('#purchase_ctrl_Modal').modal('show');
 }
 
 // Function to delete duplicates
@@ -87,7 +87,7 @@ function delete_duplicate() {
 
 // Functtion to hide and display save related popups
 $('#save_id').click(function () {
-    $('#myModal').modal('hide');
+    $('#purchase_ctrl_Modal').modal('hide');
     purhcase_control_data = read_popup_data();
     $('#id_save_confirm_popup').modal('show');
 });

@@ -45,7 +45,7 @@ $(".remove_upload_data").click(() => {
 
 });
 
-//********************************************* 
+//*********************************************
 function display_error_message(error_message){
     $('#error_message').text(error_message);
     document.getElementById("error_message").style.color = "Red";
@@ -79,10 +79,9 @@ function display_basic_db_data() {
         if(item.valid_from == ''){
             from_date = '';
             to_date = '';
-        }
-        else{
-            from_date = new Date(item.valid_from).toLocaleDateString();
-            to_date = new Date(item.valid_to).toLocaleDateString();
+        } else {
+            from_date = new Date(item.valid_from).toLocaleDateString('en-CA', {day: '2-digit', month: '2-digit', year: 'numeric'});
+            to_date = new Date(item.valid_to).toLocaleDateString('en-CA', {day: '2-digit', month: '2-digit', year: 'numeric'});
         }
         edit_basic_data += '<tr><td class="class_select_checkbox"><input class="checkbox_check" onclick="valueChanged()" type="checkbox" required></td>' +
         '<td>'+ item.company_id +'</td>'+
@@ -108,6 +107,7 @@ function display_basic_db_data() {
     table_sort_filter('display_basic_table');
 }
 
+
 // Functtion to hide and display save related popups
 $('#save_id').click(function () {
     $('#Adrs_Type_Modal').modal('hide');
@@ -117,44 +117,44 @@ $('#save_id').click(function () {
 
 //Read popup table data
 function read_popup_data() {
-    validate_add_attributes = [];
-    addresstype_data = new Array();
-    $("#id_popup_table TBODY TR").each(function () {
-        var row = $(this);
-        addresstype={};
-        addresstype.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
-        addresstype.address_guid = row.find("TD").eq(7).find('input').val();
-        addresstype.address_number = row.find("TD").eq(3).find('select').val();
-        addresstype.address_type = row.find("TD").eq(2).find('select').val();
-        addresstype.company_id = row.find("TD").eq(1).find('select').val();
-        addresstype.valid_from = row.find("TD").eq(4).find('input[type="text"]').val();
-        if((addresstype.valid_from == undefined) || (addresstype.valid_from == '')){
-            addresstype.valid_from = '';
-        }
-        else
-        {
-            var from_date = new Date(addresstype.valid_from).toLocaleDateString();
-            addresstype.valid_from = from_date+ ' 00:00:00'
-        }
-        addresstype.valid_to = row.find("TD").eq(5).find('input[type="text"]').val();
-        if((addresstype.valid_to == undefined) || (addresstype.valid_to == '')){
-            addresstype.valid_to = '';
-        }
-        else{
-            var to_date = new Date(addresstype.valid_to).toLocaleDateString();
-            addresstype.valid_to = to_date+ ' 00:00:00'
-        }
-        var addresstype_compare = addresstype.address_number +'-'+ addresstype.address_type+'-'+addresstype.company_id
-        if (addresstype == undefined){
-            addresstype.address_number = row.find("TD").eq(2).find('input').val();
-        }
-        if(addresstype.address_guid == undefined) {
-            addresstype.address_guid = ''
-        }
-        validate_add_attributes.push(addresstype_compare);
-        addresstype_data.push(addresstype);
-    });
-    return addresstype_data;
+  validate_add_attributes = [];
+  addresstype_data = new Array();
+  var check_dates = []
+  $("#id_popup_table TBODY TR").each(function () {
+    var row = $(this);
+    addresstype = {};
+    addresstype.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
+    addresstype.address_guid = row.find("TD").eq(7).find('input').val();
+    addresstype.address_number = row.find("TD").eq(3).find('select').val();
+    addresstype.address_type = row.find("TD").eq(2).find('select').val();
+    addresstype.company_id = row.find("TD").eq(1).find('select').val();
+    addresstype.valid_from = row.find("TD").eq(4).find('input[type="date"]').val();
+    addresstype.valid_to = row.find("TD").eq(5).find('input[type="date"]').val();
+    if ((addresstype.valid_from == undefined) || (addresstype.valid_from == '')) {
+      addresstype.valid_from = '';
+    } else {
+      var from_date = new Date(addresstype.valid_from).toISOString().slice(0, 10);
+      addresstype.valid_from = from_date;
+    }
+    addresstype.valid_to = row.find("TD").eq(5).find('input[type="date"]').val();
+    if ((addresstype.valid_to == undefined) || (addresstype.valid_to == '')) {
+      addresstype.valid_to = '';
+    } else {
+      var to_date = new Date(addresstype.valid_to).toISOString().slice(0, 10);
+      addresstype.valid_to = to_date;
+    }
+    var addresstype_compare = addresstype.address_number + '-' + addresstype.address_type + '-' + addresstype.company_id
+    if (addresstype == undefined) {
+      addresstype.address_number = row.find("TD").eq(2).find('input').val();
+    }
+    if (addresstype.address_guid == undefined) {
+      addresstype.address_guid = ''
+    }
+    check_dates.push([addresstype.valid_from, addresstype.valid_to])
+    validate_add_attributes.push(addresstype_compare);
+    addresstype_data.push(addresstype);
+  });
+  return addresstype_data;
 }
 
 // Function for add a new row data
@@ -163,12 +163,12 @@ function new_row_data() {
         '<td><select class="form-control">'+company_dropdwn+'</select></td>' +
         '<td><select class="form-control">'+address_type_dropdown+'</select></td>' +
         '<td><select class="form-control">'+address_number_dropdwn+'</select></td>' +
-        '<td><input  type="text" name = "valid_from" class="form-control from_to_date"></td>' +
-        '<td><input type="text" name = "valid_to"  class="form-control from_to_date"></td>' +
+        '<td><input  type="date" name = "valid_from" class="form-control from_to_date"></td>' +
+        '<td><input type="date" name = "valid_to"  class="form-control from_to_date"></td>' +
         '<td class="class_del_checkbox" hidden><input type="checkbox" required></td>' +
         '<td hidden><input  type="text" class="form-control"  name="guid"></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
-    DateFormat();
+//    DateFormat();
     table_sort_filter('id_popup_table');
 }
 
@@ -200,25 +200,47 @@ function get_main_table_data() {
              address_type_arr_obj.company_id = row.find("TD").eq(1).html();
             address_type_arr_obj.address_type = row.find("TD").eq(2).html();
             address_type_arr_obj.address_number = row.find("TD").eq(3).html();
-            fromdate = address_type_arr_obj.valid_from + ' 00:00:00';
-            todate = address_type_arr_obj.valid_to + ' 00:00:00';
-            address_type_arr_obj.valid_from = fromdate
-            address_type_arr_obj.valid_to = todate
+//            fromdate = address_type_arr_obj.valid_from;
+//            todate = address_type_arr_obj.valid_to;
+//            address_type_arr_obj.valid_from = fromdate
+//            address_type_arr_obj.valid_to = todate
             main_table_address_type_checked.push(address_type_arr_obj);
         }
     });
  }
- function check_date(addresstype_data) {
+function check_date(addresstype_data) {
     var validDate = 'Y';
     var error_message = ''
     $.each(addresstype_data, function (i, item) {
         if ((Date.parse(item.valid_to) < Date.parse(item.valid_from)) == true) {
-            $("#id_error_msg").prop("hidden", false)
-            get_message_details("JMSG017"); // Get message details
-            $('#id_save_confirm_popup').modal('hide');
-            $('#Adrs_Type_Modal').modal('show');
-            validDate = 'N'
+            error_message = 'From Date Is Greater Than To Date'; // set the error message
+            validDate = 'N';
+            return false; // exit the loop as soon as an invalid date range is found
         }
     });
-    return [validDate,error_message]
+    if (validDate == 'N') {
+        display_error_message(error_message); // display the error message
+    } else {
+        $('#error_msg_id').css('display', 'none'); // hide the error message if no invalid date ranges were found
+    }
+    return [validDate, error_message];
+}
+
+//*******************************************
+function check_date_error(check_dates) {
+    date_error = "N"
+    $.each(check_dates, function(index, value){
+        var d1=new Date(value[0]); //yyyy-mm-dd
+        var d2=new Date(value[1]); //yyyy-mm-dd
+        if (d2< d1) {
+            get_message_details("JMSG017"); // Get message details
+            var display = msg_type.messages_id_desc;
+            document.getElementById("id_error_msg").innerHTML = display;
+            document.getElementById("id_error_msg").style.color = "Red";
+            $('#id_save_confirm_popup').modal('hide');
+            $('#myModal').modal('show');
+            date_error = 'Y'
+        }
+    })
+    return date_error
 }
