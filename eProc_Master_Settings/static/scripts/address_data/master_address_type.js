@@ -80,8 +80,8 @@ function display_basic_db_data() {
             from_date = '';
             to_date = '';
         } else {
-            from_date = new Date(item.valid_from).toLocaleDateString('en-CA', {year: 'numeric', month: '2-digit', day: '2-digit'});
-            to_date = new Date(item.valid_to).toLocaleDateString('en-CA', {year: 'numeric', month: '2-digit', day: '2-digit'});
+            from_date = new Date(item.valid_from).toLocaleDateString('en-CA', {day: '2-digit', month: '2-digit', year: 'numeric'});
+            to_date = new Date(item.valid_to).toLocaleDateString('en-CA', {day: '2-digit', month: '2-digit', year: 'numeric'});
         }
         edit_basic_data += '<tr><td class="class_select_checkbox"><input class="checkbox_check" onclick="valueChanged()" type="checkbox" required></td>' +
         '<td>'+ item.company_id +'</td>'+
@@ -106,6 +106,7 @@ function display_basic_db_data() {
     $('#id_check_all').hide();
     table_sort_filter('display_basic_table');
 }
+
 
 // Functtion to hide and display save related popups
 $('#save_id').click(function () {
