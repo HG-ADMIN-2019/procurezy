@@ -1445,8 +1445,8 @@ def get_account_assignment_value():
             data["del_ind_flag"] = False
         else:
             data["del_ind_flag"] = True
-        data["valid_from"] = data["valid_from"].strftime("%d-%m-%Y")
-        data["valid_to"] = data["valid_to"].strftime("%d-%m-%Y")
+        data["valid_from"] = data["valid_from"].strftime("%Y-%m-%d")
+        data["valid_to"] = data["valid_to"].strftime("%Y-%m-%d")
     return upload_data_accounting
 
 

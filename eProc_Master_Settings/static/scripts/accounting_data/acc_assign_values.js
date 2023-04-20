@@ -183,7 +183,7 @@ function read_popup_data() {
 }
 
 
-//*************************************************** 
+//***************************************************
 function display_error_message(error_message){
     $('#error_message').text(error_message);
     $('#error_message').css('color', 'red');

@@ -208,13 +208,13 @@
     function popup_save_data() {
         $('#success_msg_id').empty()
         $('#id_popup_table').DataTable().destroy();
-<!--        var countries_data = new Array();-->
+        var countries_data = new Array();
         var aav = {};
-<!--        var check_dates = []-->
+        var check_dates = []
         no_duplicate_entries = 'Y'
         no_duplicate_value = 'Y'
         var error_message = '';
-<!--        $('#display_basic_table').DataTable().destroy();-->
+        $('#display_basic_table').DataTable().destroy();
         get_main_table_data(); //Read data from main table
         // compare for duplicates in popup
         [no_duplicate_value,error_message] = compare_table_for_duplicate_entries(validate_add_attributes, aav_data)
@@ -223,7 +223,7 @@
         }
         else{
         var dateValid ;
-        [dateValid,error_message] = check_date(aav_data);
+        [dateValid,error_message] = check_date(aav);
         if (error_message){
         display_error_message(error_message)
         }
@@ -259,7 +259,6 @@
         }
     }
 
-
     //delete the selected row in db................
     var main_table_aav_checked = [];
     function main_table_delete() {
@@ -277,9 +276,8 @@
         }
         else if (main_table_aav_checked.length == "0") {
             get_message_details("JMSG005"); // Get message details
-<!--            var display4 = msg_type.messages_id_desc;-->
+            var display4 = msg_type.messages_id_desc;
             document.getElementById("id_error_msg_checkbox").innerHTML = display4+ "Checkbox";
-            $('#id_delete_confirm_popup').modal('hide');
         }
         else {
             $('#id_delete_confirm_popup').modal('hide');
@@ -545,11 +543,11 @@
                     no_duplicate_value = 'N'
                     return [no_duplicate_value,error_message]
                 }
-<!--                if (item.valid_from >= item.valid_to) {-->
-<!--                    error_message = ui_messeges("JMSG002")// Get message details-->
-<!--                    no_duplicate_value = 'N'-->
-<!--                    return [no_duplicate_value,error_message]-->
-<!--                }-->
+                if (item.valid_from >= item.valid_to) {
+                    error_message = ui_messeges("JMSG002")// Get message details
+                    no_duplicate_value = 'N'
+                    return [no_duplicate_value,error_message]
+                }
             });
         }
         return [no_duplicate_value,error_message]
@@ -579,11 +577,9 @@
                 $("#error_msg_id").css("display", "none")
                 $("#header_select").prop( "hidden", false );
                 GLOBAL_ACTION = button.value
-                $('#id_popup_table').DataTable().destroy();
                 $("#id_popup_tbody").empty();
                 $('#myModal').modal('show');
                 new_row_data();   // Add a new row in popup
-                table_sort_filter('id_popup_table');
                 $("#id_del_ind_checkbox").prop("hidden", true);
                 document.getElementById("id_del_add_button").style.display = "block";
                 $("#delete_data").prop("hidden", true);
@@ -594,9 +590,6 @@
 
     //*****************************************
     function onclick_copy_update_button() {
-        $("#error_msg_id").css("display", "none")
-        $('#id_popup_table').DataTable().destroy();
-        $("#id_popup_tbody").empty();
         OpenLoaderPopup();
         var data = {'table_name':'AccountingData'}
         $.ajax({
@@ -672,8 +665,6 @@
                 $("#id_del_ind_checkbox").prop("hidden", true);
                 table_sort_filter('id_popup_table');
                 $('#myModal').modal('show');
-<!--                table_sort_filter('display_basic_table');-->
-                table_sort_filter('id_popup_table');
                 CloseLoaderPopup();
             }
         });
