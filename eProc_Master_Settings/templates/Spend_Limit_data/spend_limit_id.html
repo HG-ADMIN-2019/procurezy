@@ -51,9 +51,9 @@
             <table id="display_basic_table" class="class_master_spendlimitid_table table table-bordered custom-table">
                 <thead  id="id_spendlimitid_table_header">
                 <tr>
-                    <th id= "hg_select_checkbox" hidden>
+                    <th id="hg_select_checkbox"  hidden>
                         <div id="id_check_all" style="display:none;">
-                            <input type="checkbox" onchange="checkAll(this)" name="chk[]">
+                            <input type="checkbox" id="selectAll" name="chk[]">
                         </div>
                     </th>
                     <th>Company Number </th>
@@ -769,21 +769,20 @@
                 rendered_company_data = response.upload_data_company
                 spend_limlt_id_drp()
                 $("#error_msg_id").css("display", "none")
-                $('#display_basic_table').DataTable().destroy();
+                $('#id_popup_table').DataTable().destroy();
                 $("#id_popup_tbody").empty();
-                $('#display_basic_table').DataTable().destroy();
                 //Reference the Table.
-                var grid = document.getElementById("display_basic_table");
+                var res = get_all_checkboxes(); // Function to get all the checkboxes
+                var $chkbox_all = $('td input[type="checkbox"]', res);
                 //Reference the CheckBoxes in Table.
-                var checkBoxes = grid.getElementsByTagName("INPUT");
                 var edit_basic_data = "";
                 var guid = '';
                 var unique_input = '';
                 var dropdown_values = [];
                 //Loop through the CheckBoxes.
-                for (var i = 1; i < checkBoxes.length; i++) {
-                    if (checkBoxes[i].checked) {
-                        var row = checkBoxes[i].parentNode.parentNode;
+                for (var i = 0; i < $chkbox_all.length; i++) {
+                    if ($chkbox_all[i].checked) {
+                        var row = $chkbox_all[i].parentNode.parentNode;
                         if(GLOBAL_ACTION == "UPDATE"){
                             guid = row.cells[4].innerHTML;
                             unique_input ='<select class="form-control" value="' + row.cells[3].innerHTML + '">'+spendcodeid_dropdwn+' </select>'
@@ -795,7 +794,7 @@
                             edit_basic_data += '<tr><td><input type="checkbox" required></td><td><select class="form-control" value="' + row.cells[1].innerHTML + '">'+company_dropdwn+'</select></td><td><input class="form-control check_special_char" type="text" value="'+row.cells[2].innerHTML+'" maxlength="16"  name="spender_username" style="text-transform:uppercase;" required></td><td>'+unique_input+'</td><td hidden><input type="text" value="'+guid+'" hidden></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
                             $("#header_select").prop("hidden", false);
                         }
-                        var row = checkBoxes[i].parentNode.parentNode;
+                        var row = $chkbox_all[i].parentNode.parentNode;
                         var company_type_value = row.cells[1].innerHTML
                         var spendid_type_value = row.cells[3].innerHTML
                         dropdown_values.push([company_type_value, spendid_type_value])
@@ -821,7 +820,6 @@
                 $("#id_del_ind_checkbox").prop("hidden", true);
                 $('#Spend_id_Modal').modal('show');
                 table_sort_filter('id_popup_table');
-                table_sort_filter('display_basic_table');
                 $('#Spend_id_Modal').modal('show');
                 CloseLoaderPopup();
             }

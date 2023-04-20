@@ -28,21 +28,20 @@ function onclick_update_button() {
 //**********************************************************
 function onclick_copy_update_button(data) {
     $("#error_msg_id").css("display", "none")
-    $('#display_basic_table').DataTable().destroy();
+    $('#id_popup_table').DataTable().destroy();
     $("#id_popup_tbody").empty();
     //Reference the Table.
-    var grid = document.getElementById("display_basic_table");
-
+    var res = get_all_checkboxes(); // Function to get all the checkboxes
+    var $chkbox_all = $('td input[type="checkbox"]', res);
     //Reference the CheckBoxes in Table.
-    var checkBoxes = grid.getElementsByTagName("INPUT");
     var edit_basic_data = "";
     var unique_input = '';
     var porg_guid= '';
     var dropdown_values = [];
     //Loop through the CheckBoxes.
-    for (var i = 1; i < checkBoxes.length; i++) {
-        if (checkBoxes[i].checked) {
-            var row = checkBoxes[i].parentNode.parentNode;
+    for (var i = 0; i < $chkbox_all.length; i++) {
+        if ($chkbox_all[i].checked) {
+            var row = $chkbox_all[i].parentNode.parentNode;
             if(GLOBAL_ACTION == "UPDATE"){
                 porg_guid = row.cells[5].innerHTML
                 unique_input = '<input class="input form-control check_special_char"  value="' + row.cells[1].innerHTML + '" type="text" maxlength="8"  name="porg_id" disabled>'
@@ -55,7 +54,7 @@ function onclick_copy_update_button(data) {
                 edit_basic_data += '<tr><td><input type="checkbox" required></td><td>'+unique_input+'</td><td><input class="form-control check_special_char" value="' + row.cells[2].innerHTML + '" type="text"  name="description"  maxlength="100"  required></td><td hidden><input value="' + porg_guid + '"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
                 $("#header_select").prop("hidden", false);
             }
-            var row = checkBoxes[i].parentNode.parentNode;
+            var row = $chkbox_all[i].parentNode.parentNode;
             var company_id_value = row.cells[3].innerHTML
             var object_id_value = row.cells[4].innerHTML
             dropdown_values.push([company_id_value,object_id_value])
@@ -65,7 +64,6 @@ function onclick_copy_update_button(data) {
     $("#id_del_ind_checkbox").prop("hidden", true);
     $('#Porg_Modal').modal('show');
     table_sort_filter('id_popup_table');
-    table_sort_filter('display_basic_table');
 }
 
 //onclick of cancel display the table in display mode............
@@ -116,17 +114,28 @@ function add_popup_row() {
     $(".modal").on("hidden.bs.modal", function () {
         $("#id_error_msg").html(" ");
     });
-    basic_add_new_html = '<tr><td><input type="checkbox" required></td>'+
+     if (GLOBAL_ACTION == "purchase_org_upload") {
+         basic_add_new_html = '<tr><td><input type="checkbox" required></td>'+
+        '<td><input class="form-control check_special_char"  type="text"  minlength="5" maxlength="8"  name="porg_id" style="text-transform:uppercase;" required></td>'+
+        '<td><input class="input form-control check_special_char"  type="text" maxlength="100"  name="description"  required></td>'+
+        '<td hidden><input value=""></td>'+
+        '<td class="class_del_checkbox"><input type="checkbox" required></td></tr>';
+        $('#id_popup_tbody').append(basic_add_new_html);
+        table_sort_filter('id_popup_table');
+        $(".class_del_checkbox").prop("hidden", false);
+        $("#id_del_ind_checkbox").prop("hidden", false);
+    }
+    else{
+       basic_add_new_html = '<tr><td><input type="checkbox" required></td>'+
         '<td><input class="form-control check_special_char"  type="text"  minlength="5" maxlength="8"  name="porg_id" style="text-transform:uppercase;" required></td>'+
         '<td><input class="input form-control check_special_char"  type="text" maxlength="100"  name="description"  required></td>'+
         '<td hidden><input value=""></td>'+
         '<td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
-    $('#id_popup_tbody').append(basic_add_new_html);
-    if (GLOBAL_ACTION == "purchase_org_upload") {
-        $(".class_del_checkbox").prop("hidden", false);
-        $("#id_del_ind_checkbox").prop("hidden", false);
+        $('#id_popup_tbody').append(basic_add_new_html);
+        table_sort_filter('id_popup_table');
     }
-    table_sort_filter('id_popup_table');
+
+    $('#delete_data').hide()
 }
 
 //onclick of cancel display the table in display mode............
@@ -268,7 +277,7 @@ function get_selected_row_data(){
     });
 }
 
-//Get message for check data function
+//Get message for check data functionupdate_check_message
 function get_msg_desc_check_data(msg){
     var msg_type ;
     msg_type = message_config_details(msg);

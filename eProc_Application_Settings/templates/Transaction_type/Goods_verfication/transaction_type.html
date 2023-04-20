@@ -94,41 +94,43 @@
                     </button>
                 </div>
                 <!-- Modal body -->
-                <div class="modal-body scrollbox">
-                    <div id="id_del_add_button" class="mb-4">
-                        <button class="btn btn-primary" title="Add New Row" type="button" onclick="add_popup_row()">
-                            <i class="fa fa-plus"></i> add new row
-                        </button>
-                        <button class="btn btn-outline-danger" title="Delete" onclick="application_settings_delete_Row('id_popup_table')">
-                            <i class="fa fa-trash"></i> delete
-                        </button>
+                <div class="modal-body">
+                    <div class="popup-vertical-scroll">
+                        <div id="id_del_add_button" class="mb-4">
+                            <button class="btn btn-primary" title="Add New Row" type="button" onclick="add_popup_row()">
+                                <i class="fa fa-plus"></i> add new row
+                            </button>
+                            <button class="btn btn-outline-danger" title="Delete" onclick="application_settings_delete_Row('id_popup_table')">
+                                <i class="fa fa-trash"></i> delete
+                            </button>
+                        </div>
+                        <div id="id_check_success_messages" class="alert alert-success check_success_message" hidden></div>
+                        <div id="id_check_error_messages" class="alert alert-danger check_error_messages" hidden></div>
+                        <div id="id_check_special_character_messages" class="alert alert-danger check_special_character_messages" hidden>
+                            <p id="id_error_msg_transaction_types_code"></p>
+                            <p id="id_error_msg_transaction_types_name"></p>
+                            <p id="id_error_msg_transaction_types_length"></p>
+                        </div>
+                        <div id="error_msg_id" class="alert alert-danger display-none" role="alert"><span id="error_message"></span></div>
+                        <div id="id_warning_msg_id" class="alert alert-warning display-none" role="alert"></div>
+                        <div id="id_info_msg_id" class="alert alert-primary display-none" role="alert"></div>
+                        <table class="class_popup_table  table table-bordered mt-2"  id="id_popup_table">
+                            <thead>
+                                <tr>
+                                    <th>Select</th>
+                                    <th>Transaction Type</th>
+                                    <th>Document Type</th>
+                                    <th>Sequence</th>
+                                    <th>Description</th>
+                                    <th>Active/Inactive Flag</th>
+                                    <TH hidden>GUID</TH>
+                                    <th id="id_del_ind_checkbox" hidden>Del Indicator</th>
+                                </tr>
+                            </thead>
+                            <tbody id=id_popup_tbody>
+                            </tbody>
+                        </table>
                     </div>
-                    <div id="id_check_success_messages" class="alert alert-success check_success_message" hidden></div>
-                    <div id="id_check_error_messages" class="alert alert-danger check_error_messages" hidden></div>
-                    <div id="id_check_special_character_messages" class="alert alert-danger check_special_character_messages" hidden>
-                        <p id="id_error_msg_transaction_types_code"></p>
-                        <p id="id_error_msg_transaction_types_name"></p>
-                        <p id="id_error_msg_transaction_types_length"></p>
-                    </div>
-                    <div id="error_msg_id" class="alert alert-danger display-none" role="alert"><span id="error_message"></span></div>
-                    <div id="id_warning_msg_id" class="alert alert-warning display-none" role="alert"></div>
-                    <div id="id_info_msg_id" class="alert alert-primary display-none" role="alert"></div>
-                    <table class="class_popup_table  table table-bordered mt-2"  id="id_popup_table">
-                        <thead>
-                            <tr>
-                                <th>Select</th>
-                                <th>Transaction Type</th>
-                                <th>Document Type</th>
-                                <th>Sequence</th>
-                                <th>Description</th>
-                                <th>Active/Inactive Flag</th>
-                                <TH hidden>GUID</TH>
-                                <th id="id_del_ind_checkbox" hidden>Del Indicator</th>
-                            </tr>
-                        </thead>
-                        <tbody id=id_popup_tbody>
-                        </tbody>
-                    </table>
                 </div>
                 <!-- Modal footer -->
                 <div class="modal-footer">
@@ -227,19 +229,18 @@
                 rendered_document_type = response.document_type_render
                 dropdown_value();
                 $("#error_msg_id").css("display", "none")
-                $('#display_basic_table').DataTable().destroy();
+                $('#id_popup_table').DataTable().destroy();
                 $("#id_popup_tbody").empty();
-                $('#display_basic_table').DataTable().destroy();
                 //Reference the Table.
-                var grid = document.getElementById("display_basic_table");
+                var res = get_all_checkboxes(); // Function to get all the checkboxes
+                var $chkbox_all = $('td input[type="checkbox"]', res);
                 //Reference the CheckBoxes in Table.
-                var checkBoxes = document.getElementsByClassName("checkbox_check");
                 var edit_basic_data = "";
                 var dropdown_val = [];
                 //Loop through the CheckBoxes.
-                for (var i = 0; i < checkBoxes.length; i++) {
-                    if (checkBoxes[i].checked) {
-                        var row = checkBoxes[i].parentNode.parentNode;
+                for (var i = 0; i < $chkbox_all.length; i++) {
+                    if ($chkbox_all[i].checked) {
+                        var row = $chkbox_all[i].parentNode.parentNode;
                         var document_type = row.cells[2].innerHTML
                         var sequence = row.cells[3].innerHTML
                         var active_inactive = row.cells[5].children.active_inactive.checked
@@ -276,9 +277,7 @@
                 })
                 $("#id_del_ind_checkbox").prop("hidden", true);
                 $('#myModal').modal('show');
-                table_sort_filter('display_basic_table');
                 table_sort_filter('id_popup_table');
-                $('#myModal').modal('show');
                 CloseLoaderPopup();
             }
         });

@@ -515,10 +515,8 @@ class MasterSettingsSave:
                                              'address_number': addresstype_detail['address_number'],
                                              'address_type': (addresstype_detail['address_type']).upper(),
                                              'company_id': addresstype_detail['company_id'],
-                                             'valid_from': datetime.strptime(addresstype_detail['valid_from'],
-                                                                             '%m/%d/%Y %H:%M:%S'),
-                                             'valid_to': datetime.strptime(addresstype_detail['valid_to'],
-                                                                           '%m/%d/%Y %H:%M:%S'),
+                                             'valid_from': addresstype_detail['valid_from'],
+                                             'valid_to': addresstype_detail['valid_to'],
                                              'org_address_map_created_at': self.current_date_time,
                                              'org_address_map_created_by': self.username,
                                              'org_address_map_changed_at': self.current_date_time,
@@ -538,10 +536,8 @@ class MasterSettingsSave:
                                                            'address_type': (
                                                                addresstype_detail['address_type']).upper(),
                                                            'company_id': addresstype_detail['company_id'],
-                                                           'valid_from': datetime.strptime(
-                                                               addresstype_detail['valid_from'], '%m/%d/%Y %H:%M:%S'),
-                                                           'valid_to': datetime.strptime(addresstype_detail['valid_to'],
-                                                                                         '%m/%d/%Y %H:%M:%S'),
+                                                           'valid_from': addresstype_detail['valid_from'],
+                                                           'valid_to': addresstype_detail['valid_to'],
                                                            'org_address_map_changed_at': self.current_date_time,
                                                            'org_address_map_changed_by': self.username,
                                                            'client': OrgClients.objects.get(client=self.client),
@@ -1482,7 +1478,7 @@ def get_acc_value_desc_dropdown():
                                                                      'del_ind': False
                                                                      }, None,
                                                                     ['account_assign_value', 'account_assign_cat',
-                                                                     'company_id'])
+                                                                     'company_id', 'valid_from', 'valid_to'])
 
     upload_data_acccat = list(
         AccountAssignmentCategory.objects.filter(del_ind=False).values('account_assign_cat'))
@@ -1533,7 +1529,9 @@ def get_gl_acc_dropdown():
                                                                 'valid_to__gte': str(today_date)},
                                                                ['company_id'],
                                                                ['account_assign_value',
-                                                                'company_id'])
+                                                                'company_id',
+                                                                'valid_from',
+                                                                'valid_to'])
     filter_queue = ~Q(account_assign_cat=CONST_GLACC)
 
     acc_details = django_query_instance.django_queue_query(AccountingData,
@@ -1585,6 +1583,7 @@ def get_gl_acc_dropdown():
     }
 
     return data
+
 
 
 def get_acc_asg_cat_value_list(gl_acc_details, company_id):
@@ -1827,7 +1826,7 @@ def get_workflowacc_dropdown():
     upload_data_acccat = list(AccountAssignmentCategory.objects.filter(del_ind=False).values('account_assign_cat'))
     upload_accassvalues = get_configuration_data(AccountingData, {'del_ind': False},
                                                  ['account_assign_value', 'account_assign_cat',
-                                                  'company_id'])
+                                                  'company_id', 'valid_from', 'valid_to'])
     upload_data_currency = list(Currency.objects.filter(del_ind=False).values('currency_id'))
     upload_data_company = list(
         OrgCompanies.objects.filter(client=global_variables.GLOBAL_CLIENT, del_ind=False).values('company_id'))

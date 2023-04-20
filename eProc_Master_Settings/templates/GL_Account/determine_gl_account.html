@@ -49,8 +49,8 @@
                     <thead id="id_detgl_table_header">
                     <tr>
                         <th id="hg_select_checkbox" hidden>
-                            <div id="id_check_all" style="overflow:auto;">
-                                <INPUT type="checkbox" onchange="checkAll(this)" name="chk[]">
+                            <div id="id_check_all" style="display:none;">
+                                <input type="checkbox" id="selectAll" name="chk[]">
                             </div>
                         </th>
                         <th>UNSPSC Code</th>
@@ -206,22 +206,26 @@
         $.each(rendered_prod_category, function (i, item) {
             prod_cat_dropdown += '<option value="' + item.prod_cat_id + '">' + item.prod_cat_id + '</option>'
         });
-        accasscat_dropdown = '<option value="">-- Select Account Assignment Category --</option>';
-        accassval_dropdown = '<option value="">-- Select Account Assignment Value --</option>';
+        accasscat_dropdown = '';
+        accassval_dropdown = '';
         $.each(rendered_acc_value_list, function (i, item) {
             var acc_ass_cat_dropdown = '';
             var acc_ass_val_dropdown = '';
             $.each(item.account_assign_cat_list, function (j, cat) {
-                acc_ass_cat_dropdown += '<option value="' + cat + '">' + cat + '</option>';
+                if (cat !== undefined && cat !== '-- Select Account Assignment Category --') {
+                    acc_ass_cat_dropdown += '<option value="' + cat + '">' + cat + '</option>';
+                }
             });
             $.each(item.account_assign_cat_value_list, function (k, val) {
-                acc_ass_val_dropdown += '<option value="' + val + '">' + val + '</option>';
-                acc_ass_val_dict = {};
-                acc_ass_val_dict.account_assign_value = val;
-                acc_ass_val_dict.account_assign_cat = item.account_assign_cat_list[k];
-                acc_ass_val_dict.company_id = item.company_id;
-                acc_ass_val_list.push(acc_ass_val_dict);
-                account_assign_array.push(val);
+                if (val !== undefined) {
+                    acc_ass_val_dropdown += '<option value="' + val + '">' + val + '</option>';
+                    acc_ass_val_dict = {};
+                    acc_ass_val_dict.account_assign_value = val;
+                    acc_ass_val_dict.account_assign_cat = item.account_assign_cat_list[k];
+                    acc_ass_val_dict.company_id = item.company_id;
+                    acc_ass_val_list.push(acc_ass_val_dict);
+                    account_assign_array.push(val);
+                }
             });
             var company_dropdown = '';
             company_dropdown += '<option value="' + item.company_id + '">' + item.company_id + '</option>';
@@ -238,6 +242,7 @@
             company_dropdown += '<option value="' + item.company_id + '">' + item.company_id + '</option>'
         });
     }
+
 
 
     //onclick of cancel display the table in display mode............
@@ -808,20 +813,18 @@
                 rendered_acc_value_list = response.acc_value_list
                 gl_account_dropdown()
                 $("#error_msg_id").css("display", "none")
-                $('#display_basic_table').DataTable().destroy();
+                $('#id_popup_table').DataTable().destroy();
                 $("#id_popup_tbody").empty();
                 //Reference the Table.
-                var grid = document.getElementById("display_basic_table");
-
+                var res = get_all_checkboxes(); // Function to get all the checkboxes
+                var $chkbox_all = $('td input[ class="class_basic_detgl_table]', res);
                 //Reference the CheckBoxes in Table.
-                var checkBoxes = document.getElementsByClassName("checkbox_check");
                 var edit_basic_data = "";
                 var dropdown_array = [];
-
                 //Loop through the CheckBoxes.
-                for (var i = 0; i < checkBoxes.length; i++) {
-                    if (checkBoxes[i].checked) {
-                        var row = checkBoxes[i].parentNode.parentNode;
+                for (var i = 0; i < $chkbox_all.length; i++) {
+                    if ($chkbox_all[i].checked) {
+                        var row = $chkbox_all[i].parentNode.parentNode;
                             guid = row.cells[9].innerHTML;
                             unique_input = '<select class="form-control">' + prod_cat_dropdown + ' </select>'
                             edit_basic_data += '<tr ><td><input type="checkbox" required></td>'+
@@ -874,7 +877,6 @@
                 });
                 $("#id_del_ind_checkbox").prop("hidden", true);
                 $("#Detgl_Modal").modal('show');
-                table_sort_filter('display_basic_table');
                 table_sort_filter('id_popup_table');
                 $('#Detgl_Modal').modal('show');
                 CloseLoaderPopup();

@@ -48,9 +48,9 @@
                 <table id="display_basic_table" class="class_basic_country_table table table-bordered custom-table">
                     <thead  id="id_WorkFlow_table_header">
                         <tr>
-                            <th id="hg_select_checkbox" hidden>
+                            <th id="hg_select_checkbox"  hidden>
                                 <div id="id_check_all" style="display:none;">
-                                    <input type="checkbox" onchange="checkAll(this)" name="chk[]">
+                                    <input type="checkbox" id="selectAll" name="chk[]">
                                 </div>
                             </th>
                             <th>Company Number</th>
@@ -426,20 +426,19 @@
                 dropdown_db_values = response.dropdown_db_values
                 workflow_dropdown()
                 $("#error_msg_id").css("display", "none")
-                $('#display_basic_table').DataTable().destroy();
                 $('#id_popup_table').DataTable().destroy();
                 $('#id_popup_tbody').empty();
                 //Reference the Table.
-                var grid = document.getElementById("display_basic_table");
+                var res = get_all_checkboxes(); // Function to get all the checkboxes
+                var $chkbox_all = $('td input[type="checkbox"]', res);
                 //Reference the CheckBoxes in Table.
-                var checkBoxes = grid.getElementsByTagName("INPUT");
                 var edit_basic_data = "";
                 var unique_input = '';
                 var dropdown_values = [];
                 //Loop through the CheckBoxes.
-                for (var i = 1; i < checkBoxes.length; i++) {
-                    if (checkBoxes[i].checked) {
-                        var row = checkBoxes[i].parentNode.parentNode;
+                for (var i = 0; i < $chkbox_all.length; i++) {
+                    if ($chkbox_all[i].checked) {
+                        var row = $chkbox_all[i].parentNode.parentNode;
                         if(GLOBAL_ACTION == "UPDATE"){
                             unique_input = '<select value="' + row.cells[1].innerHTML + '" class="form-control" disabled>' + company_id_dropdown + '</select>';
                             edit_basic_data += '<tr><td hidden><input type="checkbox" required></td><td>'+unique_input+'</td>'+
@@ -469,7 +468,6 @@
                 });
                 $("#id_del_ind_checkbox").prop("hidden", true);
                 table_sort_filter('id_popup_table');
-                table_sort_filter('display_basic_table');
                 $('#Wfschema_Modal').modal('show');
                 CloseLoaderPopup();
             }
