@@ -206,7 +206,7 @@
                             $('#currencyModal').modal('show');
                             $('#id_data_upload').modal('hide');
                             document.getElementById("id_del_add_button").style.display = "block";
-                            $('#id_check_data').modal('show');
+                            $('#id_check_data').show();
                             $("#id_check_data").prop("hidden", false);
                             $("#save_id").prop("hidden", true);
                             table_sort_filter('id_popup_table')
@@ -397,6 +397,7 @@
                  $("#save_id").prop("hidden", true);
                  $("#id_delete_duplicate").show()
                  $("#id_check_data").prop("hidden", false);
+                 count = count +1;
             }
             else{
                 $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "none");

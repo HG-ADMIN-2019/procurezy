@@ -410,6 +410,7 @@
                  $("#save_id").prop("hidden", true);
                  $("#id_delete_duplicate").show()
                  $("#id_check_data").prop("hidden", false);
+                 count = count +1;
             }
             else{
                 $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "none");
@@ -421,7 +422,6 @@
 
         });
          $("#id_check_special_character_messages").prop("hidden",false);
-
         //*************** shows save button if there are no errors(special characters and max length) ***************
         if(count == 0){
             $("#id_popup_table").find("input,button,textarea,select").attr("disabled", "disabled");
