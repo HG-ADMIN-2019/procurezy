@@ -1,5 +1,6 @@
 from eProc_Attributes.Utilities.attributes_generic import OrgAttributeValues
 from eProc_Attributes.models.org_attribute_models import OrgAttributesLevel
+from eProc_Basic.Utilities.functions.dict_check_key import checkKey
 from eProc_Basic.Utilities.functions.django_query_set import DjangoQueries
 from eProc_Basic.Utilities.functions.generate_document_number import generate_document_number
 from eProc_Basic.Utilities.functions.messages_config import get_msg_desc, get_message_desc
@@ -85,10 +86,11 @@ class SaveShoppingCart:
         if not self.invoice_address:
             self.invoice_address = 0
 
-        if  self.sc_ui_data['adr_num']:
-            self.ship_addr_num = self.sc_ui_data['adr_num']
-        else:
-            self.ship_addr_num = 0
+        if checkKey(sc_ui_data, 'adr_num'):
+            if self.sc_ui_data['adr_num']:
+                self.ship_addr_num = self.sc_ui_data['adr_num']
+            else:
+                self.ship_addr_num = 0
 
     # Method to save header details
     def save_header_details(self, status):
@@ -121,13 +123,13 @@ class SaveShoppingCart:
         self.subtype = get_document_number[2]
         self.doc_number = get_document_number[0]
         if not django_query_instance.django_existence_check(Currency,
-                                                        {'currency_id': self.currency,
-                                                         'del_ind': False}):
+                                                            {'currency_id': self.currency,
+                                                             'del_ind': False}):
             self.currency = None
 
         if not django_query_instance.django_existence_check(TimeZone,
-                                                        {'time_zone': self.timezone,
-                                                         'del_ind': False}):
+                                                            {'time_zone': self.timezone,
+                                                             'del_ind': False}):
             self.timezone = None
 
         header_guid = self.header_guid
@@ -1252,7 +1254,7 @@ class CheckForScErrors:
         self.username = username
         self.error_message_info = []
 
-    def invoice_address_check(self,address_number,company_code):
+    def invoice_address_check(self, address_number, company_code):
         """
 
         """
@@ -1278,7 +1280,7 @@ class CheckForScErrors:
         else:
             return error_msg
 
-    def header_level_delivery_address_check(self, address_number,company_code, address_number_list, check_flag):
+    def header_level_delivery_address_check(self, address_number, company_code, address_number_list, check_flag):
         error_msg = None
         if check_flag:
             if len(address_number_list) == 0:
@@ -1292,7 +1294,7 @@ class CheckForScErrors:
         check_for_address_number_map = django_query_instance.django_existence_check(OrgAddressMap,
                                                                                     {'client': self.client,
                                                                                      'del_ind': False,
-                                                                                     'address_type':'D',
+                                                                                     'address_type': 'D',
                                                                                      'address_number': address_number,
                                                                                      'company_id': company_code})
         check_for_address_number = django_query_instance.django_existence_check(OrgAddress, {
@@ -1776,7 +1778,8 @@ class CheckForScErrors:
         return self.sc_check_data
 
 
-def check_sc_second_step_shopping_cart(sc_check_instance, object_id_list, default_calendar_id,default_invoice_adr, company_code,
+def check_sc_second_step_shopping_cart(sc_check_instance, object_id_list, default_calendar_id, default_invoice_adr,
+                                       company_code,
                                        default_address_number, address_number_list, accounting_data, manager_details,
                                        approver_id, total_value,
                                        msg_info,
@@ -1789,7 +1792,8 @@ def check_sc_second_step_shopping_cart(sc_check_instance, object_id_list, defaul
     sc_check_instance.document_sc_transaction_check(object_id_list)
     sc_check_instance.po_transaction_check(object_id_list)
     sc_check_instance.calender_id_check(default_calendar_id)
-    error_msg = sc_check_instance.header_level_delivery_address_check(default_address_number,company_code, address_number_list, True)
+    error_msg = sc_check_instance.header_level_delivery_address_check(default_address_number, company_code,
+                                                                      address_number_list, True)
     sc_check_instance.update_approval_check(manager_details, approver_id, total_value,
                                             msg_info)
     sc_check_instance.header_level_acc_check(accounting_data['acc_list'], accounting_data['default_acc_ass_cat'],
