@@ -35,11 +35,15 @@ function edit_basic_supp_data(){
     $(".hg_edit_display_mode").prop( "disabled", false );
     if(GLOBAL_ACTION != 'CREATE'){
             $("#supplier_id").prop( "disabled", true );
+            $("#sbd_edit_button").prop("hidden", true);
+            document.getElementById('sbd_save_cancel_button').style.display = 'block';
     }
     $("#edit_mode").show();
     $("#working_days").hide();
-    document.getElementById('sbd_edit_button').style.display = 'none'
-    document.getElementById('sbd_save_cancel_button').style.display = 'block'
+    document.getElementById('sbd_edit_button').style.display = 'none' ;
+    $("#sbd_edit_button").prop("hidden", true);
+    document.getElementById('sbd_save_cancel_button').style.display = 'block';
+    $("#sbd_save_cancel_button").prop("hidden", false);
 }
 
 // onclick of cancel button functionality
@@ -47,6 +51,7 @@ function cancel_basic_details(){
     $(".hg_edit_display_mode").prop( "disabled", true );
     document.getElementById('sbd_save_cancel_button').style.display = 'none'
     document.getElementById('sbd_edit_button').style.display = 'block'
+    $("#sbd_edit_button").prop("hidden", false);
     $('#image-preview').hide();
     $('#image-preview3').show();
     var output = document.getElementById('image-preview3');
@@ -260,52 +265,7 @@ function save_basic_details() {
     return false;
 }
 var supplierid = global_supplier_id;
-// Function to save edited or updated supplier organizational details data
-function supp_org_data_save(){
-    OpenLoaderPopup();
-    var save_supplier_purch_details = new Array();
-    $('#success_msg_id').empty()
-    $('#id_popup_table').DataTable().destroy();
-//    if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
-    $("#id_popup_table TBODY TR").each(function() {
-        var row = $(this);
-        var get_supp_purch_data = {};
-        get_supp_purch_data.delete_supplier = delete_supp_purch_data;
-        get_supp_purch_data.supp_id = supplierid;
-        get_supp_purch_data.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
-        get_supp_purch_data.supp_org_guid = row.find("TD").eq(1).text();
-        get_supp_purch_data.porg_id = row.find("TD").eq(2).find("select option:selected").val();
-        get_supp_purch_data.currency_id = row.find("TD").eq(3).find("select option:selected").val();
-        get_supp_purch_data.payment_term = row.find("TD").eq(4).find("select option:selected").val();
-        get_supp_purch_data.incoterm = row.find("TD").eq(5).find("select option:selected").val();
-        get_supp_purch_data.gr_inv_vrf = row.find("TD").eq(6).find('input[type="checkbox"]').is(':checked');
-        get_supp_purch_data.inv_conf_exp = row.find("TD").eq(7).find('input[type="checkbox"]').is(':checked');
-        get_supp_purch_data.gr_conf_exp = row.find("TD").eq(8).find('input[type="checkbox"]').is(':checked');
-        get_supp_purch_data.po_resp = row.find("TD").eq(9).find('input[type="checkbox"]').is(':checked');
-        get_supp_purch_data.ship_notif_exp = row.find("TD").eq(10).find('input[type="checkbox"]').is(':checked');
-        get_supp_purch_data.purch_block = row.find("TD").eq(11).find('input[type="checkbox"]').is(':checked');
-        save_supplier_purch_details.push(get_supp_purch_data)
-    })
-    data = {'data':save_supplier_purch_details,'table_name':'OrgSuppliers','action':GLOBAL_ACTION}
-    $.ajax({
-        type: 'POST',
-        url: ajax_update_supplier_org_details_url,
-        data: JSON.stringify(data),
-        contentType: "application/json; charset=utf-8",
-        dataType: 'json',
-        success: function (response) {
-            success_response(response); // Function call to display response data
-            rendered_supp_org_data = response[0];
-            edit_supp_org();
-            $('#supplierOrgModal').modal('hide');
-            CloseLoaderPopup();
-        },
-        error: function (error) {
-            console.log(error);
-        }
-    })
-//    }
-}
+
    // Validation function
    const save_basic_form_validation = (name1, city_id, email_id, mobile,search_term1, search_term2) => {
         var is_valid = true

@@ -61,6 +61,7 @@ def update_supplier_purch_details(request):
     for org_data in supp_org_data['data']:
         if not django_query_instance.django_existence_check(OrgSuppliers,
                                                             {'porg_id': org_data['porg_id'],
+                                                             'supplier_id': org_data['supp_id'],
                                                              'del_ind': False
                                                              }):
             guid = guid_generator()
@@ -114,14 +115,16 @@ def update_supplier_purch_details(request):
     else:
         msgid = 'MSG112'
 
-    supp_org_data = get_data(org_data['supp_id'], msgid)
+    client_id= getClients(request),
+    supp_org_data = get_data(org_data['supp_id'], client_id, msgid)
     return JsonResponse(supp_org_data, safe=False)
 
 
-def get_data(supplier_id, msgid):
+def get_data(supplier_id, client_id, msgid):
     message = get_message_desc(msgid)[1]
     upload_response = django_query_instance.django_filter_query(OrgSuppliers,
-                                                                {'del_ind': False, 'supplier_id': supplier_id}, None,
+                                                                {'del_ind': False, 'supplier_id': supplier_id,
+                                                                 'client_id': client_id}, None,
                                                                 None)
     print(upload_response)
     return upload_response, message

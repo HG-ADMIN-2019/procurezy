@@ -92,15 +92,7 @@ def user_search(request):
     if request.method == 'GET':
         encrypted_email = []
 
-        # employee_results = django_query_instance.django_filter_only_query(UserData, {
-        #     'client': global_variables.GLOBAL_CLIENT, 'del_ind': False
-        # })
         employee_results = get_emp_data()
-        # for emails in employee_results:
-        #     encrypted_email.append(encrypt(emails.email))
-        # to be put in function
-
-        # context['employee_results'] = zip(employee_results, encrypted_email)  # remove zip
         context['employee_results'] = employee_results
     if request.method == 'POST':
         search_fields = {}
@@ -123,14 +115,8 @@ def user_search(request):
         search_fields['user_type'] = request.POST.get('user_type')
         search_fields['employee_id'] = request.POST.get('employee_id')
 
-        # employee_results = user_detail_search(**search_fields)
         employee_results = emp_search_data(search_fields)
-        #
-        # for user_email in employee_results:
-        #     encrypted_email.append(encrypt(user_email['email']))
-
         context['employee_results'] = employee_results
-    #     funtion to define from 131 - 135
 
     return render(request, 'User Search/user_search.html', context)
 
@@ -1092,7 +1078,7 @@ def create_emp_history_data(user):
         'valid_from': user['valid_from'],
         'valid_to': user['valid_to'],
         'del_ind': user['del_ind'],
-        'object_id': user['object_id_id'],
+        'object_id': django_query_instance.django_get_query(OrgModel, {'object_id': user['object_id_id']}),
         'language_id': django_query_instance.django_get_query(Languages, {'language_id': user['language_id_id']}),
         'time_zone': django_query_instance.django_get_query(TimeZone, {'time_zone': user['time_zone_id']}),
         'currency_id': django_query_instance.django_get_query(Currency, {'currency_id': user['currency_id_id']})
@@ -1230,6 +1216,7 @@ def lock_unlock_emp(request):
     """
     """
     emp_lock_flag_detail = JsonParser_obj.get_json_from_req(request)
+    employee_id = emp_lock_flag_detail['employee_id']
     status = emp_lock_flag_detail['employee_id'].split('-')[1]
     empId = emp_lock_flag_detail['employee_id'].split('-')[0]
     if status in ('LOCKED', 'UNLOCKED'):

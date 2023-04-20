@@ -3,7 +3,7 @@ from eProc_Basic.Utilities.functions.django_q_query import django_q_query
 from eProc_Basic.Utilities.functions.django_query_set import DjangoQueries
 from eProc_Basic.Utilities.functions.encryption_util import encrypt
 from eProc_Basic.Utilities.global_defination import global_variables
-from eProc_Configuration.models import FieldTypeDescription
+from eProc_Configuration.models import FieldTypeDescription, OrgPorg
 from eProc_Registration.models import UserData
 
 django_query_instance = DjangoQueries()
@@ -63,8 +63,8 @@ def user_detail_search(**kwargs):
                 value_list = '1'
                 user_locked_query = django_q_query(value, value_list, 'user_locked')
             if key == 'is_active':
-                value = '1'
-                value_list = '1'
+                value = '0'
+                value_list = '0'
                 is_active_query = django_q_query(value, value_list, 'is_active')
 
     user_details_query = list(instance.get_user_details_by_fields(client,

@@ -104,8 +104,8 @@ $('#display_basic_table tbody').on('click', 'input[type="checkbox"]', function(e
    });
     function updateDataTableSelectAllCtrl(table){
        var $table             = table.table().node();
-       var $chkbox_all        = $('tbody input[type="checkbox"]', $table);
-       var $chkbox_checked    = $('tbody input[type="checkbox"]:checked', $table);
+       var $chkbox_all        = $('tbody input[class="checkbox_check"]', $table);
+       var $chkbox_checked    = $('tbody input[class="checkbox_check"]:checked', $table);
        var chkbox_select_all  = $('thead input[id="selectAll"]', $table).get(0);
 
        // If none of the checkboxes are checked

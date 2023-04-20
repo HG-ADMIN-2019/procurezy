@@ -57,9 +57,9 @@
                         <div class="d-flex justify-content-end">
                             <div id="sbd_save_cancel_button" >
                                 <button type="submit"  id="save_basic" name="save_basic" class="btn btn-primary" onclick="save_basic_details();"><i class="fas fa-save"></i> save</button>
-<!--                                <button type="button" class="btn btn-primary" onclick="cancel_basic_details();"><i class="fas fa-times"></i> cancel</button>-->
+                                <button id="cancel_id" type="button" class="btn btn-primary" onclick="cancel_basic_details();"><i class="fas fa-times"></i> cancel</button>
                             </div>
-                            <div id="sbd_edit_button" hidden>
+                            <div id="sbd_edit_button" >
                                 <button type="button" class="btn btn-primary" onclick="edit_basic_supp_data();"><i class="fas fa-edit"></i> edit</button>
                             </div>
                         </div>
@@ -72,7 +72,6 @@
                                         <span class="badge help-text-badge help-text-alpha-numeric"></span>
                                     </div>
                                 </div>
-                                
 
                                 <div class="row">
                                     <input value="{{supplier_info.supp_guid}}" id="supplier_guid" hidden>
@@ -303,7 +302,7 @@
                     </button>
                 </div>
                 <div>
-                <table id="display_basic_table" class="org_registration_table">
+                <table id="display_basic_table" class="org_registration_table" style="width: 1405px;">
                                     <thead id="supp_org_header" class="thead-light">
                                     <tr>
                                         <th id="hg_select_checkbox"  hidden>
@@ -488,7 +487,16 @@ $(document).ready(function(){
     if(GLOBAL_ACTION == 'CREATE'){
       $("#org_info_tab").hide();
       $("#business_doc_tab").hide();
+      $("#sbd_save_cancel_button").prop("hidden", false);
+      $("#sbd_edit_button").prop("hidden", true);
+      document.getElementById('sbd_edit_button').style.display = 'none';
+      $("#cancel_id").prop("hidden", true);
     }
+    else{
+         document.getElementById('sbd_edit_button').style.display = 'block';
+        $("#sbd_save_cancel_button").prop("hidden", true);
+    }
+
     $("#country_code_id").val(country_id).attr('selected', 'selected');
     $("#language_id").val(lang_id).attr('selected', 'selected');
     $("#currency_id").val(curr_id).attr('selected', 'selected');
@@ -825,6 +833,50 @@ function onclick_copy_update_button(data) {
                 $("#id_del_ind_checkbox").prop("hidden", true);
                 $('#supplierOrgModal').modal('show');
                 table_sort_filter('id_popup_table');
+}
+// Function to save edited or updated supplier organizational details data
+function supp_org_data_save(){
+    OpenLoaderPopup();
+    var save_supplier_purch_details = new Array();
+    $('#success_msg_id').empty()
+    $('#id_popup_table').DataTable().destroy();
+    $("#id_popup_table TBODY TR").each(function() {
+        var row = $(this);
+        var get_supp_purch_data = {};
+        get_supp_purch_data.delete_supplier = delete_supp_purch_data;
+        get_supp_purch_data.supp_id = supplierid;
+        get_supp_purch_data.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
+        get_supp_purch_data.supp_org_guid = row.find("TD").eq(1).text();
+        get_supp_purch_data.porg_id = row.find("TD").eq(2).find("select option:selected").val();
+        get_supp_purch_data.currency_id = row.find("TD").eq(3).find("select option:selected").val();
+        get_supp_purch_data.payment_term = row.find("TD").eq(4).find("select option:selected").val();
+        get_supp_purch_data.incoterm = row.find("TD").eq(5).find("select option:selected").val();
+        get_supp_purch_data.gr_inv_vrf = row.find("TD").eq(6).find('input[type="checkbox"]').is(':checked');
+        get_supp_purch_data.inv_conf_exp = row.find("TD").eq(7).find('input[type="checkbox"]').is(':checked');
+        get_supp_purch_data.gr_conf_exp = row.find("TD").eq(8).find('input[type="checkbox"]').is(':checked');
+        get_supp_purch_data.po_resp = row.find("TD").eq(9).find('input[type="checkbox"]').is(':checked');
+        get_supp_purch_data.ship_notif_exp = row.find("TD").eq(10).find('input[type="checkbox"]').is(':checked');
+        get_supp_purch_data.purch_block = row.find("TD").eq(11).find('input[type="checkbox"]').is(':checked');
+        save_supplier_purch_details.push(get_supp_purch_data)
+    })
+    data = {'data':save_supplier_purch_details,'table_name':'OrgSuppliers','action':GLOBAL_ACTION}
+    $.ajax({
+        type: 'POST',
+        url: "{% url 'eProc_Suppliers:update_supplier_purch_details' %}",
+        data: JSON.stringify(data),
+        contentType: "application/json; charset=utf-8",
+        dataType: 'json',
+        success: function (response) {
+            success_response(response); // Function call to display response data
+            rendered_supp_org_data = response[0];
+            edit_supp_org();
+            $('#supplierOrgModal').modal('hide');
+            CloseLoaderPopup();
+        },
+        error: function (error) {
+            console.log(error);
+        }
+    })
 }
 
 </script>
