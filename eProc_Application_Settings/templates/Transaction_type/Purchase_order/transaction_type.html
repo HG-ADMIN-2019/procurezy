@@ -94,41 +94,43 @@
                     </button>
                 </div>
                 <!-- Modal body -->
-                <div class="modal-body scrollbox">
-                    <div id="id_del_add_button" class="mb-4">
-                        <button class="btn btn-primary" title="Add New Row" type="button" onclick="add_popup_row()">
-                            <i class="fa fa-plus"></i> add new row
-                        </button>
-                        <button class="btn btn-outline-danger" title="Delete" onclick="application_settings_delete_Row('id_popup_table')">
-                            <i class="fa fa-trash"></i> delete
-                        </button>
+                <div class="modal-body">
+                    <div class="popup-vertical-scroll">
+                        <div id="id_del_add_button" class="mb-4">
+                            <button class="btn btn-primary" title="Add New Row" type="button" onclick="add_popup_row()">
+                                <i class="fa fa-plus"></i> add new row
+                            </button>
+                            <button class="btn btn-outline-danger" title="Delete" onclick="application_settings_delete_Row('id_popup_table')">
+                                <i class="fa fa-trash"></i> delete
+                            </button>
+                        </div>
+                        <div id="id_check_success_messages" class="alert alert-success check_success_message" hidden></div>
+                        <div id="id_check_error_messages" class="alert alert-danger check_error_messages" hidden></div>
+                        <div id="id_check_special_character_messages" class="alert alert-danger check_special_character_messages" hidden>
+                            <p id="id_error_msg_transaction_types_code"></p>
+                            <p id="id_error_msg_transaction_types_name"></p>
+                            <p id="id_error_msg_transaction_types_length"></p>
+                        </div>
+                        <div id="error_msg_id" class="alert alert-danger display-none" role="alert"><span id="error_message"></span></div>
+                        <div id="id_warning_msg_id" class="alert alert-warning display-none" role="alert"></div>
+                        <div id="id_info_msg_id" class="alert alert-primary display-none" role="alert"></div>
+                        <table class="class_popup_table  table table-bordered mt-2"  id="id_popup_table">
+                            <thead>
+                                <tr>
+                                    <th>Select</th>
+                                    <th>Transaction Type</th>
+                                    <th>Document Type</th>
+                                    <th>Sequence</th>
+                                    <th>Description</th>
+                                    <th>Active/Inactive Flag</th>
+                                    <TH hidden>GUID</TH>
+                                    <th id="id_del_ind_checkbox" hidden>Del Indicator</th>
+                                </tr>
+                            </thead>
+                            <tbody id=id_popup_tbody>
+                            </tbody>
+                        </table>
                     </div>
-                    <div id="id_check_success_messages" class="alert alert-success check_success_message" hidden></div>
-                    <div id="id_check_error_messages" class="alert alert-danger check_error_messages" hidden></div>
-                    <div id="id_check_special_character_messages" class="alert alert-danger check_special_character_messages" hidden>
-                        <p id="id_error_msg_transaction_types_code"></p>
-                        <p id="id_error_msg_transaction_types_name"></p>
-                        <p id="id_error_msg_transaction_types_length"></p>
-                    </div>
-                    <div id="error_msg_id" class="alert alert-danger display-none" role="alert"><span id="error_message"></span></div>
-                    <div id="id_warning_msg_id" class="alert alert-warning display-none" role="alert"></div>
-                    <div id="id_info_msg_id" class="alert alert-primary display-none" role="alert"></div>
-                    <table class="class_popup_table  table table-bordered mt-2"  id="id_popup_table">
-                        <thead>
-                            <tr>
-                                <th>Select</th>
-                                <th>Transaction Type</th>
-                                <th>Document Type</th>
-                                <th>Sequence</th>
-                                <th>Description</th>
-                                <th>Active/Inactive Flag</th>
-                                <TH hidden>GUID</TH>
-                                <th id="id_del_ind_checkbox" hidden>Del Indicator</th>
-                            </tr>
-                        </thead>
-                        <tbody id=id_popup_tbody>
-                        </tbody>
-                    </table>
                 </div>
                 <!-- Modal footer -->
                 <div class="modal-footer">
@@ -228,19 +230,18 @@
                 rendered_sequence = response.number_range_sequence
                 dropdown_value();
                 $("#error_msg_id").css("display", "none")
-                $('#display_basic_table').DataTable().destroy();
+                $('#id_popup_table').DataTable().destroy();
                 $("#id_popup_tbody").empty();
-                $('#display_basic_table').DataTable().destroy();
                 //Reference the Table.
-                var grid = document.getElementById("display_basic_table");
+                var res = get_all_checkboxes(); // Function to get all the checkboxes
+                var $chkbox_all = $('td input[type="checkbox"]', res);
                 //Reference the CheckBoxes in Table.
-                var checkBoxes = document.getElementsByClassName("checkbox_check");
                 var edit_basic_data = "";
                 var dropdown_val = [];
                 //Loop through the CheckBoxes.
-                for (var i = 0; i < checkBoxes.length; i++) {
-                    if (checkBoxes[i].checked) {
-                        var row = checkBoxes[i].parentNode.parentNode;
+                for (var i = 0; i < $chkbox_all.length; i++) {
+                    if ($chkbox_all[i].checked) {
+                        var row = $chkbox_all[i].parentNode.parentNode;
                         var document_type = row.cells[2].innerHTML
                         var sequence = row.cells[3].innerHTML
                         var active_inactive = row.cells[5].children.active_inactive.checked
@@ -277,9 +278,7 @@
                 })
                 $("#id_del_ind_checkbox").prop("hidden", true);
                 $('#myModal').modal('show');
-                table_sort_filter('display_basic_table');
                 table_sort_filter('id_popup_table');
-                $('#myModal').modal('show');
                 CloseLoaderPopup();
             }
         });
@@ -296,34 +295,40 @@
         get_main_table_data(); //Read data from main table
         // compare for duplicates in popup
         [no_duplicate_value,error_message] = compare_table_for_duplicate_entries(validate_add_attributes, transaction_types_data)
-        if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
-            [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
-        }
-        if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
-            var transaction_types_data_array = transaction_types_data;
-            $('#id_save_confirm_popup').modal('hide');
-            data = {'data':transaction_types_data,'table_name':'TransactionTypes','action':GLOBAL_ACTION}
-            OpenLoaderPopup();
-            $.ajax({
-                type: 'POST',
-                url: "{% url 'eProc_Configuration:create_update_application_data' %}",
-                data: JSON.stringify(data),
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                success: function(Response) {
-                    rendered_transaction_types_data = Response[0];
-                    rendered_active_inactive = Response[2];
-                    display_basic_db_data();
-                    dropdown_value();
-                    $('#myModal').modal('hide');
-                    success_response(Response); // Function call to display response data
-                    table_sort_filter('id_popup_table');
-                    CloseLoaderPopup();
-                }
-            });
-        }
-        else if (error_message){
+        if (error_message){
             display_error_message(error_message)
+        }
+        else {
+            if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
+                [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
+            }
+            if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
+                var transaction_types_data_array = transaction_types_data;
+                $('#id_save_confirm_popup').modal('hide');
+                data = {'data':transaction_types_data,'table_name':'TransactionTypes','action':GLOBAL_ACTION}
+                OpenLoaderPopup();
+                $.ajax({
+                    type: 'POST',
+                    url: "{% url 'eProc_Configuration:create_update_application_data' %}",
+                    data: JSON.stringify(data),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function(Response) {
+                        rendered_transaction_types_data = Response[0];
+                        rendered_active_inactive = Response[2];
+                        display_basic_db_data();
+                        dropdown_value();
+                        $('#myModal').modal('hide');
+                        success_response(Response); // Function call to display response data
+                        table_sort_filter('id_popup_table');
+                        CloseLoaderPopup();
+                    }
+                });
+            }
+            else if (error_message){
+                display_error_message(error_message)
+            }
+            table_sort_filter('id_popup_table');
         }
     }
   
@@ -403,19 +408,14 @@
             }
         });
         if (add_attr_duplicates_list.length != 0) {
-            get_message_details("JMSG001"); // Get message details
+            error_message = ui_messeges("JMSG001")// Get message details
             no_duplicate_value = 'N'
             return [no_duplicate_value,error_message]
         }
         else {
             $.each(transaction_types, function (i, item) {
-                if (item.transaction_type.length == 0) {
-                    get_message_details("JMSG002"); // Get message details
-                    no_duplicate_value = 'N'
-                    return [no_duplicate_value,error_message]
-                }
-                if (item.description.length == 0) {
-                    get_message_details("JMSG002"); // Get message details
+                if ((item.transaction_type.length == 0) || (item.description.length == 0)){
+                    error_message = ui_messeges("JMSG002")// Get message details
                     no_duplicate_value = 'N'
                     return [no_duplicate_value,error_message]
                 }

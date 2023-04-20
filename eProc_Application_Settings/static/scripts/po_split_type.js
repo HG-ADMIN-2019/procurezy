@@ -52,6 +52,7 @@ $('#save_id').click(function () {
 
 //Read popup table data
 function read_popup_data() {
+    $('#id_popup_table').DataTable().destroy();
     po_split_type_data = new Array();
     validate_add_attributes = [];
     $("#id_popup_table TBODY TR").each(function () {
@@ -66,6 +67,7 @@ function read_popup_data() {
         validate_add_attributes.push(po_split_types.po_split_type);
         po_split_type_data.push(po_split_types);
     });
+    table_sort_filter('id_popup_table');
     return po_split_type_data;
 }
 

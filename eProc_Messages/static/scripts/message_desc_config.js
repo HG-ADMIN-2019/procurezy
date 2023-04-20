@@ -14,22 +14,10 @@ $(document).ready(function () {
             'orderable':false,
             "bSort":false,
             "selectAllPages": false,
-//           checkboxes: {
-//               selectRow: true,
-//               selectAllPages: false
-//           },
        }],
      })
     table_sort_filter('display_basic_table');
 });
-
-//**********************************
-//onclick of upload button display id_data_upload popup and set GLOBAL_ACTION button value
-function onclick_upload_button() {
-    GLOBAL_ACTION = "message_upload"
-    $("#id_popup_tbody").empty();
-    $('#id_data_upload').modal('show');
-}
 
 //******************
 // on click copy icon display the selected checkbox data
@@ -55,10 +43,9 @@ $(".remove_upload_data").click(() => {
     $("#id_error_msg_id").html("");
     $("#id_popup_tbody").empty();
     $("#id_error_msg_id").empty();
-    $('#myModal').modal('hide');
+    $('#msg_desc_Modal').modal('hide');
     $("#id_error_msg_id").prop("hidden", true);
     $("#id_error_msg_id").prop("hidden", true);
-//    $("#id_error_msg").prop("hidden", true);
     $("#id_error_msg_length").prop("hidden", true);
     $("#id_check_error_messages").prop("hidden", true);
     $("#id_check_success_messages").prop("hidden", true);
@@ -84,35 +71,6 @@ function onclick_edit_button() {
     table_sort_filter('display_basic_table');
 }
 
-
-//********************************
-//onclick of select all checkbox
-//function checkAll(ele) {
-//    $('#display_basic_table').DataTable().destroy();
-//    var checkboxes = document.getElementsByTagName('input');
-//    if (ele.checked) {
-//        for (var i = 0; i < checkboxes.length; i++) {
-//            if (checkboxes[i].type == 'checkbox') {
-//                checkboxes[i].checked = true;
-//                $("#id_delete_data").show();
-//                $("#id_copy_data").show();
-//                $("#id_update_data").show();
-//            }
-//        }
-//    } else {
-//        for (var i = 0; i < checkboxes.length; i++) {
-//            if (checkboxes[i].type == 'checkbox') {
-//                checkboxes[i].checked = false;
-//                $("#id_delete_data").hide();
-//                $("#id_copy_data").hide();
-//                $("#id_update_data").hide();
-//            }
-//        }
-//    }
-//    table_sort_filter('display_basic_table');
-//}
-
-
 //**********************************
 //onclick of checkbox display delete,update and copy Buttons
 function valueChanged() {
@@ -127,64 +85,6 @@ function valueChanged() {
         $("#id_update_data").hide();
     }
 }
-
-
-//#############################
-//*******************************************************
-
-
-//***************************
-// //onclick of delete,delete the row.
-// function application_settings_delete_Row(myTable) {
-//     $('#id_popup_table').DataTable().destroy();
-//     try {
-//         var table = document.getElementById(myTable);
-//         var rowCount = table.rows.length;
-//         for (var i = 0; i < rowCount; i++) {
-//             var row = table.rows[i];
-//             var chkbox = row.cells[0].childNodes[0];
-//             if (null != chkbox && true == chkbox.checked) {
-//                 table.deleteRow(i);
-//                 rowCount--;
-//                 i--;
-//             }
-//         }
-
-//         $("#id_delete_data").hide();
-//         $("#id_copy_data").hide();
-//         $("#id_update_data").hide();
-//         table_sort_filter_popup_pagination('id_popup_table');
-//         return rowCount;
-//     } catch (e) {
-//         alert(e);
-//     }
-// }
-
-
-//***********************************
-
-// function delete_duplicate() {
-//     $('#id_popup_table').DataTable().destroy();
-//     var message_id_check = new Array
-//     $("#id_popup_table TBODY TR").each(function () {
-//         var row = $(this);
-
-//         //*************** reading data from the pop-up ***************
-//         message_type = row.find("TD").eq(2).find('select[type="text"]').val();
-//         message_id = row.find("TD").eq(1).find('input[type="text"]').val().toUpperCase();
-//         checked_box = row.find("TD").eq(3).find('input[type="checkbox"]').is(':checked')
-
-
-//         if (message_id_check.includes(messages_id)) {
-//             $(row).remove();
-//         }
-//         message_id_check.push(messages_id);
-//     })
-//     table_sort_filter_popup_pagination('id_popup_table')
-//     check_data()
-// }
-
-
 
 //onclick of cancel display the table in display mode............
 function display_basic_db_data() {
@@ -228,18 +128,19 @@ function display_error_message(error_message){
     document.getElementById("error_message").style.color = "Red";
     $("#error_msg_id").css("display", "block");
     $('#id_save_confirm_popup').modal('hide');
-    $('#myModal').modal('show');
+    $('#msg_desc_Modal').modal('show');
 }
 
 // Functtion to hide and display save related popups
 $('#save_id').click(function () {
-    $('#myModal').modal('hide');
+    $('#msg_desc_Modal').modal('hide');
     message_id_desc_data = read_popup_data();
     $('#id_save_confirm_popup').modal('show');
 });
 
 //Read popup table data
 function read_popup_data() {
+    $('#id_popup_table').DataTable().destroy();
     message_id_desc_data = new Array();
     validate_add_attributes = [];
     lang_values = [];
@@ -263,13 +164,10 @@ function read_popup_data() {
             if (message_id_desc.language_id == render_language_data[i].language_id)
                 desc = render_language_data[i].description;
         }
-        // var attribute_dup = {};
-        // attribute_dup.messages_id = message_id_desc.messages_id;
-        // attribute_dup.language_id = desc;
-        // duplicate_entry.push(attribute_dup);
         validate_add_attributes.push(message_id_desc.messages_id);
         message_id_desc_data.push(message_id_desc);
     });
+    table_sort_filter('id_popup_table');
     return message_id_desc_data;
 }
 

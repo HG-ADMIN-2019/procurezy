@@ -53,17 +53,17 @@
                         <th hidden>guid</th>
                     </tr>
                     </thead>
-                     <tbody id="id_number_range_tbody">
-                    {% for numberrange in upload_numberrange %}
-                    <tr>
-                        <td class="class_select_checkbox" hidden><input type="checkbox" class="checkbox_check" onclick="valueChanged()" required></td>
-                        <td>{{numberrange.sequence}}</td>
-                        <td>{{numberrange.starting}}</td>
-                        <td>{{numberrange.ending}}</td>
-                        <td>{{numberrange.current}}</td>
-                        <td hidden>{{numberrange.guid}}</td>
-                    </tr>
-                    {% endfor %}
+                    <tbody id="id_number_range_tbody">
+                        {% for numberrange in upload_numberrange %}
+                        <tr>
+                            <td class="class_select_checkbox" hidden><input type="checkbox" class="checkbox_check" onclick="valueChanged()" required></td>
+                            <td>{{numberrange.sequence}}</td>
+                            <td>{{numberrange.starting}}</td>
+                            <td>{{numberrange.ending}}</td>
+                            <td>{{numberrange.current}}</td>
+                            <td hidden>{{numberrange.guid}}</td>
+                        </tr>
+                        {% endfor %}
                     </tbody>
                 </table>
             </div>
@@ -80,39 +80,41 @@
                     </button>
                 </div>
                 <!-- Modal body -->
-                <div class="modal-body scrollbox">
-                    <div id="id_del_add_button">
-                        <button class="btn btn-primary" title="Add New Row" type="button" onclick="add_popup_row()"><i class="fa fa-plus"></i> add new row</button>
-                        <button class="btn btn-outline-danger" title="Delete" onclick="delete_popup_row('id_popup_table')"><i class="fa fa-trash"></i> delete</button>
+                <div class="modal-body">
+                    <div class="popup-vertical-scroll">
+                        <div id="id_del_add_button">
+                            <button class="btn btn-primary" title="Add New Row" type="button" onclick="add_popup_row()"><i class="fa fa-plus"></i> add new row</button>
+                            <button class="btn btn-outline-danger" title="Delete" onclick="delete_popup_row('id_popup_table')"><i class="fa fa-trash"></i> delete</button>
+                        </div>
+                        <div id="id_check_success_messages" class="alert alert-success check_success_message" hidden></div>
+                        <div id="id_check_error_messages" class="alert alert-danger check_error_messages" hidden></div>
+                        <div id="id_check_special_character_messages"
+                            class="alert alert-danger check_special_character_messages" hidden>
+                            <p id="id_error_msg_sequence"></p>
+                            <p id="id_error_msg_starting"></p>
+                            <p id="id_error_msg_ending"></p>
+                            <p id="id_error_msg_current"></p>
+                            <p id="id_error_msg_range"></p>
+                        </div>
+                        <div id="error_msg_id" class="alert alert-danger display-none" role="alert"><span id="error_message"></span></div>
+                        <div id="id_warning_msg_id" class="alert alert-warning display-none" role="alert"></div>
+                        <div id="id_info_msg_id" class="alert alert-primary display-none" role="alert"></div>
+                        <table class="class_popup_table table table-bordered mt-2" id="id_popup_table">
+                            <thead>
+                                <tr>
+                                    <th id="header_select">Select</th>
+                                    <th>Sequence</th>
+                                    <th>Starting</th>
+                                    <th>Ending</th>
+                                    <th>Current</th>
+                                    <th hidden>Guid</th>
+                                    <th id="id_del_ind_checkbox" hidden>Del Indicator</th>
+                                </tr>
+                            </thead>
+                            <tbody id=id_popup_tbody>
+                            </tbody>
+                        </table>
                     </div>
-                    <div id="id_check_success_messages" class="alert alert-success check_success_message" hidden></div>
-                    <div id="id_check_error_messages" class="alert alert-danger check_error_messages" hidden></div>
-                    <div id="id_check_special_character_messages"
-                        class="alert alert-danger check_special_character_messages" hidden>
-                        <p id="id_error_msg_sequence"></p>
-                        <p id="id_error_msg_starting"></p>
-                        <p id="id_error_msg_ending"></p>
-                        <p id="id_error_msg_current"></p>
-                        <p id="id_error_msg_range"></p>
-                    </div>
-                    <div id="error_msg_id" class="alert alert-danger display-none" role="alert"><span id="error_message"></span></div>
-                    <div id="id_warning_msg_id" class="alert alert-warning display-none" role="alert"></div>
-                    <div id="id_info_msg_id" class="alert alert-primary display-none" role="alert"></div>
-                    <table class="class_popup_table table table-bordered mt-2" id="id_popup_table">
-                        <thead>
-                            <tr>
-                                <th id="header_select">Select</th>
-                                <th>Sequence</th>
-                                <th>Starting</th>
-                                <th>Ending</th>
-                                <th>Current</th>
-                                <th hidden>Guid</th>
-                                <th id="id_del_ind_checkbox" hidden>Del Indicator</th>
-                            </tr>
-                        </thead>
-                        <tbody id=id_popup_tbody>
-                        </tbody>
-                    </table>
                 </div>
                 <!-- Modal footer -->
                 <div class="modal-footer">
@@ -194,6 +196,7 @@
             else if (error_message){
                 display_error_message(error_message)
             }
+            table_sort_filter('id_popup_table');
         }
     }
 
@@ -242,37 +245,32 @@
             }
         });
         if (add_attr_duplicates_list.length != 0) {
-            get_message_details("JMSG001"); // Get message details
+            error_message = ui_messeges("JMSG001")// Get message details
             no_duplicate_value = 'N'
             return [no_duplicate_value,error_message]
         }
         else{
             $.each(number_range, function (i, item) {
                 if (item.sequence.length == 0 || item.starting.length == 0 || item.ending.length == 0 || item.current.length == 0) {
-                    get_message_details("JMSG002"); // Get message details
+                    error_message = ui_messeges("JMSG002")// Get message details
                     no_duplicate_value = 'N'
                     return [no_duplicate_value,error_message]
                 } else if (item.starting >= item.ending) {
-                    get_message_details("JMSG009"); // Get message details
+                    error_message = ui_messeges("JMSG035")// Get message details
                     no_duplicate_value = 'N'
                     return [no_duplicate_value,error_message]
-                } else if (item.ending <= item.starting) {
-                    get_message_details("JMSG035"); // Get message details
-                    no_duplicate_value = 'N'
-                    return [no_duplicate_value,error_message]
-                }  
-                else if (item.current <= item.starting) {
+                } else if (item.current <= item.starting) {
                     error_message = ui_messeges("JMSG036")// Get message details
                     no_duplicate_value = 'N'
                     return [no_duplicate_value,error_message]
                 } else if (item.current >= item.ending) {
-                    get_message_details("JMSG037"); // Get message details
+                    error_message = ui_messeges("JMSG037")// Get message details
                     no_duplicate_value = 'N'
                     return [no_duplicate_value,error_message]
                 }
                 var range_check = list_out_of_range(number_range)
                 if (range_check){
-                    get_message_details("JMSG016"); // Get message details
+                    error_message = ui_messeges("JMSG016")// Get message details
                     no_duplicate_value = 'N'
                     return [no_duplicate_value,error_message]
                 } 
@@ -280,7 +278,7 @@
                     check_number_range = number_range
                     validation_error = range_check_function(number_range,check_number_range)
                     if(!validation_error){
-                        get_message_details("JMSG019"); // Get message details
+                        error_message = ui_messeges("JMSG109")// Get message details
                         no_duplicate_value = 'N'
                         return [no_duplicate_value,error_message]
                     }
@@ -301,13 +299,13 @@
             }
         });
         if (common.length != 0) {
-            get_message_details("JMSG001"); // Get message details
+            error_message = ui_messeges("JMSG001")// Get message details
             no_duplicate_value = 'N'
             return [no_duplicate_value,error_message]
         }
         validation_error = main_range_check_function(numberranges_data,main_table_data)
         if(!validation_error){
-            get_message_details("JMSG300"); // Get message details
+            error_message = ui_messeges("JMSG300")// Get message details
             no_duplicate_value = 'N'
             return [no_duplicate_value,error_message]
         }
