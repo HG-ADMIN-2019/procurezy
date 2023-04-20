@@ -94,6 +94,7 @@ $('#save_id').click(function () {
 
 //Read popup table data
 function read_popup_data() {
+    $('#id_popup_table').DataTable().destroy();
     purhcase_control_data = new Array();
     validate_add_attributes = [];
     $("#id_popup_table TBODY TR").each(function () {
@@ -118,6 +119,7 @@ function read_popup_data() {
         validate_add_attributes.push(compare);
         purhcase_control_data.push(purchase_contrl);
     });
+    table_sort_filter('id_popup_table');
     return purhcase_control_data;
 }
 

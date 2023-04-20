@@ -108,7 +108,8 @@ $('#save_id').click(function () {
 
 //Read popup table data
 function read_popup_data() {
-    var auth = {};
+    $('#id_popup_table').DataTable().destroy();
+    auth_data = new Array();
     validate_add_attributes = [];
     $("#id_popup_table TBODY TR").each(function () {
         var row = $(this);
@@ -123,6 +124,7 @@ function read_popup_data() {
         validate_add_attributes.push( auth.role);
         auth_data.push(auth);
     });
+    table_sort_filter('id_popup_table');
     return auth_data;
 }
 
