@@ -11,6 +11,9 @@ def po_extract(request):
     """
 
     """
+    text = []
+    header_detail = []
+    supplier_address = []
     if request.POST:
         pdfData = ''
         reader = ''
@@ -43,7 +46,6 @@ def po_extract(request):
                     if count != 0:
                         for text_data in item_data:
                             item_dictionary = {}
-                            print(text_data)
                             text_value = text_data['text']
                             if text_value:
                                 if text_value.find("Additional comments on the line item") != -1:
@@ -59,12 +61,16 @@ def po_extract(request):
                                 else:
                                     text_value = text_value.replace('\r', '')
                                     po_item_data.append({count:text_value})
-                                    print("item data:", po_item_data)
+                                    print("item data:", text_value)
 
         # data = {'pdf_data': pdfData}
     context = {'inc_nav': True,
                'inc_footer': True,
-               'is_slide_menu': True}
+               'is_slide_menu': True,
+               'text':text,
+               'header_detail':header_detail,
+               'supplier_address':supplier_address
+               }
     return render(request, 'Supplier_Order_Management/po_extract.html', context)
 
 
