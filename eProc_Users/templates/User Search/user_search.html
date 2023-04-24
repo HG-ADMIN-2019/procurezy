@@ -22,9 +22,10 @@
             </div>
         </div>
         <hr>
+        <div id="error_msg" class="alert alert-danger display-none" role="alert"><span id="error_message_search"></span></div>
         <div class="card card-shadow-1">
             <div class="card-body">
-                <form method="POST" id="search_form" name="search_form">
+                <form method="POST" id="search_form" name="search_form" >
                     {% csrf_token %}
                     <div class="row">
                         <div class="col-md">
@@ -40,7 +41,7 @@
                             <input type="text" class="form-control check_for_search" id="last_name" name='last_name' >
                         </div>
                         <div class="col-auto">
-                            <button class="button-search-users btn btn-primary" type="submit"
+                            <button id="id_search" class="button-search-users btn btn-primary" type="submit"
                                 title="Please click to get the search details!" onclick="reload()"><i class="fas fa-search"></i> search
                             </button>
                         </div>
@@ -59,10 +60,9 @@
                             <div class="col-md-3">
                                 <label for="">User Type</label>
                                 <select type="text" class="form-control" id="user_type" name="user_type">
-                                     {% for usertype in dropdown_usertype_values %}
-                                    <option value="{{usertype.field_type_id}}">{{usertype.field_type_desc}}</option>
+                                    {% for usertype in dropdown_usertype_values %}
+                                        <option value="{{usertype.field_type_id}}">{{usertype.field_type_desc}}</option>
                                     {% endfor %}
-    
                                 </select>
                             </div>
                             <div class="col-md-2">
@@ -71,7 +71,7 @@
                             </div>
                             <div class="col-md">
                                 <div class="form-check">
-                                    <input class="form-check-input checkbox-size" type="checkbox" name="user_locked">
+                                    <input class="form-check-input checkbox-size" type="checkbox" name="user_locked" id="user_locked_id">
                                     <label class="form-check-label" for="">
                                         User Locked
                                     </label>
@@ -79,7 +79,7 @@
                             </div>
                             <div class="col-md">
                                 <div class="form-check">
-                                    <input class="form-check-input checkbox-size" type="checkbox"  name="pwd_locked">
+                                    <input class="form-check-input checkbox-size" type="checkbox"  name="pwd_locked" id="pwd_locked_id">
                                     <label class="form-check-label" for="">
                                         Password Locked
                                     </label>
@@ -87,7 +87,7 @@
                             </div>
                             <div class="col-md">
                                 <div class="form-check">
-                                    <input class="form-check-input checkbox-size" type="checkbox" name="is_active">
+                                    <input class="form-check-input checkbox-size" type="checkbox" name="is_active" id="is_active_id">
                                     <label class="form-check-label" for="">
                                         In Active
                                     </label>
@@ -411,7 +411,6 @@ var db_header_data = uiConstants['EMAIL','USERNAME','PERSON_NO','FORM_OF_ADDRESS
 var data_delete = '';
 var rendered_emp_data = JSON.parse(document.getElementById('employee_results').textContent);
 
-
 function reload()
 {
     localStorage.setItem("username", document.getElementById("username").value);
@@ -420,6 +419,9 @@ function reload()
     localStorage.setItem("email", document.getElementById("email").value);
     localStorage.setItem("user_type", document.getElementById("user_type").value);
     localStorage.setItem("employee_id", document.getElementById("employee_id").value);
+    localStorage.setItem("user_locked", document.getElementById("user_locked_id").value);
+    localStorage.setItem("pwd_locked", document.getElementById("pwd_locked_id").value);
+    localStorage.setItem("is_active", document.getElementById("is_active_id").value);
     OpenLoaderPopup();
 }
 
@@ -944,16 +946,6 @@ function lock_active_change(){
         });
     }
 
-    function reload_previous_state(){
-        var emp_id = data.employee_id ;
-         $.each(rendered_emp_data, function(index, data){
-            var emp_num = emp_id.substring(0,emp_id.indexOf("-"));
-            if(data.employee_id == emp_num){
-                previous_state = data.user_locked;
-            }
-         });
-        document.getElementById(emp_id).checked = previous_state;
-    }
    function toggle(){
         var abc = $('#'+block_id)
         if($('#'+block_id).is(':checked')) {
@@ -963,7 +955,7 @@ function lock_active_change(){
             $('#'+block_id).prop("checked", true);
         }
     }
-
+<!--Check All -->
 <!-- ----------------------------------------------------   -->
 var table = $('#user_tab').DataTable();
  var rows_selected = [];
@@ -1039,6 +1031,7 @@ $('#user_tab tbody').on('click', 'input[class="emp_checkbox"]', function(e){
           }
    }
 }
+
 
 </script>
 {% endblock %}

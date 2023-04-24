@@ -1222,6 +1222,10 @@ table th {
   height: 100%;
 }
 
+.org_table_width{
+    width:100%;
+}
+
 .org_registration_table {
   border-collapse: collapse;
   margin-bottom: 10px;
