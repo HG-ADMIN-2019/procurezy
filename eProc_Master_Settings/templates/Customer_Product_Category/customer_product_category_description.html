@@ -8,13 +8,13 @@
         <div class="elements-space-between">
             <h3>Maintain Customer UNSPSC Code Descriptions</h3>
             <div>
-                <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Master_Settings:extract_cusprodcatdesc_template' %}'"type="button">
+                <button class="btn btn-outline-primary"  title="Template" onclick="location.href='{% url 'eProc_Master_Settings:extract_cusprodcatdesc_template' %}'"type="button">
                     <i class="fas fa-download"></i> template
                 </button>
                 <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Master_Settings:extract_cusprodcatdesc_data' %}'"type="button">
                     <i class="fas fa-download"></i> extract data
                 </button>
-                <button class="btn btn-outline-primary modal_upload" id="id_upload_redirect_data" title="Upload Data" value="cusprodcatdesc_upload"  onclick="onclick_upload_button()" type="button">
+                <button class="btn btn-outline-primary modal_upload" id="id_upload_redirect_data" title="Upload" value="cusprodcatdesc_upload"  onclick="onclick_upload_button()" type="button">
                     <i class="fas fa-cloud-upload-alt"></i> upload data
                 </button>
                 <button class="btn btn-primary" id="id_add_data"  title="Add Product Category Description" value="ADD" data-toggle="#custproddescModal" onclick="onclick_add_button(this);">
@@ -38,7 +38,7 @@
                     <button  class="btn btn-outline-danger btn-sm"  title= "Delete" id="id_delete_data" value="cusprodcatdesc_delete"  style="display:none;" onclick="onclick_delete_button()">
                                 <i class="fa fa-trash"></i> delete
                     </button>
-                    <button class="btn btn-primary btn-sm" title="Update" id="id_update_data" style="display:none;"   value="UPDATE"  type="button" onclick="onclick_update_button();">
+                    <button class="btn btn-primary btn-sm" title="Update" id="id_update_data" style="display:none;"   value="Update"  type="button" onclick="onclick_update_button();">
                         <i class="far fa-edit"></i> update
                     </button>
 
@@ -97,10 +97,10 @@
                 <div class="modal-body">
                     <div class="popup-vertical-scroll">
                         <div id="id_del_add_button" class="mb-4">
-                            <button class="btn btn-primary" type="button" onclick="add_popup_row()">
+                            <button class="btn btn-primary" title="Add New Row" type="button" onclick="add_popup_row()">
                                 <i class="fa fa-plus"></i> add new row
                             </button>
-                            <button class="btn btn-outline-danger" onclick="application_settings_delete_Row('id_popup_table')">
+                            <button class="btn btn-outline-danger" title="Delete" onclick="application_settings_delete_Row('id_popup_table')">
                                 <i class="fa fa-trash"></i> delete
                             </button>
                         </div>
@@ -137,8 +137,8 @@
                 <!-- Modal footer -->
              <div class="modal-footer">
                     <button type="button" class="btn btn-outline-primary remove_upload_data" title="Cancel" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
-                    <button id="id_delete_duplicate" class="btn btn-primary" style="display:none;" type="button" onclick="display_buttonp()"><i class="fa fa-trash"></i> delete duplicates</button>
-                    <button id="id_check_data" style="display:none;" class="btn btn-primary" type="button" onclick="check_data()"><i class="fas fa-check"></i> check</button>
+                    <button id="id_delete_duplicate" class="btn btn-primary" title="Delete" style="display:none;" type="button" onclick="display_buttonp()"><i class="fa fa-trash"></i> delete duplicates</button>
+                    <button id="id_check_data" style="display:none;" class="btn btn-primary" title="Check" type="button" onclick="check_data()"><i class="fas fa-check"></i> check</button>
                     <button class="btn btn-primary" title="Save" id="save_id"><i class="fas fa-save"></i> save</button>
                     <button class="btn btn-primary btn-sm" title="Delete" id="delete_data" value="DELETE" data-toggle="modal" data-target="#id_delete_confirm_popup">
                         <i class="fa fa-trash"></i> Delete

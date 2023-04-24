@@ -9,50 +9,45 @@
         <div class="elements-space-between">
             <h3>Maintain Account Assignment Values</h3>
             <div>
-                <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Master_Settings:extract_aav_data_template' %}'"type="button">
+                <button class="btn btn-outline-primary"  title="Template" onclick="location.href='{% url 'eProc_Master_Settings:extract_aav_data_template' %}'"type="button">
                     <i class="fas fa-download"></i> template
                 </button>
                 <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Master_Settings:extract_aav_data' %}'"type="button">
                     <i class="fas fa-download"></i> extract data
                 </button>
-                <button class="btn btn-outline-primary modal_upload" id="id_upload_redirect_data" value="aav_upload" onclick="onclick_upload_button()" type="button">
+                <button class="btn btn-outline-primary modal_upload" title="Upload" id="id_upload_redirect_data" value="aav_upload" onclick="onclick_upload_button()" type="button">
                     <i class="fas fa-cloud-upload-alt"></i> upload data
                 </button>
-                <button class="btn btn-primary" type="button" id="id_add_data" value="ADD" data-toggle="modal" onclick="onclick_add_button(this)">
+                <button class="btn btn-primary" title="Add Account Assignment Value" type="button" id="id_add_data" value="ADD" data-toggle="modal" onclick="onclick_add_button(this)">
                     <i class="fa fa-plus"></i> add Account Assignment Value
                 </button>
                    <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"  onclick="window_close();">
                     <i class="fas fa-times"></i> close
                 </button>
-
             </div>
         </div>
-
         <hr>
-
         <div class="configuration-table_section">
             <div id="err_msg_app_settings"> </div>
             <div id="err_msg_app_settings_t" class="alert alert-success" hidden><span id="success_msg_id"></span></div>
-
             <div class="table-container">
                 <div class="edit-button-section mb-4">
-                    <button class="btn btn-secondary btn-sm" id="id_edit_data" style="display: block;" onclick="onclick_edit_button()">
+                    <button class="btn btn-secondary btn-sm" title="Edit" id="id_edit_data" style="display: block;" onclick="onclick_edit_button()">
                         <i class="fas fa-edit"></i> edit
                     </button>
-                    <button class="btn btn-outline-danger btn-sm" id="id_delete_data" value="DELETE"  onclick="onclick_delete_button()" style="display:none;">
+                    <button class="btn btn-outline-danger btn-sm" title="Delete" id="id_delete_data" value="DELETE"  onclick="onclick_delete_button()" style="display:none;">
                         <i class="fa fa-trash"></i> Delete
                     </button>
-                    <button class="btn btn-primary btn-sm" id="id_copy_data" style="display:none;" value="COPY" type="button" onclick="onclick_button_action('COPY')">
+                    <button class="btn btn-primary btn-sm" title="Copy" id="id_copy_data" style="display:none;" value="COPY" type="button" onclick="onclick_button_action('COPY')">
                         <i class="fa fa-copy"></i> Copy
                     </button>
-                    <button class="btn btn-primary btn-sm" id="id_update_data" style="display:none;" value="UPDATE" type="button" onclick="onclick_button_action('UPDATE')">
+                    <button class="btn btn-primary btn-sm" title="Update" id="id_update_data" style="display:none;" value="UPDATE" type="button" onclick="onclick_button_action('UPDATE')">
                         <i class="far fa-edit"></i> Update
                     </button>
-                    <button  class="btn btn-secondary btn-sm" id="id_cancel_data" style="display:none;" type="button"onclick="display_basic_db_data()">
+                    <button  class="btn btn-secondary btn-sm" title="Cancel" id="id_cancel_data" style="display:none;" type="button"onclick="display_basic_db_data()">
                         <i class="fas fa-times"></i> cancel
                     </button>
                 </div>
-
                 <!--   display basic account assignment values table-->
                 <table id="display_basic_table" class="class_basic_aav_table table table-bordered custom-table">
                     <thead id="id_aav_table_header">
@@ -89,7 +84,6 @@
             </div>
         </div>
     </div>
-
     <div class="modal fade" id="myModal" style="overflow:auto;" >
         <div class="modal-dialog modal-dialog-centered modal-xl">
             <div class="modal-content">
@@ -103,8 +97,12 @@
                 <div class="modal-body">
                     <div class="popup-vertical-scroll">
                         <div id="id_del_add_button">
-                            <button class="btn btn-outline-primary" type="button" onclick="add_popup_row()"><i class="fa fa-plus"></i> Add New Row</button>
-                            <button class="btn btn-outline-danger" onclick="application_settings_delete_Row('id_popup_table')"><i class="fa fa-trash"></i> Delete</button>
+                            <button class="btn btn-primary" title="Add New Row" type="button" onclick="add_popup_row()">
+                                <i class="fa fa-plus"></i> Add New Row
+                            </button>
+                            <button class="btn btn-outline-danger" title="Delete" onclick="application_settings_delete_Row('id_popup_table')">
+                                <i class="fa fa-trash"></i> Delete
+                            </button>
                         </div>
 
                         <div id="id_check_success_messages" class="alert alert-success check_success_message" hidden></div>
@@ -142,23 +140,19 @@
 
                 <!-- Modal footer -->
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-primary remove_upload_data" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
-                    <button id="id_delete_duplicate" class="btn btn-primary" style="display:none;" type="button" onclick="delete_duplicate()"><i class="fa fa-trash"></i> delete duplicates</button>
-                    <button id="id_check_data" style="display:none;" class="btn btn-primary" type="button" onclick="check_data()"><i class="fas fa-check"></i> check</button>
-                    <button class="btn btn-primary btn-sm" id="delete_data" value="DELETE" data-toggle="modal" data-target="#id_delete_confirm_popup">
+                    <button type="button" class="btn btn-outline-primary remove_upload_data" title="Cancel" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
+                    <button id="id_delete_duplicate" class="btn btn-primary" title="Delete" style="display:none;" type="button" onclick="delete_duplicate()"><i class="fa fa-trash"></i> delete duplicates</button>
+                    <button id="id_check_data" title="Check" style="display:none;" class="btn btn-primary" type="button" onclick="check_data()"><i class="fas fa-check"></i> check</button>
+                    <button class="btn btn-primary btn-sm" title="Delete" id="delete_data" value="DELETE" data-toggle="modal" data-target="#id_delete_confirm_popup">
                         <i class="fa fa-trash"></i> Delete
                     </button>
-                    <button class="btn btn-primary" id="save_id"><i class="fas fa-save"></i> save</button>
+                    <button class="btn btn-primary" title="Save" id="save_id"><i class="fas fa-save"></i> save</button>
                 </div>
             </div>
         </div>
     </div>
-
     <!-- modal popup to upload the csv file; save confirmation popup; delete confirmation popup -->
-
-    <!-- <tr> <td><input type="checkbox" required></td> <td><input class="form-control" type="number" value="' + row.cells[1].innerHTML + '" maxlength="40" name="Account Assignment Value" required></td> <td><input class="form-control" type="date" value="' + row.cells[2].innerHTML + '" maxlength="10" name="Valid From Date" required></td> <td><input class="form-control" type="date" value="' + row.cells[3].innerHTML + '" maxlength="10" name="Valid To Date" required></td> <td><select id="acc_dropdwn" class="form-control">' + acc_ass_dropdwn + ' </select></td> <td ><select class="form-control">' + company_dropdwn + '</select> </td> <td hidden><input value="' + guid + '"></td> <td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr> -->
     {% include 'configuration_common_pop_up.html' %}
-
     <!--end of modal popup for Add,copy,update and upload-->
     <div>
         {% if messages %} {% for message in messages %} {% if message.tags == 'success' %}
@@ -172,7 +166,6 @@
 </div>
 {{ upload_account_assignment_value|json_script:"upload_account_assignment_value" }}
 <script>
-
     var rendered_account_assignment_value = JSON.parse(document.getElementById('upload_account_assignment_value').textContent);
     var messages_list = {{messages_list|safe}};
     var aav_data_array = {}
@@ -203,18 +196,10 @@
         });
     }
 
-
     // validate and save for add,copy,update and upload data
     function popup_save_data() {
         $('#success_msg_id').empty()
         $('#id_popup_table').DataTable().destroy();
-<!--        var countries_data = new Array();-->
-        var aav = {};
-<!--        var check_dates = []-->
-        no_duplicate_entries = 'Y'
-        no_duplicate_value = 'Y'
-        var error_message = '';
-<!--        $('#display_basic_table').DataTable().destroy();-->
         get_main_table_data(); //Read data from main table
         // compare for duplicates in popup
         [no_duplicate_value,error_message] = compare_table_for_duplicate_entries(validate_add_attributes, aav_data)
@@ -222,43 +207,42 @@
             display_error_message(error_message)
         }
         else{
-        var dateValid ;
-        [dateValid,error_message] = check_date(aav_data);
-        if (error_message){
-        display_error_message(error_message)
-        }
-        else {
-            if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
-                // compare main table and pop up for duplicate values
-                [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
+            var dateValid ;
+            [dateValid,error_message] = check_date(aav_data);
+            if (error_message){
+            display_error_message(error_message)
             }
-            if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')&& (dateValid == 'Y')   ) {
-                var add_basic_data = '';
-                $('#id_save_confirm_popup').modal('hide');
-                data = {'data':aav_data,'table_name':'AccountingData','action':GLOBAL_ACTION}
-                OpenLoaderPopup();
-                $.ajax({
-                    type: 'POST',
-                    url: "{% url 'eProc_Master_Settings:create_update_master_data' %}",
-                    data: JSON.stringify(data),
-                    contentType: "application/json; charset=utf-8",
-                    dataType: "json",
-                    success: function(Response) {
-                        rendered_account_assignment_value = Response[0];
-                        display_basic_db_data();
-                        $('#myModal').modal('hide');
-                        success_response(Response); // Function call to display response data
-                        CloseLoaderPopup();
-                    }
-                });
+            else {
+                if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
+                    // compare main table and pop up for duplicate values
+                    [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
+                }
+                if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')&& (dateValid == 'Y')   ) {
+                    var add_basic_data = '';
+                    $('#id_save_confirm_popup').modal('hide');
+                    data = {'data':aav_data,'table_name':'AccountingData','action':GLOBAL_ACTION}
+                    OpenLoaderPopup();
+                    $.ajax({
+                        type: 'POST',
+                        url: "{% url 'eProc_Master_Settings:create_update_master_data' %}",
+                        data: JSON.stringify(data),
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function(Response) {
+                            rendered_account_assignment_value = Response[0];
+                            display_basic_db_data();
+                            $('#myModal').modal('hide');
+                            success_response(Response); // Function call to display response data
+                            CloseLoaderPopup();
+                        }
+                    });
+                }
+                else if (error_message){
+                    display_error_message(error_message)
+                }
             }
-            else if (error_message){
-                display_error_message(error_message)
-            }
-        }
         }
     }
-
 
     //delete the selected row in db................
     var main_table_aav_checked = [];
@@ -277,7 +261,6 @@
         }
         else if (main_table_aav_checked.length == "0") {
             get_message_details("JMSG005"); // Get message details
-<!--            var display4 = msg_type.messages_id_desc;-->
             document.getElementById("id_error_msg_checkbox").innerHTML = display4+ "Checkbox";
             $('#id_delete_confirm_popup').modal('hide');
         }
@@ -405,112 +388,109 @@
         }
     }
 
-        //check function restricting special char and display the data count of csv file
-        function check_data() {
-            $('#id_popup_table').DataTable().destroy();
-            $("#id_check_success_messages").empty()
-            $("#id_check_error_messages").empty()
-            $("#id_check_success_messages").prop("hidden", true)
-            $("#id_check_error_messages").prop("hidden", true)
+    //check function restricting special char and display the data count of csv file
+    function check_data() {
+        $('#id_popup_table').DataTable().destroy();
+        $("#id_check_success_messages").empty()
+        $("#id_check_error_messages").empty()
+        $("#id_check_success_messages").prop("hidden", true)
+        $("#id_check_error_messages").prop("hidden", true)
+        $("#id_check_special_character_messages").prop("hidden", true)
+        document.getElementById("id_error_msg_aav_code").innerHTML = "";
+        document.getElementById("id_error_msg_aav_name").innerHTML = "";
+        document.getElementById("id_error_msg_aav_length").innerHTML = "";
+        Duplicate_count = 0;
+        count = 0;
+        var aav_array = new Array
+        var DB_array = new Array
+        var aav_list = new Array
+        var aav_code_check = new Array
+        del_ind = ''
+        var Duplicate_count = 0;
+        $("#id_popup_table TBODY TR").each(function() {
+            var row = $(this);
+            accval_dic = {}
+            //*************** reading data from the pop-up ***************
+            accval_dic.company_id = row.find("TD").eq(1).find("select option:selected").val();
+            accval_dic.account_assign_cat = row.find("TD").eq(2).find("select option:selected").val();
+            accval_dic.account_assign_value = row.find("TD").eq(3).find('input[type="text"]').val();
+            accval_dic.valid_from = row.find("TD").eq(4).find('input[type="date"]').val()
+            accval_dic.valid_to = row.find("TD").eq(5).find('input[type="date"]').val()
+            checked_box = row.find("TD").eq(7).find('input[type="checkbox"]').is(':checked')
+            if (checked_box) {
+                accval_dic.del_ind = '1'
+            } else {
+                accval_dic.del_ind = '0'
+            }
+            aav_list.push(accval_dic)
+            var compare = accval_dic.account_assign_value + '-' + accval_dic.account_assign_cat + '-' + accval_dic.company_id
+
+            var format = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
+            var format_aav = /[A-Z`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
+            var d1=new Date(accval_dic.valid_from); //yyyy-mm-dd
+            var d2=new Date(accval_dic.valid_to); //yyyy-mm-dd
+            if (d2< d1){
+                get_message_details("JMSG017"); // Get message details
+                var display4 = msg_type.messages_id_desc;
+                document.getElementById("id_error_msg_aav_code").innerHTML = display4;
+                $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "1px solid #FF0000");
+                count = count + 1;
+            } else {
+                $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "none");
+            }
+            //*************** checking for max length for aav code (max length = 2) ***************
+            if (accval_dic.account_assign_value < 0) {
+                error_message = ui_messeges("JMSG002")// Get message details
+                $(row.find("TD").eq(3).find('input[type="text"]')).css("border", "1px solid #FF0000");
+                count = count + 1;
+            }
+            //*************** checking for special characters for aav code ***************
+            else if (format_aav.test(accval_dic.account_assign_value)) {
+                error_message = ui_messeges("JMSG002")// Get message details
+                $(row.find("TD").eq(3).find('input[type="text"]')).css("border", "1px solid #FF0000");
+                count = count + 1;
+            } else {
+                $(row.find("TD").eq(3).find('input[type="text"]')).css("border", "none");
+            }
+            //*************** checking for special characters for aav name ***************
+            if (format.test(accval_dic.account_assign_cat)) {
+                error_message = ui_messeges("JMSG002")// Get message details
+                var display = msg_type.messages_id_desc;
+                document.getElementById("id_error_msg_aav_name").innerHTML = display + "Account Assignment Value";
+                $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "1px solid #FF0000");
+                count = count + 1;
+            } else {
+                $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "none");
+            }
+            if (aav_code_check.includes(compare)) {
+                $(row).css("background-color", "#f8d7da");
+                Duplicate_count = Duplicate_count + 1;
+            } else {
+                $(row).css("background-color", "");
+            }
+            aav_code_check.push(compare)
+        });
+        //*************** shows save button if there are no errors(special characters and max length) ***************
+        if (count == 0) {
             $("#id_check_special_character_messages").prop("hidden", true)
-            document.getElementById("id_error_msg_aav_code").innerHTML = "";
-            document.getElementById("id_error_msg_aav_name").innerHTML = "";
-            document.getElementById("id_error_msg_aav_length").innerHTML = "";
-            Duplicate_count = 0;
-            count = 0;
-            var aav_array = new Array
-            var DB_array = new Array
-            var aav_list = new Array
-            var aav_code_check = new Array
-            del_ind = ''
-            var Duplicate_count = 0;
-            $("#id_popup_table TBODY TR").each(function() {
-                var row = $(this);
-                accval_dic = {}
-                //*************** reading data from the pop-up ***************
-                accval_dic.company_id = row.find("TD").eq(1).find("select option:selected").val();
-                accval_dic.account_assign_cat = row.find("TD").eq(2).find("select option:selected").val();
-                accval_dic.account_assign_value = row.find("TD").eq(3).find('input[type="text"]').val();
-                accval_dic.valid_from = row.find("TD").eq(4).find('input[type="date"]').val()
-                accval_dic.valid_to = row.find("TD").eq(5).find('input[type="date"]').val()
-                checked_box = row.find("TD").eq(7).find('input[type="checkbox"]').is(':checked')
-                if (checked_box) {
-                    accval_dic.del_ind = '1'
-                } else {
-                    accval_dic.del_ind = '0'
-                }
-                aav_list.push(accval_dic)
-                var compare = accval_dic.account_assign_value + '-' + accval_dic.account_assign_cat + '-' + accval_dic.company_id
-
-                var format = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
-                var format_aav = /[A-Z`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
-                var d1=new Date(accval_dic.valid_from); //yyyy-mm-dd
-                var d2=new Date(accval_dic.valid_to); //yyyy-mm-dd
-                if (d2< d1){
-                    get_message_details("JMSG017"); // Get message details
-                    var display4 = msg_type.messages_id_desc;
-                    document.getElementById("id_error_msg_aav_code").innerHTML = display4;
-                    $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "1px solid #FF0000");
-                    count = count + 1;
-                } else {
-                    $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "none");
-                }
-                //*************** checking for max length for aav code (max length = 2) ***************
-                if (accval_dic.account_assign_value < 0) {
-                    error_message = ui_messeges("JMSG002")// Get message details
-                    $(row.find("TD").eq(3).find('input[type="text"]')).css("border", "1px solid #FF0000");
-                    count = count + 1;
-                }
-
-                //*************** checking for special characters for aav code ***************
-                else if (format_aav.test(accval_dic.account_assign_value)) {
-                    error_message = ui_messeges("JMSG002")// Get message details
-                    $(row.find("TD").eq(3).find('input[type="text"]')).css("border", "1px solid #FF0000");
-                    count = count + 1;
-                } else {
-                    $(row.find("TD").eq(3).find('input[type="text"]')).css("border", "none");
-                }
-
-                //*************** checking for special characters for aav name ***************
-                if (format.test(accval_dic.account_assign_cat)) {
-                    error_message = ui_messeges("JMSG002")// Get message details
-                    var display = msg_type.messages_id_desc;
-                    document.getElementById("id_error_msg_aav_name").innerHTML = display + "Account Assignment Value";
-                    $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "1px solid #FF0000");
-                    count = count + 1;
-                } else {
-                    $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "none");
-                }
-                if (aav_code_check.includes(compare)) {
-                    $(row).css("background-color", "#f8d7da");
-                    Duplicate_count = Duplicate_count + 1;
-                } else {
-                    $(row).css("background-color", "");
-                }
-                aav_code_check.push(compare)
-            });
-
-            //*************** shows save button if there are no errors(special characters and max length) ***************
-            if (count == 0) {
-                $("#id_check_special_character_messages").prop("hidden", true)
-                $("#save_id").prop("hidden", false);
-            }
-            popup_data_dict = {
-                'data_list': aav_list,
-            }
-            OpenLoaderPopup();
-            $.ajax({
-                type: 'POST',
-                url: "{% url 'eProc_Configuration_Check:check_acc_assign_values' %}",
-                data: JSON.stringify(popup_data_dict),
-                success: function(response) {
-                    table_sort_filter_popup_pagination('id_popup_table')
-                    var message = ''
-                    update_check_message(response.messages)
-                    CloseLoaderPopup();
-                }
-            });
+            $("#save_id").prop("hidden", false);
         }
+        popup_data_dict = {
+            'data_list': aav_list,
+        }
+        OpenLoaderPopup();
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'eProc_Configuration_Check:check_acc_assign_values' %}",
+            data: JSON.stringify(popup_data_dict),
+            success: function(response) {
+                table_sort_filter_popup_pagination('id_popup_table')
+                var message = ''
+                update_check_message(response.messages)
+                CloseLoaderPopup();
+            }
+        });
+    }
 
     // validating the  popup table for duplicate entries
     function compare_table_for_duplicate_entries(validate_add_attributes, aav) {
@@ -545,11 +525,6 @@
                     no_duplicate_value = 'N'
                     return [no_duplicate_value,error_message]
                 }
-<!--                if (item.valid_from >= item.valid_to) {-->
-<!--                    error_message = ui_messeges("JMSG002")// Get message details-->
-<!--                    no_duplicate_value = 'N'-->
-<!--                    return [no_duplicate_value,error_message]-->
-<!--                }-->
             });
         }
         return [no_duplicate_value,error_message]
@@ -624,7 +599,6 @@
                         var row =  $chkbox_all[i].parentNode.parentNode;
                         if(GLOBAL_ACTION == "COPY"){
                             guid = 'GUID';
-<!--                            edit_basic_data += '<tr><td><input type="checkbox" required></td><td > <select class="form-control" id="company_dropdw">' + company_dropdwn + '</select>  </td><td><select id="acc_dropdwn" class="form-control" id="acc_ass_val_dropdw">' + acc_ass_dropdwn + ' </select></td> <td ><input class="form-control check_number" type="number" value="' + row.cells[3].innerHTML + '" name="Account Assignment Value" maxlength="40" required> </td> <td><input class="form-control" type="date" value="' + row.cells[4].innerHTML + '" maxlength="10" name="Valid From Date" required></td> <td><input class="form-control" type="date" value="' + row.cells[5].innerHTML + '" maxlength="10" name="Valid To Date" required></td> <td hidden><input value="' + guid + '"></td> <td class="class_del_checkbox" hidden><input type="checkbox" required></td>'+-->
                             unique_input = '<select class="form-control" id="company_dropdw">' + company_dropdwn + '</select>'
                             edit_basic_data += '<tr><td><input type="checkbox" required></td><td>' + unique_input + ' </td><td><select id="acc_dropdwn" class="form-control" id="acc_ass_val_dropdw">' + acc_ass_dropdwn + ' </select></td> <td><input class="form-control check_number" type="number" value="' + row.cells[3].innerHTML + '" name="Account Assignment Value" maxlength="40" required> </td> <td><input class="form-control" type="date" value="' + row.cells[4].innerHTML + '" maxlength="10" name="Valid From Date" required></td> <td><input class="form-control" type="date" value="' + row.cells[5].innerHTML + '" maxlength="10" name="Valid To Date" required></td> <td hidden><input value="' + guid + '"></td> <td class="class_del_checkbox" hidden><input type="checkbox" required></td>'+
                             '<td class="class_del_checkbox1" hidden><input type="checkbox" required></td></tr>';
@@ -672,7 +646,6 @@
                 $("#id_del_ind_checkbox").prop("hidden", true);
                 table_sort_filter('id_popup_table');
                 $('#myModal').modal('show');
-<!--                table_sort_filter('display_basic_table');-->
                 table_sort_filter('id_popup_table');
                 CloseLoaderPopup();
             }
@@ -712,7 +685,6 @@
             });
         });
     }
-
 </script>
 <script src="{% static 'scripts/accounting_data/acc_assign_values.js' %}"></script>
 {% endblock %}
