@@ -3,7 +3,7 @@ from eProc_Basic.Utilities.functions.django_q_query import django_q_query
 from eProc_Basic.Utilities.functions.django_query_set import DjangoQueries
 from eProc_Basic.Utilities.functions.encryption_util import encrypt
 from eProc_Basic.Utilities.global_defination import global_variables
-from eProc_Configuration.models import FieldTypeDescription
+from eProc_Configuration.models import FieldTypeDescription, OrgPorg
 from eProc_Registration.models import UserData
 
 django_query_instance = DjangoQueries()
@@ -23,6 +23,7 @@ def user_detail_search(**kwargs):
     employee_id_query = Q()
     pwd_locked_query = Q()
     user_locked_query = Q()
+    is_active_query = Q()
     instance = UserData()
     for key, value in kwargs.items():
         value_list = []
@@ -61,6 +62,10 @@ def user_detail_search(**kwargs):
                 value = '1'
                 value_list = '1'
                 user_locked_query = django_q_query(value, value_list, 'user_locked')
+            if key == 'is_active':
+                value = '0'
+                value_list = '0'
+                is_active_query = django_q_query(value, value_list, 'is_active')
 
     user_details_query = list(instance.get_user_details_by_fields(client,
                                                                   instance,
@@ -72,6 +77,7 @@ def user_detail_search(**kwargs):
                                                                   employee_id_query,
                                                                   pwd_locked_query,
                                                                   user_locked_query,
+                                                                  is_active_query
                                                                   ))
     return user_details_query
 
@@ -87,7 +93,7 @@ def get_usertype_values():
 
 def get_emp_data():
     employee_results = django_query_instance.django_filter_query(UserData,
-                        {'client': global_variables.GLOBAL_CLIENT, 'del_ind': False},
+                        {'client': global_variables.GLOBAL_CLIENT, 'del_ind': False, 'is_active': True},
                         None, None)
 
     for emails in employee_results:
@@ -108,10 +114,9 @@ def emp_search_data(search_fields):
     return employee_results
 
 
-def set_search_data(data, value):
-    if data == 'user_locked':
-        if value == 'on':
-            value = True
-        else:
-            value = False
+def set_search_data(value):
+    if value == 'on':
+        value = True
+    else:
+        value = False
     return value

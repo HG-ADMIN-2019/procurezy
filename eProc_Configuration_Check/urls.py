@@ -26,5 +26,7 @@ urlpatterns = [
     path('check_country', views.check_country, name='check_country'),
     path('check_currency', views.check_currency, name='check_currency'),
     path('check_language', views.check_language, name='check_language'),
+    path('check_UOM', views.check_UOM, name='check_UOM'),
+    path('check_Timezone', views.check_Timezone, name='check_Timezone'),
 
 ]

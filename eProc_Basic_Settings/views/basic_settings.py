@@ -12,6 +12,7 @@ from django.db.models.query_utils import Q
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render
 from django.utils.datastructures import MultiValueDictKeyError
+from pypdf._reader import PdfReader
 
 from Majjaka_eProcure import settings
 from eProc_Basic.Utilities.constants.constants import *
@@ -36,7 +37,7 @@ from eProc_Registration.models.registration_model import UserData
 
 from eProc_Shopping_Cart.context_processors import update_user_info
 from eProc_Upload.Utilities.upload_data.upload_pk_tables import UploadBasicTables, CompareTableHeader
-
+import tabula
 JsonParser_obj = JsonParser()
 django_query_instance = DjangoQueries()
 
@@ -585,15 +586,21 @@ def extract_currency_data(request):
 
 def read_pdf(request):
     pdfData = ''
+    reader = ''
     directory = os.path.join(str(settings.BASE_DIR), 'media', 'pdf_read')
     for root, dirs, files in os.walk(directory):
         for file in files:
             file_path = os.path.join(directory, file)  # create path
-            pdf_file = open(file_path, 'rb')  # open .csv file
-            reader = PyPDF2.PdfFileReader(pdf_file)
-            page1 = reader.getPage(0)
-            print(reader.numPages)
-            pdfData = page1.extractText()
+            pdfData = tabula.read_pdf(file_path, pages="all")
+            reader = PdfReader(file_path)
+            print(len(reader.pages))
+            page = reader.pages[0]
+            print(page.extract_text())
+            # pdf_file = open(file_path, 'rb')  # open .csv file
+            # reader = PyPDF2.PdfFileReader(pdf_file)
+            # page1 = reader.getPage(0)
+            # print(reader.numPages)
+            # pdfData = page1.extractText()
             print(pdfData)
     data = {'pdf_data': pdfData}
     return JsonResponse(data)

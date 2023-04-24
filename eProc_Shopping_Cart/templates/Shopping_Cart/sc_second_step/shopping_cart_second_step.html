@@ -332,11 +332,16 @@
     var url_new = "{% url 'eProc_Basic:get_message_description' %}";
     var msg_display_interval = {{msg_display_time_value|safe}};
     var cart_length = {{cart_items_count}};
+    var acc_desc_list = {{acc_desc_append_list|safe}};
     //cart item guid
     var sc_item_guid = []
     {% for items in cart_items_guid_list %}
+
         sc_item_guid.push('{{items|safe}}')
     {% endfor %}
+for (let item_number = 0; i < cart_length; item_number++) {
+    sessionStorage.setItem('last_added_file_number-' + item_number_check, 0)
+}
 
 
     if(acc_cat_type == 'CC') {
@@ -390,6 +395,7 @@ function check_shopping_cart(type, sc_data, acc_default, acc_default_val){
     var check_sc_data = '';
     if(type != 'approval_workflow'){
         check_sc_data = get_data_for_check()
+        header_level_data = get_sc_header_data()
     }
     var total_val = $('#total_cart_value').text();
     var requester = $('#shopping_cart_requester').val()
@@ -398,6 +404,7 @@ function check_shopping_cart(type, sc_data, acc_default, acc_default_val){
             'acc_default_val': acc_default_val.split(' - ')[0],
             'total_val':total_val,
             'check_sc_data': check_sc_data,
+            'header_level_data':header_level_data,
             'type': type,
             'requester': requester
     }
@@ -420,7 +427,9 @@ function check_shopping_cart(type, sc_data, acc_default, acc_default_val){
       //  error_messages += shopping_cart_errors['error_msg_info']
    // }
             if (response.error_msg_info){
-            error_messages += response.error_msg_info + '<br>'
+                $.each(response.error_msg_info, function (i, item) {
+                    error_messages += item + '<br>'
+                });
             }
             // If SC has info
             if (sc_info_messsages_check.length > 0){
@@ -528,45 +537,46 @@ function check_shopping_cart(type, sc_data, acc_default, acc_default_val){
 // Function to save shopping cart
 function save_shopping_cart(){
     $('#save_error_id').empty();
-    var error_msg = '';
-    {% if not acc_default  %}
-        {% if acc_list %}
-            var error_msg = '<div class="alert alert-danger" role="alert"><span>No default Account assignment category maintained. Please maintain defaults in <a href="{% url 'eProc_User_Settings:purchase_settings' %}" target="_blank" >Purchase Settings</a></span></div>'
-        {% else %}
 
-                    var msg = "JMSG027";
-                    var msg_type ;
-                  msg_type = get_message_desc(msg);
-                  $("#error_msg_id").prop("hidden", false)
-
-                  if(msg_type.message_type == "ERROR"){
-                        display_message("error_msg_id", msg_type.messages_id_desc)
-                  }
-                  else if(msg_type.message_type == "WARNING"){
-                     display_message("id_warning_msg_id", msg_type.messages_id_desc)
-                  }
-                  else if(msg_type.message_type == "INFORMATION"){
-                     display_message("id_info_msg_id", msg_type.messages_id_desc)
-                  }
-                  var display7 = msg_type.messages_id_desc;
-
-            var error_msg ='<div class="alert alert-danger" role="alert"><span class="error">display7</span></div>';
-        {% endif %}
-    {% else %}
-        {% if not acc_value.0  %}
-            var error_msg = '<div class="alert alert-danger" role="alert"><span>No default Account assignment category values maintained. Please maintain defaults in <a href="{% url 'eProc_User_Settings:purchase_settings' %}" target="_blank" >Purchase Settings</a></span></div>'
-        {% endif %}
-    {% endif %}
-    if (error_msg){
-        $('#save_error_id').html(error_msg);
-        $('#save_error_popup_id').modal('show');
-    }
-    else
-    {
+//var error_msg = '';
+//    {% if not acc_default  %}
+//        {% if acc_list %}
+//            var error_msg = '<div class="alert alert-danger" role="alert"><span>No default Account assignment category maintained. Please maintain defaults in <a href="{% url 'eProc_User_Settings:purchase_settings' %}" target="_blank" >Purchase Settings</a></span></div>'
+//        {% else %}
+//
+//                    var msg = "JMSG027";
+//                    var msg_type ;
+//                  msg_type = get_message_desc(msg);
+//                  $("#error_msg_id").prop("hidden", false)
+//
+//                  if(msg_type.message_type == "ERROR"){
+//                        display_message("error_msg_id", msg_type.messages_id_desc)
+//                  }
+//                  else if(msg_type.message_type == "WARNING"){
+//                     display_message("id_warning_msg_id", msg_type.messages_id_desc)
+//                  }
+//                  else if(msg_type.message_type == "INFORMATION"){
+//                     display_message("id_info_msg_id", msg_type.messages_id_desc)
+//                  }
+//                  var display7 = msg_type.messages_id_desc;
+//
+//            var error_msg ='<div class="alert alert-danger" role="alert"><span class="error">display7</span></div>';
+//        {% endif %}
+//    {% else %}
+//        {% if not acc_value.0  %}
+//            var error_msg = '<div class="alert alert-danger" role="alert"><span>No default Account assignment category values maintained. Please maintain defaults in <a href="{% url 'eProc_User_Settings:purchase_settings' %}" target="_blank" >Purchase Settings</a></span></div>'
+//        {% endif %}
+//    {% endif %}
+//    if (error_msg){
+//        $('#save_error_id').html(error_msg);
+//        $('#save_error_popup_id').modal('show');
+//    }
+//    else
+//    {
         data = get_sc_data()
         check_shopping_cart('save', data, highest_item_acc_asgn_cat, highest_item_change_acc_value)
         $('#sc_success_messages').show();
-    }
+ //   }
 }
 
 

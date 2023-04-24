@@ -45,7 +45,7 @@ from eProc_Notes_Attachments.Notes_Attachments.Attachment_Form import CreateAtta
 from eProc_Notes_Attachments.Notes_Attachments.Notes_Form import NotesForm
 from eProc_Shopping_Cart.context_processors import update_user_info, update_user_obj_id_list_info
 from eProc_Shopping_Cart.models import CartItemDetails
-from eProc_System_Settings.Utilities.system_settings_generic import sys_attributes
+from eProc_System_Settings.Utilities.system_settings_generic import sys_attributes, get_system_settings_data
 from eProc_User_Settings.Utilities.user_settings_generic import get_object_id_list_user, get_attr_value
 from eProc_User_Settings.Utilities.user_settings_specific import UserSettings
 from eProc_Shopping_Cart.Utilities.shopping_cart_specific import empty_shopping_cart_data
@@ -419,6 +419,9 @@ def sc_second_step(request):
     # get default calender id and company code from org model
     attr_low_value_list, company_code, default_calendar_id, object_id_list = get_company_calendar_from_org_model()
 
+    org_attr_value_instance = OrgAttributeValues()
+    default_invoice_adr = org_attr_value_instance.get_user_default_attr_value_list_by_attr_id(object_id_list,
+                                                                                              CONST_INV_ADDR)[1]
     # get cart default name, first name
     requester_first_name, cart_name, receiver_name = get_cart_default_name_and_user_first_name(request.user.first_name,
                                                                                                request.user.last_name)
@@ -431,7 +434,10 @@ def sc_second_step(request):
         return redirect('eProc_Shop_Home:shopping_cart_home')
 
     actual_price, discount_value, \
-    tax_value, total_value, cart_items = validate_get_currency_converted_price_data(cart_items, sc_check_instance)
+    tax_value, total_value, cart_items = validate_get_currency_converted_price_data(cart_items,
+                                                                                    global_variables.GLOBAL_USER_CURRENCY,
+                                                                                    sc_check_instance,
+                                                                                    True)
     cart_items_guid_list, prod_cat_list, call_off_list, total_item_value = get_required_field_into_list(cart_items)
     request.session['total_value'] = total_item_value
 
@@ -473,8 +479,9 @@ def sc_second_step(request):
         prod_cat_list)
 
     cart_items, shopping_cart_errors = check_sc_second_step_shopping_cart(sc_check_instance, object_id_list,
-                                                                          default_calendar_id,
-                                                                          company_code, default_address_number,address_number_list,
+                                                                          default_calendar_id, default_invoice_adr,
+                                                                          company_code, default_address_number,
+                                                                          address_number_list,
                                                                           accounting_data, manager_details,
                                                                           approver_id, total_value, msg_info,
                                                                           cart_items)
@@ -489,6 +496,8 @@ def sc_second_step(request):
     sys_attributes_instance = sys_attributes(global_variables.GLOBAL_CLIENT)
     request.session['total_value'] = total_item_value
     request.session['company_code'] = company_code
+    system_settings_data = get_system_settings_data()
+
     context = {
         'shopping_cart_errors': shopping_cart_errors,
         'cart_items_count': cart_items_count,
@@ -519,8 +528,8 @@ def sc_second_step(request):
         'select_flag': True,
         'acc_default': accounting_data['acc_default'],
         'acc_value': accounting_data['acc_value'],
-        'account_assign_cat_list':accounting_data['account_assign_cat_list'],
-        'acc_desc_append_list':accounting_data['acc_desc_append_list'],
+        'account_assign_cat_list': accounting_data['account_assign_cat_list'],
+        'acc_desc_append_list': accounting_data['acc_desc_append_list'],
         'currency': currency,
         'unit': uom,
         'product_category': product_category,
@@ -534,17 +543,17 @@ def sc_second_step(request):
         'rest_shipping_addr': delivery_addr_list,
         'addr_val_desc': addr_val_desc,
         'delivery_addr_desc': delivery_addr_desc,
-        'default_address_number':default_address_number,
+        'default_address_number': default_address_number,
         'acc_cat_default_value': accounting_data['default_acc_ass_cat'],
         'country_list': get_country_data(),
         'is_second_step': True,
         'is_document_detail': False,
-        'acct_assignment_category': sys_attributes_instance.get_acct_assignment_category(),
-        'purchase_group': sys_attributes_instance.get_purchase_group(),
-        'edit_address_flag': sys_attributes_instance.get_edit_address(),
-        'shipping_address_flag': sys_attributes_instance.get_shipping_address(),
-        'attachment_size': sys_attributes_instance.get_attachment_size(),
-        'attachment_extension': sys_attributes_instance.get_attachment_extension(),
+        'acct_assignment_category': system_settings_data['acct_assignment_category'],
+        'purchase_group': system_settings_data['purchase_group'],
+        'edit_address_flag': system_settings_data['edit_address_flag'],
+        'shipping_address_flag': system_settings_data['shipping_address_flag'],
+        'attachment_size': system_settings_data['attachment_size'],
+        'attachment_extension': system_settings_data['attachment_extension'],
         'currency_list': currency_list,
 
     }
@@ -559,9 +568,8 @@ def save_shopping_cart(request):
     :param request:
     :return:
     """
-    username = getUsername(request)
-    client = getClients(request)
     manager_details = []
+    update_user_info(request)
     if request.method == 'POST':
         attachments_data = request.FILES
         sc_ui_data = request.POST
@@ -578,7 +586,6 @@ def save_shopping_cart(request):
         if not sc_details[0]:
             return JsonResponse({'error_ms': sc_details[1]}, status=201)
 
-        update_user_info(request)
         save_sc_data.save_approval_data(manager_details, CONST_SC_HEADER_SAVED, sc_completion_flag)
 
         if sc_details[0]:

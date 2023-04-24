@@ -17,6 +17,7 @@ from django.db import transaction
 from eProc_Account_Assignment.Utilities.account_assignment_generic import AccountAssignment, get_header_level_gl_acc, \
     get_acc_value_and_description_append, AccountAssignmentCategoryDetails
 from eProc_Add_Item.views import save_eform_data
+from eProc_Basic.Utilities.functions.dictionary_key_to_list import dictionary_key_to_list
 from eProc_Basic.Utilities.functions.encryption_util import decrypt, encrypt
 from eProc_Basic.Utilities.functions.get_description import get_gl_acc_description
 from eProc_Basic.Utilities.functions.get_system_setting_attributes import *
@@ -24,7 +25,7 @@ from eProc_Basic.Utilities.functions.ignore_duplicates import remove_duplicate_e
 from eProc_Basic.Utilities.functions.json_parser import JsonParser
 from eProc_Basic.decorators import authorize_view
 from eProc_Doc_Details.Utilities.update_saved_item import UpdateSavedItem
-from eProc_Doc_Search_and_Display.Utilities.search_display_specific import get_sc_header_app
+from eProc_Doc_Search_and_Display.Utilities.search_display_specific import get_sc_header_app, get_shopping_cart_approval
 from eProc_Emails.Utilities.email_notif_generic import appr_notify, send_po_attachment_email
 from eProc_Purchase_Order.Utilities.purchase_order_generic import CreatePurchaseOrder
 from eProc_Related_Documents.Utilities.related_documents_generic import get_item_level_related_documents
@@ -34,7 +35,7 @@ from django.http import HttpResponseForbidden, JsonResponse
 from django.shortcuts import render
 from eProc_Basic.Utilities.functions.type_casting import type_cast_array_float_to_str
 from eProc_Doc_Details.Utilities.details_generic import GetAttachments, update_approval_status, update_sc_data, \
-    get_doc_details, update_eform_scitem
+    get_doc_details, update_eform_scitem, get_shopping_cart_details, get_sc_supplier_internal_approver_note
 from eProc_Doc_Details.Utilities.details_specific import *
 from eProc_Notes_Attachments.Utilities.notes_attachments_generic import download
 from eProc_Price_Calculator.Utilities.price_calculator_generic import calculate_item_total_value, calculate_item_price, \
@@ -42,7 +43,7 @@ from eProc_Price_Calculator.Utilities.price_calculator_generic import calculate_
 from eProc_Shopping_Cart.Shopping_Cart_Forms.call_off_forms.limit_form import UpdateLimitItem
 from eProc_Shopping_Cart.Utilities.shopping_cart_generic import get_supplier_first_second_name, get_prod_cat, \
     get_prod_by_id, update_eform_details_scitem, get_total_price_details, get_SC_details_email, get_price_discount_tax, \
-    update_pricing_data
+    update_pricing_data, validate_get_currency_converted_price_data
 from eProc_Shopping_Cart.Utilities.shopping_cart_specific import get_manger_detail, get_prod_cat_dropdown, \
     get_users_first_name, update_supplier_uom_for_prod, update_supplier_uom
 from eProc_Shopping_Cart.context_processors import update_user_info
@@ -200,8 +201,187 @@ def my_order_doc_details(req, flag, type, guid, mode, access_type):
     addr_value, addr_default_value = ship_to_bill_to_address_instance.get_default_address_number_and_list()
     delivery_addr_desc = ship_to_bill_to_address_instance.get_all_addresses_with_descriptions(addr_value)
 
-    org_config_acc_desc = get_acc_details(object_id_list, global_variables.GLOBAL_REQUESTER_COMPANY_CODE, item_detail_list)
+    org_config_acc_desc = get_acc_details(object_id_list, global_variables.GLOBAL_REQUESTER_COMPANY_CODE,
+                                          item_detail_list)
     client = getClients(req)
+    sys_attributes_instance = sys_attributes(client)
+    acc_list = org_config_acc_desc['acc_list']
+    doc_number_encrypted = encrypt(sc_header_instance['doc_number'])
+
+    if access_type == 'approvals':
+        is_approval_preview = True
+        if django_query_instance.django_existence_check(ScPotentialApproval,
+                                                        {'sc_header_guid': sc_header_instance['guid'],
+                                                         'proc_lvl_sts': CONST_ACTIVE,
+                                                         'app_id': global_variables.GLOBAL_LOGIN_USERNAME,
+                                                         'client': global_variables.GLOBAL_CLIENT}):
+            eligible_approver_flag = True
+        # total price detail
+    actual_price = round(sum(actual_price_list), 2)
+    discount_value = round(sum(discount_value_list), 2)
+    tax_value = sum(tax_value_list)
+    context = {'type': type, 'guid': header_guid,
+               'currency': django_query_instance.django_filter_only_query(Currency, {'del_ind': False}),
+               'requester': requester_user_name, 'unit': UnitOfMeasures.objects.filter(del_ind=False),
+               'product_category': product_category, 'limit_form': UpdateLimitItem(),
+               'requesters_currency': requester_currency, 'header_level_gl_acc': header_level_gl_acc,
+               'highest_item_guid': highest_item_guid, 'item_detail_list': item_detail_list, 'eform_info': eform_info,
+               'hdr_det': sc_hdr_details, 'itm_det': sc_item_details, 'acc_det': sc_accounting_details,
+               'requester_first_name': requester_first_name,
+               'app_det': sc_approval_data,
+               'actual_price': actual_price,
+               'discount_value': discount_value,
+               'eligible_approver_flag': eligible_approver_flag,
+               'tax_value': tax_value,
+               'item_dictionary_list': item_dictionary_list,
+               'header_acc_detail': header_acc_detail,
+               'header_level_acc_guid': header_level_acc_guid,
+               'addr_det': sc_address_data, 'supp_notes': supp_notes, 'int_notes': int_notes, 'appr_notes': appr_notes,
+               'header_level_addr': header_level_addr,
+               'default_company_code': global_variables.GLOBAL_REQUESTER_COMPANY_CODE,
+               'pgrp_list': pgrp_list,
+               'acc_list': acc_list,
+               'supplier_details': get_supplier_first_second_name(global_variables.GLOBAL_CLIENT),
+               'account_assign_cat_list': org_config_acc_desc['account_assign_cat_list'],
+               'acc_desc_append_list': org_config_acc_desc['acc_desc_append_list'],
+               'sc_completion_flag': flag,
+               'supplier_data': supplier_data, 'del_addr': del_addr, 'delivery_addr_desc': delivery_addr_desc,
+               'addr_val_desc': addr_val_desc, 'sc_attachements': sc_attachments,
+               'attachment_length': len(sc_attachments), 'receiver_name': requester_user_name,
+               'requester_currency': requester_currency, 'sc_header_data': sc_header_data, 'total_val': total_val,
+               'inc_nav': True, 'inc_footer': True, 'sc_appr': sc_appr, 'sc_head': sc_header_instance,
+               'sc_completion': sc_completion, 'item_count': sc_item_details.count(),
+               'total_value_of_item_converted': total_value_of_item_converted, 'country_list': get_country_id(),
+               'currency_list': get_currency_list(), 'requester_full_name': requester_full_name,
+               'delivery_addr_list': delivery_addr_list, 'doc_number_encrypted': doc_number_encrypted,
+               'is_document_detail': True, 'attachment_size': sys_attributes_instance.get_attachment_size(),
+               'attachment_extension': sys_attributes_instance.get_attachment_extension(),
+               'acct_assignment_category': sys_attributes_instance.get_acct_assignment_category(),
+               'edit_address_flag': sys_attributes_instance.get_edit_address(),
+               'shipping_address_flag': sys_attributes_instance.get_shipping_address(),
+               'country_dropdown': get_country_data(),
+               'is_approval_preview': is_approval_preview}
+    return render(req, template, context)
+
+
+@login_required
+@authorize_view(CONST_MY_ORDER)
+def my_order_doc_details_new(req, flag, type, guid, mode, access_type):
+    """
+    Gets the details from various tables and reders back to the details page
+    :param mode:
+    :param flag:
+    :param req: Form Request
+    :param type: Consists of type od document SC/PO
+    :param guid: Document guid for which the details have to be pulled
+    :return: Doc details page
+    """
+    item_detail_list = []
+    gl_acc_num_list = []
+    item_value_list = []
+    sc_header_instance = {}
+    total_value_of_item_converted = []
+    requesters_currency = ''
+    actual_price_list = []
+    discount_value_list = []
+    tax_value_list = []
+    total_val = 0
+    document_number = ''
+    is_approval_preview = False
+    eligible_approver_flag = False
+    template = 'Doc_Details/my_order_doc_details.html'
+    # To validate access based on creator and requester
+    update_user_info(req)
+    header_guid = decrypt(guid)
+    # get shopping cart related data based on header guid
+    shopping_cart_data = get_shopping_cart_details(header_guid)
+    sc_hdr_details = shopping_cart_data['sc_header_details']
+    sc_item_details = shopping_cart_data['sc_item_details']
+    sc_accounting_details = shopping_cart_data['sc_account_details']
+    sc_approval_data = shopping_cart_data['sc_approval_details']
+    sc_address_data = shopping_cart_data['sc_address_details']
+    sc_header, sc_appr, sc_completion, requester_first_name = get_shopping_cart_approval(shopping_cart_data)
+
+    # get supplier, internal and approval notes
+    sc_item_guid_list = dictionary_key_to_list(shopping_cart_data['sc_item_details'], 'guid')
+    supp_notes, int_notes, appr_notes = get_sc_supplier_internal_approver_note(header_guid, sc_item_guid_list)
+
+    if sc_hdr_details:
+        sc_header_instance = sc_hdr_details[0]
+        total_val = sc_header_instance['total_value']
+        global_variables.GLOBAL_REQUESTER_COMPANY_CODE = sc_header_instance['co_code']
+    update_requester_info(sc_header_instance['requester'])
+    object_id_list = get_object_id_list_user(global_variables.GLOBAL_CLIENT,
+                                             global_variables.GLOBAL_REQUESTER_OBJECT_ID)
+    requesters_currency = global_variables.GLOBAL_REQUESTER_CURRENCY
+    is_valid = validate_document_access(sc_header_instance['requester'],
+                                        sc_header_instance['created_by'], req, header_guid, access_type)
+    if not is_valid:
+        return HttpResponseForbidden()
+    item_dictionary_list = []
+    actual_price, discount_value, \
+    tax_value, total_value, shopping_cart_data['sc_item_details'] = validate_get_currency_converted_price_data(shopping_cart_data['sc_item_details'],
+                                                                                                               global_variables.GLOBAL_REQUESTER_CURRENCY,
+                                                                                                               None,
+                                                                                                               False)
+    for sc_items in sc_item_details:
+        item_details = {'prod_cat': sc_items['prod_cat_id'], 'value': sc_items['value'], 'guid': sc_items['guid']}
+        item_detail_list.append(item_details)
+    # append eform details to item
+    item_dictionary_list = update_eform_scitem(header_guid)
+    for item in item_dictionary_list:
+        item['related_documents'] = get_item_level_related_documents(item, CONST_DOC_TYPE_SC, item['po_doc_num'])
+        item = update_supplier_uom_for_prod(item)
+
+    for acc_detail in sc_accounting_details:
+        gl_acc_num_list.append(acc_detail['gl_acc_num'])
+        acc_detail['gl_account_value_desc'] = ACCValueDesc.append_gl_account_value_desc(acc_detail['gl_acc_num'],
+                                                                                        global_variables.GLOBAL_REQUESTER_COMPANY_CODE,
+                                                                                        global_variables.GLOBAL_REQUESTER_LANGUAGE)
+
+        acc_desc_append = get_acc_desc_append([acc_detail['acc_cat']])
+        if acc_desc_append:
+            acc_detail['acc_desc'] = acc_desc_append[0]['append_val']
+        else:
+            acc_detail['acc_desc'] = acc_detail['acc_cat']
+
+        acc_detail['acc_value_desc'] = get_acc_value_and_description_append(acc_detail,
+                                                                            acc_detail['acc_cat'],
+                                                                            global_variables.GLOBAL_REQUESTER_COMPANY_CODE,
+                                                                            global_variables.GLOBAL_REQUESTER_LANGUAGE)
+
+    header_level_gl_acc = get_header_level_gl_acc(gl_acc_num_list)
+    header_acc_detail, header_level_acc_guid = get_header_acc_detail(header_guid)
+    header_level_addr = get_header_level_addr(header_guid)
+    eform_info = get_eform_data(header_guid)
+    del_addr = get_del_addr(header_guid)
+    pgrp_list = get_pgrp_item(header_guid)
+    # highest item guid
+    highest_item_guid = get_highest_item_guid(header_guid)
+
+    # requester user name
+    sc_header_data, requester_user_name = get_sc_requester_user_name(header_guid)
+
+    requester_full_name = UserData.objects.get(username=requester_user_name, client=global_variables.GLOBAL_CLIENT)
+    # Requester Currency
+    requester_currency = get_requester_currency(requester_user_name)
+
+    # requester object id
+    requester_object_id = get_requester_object_id(requester_user_name)
+
+    ship_to_bill_to_address_instance = ShipToBillToAddress(requester_object_id)
+    delivery_addr_list, addr_default, addr_val_desc = get_sc_comp_my_order(requester_object_id)
+    product_category = get_prod_cat()
+    supplier_data = get_supplier_dropdown()
+    GetAttachments.po_attachments = []
+    sc_attachments = GetAttachments.get_sc_attachments(header_guid)
+
+    addr_value, addr_default_value = ship_to_bill_to_address_instance.get_default_address_number_and_list()
+    delivery_addr_desc = ship_to_bill_to_address_instance.get_all_addresses_with_descriptions(addr_value)
+
+    org_config_acc_desc = get_acc_details(object_id_list, global_variables.GLOBAL_REQUESTER_COMPANY_CODE,
+                                          item_detail_list)
+    client = global_variables.GLOBAL_CLIENT
     sys_attributes_instance = sys_attributes(client)
     acc_list = org_config_acc_desc['acc_list']
     doc_number_encrypted = encrypt(sc_header_instance['doc_number'])

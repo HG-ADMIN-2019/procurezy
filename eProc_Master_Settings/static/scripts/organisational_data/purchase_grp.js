@@ -6,6 +6,7 @@ var pgroup={};
 //onclick of upload button display id_data_upload popup and set GLOBAL_ACTION button value
 function onclick_upload_button() {
     GLOBAL_ACTION = "purchase_grp_upload"
+    $("#id_error_msg_upload").prop("hidden",true)
     $("#id_popup_tbody").empty();
     $('#id_data_upload').modal('show');
     document.getElementById('id_file_data_upload').value = "";
@@ -108,12 +109,19 @@ function add_popup_row() {
     $(".modal").on("hidden.bs.modal", function () {
         $("#id_error_msg").html(" ");
     });
-    new_row_data();   // Add a new row in popup
     if (GLOBAL_ACTION == "purchase_grp_upload") {
+        basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><input class="input form-control check_special_char"  type="text" minlength="4" maxlength="8"  name="pgroup_id" required></td><td><input class="input form-control check_special_char"  type="text" maxlength="100"  name="description"  required></td><td hidden><select>' + object_id_dropdwn + ' </select><td hidden>pgroup_guid</td><td class="class_del_checkbox"><input type="checkbox" required></td></tr>';
+        $('#id_popup_tbody').append(basic_add_new_html);
+        table_sort_filter('id_popup_table');
         $(".class_del_checkbox").prop("hidden", false);
         $("#id_del_ind_checkbox").prop("hidden", false);
     }
-    table_sort_filter('id_popup_table');
+    else{
+         new_row_data();   // Add a new row in popup
+        table_sort_filter('id_popup_table');
+    }
+      $('#delete_data').hide()
+
 }
 
 //onclick of cancel display the table in display mode............
@@ -258,4 +266,12 @@ function get_selected_row_data() {
             main_table_pgroup_checked.push( pgroup_arr_obj);
         }
     });
+}
+
+//Get message for check data function
+function get_msg_desc_check_data(msg){
+    var msg_type ;
+    msg_type = message_config_details(msg);
+    $("#error_msg_id").prop("hidden", false);
+    return msg_type.messages_id_desc;
 }

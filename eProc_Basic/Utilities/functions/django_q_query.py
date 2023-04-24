@@ -9,7 +9,9 @@ def django_q_query(value, value_list, field):
     """
     django_query = Q()
     if value:
-        if '*' in value:
+        if value == '*':
+            django_query = Q(**{field + '__in': value_list})
+        elif '*' in value:
             product_match = re.search(r'[a-zA-Z0-9]+', value)
             if value[0] == '*' and value[-1] == '*':
                 django_query = Q(**{field + '__in': value_list}) | Q(**{field + '__icontains': product_match.group(0)})

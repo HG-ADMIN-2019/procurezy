@@ -69,6 +69,7 @@ urlpatterns = [
     path('setup_new_client/', include('eProc_New_Client_Setup.urls')),
     path('timesheet/', include('eProc_Time_Sheet.urls')),
     path('projects/', include('eProc_Projects.urls')),
+    path('som/', include('eProc_Supplier_Order_Management.urls')),
 
 ]
 

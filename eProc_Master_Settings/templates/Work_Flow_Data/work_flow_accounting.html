@@ -201,74 +201,66 @@
 
     //********************************
     function workflowacc_drp(){
-        acc_ass_val_list = [];
-        user_dropdwn = '';
-        $.each(rendered_user_data, function(i, item){
-            user_dropdwn += '<option value="' + item.username + '">' + item.username + '</option>';
-        })
-        acc_ass_dropdwn = '';
-        $.each(rendered_accasscat_data, function(i, item){
-            acc_ass_dropdwn += '<option value="' + item.account_assign_cat + '">' + item.account_assign_cat + '</option>';
-        })
-        sup_acc_ass_dropdwn = '';
-        $.each(rendered_accasscat_data, function(i, item){
-            sup_acc_ass_dropdwn += '<option value="' + item.account_assign_cat + '">' + item.account_assign_cat + '</option>';
-        })
-        company_id_dropdown = '';
-        $.each(rendered_company_data, function(i, item){
-            company_id_dropdown += '<option value="' + item.company_id + '">' + item.company_id + '</option>';
-        })
-        supcompany_dropdwn = '';
-        $.each(rendered_super_company_data, function(i, item){
-            supcompany_dropdwn += '<option value="' + item.company_id + '">' + item.company_id + '</option>';
-        })
-        currency_dropdwn = '';
-        $.each(rendered_currency_data, function(i, item){
-            currency_dropdwn += '<option value="' + item.currency_id + '">' + item.currency_id + '</option>';
-        })
-        sup_acc_ass_val_dropdwn = '';
-        $.each(rendered_wfacc_data, function (i, item) {
-            sup_acc_ass_val_dropdwn += '<option value="' + item.sup_acc_value + '">' + item.sup_acc_value + '</option>'
-        })
-        company_dropdwn = '';
-        $(arrDistinct).each(function (index, item) {
-            company_dropdwn += '<option value="' + item + '">' + item + '</option>'
-        });
+    acc_ass_val_list = [];
+    user_dropdwn = '';
+    $.each(rendered_user_data, function(i, item){
+        user_dropdwn += '<option value="' + item.username + '">' + item.username + '</option>';
+    })
+    acc_ass_dropdwn = '';
+    $.each(rendered_accasscat_data, function(i, item){
+        acc_ass_dropdwn += '<option value="' + item.account_assign_cat + '">' + item.account_assign_cat + '</option>';
+    })
+    sup_acc_ass_dropdwn = '';
+    $.each(rendered_accasscat_data, function(i, item){
+        sup_acc_ass_dropdwn += '<option value="' + item.account_assign_cat + '">' + item.account_assign_cat + '</option>';
+    })
+    company_id_dropdown = '';
+    $.each(rendered_company_data, function(i, item){
+        company_id_dropdown += '<option value="' + item.company_id + '">' + item.company_id + '</option>';
+    })
+    supcompany_dropdwn = '';
+    $.each(rendered_super_company_data, function(i, item){
+        supcompany_dropdwn += '<option value="' + item.company_id + '">' + item.company_id + '</option>';
+    })
+    currency_dropdwn = '';
+    $.each(rendered_currency_data, function(i, item){
+        currency_dropdwn += '<option value="' + item.currency_id + '">' + item.currency_id + '</option>';
+    })
+    sup_acc_ass_val_dropdwn = '';
+    $.each(rendered_wfacc_data, function (i, item) {
+        sup_acc_ass_val_dropdwn += '<option value="' + item.sup_acc_value + '">' + item.sup_acc_value + '</option>'
+    })
 
-        acc_ass_val_dropdwn = '';
-        $.each(rendered_accassval_data, function (i, item) {
-            acc_ass_val_dropdwn += '<option value="' + item.acc_value + '">' + item.acc_value + '</option>'
-            acc_ass_val_dict = {};
-            acc_ass_val_dict.acc_ass_val_dropdwn = item.account_assign_value
-            acc_ass_val_dict.account_assign_cat = item.account_assign_cat
-            acc_ass_val_dict.company_id = item.company_id
-            acc_ass_val_list.push(acc_ass_val_dict)
-            account_assign_array.push(item.acc_value)
-        });
-        company_dropdwn = '';
-        var unique_comp = [];
+    // Filter records by "valid to" date
+    var today = new Date();
+    var validAccAssValData = rendered_accassval_data.filter(function (item) {
+        var validToDate = new Date(item.valid_to);
+        return validToDate >= today;
+    });
 
-         $.each(rendered_accassval_data, function (i, item) {
-            company_dropdwn += '<option value="' + item.company_id + '">' + item.company_id + '</option>'
-            company_dict = {};
-            company_dict.acc_ass_val_dropdwn = item.account_assign_value
-            company_dict.account_assign_cat = item.account_assign_cat
-            company_dict.company_id = item.company_id
-            company_list.push(company_dict)
-            company_array.push(item.company_id)
-            unique_comp.push(item.company_id);
-            unique_acct_assmt_val.push(item.acc_value);
-        });
+    company_dropdwn = '';
+    var unique_comp = [];
+    $.each(validAccAssValData, function (i, item) {
+        company_dropdwn += '<option value="' + item.company_id + '">' + item.company_id + '</option>'
+        company_dict = {};
+        company_dict.acc_ass_val_dropdwn = item.account_assign_value
+        company_dict.account_assign_cat = item.account_assign_cat
+        company_dict.company_id = item.company_id
+        company_list.push(company_dict)
+        company_array.push(item.company_id)
+        unique_comp.push(item.company_id);
+        unique_acct_assmt_val.push(item.acc_value);
+    });
 
-        $(unique_comp).each(function (index, item) {
-            if ($.inArray(item, arrDistinct) == -1)
-                arrDistinct.push(item);
-        });
-        company_dropdwn = '';
-        $(arrDistinct).each(function (index, item) {
-            company_dropdwn += '<option value="' + item + '">' + item + '</option>'
-        });
-    }
+    $(unique_comp).each(function (index, item) {
+        if ($.inArray(item, arrDistinct) == -1)
+            arrDistinct.push(item);
+    });
+    company_dropdwn = '';
+    $(arrDistinct).each(function (index, item) {
+        company_dropdwn += '<option value="' + item + '">' + item + '</option>'
+    });
+}
 
    //onclick of cancel display the table in display mode............
     function display_basic_db_data() {
@@ -689,6 +681,7 @@
                 rendered_currency_data = response.upload_data_currency
                 rendered_company_data = response.upload_data_company
                 rendered_super_company_data = response.upload_data_OrgCompanies
+                rendered_accassval_data = response.upload_accassvalues
                 workflowacc_drp()
                 $("#error_msg_id").css("display", "none")
                 $('#id_popup_table').DataTable().destroy();

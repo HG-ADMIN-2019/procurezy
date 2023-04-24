@@ -247,10 +247,16 @@ function get_sc_data(){
     } else {
         silent_po = 0;
     }
-    data = new FormData();
+    var data = new FormData();
     array_index = 0;
     for(i=1;i<parseInt(cart_counter)+1;i++){
-        last_index_attachments = parseInt(sessionStorage.getItem('last_added_file_number-'+i))
+        if(sessionStorage.getItem('last_added_file_number-'+i) == null){
+            last_index_attachments = 0
+        }
+        else{
+            last_index_attachments = parseInt(sessionStorage.getItem('last_added_file_number-'+i))
+        }
+
         // for(j=0;j<final_attachment_array.length; j++){
             var j = 1;
             while(j<=last_index_attachments){
@@ -340,15 +346,19 @@ function get_sc_header_data(){
     pcode     = pcode_element ? pcode_element.innerHTML : 'None'
     region    = region_element ? region_element.innerHTML : 'None'
 
-    data.append('adr_num' , adr_num)
-    data.append('street' , street)
-    data.append('area' , area)
-    data.append('landmark' , landmark)
-    data.append('city' , city)
-    data.append('pcode' , pcode)
-    data.append('region' , region)
-    data.append('acc_asg_cat',acc_asg_cat)
-    data.append('acc_asg_cat_value',acc_asg_cat_value)
+    var header_level_addr = {'adr_num':adr_num,
+                             'street':street,
+                             'area': area,
+                             'landmark':landmark,
+                             'city': city,
+                              'pcode': pcode,
+                              'region' : region}
+    var header_level_acc = {'acc_asg_cat':acc_asg_cat,
+                            'acc_asg_cat_value':acc_asg_cat_value,
+                            'acc_desc_list':acc_desc_list}
+    var header_level_data = {'header_level_addr':header_level_addr,
+                                'header_level_acc':header_level_acc}
+    return header_level_data
 
 }
 

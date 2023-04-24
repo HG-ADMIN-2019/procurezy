@@ -360,7 +360,7 @@ var update_project = function(project_id) {
         document.getElementById('add_update_project_id').innerHTML = guid_generator.project_id;
     }
     $("#add_update_modal").modal("show");
-    setTimeout(function(){location.reload()},5000);
+<!--    setTimeout(function(){location.reload()},5000);-->
 };
 
 
@@ -414,7 +414,7 @@ function save_project(){
             }
             else{
                 $("#add_update_modal").modal("hide");
-                window.location.reload();//reload the page
+<!--                window.location.reload();//reload the page-->
             }
         }
     });
@@ -507,7 +507,7 @@ function delete_project() {
             $("#error_msg_div").prop("hidden",false)
 <!--            setTimeout(function(){$("#error_msg_div").prop("hidden",true);},5000)-->
             message_display_time();
-            location.reload();
+<!--            location.reload();-->
         }
     });
 
@@ -587,7 +587,7 @@ $('#project_catalog').click(function(e){
            response = result;
            updateTable();
            CloseLoaderPopup();
-           setTimeout(function(){location.reload()},10000);
+<!--           setTimeout(function(){location.reload()},10000);-->
        },
        error: function(xhr, resp, text) {
        },
