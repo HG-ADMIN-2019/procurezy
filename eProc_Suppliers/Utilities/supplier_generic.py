@@ -70,8 +70,7 @@ def supplier_detail_search(**kwargs):
                 if '*' not in value:
                     value_list = [value]
                 if value == '*':
-                    # value_list = porg_array
-                    value = value
+                    value_list = porg_array
                 org_supplier_query = django_q_query(value, value_list, 'porg_id')
                 supplier_id_query = django_query_instance.django_queue_query_value_list(OrgSuppliers, {
                     'client': global_variables.GLOBAL_CLIENT,
@@ -123,11 +122,7 @@ def supplier_detail_search(**kwargs):
                                                                           country_code_query,
                                                                           city_query
                                                                           ))
-    # user_details_query = list(
-    #     UserData.objects.filter(username_query, email_query, client=client,
-    #                             del_ind=False
-    #                             ).values().order_by('username'))
-    print(supplier_details_query)
+
     return supplier_details_query
 
 
@@ -145,6 +140,5 @@ def get_supplier_email(supplier_id):
                                                                   'supplier_id': supplier_id,
                                                                   'del_ind': False})
         supplier_email_addr = supplier_detail.email
-    print("supplier email address", supplier_email_addr)
 
     return supplier_email_addr

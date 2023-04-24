@@ -75,11 +75,6 @@ def admin_tool(req):
 
 def user_search(request):
     update_user_info(request)
-    # dropdown_usertype_values = list(
-    #     FieldTypeDescription.objects.filter(field_name='user_type', del_ind=False,
-    #                                         client=global_variables.GLOBAL_CLIENT).values('field_type_id',
-    #                                                                                       'field_type_desc'
-    #                                                                                       ))
     context = {
         'inc_nav': True,
         'inc_footer': True,
@@ -91,7 +86,6 @@ def user_search(request):
 
     if request.method == 'GET':
         encrypted_email = []
-
         employee_results = get_emp_data()
         context['employee_results'] = employee_results
     if request.method == 'POST':
@@ -161,8 +155,6 @@ def supplier_search(request):
                 if value != '':
                     search_fields[data] = value
 
-        # search_fields['client'] = client
-        # search_fields['del_ind'] = False
         search_fields['name1'] = request.POST.get('name1')
         search_fields['name2'] = request.POST.get('name2')
         search_fields['supplier_id'] = request.POST.get('supplier_id')
@@ -174,7 +166,6 @@ def supplier_search(request):
         search_fields['purchasing_org'] = request.POST.get('purchasing_org')
 
         supplier_results = supplier_detail_search(**search_fields)
-        print("supplier_results", supplier_results)
         context['supplier_results'] = update_country_encrypt(supplier_results)
 
     return render(request, 'Supplier Search/supplier_search.html', context)
@@ -201,8 +192,6 @@ def user_details(request, email):
         'inc_nav': True,
         'inc_footer': True,
         'user_info': user_info,
-        # 'currency_id': django_query_instance.django_filter_value_list_query(Currency, {'del_ind': False},
-        #                                                                     'currency_id'),
         'currency_id': django_query_instance.django_filter_query(Currency, {'del_ind': False}, None,
                                                                  ['currency_id', 'description']),
         'time_zones': django_query_instance.django_filter_value_list_query(TimeZone, {'del_ind': False}, 'time_zone'),
@@ -244,7 +233,6 @@ def sup_details(req, supplier_id):
     img_url = []
     for img in supp_img_info:
         img_url.append(img.image_url)
-    print(img_url)
 
     context = {
         'inc_nav': True,
@@ -301,17 +289,12 @@ def user_report(request):
 
         # ---------------------------------------------------------------------
         user_list_star = django_query_instance.django_filter_only_query(UserData, {'is_active': True})
-        print(user_list_star)
         ####################################################################################
-
         if default_comp_id is not None:
             # UserData
             company_details = OrgCompanies.objects.filter(client=client, del_ind=False, company_id=default_comp_id)
-
             # Using the company code number and CCODE node type get the company details from Org Model table
             for comp_det in company_details:
-                print(comp_det.object_id)
-
                 comp_obj_id_info = OrgModel.objects.filter(Q(object_id=comp_det.object_id_id, node_type='CCODE',
                                                              client=client, del_ind=False))
 
@@ -328,13 +311,6 @@ def user_report(request):
 
                         # Using the user_list from the Org Model read the user details
                         for user_obj_id in user_list:
-                            print("user_obj_id.object_id", user_obj_id.object_id)
-
-                            # if inp_active == 'on':
-                            #     active = True
-                            # else:
-                            #     active = False
-
                             user_details = UserData.objects.filter(
                                 Q(object_id=user_obj_id.object_id, is_active=True,
                                   client=client, del_ind=False))
@@ -342,7 +318,6 @@ def user_report(request):
                             final_array = []
 
                             for user in user_details:
-                                print('User in Company:', user.first_name, user.username)
                                 final_array.append(comp_det.company_id)
                                 final_array.append(concatenate_str(comp_det.name1, comp_det.name2))
                                 final_array.append(user.username)
@@ -391,23 +366,16 @@ def user_report(request):
                     print(list.email)
             else:
                 user_list_star = django_query_instance.django_filter_only_query(UserData, {'is_active': active})
-                print(user_list_star)
             ####################################################################################
-
             if inp_comp_code is not None:
                 # UserData
                 company_details = OrgCompanies.objects.filter(client=client, del_ind=False, company_guid=inp_comp_code)
-
                 # Using the company code number and CCODE node type get the company details from Org Model table
                 for comp_det in company_details:
-                    print(comp_det.company_id)
-
                     comp_obj_id_info = OrgModel.objects.filter(Q(object_id=comp_det.object_id_id, node_type='CCODE',
                                                                  client=client, del_ind=False))
-
                     ###################################################################
                     if inp_username is not None and inp_username != '':
-
                         for user_info in user_list_star:
                             confirm_in_comp = OrgModel.objects.filter(
                                 Q(node_type='USER', name=user_info.username,
@@ -423,7 +391,6 @@ def user_report(request):
                                 final_array.append(user_info.user_locked)
                                 final_list.append(final_array)
                     else:
-
                         # Using the Company Details - node_guid read the NODE type which has company code node_guid
                         # as parent_node from the Org Model table
                         for comp in comp_obj_id_info:
@@ -437,19 +404,10 @@ def user_report(request):
 
                                 # Using the user_list from the Org Model read the user details
                                 for user_obj_id in user_list:
-                                    print("user_obj_id.object_id", user_obj_id.object_id)
-
-                                    # if inp_active == 'on':
-                                    #     active = True
-                                    # else:
-                                    #     active = False
-
                                     user_details = UserData.objects.filter(
                                         Q(object_id=user_obj_id.object_id, is_active=True,
                                           client=client, del_ind=False))
-
                                     final_array = []
-
                                     for user in user_details:
                                         print('User in Company:', user.first_name, user.username)
                                         final_array.append(comp_det.company_id)

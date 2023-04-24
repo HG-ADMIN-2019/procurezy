@@ -171,27 +171,6 @@ function cancel_supp_org_data(){
     document.getElementById("supp_org_cancel_save").style.display = "none";
 }
 
-// Function to delete rows from UI
-//function application_settings_delete_Row(myTable) {
-//    try {
-//        var table = document.getElementById(myTable);
-//        var rowCount = table.rows.length;
-//
-//        for (var i = 0; i < rowCount; i++) {
-//            var row = table.rows[i];
-//            var chkbox = row.cells[0].childNodes[0];
-//            if (null != chkbox && true == chkbox.checked) {
-//                table.deleteRow(i);
-//                rowCount--;
-//                i--;
-//            }
-//        }
-//        return rowCount;
-//    } catch (e) {
-//        alert(e);
-//    }
-//}
-
 // Function to save edited supplier basic details data
 function save_basic_details() {
     OpenLoaderPopup();
