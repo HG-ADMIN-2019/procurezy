@@ -439,7 +439,7 @@ def get_currency_converted_price_data(cart_items):
     return total_actual_price, total_discount_value, total_tax_value, total_value, cart_items
 
 
-def validate_get_currency_converted_price_data(cart_items, sc_check_instance):
+def validate_get_currency_converted_price_data(cart_items,currency, sc_check_instance,check_flag):
     """
 
     """
@@ -451,7 +451,7 @@ def validate_get_currency_converted_price_data(cart_items, sc_check_instance):
         item_number = loop_count + 1
         item_currency = items['currency']
         if not item_currency:
-            item_currency = global_variables.GLOBAL_USER_CURRENCY
+            item_currency = currency
         if items['call_off'] == CONST_LIMIT_ORDER_CALLOFF:
             overall_limit = items['overall_limit']
             price_unit = 1
@@ -460,17 +460,18 @@ def validate_get_currency_converted_price_data(cart_items, sc_check_instance):
             price_unit = items['price_unit']
         value = calculate_item_total_value(items['call_off'], items['quantity'], None, price_unit, items['price'],
                                            overall_limit)
-        if item_currency != global_variables.GLOBAL_USER_CURRENCY:
+        if item_currency != currency:
             actual_price = convert_currency(float(items['actual_price']) * items['quantity'], str(item_currency),
-                                            str(global_variables.GLOBAL_USER_CURRENCY))
+                                            str(currency))
             discount_value = convert_currency(float(items['discount_value']) * items['quantity'],
                                               str(item_currency),
-                                              str(global_variables.GLOBAL_USER_CURRENCY))
+                                              str(currency))
             tax_value = convert_currency(float(items['tax_value']) * items['quantity'],
                                          str(item_currency),
-                                         str(global_variables.GLOBAL_USER_CURRENCY))
-            value = convert_currency(value, str(item_currency), str(global_variables.GLOBAL_USER_CURRENCY))
-            sc_check_instance.check_for_currency(item_number, value, str(item_currency))
+                                         str(currency))
+            value = convert_currency(value, str(item_currency), str(currency))
+            if check_flag:
+                sc_check_instance.check_for_currency(item_number, value, str(item_currency))
             # gross_price_list.append(convert_currency(float(items['gross_price'])*items['quantity'], str(item_currency), str(user_currency)))
         else:
             actual_price = float(items['actual_price']) * items['quantity']

@@ -21,7 +21,7 @@ $(".remove_upload_data").click(() => {
     $("#id_error_msg_id").html("");
     $("#id_popup_tbody").empty();
     $("#id_error_msg_id").empty();
-    $('#myModal').modal('hide');
+    $('#msg_id_Modal').modal('hide');
     $("#id_error_msg_id").prop("hidden", true);
     $("#id_error_msg_id").prop("hidden", true);
     $("#id_error_msg_length").prop("hidden", true);
@@ -65,7 +65,7 @@ function display_error_message(error_message){
     document.getElementById("error_message").style.color = "Red";
     $("#error_msg_id").css("display", "block");
     $('#id_save_confirm_popup').modal('hide');
-    $('#myModal').modal('show');
+    $('#msg_id_Modal').modal('show');
 }
 
 // on click add icon display the row in to add the new entries
@@ -108,13 +108,14 @@ function display_basic_db_data() {
 
 // Functtion to hide and display save related popups
 $('#save_id').click(function () {
-    $('#myModal').modal('hide');
+    $('#msg_id_Modal').modal('hide');
     message_id_data = read_popup_data();
     $('#id_save_confirm_popup').modal('show');
 });
 
 //Read popup table data
 function read_popup_data() {
+    $('#id_popup_table').DataTable().destroy();
     message_id_data = new Array();
     validate_add_attributes = [];
     $("#id_popup_table TBODY TR").each(function () {
@@ -133,6 +134,7 @@ function read_popup_data() {
         validate_add_attributes.push(message_id.message_id);
         message_id_data.push(message_id);
     });
+    table_sort_filter('id_popup_table');
     return message_id_data;
 }
 

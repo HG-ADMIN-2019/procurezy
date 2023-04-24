@@ -1,6 +1,9 @@
 from datetime import date, timedelta
 
 from eProc_Attributes.models.org_attribute_models import OrgAttributesLevel
+from eProc_Basic.Utilities.functions.dictionary_check_value_based_for_key import \
+    dictionary_check_get_value_based_for_key
+from eProc_Basic.Utilities.functions.dictionary_key_to_list import dictionary_key_to_list
 from eProc_Basic.Utilities.functions.distinct_list import distinct_dictionary_list
 from eProc_Basic.Utilities.functions.django_query_set import DjangoQueries
 from eProc_Basic.Utilities.functions.encryption_util import encrypt
@@ -43,6 +46,57 @@ def get_my_order_default(client, login_user_obj_id):
         sc_po = sc_po_default[0]['document_type_desc']
 
     return sc_po
+
+
+def get_shopping_cart_approval(data):
+    """
+
+    """
+    sc_header = []
+    sc_appr = []
+    cmp_code = []
+    sc_completion = []
+    prod_cat_list = []
+    default_cmp_code = []
+    call_off_list = []
+    guid_completion = []
+    requester_first_name = ''
+    sc_approval_guid = dictionary_key_to_list(data['sc_potential_approval_details'], 'sc_approval_guid_id')
+    for sc_app in data['sc_approval_details']:
+        if sc_app['guid'] in sc_approval_guid:
+            sc_app['app_id'] = CONST_MULTIPLE
+        else:
+            approver_detail = dictionary_check_get_value_based_for_key(data['sc_potential_approval_details'],
+                                                                       'sc_approval_guid_id',
+                                                                       sc_app['guid'])
+            sc_app['app_id'] = approver_detail['app_id']
+
+    for scitems in data['sc_item_details']:
+        prod_cat_list.append(scitems['prod_cat_id'])
+        call_off_list.append(scitems['call_off'])
+        cmp_code.append(scitems['comp_code'])
+    if cmp_code:
+        default_cmp_code = list(set(cmp_code))
+    purchase_control_call_off_list = get_order_status(default_cmp_code, global_variables.GLOBAL_CLIENT)
+    for purchase_control_call_off in purchase_control_call_off_list:
+        if purchase_control_call_off in call_off_list:
+            completion_work_flow = get_completion_work_flow(global_variables.GLOBAL_CLIENT, prod_cat_list,
+                                                            default_cmp_code)
+            if completion_work_flow:
+                guid_completion.append(data['sc_header_details'][0]['guid'])
+                guid_completion.append(completion_work_flow[0])
+                sc_completion.append(guid_completion)
+    requester_first_name = requester_field_info(data['sc_header_details'][0]['requester'], 'first_name')
+    sc_header.append(data['sc_header_details'][0])
+
+    for data in data['sc_approval_details']:
+        # get work flow manager's first name
+        if data['app_id'] != CONST_AUTO and data['app_id'] != CONST_MULTIPLE:
+            data['app_id'] = django_query_instance.django_filter_value_list_query(UserData, {
+                'client': global_variables.GLOBAL_CLIENT, 'username': data['app_id']
+            }, 'first_name')[0]
+        sc_appr.append(data)
+    return sc_header, sc_appr, sc_completion, requester_first_name
 
 
 def get_sc_header_app(result, client):
@@ -449,12 +503,12 @@ def get_order_status(company_code, client):
                                                      'company_code_id': company_code,
                                                      'purchase_ctrl_flag': False}):
         purchase_control_inactive_list_cocode = django_query_instance.django_filter_value_list_query(PurchaseControl,
-                                                                                             {
-                                                                                                 'client': client,
-                                                                                                 'del_ind': False,
-                                                                                                 'company_code_id': company_code,
-                                                                                                 'purchase_ctrl_flag': False},
-                                                                                             'call_off')
+                                                                                                     {
+                                                                                                         'client': client,
+                                                                                                         'del_ind': False,
+                                                                                                         'company_code_id': company_code,
+                                                                                                         'purchase_ctrl_flag': False},
+                                                                                                     'call_off')
         purchase_control_list = remove_element_from_list(purchase_control_list, purchase_control_inactive_list_cocode)
     if django_query_instance.django_existence_check(PurchaseControl,
                                                     {'client': client,

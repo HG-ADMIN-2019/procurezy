@@ -88,40 +88,42 @@
                     </button>
                 </div>
                 <!-- Modal body -->
-                <div class="modal-body scrollbox">
-                    <div id="id_del_add_button" class="mb-4">
-                        <button type="button" class="btn btn-primary" title="Add New Row" onclick="add_popup_row()"><i class="fa fa-plus"></i> add new row</button>
-                        <button class="btn btn-outline-danger" title="Delete" onclick="application_settings_delete_Row('id_popup_table')" id="deleteBtn"><i class="fa fa-trash"></i>
-                            delete
-                        </button>
-                    </div>
-                    <div id="id_check_success_messages" class="alert alert-success check_success_message" hidden></div>
-                    <div id="id_check_error_messages" class="alert alert-danger check_error_messages" hidden></div>
-                    <div id="id_check_special_character_messages" class="alert alert-danger check_special_character_messages" hidden>
-                        <p id="id_error_msg_calendar_code" ></p>
-                        <p id="id_error_msg_calendar_name" ></p>
-                        <p id="id_error_msg_calendar_length" ></p>
-                    </div>
-                    <div id="error_msg_id" class="alert alert-danger display-none" role="alert"><span id="error_message"></span></div>
-                    <div id="id_warning_msg_id" class="alert alert-warning display-none" role="alert"></div>
-                    <div id="id_info_msg_id" class="alert alert-primary display-none" role="alert"></div>
-                    <table class="class_popup_table table table-bordered mt-2" id="id_popup_table" >
-                        <thead>
-                            <tr>
-                                <th id="header_select">Select</th>
-                                <th>calendar Number</th>
-                                <th>Country</th>
-                                <th>Description</th>
-                                <th>Year</th>
-                                <th>Working Days</th>
-                                <th id="id_del_ind_checkbox" hidden>Del Indicator</th>
-                                <th hidden></th>
-                            </tr>
-                        </thead>
-                        <tbody id="id_popup_tbody">
+                <div class="modal-body">
+                    <div class="popup-vertical-scroll">
+                        <div id="id_del_add_button" class="mb-4">
+                            <button type="button" class="btn btn-primary" title="Add New Row" onclick="add_popup_row()"><i class="fa fa-plus"></i> add new row</button>
+                            <button class="btn btn-outline-danger" title="Delete" onclick="application_settings_delete_Row('id_popup_table')" id="deleteBtn"><i class="fa fa-trash"></i>
+                                delete
+                            </button>
+                        </div>
+                        <div id="id_check_success_messages" class="alert alert-success check_success_message" hidden></div>
+                        <div id="id_check_error_messages" class="alert alert-danger check_error_messages" hidden></div>
+                        <div id="id_check_special_character_messages" class="alert alert-danger check_special_character_messages" hidden>
+                            <p id="id_error_msg_calendar_code" ></p>
+                            <p id="id_error_msg_calendar_name" ></p>
+                            <p id="id_error_msg_calendar_length" ></p>
+                        </div>
+                        <div id="error_msg_id" class="alert alert-danger display-none" role="alert"><span id="error_message"></span></div>
+                        <div id="id_warning_msg_id" class="alert alert-warning display-none" role="alert"></div>
+                        <div id="id_info_msg_id" class="alert alert-primary display-none" role="alert"></div>
+                        <table class="class_popup_table table table-bordered mt-2" id="id_popup_table" >
+                            <thead>
+                                <tr>
+                                    <th id="header_select">Select</th>
+                                    <th>calendar Number</th>
+                                    <th>Country</th>
+                                    <th>Description</th>
+                                    <th>Year</th>
+                                    <th>Working Days</th>
+                                    <th id="id_del_ind_checkbox" hidden>Del Indicator</th>
+                                    <th hidden></th>
+                                </tr>
+                            </thead>
+                            <tbody id="id_popup_tbody">
 
-                        </tbody>
-                    </table>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
                 <!-- Modal footer -->
                 <div class="modal-footer">
@@ -227,6 +229,7 @@
     }
 
     function onclick_copy_update_button(data) {
+        $('#id_popup_table').DataTable().destroy();
         $("#error_msg_id").css("display", "none")
         $("#id_popup_tbody").empty();
         //Reference the Table.
@@ -303,36 +306,41 @@
         get_main_table_data(); //Read data from main table
         // compare for duplicates in popup
         [no_duplicate_value,error_message] = compare_table_for_duplicate_entries(validate_add_attributes, calendarconfig_data)
-        if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
-            // compare main table and pop up for duplicate values
-            [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
-        }
-        if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
-            var calendar_data_array = calendarconfig_data;
-            $('#id_save_confirm_popup').modal('hide');
-            data = {'data':calendarconfig_data,'table_name':'CalenderConfig','action':GLOBAL_ACTION}
-            OpenLoaderPopup();
-            $.ajax({
-                type: 'POST',
-                url: "{% url 'eProc_Configuration:create_update_application_data' %}",
-                data: JSON.stringify(data),
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                success: function (Response) {
-                    rendered_calendar_data = Response[0];
-                    display_basic_db_data();
-                    $('#Calendar_Modal').modal('hide');
-                    success_response(Response);
-                    DatePicker();
-                    MultipleSelect();
-                    CloseLoaderPopup();
-                }
-            });
-        }
-        else if (error_message) {
+        if (error_message){
             display_error_message(error_message)
-        } 
-        table_sort_filter('id_popup_table');
+        }
+        else {
+            if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
+                // compare main table and pop up for duplicate values
+                [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
+            }
+            if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
+                var calendar_data_array = calendarconfig_data;
+                $('#id_save_confirm_popup').modal('hide');
+                data = {'data':calendarconfig_data,'table_name':'CalenderConfig','action':GLOBAL_ACTION}
+                OpenLoaderPopup();
+                $.ajax({
+                    type: 'POST',
+                    url: "{% url 'eProc_Configuration:create_update_application_data' %}",
+                    data: JSON.stringify(data),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (Response) {
+                        rendered_calendar_data = Response[0];
+                        display_basic_db_data();
+                        $('#Calendar_Modal').modal('hide');
+                        success_response(Response);
+                        DatePicker();
+                        MultipleSelect();
+                        CloseLoaderPopup();
+                    }
+                });
+            }
+            else if (error_message) {
+                display_error_message(error_message)
+            } 
+            table_sort_filter('id_popup_table');
+        }
     } 
 
     // on click add icon display the row in to add the new entries
@@ -477,14 +485,14 @@
             }
         });
         if (add_attr_duplicates_list.length != 0) {
-            get_message_details("JMSG001"); // Get message details
+            error_message = ui_messeges("JMSG001")// Get message details
             no_duplicate_value = 'N'
             return [no_duplicate_value,error_message]
         }
-        else {
+        else {    
             $.each(calendar, function (i, item) {
-                if (item.description.length == 0) {
-                    get_message_details("JMSG002"); // Get message details
+                if ((item.calender_id.length == 0) || (item.description.length == 0)) {
+                    error_message = ui_messeges("JMSG002")// Get message details
                     no_duplicate_value = 'N'
                     return [no_duplicate_value,error_message]
                 }

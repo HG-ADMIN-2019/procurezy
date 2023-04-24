@@ -81,6 +81,7 @@ def update_user_info(request):
     global_variables.GLOBAL_LOGIN_USER_EMAIL_ID = getUserEmailId(request)
     global_variables.GLOBAL_USER_CURRENCY = get_user_currency(request)
     global_variables.GLOBAL_USER_LANGUAGE = get_user_language(request)
+    global_variables.GLOBAL_USER_TIMEZONE = get_user_timezone(request)
 
 
 def clear_user_info():

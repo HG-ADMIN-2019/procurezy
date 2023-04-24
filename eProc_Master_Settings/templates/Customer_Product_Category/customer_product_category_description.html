@@ -874,14 +874,11 @@ function onclick_copy_update_button(data){
             render_language_data = response.upload_language
             unspcdesc_dropdown()
             $("#error_msg_id").css("display", "none")
-<!--            $('#display_basic_table').DataTable().destroy();-->
             $("#id_popup_tbody").empty();
             //Reference the Table.
-<!--            var grid = document.getElementById("display_basic_table");-->
             var res = get_all_checkboxes(); // Function to get all the checkboxes
             var $chkbox_all = $('td input[type="checkbox"]', res);
             //Reference the CheckBoxes in Table.
-<!--            var checkBoxes = grid.getElementsByTagName("INPUT");-->
             var edit_basic_data = "";
             var unique_input = '';
             var prod_cat_desc_guid= '';
@@ -970,7 +967,6 @@ function onclick_copy_update_button(data){
             $("#id_del_ind_checkbox").prop("hidden", true);
             $('#custproddescModal').modal('show');
             table_sort_filter('id_popup_table');
-<!--         table_sort_filter('display_basic_table');-->
             CloseLoaderPopup();
         }
     });
@@ -1060,7 +1056,6 @@ function onclick_copy_update_button(data){
 
         });
     }
-
 
   function onclick_delete_button() {
     GLOBAL_ACTION = "DELETE"

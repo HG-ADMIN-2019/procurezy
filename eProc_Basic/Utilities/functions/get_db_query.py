@@ -78,6 +78,15 @@ def get_user_language(request):
     return request.user.language_id
 
 
+def get_user_timezone(request):
+    """
+    login user currency
+    :param request:
+    :return:
+    """
+    return request.user.time_zone
+
+
 def get_requester_currency(requester_user_name):
     """
     get requester currency from mum user info
@@ -115,8 +124,9 @@ def requester_field_info(requester_user_name, field_name):
     try:
         client = global_variables.GLOBAL_CLIENT
         field_detail = \
-        (list(UserData.objects.filter(username=requester_user_name, client=client).values_list(field_name, flat=True)))[
-            0]
+            (list(UserData.objects.filter(username=requester_user_name, client=client).values_list(field_name,
+                                                                                                   flat=True)))[
+                0]
     except:
         field_detail = None
 
@@ -248,6 +258,6 @@ def get_super_user_detail_based_on_client(client):
     user_data = django_query_instance.django_filter_query(UserData,
                                                           {'client': client,
                                                            'del_ind': False,
-                                                           'is_superuser':True}, ['username'], None)
+                                                           'is_superuser': True}, ['username'], None)
 
     return user_data

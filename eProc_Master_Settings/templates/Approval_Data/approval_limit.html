@@ -2,7 +2,6 @@
 {% load static %}
 {% block title %} Approval Limits (Master Settings) {% endblock %}
 {% block maincontent %}
-
 {% include 'root/loader.html' %}
 
 <div class="container-fluid">
@@ -44,9 +43,6 @@
                     <button class="btn btn-outline-danger btn-sm" id="id_delete_data" value="approval_limit_delete" style="display:none;" data-toggle="modal" data-target="#id_delete_confirm_popup">
                         <i class="fa fa-trash"></i> Delete
                     </button>
-<!--                    <button class="btn btn-primary btn-sm"  id="id_copy_data" style="display:none;" value="COPY" type="button" onclick="onclick_copy_button()">-->
-<!--                        <i class="fa fa-copy"></i> Copy-->
-<!--                    </button>-->
                     <button class="btn btn-primary btn-sm" id="id_update_data" style="display:none;" value="UPDATE" type="button" onclick="onclick_update_button()">
                         <i class="far fa-edit"></i> Update
                     </button>
@@ -57,9 +53,9 @@
                 <table id="display_basic_table" class="class_basic_approval_limit_table table table-bordered custom-table">
                     <thead id="id_approval_limit_table_header">
                     <tr>
-                        <th id="hg_select_checkbox" hidden>
+                        <th id="hg_select_checkbox"  hidden>
                             <div id="id_check_all" style="display:none;">
-                                <INPUT type="checkbox" onchange="checkAll(this)" name="chk[]">
+                                <input type="checkbox" id="selectAll" name="chk[]">
                             </div>
                         </th>
                         <th>Company Number</th>
@@ -200,12 +196,10 @@
     $.each(rendered_user_data, function(i, item){
         user_name_dropdown += '<option value="' + item.username + '">' + item.username + '</option>'
     });
-
     company_id_dropdown = "";
     $.each(rendered_company_data, function(i, item){
         company_id_dropdown += '<option  value="' + item.company_id + '">' + item.company_id + '</option>'
     });
-
     app_code_id_dropdown = "";
     $.each(rendered_app_code_id_data, function(i, item){
         app_code_id_dropdown += '<option value="' + item.app_code_id + '">' + item.app_code_id + '</option>';
@@ -215,11 +209,9 @@
         approval_limit.push(app_limit_dict);
         app_limit_array.push(item.app_code_id);
     });
-
     company_dropdwn = "";
     var unique_comp = [];
     var unique_app = [];
-
     // Filter rendered_approval_limit_data based on app_code_id and company_id in rendered_app_code_id_data
     var filtered_approval_limit_data = rendered_app_code_id_data.filter(function(item) {
         return app_limit_array.includes(item.app_code_id) &&
@@ -227,7 +219,6 @@
                 return app_item.app_code_id === item.app_code_id && app_item.company_id === item.company_id;
             });
     });
-
     $.each(filtered_approval_limit_data, function(i, item) {
         company_dropdwn += '<option value="' + item.company_id + '">' + item.company_id + '</option>';
         company_dict = {};
@@ -238,13 +229,11 @@
         unique_comp.push(item.company_id);
         unique_app_limit.push(item.app_code_id);
     });
-
     $(unique_comp).each(function(index, item) {
         if ($.inArray(item, arrDistinct) == -1) {
             arrDistinct.push(item);
         }
     });
-
     company_dropdwn = '';
     $(arrDistinct).each(function(index, item) {
         company_dropdwn += '<option value="' + item + '">' + item + '</option>'
@@ -581,10 +570,6 @@
                     $(row.find("TD").eq(1).find("select")).change(function () {
                         company_dropdwn_change(row);
                     })
-<!--                    $(row.find("TD").eq(2).find("select")).change(function () {-->
-<!--                        company_num = row.find("TD").eq(1).find("select option:selected").val();-->
-<!--                        approv_limit(row,company_num);-->
-<!--                    })-->
                 })
                 $("#id_del_ind_checkbox").prop("hidden", true);
                 document.getElementById("id_del_add_button").style.display = "block";
@@ -649,30 +634,29 @@
                 rendered_app_code_id_data = response.upload_data_app_code_id
                 applim_dropdown()
                 $("#error_msg_id").css("display", "none")
+                $('#id_popup_table').DataTable().destroy();
                 $("#id_popup_tbody").empty();
-                $('#display_basic_table').DataTable().destroy();
                 //Reference the Table.
-                var grid = document.getElementById("display_basic_table");
-
+                var res = get_all_checkboxes(); // Function to get all the checkboxes
+                var $chkbox_all = $('td input[type="checkbox"]', res);
                 //Reference the CheckBoxes in Table.
-                var checkBoxes = grid.getElementsByTagName("INPUT");
                 var edit_basic_data = "";
                 var guid = '';
                 var dropdown_values = [];
                 //Loop through the CheckBoxes.
-                for (var i = 1; i < checkBoxes.length; i++) {
-                    if (checkBoxes[i].checked) {
-                        var row = checkBoxes[i].parentNode.parentNode;
-                        if(GLOBAL_ACTION == "COPY"){
+                for (var i = 0; i < $chkbox_all.length; i++) {
+                    if ($chkbox_all[i].checked) {
+                        var row = $chkbox_all[i].parentNode.parentNode;
+                        if(GLOBAL_ACTION == "COPY") {
                             guid = 'GUID';
                             edit_basic_data += '<tr><td><input type="checkbox" required></td><td><select class="form-control" disabled>'+company_id_dropdown+'</select></td><td><select class="form-control">'+user_name_dropdown+'</select></td><td><select class="form-control">'+app_code_id_dropdown+'</select></td><td hidden><input type="text" value="'+guid+'"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
                             $("#header_select").prop("hidden", false);
-                        } else{
+                        } else {
                             guid = row.cells[4].innerHTML;
                             edit_basic_data += '<tr><td hidden><input type="checkbox" required></td><td><select class="form-control" disabled>'+company_id_dropdown+'</select></td><td><select class="form-control"disabled>'+user_name_dropdown+'</select></td><td><select class="form-control">'+app_code_id_dropdown+'</select></td><td hidden><input type="text" value="'+guid+'"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
                             $("#header_select").prop("hidden", true);
                         }
-                        var row = checkBoxes[i].parentNode.parentNode;
+                        var row = $chkbox_all[i].parentNode.parentNode;
                         var approver_username_value = row.cells[2].innerHTML
                         var company_type_value = row.cells[1].innerHTML
                         var app_code_id_value = row.cells[3].innerHTML
@@ -694,10 +678,9 @@
                 });
                 $("#id_del_ind_checkbox").prop("hidden", true);
                 $('#App_limt_Modal').modal('show');
-                table_sort_filter('display_basic_table');
                 table_sort_filter('id_popup_table');
                 $('#App_limt_Modal').modal('show');
-            CloseLoaderPopup();
+                CloseLoaderPopup();
             }
         });
     }

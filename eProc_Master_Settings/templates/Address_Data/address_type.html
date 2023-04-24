@@ -57,9 +57,9 @@
                 <table id="display_basic_table" class="class_basic_country_table table table-bordered custom-table">
                     <thead id="id_address_type_table_header">
                         <tr>
-                            <th id="hg_select_checkbox" class="checkall" hidden>
+                            <th id="hg_select_checkbox"  hidden>
                                 <div id="id_check_all" style="display:none;">
-                                    <INPUT type="checkbox" onchange="checkAll(this)" name="chk[]">
+                                    <input type="checkbox" id="selectAll" name="chk[]">
                                 </div>
                             </th>
                             <th>Company Number</th>
@@ -78,8 +78,8 @@
                             <td>{{ data.company_id}}</td>
                             <td>{{ data.address_type}}</td>
                             <td>{{ data.address_number}}</td>
-                             <td>{{ data.valid_from|date:'d/m/Y'}}</td>
-                             <td>{{ data.valid_to|date:'d/m/Y'}}</td>
+                            <td>{{ data.valid_from|date:"Y-m-d" }}</td>
+                            <td>{{ data.valid_to|date:"Y-m-d" }}</td>
                             <td hidden>{{ data.del_ind}}</td>
                             <td hidden>{{ data.address_guid}}</td>
                         </tr>
@@ -188,7 +188,7 @@
     var address_number_dropdwn = "";
     var address_type_dropdown= '';
     var company_dropdwn = "";
-    
+
     //***************************
     function addtype_drp(){
         address_number_dropdwn = "";
@@ -205,12 +205,12 @@
         });
     }
 
-    //Date format
-    function DateFormat() {
-        $(".from_to_date").datepicker({
-            dateFormat: 'yyyy-mm-dd',
-        });
-    }
+<!--    //Date format-->
+<!--    function DateFormat() {-->
+<!--        $(".from_to_date").datepicker({-->
+<!--            dateFormat: 'yyyy-mm-dd',-->
+<!--        });-->
+<!--    }-->
 
     //onclick of add button display Adrs_Type_Modal popup and set GLOBAL_ACTION button value
     function onclick_add_button(button) {
@@ -242,6 +242,9 @@
 
     //*****************************************
     function onclick_copy_update_button() {
+        $("#error_msg_id").css("display", "none")
+        $('#id_popup_table').DataTable().destroy();
+        $("#id_popup_tbody").empty();
         OpenLoaderPopup();
         var data = {'table_name':'OrgAddressMap'}
         $.ajax({
@@ -254,21 +257,20 @@
                 rendered_address_type_values = response.dropdown_db_values
                 addtype_drp();
                 $("#error_msg_id").css("display", "none")
-                $('#display_basic_table').DataTable().destroy();
+                $('#id_popup_table').DataTable().destroy();
                 $("#id_popup_tbody").empty();
-                $('#display_basic_table').DataTable().destroy();
                 //Reference the Table.
-                var grid = document.getElementById("display_basic_table");
+                var res = get_all_checkboxes(); // Function to get all the checkboxes
+                var $chkbox_all = $('td input[type="checkbox"]', res);
                 //Reference the CheckBoxes in Table.
-                var checkBoxes = grid.getElementsByTagName("INPUT");
                 var edit_basic_data = "";
                 var unique_input = '';
                 var address_guid= '';
                 var dropdown_array = [];
                 //Loop through the CheckBoxes.
-                for (var i = 1; i < checkBoxes.length; i++) {
-                    if (checkBoxes[i].checked) {
-                        var row = checkBoxes[i].parentNode.parentNode;
+                for (var i = 0; i < $chkbox_all.length; i++) {
+                    if ($chkbox_all[i].checked) {
+                        var row = $chkbox_all[i].parentNode.parentNode;
                         if(GLOBAL_ACTION == "COPY"){
                             address_guid = 'GUID';
                             unique_input = '<select class="form-control">'+company_dropdwn+'</select>'
@@ -276,8 +278,8 @@
                             '<td>'+unique_input+'</td>' +
                             '<td><select class="form-control" >'+address_type_dropdown+'</select></td>' +
                             '<td><select class="form-control">'+address_number_dropdwn+'</select></td>' +
-                            '<td><input  type="text" name = "valid_from" value="' + row.cells[4].innerHTML + '" class="form-control from_to_date"></td>'+
-                            '<td><input  type="text"  name = "valid_to" value="' + row.cells[5].innerHTML + '" class="form-control from_to_date"></td>'+
+                            '<td><input  type="date" name = "valid_from" value="' + row.cells[4].innerHTML + '" class="form-control from_to_date"></td>'+
+                            '<td><input  type="date"  name = "valid_to" value="' + row.cells[5].innerHTML + '" class="form-control from_to_date"></td>'+
                             '<td class="class_del_checkbox" hidden><input type="checkbox" ></td>' +
                             '<td hidden><input  type="text" class="form-control"  value="' + row.cells[7].innerHTML + '"  name="guid"></td></tr>';
                             $("#header_select").prop("hidden", false);
@@ -289,7 +291,7 @@
                     }
                 }
                 $('#id_popup_table').append(edit_basic_data);
-                DateFormat();
+<!--                DateFormat();-->
                 var i = 0;
                 $("#id_popup_table TBODY TR").each(function () {
                     var row = $(this);
@@ -303,8 +305,8 @@
                 });
                 $("#id_del_ind_checkbox").prop("hidden", true);
                 table_sort_filter('id_popup_table');
-                table_sort_filter('display_basic_table');
                 $('#Adrs_Type_Modal').modal('show');
+                table_sort_filter('id_popup_table');
                 CloseLoaderPopup();
             }
         });
@@ -312,27 +314,25 @@
 
     // validate and save for add,copy,update and upload data
     function popup_save_data() {
-        $('#success_msg_id').empty()
-        $('#id_popup_table').DataTable().destroy();
-        no_duplicate_entries = 'Y'
-        no_duplicate_value = 'Y'
-        var error_message = '';
-        $('#display_basic_table').DataTable().destroy();
-        get_main_table_data(); //Read data from main table
-        // compare for duplicates in popup
-        [no_duplicate_value,error_message] = compare_table_for_duplicate_entries(validate_add_attributes, addresstype_data)
-         if(error_message){
-            display_error_message(error_message)
-        }
-        else{
-         var dateValid ;
-        [dateValid,error_message] = check_date(addresstype_data);
-        if(error_message){
+    $('#success_msg_id').empty()
+    $('#id_popup_table').DataTable().destroy();
+    no_duplicate_entries = 'Y'
+    no_duplicate_value = 'Y'
+    var error_message = '';
+    get_main_table_data(); //Read data from main table
+    // compare for duplicates in popup
+    [no_duplicate_value, error_message] = compare_table_for_duplicate_entries(validate_add_attributes, addresstype_data)
+    if (error_message) {
+        display_error_message(error_message)
+    } else {
+        var dateValid;
+        [dateValid, error_message] = check_date(addresstype_data);
+        if (error_message) {
             display_error_message(error_message)
         } else {
             if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
                 // compare main table and pop up for duplicate values
-                [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
+                [no_duplicate_entries, error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
             }
             if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y') && (dateValid == 'Y')) {
                 var add_basic_data = '';
@@ -356,13 +356,13 @@
                         CloseLoaderPopup();
                     }
                 });
+            } else if (error_message) {
+                display_error_message(error_message)
             }
-            else if (error_message){
-                    display_error_message(error_message)
-            } 
-        }
         }
     }
+}
+
 
     //delete the selected row in db................
     var main_table_address_type_checked = [];
@@ -594,7 +594,7 @@
     }
 
     // validating the  popup table for duplicate entries
-    function compare_table_for_duplicate_entries(validate_add_attributes, address_type) {
+        function compare_table_for_duplicate_entries(validate_add_attributes, address_type) {
         add_attr_duplicates = false;
         var error_message = ''
         var add_attr_duplicates_list = [];

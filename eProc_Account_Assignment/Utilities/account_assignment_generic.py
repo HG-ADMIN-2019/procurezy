@@ -13,7 +13,6 @@ from eProc_Basic.Utilities.functions.str_concatenate import concatenate_array_st
 from eProc_Basic.Utilities.global_defination import global_variables
 from eProc_Basic.Utilities.messages.messages import MSG115
 from eProc_Configuration.models import AccountingDataDesc, DetermineGLAccount
-from eProc_Doc_Details.Utilities.details_specific import get_acc_value, get_acc_value_acc_level
 from eProc_Shopping_Cart.Utilities.shopping_cart_specific import get_gl_account_default_value
 from eProc_System_Settings.Utilities.system_settings_generic import sys_attributes
 from eProc_User_Settings.Utilities.user_settings_generic import get_attr_value
@@ -321,6 +320,22 @@ def get_header_level_gl_acc(glacc_list):
         header_level_gl_acc = None
     return header_level_gl_acc
 
+def get_acc_value_acc_level(acc_detail, acc_data):
+    """
+
+    :param header_level_acc:
+    :return:
+    """
+    acc_val = ''
+    if acc_data in CONST_CC:
+        acc_val = acc_detail['cost_center']
+    if acc_data in CONST_WBS:
+        acc_val = acc_detail['wbs_ele']
+    if acc_data in CONST_OR:
+        acc_val = acc_detail['internal_order']
+    if acc_data in CONST_AS:
+        acc_val = acc_detail['asset_number']
+    return acc_val
 
 def get_acc_value_and_description_append(acc_detail, acc_asg_cat, default_company_code, language_id):
     """

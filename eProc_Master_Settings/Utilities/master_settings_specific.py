@@ -1,3 +1,5 @@
+import time
+
 from django.db.models.query_utils import Q
 
 from eProc_Basic.Utilities.functions.camel_case import convert_to_camel_case
@@ -513,10 +515,8 @@ class MasterSettingsSave:
                                              'address_number': addresstype_detail['address_number'],
                                              'address_type': (addresstype_detail['address_type']).upper(),
                                              'company_id': addresstype_detail['company_id'],
-                                             'valid_from': datetime.strptime(addresstype_detail['valid_from'],
-                                                                             '%m/%d/%Y %H:%M:%S'),
-                                             'valid_to': datetime.strptime(addresstype_detail['valid_to'],
-                                                                           '%m/%d/%Y %H:%M:%S'),
+                                             'valid_from': addresstype_detail['valid_from'],
+                                             'valid_to': addresstype_detail['valid_to'],
                                              'org_address_map_created_at': self.current_date_time,
                                              'org_address_map_created_by': self.username,
                                              'org_address_map_changed_at': self.current_date_time,
@@ -536,10 +536,8 @@ class MasterSettingsSave:
                                                            'address_type': (
                                                                addresstype_detail['address_type']).upper(),
                                                            'company_id': addresstype_detail['company_id'],
-                                                           'valid_from': datetime.strptime(
-                                                               addresstype_detail['valid_from'], '%m/%d/%Y %H:%M:%S'),
-                                                           'valid_to': datetime.strptime(addresstype_detail['valid_to'],
-                                                                                         '%m/%d/%Y %H:%M:%S'),
+                                                           'valid_from': addresstype_detail['valid_from'],
+                                                           'valid_to': addresstype_detail['valid_to'],
                                                            'org_address_map_changed_at': self.current_date_time,
                                                            'org_address_map_changed_by': self.username,
                                                            'client': OrgClients.objects.get(client=self.client),
@@ -1480,7 +1478,7 @@ def get_acc_value_desc_dropdown():
                                                                      'del_ind': False
                                                                      }, None,
                                                                     ['account_assign_value', 'account_assign_cat',
-                                                                     'company_id'])
+                                                                     'company_id', 'valid_from', 'valid_to'])
 
     upload_data_acccat = list(
         AccountAssignmentCategory.objects.filter(del_ind=False).values('account_assign_cat'))
@@ -1514,6 +1512,8 @@ def get_acc_value_desc_data():
 
 
 def get_gl_acc_dropdown():
+    datetime_datetime_object = ''
+    today_date = datetime.today().strftime('%Y-%m-%d')
     prod_catogories = list(
         UnspscCategoriesCust.objects.filter(client=global_variables.GLOBAL_CLIENT, del_ind=False).values('prod_cat_id'))
     upload_value_glacc = list(AccountingData.objects.filter(client=global_variables.GLOBAL_CLIENT,
@@ -1524,18 +1524,29 @@ def get_gl_acc_dropdown():
     gl_acc_details = django_query_instance.django_filter_query(AccountingData,
                                                                {'client': global_variables.GLOBAL_CLIENT,
                                                                 'del_ind': False,
-                                                                'account_assign_cat': CONST_GLACC},
+                                                                'account_assign_cat': CONST_GLACC,
+                                                                'valid_from__lte': str(today_date),
+                                                                'valid_to__gte': str(today_date)},
                                                                ['company_id'],
                                                                ['account_assign_value',
-                                                                'company_id'])
+                                                                'company_id',
+                                                                'valid_from',
+                                                                'valid_to'])
     filter_queue = ~Q(account_assign_cat=CONST_GLACC)
+
     acc_details = django_query_instance.django_queue_query(AccountingData,
                                                            {'client': global_variables.GLOBAL_CLIENT,
-                                                            'del_ind': False},
+                                                            'del_ind': False,
+                                                            'valid_from__lte': str(today_date),
+                                                            'valid_to__gte': str(today_date)},
                                                            filter_queue,
                                                            ['company_id'],
                                                            ['account_assign_cat',
-                                                            'company_id'])
+                                                            'company_id',
+                                                            'valid_from',
+                                                            'valid_to',
+                                                            'account_assign_value'])
+
     company_id_list = django_query_instance.django_filter_value_list_ordered_by_distinct_query(AccountingData,
                                                                                                {
                                                                                                    'client': global_variables.GLOBAL_CLIENT,
@@ -1572,6 +1583,7 @@ def get_gl_acc_dropdown():
     }
 
     return data
+
 
 
 def get_acc_asg_cat_value_list(gl_acc_details, company_id):
@@ -1814,7 +1826,7 @@ def get_workflowacc_dropdown():
     upload_data_acccat = list(AccountAssignmentCategory.objects.filter(del_ind=False).values('account_assign_cat'))
     upload_accassvalues = get_configuration_data(AccountingData, {'del_ind': False},
                                                  ['account_assign_value', 'account_assign_cat',
-                                                  'company_id'])
+                                                  'company_id', 'valid_from', 'valid_to'])
     upload_data_currency = list(Currency.objects.filter(del_ind=False).values('currency_id'))
     upload_data_company = list(
         OrgCompanies.objects.filter(client=global_variables.GLOBAL_CLIENT, del_ind=False).values('company_id'))
@@ -1999,5 +2011,6 @@ def delete_prod_cat_image_to_db(prod_cat):
                                                {'client': global_variables.GLOBAL_CLIENT,
                                                 'image_id': prod_cat}).image_url.delete(save=True)
         django_query_instance.django_filter_delete_query(ImagesUpload,
-                                                         {'client': global_variables.GLOBAL_CLIENT,'image_default': False,
+                                                         {'client': global_variables.GLOBAL_CLIENT,
+                                                          'image_default': False,
                                                           'image_id': prod_cat})

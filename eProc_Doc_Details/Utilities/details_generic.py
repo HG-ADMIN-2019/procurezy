@@ -8,13 +8,15 @@ from Majjaka_eProcure import settings
 from eProc_Attributes.Utilities.attributes_generic import OrgAttributeValues
 from eProc_Basic.Utilities.constants.constants import CONST_SC_HEADER_APPROVED, CONST_COMPLETED, CONST_SC_APPR_APPROVED, \
     CONST_SC_HEADER_AWAITING_APPROVAL, CONST_ACTIVE, CONST_AUTO, CONST_INITIATED, CONST_SC_APPR_OPEN, CONST_PR_CALLOFF, \
-    CONST_CALENDAR_ID, CONST_CATALOG_CALLOFF
+    CONST_CALENDAR_ID, CONST_CATALOG_CALLOFF, CONST_SUPPLIER_NOTE, CONST_INTERNAL_NOTE, CONST_APPROVER_NOTE
 from eProc_Basic.Utilities.functions.dict_check_key import checkKey
+from eProc_Basic.Utilities.functions.dictionary_key_to_list import dictionary_key_to_list
 from eProc_Basic.Utilities.functions.django_query_set import DjangoQueries
 from eProc_Basic.Utilities.functions.get_db_query import getClients, get_object_id_from_username
 from eProc_Basic.Utilities.global_defination import global_variables
 from eProc_Calendar_Settings.Utilities.calender_settings_generic import calculate_delivery_date
 from eProc_Configuration.models import ImagesUpload
+from eProc_Doc_Details.Utilities.details_specific import get_notes
 from eProc_Exchange_Rates.Utilities.exchange_rates_generic import convert_currency
 from eProc_Notes_Attachments.models import Attachments, Notes
 from eProc_Price_Calculator.Utilities.price_calculator_generic import calculate_item_total_value
@@ -26,6 +28,10 @@ from eProc_Shopping_Cart.Utilities.shopping_cart_specific import get_login_user_
 
 from eProc_Shopping_Cart.models import *
 import datetime
+
+from eProc_Shopping_Cart.models.shopping_cart import ScHeader, ScItem, ScAccounting, ScAddresses, ScApproval, \
+    ScPotentialApproval
+
 django_query_instance = DjangoQueries()
 from eProc_User_Settings.Utilities.user_settings_generic import get_object_id_list_user
 
@@ -56,6 +62,75 @@ def get_doc_details(type, hdr_guid):
     return {'hdr_data': hdr_data, 'itm_data': itm_data, 'acc_data': acc_data, 'appr_data': appr_data,
             'addr_data': addr_data}
 
+
+def get_shopping_cart_details(hdr_guid):
+    """
+
+    """
+    sc_header_details = []
+    sc_item_details = []
+    sc_account_details = []
+    sc_address_details = []
+    sc_approval_details = []
+    sc_potential_approval_details = []
+    if django_query_instance.django_existence_check(ScHeader,
+                                                    {'client': global_variables.GLOBAL_CLIENT,
+                                                     'guid': hdr_guid,
+                                                     'del_ind': False}):
+        sc_header_details = django_query_instance.django_filter_query(ScHeader,
+                                                                      {'client': global_variables.GLOBAL_CLIENT,
+                                                                       'guid': hdr_guid,
+                                                                       'del_ind': False},
+                                                                      None,
+                                                                      None)
+        sc_item_details = django_query_instance.django_filter_query(ScItem,
+                                                                    {'header_guid': hdr_guid,
+                                                                     'client': global_variables.GLOBAL_CLIENT,
+                                                                     'del_ind': False},
+                                                                    ['item_num'],
+                                                                    None)
+        sc_item_guid = dictionary_key_to_list(sc_item_details, 'guid')
+        sc_account_details = django_query_instance.django_filter_query(ScAccounting,
+                                                                       {'client': global_variables.GLOBAL_CLIENT,
+                                                                        'item_guid__in': sc_item_guid,
+                                                                        'del_ind': False},
+                                                                       ['acc_item_num'],
+                                                                       None)
+        sc_address_details = django_query_instance.django_filter_query(ScAddresses,
+                                                                       {'client': global_variables.GLOBAL_CLIENT,
+                                                                        'item_guid__in': sc_item_guid,
+                                                                        'del_ind': False},
+                                                                       ['item_guid'],
+                                                                       None)
+        sc_approval_details = django_query_instance.django_filter_query(ScApproval,
+                                                                        {'header_guid': hdr_guid,
+                                                                         'client': global_variables.GLOBAL_CLIENT,
+                                                                         'del_ind': False},
+                                                                        ['step_num'],
+                                                                        None)
+        sc_approval_guid = dictionary_key_to_list(sc_approval_details, 'guid')
+        sc_potential_approval_details = django_query_instance.django_filter_query(ScPotentialApproval,
+                                                                                  {
+                                                                                      'sc_approval_guid__in': sc_approval_guid},
+                                                                                  ['step_num'],
+                                                                                  None)
+    data = {'sc_header_details': sc_header_details,
+            'sc_item_details': sc_item_details,
+            'sc_account_details': sc_account_details,
+            'sc_address_details': sc_address_details,
+            'sc_approval_details': sc_approval_details,
+            'sc_potential_approval_details': sc_potential_approval_details}
+    return data
+
+
+def get_sc_supplier_internal_approver_note(header_guid,sc_item_guid_list):
+    """
+
+    """
+    supp_notes = get_notes(header_guid, sc_item_guid_list, CONST_SUPPLIER_NOTE, True)
+    int_notes = get_notes(header_guid,sc_item_guid_list,CONST_INTERNAL_NOTE, True)
+    appr_notes = get_notes(header_guid,sc_item_guid_list, CONST_APPROVER_NOTE, False)
+    return supp_notes,int_notes,appr_notes
 
 # Get attachments by path
 class GetAttachments:
@@ -234,7 +309,8 @@ def save_update_sc(sc_data, db_table_name, db_name, pk_value, header_guid):
             item_total_value = calculate_item_total_value(item_instance.call_off, quantity, catalog_qty, price_unit,
                                                           price, overall_limit)
             if sc_header_instance.currency != item_instance.currency:
-                item_total_value = convert_currency(item_total_value,str(item_instance.currency),str(sc_header_instance.currency))
+                item_total_value = convert_currency(item_total_value, str(item_instance.currency),
+                                                    str(sc_header_instance.currency))
 
             scitem['value'] = item_total_value
             if item_instance.call_off == CONST_CATALOG_CALLOFF:
@@ -242,7 +318,6 @@ def save_update_sc(sc_data, db_table_name, db_name, pk_value, header_guid):
         if db_name == 'ScAddresses':
             item_guid['address_type'] = 'D'
         save_sc_item_details_to_db(db_table_name, scitem, **item_guid)
-
 
 
 def update_approval_status(scheader_guid):
@@ -255,13 +330,13 @@ def update_approval_status(scheader_guid):
     received_time, proc_time = get_received_proc_time(sc_approval)
     proc_lvl_sts, app_sts = get_proc_appr_level_status(sc_approval)
     django_query_instance.django_update_query(ScApproval,
-                                              {'header_guid':scheader_guid,
-                                               'client':global_variables.GLOBAL_CLIENT,
-                                               'del_ind':False},
-                                              {'received_time':received_time,
-                                               'proc_time':proc_time,
-                                               'proc_lvl_sts':proc_lvl_sts,
-                                               'app_sts':app_sts})
+                                              {'header_guid': scheader_guid,
+                                               'client': global_variables.GLOBAL_CLIENT,
+                                               'del_ind': False},
+                                              {'received_time': received_time,
+                                               'proc_time': proc_time,
+                                               'proc_lvl_sts': proc_lvl_sts,
+                                               'app_sts': app_sts})
 
     # sc_approval.received_time = received_time
     # sc_approval.proc_time = proc_time
@@ -373,7 +448,7 @@ def update_eform_scitem(header_guid):
     item_dictionary_list = django_query_instance.django_filter_query(ScItem,
                                                                      {'header_guid': header_guid,
                                                                       'client': global_variables.GLOBAL_CLIENT,
-                                                                      'del_ind':False},
+                                                                      'del_ind': False},
                                                                      ['item_num'], None)
     item_dictionary_list = update_eform_details_scitem(item_dictionary_list)
     for item_dictionary in item_dictionary_list:

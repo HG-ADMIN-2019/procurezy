@@ -96,6 +96,7 @@ INSTALLED_APPS = [
     'eProc_New_Client_Setup',
     'eProc_Time_Sheet',
     'eProc_Projects',
+    'eProc_Supplier_Order_Management'
 ]
 
 AUTHENTICATION_BACKENDS = [
@@ -161,7 +162,7 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',  # Database engine
         'HOST': 'sg2plzcpnl489587.prod.sin2.secureserver.net',  # Database host
-        'NAME': 'MEP_FIXING',  # Database name MEP_FIXING MEP_DEPLOYED_NEW_22
+        'NAME': 'MEP_DEPLOYED_NEW_29',  # Database name MEP_FIXING MEP_DEPLOYED_NEW_22 MEP_DEPLOYED_NEW_29
         'USER': 'MajjakaShopEProcure',  # Database user name
         'PASSWORD': 'Project@2019',  # Database credentials
         'PORT': '3306',  # Database port number

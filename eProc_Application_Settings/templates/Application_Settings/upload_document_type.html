@@ -72,38 +72,40 @@
                     </button>
                 </div>
                 <!-- Modal body -->
-                <div class="modal-body scrollbox">
-                    <div id="id_del_add_button" class="mb-4">
-                        <button class="btn btn-primary" title="Add New Row" type="button" onclick="add_popup_row()">
-                            <i class="fa fa-plus"></i> add new row
-                        </button>
-                        <button class="btn btn-outline-danger" title="Delete" onclick="application_settings_delete_Row('id_popup_table')">
-                            <i class="fa fa-trash"></i> delete
-                        </button>
-                    </div>
-                    <div id="id_check_success_messages" class="alert alert-success check_success_message" hidden></div>
-                    <div id="id_check_error_messages" class="alert alert-danger check_error_messages" hidden></div>
-                    <div id="id_check_special_character_messages" class="alert alert-danger check_special_character_messages" hidden>
-                        <p id="id_error_msg_doctype_code"></p>
-                        <p id="id_error_msg_doctype_name"></p>
-                        <p id="id_error_msg_doctype_length"></p>
-                    </div>
-                    <div id="error_msg_id" class="alert alert-danger display-none" role="alert"><span id="error_message"></span></div>
-                    <div id="id_warning_msg_id" class="alert alert-warning display-none" role="alert"></div>
-                    <div id="id_info_msg_id" class="alert alert-primary display-none" role="alert"></div>
-                    <table class="class_popup_table table table-bordered mt-2" id="id_popup_table">
-                        <thead>
-                            <tr>
-                                <th id="header_select">Select</th>
-                                <th>Document Type</th>
-                                <th>Description</th>
-                                <th id="id_del_ind_checkbox" hidden>Del Indicator</th>
-                            </tr>
-                        </thead>
-                        <tbody id=id_popup_tbody>
+                <div class="modal-body">
+                    <div class="popup-vertical-scroll">
+                        <div id="id_del_add_button" class="mb-4">
+                            <button class="btn btn-primary" title="Add New Row" type="button" onclick="add_popup_row()">
+                                <i class="fa fa-plus"></i> add new row
+                            </button>
+                            <button class="btn btn-outline-danger" title="Delete" onclick="application_settings_delete_Row('id_popup_table')">
+                                <i class="fa fa-trash"></i> delete
+                            </button>
+                        </div>
+                        <div id="id_check_success_messages" class="alert alert-success check_success_message" hidden></div>
+                        <div id="id_check_error_messages" class="alert alert-danger check_error_messages" hidden></div>
+                        <div id="id_check_special_character_messages" class="alert alert-danger check_special_character_messages" hidden>
+                            <p id="id_error_msg_doctype_code"></p>
+                            <p id="id_error_msg_doctype_name"></p>
+                            <p id="id_error_msg_doctype_length"></p>
+                        </div>
+                        <div id="error_msg_id" class="alert alert-danger display-none" role="alert"><span id="error_message"></span></div>
+                        <div id="id_warning_msg_id" class="alert alert-warning display-none" role="alert"></div>
+                        <div id="id_info_msg_id" class="alert alert-primary display-none" role="alert"></div>
+                        <table class="class_popup_table table table-bordered mt-2" id="id_popup_table">
+                            <thead>
+                                <tr>
+                                    <th id="header_select">Select</th>
+                                    <th>Document Type</th>
+                                    <th>Description</th>
+                                    <th id="id_del_ind_checkbox" hidden>Del Indicator</th>
+                                </tr>
+                            </thead>
+                            <tbody id=id_popup_tbody>
 
-                        </tbody>
-                    </table>
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
                 <!-- Modal footer -->
                 <div class="modal-footer">
@@ -127,6 +129,7 @@
 </div>
 <script>
     var rendered_doctype_data = {{ upload_document_type| safe}};
+    var messages_list = {{messages_list|safe}};
     var rendered_dropdown_db_values
     var doctype_data_array = {}
     var main_table_doctype_value = [];
@@ -161,7 +164,7 @@
                 $("#error_msg_id").css("display", "none")
                 $( "#header_select").prop( "hidden", false );
                 GLOBAL_ACTION = button.value
-                $('#id_popup_table').DataTable().destroy();
+                // $('#id_popup_table').DataTable().destroy();
                 $("#id_popup_tbody").empty();
                 $('#doc_Modal').modal('show');
                 new_row_data();   // Add a new row in popup
@@ -178,7 +181,6 @@
         dropdown_value();
         $("#error_msg_id").css("display", "none")
         basic_add_new_html = '';
-        var display_db_data = '';
         var getid = $(".documenttype:last").attr("id");
         var getindex = getid.split("-")[1]
         var inc_index = Number(getindex)+1
@@ -186,7 +188,15 @@
         $(".modal").on("hidden.bs.modal", function () {
             $("#id_error_msg").html(" ");
         });
-        new_row_data();   // Add a new row in popup
+        basic_add_new_html = '<tr ><td><input type="checkbox" required></td>'+
+        '<td><select type="text" class="input form-control documenttype" id="documenttype-'+inc_index+'" name="documenttype" onchange="GetSelectedTextValue(this)"><option value="" disabled selected>Select your option</option>'+ document_type_dropdown +'</select></td>'+
+        '<td><input class="form-control description" type="text" id="description-'+inc_index+'" name="description" disabled></td>'+
+        '<td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+        $('#id_popup_tbody').append(basic_add_new_html);
+        if (GLOBAL_ACTION == "doctype_upload") {
+            $(".class_del_checkbox").prop("hidden", false);
+        }
+        table_sort_filter_popup('id_popup_table');
     }
 
     // validate and save for add,copy,update and upload data
@@ -199,36 +209,41 @@
         get_main_table_data();  //Read data from main table
         // compare for duplicates in popup
         [no_duplicate_value,error_message] = compare_table_for_duplicate_entries(validate_add_attributes, doctype_data)
-        if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
-            [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
-        }
-        if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
-            var add_basic_data = '';
-            var doctype_data_array = doctype_data;
-            $('#id_save_confirm_popup').modal('hide');    
-            data = {'data':doctype_data,'table_name':'DocumentType','action':GLOBAL_ACTION}
-            OpenLoaderPopup();
-            $.ajax({
-                type: 'POST',
-                url: "{% url 'eProc_Configuration:create_update_application_data' %}",
-                data: JSON.stringify(data),
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                success: function (Response) {
-                    rendered_doctype_data = Response[0];
-                    rendered_dropdown_db_values = Response[2];
-                    display_basic_db_data();
-                    dropdown_value();
-                    $('#doc_Modal').modal('hide');
-                    success_response(Response); // Function call to display response data
-                    CloseLoaderPopup();
-                }
-            });
-
-        }
-        else if (error_message){
+        if (error_message){
             display_error_message(error_message)
         }
+        else {
+            if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
+                [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
+            }
+            if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
+                var add_basic_data = '';
+                var doctype_data_array = doctype_data;
+                $('#id_save_confirm_popup').modal('hide');    
+                data = {'data':doctype_data,'table_name':'DocumentType','action':GLOBAL_ACTION}
+                OpenLoaderPopup();
+                $.ajax({
+                    type: 'POST',
+                    url: "{% url 'eProc_Configuration:create_update_application_data' %}",
+                    data: JSON.stringify(data),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function (Response) {
+                        rendered_doctype_data = Response[0];
+                        rendered_dropdown_db_values = Response[2];
+                        display_basic_db_data();
+                        dropdown_value();
+                        $('#doc_Modal').modal('hide');
+                        success_response(Response); // Function call to display response data
+                        CloseLoaderPopup();
+                    }
+                });
+            }
+            else if (error_message){
+                display_error_message(error_message)
+            }
+            table_sort_filter('id_popup_table');
+        } 
     }
 
     //delete the selected row in db................
@@ -288,19 +303,14 @@
             }
         });
         if (add_attr_duplicates_list.length != 0) {
-            get_message_details("JMSG001"); // Get message details
+            error_message = ui_messeges("JMSG001")// Get message details
             no_duplicate_value = 'N'
             return [no_duplicate_value,error_message]
         }
         else {
             $.each(doctype, function (i, item) {
-                if (item && item.document_type && item.document_type.length == 0) {
-                    get_message_details("JMSG002"); // Get message details
-                    no_duplicate_value = 'N'
-                    return [no_duplicate_value,error_message]
-                }
-                if (item.document_type_desc.length == 0) {
-                    get_message_details("JMSG002"); // Get message details
+                if ((item.document_type == null) || (item.document_type_desc.length == 0)) {
+                    error_message = ui_messeges("JMSG002")// Get message details
                     no_duplicate_value = 'N'
                     return [no_duplicate_value,error_message]
                 }
