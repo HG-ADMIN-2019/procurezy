@@ -185,8 +185,6 @@
         no_duplicate_entries = 'Y'
         no_duplicate_value = 'Y'
         var error_message = '';
-        var orgcompany = {};
-        $('#display_basic_table').DataTable().destroy();
         get_main_table_data(); //Read data from main table
         // compare for duplicates in popup
         [no_duplicate_value,error_message] = compare_table_for_duplicate_entries(validate_add_attributes,company_data )
@@ -218,6 +216,7 @@
                         display_basic_db_data();
                         $('#companyModal').modal('hide');
                         success_response(Response); // Function call to display response data
+                        $("#id_check_data").prop("hidden", true);
                         CloseLoaderPopup();
                     }
                 });
@@ -226,6 +225,7 @@
                 display_error_message(error_message)
             }
         }
+        table_sort_filter('id_popup_table');
     }
 
     //delete the selected row in db................
@@ -498,41 +498,40 @@
     function compare_table_for_duplicate_entries(validate_add_attributes,orgcompany ) {
         add_attr_duplicates = false;
         var error_message = ''
-        var add_attr_duplicates_list = [];
+        var common = [];
         var add_attr_unique_list = [];
         var no_duplicate_value = 'Y'
         $.each(validate_add_attributes, function (index, value) {
             if ($.inArray(value, add_attr_unique_list) == -1) {
                 add_attr_unique_list.push(value);
             } else {
-                if ($.inArray(value, add_attr_duplicates_list) == -1) {
-                    add_attr_duplicates_list.push(value);
+                if ($.inArray(value, common) == -1) {
+                    common.push(value);
                 }
             }
         });
-        if (add_attr_duplicates_list.length != 0) {
-            messages_id = "JMSG001"
-            error_message = ui_messeges(messages_id)
+        if (common.length != 0) { 
+            $('#companyModal').modal('show');
+            error_message = ui_messeges("JMSG001")
+            display_duplicate_entry(common);  //Function to highlight the rows in popup
             no_duplicate_value = 'N'
             return [no_duplicate_value,error_message]
         }
         else {
             $.each(orgcompany, function (i, item) {  
                 if (item.company_id.length == 0) {
-                    messages_id = "JMSG002"
-                    error_message = ui_messeges(messages_id)
+                    $('#companyModal').modal('show');
+                    error_message = ui_messeges("JMSG002")
                     no_duplicate_value = 'N'
                     return [no_duplicate_value,error_message]
                 }
                 if (item.name1.length == 0) {
-                    messages_id = "JMSG002"
-                    error_message = ui_messeges(messages_id)
+                    error_message = ui_messeges("JMSG002")
                     no_duplicate_value = 'N'
                     return [no_duplicate_value,error_message]
                 }
                 if (item.name2.length == 0) {
-                    messages_id = "JMSG002"
-                    error_message = ui_messeges(messages_id)
+                    error_message = ui_messeges("JMSG002")
                     no_duplicate_value = 'N'
                     return [no_duplicate_value,error_message]
                 }

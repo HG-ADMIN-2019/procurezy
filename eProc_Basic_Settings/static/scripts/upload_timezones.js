@@ -102,12 +102,11 @@ $(".remove_upload_data").click(() => {
 });
 
 function display_error_message(error_message){
-    $("#error_msg_id").css("display", "none")
     $('#error_message').text(error_message);
     document.getElementById("error_message").style.color = "Red";
     $("#error_msg_id").css("display", "block")
     $('#id_save_confirm_popup').modal('hide');
-    $('#timezoneModal').modal('show');
+    $('#countriesModal').modal('show');
 }
 
 // on click add icon display the row in to add the new entries

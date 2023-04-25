@@ -262,7 +262,6 @@
                 }
             }
             if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
-                var add_basic_data = '';
                 var timezone_data_array =timezone_data;
                 $('#id_save_confirm_popup').modal('hide');
                 data = {'data':timezone_data,'table_name':'TimeZone','action':GLOBAL_ACTION}
@@ -466,21 +465,22 @@
     function compare_table_for_duplicate_entries(validate_add_attributes, timezone) {
         add_attr_duplicates = false;
         var error_message = ''
-        var add_attr_duplicates_list = [];
+        var common = [];
         var add_attr_unique_list = [];
         var no_duplicate_value = 'Y'
         $.each(validate_add_attributes, function(index, value) {
             if ($.inArray(value, add_attr_unique_list) == -1) {
                 add_attr_unique_list.push(value);
             } else {
-                if ($.inArray(value, add_attr_duplicates_list) == -1) {
-                    add_attr_duplicates_list.push(value);
+                if ($.inArray(value, common) == -1) {
+                    common.push(value);
                 }
             }
         });
-        if (add_attr_duplicates_list.length != 0) {
+        if (common.length != 0) {
             $('#timezoneModal').modal('show');
-            get_message_details("JMSG001"); // Get message details
+            display_duplicate_entry(common);  //Function to highlight the rows in popup
+            error_message = ui_messeges("JMSG001")// Get message details
             no_duplicate_value = 'N'
             return [no_duplicate_value,error_message]
         }
@@ -488,7 +488,7 @@
             $.each(timezone, function (i, item) {
                 if ((item.time_zone.length == 0) || (item.description.length == 0)){
                     $('#timezoneModal').modal('show');
-                      error_message = ui_messeges("JMSG002")// Get message details
+                    error_message = ui_messeges("JMSG002")// Get message details
                     no_duplicate_value = 'N'
                     return [no_duplicate_value,error_message]
                 }
