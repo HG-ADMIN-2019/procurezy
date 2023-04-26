@@ -1,23 +1,36 @@
+import datetime
 import os
 
 from django.shortcuts import render
 from pypdf._reader import PdfReader
 import tabula
 from Majjaka_eProcure import settings
+from eProc_Basic.Utilities.functions.distinct_list import distinct_list
+from eProc_Basic.Utilities.functions.django_query_set import DjangoQueries
+from eProc_Basic.Utilities.functions.guid_generator import guid_generator
 from eProc_Basic.Utilities.functions.string_related_functions import remove_space
+from eProc_Basic.Utilities.global_defination import global_variables
+from eProc_Shopping_Cart.context_processors import update_user_info
+from eProc_Supplier_Order_Management.Utilities.supplier_order_management_specific import save_po_data, \
+    get_po_table_data, get_po_data
+from eProc_Supplier_Order_Management.models.supplier_order_management_models import SOMPoHeader
+
+
 
 
 def po_extract(request):
     """
 
     """
+    update_user_info(request)
     text = []
     header_detail = []
     supplier_address = []
     if request.POST:
         pdfData = ''
         reader = ''
-
+        item_row_num = []
+        po_item_data = []
         directory = os.path.join(str(settings.BASE_DIR), 'media', 'pdf_read')
         for root, dirs, files in os.walk(directory):
             for file in files:
@@ -32,16 +45,14 @@ def po_extract(request):
                 text = extract_text.splitlines()
                 print(text)
                 header_detail = {}
-                header_detail,supplier_address = get_po_data(text, header_detail)
+                header_detail, supplier_address = get_po_data(text, header_detail)
                 get_po_table_data(pdfData[0], header_detail)
-                # pdf_file = open(file_path, 'rb')  # open .csv file
-                # reader = PyPDF2.PdfFileReader(pdf_file)
-                # page1 = reader.getPage(0)
-                # print(reader.numPages)
-                # pdfData = page1.extractText()
-                # print(pdfData[1])
                 data = pdfData[1]
-                po_item_data = []
+                po_total_table = pdfData[2]['data']
+                total_detail = po_total_table[0][1]['text'].split(' ')
+                header_detail['total_value'] = total_detail[0]
+                header_detail['currency'] = total_detail[1]
+                item_num = 0
                 for count, item_data in enumerate(data['data']):
                     if count != 0:
                         for text_data in item_data:
@@ -51,136 +62,41 @@ def po_extract(request):
                                 if text_value.find("Additional comments on the line item") != -1:
                                     value = text_value.split('\r')
                                     print("additional info:", value)
-                                    additional_info.append({'item_num':count+1,'data':value})
+                                    po_item_data.append({item_num: text_value})
+                                    additional_info.append({'item_num': count + 1, 'data': value})
                                 elif text_value.find("Cost Object") != -1:
+                                    po_item_data.append({item_num: text_value})
                                     print("Cost Object:", text_value)
-                                    cost_obj_data.append({'item_num':count+1,'data':text_value})
+                                    cost_obj_data.append({'item_num': count + 1, 'data': text_value})
                                 elif text_value.find("External Product ID") != -1:
                                     print("External Product ID:", text_value)
-                                    po_item_data.append({'ext':text_value})
+                                    po_item_data.append({item_num: text_value})
                                 else:
                                     text_value = text_value.replace('\r', '')
-                                    po_item_data.append({count:text_value})
+                                    item_row_num.append(count)
+                                    item_num = count
+                                    po_item_data.append({count: text_value})
                                     print("item data:", text_value)
+                item_row_num = distinct_list(item_row_num)
+                po_item_details = []
+                for count, row_num in enumerate(item_row_num):
+                    item_list = []
+                    for item_data in po_item_data:
+                        for key, value in item_data.items():
+                            if key == row_num:
+                                item_list.append(value)
+                    po_item_details.append(item_list)
+                save_po_data(header_detail, po_item_details, supplier_address)
 
         # data = {'pdf_data': pdfData}
     context = {'inc_nav': True,
                'inc_footer': True,
                'is_slide_menu': True,
-               'text':text,
-               'header_detail':header_detail,
-               'supplier_address':supplier_address
+               'text': text,
+               'header_detail': header_detail,
+               'supplier_address': supplier_address
                }
     return render(request, 'Supplier_Order_Management/po_extract.html', context)
 
 
-def get_po_data(text, header_detail):
-    """
 
-    """
-    supplier_address = {'address_details': '', 'invoice_address': '', 'delivery_address': ''}
-    header_detail['invoicing_detail'] = ''
-    index = 0
-    flag = False
-    buyer_flag = False
-    invoice_address = False
-    pdf_invoice_address_flag = False
-    delivery_address_flag = False
-    incoterm_flag = False
-    payment_term_flag = False
-    invoicing_detail_flag = False
-    goods_recep_flag = False
-    supplier_note_text_flag = False
-    for count, po_data in enumerate(text):
-        if po_data.find("PURCHASE ORDER NO") != -1:
-            header_detail['doc_num'] = remove_space(po_data.split(':')[1])
-        if flag:
-            if not po_data.find("Buyer") != -1:
-                supplier_address['address_details'] = supplier_address['address_details'] + ' ' + po_data
-            else:
-                if po_data.find("Buyer") != -1:
-                    data = po_data.split('Buyer')
-                    supplier_address['address_details'] = supplier_address['address_details'] + ' ' + data[0]
-                    buyer_flag = True
-                    flag = False
-        if po_data == "Vendor":
-            flag = True
-        if incoterm_flag:
-            header_detail['incoterm'] = po_data.split('Terms of Payment')[0]
-            payment_term_flag = True
-            incoterm_flag = False
-        if po_data == 'Terms of Delivery (In accordance with INCOTERMS 2010)':
-            incoterm_flag = True
-            delivery_address_flag = False
-        if delivery_address_flag:
-            supplier_address['delivery_address'] = supplier_address['delivery_address'] + ' ' + po_data
-        if goods_recep_flag:
-            header_detail['goods_recep'] = po_data
-            goods_recep_flag = False
-        if po_data == 'Goods Receiver':
-            goods_recep_flag = True
-        if supplier_note_text_flag:
-            if not po_data == 'Order line no. Product no. Product Order quantity UOM Unit price excl.':
-                header_detail['supplier_note_text'] = po_data
-            supplier_note_text_flag = False
-        if po_data == 'Note(s) to Supplier':
-            supplier_note_text_flag = True
-        if invoicing_detail_flag:
-            if not po_data.find('Goods Marking'):
-                header_detail['invoicing_detail'] = header_detail['invoicing_detail'] + ' ' + po_data
-            else:
-                header_detail['invoicing_detail'] = header_detail['invoicing_detail'] + ' ' + po_data.split('Goods Marking')[0]
-                invoicing_detail_flag = False
-        if po_data == 'Invoicing':
-            invoicing_detail_flag = True
-            payment_term_flag = False
-        if payment_term_flag:
-            header_detail['payment_term'] = po_data
-
-        if pdf_invoice_address_flag:
-            header_detail['pdf_invoice_address'] = po_data.split('Delivery Address')[0]
-            delivery_address_flag = True
-            pdf_invoice_address_flag = False
-        if po_data == 'PDF Invoice Address':
-            invoice_address = False
-            pdf_invoice_address_flag = True
-            delivery_address_flag = False
-        if po_data == 'Invoice Address':
-            invoice_address = True
-        if invoice_address:
-            supplier_address['invoice_address'] = supplier_address['invoice_address'] + ' ' + po_data
-
-    return header_detail,supplier_address
-
-
-def get_po_table_data(po_table_details, header_detail):
-    """
-
-    """
-
-    for row_count, po_table_detail in enumerate(po_table_details['data']):
-        for cell_count, text_data in enumerate(po_table_detail):
-            if row_count == 0:
-                if cell_count == 0:
-                    buyer_detail = text_data['text'].split('\r')
-                    header_detail['requester'] = buyer_detail[1]
-                    header_detail['requester_email'] = buyer_detail[2]
-                if cell_count == 1:
-                    supplier_contact = text_data['text'].split('\r')
-                    header_detail['supplier_contact'] = supplier_contact[1]
-                if cell_count == 2:
-                    ordered_at = text_data['text'].split('\r')
-                    header_detail['ordered_at'] = ordered_at[1]
-            if row_count == 1:
-                if cell_count == 0:
-                    requester_mobile_num = text_data['text'].split('\r')
-                    header_detail['requester_mobile_num'] = requester_mobile_num[1]
-                if cell_count == 2:
-                    supplier_mobile_num = text_data['text'].split('\r')
-                    header_detail['supplier_mobile_num'] = supplier_mobile_num[1]
-                if cell_count == 3:
-                    supplier_email = text_data['text'].split('\r')
-                    header_detail['supplier_email'] = supplier_email[1]
-
-    print("header details: ", header_detail)
-    return header_detail

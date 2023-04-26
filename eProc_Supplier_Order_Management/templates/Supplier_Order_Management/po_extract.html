@@ -27,9 +27,13 @@
     {{data}}
     {% endfor %}
     <br><br>
+    {% if header_detail %}
     HEADER DATA: {{header_detail}}
+    {% endif %}
     <br><br>
+    {% if supplier_address %}
     ADDRESS: {{supplier_address}}
+    {% endif %}
 
   </form>
   </div>
