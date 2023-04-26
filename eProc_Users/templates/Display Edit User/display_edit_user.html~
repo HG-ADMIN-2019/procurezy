@@ -21,16 +21,16 @@
                     <i class="fas fa-info-circle"></i><span> Basic Data</span>
                 </div>
             </li>
-<!--            <li data-tab-target="#user_org_data_tab" class="sub-tab">-->
-<!--                <div class="sub-tab-link">-->
-<!--                    <i class="fas fa-sitemap"></i><span> Organizational Information</span>-->
-<!--                </div>-->
-<!--            </li>-->
-<!--            <li data-tab-target="#user_buisness_doc_tab" class="sub-tab">-->
-<!--                <div class="sub-tab-link">-->
-<!--                    <i class="fas fa-file-alt"></i><span> Business Document</span>-->
-<!--                </div>-->
-<!--            </li>-->
+            <li data-tab-target="#user_org_data_tab" class="sub-tab">
+                <div class="sub-tab-link">
+                    <i class="fas fa-sitemap"></i><span> Organizational Information</span>
+                </div>
+            </li>
+            <li data-tab-target="#user_buisness_doc_tab" class="sub-tab">
+                <div class="sub-tab-link">
+                    <i class="fas fa-file-alt"></i><span> Business Document</span>
+                </div>
+            </li>
         </ul>
 
         <div class="tab-content">
