@@ -512,26 +512,16 @@
         });
         if (common.length != 0) { 
             $('#companyModal').modal('show');
-            error_message = ui_messeges("JMSG001")
+            error_message = ui_messeges("JMSG001") // Get message details
             display_duplicate_entry(common);  //Function to highlight the rows in popup
             no_duplicate_value = 'N'
             return [no_duplicate_value,error_message]
         }
         else {
             $.each(orgcompany, function (i, item) {  
-                if (item.company_id.length == 0) {
+                if ((item.company_id.length == 0) || (item.name1.length == 0)||(item.name2.length == 0)) {
                     $('#companyModal').modal('show');
-                    error_message = ui_messeges("JMSG002")
-                    no_duplicate_value = 'N'
-                    return [no_duplicate_value,error_message]
-                }
-                if (item.name1.length == 0) {
-                    error_message = ui_messeges("JMSG002")
-                    no_duplicate_value = 'N'
-                    return [no_duplicate_value,error_message]
-                }
-                if (item.name2.length == 0) {
-                    error_message = ui_messeges("JMSG002")
+                    error_message = ui_messeges("JMSG002") // Get message details
                     no_duplicate_value = 'N'
                     return [no_duplicate_value,error_message]
                 }

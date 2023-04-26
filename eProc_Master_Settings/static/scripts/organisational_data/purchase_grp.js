@@ -194,6 +194,7 @@ $('#save_id').click(function () {
 
 //Read popup table data
 function read_popup_data() {
+    $('#id_popup_table').DataTable().destroy();
     pgroup_data = new Array();
     validate_add_attributes = [];
     $("#id_popup_table TBODY TR").each(function () {
@@ -216,6 +217,7 @@ function read_popup_data() {
         validate_add_attributes.push(pgroup.pgroup_id);
         pgroup_data.push(pgroup);
     });
+    table_sort_filter('id_popup_table');
     return pgroup_data;
 }
 

@@ -1,5 +1,6 @@
 var porg_data = new Array();
 var validate_add_attributes = [];
+var main_table_low_value = [];
 var porg={};
 
 //onclick of upload button display id_data_upload popup and set GLOBAL_ACTION button value
@@ -202,6 +203,13 @@ function delete_duplicate() {
 // Function to hide and display save related popups
 $('#save_id').click(function () {
     $('#Porg_Modal').modal('hide');
+    porg_data = read_popup_data();
+    $('#id_save_confirm_popup').modal('show');
+});
+
+//Read popup table data
+function read_popup_data() {
+    $('#id_popup_table').DataTable().destroy();
     porg_data = new Array();
     validate_add_attributes = [];
     $("#id_popup_table TBODY TR").each(function () {
@@ -224,9 +232,9 @@ $('#save_id').click(function () {
         validate_add_attributes.push(porg.porg_id);
         porg_data.push(porg);
     });
-    $('#id_save_confirm_popup').modal('show');
-});
-
+    table_sort_filter('id_popup_table');
+    return porg_data;
+}
 
 //**********************************************************
 function update_check_message(messages){

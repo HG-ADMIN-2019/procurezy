@@ -83,7 +83,7 @@
         </div>
     </div>
     <!-- The Modal -->
-    <div class="modal fade" id="myModal" style="overflow:auto;">
+    <div class="modal fade" id="cusprodcat_Modal" style="overflow:auto;">
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content">
                 <!-- Modal Header -->
@@ -205,6 +205,7 @@
     var content_managment_settings = '{{content_managment_settings|safe}}';
     var rendered_cust_prod_cat_data ={{upload_cust_prod_cat|safe}};
     var rendered_UNSPC_data = {{upload_ProdCat|safe}};
+    var messages_list = {{messages_list|safe}};
     var cusprodcat_data_array = {}
     var main_table_cusprodcat_value =[];
     var main_table_low_value = [];
@@ -406,7 +407,7 @@
         var validate_add_attributes = [];
            $("#dis_tab TBODY TR").each(function () {
                 var row = $(this);
-                $('#myModal').modal('show');
+                $('#cusprodcat_Modal').modal('show');
                 prod_cat_id = row.find("TD").eq(1).find('input[type="number"]').val();
                 if (prod_cat_id == undefined){
                     prod_cat_id = row.find("TD").eq(1).find('input[type="number"]').val();
@@ -442,7 +443,7 @@
             if(common.length != 0 || add_attr_duplicates_list.length != 0){
                 document.getElementById("add_att_error_msg").innerHTML = messageConstants["JMSG001"];
                 document.getElementById("add_att_error_msg").style.color = "Red";
-                $('#myModal').modal('show');
+                $('#cusprodcat_Modal').modal('show');
             }
             else{
                 var add_basic_data = '';
@@ -454,9 +455,9 @@
                 });
                 $('#display_basic_table').DataTable().destroy();
                 $('#display_basic_table').append(add_basic_data);
-                $('#myModal').modal('hide');
+                $('#cusprodcat_Modal').modal('hide');
                 table_sort_filter('display_basic_table');
-                $('#myModal').find('input:text').val('');
+                $('#cusprodcat_Modal').find('input:text').val('');
             }
         });
     });
@@ -661,7 +662,7 @@
         table_sort_filter_popup('id_popup_table');
     }
 
-    //onclick of add button display myModal popup and set GLOBAL_ACTION button value
+    //onclick of add button display cusprodcat_Modal popup and set GLOBAL_ACTION button value
     function onclick_add_button(button) {
         OpenLoaderPopup();
         var data = {'table_name':'UnspscCategoriesCust'}
@@ -676,7 +677,7 @@
                 $("#header_select").prop( "hidden", false );
                 GLOBAL_ACTION = button.value
                 $("#id_popup_tbody").empty();
-                $('#myModal').modal('show');
+                $('#cusprodcat_Modal').modal('show');
                 basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select type="text" class="input form-control prodid" id="prodid-1"  name="prodid" onchange="GetSelectedTextValue(this)"><option value=""selected>Select your option</option>'+prod_cat_id_dropdown+'</select></td><td><input class="form-control description" type="text"  name="description"  id="description-1" disabled></td><td hidden><guid></td><td hidden>< del_ind></td></tr>';
                 $('#id_popup_tbody').append(basic_add_new_html);
                 $("#id_del_ind_checkbox").prop("hidden", true);
@@ -701,7 +702,7 @@
         $("#id_error_msg").html("");
         $("#id_popup_tbody").empty();
         $("#id_error_msg").empty();
-        $('#myModal').modal('hide');
+        $('#cusprodcat_Modal').modal('hide');
         $("#id_error_msg").prop("hidden", true);
         $("#id_error_msg_country_code").prop("hidden", true);
         $("#id_error_msg_country_name").prop("hidden", true);
@@ -808,7 +809,7 @@
                         $( "#header_select").prop( "hidden", false );
                         $( ".class_del_checkbox").prop( "hidden", false );
                         $("#desc_upload").prop("hidden", true);
-                        $('#myModal').modal('show');
+                        $('#cusprodcat_Modal').modal('show');
                         $('#id_data_upload').modal('hide');
                         document.getElementById("id_del_add_button").style.display = "block";
                         $('#id_check_data').show();
@@ -889,7 +890,6 @@
         no_duplicate_entries = 'Y'
         no_duplicate_value = 'Y'
         var error_message = '';
-        cusprodcat = {};
         get_main_table_data(); //Read data from main table
         [no_duplicate_value,error_message] = compare_table_for_duplicate_entries(validate_add_attributes, cust_prod_cat_data)
         if (error_message){
@@ -924,6 +924,7 @@
                 display_error_message(error_message)
             }
         }
+        table_sort_filter('id_popup_table');
     }
 
     // Function to get main table data
@@ -941,13 +942,14 @@
 
     // Function to hide and display save related popups
     $('#save_id').click(function () {
-        $('#myModal').modal('hide');
+        $('#cusprodcat_Modal').modal('hide');
         cust_prod_cat_data = read_popup_data();
         $('#id_save_confirm_popup').modal('show');
     });
 
     //Read popup table data
     function read_popup_data() {
+        $('#id_popup_table').DataTable().destroy();
         validate_add_attributes = [];
         cust_prod_cat_data = [];
         $("#id_popup_table TBODY TR").each(function() {
@@ -966,6 +968,7 @@
             validate_add_attributes.push(cusprodcat.prod_cat_id);
             cust_prod_cat_data.push(cusprodcat);
         });
+        table_sort_filter('id_popup_table');
         return cust_prod_cat_data;
     }
 
@@ -1016,7 +1019,7 @@
     function compare_table_for_duplicate_entries(validate_add_attributes, cusprodcat) {
         add_attr_duplicates = false;
         var error_message = ''
-        var add_attr_duplicates_list = [];
+        var common = [];
         var add_attr_unique_list = [];
         var no_duplicate_value = 'Y'
         $.each(validate_add_attributes, function (index, value) {
@@ -1024,20 +1027,22 @@
                 add_attr_unique_list.push(value);
             }
             else {
-                if ($.inArray(value, add_attr_duplicates_list) == -1) {
-                    add_attr_duplicates_list.push(value);
+                if ($.inArray(value, common) == -1) {
+                    common.push(value);
                 }
             }
         });
-        if (add_attr_duplicates_list.length != 0) {
-            get_message_details("JMSG001"); // Get message details
+        if (common.length != 0) {
+            display_duplicate_entry(common);  //Function to highlight the rows in popup
+            error_message = ui_messeges("JMSG001")// Get message details
             no_duplicate_value = 'N'
             return [no_duplicate_value,error_message]
         }
         else {
             $.each(cusprodcat, function (i, item) {
-                if (item.prod_cat_id.length == 0) {
-                    get_message_details("JMSG002"); // Get message details
+                if ((item.prod_cat_id == null) || (item.category_desc.length == 0)){
+                    $('#cusprodcat_Modal').modal('show');
+                    error_message = ui_messeges("JMSG002")// Get message details
                     no_duplicate_value = 'N'
                     return [no_duplicate_value,error_message]
                 }
@@ -1052,7 +1057,7 @@
         document.getElementById("error_message").style.color = "Red";
         $("#error_msg_id").css("display", "block")
         $('#id_save_confirm_popup').modal('hide');
-        $('#myModal').modal('show');
+        $('#cusprodcat_Modal').modal('show');
     }
 
     //********************************************
