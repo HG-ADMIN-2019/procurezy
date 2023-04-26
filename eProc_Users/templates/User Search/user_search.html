@@ -160,25 +160,29 @@
                             </td>
                             <td>
                                 <label class="switch">
-                                    <label class="toggle">
+                                    <label class="toggle-control">
                                         {% if results.user_locked %}
-                                        <input type="checkbox" id="{{results.employee_id}}-LOCKED" class="toggle-input" checked>
+                                        <input type="checkbox" id="{{results.employee_id}}-LOCKED" class="toggle-block" checked>
+                                        <span class="control"></span>
                                         {% else %}
-                                        <input type="checkbox" id="{{results.employee_id}}-UNLOCKED" class="toggle-input">
+                                        <input type="checkbox" id="{{results.employee_id}}-UNLOCKED" class="toggle-block">
+                                        <span class="control"></span>
                                         {% endif %}
-                                        <div class="toggle-controller default-success"></div>
+<!--                                        <div class="toggle-controller default-success"></div>-->
                                     </label>
                                 </label>
                             </td>
                             <td>
                                 <label class="switch">
-                                    <label class="toggle">
+                                    <label class="toggle-control">
                                         {% if results.pwd_locked %}
-                                        <input type="checkbox" id="{{results.employee_id}}-PWDLOCKED" class="toggle-input" checked>
+                                        <input type="checkbox" id="{{results.employee_id}}-PWDLOCKED" class="toggle-block" checked>
+                                         <span class="control"></span>
                                         {% else %}
-                                        <input type="checkbox" id="{{results.employee_id}}-PWDUNLOCKED" class="toggle-input">
+                                        <input type="checkbox" id="{{results.employee_id}}-PWDUNLOCKED" class="toggle-block">
+                                         <span class="control"></span>
                                         {% endif %}
-                                        <div class="toggle-controller default-success"></div>
+<!--                                        <div class="toggle-controller default-success"></div>-->
                                     </label>
                                 </label>
                             </td>
@@ -419,9 +423,9 @@ function reload()
     localStorage.setItem("email", document.getElementById("email").value);
     localStorage.setItem("user_type", document.getElementById("user_type").value);
     localStorage.setItem("employee_id", document.getElementById("employee_id").value);
-    localStorage.setItem("user_locked", document.getElementById("user_locked_id").value);
-    localStorage.setItem("pwd_locked", document.getElementById("pwd_locked_id").value);
-    localStorage.setItem("is_active", document.getElementById("is_active_id").value);
+    localStorage.setItem("user_locked", document.getElementById("user_locked_id").checked);
+    localStorage.setItem("pwd_locked", document.getElementById("pwd_locked_id").checked);
+    localStorage.setItem("is_active", document.getElementById("is_active_id").checked);
     OpenLoaderPopup();
 }
 
@@ -907,7 +911,7 @@ function check_data() {
 }
 var data = {};
 var block_id = '';
- $('.toggle-input').change(function() {
+ $('.toggle-block').change(function() {
         $('#id_confirm_popup').modal('show')
         if($(this).is(':checked')) {
             $('.toggle-off').removeClass('active');
@@ -921,8 +925,8 @@ var block_id = '';
         var id = this.id;
         data.employee_id = id;
         var id = this.id
-        block_id = id
-        data.employee_id = id.split('-')[0]
+<!--        block_id = id-->
+<!--        data.employee_id = id.split('-')[0]-->
   });
   var previous_state;
 function lock_active_change(){

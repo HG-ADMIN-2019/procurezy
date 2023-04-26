@@ -26,11 +26,11 @@
                     <i class="fas fa-sitemap"></i><span> Organizational Information</span>
                 </div>
             </li>
-            <li data-tab-target="#buisness_doc_tab" class="sub-tab" id="business_doc_tab">
-                <div class="sub-tab-link">
-                    <i class="fas fa-file-alt"></i><span> Business Document</span>
-                </div>
-            </li>
+<!--            <li data-tab-target="#buisness_doc_tab" class="sub-tab" id="business_doc_tab">-->
+<!--                <div class="sub-tab-link">-->
+<!--                    <i class="fas fa-file-alt"></i><span> Business Document</span>-->
+<!--                </div>-->
+<!--            </li>-->
         </ul>
 
         <div class="tab-content">
@@ -232,9 +232,9 @@
                                 <div class="row">
                                     <div class="form-group col-md">
                                         <label> Working Days</label><span class="hg_required"></span><br>
-<!--                                        <input type="text" class="form-control hg_edit_display_mode" id="working_days" value="{{supplier_info.delivery_days}}">-->
-                                        <div  id="edit_mode">
-                                        <select type="text" class="multiple_select form-control hg_edit_display_mode"  id="working_days_id" name="working_days" multiple data-selected-text-format="count" data-actions-box="true" title='Select...'>
+                                        <input type="text" class="form-control hg_edit_display_mode" id="working_days" value="{{supplier_info.delivery_days}}">
+                                        <div  id="edit_mode" hidden>
+                                        <select type="text" class="multiple_select form-control "  id="working_days_id" name="working_days" multiple data-selected-text-format="count" data-actions-box="true" title='Select...' >
                                             <option value="1">Sunday</option> <option value="2">Monday</option> <option value="3">Tuesday</option> <option value="4">Wednesday</option> <option value="5">Thursday</option> <option value="6">Friday</option> <option value="7">Saturday</option>
                                         </select>
                                         </div>

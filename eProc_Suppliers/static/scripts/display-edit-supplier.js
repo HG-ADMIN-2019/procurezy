@@ -33,6 +33,7 @@ $("#display_basic_table TBODY TR").each(function() {
 function edit_basic_supp_data(){
     $('#supplier_basic_update_success').hide();
     $(".hg_edit_display_mode").prop( "disabled", false );
+//    $(".hg_edit_display_mode").prop("disabled", true);
     if(GLOBAL_ACTION != 'CREATE'){
             $("#supplier_id").prop( "disabled", true );
             $("#sbd_edit_button").prop("hidden", true);
@@ -40,6 +41,7 @@ function edit_basic_supp_data(){
     }
     $("#edit_mode").show();
     $("#working_days").hide();
+     $("#edit_mode").prop("hidden", false);
     document.getElementById('sbd_edit_button').style.display = 'none' ;
     $("#sbd_edit_button").prop("hidden", true);
     document.getElementById('sbd_save_cancel_button').style.display = 'block';

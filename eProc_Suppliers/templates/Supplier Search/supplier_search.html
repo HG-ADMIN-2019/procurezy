@@ -3,79 +3,6 @@
 
 {% block title %} Supplier Management (Admin Tool) {% endblock %}
 {% block maincontent %}
-<style>
-    .toggle {
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
-    display: block;
-    height: auto;
-    width: 7.5rem;
-    margin: auto;
-    cursor: pointer;
-    }
-    .toggle-input {
-    display: none;
-    margin: 0;
-    }
-    .toggle-off,
-    .toggle-on {
-    height: 1.8125rem;
-    width: 1.8125rem;
-    color: rgba(46, 45, 44, 0.1);
-    vertical-align: top;
-    text-align: center;
-    line-height: 1.8125rem !important;
-    }
-    .toggle-input:checked + .toggle-controller.default-success {
-    border: 0.125rem solid rgba(108, 211, 61, 0.75);
-    background: rgba(108, 211, 61, 0.375);
-    }
-    .toggle-input:checked + .toggle-controller.default-success:after {
-    left: 1.5625rem;
-    }
-    .toggle-controller.default-success {
-    position: relative;
-    display: inline-block;
-    height: 1.5625rem;
-    width: 3.125rem;
-    border: 0.125rem solid rgba(46, 45, 44, 0.05);
-    -webkit-border-radius: 1.5625rem;
-    -moz-border-radius: 1.5625rem;
-    border-radius: 1.5625rem;
-    -webkit-box-shadow: inset 0 0 0.1875rem rgba(46, 45, 44, 0.25);
-    -moz-box-shadow: inset 0 0 0.1875rem rgba(46, 45, 44, 0.25);
-    box-shadow: inset 0 0 0.1875rem rgba(46, 45, 44, 0.25);
-    background: rgba(46, 45, 44, 0.025);
-    -webkit-transition: all 0.25s ease;
-    -moz-transition: all 0.25s ease;
-    -o-transition: all 0.25s ease;
-    transition: all 0.25s ease;
-    }
-    .toggle-controller.default-success:after {
-    position: absolute;
-    top: 0;
-    left: 0;
-    content: '';
-    display: block;
-    height: 1.5625rem;
-    width: 1.5625rem;
-    -webkit-border-radius: 1.5625rem;
-    -moz-border-radius: 1.5625rem;
-    border-radius: 1.5625rem;
-    -webkit-box-shadow: 0 0.0625rem 0.125rem rgba(46, 45, 44, 0.2);
-    -moz-box-shadow: 0 0.0625rem 0.125rem rgba(46, 45, 44, 0.2);
-    box-shadow: 0 0.0625rem 0.125rem rgba(46, 45, 44, 0.2);
-    background: white;
-    -webkit-transition: all 0.25s ease;
-    -moz-transition: all 0.25s ease;
-    -o-transition: all 0.25s ease;
-    transition: all 0.25s ease;
-    }
-    .toggle-off.active {color:red;}
-    .toggle-on.active {color:blue;}
-
-</style>
 
 <div class="container-fluid">
     <div class="mep-form_wrapper">
@@ -160,7 +87,7 @@
                             </div>
                             <div class="col-md">
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="block">
+                                    <input class="form-check-input" type="checkbox" name="block" id="purchase_block">
                                     <label class="form-check-label" for="">
                                         Purchase Block
                                     </label>
@@ -241,13 +168,15 @@
                             <td>{{results.registration_number}}</td>
                             <td>
                                 <label class="switch">
-                                    <label class="toggle">
+                                    <label class="toggle-control">
                                         {% if results.block %}
-                                        <input type="checkbox" id="{{results.supplier_id}}-block" class="toggle-input" checked>
+                                        <input type="checkbox" id="{{results.supplier_id}}-block" class="toggle-block" checked>
+                                        <span class="control"></span>
                                         {% else %}
-                                        <input type="checkbox" id="{{results.supplier_id}}-unblock" class="toggle-input">
+                                        <input type="checkbox" id="{{results.supplier_id}}-unblock" class="toggle-block">
+                                        <span class="control"></span>
                                         {% endif %}
-                                        <div class="toggle-controller default-success"></div>
+<!--                                        <div class="toggle-controller default-success"></div>-->
                                     </label>
                                 </label>
                             </td>
@@ -344,9 +273,10 @@
         localStorage.setItem("supplier_id", document.getElementById("supplier_id").value);
         localStorage.setItem("search_term1", document.getElementById("search_term1").value);
         localStorage.setItem("search_term2", document.getElementById("search_term2").value);
-        console.log(document.getElementById("city").value);
         localStorage.setItem("city", document.getElementById("city").value);
         localStorage.setItem("country_code", document.getElementById("country_code").value);
+        localStorage.setItem("porg", document.getElementById("porg").value);
+        localStorage.setItem("purchase_block", document.getElementById("purchase_block").checked);
         OpenLoaderPopup();
     }
 
@@ -405,7 +335,7 @@
 
     var data = {}
     var block_id = '';
-    $('.toggle-input').change(function() {
+    $('.toggle-block').change(function() {
         if($(this).is(':checked')) {
             $('.toggle-off').removeClass('active');
             $('.toggle-on').addClass('active');
@@ -423,6 +353,7 @@
     });
 
     function block_unblock_supplier(){
+        OpenLoaderPopup();
         jQuery.ajax({
             type: 'POST',
             url: "{% url 'eProc_Suppliers:supplier_blocking' %}",
@@ -430,6 +361,7 @@
             data: JSON.stringify(data),
             success: function(result){
                     $('#id_block_confirm_popup').modal('hide');
+                    CloseLoaderPopup();
             },
             error: function(xhr, resp, text) {
             },
@@ -438,7 +370,6 @@
             contentType: false,
         });
     }
-
 
     function toggle(){
         var abc = $('#'+block_id)
@@ -449,7 +380,6 @@
             $('#'+block_id).prop("checked", true);
         }
     }
-
     //onclick of select all checkbox
     function checkAll(ele) {
         if (ele.checked) {
@@ -471,7 +401,6 @@
             });
         }
     }
-
 
     function valueChanged() {
         if ($('.supplier_checkbox').is(":checked")) {
@@ -495,10 +424,10 @@
                 is_active = 'Inactive'
             }
             if(supplier_detail.block){
-                block_input = '<input type="checkbox" id="'+ supplier_detail.supplier_id +'-block" class="toggle-input" checked>'
+                block_input = '<input type="checkbox" id="'+ supplier_detail.supplier_id +'-block" class="toggle-control" checked>'
             }
             else{
-                block_input = '<input type="checkbox" id="'+ supplier_detail.supplier_id +'-unblock" class="toggle-input">'
+                block_input = '<input type="checkbox" id="'+ supplier_detail.supplier_id +'-unblock" class="toggle-control">'
             }
 
             supplier_detail_html += '<tr id="table-'+ supplier_detail.supplier_id +'">'+
@@ -528,6 +457,79 @@
     });
 
     <!-- ----------------------------------------------------   -->
+var table = $('#sup_tab').DataTable();
+ var rows_selected = [];
+//onclick of select all checkbox
+$('#sup_tab tbody').on('click', 'input[class="supplier_checkbox"]', function(e){
+      var $row = $(this).closest('tr');
+      // Get row data
+      var data = table.row($row).data();
+      // Get row ID
+      var rowId = data[0];
+      // Determine whether row ID is in the list of selected row IDs
+      var index = $.inArray(rowId, rows_selected);
+      // If checkbox is checked and row ID is not in list of selected row IDs
+      if(this.checked && index === -1){
+         rows_selected.push(rowId);
+      // Otherwise, if checkbox is not checked and row ID is in list of selected row IDs
+      } else if (!this.checked && index !== -1){
+         rows_selected.splice(index, 1);
+      }
+      if(this.checked){
+         $row.addClass('selected');
+      } else {
+         $row.removeClass('selected');
+      }
+      // Update state of "Select all" control
+//      updateDataTableSelectAllCtrl(table);
+      // Prevent click event from propagating to parent
+      e.stopPropagation();
+   });
+   // Handle click on table cells with checkboxes
+   $('#sup_tab').on('click', 'tbody td, thead th:first-child', function(e){
+      $(this).parent().find('input[class="supplier_checkbox"]').trigger('click');
+   });
+   // Handle click on "Select all" control
+   $('thead input[id="selectAll"]', table.table().container()).on('click', function(e){
+      if(this.checked){
+         $('#sup_tab tbody input[class="supplier_checkbox"]:not(:checked)').trigger('click');
+      } else {
+         $('#sup_tab tbody input[class="supplier_checkbox"]:checked').trigger('click');
+      }
+      // Prevent click event from propagating to parent
+      e.stopPropagation();
+   });
+   // Handle table draw event
+   table.on('draw', function(){
+      // Update state of "Select all" control
+      updateDataTableSelectAllCtrl(table);
+//      e.stopPropagation();
+   });
+    function updateDataTableSelectAllCtrl(table){
+       var $table             = table.table().node();
+       var $chkbox_all        = $('tbody input[class="supplier_checkbox"]', $table);
+       var $chkbox_checked    = $('tbody input[class="supplier_checkbox"]:checked', $table);
+       var chkbox_select_all  = $('thead input[id="selectAll"]', $table).get(0);
+
+       // If none of the checkboxes are checked
+       if($chkbox_checked.length === 0){
+          chkbox_select_all.checked = false;
+          if('indeterminate' in chkbox_select_all){
+             chkbox_select_all.indeterminate = false;
+          }
+       // If all of the checkboxes are checked
+       } else if ($chkbox_checked.length === $chkbox_all.length){
+          chkbox_select_all.checked = true;
+          if('indeterminate' in chkbox_select_all){
+             chkbox_select_all.indeterminate = false;
+          }
+       } else {
+          chkbox_select_all.checked = true;
+          if('indeterminate' in chkbox_select_all){
+             chkbox_select_all.indeterminate = true;
+          }
+   }
+}
 
 
 </script>
