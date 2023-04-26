@@ -1,0 +1,137 @@
+{% extends 'root/base.html' %}
+{% load static %}
+
+{% block title %} Purchase Orders (SOM) {% endblock %}
+{% block maincontent %}
+<div class="container-fluid">
+  <div class="mep-form_wrapper">
+
+    <div class="d-flex justify-content-between">
+      <h3>Purchase Orders</h3>
+      <div>
+        <button class="btn btn-outline-primary" id="basic_save_upld_redirect" onclick="onclick_upload_button()">
+          <i class="fas fa-cloud-upload-alt"></i>
+          upload SOM PO
+        </button>
+
+      </div>
+    </div>
+
+    <hr>
+
+    <div class="card card-shadow-1">
+      <div class="card-body">
+        <form method="POST">
+          {% csrf_token %}
+          <div class="row">
+            <div class="col-md">
+              <label for="">PO Number</label>
+              <input type="text" class="form-control check_for_search" id="po_number" name="name1" >
+            </div>
+            <div class="col-md">
+              <label for="">Company Name</label>
+              <input type="text" class="form-control check_for_search" id="company_name" name="name2">
+            </div>
+            <div class="col-md">
+              <label for="">Received Date</label>
+              <input type="date" class="form-control check_for_search" id="received_date" name='supplier_id'>
+            </div>
+
+            <div class="col-auto my-1">
+              <button class="button-search-users btn btn-primary" type="submit"
+                      title="Please click to get the search details!" onclick="reload()"><i class="fas fa-search"></i> search
+              </button>
+            </div>
+          </div>
+          <hr>
+          <div class="elements-space-between" data-toggle="collapse" data-target="#supplier_adv_search">
+            <span class="h5">Advanced Search</span>
+            <i class="fas fa-chevron-down"></i>
+          </div>
+          <div id="supplier_adv_search" class="advanced-search-collapse collapse">
+            <div class="row">
+              <div class="col-md">
+                <label for="">Buyer Name</label>
+                <input type="text" class="form-control check_for_search" id="buyer_name" name="search_term1">
+              </div>
+              <div class="col-md">
+                <label for="">Buyer Email ID</label>
+                <input type="text" class="form-control check_for_search" id="buyer_email_id" name="search_term2">
+              </div>
+              <div class="col-md">
+                <label for="">Buyer Phone Number</label>
+                <input type="text" class="form-control check_for_search" id="buyer_phone_num" name="search_term2">
+              </div>
+
+            </div>
+          </div>
+          <br>
+          <div class="elements-space-between">
+            <input type="reset" value="Clear filters" class="ip-form-clear-filters">
+            <div>
+              <span class="badge help-text-badge help-text-star-search"></span>
+            </div>
+          </div>
+        </form>
+      </div>
+    </div>
+    {% if som_po_data.count > 0 %}
+    <div class="search_result_count_card card">
+      <div class="card-body">
+        <h6 class="card-title">Total number of results found
+          :{{supplier_results.count}}</h6>
+      </div>
+    </div>
+    {% elif som_po_data.count == 0  %}
+    <div class="search_result_count_card card">
+      <div class="card-body">
+        <h6 class="card-title">No Results Found</h6>
+      </div>
+    </div>
+    {% endif %}
+    {% if som_po_data %}
+
+    <div class="card mt-5">
+      <div>
+        <div>
+          <table id="som_po_table" class="table table_sort_filter_export_excel">
+            <thead class="thead-light">
+            <tr>
+              <th> PO Number  </th>
+              <th> Company Name </th>
+              <th> Buyer Name </th>
+              <th> Buyer Email </th>
+              <th> Buyer Phone No.</th>
+              <th> Received Date</th>
+              <th>Action</th>
+            </tr>
+            </thead>
+            <tbody id="supplier_detail_tbody">
+            {% for results in som_po_data %}
+            <tr id="table-{{results.supplier_id}}">
+              <td><a href="{% url 'eProc_Admin_Tool:sup_details_page' results.supplier_id_encrypted %}" id="{{results.supplier_id}}" class="deletepop" target="_blank">{{results.supplier_id}}</a></td>
+              <td>{{results.name1}}</td>
+              <td>{{results.name2}}</td>
+              <td>{{results.city}}</td>
+              <td>{{results.email}}</td>
+              <td>
+              </td>
+              <td class="item-action-icon-section">
+                 <span title="Delete supplier" onclick="get_supplier_detail_to_delete(this.id)" id="{{results.supp_guid}}-{{results.supplier_id}}">
+                    <i class="material-icons item-action-icons">Download PO</i>
+                </span>
+              </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </div>
+    {% endif %}
+
+
+  </div>
+</div>
+
+{% endblock %}

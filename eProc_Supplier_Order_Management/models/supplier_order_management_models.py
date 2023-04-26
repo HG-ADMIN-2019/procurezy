@@ -185,7 +185,7 @@ class SOMPoAddresses(models.Model):
     address_type = models.CharField(db_column='ADDRESS_TYPE', max_length=1, null=True, blank=True)
     address_partner_type = models.ForeignKey('eProc_Configuration.AddressPartnerType', models.DO_NOTHING,
                                              db_column='ADDRESS_PARTNER_TYPE', null=True)
-    address_details = models.CharField(db_column='ADDRESS_DETAILS', max_length=40, null=True)
+    address_details = models.CharField(db_column='ADDRESS_DETAILS', max_length=400, null=True)
     mobile_number = models.CharField(db_column='MOBILE_NUMBER', max_length=20, verbose_name='Mobile', null=True,
                                      blank=True)
     telephone_number = models.CharField(db_column='TELEPHONE_NUMBER', max_length=20, verbose_name='Telephone',

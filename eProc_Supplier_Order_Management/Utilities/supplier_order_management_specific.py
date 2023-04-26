@@ -8,8 +8,9 @@ from eProc_Basic.Utilities.functions.django_query_set import DjangoQueries, bulk
 from eProc_Basic.Utilities.functions.guid_generator import guid_generator, random_int
 from eProc_Basic.Utilities.functions.string_related_functions import remove_space
 from eProc_Basic.Utilities.global_defination import global_variables
+from eProc_Configuration.models.development_data import AddressPartnerType
 from eProc_Supplier_Order_Management.models.supplier_order_management_models import SOMPoHeader, SOMPoItem, \
-    SOMEformFieldData, SOMPoAccounting
+    SOMEformFieldData, SOMPoAccounting, SOMPoAddresses
 
 django_query_instance = DjangoQueries()
 
@@ -160,6 +161,10 @@ class SaveSOMPO:
         self.som_po_header_instance = ''
         self.requester = ''
         self.som_po_item_instance = ''
+        self.supplier_mobile_num = ''
+        self.supplier_email = ''
+        self.requester_mobile_num = ''
+        self.requester_email = ''
 
     def save_som_po_header(self, header_detail):
         """
@@ -173,6 +178,10 @@ class SaveSOMPO:
         header_detail['time_zone'] = ''
         if not checkKey(header_detail, 'supplier_note_text'):
             header_detail['supplier_note_text'] = ''
+        self.supplier_mobile_num = header_detail['supplier_mobile_num']
+        self.supplier_email = header_detail['supplier_email']
+        self.requester_mobile_num = header_detail['requester_mobile_num']
+        self.requester_email = header_detail['requester_email']
         header_detail['som_po_header_created_at'] = datetime.datetime.now()
         header_detail['som_po_header_created_by'] = global_variables.GLOBAL_LOGIN_USERNAME
         header_detail['som_po_header_changed_at'] = datetime.datetime.now()
@@ -186,6 +195,7 @@ class SaveSOMPO:
 
         """
         som_po_item_list = []
+        eform_description = ''
         self.som_po_header_instance = django_query_instance.django_get_query(SOMPoHeader,
                                                                              {
                                                                                  'som_po_header_guid': self.som_po_header_guid})
@@ -196,10 +206,12 @@ class SaveSOMPO:
                            'som_po_item_num': po_item_detail[0], 'int_product_id': po_item_detail[1],
                            'description': po_item_detail[2], 'quantity': int(round(float(po_item_detail[3])))}
             unit = po_item_detail[4].split('(')[1]
+            price = po_item_detail[5].replace(',','')
+            value = po_item_detail[7].replace(',','')
             som_po_item['unit'] = unit.split(')')[0]
-            som_po_item['price'] = round(float(po_item_detail[5]), 2)
+            som_po_item['price'] = round(float(price), 2)
             som_po_item['item_del_date'] = datetime.datetime.strptime(po_item_detail[6], '%m-%d-%Y')
-            som_po_item['value'] = float(po_item_detail[7].split(' ')[0])
+            som_po_item['value'] = float(value.split(' ')[0])
             som_po_item['price_unit'] = '1'
             som_po_item['currency'] = po_item_detail[7].split(' ')[1]
             som_po_item['goods_recep'] = self.requester
@@ -217,9 +229,12 @@ class SaveSOMPO:
             if len(po_item_detail) > 7:
                 for po_additional_data in po_item_detail:
                     if po_additional_data.find("Additional comments on the line item") != -1:
-                        additional_data = po_additional_data.split('ShortDescription:')
-                        eform_data = additional_data[0]
-                        eform_description = additional_data[1]
+                        if po_additional_data.find("ShortDescription:") != -1:
+                            additional_data = po_additional_data.split('ShortDescription:')
+                            eform_data = additional_data[0]
+                            eform_description = additional_data[1]
+                        else:
+                            eform_data = po_additional_data
                         eform_list = eform_data.split('\r')
                         for count, eform in enumerate(eform_list):
                             if eform.find("Additional comments on the line item") != -1:
@@ -286,12 +301,62 @@ class SaveSOMPO:
         bulk_create_entry_db(SOMEformFieldData, eform_list)
         return eform_id
 
-    def save_som_po_address(self,address):
+    def save_som_po_address(self, address):
         """
 
         """
+        som_po_address_dic_list = []
+        address_partner_type = []
         for key, value in address.items():
+            som_po_address_dic = {}
             if key == 'supplier_address_detail':
-                som_po_address_dic = {'som_po_addresses_guid':guid_generator(),
-                                      'address_type':'S',
+                address_partner_type = django_query_instance.django_get_query(AddressPartnerType,
+                                                                           {'address_partner_type': '04'})
+                som_po_address_dic = {'som_po_addresses_guid': guid_generator(),
+                                      'address_type': 'S',
+                                      'address_details': value,
+                                      'address_partner_type': address_partner_type,
+                                      'som_po_header_guid': self.som_po_header_instance,
+                                      'mobile_number': self.supplier_mobile_num,
+                                      'telephone_number': self.supplier_mobile_num,
+                                      'email': self.supplier_email,
+                                      'som_po_addr_created_at': datetime.datetime.now(),
+                                      'som_po_addr_created_by': global_variables.GLOBAL_LOGIN_USERNAME,
+                                      'som_po_addr_changed_at': datetime.datetime.now(),
+                                      'som_po_addr_changed_by': global_variables.GLOBAL_LOGIN_USERNAME,
                                       }
+            if key == 'invoice_address':
+                address_partner_type = django_query_instance.django_get_query(AddressPartnerType,
+                                                                              {'address_partner_type': '01'})
+                som_po_address_dic = {'som_po_addresses_guid': guid_generator(),
+                                      'address_type': 'I',
+                                      'address_details': value,
+                                      'address_partner_type': address_partner_type,
+                                      'som_po_header_guid': self.som_po_header_instance,
+                                      'mobile_number': self.requester_mobile_num,
+                                      'telephone_number': self.requester_mobile_num,
+                                      'email': self.requester_email,
+                                      'som_po_addr_created_at': datetime.datetime.now(),
+                                      'som_po_addr_created_by': global_variables.GLOBAL_LOGIN_USERNAME,
+                                      'som_po_addr_changed_at': datetime.datetime.now(),
+                                      'som_po_addr_changed_by': global_variables.GLOBAL_LOGIN_USERNAME,
+                                      }
+            if key == 'delivery_address':
+                address_partner_type = django_query_instance.django_get_query(AddressPartnerType,
+                                                                              {'address_partner_type': '01'})
+                som_po_address_dic = {'som_po_addresses_guid': guid_generator(),
+                                      'address_type': 'D',
+                                      'address_details': value,
+                                      'address_partner_type': address_partner_type,
+                                      'som_po_header_guid': self.som_po_header_instance,
+                                      'mobile_number': self.requester_mobile_num,
+                                      'telephone_number': self.requester_mobile_num,
+                                      'email': self.requester_email,
+                                      'som_po_addr_created_at': datetime.datetime.now(),
+                                      'som_po_addr_created_by': global_variables.GLOBAL_LOGIN_USERNAME,
+                                      'som_po_addr_changed_at': datetime.datetime.now(),
+                                      'som_po_addr_changed_by': global_variables.GLOBAL_LOGIN_USERNAME,
+                                      }
+            som_po_address_dic_list.append(som_po_address_dic)
+        bulk_create_entry_db(SOMPoAddresses, som_po_address_dic_list)
+
