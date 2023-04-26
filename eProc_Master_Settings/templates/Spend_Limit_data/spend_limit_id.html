@@ -8,16 +8,16 @@
         <div class="elements-space-between">
             <h3>Maintain Spending Limits</h3>
             <div>
-                <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Master_Settings:extract_spendlimit_template' %}'"type="button">
+                <button class="btn btn-outline-primary"  title="Template" onclick="location.href='{% url 'eProc_Master_Settings:extract_spendlimit_template' %}'"type="button">
                     <i class="fas fa-download"></i> template
                 </button>
                 <button class="btn btn-outline-primary" title="Extract" onclick="location.href='{% url 'eProc_Master_Settings:extract_spendlimit_data'%} '"type="button">
                     <i class="fas fa-download"></i> extract data
                 </button>
-                <button class="btn btn-outline-primary model_upload" id="id_upload_redirect_data" value="spendlimitid_upload" onclick="onclick_upload_button()" type="button">
+                <button class="btn btn-outline-primary model_upload" title="Upload" id="id_upload_redirect_data" value="spendlimitid_upload" onclick="onclick_upload_button()" type="button">
                     <i class="fas fa-cloud-upload-alt"></i> upload data
                 </button>
-                <button class="btn btn-primary" id="id_add_data"  value="ADD" onclick="onclick_add_button(this);">
+                <button class="btn btn-primary" title="Add spending limit" id="id_add_data"  value="ADD" onclick="onclick_add_button(this);">
                     <i class="fa fa-plus"></i> add spending limit
                 </button>
                 <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"  onclick="window_close();">
@@ -79,7 +79,6 @@
         </div>
     </div>
 </div>
-
 <!--save confirmation popup-->
 <div class="modal fade" id="id_check_popup">
     <div class="modal-dialog modal-dialog-centered ">
@@ -114,10 +113,10 @@
             <div class="modal-body">
                 <div class="popup-vertical-scroll">
                     <div id="id_del_add_button" class="mb-2">
-                        <button class="btn btn-primary" type="button" onclick="add_popup_row()">
+                        <button class="btn btn-primary" title="Add New Row" type="button" onclick="add_popup_row()">
                             <i class="fa fa-plus"></i> add new row
                         </button>
-                        <button class="btn btn-outline-danger" onclick="application_settings_delete_Row('id_popup_table')">
+                        <button class="btn btn-outline-danger" title="Delete" onclick="application_settings_delete_Row('id_popup_table')">
                             <i class="fa fa-trash"></i> delete
                         </button>
                     </div>
@@ -150,10 +149,10 @@
             </div>
             <!-- Modal footer -->
             <div class="modal-footer">
-                <button type="button" class="btn btn-outline-primary remove_upload_data" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
-                <button id="id_delete_duplicate" class="btn btn-primary" style="display:none;" type="button" onclick="delete_duplicate()"><i class="fas fa-check"></i> Delete Duplicates</button>
-                <button id="id_check_data" style="display:none;" class="btn btn-primary " type="button" onclick="check_data()"><i class="fas fa-check"></i> Check</button>
-                <button class="btn btn-primary" id="save_id" ><i class="fas fa-save"></i> save</button>
+                <button type="button" class="btn btn-outline-primary remove_upload_data" title="Cancel" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
+                <button id="id_delete_duplicate" class="btn btn-primary" title="Delete" style="display:none;" type="button" onclick="delete_duplicate()"><i class="fas fa-check"></i> Delete Duplicates</button>
+                <button id="id_check_data" style="display:none;" class="btn btn-primary" title="Check" type="button" onclick="check_data()"><i class="fas fa-check"></i> Check</button>
+                <button class="btn btn-primary" title="Save" id="save_id" ><i class="fas fa-save"></i> save</button>
             </div>
         </div>
     </div>
@@ -207,6 +206,8 @@
     var spend_limit_array = [];
     var spendcodeid_dropdwn = ""
     var company_dropdwn = ""
+    var unique_comp = [];
+    var unique_spend = [];
 
     // *******************************
     function spend_limlt_id_drp(){
@@ -225,11 +226,7 @@
             spend_limit.push(spend_limit_dict);
             spend_limit_array.push(item.spend_code_id);
         });
-
-        company_dropdwn = "";
-        var unique_comp = [];
-        var unique_spend = [];
-
+        
         // Filter rendered_approval_limit_data based on spend_code_id and company_id in rendered_spndlimval_data
         var filtered_spend_limit_data = rendered_spndlimval_data.filter(function(item) {
             return spend_limit_array.includes(item.spend_code_id) &&
@@ -259,36 +256,36 @@
         $(arrDistinct).each(function(index, item) {
             company_dropdwn += '<option value="' + item + '">' + item + '</option>'
 
-            });
-        }
+        });
+    }
 
     //**********************************
     function spending_limit_find(company_num) {
-    corresponding_values = {};
-    corresponding_values.spend_code_id_dropdown = '';
-    corresponding_values.other_dropdn = '';
-    company_list = company_list;
-    unique_spend_code = [];
-    for (var i = 0; i < company_list.length; i++) {
-        compare_dict = {};
-        compare_dict = company_list[i]
-        if (company_num == compare_dict.company_id) {
-            unique_spend_code.push(compare_dict.spend_code_id);
+        corresponding_values = {};
+        corresponding_values.spend_code_id_dropdown = '';
+        corresponding_values.other_dropdn = '';
+        company_list = company_list;
+        unique_spend_code = [];
+        for (var i = 0; i < company_list.length; i++) {
+            compare_dict = {};
+            compare_dict = company_list[i]
+            if (company_num == compare_dict.company_id) {
+                unique_spend_code.push(compare_dict.spend_code_id);
+            }
         }
+        for (var i = 0; i < arrDistinct.length; i++) {
+            corresponding_values.other_dropdn += '<option value="'+arrDistinct[i]+'">' + arrDistinct[i] + '</option>'
+        }
+        spendcodeDistinct = [];
+        $(unique_spend_code).each(function (index, item) {
+        if ($.inArray(item, spendcodeDistinct) == -1)
+            spendcodeDistinct.push(item);
+        });
+        for (var i = 0; i < spendcodeDistinct.length; i++) {
+            corresponding_values.spend_code_id_dropdown += '<option value="'+spendcodeDistinct[i]+'">' + spendcodeDistinct[i] + '</option>'
+        }
+        return corresponding_values
     }
-     for (var i = 0; i < arrDistinct.length; i++) {
-        corresponding_values.other_dropdn += '<option value="'+arrDistinct[i]+'">' + arrDistinct[i] + '</option>'
-     }
-     spendcodeDistinct = [];
-     $(unique_spend_code).each(function (index, item) {
-     if ($.inArray(item, spendcodeDistinct) == -1)
-        spendcodeDistinct.push(item);
-     });
-     for (var i = 0; i < spendcodeDistinct.length; i++) {
-        corresponding_values.spend_code_id_dropdown += '<option value="'+spendcodeDistinct[i]+'">' + spendcodeDistinct[i] + '</option>'
-     }
-    return corresponding_values
-}
 
     //**********************************
     function company_dropdwn_change(row){

@@ -10,9 +10,8 @@
         <div class="elements-space-between">
             <h3>Maintain Addresses</h3>
             <div>
-                <button class="btn btn-outline-primary" title="Extract"
-                    onclick="location.href='{% url 'eProc_Master_Settings:extract_address_data_Template' %}'"
-                    type="button">
+                <button class="btn btn-outline-primary" title="Template"
+                    onclick="location.href='{% url 'eProc_Master_Settings:extract_address_data_Template' %}'" type="button">
                     <i class="fas fa-download"></i> template
                 </button>
                 <button class="btn btn-outline-primary" title="Extract"
@@ -23,12 +22,10 @@
                     value="address_upload" onclick="onclick_upload_button()" type="button">
                     <i class="fas fa-cloud-upload-alt"></i> upload data
                 </button>
-                <button class="btn btn-primary" id="id_add_data" type="button" value="ADD" title="Add Address"
-                    onclick="add_new_address(this);">
-                    <i class="fa fa-plus"></i> add address
+                <button class="btn btn-primary" id="id_add_data" type="button" value="ADD" title="Add Address" onclick="add_new_address(this);">
+                    <i class="fa fa-plus"></i> Add Address
                 </button>
-                <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"
-                    onclick="window_close();">
+                <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close" onclick="window_close();">
                     <i class="fas fa-times"></i> close
                 </button>
             </div>
@@ -74,11 +71,11 @@
                             {% endif %}
                             {% endfor %}
                             <td class="item-action-icon-section">
-                                <span title="edit address" id="edit-{{data.address_number}}"
+                                <span title="Edit Address" id="edit-{{data.address_number}}"
                                     onclick="onclick_editaddress_button(this.id)">
                                     <i class="fas fa-edit item-action-icons"> edit</i>
                                 </span>
-                                <span title="Delete address" id="delete-{{data.address_number}}"
+                                <span title="Delete Address" id="delete-{{data.address_number}}"
                                     onclick="get_address_detail_to_delete(this.id)">
                                     <i class="material-icons item-action-icons">delete</i>
                                 </span>
@@ -454,16 +451,15 @@
                 </div>
                 <!-- Modal footer -->
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-primary remove_upload_data" data-dismiss="modal"><i
-                            class="fas fa-times"></i> cancel</button>
-                    <button class="btn btn-primary" id="save_id"><i class="fas fa-save"></i> save</button>
-                    <button class="btn btn-primary" id="save_upload_update" onclick="onclick_upload_save_button(this)"> save</button>
+                    <button type="button" class="btn btn-outline-primary remove_upload_data" title="Cancel" data-dismiss="modal"><i
+                        class="fas fa-times"></i> cancel</button>
+                    <button class="btn btn-primary" title="Save" id="save_id"><i class="fas fa-save"></i> save</button>
+                    <button class="btn btn-primary" title="Save" id="save_upload_update" onclick="onclick_upload_save_button(this)"> save</button>
                 </div>
             </div>
         </div>
     </div>
     <!--  Delivery address add process data details - End -->
-
     <!--modal popup for upload-->
     <div class="modal fade" id="myModalupload" style="overflow:auto;">
         <div class="modal-dialog modal-dialog-centered modal-xl">
@@ -521,14 +517,12 @@
                         </table>
                     </div>
                 </div>
-
                 <!-- Modal footer -->
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-primary remove_upload_data" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
-                    <button id="id_delete_duplicate" class="btn btn-primary" style="display:none;" type="button" onclick="delete_duplicate()"><i class="fa fa-trash"></i> delete duplicates</button>
-                    <button id="id_check_data" style="display:none;" class="btn btn-primary" type="button" onclick="check_data()"><i class="fas fa-check"></i> check</button>
-                    <button class="btn btn-primary" id="save_upload_id"><i class="fas fa-save"></i> save</button>
-
+                    <button type="button" class="btn btn-outline-primary remove_upload_data" title="Cancel" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
+                    <button id="id_delete_duplicate" class="btn btn-primary" title="Delete" style="display:none;" type="button" onclick="delete_duplicate()"><i class="fa fa-trash"></i> delete duplicates</button>
+                    <button id="id_check_data" style="display:none;" class="btn btn-primary" title="Check" type="button" onclick="check_data()"><i class="fas fa-check"></i> check</button>
+                    <button class="btn btn-primary" title="Save" id="save_upload_id"><i class="fas fa-save"></i> save</button>
                 </div>
             </div>
         </div>
@@ -1383,8 +1377,6 @@
 
         });
     }
-    
-
 </script>
 <script src="{% static 'scripts/address_data/master_address.js' %}"></script>
 {% endblock %}

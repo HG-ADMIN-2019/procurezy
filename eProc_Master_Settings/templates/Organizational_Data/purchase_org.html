@@ -10,13 +10,13 @@
         <div class="elements-space-between">
             <h3>Maintain Purchasing Organizations</h3>
             <div>
-                <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Master_Settings:extract_porg_template' %}'"type="button">
+                <button class="btn btn-outline-primary"  title="Template" onclick="location.href='{% url 'eProc_Master_Settings:extract_porg_template' %}'"type="button">
                     <i class="fas fa-download"></i> template
                 </button>
                 <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Master_Settings:extract_porg_data' %}'"type="button">
                     <i class="fas fa-download"></i> extract data
                 </button>
-                <button class="btn btn-outline-primary modal_upload" id="id_upload_redirect_data"  title="Upload Data" value="purchase_org_upload"  onclick="onclick_upload_button();" type="button">
+                <button class="btn btn-outline-primary modal_upload" id="id_upload_redirect_data"  title="Upload" value="purchase_org_upload"  onclick="onclick_upload_button();" type="button">
                     <i class="fas fa-cloud-upload-alt"></i> upload data
                 </button>
                 <button class="btn btn-primary " id="id_add_data" value="ADD" title="Add Purchasing organisation" data-toggle="modal"  onclick="onclick_add_button(this);">
@@ -27,13 +27,10 @@
                 </button>
             </div>
         </div>
-
         <hr>
-
         <div class="configuration-table_section">
             <div id="err_msg_app_settings"> </div>
             <div id="err_msg_app_settings_t" class="alert alert-success" hidden> <span id="success_msg_id"></span></div>
-
             <!--   display basic country table-->
             <div class="table-container">
                 <div class="edit-button-section mb-4">
@@ -52,9 +49,7 @@
                     <button class="btn btn-secondary btn-sm" title="Cancel"  id="id_cancel_data" style="display:none;" type="button" onclick="display_basic_db_data()">
                         <i class="fas fa-times"></i> cancel
                     </button>
-
                 </div>
-                
                 <table id="display_basic_table" class="class_basic_purchase_org_table table table-bordered custom-table">
                     <thead id="id_purchase_org_table_header">
                         <tr>
@@ -86,10 +81,8 @@
             </div>
         </div>
     </div>
-
     <!--modal popup for Add,copy,update and upload-->
     <!-- The Modal -->
-
     <div class="modal fade" id="Porg_Modal" style="overflow:auto;">
         <div class="modal-dialog modal-dialog-centered modal-xl">
             <div class="modal-content">
@@ -103,15 +96,13 @@
                 <div class="modal-body">
                     <div class="popup-vertical-scroll">
                         <div id="id_del_add_button" class="mb-4">
-                            <button class="btn btn-primary" type="button" onclick="add_popup_row()">
+                            <button class="btn btn-primary" title="Add New Row" type="button" onclick="add_popup_row()">
                                 <i class="fa fa-plus"></i> add new row
                             </button>
-                            <button class="btn btn-outline-danger" onclick="application_settings_delete_Row('id_popup_table')">
+                            <button class="btn btn-outline-danger" title="Delete" onclick="application_settings_delete_Row('id_popup_table')">
                                 <i class="fa fa-trash"></i> delete
                             </button>
-                        </div>
-
-    
+                        </div>    
                         <div id="id_check_success_messages" class="alert alert-success check_success_message" hidden></div>
                         <div id="id_check_error_messages" class="alert alert-danger check_error_messages" hidden></div>
                         <div id="id_check_special_character_messages" class="alert alert-danger check_special_character_messages" hidden>
@@ -119,12 +110,9 @@
                             <p id="id_error_msg_description" ></p>
                             <p id="id_error_msg_porgid_length" ></p>
                         </div>
-
                         <div id="error_msg_id" class="alert alert-danger display-none" role="alert"><span id="error_message"></span></div>
                         <div id="id_warning_msg_id" class="alert alert-warning display-none" role="alert"></div>
                         <div id="id_info_msg_id" class="alert alert-primary display-none" role="alert"></div>
-
-
                         <table class="class_popup_table table table-bordered mt-2" id="id_popup_table" >
                             <thead>
                                 <tr>
@@ -141,24 +129,19 @@
                         </table>
                     </div>
                 </div>
-
                 <!-- Modal footer -->
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-primary remove_upload_data" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
-                    <button id="id_delete_duplicate" class="btn btn-primary" style="display:none;" type="button" onclick="delete_duplicate()"><i class="fa fa-trash"></i> delete duplicates</button>
-                    <button id="id_check_data" style="display:none;" class="btn btn-primary" type="button" onclick="check_data()"><i class="fas fa-check"></i> check</button>
-                    <button class="btn btn-primary" id="save_id"><i class="fas fa-save"></i> save</button>
-                   
+                    <button type="button" class="btn btn-outline-primary remove_upload_data" title="Cancel" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
+                    <button id="id_delete_duplicate" class="btn btn-primary" title="Delete" style="display:none;" type="button" onclick="delete_duplicate()"><i class="fa fa-trash"></i> delete duplicates</button>
+                    <button id="id_check_data" style="display:none;" class="btn btn-primary" title="Check" type="button" onclick="check_data()"><i class="fas fa-check"></i> check</button>
+                    <button class="btn btn-primary" title="Save" id="save_id"><i class="fas fa-save"></i> save</button>
                 </div>
             </div>
         </div>
     </div>
-
     <!--end of modal popup for Add,copy,update and upload-->
-
     <!-- modal popup to upload the csv file; save confirmation popup; delete confirmation popup -->
     {% include 'configuration_common_pop_up.html' %}
-
     <div>
         {% if messages %}
         {% for message in messages %}
@@ -175,11 +158,8 @@
         {% endif %}
     </div>
 </div>
-
     {{ purchasing_org|json_script:"purchasing_org" }}
-
 <script>
-
     var basic_settings = '{{basic_settings|safe}}';
     var rendered_orgporg_data = JSON.parse(document.getElementById('purchasing_org').textContent);
     var messages_list = {{messages_list|safe}};
@@ -194,15 +174,8 @@
         no_duplicate_entries = 'Y'
         no_duplicate_value = 'Y'
         var error_message = '';
-        var main_table_low_value = [];;
-        $('#display_basic_table').DataTable().destroy();
-        $("#display_basic_table TBODY TR").each(function() {
-        var row = $(this);
-        var main_attribute = {};
-        main_attribute.porg_id = row.find("TD").eq(1).html();
-        main_table_low_value.push(main_attribute.porg_id);
-    });
-    table_sort_filter('display_basic_table');
+        get_main_table_data(); //Read data from main table
+        // compare for duplicates in popup
         [no_duplicate_value,error_message] = compare_table_for_duplicate_entries(validate_add_attributes, porg_data)
         if (error_message){
             display_error_message(error_message)
@@ -239,7 +212,8 @@
             else if (error_message) {
                 display_error_message(error_message)
             } 
-        }          
+        }      
+        table_sort_filter('id_popup_table');    
     }
     
     //onclick of data Upload copy data to modal pop-up
@@ -356,7 +330,7 @@
     function compare_table_for_duplicate_entries(validate_add_attributes, porg) {
         add_attr_duplicates = false;
         var error_message = ''
-        var add_attr_duplicates_list = [];
+        var common = [];
         var add_attr_unique_list = [];
         var no_duplicate_value = 'Y'
         $.each(validate_add_attributes, function (index, value) {
@@ -364,28 +338,26 @@
                 add_attr_unique_list.push(value);
             }
             else {
-                if ($.inArray(value, add_attr_duplicates_list) == -1) {
-                    add_attr_duplicates_list.push(value);
+                if ($.inArray(value, common) == -1) {
+                    common.push(value);
                 }
             }
         });
-        if (add_attr_duplicates_list.length != 0) {
+        if (common.length != 0) { 
+            $('#Porg_Modal').modal('show');
+            display_duplicate_entry(common);  //Function to highlight the rows in popup
             error_message = ui_messeges("JMSG001") // Get message details
             no_duplicate_value = 'N'
             return [no_duplicate_value,error_message]
         }
         else {
             $.each(porg, function (i, item) {
-                if (item.porg_id.length == 0) {
+                if ((item.porg_id.length == 0)|| (item.description.length == 0)) {
+                    $('#Porg_Modal').modal('show');
                     error_message = ui_messeges("JMSG002") // Get message details
                     no_duplicate_value = 'N'
                     return [no_duplicate_value,error_message]
-                }
-                if (item.description.length == 0) { 
-                    error_message = ui_messeges("JMSG002") // Get message details
-                    no_duplicate_value = 'N'
-                    return [no_duplicate_value,error_message]
-                }          
+                }         
             });
         }
         return [no_duplicate_value,error_message]
