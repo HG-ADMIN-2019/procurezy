@@ -12,7 +12,7 @@ from eProc_Shopping_Cart.context_processors import update_user_info
 from eProc_Shopping_Cart.models import ScItem, CartItemDetails
 from eProc_Suppliers.Utilities.supplier_generic import supplier_detail_search
 from eProc_Suppliers.Utilities.supplier_specific import update_block_status, get_supplier_data
-from eProc_Suppliers.models import OrgSuppliers
+from eProc_Suppliers.models import OrgSuppliers, OrgSuppliersHistory
 
 JsonParser_obj = JsonParser()
 django_query_instance = DjangoQueries()
@@ -89,4 +89,4 @@ def create_Orgsupplier_history_data(supplier_id):
                                                               {'supplier_id': supplier_id,
                                                                'del_ind': False}, None, None)
     for supplier in supplier_info:
-        django_query_instance.django_create_query(OrgSuppliers, supplier)
+        django_query_instance.django_create_query(OrgSuppliersHistory, supplier)
