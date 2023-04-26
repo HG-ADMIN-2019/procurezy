@@ -319,6 +319,7 @@
 
     //check function restricting special char and diaplay the data count of csv file
     function check_data() {
+        $("#id_delete_duplicate").hide()
         $('#id_popup_table').DataTable().destroy();
         $("#id_check_success_messages").empty();
         $("#id_check_error_messages").empty();
@@ -335,6 +336,7 @@
         var country_code_check = new Array
         del_ind = ''
         $("#id_popup_table TBODY TR").each(function() {
+            $('#id_popup_table').DataTable().destroy();
             var row = $(this);
             country_dic = {}
             //*************** reading data from the pop-up ***************
@@ -348,6 +350,7 @@
                 country_dic.del_ind = '0'
             }
             country_list.push(country_dic)
+            get_main_table_data(); //Read data from main table
             var format = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
             //*************** checking for empty records for country code ***************
             if(country_dic.country_code.length == 0){
@@ -416,6 +419,17 @@
                  $("#id_check_data").prop("hidden", false);
                  count = count +1;
             }
+            else if(main_table_low_value.includes(country_dic.country_code)){
+                 $(row).css("border", "#f8d7da");
+                 row_color_highlight(row);
+                 $("#id_check_error_messages").prop("hidden",false);
+                 var display7 = get_msg_desc_check_data("JMSG001");
+                 document.getElementById("id_check_error_messages").innerHTML = display7;
+                 $("#save_id").prop("hidden", true);
+                 $("#id_delete_duplicate").show()
+                 $("#id_check_data").prop("hidden", false);
+                 count = count +1;
+            }
             else{
                 $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "none");
                 row_color_no_highlight(row);
@@ -423,14 +437,20 @@
                 $("#id_delete_duplicate").hide()
             }
             country_code_check.push(country_dic.country_code)
+            main_table_low_value.push(country_dic.country_code)
+            table_sort_filter_popup_pagination('id_popup_table');
         });
          $("#id_check_special_character_messages").prop("hidden",false);
     //*************** shows save button if there are no errors(special characters and max length) ***************
         if(count == 0){
+            $('#id_popup_table').DataTable().destroy();
             $("#id_popup_table").find("input,button,textarea,select").attr("disabled", "disabled");
             document.getElementById("id_del_add_button").style.display = "none";
             $("#save_id").prop("hidden", false);
             $("#id_check_data").prop("hidden", true);
+            if (country_list == 0) {
+                $("#save_id").prop("hidden", true);
+            }
             popup_data_dict ={'data_list' : country_list}
             OpenLoaderPopup();
             $.ajax({
