@@ -165,6 +165,7 @@ function display_basic_db_data() {
 function delete_duplicate() {
     $('#id_popup_table').DataTable().destroy();
     var time_zone_check = new Array
+    var main_table_low_value = new Array
     $("#id_popup_table TBODY TR").each(function() {
         var row = $(this);
         //*************** reading data from the pop-up ***************
@@ -178,6 +179,11 @@ function delete_duplicate() {
             $(row).remove();
         }
         time_zone_check.push(time_zone);
+        main_table_low_value = get_main_table_data_upload(); //Read data from main table
+        if (main_table_low_value.includes(time_zone)) {
+            $(row).remove();
+        }
+        main_table_low_value.push(time_zone);
     });
     table_sort_filter_popup_pagination('id_popup_table')
     check_data();
@@ -225,6 +231,21 @@ function get_main_table_data(){
     });
     table_sort_filter('display_basic_table');
 }
+
+// Function to get main table data
+function get_main_table_data_upload() {
+    main_table_low_value = [];
+    $('#display_basic_table').DataTable().destroy();
+    $("#display_basic_table TBODY TR").each(function() {
+        var row = $(this);
+        var main_attribute = {};
+        main_attribute.time_zone = row.find("TD").eq(1).html();
+        main_table_low_value.push(main_attribute.time_zone);
+    });
+    table_sort_filter('display_basic_table');
+    return main_table_low_value
+}
+
 function get_selected_data(){
     $('#display_basic_table').DataTable().destroy();
     $("#display_basic_table TBODY TR").each(function() {

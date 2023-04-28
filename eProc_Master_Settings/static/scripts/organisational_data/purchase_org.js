@@ -183,6 +183,7 @@ function display_error_message(error_message){
 function delete_duplicate() {
     $('#id_popup_table').DataTable().destroy();
     var porg_code_check = new Array
+    var main_table_low_value = new Array
     $("#id_popup_table TBODY TR").each(function () {
         var row = $(this);
         //*************** reading data from the pop-up ***************
@@ -195,6 +196,11 @@ function delete_duplicate() {
             $(row).remove();
         }
         porg_code_check.push(porg_id);
+         main_table_low_value = get_main_table_data_upload(); //Read data from main table
+        if (main_table_low_value.includes(porg_id)) {
+            $(row).remove();
+        }
+        main_table_low_value.push(porg_id);
     });
     table_sort_filter_popup_pagination('id_popup_table')
     check_data()
@@ -266,6 +272,21 @@ function get_main_table_data(){
         main_table_low_value.push(main_attribute.porg_id);
     });
     table_sort_filter('display_basic_table');
+}
+
+
+// Function to get main table data
+function get_main_table_data_upload() {
+    main_table_low_value = [];
+    $('#display_basic_table').DataTable().destroy();
+    $("#display_basic_table TBODY TR").each(function() {
+        var row = $(this);
+        var main_attribute = {};
+        main_attribute.porg_id = row.find("TD").eq(1).html();
+        main_table_low_value.push(main_attribute.porg_id);
+    });
+    table_sort_filter('display_basic_table');
+    return main_table_low_value
 }
 
 // Function to get the selected row data
