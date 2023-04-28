@@ -408,7 +408,7 @@
                 $("#id_error_msg_purgrp_length").prop("hidden",false);
                 error_message = ui_messeges("JMSG002")// Get message details
                 var display8 = error_message;
-                document.getElementById("id_error_msg_purgrp_length").innerHTML = display8+ "purchasegrp Code";
+                document.getElementById("#id_error_msg_purgrp_id").innerHTML = display8+ "purchasegrp Code";
                 count = count +1;
             }
             //*************** checking for minimum length for purchasegrp code (max length = 2) ***************
@@ -428,7 +428,7 @@
                 $("#id_error_msg_purgrp_id").prop("hidden",false);
                 error_message = ui_messeges("JMSG003")// Get message details
                 var display4 = error_message;
-                document.getElementById("id_error_msg_purgrp_id").innerHTML = display4+ "purchasegrp Code";
+                document.getElementById("#id_error_msg_purgrp_id").innerHTML = display4+ "purchasegrp Code";
                 count = count +1;
             }
             else{
@@ -513,7 +513,7 @@
                         $("#id_check_special_character_messages").prop("hidden", true);
                     }
                     var message = ''
-                    update_check_message(response.messages[1])
+                    update_check_message(response.messages)
                     CloseLoaderPopup();
                 }
             });
