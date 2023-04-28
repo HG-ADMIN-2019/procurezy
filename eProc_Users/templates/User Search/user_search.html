@@ -89,7 +89,7 @@
                                 <div class="form-check">
                                     <input class="form-check-input checkbox-size" type="checkbox" name="is_active" id="is_active_id">
                                     <label class="form-check-label" for="">
-                                        In Active
+                                        Inactive
                                     </label>
                                 </div>
                             </div>
@@ -105,14 +105,7 @@
                 </form>
             </div>
         </div>
-        {% if employee_results.count > 0 %}
-        <div class="search_result_count_card card">
-            <div class="card-body">
-                <h6 class="card-title">Total number of results found
-                    :{{employee_results.count}}</h6>
-            </div>
-        </div>
-        {% elif employee_results.count == 0  %}
+        {% if count == 0  %}
         <div class="search_result_count_card card">
             <div class="card-body">
                 <h6 class="card-title">No Results Found</h6>
@@ -214,7 +207,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                You are about to delete  "<span id="form_id_del"></span>". Are you sure?
+                You Are About To Delete  "<span id="form_id_del"></span>". Are You Sure?
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
@@ -235,7 +228,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <p>Are you sure you want to delete?.</p>
+                <p>Are You Sure You Want To Delete?.</p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-outline-primary" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
@@ -393,7 +386,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <p>Are you sure you want to Change?.</p>
+                    <p>Are You Sure You Want To Change?.</p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-primary" data-dismiss="modal" onclick="toggle()"><i class="fas fa-times"></i> cancel</button>
@@ -455,6 +448,7 @@ function get_user_detail_to_delete(element) {
         data_delete = element;
         document.getElementById("form_id_del").innerHTML = data_delete;
         $('#confirm_delete_pop_up').modal('show')
+        $(".emp_checkbox").prop("checked", false);
     }
 function valueChanged() {
     if ($('.emp_checkbox').is(":checked")) {
@@ -489,34 +483,29 @@ function display_emp_data(emp_data){
     $('#user_tab').DataTable().destroy();
     $("#user_tab_tbody").empty();
     $.each(emp_data, function (i, emp) {
-        if(emp.employee_id){
-            checkbox_input = '<input type="checkbox" class="emp_checkbox" onclick="valueChanged()">'
-        }
-        else{
-            checkbox_input = '<input type="checkbox" class="emp_checkbox" onclick="valueChanged()" >'
-        }
+        checkbox_input = '<input type="checkbox" class="emp_checkbox" onclick="valueChanged();" >'
         var lock_id, pwd_lock;
         if(emp.user_locked){
-            lock_id = '<input type="checkbox" id="'+emp.employee_id.concat("-LOCKED")+'" class="toggle-input" checked>';
+            lock_id = '<input type="checkbox" id="'+emp.employee_id.concat("-LOCKED")+'" class="toggle-input" checked><span class="control"></span>';
             }
         else {
-            lock_id = '<input type="checkbox" id="'+emp.employee_id.concat("-UNLOCKED")+'" class="toggle-input">';
+            lock_id = '<input type="checkbox" id="'+emp.employee_id.concat("-UNLOCKED")+'" class="toggle-input"> <span class="control"></span>';
         }
         if(emp.pwd_locked){
-            pwd_lock = '<input type="checkbox" id="'+emp.employee_id.concat("-PWDLOCKED")+'" class="toggle-input" checked>';
+            pwd_lock = '<input type="checkbox" id="'+emp.employee_id.concat("-PWDLOCKED")+'" class="toggle-input" checked><span class="control"></span>';
         }
         else {
-            pwd_lock = '<input type="checkbox" id="'+emp.employee_id.concat("-PWDUNLOCKED")+'" class="toggle-input">';
+            pwd_lock = '<input type="checkbox" id="'+emp.employee_id.concat("-PWDUNLOCKED")+'" class="toggle-input"><span class="control"></span>';
             }
-        emp_detail_html += '<tr id="'+emp.employee_id+'"><td>'+checkbox_input+'</td> '+
+        emp_detail_html += '<tr id="tr_'+emp.email+'"><td class="class_select_checkbox">'+checkbox_input+'</td> '+
         '<td><a href="#" id="'+ emp.employee_id +'" class="deletepop" target="_blank">'+ emp.employee_id +'</a></td>'+
          '<td>'+ emp.username +'</td>'+
          '<td>'+ emp.first_name +'</td>'+
          '<td>'+ emp.last_name +'</td>'+
          '<td>'+ emp.email +'</td>'+
          '<td>' + emp.is_active + '</td>'+
-         '<td><label class="switch"><label class="toggle">' + lock_id + '<div class="toggle-controller default-success"></div></label></label></td>'+
-         '<td><label class="switch"><label class="toggle">' + pwd_lock + '<div class="toggle-controller default-success"></div></label></label></td>'+
+         '<td><label class="switch"><label class="toggle-control">' + lock_id + '</label></label></td>'+
+         '<td><label class="switch"><label class="toggle-control">' + pwd_lock + '</label></label></td>'+
          '<td class="item-action-icon-section"><span title="Delete employee" onclick="get_user_detail_to_delete(this.id)" id="'+ emp.email +'">'+
           '<i class="material-icons item-action-icons">delete_outline</i></span></td>'+
          '</tr>';
@@ -548,8 +537,7 @@ function main_table_delete(){
         success: function (Response) {
             display_emp_data(Response.employee_results);
             $('#success_msg_id').text(Response.success_message)
-            $("#error_msg_div").prop("hidden",false);
-            $("#id_delete_emp").prop("hidden",true);
+            $("#error_msg_div").prop("hidden",false)
             message_display_time();
             CloseLoaderPopup();
         }
@@ -925,8 +913,8 @@ var block_id = '';
         var id = this.id;
         data.employee_id = id;
         var id = this.id
-<!--        block_id = id-->
-<!--        data.employee_id = id.split('-')[0]-->
+        block_id = id
+        data.employee_id = id.split('-')[0]
   });
   var previous_state;
 function lock_active_change(){
@@ -937,7 +925,7 @@ function lock_active_change(){
        data: JSON.stringify(data),
        success: function(result){
              $('#id_confirm_popup').modal('hide');
-              $('#success_msg_id').text("Changed Successfully");
+             $('#success_msg_id').text("Changed Successfully");
             previous_state = data.flag;
             $("#error_msg_div").prop("hidden",false)
             message_display_time();
@@ -963,9 +951,8 @@ function lock_active_change(){
 <!-- ----------------------------------------------------   -->
 var table = $('#user_tab').DataTable();
  var rows_selected = [];
-//onclick of select all checkbox
+ //onclick of select all checkbox
 $('#user_tab tbody').on('click', 'input[class="emp_checkbox"]', function(e){
-     var table = $('#user_tab').DataTable();
       var $row = $(this).closest('tr');
       // Get row data
       var data = table.row($row).data();
@@ -990,16 +977,15 @@ $('#user_tab tbody').on('click', 'input[class="emp_checkbox"]', function(e){
       // Prevent click event from propagating to parent
       e.stopPropagation();
    });
-   // Handle click on table cells with checkboxes
-   $('#user_tab').on('click', 'tbody td, thead th:first-child', function(e){
-      $(this).parent().find('input[class="emp_checkbox"]').trigger('click');
-   });
+
    // Handle click on "Select all" control
    $('thead input[id="selectAll"]', table.table().container()).on('click', function(e){
       if(this.checked){
-         $('#user_tab tbody input[class="emp_checkbox"]:not(:checked)').trigger('click');
+<!--         $('#user_tab tbody input[class="emp_checkbox"]:not(:checked)').trigger('click');-->
+         $(".emp_checkbox").prop("checked", true);
       } else {
-         $('#user_tab tbody input[class="emp_checkbox"]:checked').trigger('click');
+<!--         $('#user_tab tbody input[class="emp_checkbox"]:checked').trigger('click');-->
+         $(".emp_checkbox").prop("checked", false);
       }
       // Prevent click event from propagating to parent
       e.stopPropagation();

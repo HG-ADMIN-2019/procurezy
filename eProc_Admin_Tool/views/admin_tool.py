@@ -88,6 +88,8 @@ def user_search(request):
         encrypted_email = []
         employee_results = get_emp_data()
         context['employee_results'] = employee_results
+        count = len(employee_results)
+        context['count'] = count
     if request.method == 'POST':
         search_fields = {}
         for data in request.POST:
@@ -110,6 +112,8 @@ def user_search(request):
         search_fields['employee_id'] = request.POST.get('employee_id')
 
         employee_results = emp_search_data(search_fields)
+        count = len(employee_results)
+        context['count'] = count
         context['employee_results'] = employee_results
 
     return render(request, 'User Search/user_search.html', context)

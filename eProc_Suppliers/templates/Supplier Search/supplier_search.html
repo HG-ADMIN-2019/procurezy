@@ -324,14 +324,13 @@
             success: function (Response) {
                 display_supplier_data(Response.supplier_results);
                 $("#id_delete_confirm_popup").prop("hidden",true);
-                $('#success_msg_id').text(Response.success_message)
-                //document.getElementById("success_msg_id").text = Response.success_message;
+                $("#success_msg_id").text(Response.success_message);
                 $("#error_msg_div").prop("hidden",false);
-                CloseLoaderPopup();
                 message_display_time();
+                CloseLoaderPopup();
             }
         });
-    };
+    }
 
     var data = {}
     var block_id = '';
@@ -349,7 +348,6 @@
         block_id = id
         data.supplier_id = id.split('-')[0]
         $('#id_block_confirm_popup').modal('show');
-
     });
 
     function block_unblock_supplier(){
@@ -424,13 +422,13 @@
                 is_active = 'Inactive'
             }
             if(supplier_detail.block){
-                block_input = '<input type="checkbox" id="'+ supplier_detail.supplier_id +'-block" class="toggle-control" checked>'
+                block_input = '<input type="checkbox" id="'+ supplier_detail.supplier_id +'-block" class="toggle-block" checked><span class="control"></span>'
             }
             else{
-                block_input = '<input type="checkbox" id="'+ supplier_detail.supplier_id +'-unblock" class="toggle-control">'
+                block_input = '<input type="checkbox" id="'+ supplier_detail.supplier_id +'-unblock" class="toggle-block"><span class="control"></span>'
             }
 
-            supplier_detail_html += '<tr id="table-'+ supplier_detail.supplier_id +'">'+
+            supplier_detail_html += '<tr id="'+ supplier_detail.supplier_id +'">'+
                     '<td><input type="checkbox" class="supplier_checkbox" onclick="valueChanged();"></td>'+
                     '<td><a href="#" class="dummy_supplier_detail"  id=" '+supplier_detail.supplier_id_encrypted+' " target="_blank">'+ supplier_detail.supplier_id +'</a></td>'+
                     '<td>'+ supplier_detail.name1 +'</td>'+
@@ -440,10 +438,10 @@
                     '<td>'+ is_active +'</td>'+
                     '<td> '+ supplier_detail.country_code_id +'</td>'+
                     '<td>'+ supplier_detail.registration_number +'</td>'+
-                    '<td><label class="switch"><label class="toggle">'+ block_input +'<div class="toggle-controller default-success"></div></label></label></td>'+
+                    '<td><label class="switch"><label class="toggle-control">'+ block_input +'</label></label></td>'+
                     '<td class="item-action-icon-section"><span title="Delete supplier" onclick="get_user_detail_to_delete(this.id)" id="'+ supplier_detail.supp_guid +'-'+ supplier_detail.supplier_id +'" data-toggle="modal"  data-target="#confirm_delete_pop_up" onclick="get_supplier_detail_to_delete(this.id)">'+
                         '<i class="material-icons item-action-icons">delete_outline</i></span></td>'+
-                    '</tr> '
+                    '</tr>';
         });
         $("#supplier_detail_tbody").append(supplier_detail_html);
         table_sort_filter('sup_tab');
