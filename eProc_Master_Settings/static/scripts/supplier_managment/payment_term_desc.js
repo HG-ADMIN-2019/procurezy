@@ -1,8 +1,6 @@
 var payment_term_data = new Array();
 var validate_add_attributes = [];
 var main_table_low_value = [];
-var duplicate_entry = [];
-var lang_values = [];
 var payment_term={};
 
 // on click copy icon display the selected checkbox data
@@ -62,10 +60,9 @@ $('#save_id').click(function () {
 
 //Read popup table data
 function read_popup_data() {
+    $('#id_popup_table').DataTable().destroy();
+    payment_term_data = new Array();
     validate_add_attributes = [];
-    duplicate_entry = [];
-    lang_values = [];
-    var lang_id='';
     $("#id_popup_table TBODY TR").each(function () {
         var row = $(this);
         payment_term = {};
@@ -81,18 +78,11 @@ function read_popup_data() {
         if (payment_term.payment_term_guid == undefined) {
             payment_term.payment_term_guid = '';
         }
-            // for (i = 0; i < render_language_data.length; i++) {
-            // if (payment_term.language_id == render_language_data[i].description)
-            //     lang_id = render_language_data[i].language_id;
-            // }
-        // var attribute_dup = {};
-        // attribute_dup.payment_term_key = payment_term.payment_term_key;
-        // attribute_dup.language_id = lang_id;
-        // duplicate_entry.push(attribute_dup);
         var paytrm_desc_compare = payment_term.language_id +'-'+ payment_term.payment_term_key
         validate_add_attributes.push(paytrm_desc_compare);
         payment_term_data.push(payment_term);
     });
+    table_sort_filter('id_popup_table');
     return payment_term_data;
 }
 
@@ -115,6 +105,7 @@ function new_row_data() {
 // Function to get main table data
 function get_main_table_data() {
     main_table_low_value = [];
+     $('#display_basic_table').DataTable().destroy();
     $("#display_basic_table TBODY TR").each(function () {
         var row = $(this);
         var main_attribute = {};

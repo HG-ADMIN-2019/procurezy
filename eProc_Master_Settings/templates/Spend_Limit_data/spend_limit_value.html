@@ -170,7 +170,6 @@
     var db_header_data = uiConstants["CONST_HEADER_DATA_SPEND_LIMIT_VALUE"]
     var spend_limit_data_array = {}
     var main_table_low_value = [];
-    var spend_limit_value = '';
     var edit_basic_data = '';
     var GLOBAL_ACTION = '';
     var no_duplicate_entries = 'Y'
@@ -461,11 +460,9 @@
     function popup_save_data() {
         $('#success_msg_id').empty()
         $('#id_popup_table').DataTable().destroy();
-        var countries_data = new Array();
         no_duplicate_entries = 'Y'
         no_duplicate_value = 'Y'
         var error_message = '';
-        $('#display_basic_table').DataTable().destroy();
         get_main_table_data(); //Read data from main table
         // compare for duplicates in popup
         [no_duplicate_value,error_message] = compare_table_for_duplicate_entries(validate_add_attributes, spend_limit_value_data)
@@ -476,9 +473,11 @@
             if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
                 // compare main table and pop up for duplicate values
                 [no_duplicate_value,error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
+                if(no_duplicate_entries == 'N') {
+                    $('#Spnd_Lim_Val_Modal').modal('show');
+                }
             }
             if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
-                var add_basic_data = '';
                 var spend_limit_value_array = spend_limit_value_data;
                 $('#id_save_confirm_popup').modal('hide');
                 data = {'data':spend_limit_value_data,'table_name':'SpendLimitValue','action':GLOBAL_ACTION}
@@ -502,11 +501,13 @@
                 display_error_message(error_message)
             }
         }
+        table_sort_filter('id_popup_table');
     }
 
     // Function to get main table data
     function get_main_table_data() {
         main_table_low_value = [];
+        $('#display_basic_table').DataTable().destroy();
         $("#display_basic_table TBODY TR").each(function() {
             var row = $(this);
             var main_attribute = {};
@@ -522,7 +523,7 @@
     // **************************************************************************************************
     function compare_table_for_duplicate_entries(validate_add_attributes, spend_limit_value) {
         add_attr_duplicates = false;
-        var add_attr_duplicates_list = [];
+        var common = [];
         var error_message = ''
         var add_attr_unique_list = [];
         var no_duplicate_value = 'Y'
@@ -530,24 +531,22 @@
             if ($.inArray(value, add_attr_unique_list) == -1) {
                 add_attr_unique_list.push(value);
             } else {
-                if ($.inArray(value, add_attr_duplicates_list) == -1) {
-                    add_attr_duplicates_list.push(value);
+                if ($.inArray(value, common) == -1) {
+                    common.push(value);
                 }
             }
         });
-        if (add_attr_duplicates_list.length != 0) {
-            error_message = ui_messeges("JMSG001")// Get message details
+        if (common.length != 0) {
+            $('#Spnd_Lim_Val_Modal').modal('show');
+            display_duplicate_entry(common);  //Function to highlight the rows in popup
+            error_message = ui_messeges("JMSG002")// Get message details
             no_duplicate_value = 'N'
             return [no_duplicate_value,error_message]
         }
         else{
             $.each(spend_limit_value, function (i, item) {  
-                if (item.spend_code_id.length == 0) {
-                    error_message = ui_messeges("JMSG002")// Get message details
-                    no_duplicate_value = 'N'
-                    return [no_duplicate_value,error_message]
-                }
-                if (item.upper_limit_value.length == 0) {
+                if ((item.company_id == null)|| (item.spend_code_id.length == 0) || (item.upper_limit_value.length == 0)) {
+                    $('#Spnd_Lim_Val_Modal').modal('show');
                     error_message = ui_messeges("JMSG002")// Get message details
                     no_duplicate_value = 'N'
                     return [no_duplicate_value,error_message]
@@ -654,10 +653,6 @@
             }
         });
     }
-
-    var spend_limit_value_data = new Array();
-    var validate_add_attributes = [];
-    var spend_limit_value={};
 
     //onclick of upload button display id_data_upload popup and set GLOBAL_ACTION button value
     function onclick_upload_button() {
@@ -842,14 +837,10 @@
     // Functtion to hide and display save related popups    
     $('#save_id').click(function () {
         $('#Spnd_Lim_Val_Modal').modal('hide');
-        spend_limit_value_data = read_popup_data();
-        $('#id_save_confirm_popup').modal('show');
-    });
-
-    //Read popup table data
-    function read_popup_data() {
+        // spend_limit_value_data = read_popup_data();
+        spend_limit_value_data = new Array();
         validate_add_attributes = [];
-        var spend_limit_value={};
+        var spend_limit_value = {};
         $("#id_popup_table TBODY TR").each(function () {
             var row = $(this);
             spend_limit_value = {};
@@ -859,16 +850,44 @@
             spend_limit_value.upper_limit_value =row.find("TD").eq(3).find('input[type="number"]').val();
             spend_limit_value.currency_id = row.find("TD").eq(4).find("select option:selected").val();
             spend_limit_value.spend_lim_value_guid = row.find("TD").eq(5).find('input[type="text"]').val().toUpperCase()
-            var spend_limit_value_compare = spend_limit_value.company_id +'-'+ spend_limit_value.spend_code_id+'-'+ spend_limit_value.currency_id
             if (spend_limit_value == undefined) {
                 spend_limit_value.spend_code_id = row.find("TD").eq(1).find('input[type="text"]').val();
             }
             if(spend_limit_value.spend_lim_value_guid == undefined) {
                 spend_limit_value.spend_lim_value_guid = ''
             }
+            var spend_limit_value_compare = spend_limit_value.company_id +'-'+ spend_limit_value.spend_code_id+'-'+ spend_limit_value.currency_id
             validate_add_attributes.push(spend_limit_value_compare);
             spend_limit_value_data.push(spend_limit_value);
         });
+        $('#id_save_confirm_popup').modal('show');
+    });
+
+    //Read popup table data
+    function read_popup_data() {
+        $('#id_popup_table').DataTable().destroy();
+        spend_limit_value_data = new Array();
+        validate_add_attributes = [];
+        $("#id_popup_table TBODY TR").each(function () {
+            var row = $(this);
+            spend_limit_value = {};
+            spend_limit_value.del_ind = row.find("TD").eq(6).find('input[type="checkbox"]').is(':checked');
+            spend_limit_value.company_id = row.find("TD").eq(1).find("select option:selected").val();
+            spend_limit_value.spend_code_id = row.find("TD").eq(2).find('input[type="text"]').val();
+            spend_limit_value.upper_limit_value =row.find("TD").eq(3).find('input[type="number"]').val();
+            spend_limit_value.currency_id = row.find("TD").eq(4).find("select option:selected").val();
+            spend_limit_value.spend_lim_value_guid = row.find("TD").eq(5).find('input[type="text"]').val().toUpperCase()
+            if (spend_limit_value == undefined) {
+                spend_limit_value.spend_code_id = row.find("TD").eq(1).find('input[type="text"]').val();
+            }
+            if(spend_limit_value.spend_lim_value_guid == undefined) {
+                spend_limit_value.spend_lim_value_guid = ''
+            }
+            var spend_limit_value_compare = spend_limit_value.company_id +'-'+ spend_limit_value.spend_code_id+'-'+ spend_limit_value.currency_id
+            validate_add_attributes.push(spend_limit_value_compare);
+            spend_limit_value_data.push(spend_limit_value);
+        });
+        table_sort_filter('id_popup_table');
         return spend_limit_value_data;
     }
 

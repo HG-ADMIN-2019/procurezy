@@ -176,8 +176,6 @@
 		no_duplicate_entries = 'Y'
     	no_duplicate_value = 'Y'
 	    var error_message = '';
-        $('#display_basic_table').DataTable().destroy();
-        $("#id_error_msg").empty();
         get_main_table_data(); //Read data from main table
         // compare for duplicates in popup
         [no_duplicate_value,error_message] = compare_table_for_duplicate_entries(validate_add_attributes, incoterms_data)
@@ -188,6 +186,9 @@
             if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
                 // compare main table and pop up for duplicate values
                 [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
+                if(no_duplicate_entries == 'N'){
+                    $('#Incoterms_Modal').modal('show');
+                }
             }
             if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
                 var add_basic_data = '';
@@ -415,7 +416,7 @@
     function compare_table_for_duplicate_entries(validate_add_attributes, incoterm) {
         add_attr_duplicates = false;
         var error_message = ''
-        var add_attr_duplicates_list = [];
+        var common = [];
         var add_attr_unique_list = [];
         var no_duplicate_value = 'Y'
         $.each(validate_add_attributes, function (index, value) {
@@ -423,24 +424,22 @@
                 add_attr_unique_list.push(value);
             }
             else {
-                if ($.inArray(value, add_attr_duplicates_list) == -1) {
-                    add_attr_duplicates_list.push(value);
+                if ($.inArray(value, common) == -1) {
+                    common.push(value);
                 }
             }
         });
-        if (add_attr_duplicates_list.length != 0) {
+        if (common.length != 0) {
+            $('#Incoterms_Modal').modal('show');
+            display_duplicate_entry(common);  //Function to highlight the rows in popup
             error_message = ui_messeges("JMSG001")// Get message details
             no_duplicate_value = 'N'
             return [no_duplicate_value,error_message]
         }
         else {
             $.each(incoterm, function (i, item) {
-                if (item.incoterm_key.length == 0) {
-                    error_message = ui_messeges("JMSG002")// Get message details
-                    no_duplicate_value = 'N'
-                    return [no_duplicate_value,error_message]
-                }
-                if (item.description.length == 0) {
+                if ((item.incoterm_key.length == 0) || (item.description.length == 0)) {
+                    $('#Incoterms_Modal').modal('show');
                     error_message = ui_messeges("JMSG002")// Get message details
                     no_duplicate_value = 'N'
                     return [no_duplicate_value,error_message]
@@ -464,7 +463,7 @@
         $("#id_popup_table TBODY TR").each(function() {
             var row = $(this);
             aincoterms_dic = {}
-            aincoterms_dic.incoterm_key = row.find("TD").eq(1).find('input[type="text"]').val();
+            aincoterms_dic.incoterm_key = row.find("TD").eq(1).find('input[type="text"]').val().toUpperCase();
             incoterms_check.push(aincoterms_dic.incoterm_key);
             jQuery.grep(incoterms_check, function(el) {
                 if (jQuery.inArray(el, common) != -1) {

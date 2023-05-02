@@ -479,8 +479,11 @@
             display_error_message(error_message)
         } else {
             if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
-            // compare main table and pop up for duplicate values
-            [no_duplicate_entries, error_message] = maintable_validation(validate_add_attributes, main_table_low_value);
+                // compare main table and pop up for duplicate values
+                [no_duplicate_entries, error_message] = maintable_validation(validate_add_attributes, main_table_low_value);
+                if(no_duplicate_entries == 'N'){
+                    $('#Wf_Acc_Modal').modal('show');
+                }
             }
             if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
                 var add_basic_data = '';
@@ -507,6 +510,7 @@
                 display_error_message(error_message)
             }
         }
+        table_sort_filter('id_popup_table');
     }
 
     //delete the selected row in db................
@@ -515,7 +519,7 @@
         $('#success_msg_id').empty();
         GLOBAL_ACTION = 'DELETE';
         main_table_workflowaccounting_checked = [];
-<!--        $('#display_basic_table').DataTable().destroy();-->
+        $('#display_basic_table').DataTable().destroy();
         get_selected_row_data(); // Function call to get the selected row data
         $('#id_delete_confirm_popup').modal('hide');
         data = {'data':main_table_workflowaccounting_checked,'table_name':'WorkflowACC','action':GLOBAL_ACTION}
@@ -842,7 +846,7 @@
     function compare_table_for_duplicate_entries(validate_add_attributes, wfacc_data) {
         add_attr_duplicates = false;
         var error_message = ''
-        var add_attr_duplicates_list = [];
+        var common = [];
         var add_attr_unique_list = [];
         var no_duplicate_value = 'Y'
         $.each(validate_add_attributes, function (index, value) {
@@ -850,24 +854,22 @@
                 add_attr_unique_list.push(value);
             }
             else {
-                if ($.inArray(value, add_attr_duplicates_list) == -1) {
-                    add_attr_duplicates_list.push(value);
+                if ($.inArray(value, common) == -1) {
+                    common.push(value);
                 }
             }
         });
-        if (add_attr_duplicates_list.length != 0) {
+        if (common.length != 0) {
+            $('#Wf_Acc_Modal').modal('show');
+            display_duplicate_entry(common);  //Function to highlight the rows in popup
             error_message = ui_messeges("JMSG001")// Get message details
             no_duplicate_value = 'N'
             return [no_duplicate_value,error_message]
         }
         else {
             $.each(wfacc_data, function (i, item) {
-                if (item.acc_value.length == 0) {
-                    error_message = ui_messeges("JMSG002")// Get message details
-                    no_duplicate_value = 'N'
-                    return [no_duplicate_value,error_message]
-                }
-                if (item.sup_acc_value.length == 0) {
+                if ((item.acc_value == null) || (item.sup_acc_value == null))  {
+                    $('#Wf_Acc_Modal').modal('show');
                     error_message = ui_messeges("JMSG002")// Get message details
                     no_duplicate_value = 'N'
                     return [no_duplicate_value,error_message]
