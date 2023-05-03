@@ -242,6 +242,8 @@ function get_main_table_data_upload() {
     table_sort_filter('display_basic_table');
     return main_table_low_value
 }
+
+
 // Function to get the selected row data
 function get_selected_row_data(){
     $("#display_basic_table TBODY TR").each(function () {
