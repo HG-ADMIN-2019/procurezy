@@ -141,6 +141,7 @@
 {{ approval_type|json_script:"approval_type" }}
 <script>
     var rendered_approval_type_data = JSON.parse(document.getElementById('approval_type').textContent);
+    var messages_list = {{messages_list|safe}};
     var rendered_approval_type_values
     var approval_type_data_array = {}
     var main_table_approval_type_value = [];
@@ -169,7 +170,6 @@
         var Tabledata = {
             "Dbl_clck_tbl_id": 'upload_approval_type'
         };
-        var countries_data = new Array();
         no_duplicate_entries = 'Y'
         no_duplicate_value = 'Y'
         var error_message = '';
@@ -184,6 +184,9 @@
             if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
                 // compare main table and pop up for duplicate values
                 [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
+                if(no_duplicate_entries == 'N'){
+                    $('#App_Type_Modal').modal('show');
+                }
             }
             if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
                 var add_basic_data = '';
@@ -212,6 +215,7 @@
                 display_error_message(error_message)
             }
         }
+        table_sort_filter('id_popup_table');
     }
 
     //onclick of add button display App_Type_Modal popup and set GLOBAL_ACTION button value
@@ -435,31 +439,29 @@
     function compare_table_for_duplicate_entries(validate_add_attributes, approval_type) {
         add_attr_duplicates = false;
         var error_message = ''
-        var add_attr_duplicates_list = [];
+        var common = [];
         var add_attr_unique_list = [];
         var no_duplicate_value = 'Y'
         $.each(validate_add_attributes, function(index, value) {
             if ($.inArray(value, add_attr_unique_list) == -1) {
                 add_attr_unique_list.push(value);
             } else {
-                if ($.inArray(value, add_attr_duplicates_list) == -1) {
-                    add_attr_duplicates_list.push(value);
+                if ($.inArray(value, common) == -1) {
+                    common.push(value);
                 }
             }
         });
-        if (add_attr_duplicates_list.length != 0) {
+        if (common.length != 0) {
+            $('#App_Type_Modal').modal('show');
+            display_duplicate_entry(common);  //Function to highlight the rows in popup
             error_message = ui_messeges("JMSG001")// Get message details
             no_duplicate_value = 'N'
             return [no_duplicate_value,error_message]
         }
         else {
             $.each(approval_type, function (i, item) {
-                if (item.app_types.length == 0) {
-                    error_message = ui_messeges("JMSG002")// Get message details
-                    no_duplicate_value = 'N'
-                    return [no_duplicate_value,error_message]
-                }
-                if (item.appr_type_desc.length == 0) {
+                if ((item.app_types == null) || (item.appr_type_desc.length == 0)) {
+                    $('#App_Type_Modal').modal('show');
                     error_message = ui_messeges("JMSG002")// Get message details
                     no_duplicate_value = 'N'
                     return [no_duplicate_value,error_message]

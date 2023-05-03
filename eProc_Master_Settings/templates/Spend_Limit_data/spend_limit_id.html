@@ -626,7 +626,6 @@
         no_duplicate_value = 'Y'
         var error_message = '';
         var aad = {};
-        $('#display_basic_table').DataTable().destroy();
         get_main_table_data(); //Read data from main table
         // compare for duplicates in popup
         [no_duplicate_value,error_message] = compare_table_for_duplicate_entries(validate_add_attributes, aad)
@@ -637,9 +636,11 @@
             if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
                 // compare main table and pop up for duplicate values
                 [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
+                if(no_duplicate_entries == 'N'){
+                    $('#Spend_id_Modal').modal('show');
+                }
             }
             if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
-                var add_basic_data = '';
                 var spend_limit_id_data_array = spend_limit_id_data;
                 $('#id_save_confirm_popup').modal('hide');
                 data = {'data':spend_limit_id_data,'table_name':'SpendLimitId','action':GLOBAL_ACTION}
@@ -663,11 +664,13 @@
                 display_error_message(error_message)
             }
         }
+        table_sort_filter('id_popup_table');
     }
 
     // Function to get main table data
     function get_main_table_data() {
         main_table_low_value = [];
+        $('#display_basic_table').DataTable().destroy();
         $("#display_basic_table TBODY TR").each(function() {
             var row = $(this);
             var main_attribute = {};
@@ -683,7 +686,7 @@
     // validating the  popup table for duplicate entries
     function compare_table_for_duplicate_entries(validate_add_attributes, aad) {
         add_attr_duplicates = false;
-        var add_attr_duplicates_list = [];
+        var common = [];
         var add_attr_unique_list = [];
         var no_duplicate_value = 'Y'
         var error_message = ''
@@ -691,32 +694,21 @@
             if ($.inArray(value, add_attr_unique_list) == -1) {
                 add_attr_unique_list.push(value);
             } else {
-                if ($.inArray(value, add_attr_duplicates_list) == -1) {
-                    add_attr_duplicates_list.push(value);
+                if ($.inArray(value, common) == -1) {
+                    common.push(value);
                 }
             }
         });
-        if (add_attr_duplicates_list.length != 0) {
+        if (common.length != 0) {
             $('#Spend_id_Modal').modal('show');
+            display_duplicate_entry(common);  //Function to highlight the rows in popup
             error_message = ui_messeges("JMSG001") // Get message details}
             no_duplicate_value = 'N'
             return [no_duplicate_value,error_message]
         }
         else {
             $.each(aad, function (i, item) {
-                $('#Spend_id_Modal').modal('show');
-                if (aad.spend_code_id.length == 0) {
-                    error_message = ui_messeges("JMSG002") // Get message details
-                    no_duplicate_value = 'N'
-                    return [no_duplicate_value,error_message]
-                }
-                if (aad.spender_username.length == 0) {
-                    $('#Spend_id_Modal').modal('show');
-                    error_message = ui_messeges("JMSG002") // Get message details
-                    no_duplicate_value = 'N'
-                    return [no_duplicate_value,error_message]
-                }
-                if (aad.company_id.length == 0) { 
+                if ((aad.company_id.length == 0) || (aad.spend_code_id.length == 0)|| (aad.spender_username.length == 0)) {
                     $('#Spend_id_Modal').modal('show');
                     error_message = ui_messeges("JMSG002") // Get message details
                     no_duplicate_value = 'N'
@@ -957,6 +949,7 @@
 
     // Functtion to hide and display save related popups
     $('#save_id').click(function () {
+        $('#id_popup_table').DataTable().destroy();
         $('#Spend_id_Modal').modal('hide');
         spend_limit_id_data = new Array();
         var spend_limit = {};
@@ -980,6 +973,7 @@
             spend_limit_id_data.push(spend_limit);
         });
         $('#id_save_confirm_popup').modal('show');
+        table_sort_filter('id_popup_table');
     });
 
     // ****************************************

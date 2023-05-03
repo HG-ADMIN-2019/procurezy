@@ -59,17 +59,17 @@ function display_error_message(error_message){
 
 $('#save_id').click(function () {
     $('#payment_term_Modal').modal('hide');
-    incoterms_data =  read_popup_data();
+    payment_term_data =  read_popup_data();
     $('#id_save_confirm_popup').modal('show');
 });
 
 //Read popup table data
 function read_popup_data() {
+    $('#id_popup_table').DataTable().destroy();
     payment_term_data = new Array();
     validate_add_attributes = [];
     $("#id_popup_table TBODY TR").each(function () {
         var row = $(this);
-        var countries_data = new Array();
         payment_term = {};
         payment_term.payment_term_guid = row.find("TD").eq(3).find('input[type="text"]').val();
         payment_term.del_ind = row.find("TD").eq(2).find('input[type="checkbox"]').is(':checked');
@@ -81,8 +81,10 @@ function read_popup_data() {
                 payment_term.payment_term_guid = ''
             }
         validate_add_attributes.push(payment_term.payment_term_key);
-        countries_data.push(payment_term);
+        payment_term_data.push(payment_term);
     });
+    table_sort_filter('id_popup_table');
+    return payment_term_data;
 }
 
 // Function for add a new row data
@@ -95,6 +97,7 @@ function new_row_data() {
 // Function to get main table data
 function get_main_table_data() {
     main_table_low_value = [];
+    $('#display_basic_table').DataTable().destroy();
     $("#display_basic_table TBODY TR").each(function () {
         var row = $(this);
         var main_attribute = {};

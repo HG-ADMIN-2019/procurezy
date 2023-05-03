@@ -27,7 +27,7 @@ function onclick_upload_button() {
 $(".remove_upload_data").click(() => {
     $("#id_error_msg").html("");   
     $("#id_error_msg").empty();
-    $('#myModal').modal('hide');
+    $('#address_details').modal('hide');
     $("#id_error_msg").prop("hidden", true);
     $("#id_error_msg_address").prop("hidden", true);
     $("#id_error_msg_description").prop("hidden", true);
@@ -36,7 +36,7 @@ $(".remove_upload_data").click(() => {
     $("#id_check_success_messages").prop("hidden", true);
     $("#id_check_special_character_messages").prop("hidden", true)
     $("#id_check_data").prop("hidden", true);
-    $('#id_popup_table').DataTable().destroy();Please delete Highlight duplicate and empty records
+    $('#id_popup_table').DataTable().destroy();
 });
 
 // on click edit icon display the data in edit mode
@@ -63,6 +63,8 @@ function display_error_message(error_message){
 
 // Function to hide and display save related popups
 $('#save_id').click(function () {
+    $('#address_add_details').modal('hide');
+    $('#id_popup_table').DataTable().destroy();
     validate_add_attributes = [];
     address_data = new Array();
     var user_data_dict = {}
@@ -100,6 +102,7 @@ $('#save_id').click(function () {
     validate_add_attributes.push(user_data_dict_compare);
     address_data.push(user_data_dict);
     $('#id_save_confirm_popup').modal('show');
+    table_sort_filter('id_popup_table');
 });
 
 // Function to get main table data
@@ -109,7 +112,8 @@ function get_main_table_data() {
     $.each(rendered_address_data, function (i, item) {
         var main_attribute = {};
         main_attribute.address_number = item.address_number;
-        main_table_low_value.push(main_attribute.address_number);
+        var main_compare =  main_attribute.address_number
+        main_table_low_value.push(main_compare);
     });
     table_sort_filter('display_basic_table');
 }
