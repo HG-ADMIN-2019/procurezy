@@ -58,7 +58,7 @@ function display_error_message(error_message){
     document.getElementById("error_message").style.color = "Red";
     $("#error_msg_id").css("display", "block")
     $('#id_save_confirm_popup').modal('hide');
-
+    $('#address_Modal').modal('show');
 }
 
 // Function to hide and display save related popups
@@ -106,16 +106,25 @@ $('#save_id').click(function () {
 });
 
 // Function to get main table data
+// function get_main_table_data() {
+//     main_table_low_value = [];
+//     $('#display_basic_table').DataTable().destroy();
+//     $.each(rendered_address_data, function (i, item) {
+//         var main_attribute = {};
+//         main_attribute.address_number = item.address_number;
+//         main_table_low_value.push(main_attribute.address_number);
+//     });
+//     table_sort_filter('display_basic_table');
+// }
+
 function get_main_table_data() {
     main_table_low_value = [];
     $('#display_basic_table').DataTable().destroy();
-    $.each(rendered_address_data, function (i, item) {
+    $("#display_basic_table TBODY TR").each(function() {
+        var row = $(this);
         var main_attribute = {};
-        main_attribute.address_number = item.address_number;
-        var main_compare =  main_attribute.address_number
-        main_table_low_value.push(main_compare);
+        main_attribute.address_number = $('#id_add_addresses_address_number').val();
+        main_table_low_value.push(main_attribute.address_number);
     });
     table_sort_filter('display_basic_table');
 }
-
-

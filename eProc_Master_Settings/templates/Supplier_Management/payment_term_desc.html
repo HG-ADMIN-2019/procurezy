@@ -664,6 +664,8 @@
 
     //onclick of cancel display the table in display mode............
     function display_basic_db_data() {
+        $('#display_basic_table').DataTable().destroy();
+        $('#id_payment_term_tbody').empty();
         var data = {'table_name':'Payterms_desc'}
         $.ajax({
             type: 'POST',
@@ -673,8 +675,6 @@
                 rendered_payment_key_list = response.payterm_key_list
                 render_language_data = response.language_list
                 paytermdesc_drop();
-                $('#display_basic_table').DataTable().destroy();
-                $('#id_payment_term_tbody').empty();
                 var edit_basic_data = '';
                 var desc = ''; var lang_code;
                 $.each(rendered_payment_term_data, function (i, item) {
@@ -688,7 +688,7 @@
                     '<td>' + item.payment_term_key + '</td>' +
                     '<td>' + item.description + '</td>' +
                     '<td>' + item.day_limit + '</td>' +
-                    '<td hidden> <input type="checkbox"</td>' +
+                    // '<td hidden> <input type="checkbox"</td>' +
                     '<td hidden>' + item.payment_term_guid + '</td></tr>';
                 });
                 $('#id_payment_term_tbody').append(edit_basic_data);
@@ -703,9 +703,9 @@
                 $('#id_save_confirm_popup').modal('hide');
                 $('#id_delete_confirm_popup').modal('hide');
                 $('#id_check_all').hide();
-                table_sort_filter('display_basic_table');
             }
         });
+        table_sort_filter('display_basic_table');
     }
 
     //Function to highlight duplicate records

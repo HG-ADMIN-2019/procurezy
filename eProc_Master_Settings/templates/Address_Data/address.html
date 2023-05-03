@@ -22,7 +22,7 @@
                     value="address_upload" onclick="onclick_upload_button()" type="button">
                     <i class="fas fa-cloud-upload-alt"></i> upload data
                 </button>
-                <button class="btn btn-primary" id="id_add_data" type="button" value="ADD" title="Add Address" onclick="add_new_address(this);">
+                <button class="btn btn-primary" id="id_add_data" type="button" value="ADD" data-toggle="modal"  data-target="#address_Modal" title="Add Address" onclick="add_new_address(this);">
                     <i class="fa fa-plus"></i> Add Address
                 </button>
                 <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close" onclick="window_close();">
@@ -101,152 +101,154 @@
                             class="fas fa-times"></i> close</button>
                 </div>
                 <!-- Modal body -->
-                <div class="modal-body scrollbox">
-                    <div class="row">
-                        <div class="col m-3">
-                            <div class="form-group row" hidden>
-                                <label class="col-4 col-form-label">Address Number:</label>
-                                <div class="col-8">
-                                    <input type="text" class="form-control hg_edit_display_mode"
-                                        id="id_addresses_address_number" disabled>
+                <div class="modal-body">
+                    <div class="popup-vertical-scroll">
+                        <div class="row">
+                            <div class="col m-3">
+                                <div class="form-group row" hidden>
+                                    <label class="col-4 col-form-label">Address Number:</label>
+                                    <div class="col-8">
+                                        <input type="text" class="form-control hg_edit_display_mode"
+                                            id="id_addresses_address_number" disabled>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-4 col-form-label">Title:</label>
+                                    <div class="col-8">
+                                        <input type="text" class="form-control hg_edit_display_mode" id="id_addresses_title" disabled>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-4 col-form-label">Name1:</label>
+                                    <div class="col-8">
+                                        <input type="text" class="form-control hg_edit_display_mode" id="id_addresses_name1" disabled>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-4 col-form-label">Name2:</label>
+                                    <div class="col-8">
+                                        <input type="text" class="form-control hg_edit_display_mode" id="id_addresses_name2" disabled>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-4 col-form-label">Street:</label>
+                                    <div class="col-8">
+                                        <input type="text" class="form-control hg_edit_display_mode"
+                                            id="id_addresses_street" disabled>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-4 col-form-label">Area:</label>
+                                    <div class="col-8">
+                                        <input type="text" class="form-control hg_edit_display_mode" id="id_addresses_area" disabled>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-4 col-form-label">Landmark:</label>
+                                    <div class="col-8">
+                                        <input type="text" class="form-control hg_edit_display_mode"
+                                            id="id_addresses_landmark" disabled>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-4 col-form-label">City:</label>
+                                    <div class="col-8">
+                                        <input type="text" class="form-control hg_edit_display_mode" id="id_addresses_city"
+                                            disabled>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-4 col-form-label">Address Partner Type:</label>
+                                    <div class="col-8">
+                                        <input type="text" class="form-control hg_edit_display_mode"
+                                            id="id_addresses_partnertype" disabled>
+                                    </div>
+                                </div>
+                                <div class="form-group row">
+                                    <label class="col-4 col-form-label">Org Address Source System:</label>
+                                    <div class="col-8">
+                                        <input type="text" class="form-control hg_edit_display_mode"
+                                            id="id_addresses_source" disabled>
+                                    </div>
                                 </div>
                             </div>
-                            <div class="form-group row">
-                                <label class="col-4 col-form-label">Title:</label>
-                                <div class="col-8">
-                                    <input type="text" class="form-control hg_edit_display_mode" id="id_addresses_title" disabled>
+                            <div class="col m-3">
+                                <div class="form-group row">
+                                    <label class="col-4 col-form-label">Postal Code:</label>
+                                    <div class="col-8">
+                                        <input type="text" class="form-control hg_edit_display_mode check_postal_code"
+                                            id="id_addresses_postalcode" disabled>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="form-group row">
-                                <label class="col-4 col-form-label">Name1:</label>
-                                <div class="col-8">
-                                    <input type="text" class="form-control hg_edit_display_mode" id="id_addresses_name1" disabled>
+                                <div class="form-group row">
+                                    <label class="col-4 col-form-label">Region:</label>
+                                    <div class="col-8">
+                                        <input type="text" class="form-control hg_edit_display_mode"
+                                            id="id_addresses_region" disabled>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="form-group row">
-                                <label class="col-4 col-form-label">Name2:</label>
-                                <div class="col-8">
-                                    <input type="text" class="form-control hg_edit_display_mode" id="id_addresses_name2" disabled>
+                                <div class="form-group row">
+                                    <label class="col-4 col-form-label">Mobile Number:</label>
+                                    <div class="col-8">
+                                        <input type="text" class="form-control hg_edit_display_mode"
+                                            id="id_addresses_mobile_number" disabled>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="form-group row">
-                                <label class="col-4 col-form-label">Street:</label>
-                                <div class="col-8">
-                                    <input type="text" class="form-control hg_edit_display_mode"
-                                        id="id_addresses_street" disabled>
+                                <div class="form-group row">
+                                    <label class="col-4 col-form-label">Telephone Number:</label>
+                                    <div class="col-8">
+                                        <input type="text" class="form-control hg_edit_display_mode"
+                                            id="id_addresses_telephone_number" disabled>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="form-group row">
-                                <label class="col-4 col-form-label">Area:</label>
-                                <div class="col-8">
-                                    <input type="text" class="form-control hg_edit_display_mode" id="id_addresses_area" disabled>
+                                <div class="form-group row">
+                                    <label class="col-4 col-form-label">Fax Number:</label>
+                                    <div class="col-8">
+                                        <input type="text" class="form-control hg_edit_display_mode"
+                                            id="id_addresses_fax_number" disabled>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="form-group row">
-                                <label class="col-4 col-form-label">Landmark:</label>
-                                <div class="col-8">
-                                    <input type="text" class="form-control hg_edit_display_mode"
-                                        id="id_addresses_landmark" disabled>
+                                <div class="form-group row">
+                                    <label class="col-4 col-form-label">Email:</label>
+                                    <div class="col-8">
+                                        <input type="text" class="form-control hg_edit_display_mode" id="id_addresses_email"
+                                            disabled>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="form-group row">
-                                <label class="col-4 col-form-label">City:</label>
-                                <div class="col-8">
-                                    <input type="text" class="form-control hg_edit_display_mode" id="id_addresses_city"
-                                        disabled>
+                                <div class="form-group row">
+                                    <label class="col-4 col-form-label">Country Code:</label>
+                                    <div class="col-8">
+                                        <input type="text" class="form-control hg_edit_display_mode"
+                                            id="id_addresses_country_code" disabled>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="form-group row">
-                                <label class="col-4 col-form-label">Address Partner Type:</label>
-                                <div class="col-8">
-                                    <input type="text" class="form-control hg_edit_display_mode"
-                                        id="id_addresses_partnertype" disabled>
+                                <div class="form-group row">
+                                    <label class="col-4 col-form-label">Language:</label>
+                                    <div class="col-8">
+                                        <input type="text" class="form-control hg_edit_display_mode"
+                                            id="id_addresses_language_id" disabled>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="form-group row">
-                                <label class="col-4 col-form-label">Org Address Source System:</label>
-                                <div class="col-8">
-                                    <input type="text" class="form-control hg_edit_display_mode"
-                                        id="id_addresses_source" disabled>
+                                <div class="form-group row">
+                                    <label class="col-4 col-form-label">TIME ZONE:</label>
+                                    <div class="col-8">
+                                        <input type="text" class="form-control hg_edit_display_mode"
+                                            id="id_addresses_time_zone" disabled>
+                                    </div>
                                 </div>
-                            </div>
-                        </div>
-                        <div class="col m-3">
-                            <div class="form-group row">
-                                <label class="col-4 col-form-label">Postal Code:</label>
-                                <div class="col-8">
-                                    <input type="text" class="form-control hg_edit_display_mode check_postal_code"
-                                        id="id_addresses_postalcode" disabled>
+                                <div class="form-group row" hidden>
+                                    <label class="col-4 col-form-label">Del Ind:</label>
+                                    <div class="col-8">
+                                        <input type="text" class="form-control hg_edit_display_mode"
+                                            id="id_addresses_del_ind_flag">
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="form-group row">
-                                <label class="col-4 col-form-label">Region:</label>
-                                <div class="col-8">
-                                    <input type="text" class="form-control hg_edit_display_mode"
-                                        id="id_addresses_region" disabled>
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label class="col-4 col-form-label">Mobile Number:</label>
-                                <div class="col-8">
-                                    <input type="text" class="form-control hg_edit_display_mode"
-                                        id="id_addresses_mobile_number" disabled>
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label class="col-4 col-form-label">Telephone Number:</label>
-                                <div class="col-8">
-                                    <input type="text" class="form-control hg_edit_display_mode"
-                                        id="id_addresses_telephone_number" disabled>
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label class="col-4 col-form-label">Fax Number:</label>
-                                <div class="col-8">
-                                    <input type="text" class="form-control hg_edit_display_mode"
-                                        id="id_addresses_fax_number" disabled>
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label class="col-4 col-form-label">Email:</label>
-                                <div class="col-8">
-                                    <input type="text" class="form-control hg_edit_display_mode" id="id_addresses_email"
-                                        disabled>
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label class="col-4 col-form-label">Country Code:</label>
-                                <div class="col-8">
-                                    <input type="text" class="form-control hg_edit_display_mode"
-                                        id="id_addresses_country_code" disabled>
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label class="col-4 col-form-label">Language:</label>
-                                <div class="col-8">
-                                    <input type="text" class="form-control hg_edit_display_mode"
-                                        id="id_addresses_language_id" disabled>
-                                </div>
-                            </div>
-                            <div class="form-group row">
-                                <label class="col-4 col-form-label">TIME ZONE:</label>
-                                <div class="col-8">
-                                    <input type="text" class="form-control hg_edit_display_mode"
-                                        id="id_addresses_time_zone" disabled>
-                                </div>
-                            </div>
-                            <div class="form-group row" hidden>
-                                <label class="col-4 col-form-label">Del Ind:</label>
-                                <div class="col-8">
-                                    <input type="text" class="form-control hg_edit_display_mode"
-                                        id="id_addresses_del_ind_flag">
-                                </div>
-                            </div>
-                            <div class="form-group row" hidden>
-                                <label class="col-4 col-form-label">Address Guid:</label>
-                                <div class="col-8">
-                                    <input type="text" class="form-control hg_edit_display_mode"
-                                        id="id_addresses_address_guid">
+                                <div class="form-group row" hidden>
+                                    <label class="col-4 col-form-label">Address Guid:</label>
+                                    <div class="col-8">
+                                        <input type="text" class="form-control hg_edit_display_mode"
+                                            id="id_addresses_address_guid">
+                                    </div>
                                 </div>
                             </div>
                         </div>
