@@ -866,7 +866,7 @@ def extract_pgrp_data(request):
     purgrp_data = query_update_del_ind(purgrp)
 
     for purgrpdata in purgrp_data:
-        purgrp_info = [purgrpdata['pgroup_id'], purgrpdata['description'],
+        purgrp_info = [purgrpdata['pgroup_id'],purgrpdata['description'],
                        purgrpdata['del_ind']]
 
         writer.writerow(purgrp_info)
