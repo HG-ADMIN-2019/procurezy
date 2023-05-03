@@ -45,7 +45,7 @@ class SupplierRegForm(forms.Form):
     name1 = forms.CharField(label='Name 1', required=True, widget=forms.TextInput(attrs={'class': 'form-control '
                                                                                                   'check_special_char',
                                                                                          'onkeyup': 'test()'}))
-    name2 = forms.CharField(label='Name 2', required=False, widget=forms.TextInput(attrs={'class': 'form-control '
+    name2 = forms.CharField(label='Name 2', required=True, widget=forms.TextInput(attrs={'class': 'form-control '
                                                                                                    'check_special_char'}))
     email = forms.EmailField(label='E-mail', required=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
     # email1 = forms.EmailField(label='E-mail 1', required=False, widget=forms.TextInput(attrs={'class':
@@ -60,7 +60,7 @@ class SupplierRegForm(forms.Form):
                                  widget=forms.TextInput(attrs={'class': 'form-control'}))
     fax = forms.CharField(label='Fax', required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
     street = forms.CharField(label='Street', required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    postal_code = forms.CharField(label='Postal code', required=False,
+    postal_code = forms.CharField(label='Postal code', required=True,
                                   widget=forms.TextInput(attrs={'class': 'form-control'}))
     city = forms.CharField(label='City', required=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
     country_code = forms.ModelChoiceField(queryset=Country.objects.all(), label='Country',

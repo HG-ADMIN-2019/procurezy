@@ -51,7 +51,7 @@ from eProc_Suppliers.Utilities.supplier_generic import supplier_detail_search
 from eProc_Suppliers.Utilities.supplier_specific import get_supplier_data, update_country_encrypt
 from eProc_Suppliers.models import OrgSuppliers
 from eProc_Users.Utilities.user_generic import user_detail_search, get_usertype_values, \
-    get_emp_data, emp_search_data, set_search_data
+    get_emp_data, emp_search_data, set_search_data, get_supplier_type_values
 from django.http import QueryDict
 import sys
 from datetime import datetime
@@ -136,7 +136,8 @@ def supplier_search(request):
         'purch_org_list': django_query_instance.django_filter_value_list_query(OrgPorg, {
             'client': global_variables.GLOBAL_CLIENT,
             'del_ind': False}, 'porg_id'),
-        'is_admin_active': True
+        'is_admin_active': True,
+        'dropdown_suptype_values': get_supplier_type_values(),
     }
 
     if request.method == 'GET':
@@ -162,8 +163,8 @@ def supplier_search(request):
         search_fields['name1'] = request.POST.get('name1')
         search_fields['name2'] = request.POST.get('name2')
         search_fields['supplier_id'] = request.POST.get('supplier_id')
-        search_fields['search_term1'] = request.POST.get('search_term1')
-        search_fields['search_term2'] = request.POST.get('search_term2')
+        search_fields['email'] = request.POST.get('email')
+        search_fields['supplier_type'] = request.POST.get('supplier_type')
         search_fields['country_code'] = request.POST.get('country_code')
         search_fields['city'] = request.POST.get('city')
         search_fields['block'] = request.POST.get('block')
@@ -1216,6 +1217,24 @@ def extract_employee_template(request):
          'DATE_JOINED', 'FIRST_LOGIN', 'LAST_LOGIN', 'IS_ACTIVE', 'IS_SUPERUSER', 'IS_STAFF', 'DATE_FORMAT',
          'EMPLOYEE_ID', 'DECIMAL_NOTATION', 'USER_TYPE', 'LOGIN_ATTEMPTS', 'USER_LOCKED', 'PWD_LOCKED', 'SSO_USER',
          'VALID_FROM', 'VALID_TO', 'del_ind', 'CURRENCY_ID', 'LANGUAGE_ID', 'OBJECT_ID', 'TIME_ZONE'])
+
+    return response
+
+
+def extract_supplier_template(request):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="Supplier_Template.CSV"'
+
+    writer = csv.writer(response)
+
+    writer.writerow(
+        ['SUPPLIER_ID', 'SUPP_TYPE', 'NAME1', 'NAME2', 'SUPPLIER_USERNAME', 'CITY', 'POSTAL_CODE', 'STREET',
+         'LANDLINE', 'MOBILE_NUM', 'FAX', 'EMAIL', 'EMAIL1', 'EMAIL2', 'EMAIL3',
+         'EMAIL4', 'EMAIL5', 'OUTPUT_MEDIUM', 'SEARCH_TERM1', 'SEARCH_TERM2', 'DUNS_NUMBER', 'BLOCK DATE',
+         'BLOCK', 'DELIVERY_DAYS', 'IS_ACTIVE', 'REGISTRATION_NUMBER', 'COMPANY_ID', 'SUPPLIER_MASTER_SOURCE_SYSTEM',
+         'PREF_ROUTING', 'LOCK_DATE', 'GLOBAL_DUNS','DOMESTIC_DUNS', 'ICS_CODE', 'INTERNAL_IND', 'SBA_CODE', 'ETHNICITY',
+         'HUBZONE', 'NO_VEND_TEXT', 'AGR_REG_NO', 'NO_MULT_ADDR', 'del_ind', 'COUNTRY_CODE', 'CURRENCY_ID',
+         'LANGUAGE_ID'])
 
     return response
 

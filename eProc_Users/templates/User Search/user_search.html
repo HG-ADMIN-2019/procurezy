@@ -486,16 +486,16 @@ function display_emp_data(emp_data){
         checkbox_input = '<input type="checkbox" class="emp_checkbox" onclick="valueChanged();" >'
         var lock_id, pwd_lock;
         if(emp.user_locked){
-            lock_id = '<input type="checkbox" id="'+emp.employee_id.concat("-LOCKED")+'" class="toggle-input" checked><span class="control"></span>';
+            lock_id = '<input type="checkbox" id="'+emp.employee_id.concat("-LOCKED")+'" class="toggle-block" checked><span class="control"></span>';
             }
         else {
-            lock_id = '<input type="checkbox" id="'+emp.employee_id.concat("-UNLOCKED")+'" class="toggle-input"> <span class="control"></span>';
+            lock_id = '<input type="checkbox" id="'+emp.employee_id.concat("-UNLOCKED")+'" class="toggle-block"> <span class="control"></span>';
         }
         if(emp.pwd_locked){
-            pwd_lock = '<input type="checkbox" id="'+emp.employee_id.concat("-PWDLOCKED")+'" class="toggle-input" checked><span class="control"></span>';
+            pwd_lock = '<input type="checkbox" id="'+emp.employee_id.concat("-PWDLOCKED")+'" class="toggle-block" checked><span class="control"></span>';
         }
         else {
-            pwd_lock = '<input type="checkbox" id="'+emp.employee_id.concat("-PWDUNLOCKED")+'" class="toggle-input"><span class="control"></span>';
+            pwd_lock = '<input type="checkbox" id="'+emp.employee_id.concat("-PWDUNLOCKED")+'" class="toggle-block"><span class="control"></span>';
             }
         emp_detail_html += '<tr id="tr_'+emp.email+'"><td class="class_select_checkbox">'+checkbox_input+'</td> '+
         '<td><a href="#" id="'+ emp.employee_id +'" class="deletepop" target="_blank">'+ emp.employee_id +'</a></td>'+
@@ -914,10 +914,11 @@ var block_id = '';
         data.employee_id = id;
         var id = this.id
         block_id = id
-        data.employee_id = id.split('-')[0]
+<!--        data.employee_id = id.split('-')[0]-->
   });
   var previous_state;
 function lock_active_change(){
+        OpenLoaderPopup();
         jQuery.ajax({
        type: 'POST',
        url: "{% url 'eProc_Admin_Tool:lock_unlock_emp' %}",
@@ -929,6 +930,7 @@ function lock_active_change(){
             previous_state = data.flag;
             $("#error_msg_div").prop("hidden",false)
             message_display_time();
+            CloseLoaderPopup();
        },
        error: function(xhr, resp, text) {
        },
@@ -981,10 +983,10 @@ $('#user_tab tbody').on('click', 'input[class="emp_checkbox"]', function(e){
    // Handle click on "Select all" control
    $('thead input[id="selectAll"]', table.table().container()).on('click', function(e){
       if(this.checked){
-<!--         $('#user_tab tbody input[class="emp_checkbox"]:not(:checked)').trigger('click');-->
+         $('#user_tab tbody input[class="emp_checkbox"]:not(:checked)').trigger('click');
          $(".emp_checkbox").prop("checked", true);
       } else {
-<!--         $('#user_tab tbody input[class="emp_checkbox"]:checked').trigger('click');-->
+         $('#user_tab tbody input[class="emp_checkbox"]:checked').trigger('click');
          $(".emp_checkbox").prop("checked", false);
       }
       // Prevent click event from propagating to parent

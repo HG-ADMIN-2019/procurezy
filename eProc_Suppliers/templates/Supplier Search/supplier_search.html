@@ -10,6 +10,12 @@
         <div class="d-flex justify-content-between">
             <h3>Supplier Management</h3>
             <div>
+                 <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Admin_Tool:extract_supplier_template' %}'"type="button">
+                    <i class="fas fa-download"></i> download template
+                </button>
+                <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Basic_Settings:extract_employee_data' %}'"type="button">
+                    <i class="fas fa-download"></i> extract
+                </button>
                 <button class="btn btn-outline-primary" id="basic_save_upld_redirect" onclick="onclick_upload_button()">
                     <i class="fas fa-cloud-upload-alt"></i> 
                     upload data
@@ -55,12 +61,17 @@
                     <div id="supplier_adv_search" class="advanced-search-collapse collapse">
                         <div class="row">
                             <div class="col-md">
-                                <label for="">Search Term 1</label>
-                                <input type="text" class="form-control check_for_search" id="search_term1" name="search_term1">
+                              <label for="">Email</label>
+                                <input type="text" class="form-control" id="email" name="email">
                             </div>
                             <div class="col-md">
-                                <label for="">Search Term 2</label>
-                                <input type="text" class="form-control check_for_search" id="search_term2" name="search_term2">
+                                <label for="">Supplier Type</label>
+                                <select type="text" class="form-control" id="supplier_type" name="supplier_type">
+                                    <option value="">select</option>
+                                    {% for suptype in dropdown_suptype_values %}
+                                        <option value="{{suptype.field_type_id}}">{{suptype.field_type_desc}}</option>
+                                    {% endfor %}
+                                </select>
                             </div>
                             <div class="col-md">
                                 <label for="">Country</label>

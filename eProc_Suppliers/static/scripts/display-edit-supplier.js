@@ -175,13 +175,13 @@ function cancel_supp_org_data(){
 
 // Function to save edited supplier basic details data
 function save_basic_details() {
-    OpenLoaderPopup();
     var name1_val= $('#name1').val();
     var city_val = $('#city_id').val();
     var email_val = $('#email_id').val();
     var mobile_val = $('#mobile_num_id').val();
     var search_term1_val = $('#search_term1_id').val();
     var search_term2_val = $('#search_term2_id').val();
+    OpenLoaderPopup();
     is_save_form_valid = save_basic_form_validation(name1_val, city_val, email_val, mobile_val, search_term1_val, search_term2_val)
     if (is_save_form_valid != '') {
         $('#save_error_div').html(is_save_form_valid)
@@ -190,7 +190,6 @@ function save_basic_details() {
         CloseLoaderPopup();
         return
     }
-
     formdata = new FormData();
     formdata.append("supplier_image",  $('#supplier_image_id').prop('files')[0]);
     formdata.append("supplier_guid",   $('#supplier_guid').val());
@@ -221,7 +220,6 @@ function save_basic_details() {
     formdata.append("output_medium_id",   $('#output_medium_id').val());
     formdata.append("status",   GLOBAL_ACTION);
     response = ajax_update_supplier_basic_details(formdata)
-    console.log(response);
     encrypted_supplier = response.encrypted_supplier
     message = response.message
     // ajax success response

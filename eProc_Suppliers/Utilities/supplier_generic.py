@@ -49,8 +49,8 @@ def supplier_detail_search(**kwargs):
     name1_query = Q()
     name2_query = Q()
     supplier_id_query = Q()
-    search_term1_query = Q()
-    search_term2_query = Q()
+    email_query = Q()
+    supp_type_query = Q()
     country_code_query = Q()
     org_supplier_query = Q()
     city_query = Q()
@@ -88,14 +88,14 @@ def supplier_detail_search(**kwargs):
                 if '*' not in value:
                     value_list = [value]
                 supplier_id_query = django_q_query(value, value_list, 'supplier_id')
-            if key == 'search_term1':
+            if key == 'email':
                 if '*' not in value:
                     value_list = [value]
-                search_term1_query = django_q_query(value, value_list, 'search_term1')
-            if key == 'search_term2':
+                email_query = django_q_query(value, value_list, 'email')
+            if key == 'supplier_type':
                 if '*' not in value:
                     value_list = [value]
-                search_term2_query = django_q_query(value, value_list, 'search_term2')
+                supp_type_query = django_q_query(value, value_list, 'supp_type')
             if key == 'country_code':
                 if '*' not in value:
                     value_list = [value]
@@ -117,8 +117,8 @@ def supplier_detail_search(**kwargs):
                                                                           name1_query,
                                                                           name2_query,
                                                                           supplier_id_query,
-                                                                          search_term1_query,
-                                                                          search_term2_query,
+                                                                          email_query,
+                                                                          supp_type_query,
                                                                           country_code_query,
                                                                           city_query
                                                                           ))

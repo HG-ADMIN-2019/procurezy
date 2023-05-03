@@ -11,7 +11,7 @@ $(document).ready(function () {
     $('.help-text-star-search').text('Use * as a wild card search criteria (eg. Apple - App*, *ple, *ppl*)')
     // <span class="badge help-text-badge help-text-star-search"></span>
 
-    $('.help-text-phone-numbers').text('Valid characters for Phone, Mobile and Fax are 0-9 [-+ ]')
+    $('.help-text-phone-numbers').text('Valid characters are 0-9 [-+ ]')
     // <small class="form-text text-muted help-text-phone-numbers"></small>
 
 });
