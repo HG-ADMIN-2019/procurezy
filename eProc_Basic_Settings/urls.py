@@ -33,6 +33,7 @@ urlpatterns = [
     path('export_product_details', extract_product_details, name='extract_product_details'),
     path('download_product_template', download_product_template, name='download_product_template'),
     path('export_emp', extract_employee_data, name='extract_employee_data'),
+    path('export_supplier', extract_supplier_data, name='extract_supplier_data'),
     path('countries/', upload_countries, name='upload_countries'),
     path('data_upload/', data_upload, name='data_upload'),
     path('check_data/', check_data, name='check_data'),

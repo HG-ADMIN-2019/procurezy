@@ -102,7 +102,6 @@
                             <p id="id_error_msg_country_name" ></p>
                             <p id="id_error_msg_country_length" ></p>
                         </div>
-
                         <div id="error_msg_id" class="alert alert-danger display-none" role="alert"><span id="error_message"></span></div>
                         <div id="id_warning_msg_id" class="alert alert-warning display-none" role="alert"></div>
                         <div id="id_info_msg_id" class="alert alert-primary display-none" role="alert"></div>

@@ -108,7 +108,7 @@
                                     </div>
 
                                     <div class="form-group col-md">
-                                        <label> Last Name</label><br>
+                                        <label> Last Name</label><span class="hg_required"></span><br>
                                         <input type="text" class="form-control hg_edit_display_mode" id="name2" value="{{supplier_info.name2}}" >
                                     </div>
                                 </div>
@@ -157,7 +157,7 @@
                                     </div>
 
                                     <div class="form-group col-md">
-                                        <label> Postal Code</label><br>
+                                        <label> Postal Code</label><span class="hg_required"></span><br>
                                         <input type="text" class="form-control hg_edit_display_mode check_postal_code" id="postal_code_id" value="{{supplier_info.postal_code}}">
                                     </div>
                                 </div>
@@ -170,7 +170,7 @@
                                             <div>
                                                 <label> Upload Supplier Image</label><br>
                                                 <input type="file" class="hg_edit_display_mode" name="supplier_image" id="supplier_image_id" onchange="loadFile3(event)">
-                                                <small class="form-text text-muted"> Help text here - supported images types </small>
+                                                <small class="form-text text-muted"> Supported images types - jpg, jpeg, png, bmp, tif, tiff or gif </small>
                                             </div>
                                             
                                            <div>
@@ -198,7 +198,6 @@
                                     <div class="form-group col-md">
                                         <label> Phone</label><br>
                                         <input type="text" class="form-control hg_edit_display_mode" id="landline_id" value="{{supplier_info.landline}}">
-                                        <small class="form-text text-muted help-text-phone-numbers"></small>
                                     </div>
 
                                     <div class="form-group col-md">
@@ -210,7 +209,8 @@
                                         <label> Fax</label><br>
                                         <input type="text" class="form-control hg_edit_display_mode" id="fax_id" value="{{supplier_info.fax}}">
                                     </div>
-                                </div>
+                                </div><br>
+                                <small class="form-text text-muted help-text-phone-numbers"></small>
                             </div>
                         </div>
 
