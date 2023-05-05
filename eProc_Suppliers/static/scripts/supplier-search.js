@@ -4,8 +4,8 @@ $(document).ready( function() {
   $('#name1').val(localStorage.getItem("name1"));
   $('#name2').val(localStorage.getItem("name2"));
   $('#supplier_id').val(localStorage.getItem("supplier_id"));
-  $('#search_term1').val(localStorage.getItem("search_term1"));
-  $('#search_term2').val(localStorage.getItem("search_term2"));
+  $('#email').val(localStorage.getItem("email"));
+  $('#supplier_type').val(localStorage.getItem("supplier_type"));
   $('#city').val(localStorage.getItem("city"));
   $('#country_code').val(localStorage.getItem("country_code"));
   $('#porg').val(localStorage.getItem("porg"));
