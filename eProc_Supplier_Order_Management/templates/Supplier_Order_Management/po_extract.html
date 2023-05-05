@@ -23,6 +23,18 @@
       <button type="submit" class="btn btn-outline-primary" style="padding: 40px 40px;float: right;"><i class="fa-solid fa-file-export"></i> Extract PO </button>
 
     </div>
+    {% for data in text %}
+    {{data}}
+    {% endfor %}
+    <br><br>
+    {% if header_detail %}
+    HEADER DATA: {{header_detail}}
+    {% endif %}
+    <br><br>
+    {% if supplier_address %}
+    ADDRESS: {{supplier_address}}
+    {% endif %}
+
   </form>
   </div>
 </div>

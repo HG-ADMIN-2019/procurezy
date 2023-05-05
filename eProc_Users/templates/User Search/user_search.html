@@ -29,15 +29,15 @@
                     <div class="row">
                         <div class="col-md">
                             <label for="">Username</label>
-                            <input type="text" class="form-control check_for_search" id="username" name="username" value="">
+                            <input type="text" class="form-control check_for_search" id="username" name="username" value="" >
                         </div>
                         <div class="col-md">
                             <label for="">First Name</label>
-                            <input type="text" class="form-control check_for_search " id="first_name" name="first_name">
+                            <input type="text" class="form-control check_for_search " id="first_name" name="first_name" >
                         </div>
                         <div class="col-md">
                             <label for="">Last Name</label>
-                            <input type="text" class="form-control check_for_search" id="last_name" name='last_name'>
+                            <input type="text" class="form-control check_for_search" id="last_name" name='last_name' >
                         </div>
                         <div class="col-auto">
                             <button class="button-search-users btn btn-primary" type="submit"
@@ -145,7 +145,7 @@
                         <tbody id="user_tab_tbody">
                         {% for results in employee_results %}
                         <tr id="tr_{{results.email}}">
-                            <td class="class_select_checkbox"><input type="checkbox" class="checkbox_check" onclick="valueChanged();"></td>
+                            <td class="class_select_checkbox"><input type="checkbox" class="emp_checkbox" onclick="valueChanged();"></td>
                             <td><a href="{% url 'eProc_Admin_Tool:user_details_page' results.encrypted_email %}" id="{{results.employee_id}}" class="deletepop" target="_blank">{{results.employee_id}}</a></td>
                             <td>{{results.username}}</td>
                             <td>{{results.first_name}}</td>
@@ -968,7 +968,7 @@ function lock_active_change(){
 var table = $('#user_tab').DataTable();
  var rows_selected = [];
 //onclick of select all checkbox
-$('#user_tab tbody').on('click', 'input[type="checkbox"]', function(e){
+$('#user_tab tbody').on('click', 'input[class="emp_checkbox"]', function(e){
      var table = $('#user_tab').DataTable();
       var $row = $(this).closest('tr');
       // Get row data
@@ -996,14 +996,14 @@ $('#user_tab tbody').on('click', 'input[type="checkbox"]', function(e){
    });
    // Handle click on table cells with checkboxes
    $('#user_tab').on('click', 'tbody td, thead th:first-child', function(e){
-      $(this).parent().find('input[class="checkbox_check"]').trigger('click');
+      $(this).parent().find('input[class="emp_checkbox"]').trigger('click');
    });
    // Handle click on "Select all" control
    $('thead input[id="selectAll"]', table.table().container()).on('click', function(e){
       if(this.checked){
-         $('#user_tab tbody input[class="checkbox_check"]:not(:checked)').trigger('click');
+         $('#user_tab tbody input[class="emp_checkbox"]:not(:checked)').trigger('click');
       } else {
-         $('#user_tab tbody input[class="checkbox_check"]:checked').trigger('click');
+         $('#user_tab tbody input[class="emp_checkbox"]:checked').trigger('click');
       }
       // Prevent click event from propagating to parent
       e.stopPropagation();
@@ -1016,8 +1016,8 @@ $('#user_tab tbody').on('click', 'input[type="checkbox"]', function(e){
    });
     function updateDataTableSelectAllCtrl(table){
        var $table             = table.table().node();
-       var $chkbox_all        = $('tbody input[class="checkbox_check"]', $table);
-       var $chkbox_checked    = $('tbody input[class="checkbox_check"]:checked', $table);
+       var $chkbox_all        = $('tbody input[class="emp_checkbox"]', $table);
+       var $chkbox_checked    = $('tbody input[class="emp_checkbox"]:checked', $table);
        var chkbox_select_all  = $('thead input[id="selectAll"]', $table).get(0);
 
        // If none of the checkboxes are checked
