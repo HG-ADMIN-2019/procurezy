@@ -58,7 +58,7 @@ function display_error_message(error_message){
     document.getElementById("error_message").style.color = "Red";
     $("#error_msg_id").css("display", "block")
     $('#id_save_confirm_popup').modal('hide');
-
+    $('#address_add_details').modal('show');
 }
 
 // Function to hide and display save related popups
