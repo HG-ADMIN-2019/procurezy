@@ -247,7 +247,7 @@
 <!--                    <button type="button" class="btn btn-outline-primary" data-dismiss="modal" onclick="reload_previous_state()"><i class="fas fa-times"></i> cancel</button>-->
 <!--                    <button type="button" onclick="lock_active_change()" class="btn btn-primary"><i class="fas fa-check"></i> yes </button>-->
                     <button type="button" class="btn btn-outline-primary" data-dismiss="modal" onclick="toggle()"><i class="fas fa-times"></i> cancel</button>
-                    <button type="button" onclick="block_unblock_supplier()" class="btn btn-primary"><i class="fas fa-check"></i> yes </button>
+                    <button type="button" onclick="block_unblock_supplier();" class="btn btn-primary"><i class="fas fa-check"></i> yes </button>
                 </div>
             </div>
         </div>
@@ -282,8 +282,8 @@
         localStorage.setItem("name1", document.getElementById("name1").value);
         localStorage.setItem("name2", document.getElementById("name2").value);
         localStorage.setItem("supplier_id", document.getElementById("supplier_id").value);
-        localStorage.setItem("search_term1", document.getElementById("search_term1").value);
-        localStorage.setItem("search_term2", document.getElementById("search_term2").value);
+        localStorage.setItem("email", document.getElementById("email").value);
+        localStorage.setItem("supplier_type", document.getElementById("supplier_type").value);
         localStorage.setItem("city", document.getElementById("city").value);
         localStorage.setItem("country_code", document.getElementById("country_code").value);
         localStorage.setItem("porg", document.getElementById("porg").value);
@@ -368,8 +368,11 @@
             url: "{% url 'eProc_Suppliers:supplier_blocking' %}",
             dataType :'json',
             data: JSON.stringify(data),
-            success: function(result){
+            success: function(response){
                     $('#id_block_confirm_popup').modal('hide');
+                     $('#success_msg_id').text(response.success_message);
+                    $("#error_msg_div").prop("hidden",false)
+<!--                    message_display_time();-->
                     CloseLoaderPopup();
             },
             error: function(xhr, resp, text) {
@@ -495,9 +498,9 @@ $('#sup_tab tbody').on('click', 'input[class="supplier_checkbox"]', function(e){
       e.stopPropagation();
    });
    // Handle click on table cells with checkboxes
-   $('#sup_tab').on('click', 'tbody td, thead th:first-child', function(e){
-      $(this).parent().find('input[class="supplier_checkbox"]').trigger('click');
-   });
+<!--   $('#sup_tab').on('click', 'tbody td, thead th:first-child', function(e){-->
+<!--      $(this).parent().find('input[class="supplier_checkbox"]').trigger('click');-->
+<!--   });-->
    // Handle click on "Select all" control
    $('thead input[id="selectAll"]', table.table().container()).on('click', function(e){
       if(this.checked){
@@ -512,6 +515,7 @@ $('#sup_tab tbody').on('click', 'input[class="supplier_checkbox"]', function(e){
    table.on('draw', function(){
       // Update state of "Select all" control
       updateDataTableSelectAllCtrl(table);
+      valueChanged();
 //      e.stopPropagation();
    });
     function updateDataTableSelectAllCtrl(table){

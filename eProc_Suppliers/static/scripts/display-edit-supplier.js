@@ -9,7 +9,7 @@ var delete_supp_purch_data = []
 
 // Global variable - supplier purchasing data
 var supplier_org_data = new Array();
-$("#display_basic_table TBODY TR").each(function() {
+$("#display_basic_org_table TBODY TR").each(function() {
     var row = $(this);
     var save_supp_org_data = {};
     save_supp_org_data.supp_id = global_supplier_id;
@@ -64,7 +64,7 @@ function cancel_basic_details(){
 function edit_supp_org(){
     var supp_org_body_data = '';
 // -----------------------------------------------
-    $('#display_basic_table').DataTable().destroy();
+    $('#display_basic_org_table').DataTable().destroy();
     $('#supp_org_body').empty();
     var edit_basic_data = '';
     $.each(rendered_supp_org_data, function (i, item) {
@@ -98,7 +98,7 @@ function edit_supp_org(){
             purch_block_checkbox += '<input type="checkbox"  checked disabled>'
         } else purch_block_checkbox += '<input type="checkbox" disabled>'
 
-        edit_basic_data += '<tr><td class="class_select_checkbox"><input class="checkbox_check" onclick="valueChanged()" type="checkbox"></td>'+
+        edit_basic_data += '<tr><td class="class_select_checkbox"><input class="checkbox_check"  onclick="valueChanged()" type="checkbox"></td>'+
          '<td hidden>'+item.guid+'</td>'+
          '<td>'+item.porg_id+'</td>'+
          '<td>'+item.currency_id_id+'</td>'+
@@ -115,7 +115,7 @@ function edit_supp_org(){
     $("#hg_select_checkbox").prop("hidden", true);
     $("#id_check_all").prop("hidden", false);
     $(".class_select_checkbox").prop("hidden", true);
-    $('input:checkbox').removeAttr('checked');
+//    $('input:checkbox').removeAttr('checked');
     $('#id_edit_data').show();
     $('#id_cancel_data').hide();
     $('#id_delete_data').hide();
@@ -123,7 +123,7 @@ function edit_supp_org(){
     $('#id_update_data').hide();
     $('#id_save_confirm_popup').modal('hide');
     $('#id_delete_confirm_popup').modal('hide');
-    table_sort_filter('display_basic_table');
+    table_sort_filter('display_basic_org_table');
 }
 
 // Function to cancel Edit operation
@@ -325,7 +325,7 @@ function enable_disable(action){
 
 // Function for add a new row data
 function new_row_data(){
-    basic_add_new_html = '<tr><td><input type="checkbox" required></td>'+
+    basic_add_new_html = '<tr><td><input type="checkbox" class="checkbox_check" onclick="valueChanged();" required></td>'+
     '<td hidden><input type="text" name="supp_org_guid"></td>'+
     '<td><select class="form-control"  type="text"  name="porg_id" style="text-transform:uppercase;">'+porg_opt+'</select></td>'+
     '<td><select class="form-control" type="text"  name="currency_id">'+currency_opt1+'</select></td>'+
@@ -342,27 +342,58 @@ function new_row_data(){
 }
 //onclick of cancel display the table in display mode............
 function display_basic_db_data() {
-    $('#display_basic_table').DataTable().destroy();
+    $('#display_basic_org_table').DataTable().destroy();
     $('#supp_org_body').empty();
     var edit_basic_data = '';
     $.each(rendered_supp_org_data, function (i, item) {
+        var gr_inv_vrf = '', inv_conf_exp = '', gr_conf_exp = '', po_resp = '', ship_notif_exp='', purch_block='';
+        if (item.gr_ind == true){
+                gr_inv_vrf = '<input type="checkbox" name="gr_inv_vrf" value="" checked disabled>'
+        } else{
+                gr_inv_vrf = '<input type="checkbox" name="gr_inv_vrf" value="" disabled>'
+        }
+        if (item.ir_ind == true){
+                inv_conf_exp = '<input type="checkbox" name="inv_conf_exp" value="" checked disabled>'
+        } else{
+                inv_conf_exp = '<input type="checkbox" name="inv_conf_exp" value="" disabled>'
+        }
+         if (item.ir_gr_ind == true){
+                gr_conf_exp = '<input type="checkbox" name="gr_conf_exp" value="" checked disabled>'
+        } else{
+                gr_conf_exp = '<input type="checkbox" name="gr_conf_exp" value="" disabled>'
+        }
+         if (item.po_resp == true){
+                po_resp = '<input type="checkbox" name="po_resp" value="" checked disabled>'
+        } else{
+                po_resp = '<input type="checkbox" name="po_resp" value="" disabled>'
+        }
+        if (item.ship_notif_exp == true){
+                ship_notif_exp = '<input type="checkbox" name="ship_notif_exp" value="" checked disabled>'
+        } else{
+                ship_notif_exp = '<input type="checkbox" name="ship_notif_exp" value="" disabled>'
+        }
+        if (item.purch_block == true){
+                purch_block = '<input type="checkbox" name="purch_block" value="" checked disabled>'
+        } else{
+                purch_block = '<input type="checkbox" name="purch_block" value="" disabled>'
+        }
         edit_basic_data += '<tr><td class="class_select_checkbox"><input class="checkbox_check" onclick="valueChanged()" type="checkbox" required></td>'+
         '<td>' + item.porg_id + '</td>'+
         '<td>' + item.currency_id + '</td>'+
         '<td>' + item.payment_term_key + '</td>'+
         '<td>' + item.incoterm_key + '</td>'+
-        '<td>' + item.gr_ind + '</td>'+
-        '<td>' + item.ir_ind + '</td>'+
-        '<td>' + item.ir_gr_ind + '</td>'+
-        '<td>' + item.po_resp + '</td>'+
-        '<td>' + item.ship_notif_exp + '</td>'+
-        '<td>' + item.purch_block + '</td>'+
+        '<td>' + gr_inv_vrf + '</td>'+
+        '<td>' + inv_conf_exp + '</td>'+
+        '<td>' + gr_conf_exp+ '</td>'+
+        '<td>' + po_resp + '</td>'+
+        '<td>' + ship_notif_exp + '</td>'+
+        '<td>' + purch_block + '</td>'+
         '</tr>';
     });
     $('#supp_org_body').append(edit_basic_data);
     $("#hg_select_checkbox").prop("hidden", true);
     $(".class_select_checkbox").prop("hidden", true);
-    $('input:checkbox').removeAttr('checked');
+//    $('input:checkbox').removeAttr('checked');
     $('#id_edit_data').show();
     $('#id_cancel_data').hide();
     $('#id_delete_data').hide();
@@ -371,11 +402,11 @@ function display_basic_db_data() {
     $('#id_save_confirm_popup').modal('hide');
     $('#id_delete_confirm_popup').modal('hide');
     $('#id_check_all').hide();
-    table_sort_filter('display_basic_table');
+    table_sort_filter('display_basic_org_table');
 }
 // Function to get the selected row data
 function get_selected_row_data(){
-    $("#display_basic_table TBODY TR").each(function () {
+    $("#display_basic_org_table TBODY TR").each(function () {
         var row = $(this);
         var supp_arr_obj ={};
         supp_arr_obj.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');

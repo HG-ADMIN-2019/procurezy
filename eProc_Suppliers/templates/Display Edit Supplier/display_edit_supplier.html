@@ -278,6 +278,7 @@
                                 <h5>Organizational Details</h5>
 <!-- ---------------------------------------------------- -->
                                 <div>
+                                    <button class="btn btn-primary" id="id_edit_data" onclick="onclick_edit_button();"><i class="fas fa-edit" title="Edit Organizational data" ></i> Edit</button>
                                     <button class="btn btn-primary" id="id_add_data" value="ADD" title="Add Org Info" data-toggle="modal"  data-target="#supplierOrgModal" onclick="onclick_add_button(this);">
                                     <i class="fa fa-plus"></i> add organizational data
                                     </button>
@@ -286,7 +287,6 @@
                         <div class="table-container tcw-60">
                             <div class="edit-button-section mb-4">
                                 <div  class="mb-3" style="display: block;">
-                                    <button class="btn btn-primary" id="id_edit_data" onclick="onclick_edit_button();"><i class="fas fa-edit" title="Edit Organizational data" ></i> Edit</button>
                                 </div>
                     <button class="btn btn-outline-danger btn-sm"  title="Delete" id="id_delete_data" value="DELETE" data-toggle="modal" data-target="#id_delete_confirm_popup" style="display:none;">
                         <i class="fa fa-trash"></i> delete
@@ -299,12 +299,12 @@
                     </button>
                 </div>
                 <div>
-                <table id="display_basic_table" class="org_registration_table" style="width:100%">
+                <table id="display_basic_org_table" class="org_registration_table" style="width:100%">
                                     <thead id="supp_org_header" class="thead-light">
                                     <tr>
                                         <th id="hg_select_checkbox"  hidden>
                                             <div id="id_check_all" style="display:none;">
-                                                <input type="checkbox" id="selectAll" name="chk[]">
+                                                <input type="checkbox" id="selectAll" name="chk[]" onclick="checkAll(this)">
                                             </div>
                                         </th>
                                         <th hidden>Guid</th>
@@ -419,7 +419,7 @@
                         <table class="class_popup_table table table-bordered mt-2" id="id_popup_table" >
                             <thead>
                             <tr>
-                                <th id="header_select">Select</th>
+                               <th id="header_select">Select</th>
                                         <th hidden>Guid</th>
                                         <th>Purchasing organization </th>
                                         <th>PO Currency</th>
@@ -685,7 +685,7 @@ function loadFile3(event) {
         $('#success_msg_id').empty()
         GLOBAL_ACTION = 'DELETE'
         main_table_supp_checked = [];
-        $('#display_basic_table').DataTable().destroy();
+        $('#display_basic_org_table').DataTable().destroy();
         get_selected_row_data(); // Function call to get the selected row data
         $('#id_delete_confirm_popup').modal('hide');
         data = {'data':main_table_supp_checked,'table_name':'OrgSuppliers','action':GLOBAL_ACTION}
@@ -737,7 +737,7 @@ function onclick_copy_update_button(data) {
                 $('#id_popup_table').DataTable().destroy();
                 $("#id_popup_tbody").empty();
                 //Reference the Table.
-                var res = get_all_checkboxes(); // Function to get all the checkboxes
+                var res = get_all_org_checkboxes(); // Function to get all the checkboxes
                 var $chkbox_all = $('td input[class="checkbox_check"]', res);
                 //Reference the CheckBoxes in Table.
                 var edit_basic_data = "";
@@ -813,6 +813,7 @@ function onclick_copy_update_button(data) {
                     if(purch_block) {
                         $(row.find("TD").eq(11).find('input[name="purch_block_checkbox"]').attr('checked', 'checked'));
                     }
+                    i++;
                 });
                 $("#id_del_ind_checkbox").prop("hidden", true);
                 $('#supplierOrgModal').modal('show');
@@ -861,6 +862,37 @@ function supp_org_data_save(){
             console.log(error);
         }
     })
+}
+//onclick of select all checkbox
+    function checkAll(ele) {
+        if (ele.checked) {
+            $('.checkbox_check').each(function() {
+                var disable_check = this.disabled
+                if(disable_check == false){
+                    this.checked = true;
+                    $('#id_delete_data').show();
+                    $('#id_update_data').show();
+                }
+            });
+        }
+        else{
+            $('.checkbox_check').each(function() {
+                var disable_check = this.disabled
+                if(disable_check == false){
+                    this.checked = false;
+                    $('#id_delete_data').hide();
+                    $('#id_update_data').hide();
+                }
+            });
+        }
+    }
+
+    // Function to get all the checkboxes from main table
+function get_all_org_checkboxes(){
+    var table = $('#display_basic_org_table').DataTable();
+    var $table = table.table().node();
+    var res = table.rows().nodes();
+    return res;
 }
 
 </script>
