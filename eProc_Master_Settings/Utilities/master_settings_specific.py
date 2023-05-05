@@ -61,7 +61,17 @@ class MasterSettingsSave:
 
                 prodcat_db_list.append(prodcat_db_dictionary)
             else:
-                if django_query_instance.django_existence_check(UnspscCategoriesCust,
+                if prodcat_detail['del_ind'] in ['1', True]:
+                    django_query_instance.django_filter_delete_query(UnspscCategoriesCustDesc,
+                                                                     {'prod_cat_id': prodcat_detail['prod_cat_id'],
+                                                                      'client': self.client})
+                    django_query_instance.django_filter_delete_query(UnspscCategoriesCust,
+                                                                     {'prod_cat_id': prodcat_detail['prod_cat_id'],
+                                                                      'client': self.client})
+                    prod_cat = prodcat_detail['prod_cat_id']
+
+                    delete_prod_cat_image_to_db(prod_cat)
+                elif django_query_instance.django_existence_check(UnspscCategoriesCust,
                                                                 {'prod_cat_id': prodcat_detail['prod_cat_id'],
                                                                  'client': self.client}):
                     django_query_instance.django_update_query(UnspscCategoriesCust,
@@ -77,10 +87,7 @@ class MasterSettingsSave:
                     django_query_instance.django_filter_delete_query(UnspscCategoriesCust,
                                                                      {'prod_cat_id': prodcat_detail['prod_cat_id'],
                                                                       'client': self.client})
-                if prodcat_detail['del_ind'] in ['1', True]:
-                    prod_cat = prodcat_detail['prod_cat_id']
 
-                    delete_prod_cat_image_to_db(prod_cat)
 
         if prodcat_db_list:
             bulk_create_entry_db(UnspscCategoriesCust, prodcat_db_list)
