@@ -540,7 +540,6 @@
         $('#custproddescModal').modal('show');
     }
 
-
     // onclick add icon display the row in to add the new entries
     function add_popup_row() {
         $("#error_msg_id").css("display", "none")
@@ -832,31 +831,31 @@ function check_data() {
     }
 
 
-    // ajax Function to add catalog product
-    function ajax_dropdown_data(data) {
-        urlLink = "{% url 'eProc_Configuration:get_dropdown_data' %}";
-        let result = AjaxCallAPI(urlLink, data);
-        return result;
-    }
+    // // ajax Function to add catalog product
+    // function ajax_dropdown_data(data) {
+    //     urlLink = "{% url 'eProc_Configuration:get_dropdown_data' %}";
+    //     let result = AjaxCallAPI(urlLink, data);
+    //     return result;
+    // }
 
-    function AjaxCallAPI(urlLink, data){
-        jQuery.ajax({
-            async : false,
-            type: 'POST',
-            url: urlLink,
-            dataType :'json',
-            data: JSON.stringify(data),
-            success: function(result){
-                response = result;
-            },
-            error: function(xhr, resp, text) {
-            },
-            cache: false,
-            processData: false,
-            contentType: false,
-        });
-        return response;
-    };
+    // function AjaxCallAPI(urlLink, data){
+    //     jQuery.ajax({
+    //         async : false,
+    //         type: 'POST',
+    //         url: urlLink,
+    //         dataType :'json',
+    //         data: JSON.stringify(data),
+    //         success: function(result){
+    //             response = result;
+    //         },
+    //         error: function(xhr, resp, text) {
+    //         },
+    //         cache: false,
+    //         processData: false,
+    //         contentType: false,
+    //     });
+    //     return response;
+    // };
 
 //**********************************************************
 function onclick_copy_update_button(data){
@@ -1000,7 +999,7 @@ function onclick_copy_update_button(data){
             var cusprodcatdesc_compare =  main_attribute.prod_cat_id +'-'+ main_attribute.language_id
             main_table_low_value.push(cusprodcatdesc_compare);
         });
-          table_sort_filter('display_basic_table');
+        table_sort_filter('display_basic_table');
     }
 
     // Function to get the selected row data

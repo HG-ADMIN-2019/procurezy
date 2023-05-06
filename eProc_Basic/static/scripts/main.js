@@ -688,10 +688,10 @@ function maintable_validation(validate_add_attributes, main_table_low_value) {
         }
     });
     if (common.length != 0) {
-             display_duplicate_entry(common);  //Function to highlight the rows in popup
-             error_message = ui_messeges("JMSG001")
-             no_duplicate_value = 'N'
-             return [no_duplicate_value,error_message]
+         display_duplicate_entry(common);  //Function to highlight the rows in popup
+         error_message = ui_messeges("JMSG001")
+         no_duplicate_value = 'N'
+         return [no_duplicate_value,error_message]
     }
     return [no_duplicate_entries,error_message]
 }

@@ -2,7 +2,6 @@
 {% load static %}
 {% block title %} Payment Term Descriptions (Master Settings) {% endblock %}
 {% block maincontent %}
-
 {% include 'root/loader.html' %}
 
 <script type="text/javascript"
@@ -68,7 +67,7 @@
                             <th>Payment Term</th>
                             <th>Description</th>
                             <th>Day Limit</th>
-                            <th  hidden>Del Indicator</th>
+                            <th hidden>del_ind</th>
                             <th hidden>Guid</th>
                         </tr>
                     </thead>
@@ -84,7 +83,7 @@
                             <td>{{ data.payment_term_key}}</td>
                             <td>{{ data.description}}</td>
                             <td>{{ data.day_limit}}</td>
-                            <td hidden>{{ data.del_ind}}</td>
+                            <td hidden>del_ind</td> 
                             <td hidden>{{ data.payment_term_guid}}</td>
                         </tr>
                         {% endfor %}
@@ -186,7 +185,7 @@
     var no_duplicate_entries = 'Y'
     var Tablename = uiConstants["CONST_TABLENAME_PAYMENT_TERM_DESC"]
     var appname = uiConstants["CONST_APPNAME01"]
-    var db_header_data = uiConstants['PAYMENT_TERM_KEY', 'DAY_LIMIT', 'DESCRIPTION', 'del_ind', 'LANGUAGE_ID']
+    var db_header_data = uiConstants['LANGUAGE_ID', 'PAYMENT_TERM_KEY','DESCRIPTION', 'DAY_LIMIT',  'del_ind']
     var payment_term_dropdown;
     var language_dropdown;
 
@@ -254,21 +253,21 @@
         get_main_table_data(); //Read data from main table
         // compare for duplicates in popup
         [no_duplicate_value,error_message] = compare_table_for_duplicate_entries(validate_add_attributes, payment_term_data)
-		if (error_message){
+		if (error_message) {
             display_error_message(error_message)
     	}
     	else {
             if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
                 // compare main table and pop up for duplicate values
                 [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
-                if(no_duplicate_entries == 'N'){
+                if(no_duplicate_entries == 'N') {
                     $('#Paytrm_desc_Modal').modal('show');
                 }
             }
             if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
                 var add_basic_data = '';
                 var payment_term_data_array = payment_term_data;
-                $('#id_save_confirm_popup').modal('hide');;
+                $('#id_save_confirm_popup').modal('hide');
                 data = {'data':payment_term_data,'table_name':'Payterms_desc','action':GLOBAL_ACTION}
                 OpenLoaderPopup();
                 $.ajax({
@@ -676,7 +675,8 @@
                 render_language_data = response.language_list
                 paytermdesc_drop();
                 var edit_basic_data = '';
-                var desc = ''; var lang_code;
+                var desc = '';
+                var lang_code;
                 $.each(rendered_payment_term_data, function (i, item) {
                     lang_code = item.language_id;
                     for (i = 0; i < render_language_data.length; i++) {
@@ -688,7 +688,7 @@
                     '<td>' + item.payment_term_key + '</td>' +
                     '<td>' + item.description + '</td>' +
                     '<td>' + item.day_limit + '</td>' +
-                    // '<td hidden> <input type="checkbox"</td>' +
+                    '<td hidden> <input type="checkbox"</td>' +
                     '<td hidden>' + item.payment_term_guid + '</td></tr>';
                 });
                 $('#id_payment_term_tbody').append(edit_basic_data);
@@ -726,7 +726,6 @@
                     row_color_no_highlight(row);
                 }
             });
-
         });
     }
 </script>

@@ -22,7 +22,7 @@
                     value="address_upload" onclick="onclick_upload_button()" type="button">
                     <i class="fas fa-cloud-upload-alt"></i> upload data
                 </button>
-                <button class="btn btn-primary" id="id_add_data" type="button" value="ADD" data-toggle="modal"  data-target="#address_Modal" title="Add Address" onclick="add_new_address(this);">
+                <button class="btn btn-primary" id="id_add_data" type="button" value="ADD" title="Add Address" onclick="add_new_address(this);">
                     <i class="fa fa-plus"></i> Add Address
                 </button>
                 <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close" onclick="window_close();">
@@ -271,185 +271,187 @@
                     </button>
                 </div>
                 <!-- Modal body -->
-                <div class="modal-body  scrollbox">
-                    <div id="id_check_success_messages" class="alert alert-success check_success_message" hidden></div>
-                    <div id="id_check_error_messages" class="alert alert-danger check_error_messages" hidden></div>
-                    <div id="id_check_special_character_messages"
-                        class="alert alert-danger check_special_character_messages" hidden>
-                        <p id="id_error_msg_address_number"></p>
-                        <p id="id_error_msg_title"></p>
-                        <p id="id_error_msg_name1"></p>
-                        <p id="id_error_msg_name2"></p>
-                        <p id="id_error_msg_street"></p>
-                        <p id="id_error_msg_area"></p>
-                        <p id="id_error_msg_landmark"></p>
-                        <p id="id_error_msg_city"></p>
-                        <p id="id_error_msg_org_address_source_system"></p>
-                        <p id="id_error_msg_postal_code"></p>
-                        <p id="id_error_msg_region"></p>
-                        <p id="id_error_msg_mobile_number"></p>
-                        <p id="id_error_msg_telephone_number"></p>
-                        <p id="id_error_msg_fax_number"></p>
-                        <p id="id_error_msg_email"></p>
-                    </div>
-                    <div id="error_msg_id" class="alert alert-danger display-none" role="alert"><span
-                            id="error_message"></span></div>
-                    <div id="id_warning_msg_id" class="alert alert-warning display-none" role="alert"></div>
-                    <div id="id_info_msg_id" class="alert alert-primary display-none" role="alert"></div>
-                    <form id ="address_clear">
-                        <div class="row">
-                            <div class="col m-3">
-                                <div class="form-group row ">
-                                    <label class="col-4 col-form-label">Address Number:</label>
-                                    <div class="col-8">
-                                        <input type="text" class="form-control" id="id_add_addresses_address_number" disabled>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="col-4 col-form-label">Title:</label>
-                                    <div class="col-8">
-                                        <input type="text" class="form-control" id="id_add_addresses_title">
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="col-4 col-form-label">Name1:</label>
-                                    <div class="col-8">
-                                        <input type="text" class="form-control" id="id_add_addresses_name1">
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="col-4 col-form-label">Name2:</label>
-                                    <div class="col-8">
-                                        <input type="text" class="form-control" id="id_add_addresses_name2">
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="col-4 col-form-label">Street:</label>
-                                    <div class="col-8">
-                                        <input type="text" class="form-control" id="id_add_addresses_street">
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="col-4 col-form-label">Area:</label>
-                                    <div class="col-8">
-                                        <input type="text" class="form-control" id="id_add_addresses_area">
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="col-4 col-form-label">Landmark:</label>
-                                    <div class="col-8">
-                                        <input type="text" class="form-control" id="id_add_addresses_landmark">
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="col-4 col-form-label">City:</label>
-                                    <div class="col-8">
-                                        <input type="text" class="form-control" id="id_add_addresses_city">
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="col-4 col-form-label">Address Partner Type:</label>
-                                    <div class="col-8">
-                                        <select class="form-control" type="text" name="address_partnertype"
-                                            id="id_add_addresses_partnertype">
-                                            {% for data in add_partner_type_data %}
-                                            <option value={{data.address_partner_type}}>{{data.address_partner_type_desc}}</option>
-                                            {% endfor %}
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="col-4 col-form-label">Org Address Source System:</label>
-                                    <div class="col-8">
-                                        <input type="text" class="form-control" id="id_add_addresses_source">
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="col m-3">
-                                <div class="form-group row">
-                                    <label class="col-4 col-form-label">Postal Code:</label>
-                                    <div class="col-8">
-                                        <input type="text" class="form-control check_postal_code" id="id_add_addresses_postalcode">
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="col-4 col-form-label">Region:</label>
-                                    <div class="col-8">
-                                        <input type="text" class="form-control" id="id_add_addresses_region">
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="col-4 col-form-label">Mobile Number:</label>
-                                    <div class="col-8">
-                                        <input type="text" class="form-control" id="id_add_addresses_mobile_number">
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="col-4 col-form-label">Telephone Number:</label>
-                                    <div class="col-8">
-                                        <input type="text" class="form-control" id="id_add_addresses_telephone_number">
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="col-4 col-form-label">Fax Number:</label>
-                                    <div class="col-8">
-                                        <input type="text" class="form-control" id="id_add_addresses_fax_number">
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="col-4 col-form-label">Email:</label>
-                                    <div class="col-8">
-                                        <input type="text" class="form-control" id="id_add_addresses_email">
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="col-4 col-form-label">Country Code:</label>
-                                    <div class="col-8">
-                                        <select class="form-control" type="text" name="country_code"
-                                            id="id_add_addresses_country_code">
-                                            {% for data in country_list %}
-                                            <option value={{data.country_code}}>{{data.country_name}}</option>
-                                            {% endfor %}
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="col-4 col-form-label">Language:</label>
-                                    <div class="col-8">
-                                        <select class="form-control" type="text" name="language_id"
-                                            id="id_add_addresses_language_id">
-                                            {% for data in language_list %}
-                                            <option value={{data.language_id}}>{{data.description}}</option>
-                                            {% endfor %}
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="form-group row">
-                                    <label class="col-4 col-form-label">TIME ZONE:</label>
-                                    <div class="col-8">
-                                        <select class="form-control" type="text" name="time_zone"
-                                            id="id_add_addresses_time_zone">
-                                            {% for data in time_zone_data %}
-                                            <option value={{data.time_zone}}>{{data.description}}</option>
-                                            {% endfor %}
-                                        </select>
-                                    </div>
-                                </div>
-                                <div class="form-group row" hidden>
-                                    <label class="col-4 col-form-label">Del Ind:</label>
-                                    <div class="col-8">
-                                        <input type="text" class="form-control" id="id_add_addresses_del_ind_flag">
-                                    </div>
-                                </div>
-                                <div class="form-group row" hidden>
-                                    <label class="col-4 col-form-label">Address Guid:</label>
-                                    <div class="col-8">
-                                        <input type="text" class="form-control" id="id_add_addresses_address_guid">
-                                    </div>
-                                </div>
-                            </div>
+                <div class="modal-body">
+                    <div class="popup-vertical-scroll">
+                        <div id="id_check_success_messages" class="alert alert-success check_success_message" hidden></div>
+                        <div id="id_check_error_messages" class="alert alert-danger check_error_messages" hidden></div>
+                        <div id="id_check_special_character_messages"
+                            class="alert alert-danger check_special_character_messages" hidden>
+                            <p id="id_error_msg_address_number"></p>
+                            <p id="id_error_msg_title"></p>
+                            <p id="id_error_msg_name1"></p>
+                            <p id="id_error_msg_name2"></p>
+                            <p id="id_error_msg_street"></p>
+                            <p id="id_error_msg_area"></p>
+                            <p id="id_error_msg_landmark"></p>
+                            <p id="id_error_msg_city"></p>
+                            <p id="id_error_msg_org_address_source_system"></p>
+                            <p id="id_error_msg_postal_code"></p>
+                            <p id="id_error_msg_region"></p>
+                            <p id="id_error_msg_mobile_number"></p>
+                            <p id="id_error_msg_telephone_number"></p>
+                            <p id="id_error_msg_fax_number"></p>
+                            <p id="id_error_msg_email"></p>
                         </div>
-                    </form>
+                        <div id="error_msg_id" class="alert alert-danger display-none" role="alert"><span
+                                id="error_message"></span></div>
+                        <div id="id_warning_msg_id" class="alert alert-warning display-none" role="alert"></div>
+                        <div id="id_info_msg_id" class="alert alert-primary display-none" role="alert"></div>
+                        <form id ="address_clear">
+                            <div class="row">
+                                <div class="col m-3">
+                                    <div class="form-group row ">
+                                        <label class="col-4 col-form-label">Address Number:</label>
+                                        <div class="col-8">
+                                            <input type="text" class="form-control" id="id_add_addresses_address_number" disabled>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="col-4 col-form-label">Title:</label>
+                                        <div class="col-8">
+                                            <input type="text" class="form-control" id="id_add_addresses_title">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="col-4 col-form-label">Name1:</label>
+                                        <div class="col-8">
+                                            <input type="text" class="form-control" id="id_add_addresses_name1">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="col-4 col-form-label">Name2:</label>
+                                        <div class="col-8">
+                                            <input type="text" class="form-control" id="id_add_addresses_name2">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="col-4 col-form-label">Street:</label>
+                                        <div class="col-8">
+                                            <input type="text" class="form-control" id="id_add_addresses_street">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="col-4 col-form-label">Area:</label>
+                                        <div class="col-8">
+                                            <input type="text" class="form-control" id="id_add_addresses_area">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="col-4 col-form-label">Landmark:</label>
+                                        <div class="col-8">
+                                            <input type="text" class="form-control" id="id_add_addresses_landmark">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="col-4 col-form-label">City:</label>
+                                        <div class="col-8">
+                                            <input type="text" class="form-control" id="id_add_addresses_city">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="col-4 col-form-label">Address Partner Type:</label>
+                                        <div class="col-8">
+                                            <select class="form-control" type="text" name="address_partnertype"
+                                                id="id_add_addresses_partnertype">
+                                                {% for data in add_partner_type_data %}
+                                                <option value={{data.address_partner_type}}>{{data.address_partner_type_desc}}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="col-4 col-form-label">Org Address Source System:</label>
+                                        <div class="col-8">
+                                            <input type="text" class="form-control" id="id_add_addresses_source">
+                                        </div>
+                                    </div>
+                                </div>
+                                <div class="col m-3">
+                                    <div class="form-group row">
+                                        <label class="col-4 col-form-label">Postal Code:</label>
+                                        <div class="col-8">
+                                            <input type="text" class="form-control check_postal_code" id="id_add_addresses_postalcode">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="col-4 col-form-label">Region:</label>
+                                        <div class="col-8">
+                                            <input type="text" class="form-control" id="id_add_addresses_region">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="col-4 col-form-label">Mobile Number:</label>
+                                        <div class="col-8">
+                                            <input type="text" class="form-control" id="id_add_addresses_mobile_number">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="col-4 col-form-label">Telephone Number:</label>
+                                        <div class="col-8">
+                                            <input type="text" class="form-control" id="id_add_addresses_telephone_number">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="col-4 col-form-label">Fax Number:</label>
+                                        <div class="col-8">
+                                            <input type="text" class="form-control" id="id_add_addresses_fax_number">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="col-4 col-form-label">Email:</label>
+                                        <div class="col-8">
+                                            <input type="text" class="form-control" id="id_add_addresses_email">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="col-4 col-form-label">Country Code:</label>
+                                        <div class="col-8">
+                                            <select class="form-control" type="text" name="country_code"
+                                                id="id_add_addresses_country_code">
+                                                {% for data in country_list %}
+                                                <option value={{data.country_code}}>{{data.country_name}}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="col-4 col-form-label">Language:</label>
+                                        <div class="col-8">
+                                            <select class="form-control" type="text" name="language_id"
+                                                id="id_add_addresses_language_id">
+                                                {% for data in language_list %}
+                                                <option value={{data.language_id}}>{{data.description}}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row">
+                                        <label class="col-4 col-form-label">TIME ZONE:</label>
+                                        <div class="col-8">
+                                            <select class="form-control" type="text" name="time_zone"
+                                                id="id_add_addresses_time_zone">
+                                                {% for data in time_zone_data %}
+                                                <option value={{data.time_zone}}>{{data.description}}</option>
+                                                {% endfor %}
+                                            </select>
+                                        </div>
+                                    </div>
+                                    <div class="form-group row" hidden>
+                                        <label class="col-4 col-form-label">Del Ind:</label>
+                                        <div class="col-8">
+                                            <input type="text" class="form-control" id="id_add_addresses_del_ind_flag">
+                                        </div>
+                                    </div>
+                                    <div class="form-group row" hidden>
+                                        <label class="col-4 col-form-label">Address Guid:</label>
+                                        <div class="col-8">
+                                            <input type="text" class="form-control" id="id_add_addresses_address_guid">
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </form>
+                    </div>
                 </div>
                 <!-- Modal footer -->
                 <div class="modal-footer">
@@ -795,6 +797,25 @@
             }
         }
         table_sort_filter('id_popup_table');
+    }
+
+    //validate by comparing  main table values and popup table values
+    function maintable_validation(validate_add_attributes, main_table_low_value) {
+        var no_duplicate_entries = 'Y'
+        var error_message =''
+        var common = [];
+        jQuery.grep(validate_add_attributes, function(el) {
+            if (jQuery.inArray(el, main_table_low_value) != -1) {
+                common.push(el);
+            }
+        });
+        if (common.length != 0) {
+                // display_duplicate_entry(common);  //Function to highlight the rows in popup
+                error_message = ui_messeges("JMSG001")
+                no_duplicate_value = 'N'
+                return [no_duplicate_value,error_message]
+        }
+        return [no_duplicate_entries,error_message]
     }
 
     //*********************************************
@@ -1368,7 +1389,7 @@
             var row = $(this);
             address_dic = {}
             address_dic.address_number = $('#id_add_addresses_address_number').val();
-            var compare =  address_dic.ddress_number
+            var compare =  address_dic.address_number
             address_check.push(compare);
             jQuery.grep(address_check, function(el) {
                 if (jQuery.inArray(el, common) != -1) {
