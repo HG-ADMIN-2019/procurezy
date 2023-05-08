@@ -50,7 +50,7 @@ function display_error_message(error_message){
     $('#Paytrm_desc_Modal').modal('show');
 }
 
-// Functtion to hide and display save related popups
+// Function to hide and display save related popups
 $('#save_id').click(function () {
     $('#Paytrm_desc_Modal').modal('hide');
     payment_term_data = read_popup_data();

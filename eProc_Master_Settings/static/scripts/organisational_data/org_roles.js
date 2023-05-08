@@ -8,7 +8,7 @@ $(".remove_upload_data").click(() => {
     $("#id_error_msg").html("");
     $("#id_popup_tbody").empty();
     $("#id_error_msg").empty();
-    $('#myModal').modal('hide');
+    $('#Roles_Modal').modal('hide');
     $("#id_error_msg").prop("hidden", true);
     $("#id_error_msg_roles_code").prop("hidden", true);
     $("#id_error_msg_roles_name").prop("hidden", true);
@@ -49,12 +49,12 @@ function display_error_message(error_message) {
     document.getElementById("error_message").style.color = "Red";
     $("#error_msg_id").css("display", "block")
     $('#id_save_confirm_popup').modal('hide');
-    $('#myModal').modal('show');
+    $('#Roles_Modal').modal('show');
 }
 
 // Function to hide and display save related popups
 $('#save_id').click(function () {
-    $('#myModal').modal('hide');
+    $('#Roles_Modal').modal('hide');
     roles_data = read_popup_data();
     $('#id_save_confirm_popup').modal('show');
 });
@@ -93,6 +93,7 @@ function new_row_data(){
 // Function to get main table data
 function get_main_table_data() {
     main_table_low_value = [];
+    $('#display_basic_table').DataTable().destroy();
     $("#display_basic_table TBODY TR").each(function() {
         var row = $(this);
         var main_attribute = {};

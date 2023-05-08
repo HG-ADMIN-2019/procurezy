@@ -102,7 +102,7 @@ var org_attr={};
             $("#id_del_ind_checkbox").prop("hidden", true);
             table_sort_filter("id_popup_table");
             table_sort_filter('display_basic_table');
-            $('#myModal').modal('show');
+            $('#org_attr_Modal').modal('show');
     }
 
     //***************************
@@ -122,7 +122,7 @@ var org_attr={};
         $("#id_error_msg").html("");
         $("#id_popup_tbody").empty();
         $("#id_error_msg").empty();
-        $('#myModal').modal('hide');
+        $('#org_attr_Modal').modal('hide');
         $("#id_error_msg").prop("hidden", true);
         $("#id_error_msg_org_attr_code").prop("hidden", true);
         $("#id_error_msg_org_attr_name").prop("hidden", true);
@@ -140,7 +140,7 @@ var org_attr={};
         document.getElementById("error_message").style.color = "Red";
         $("#error_msg_id").css("display", "block")
         $('#id_save_confirm_popup').modal('hide');
-        $('#myModal').modal('show');
+        $('#org_attr_Modal').modal('show');
     }
 
     //onclick of cancel display the table in display mode............
@@ -215,7 +215,7 @@ var org_attr={};
 
     // Function to hide and display save related popups
     $('#save_id').click(function () {
-        $('#myModal').modal('hide');
+        $('#org_attr_Modal').modal('hide');
         orgattr_data = read_popup_data();
         $('#id_save_confirm_popup').modal('show');
     });
