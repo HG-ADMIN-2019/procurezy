@@ -38,6 +38,7 @@ function edit_basic_supp_data(){
             $("#supplier_id").prop( "disabled", true );
             $("#sbd_edit_button").prop("hidden", true);
             document.getElementById('sbd_save_cancel_button').style.display = 'block';
+            $("#working_days").show();
     }
     $("#edit_mode").show();
     $("#working_days").hide();
@@ -173,96 +174,35 @@ function cancel_supp_org_data(){
     document.getElementById("supp_org_cancel_save").style.display = "none";
 }
 
-// Function to save edited supplier basic details data
-function save_basic_details() {
-    var name1_val= $('#name1').val();
-    var city_val = $('#city_id').val();
-    var email_val = $('#email_id').val();
-    var mobile_val = $('#mobile_num_id').val();
-    var search_term1_val = $('#search_term1_id').val();
-    var search_term2_val = $('#search_term2_id').val();
-    OpenLoaderPopup();
-    is_save_form_valid = save_basic_form_validation(name1_val, city_val, email_val, mobile_val, search_term1_val, search_term2_val)
-    if (is_save_form_valid != '') {
-        $('#save_error_div').html(is_save_form_valid)
-        $('#save_error_div').show();
-        scroll_top()
-        CloseLoaderPopup();
-        return
-    }
-    formdata = new FormData();
-    formdata.append("supplier_image",  $('#supplier_image_id').prop('files')[0]);
-    formdata.append("supplier_guid",   $('#supplier_guid').val());
-    formdata.append("supplier_id",   $('#supplier_id').val()); supplier_type
-    formdata.append("supplier_type",   $('#supplier_type').val());
-    formdata.append("registration_number",   $('#supplier_regnum').val());
-    formdata.append("name1",$('#name1').val());
-    formdata.append("name2",$('#name2').val());
-    formdata.append("city_id",   $('#city_id').val());
-    formdata.append("postal_code_id",   $('#postal_code_id').val());
-    formdata.append("street_id",   $('#street_id').val());
-    formdata.append("country_code_id",   $('#country_code_id').val());
-    formdata.append("currency_id",   $('#currency_id').val());
-    formdata.append("language_id",   $('#language_id').val());
-    formdata.append("landline_id",   $('#landline_id').val());
-    formdata.append("mobile_num_id",   $('#mobile_num_id').val());
-    formdata.append("fax_id",   $('#fax_id').val());
-    formdata.append("email_id",   $('#email_id').val());
-    formdata.append("search_term1_id",   $('#search_term1_id').val());
-    formdata.append("search_term2_id",   $('#search_term2_id').val());
-    formdata.append("working_days_id",   $('#working_days_id').val());
-    formdata.append("duns_number_id",   $('#duns_number_id').val());
-    formdata.append("email1_id",   $('#email1_id').val());
-    formdata.append("email2_id",   $('#email2_id').val());
-    formdata.append("email3_id",   $('#email3_id').val());
-    formdata.append("email4_id",   $('#email4_id').val());
-    formdata.append("email5_id",   $('#email5_id').val());
-    formdata.append("output_medium_id",   $('#output_medium_id').val());
-    formdata.append("status",   GLOBAL_ACTION);
-    response = ajax_update_supplier_basic_details(formdata)
-    encrypted_supplier = response.encrypted_supplier
-    message = response.message
-    // ajax success response
-    if(message.success){
-        document.getElementById('supplier_basic_update_success').innerHTML = message.success;
-        $('#supplier_basic_update_success').show();
-        $('#save_error_div').hide();
-        CloseLoaderPopup();
-    }
-    if(message.error){
-        document.getElementById('save_error_div').innerHTML = message.error;
-        $('#save_error_div').show();
-        $('#supplier_basic_update_success').hide();
-        CloseLoaderPopup();
-    }
-    $('html, body').animate({ scrollTop: 0 }, 'slow');
-    cancel_basic_details();
-    if(GLOBAL_ACTION == 'CREATE'){
-        var url = '/admin_tool/supplier_management/supplier_details/' + encrypted_supplier + '';
-        location.href = url
-    }
-    return false;
-}
+
 var supplierid = global_supplier_id;
 
    // Validation function
-   const save_basic_form_validation = (name1, city_id, email_id, mobile,search_term1, search_term2) => {
+   function save_basic_form_validation(name1,name2, city_id, email_id, mobile,search_term1, search_term2){
         var is_valid = true
         var save_form_errors = ''
         var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
         if (name1 == '') {
             is_valid = false
-
-             var msg = "JMSG007" + " First name";
+             var msg = "JMSG007";
              var msg_type ;
              msg_type = message_config_details(msg);
              $("#error_msg_id").prop("hidden", false)
-             var display1 = msg_type.messages_id_desc;
+             var display1 = msg_type.messages_id_desc + " First name ";
+            save_form_errors += display1;
+        }
+        else if (name2 == '') {
+            is_valid = false
+             var msg = "JMSG007";
+             var msg_type ;
+             msg_type = message_config_details(msg);
+             $("#error_msg_id").prop("hidden", false)
+             var display1 = msg_type.messages_id_desc+ " Last name";
             save_form_errors += display1;
         }
         else if (city_id == '') {
             is_valid = false
-              var msg = "JMSG007" + " City";
+              var msg = "JMSG007" ;
              var msg_type ;
              msg_type = message_config_details(msg);
              $("#error_msg_id").prop("hidden", false)
@@ -271,7 +211,7 @@ var supplierid = global_supplier_id;
         }
         else if ((email_id == '') || !(email_id.match(mailformat))) {
             is_valid = false
-              var msg = "JMSG002" + " in Email Id";
+              var msg = "JMSG002";
              var msg_type ;
              msg_type = message_config_details(msg);
              $("#error_msg_id").prop("hidden", false)
@@ -280,7 +220,7 @@ var supplierid = global_supplier_id;
         }
         else if (mobile == '') {
             is_valid = false
-              var msg = "JMSG007" + " Mobile Number";
+              var msg = "JMSG007" ;
              var msg_type ;
              msg_type = message_config_details(msg);
              $("#error_msg_id").prop("hidden", false)
@@ -289,7 +229,7 @@ var supplierid = global_supplier_id;
         }
         else if (search_term1 == '') {
             is_valid = false
-              var msg = "JMSG007" + " Search Term1";
+              var msg = "JMSG007";
              var msg_type ;
              msg_type = message_config_details(msg);
              $("#error_msg_id").prop("hidden", false)
@@ -298,15 +238,14 @@ var supplierid = global_supplier_id;
         }
         else if (search_term2 == '') {
             is_valid = false
-              var msg = "JMSG007" + " Search Term2";
+              var msg = "JMSG007";
              var msg_type ;
              msg_type = message_config_details(msg);
              $("#error_msg_id").prop("hidden", false)
              var display1 = msg_type.messages_id_desc;
             save_form_errors += display1 + " Search Term2";
         }
-
-        return is_valid, save_form_errors
+        return [is_valid, save_form_errors]
     }
 
 function enable_disable(action){

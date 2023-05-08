@@ -121,6 +121,9 @@ class SupplierRegForm(forms.Form):
         :return: second name
         """
         lname = self.cleaned_data.get('name2')
+        if lname == '':
+            error_msg = get_message_desc(MSG080)[1]
+            raise forms.ValidationError(error_msg)
         if not (lname.isalpha() and re.match('[a-zA-Z]{1,30}', lname)):
             error_msg = get_message_desc(MSG080)[1]
             # msgid = 'MSG080'

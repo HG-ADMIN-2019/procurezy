@@ -15,3 +15,9 @@ $(document).ready( function() {
    else{ $('#purchase_block').prop("checked", false)}
   nav_bar_admin();
 });
+
+$("#porg").change(function () {
+    if(document.getElementById("porg").value != '*'){
+
+    }
+})
