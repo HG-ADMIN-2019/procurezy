@@ -85,8 +85,8 @@
       {% endif %}
 
       {% if som_po_data %}
-      <div class="card mt-5">
-        <div>
+      <div class="card">
+        <div style="margin-top: 17px;margin-left: 10px;">
           <table id="som_po_table" class="table table_sort_filter_export_excel">
             <thead class="thead-light">
             <tr>
@@ -126,6 +126,7 @@
 <script>
 
 $(document).ready( function() {
+  nav_bar_som()
   table_sort_filter_export_excel();
   $('#po_number').val(localStorage.getItem("po_number"));
   $('#company_name').val(localStorage.getItem("company_name"));
