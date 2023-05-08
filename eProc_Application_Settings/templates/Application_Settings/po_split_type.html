@@ -264,13 +264,14 @@
             $("#id_error_msg").html(" ");
         });
         basic_add_new_html = '<tr ><td><input type="checkbox" required></td>'+
-            '<td><select type="text" class="input form-control aaccode" id="aaccode-'+inc_index+'" name="aaccode" onchange="GetSelectedTextValue(this)"><option value="" disabled selected>Select your option</option>'+ aac_dropdown +'</select></td>'+
+            '<td><select type="text" class="input form-control aaccode" id="aaccode-'+inc_index+'" name="aaccode" onchange="GetSelectedTextValue(this)">zzzz'+ aac_dropdown +'</select></td>'+
             '<td><input class="form-control description" type="text" id="description-'+inc_index+'" name="description" disabled></td>'+
             '<td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
         $('#id_popup_tbody').append(basic_add_new_html);
         if (GLOBAL_ACTION == "aac_upload") {
             $(".class_del_checkbox").prop("hidden", false);
         }
+        GetSelectedTextValue($("#aaccode-" + inc_index)[0]);
         table_sort_filter('id_popup_table');
     }
 
@@ -309,17 +310,22 @@
     }
 
     //***********************************
-    function GetSelectedTextValue(aaccode) {
-        var selectedText = aaccode.options[aaccode.selectedIndex].innerHTML;
-        var selectedValue = aaccode.value;
-        var selectedId = (aaccode.id).split('-')[1];
-        $.each (rendered_aac_values, function(i, item){
-            if(selectedValue == item.field_type_id){
-                $('#description-'+selectedId).val(item.field_type_desc);
-            }
-        });
-    }
+   function GetSelectedTextValue(aaccode) {
+  var selectedText = "";
+  var selectedValue = aaccode.value;
+  var selectedId = (aaccode.id).split('-')[1];
 
+  if (aaccode.length > 0) {
+    selectedText = aaccode.options[aaccode.selectedIndex].innerHTML;
+  }
+
+  $.each (rendered_aac_values, function(i, item){
+    if(selectedValue == item.field_type_id){
+      $('#description-'+selectedId).val(item.field_type_desc);
+    }
+  });
+}
+F
     //Function to highlight duplicate records
     function display_duplicate_entry(common) {
         var po_split_types_check = new Array;

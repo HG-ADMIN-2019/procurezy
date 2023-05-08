@@ -83,11 +83,13 @@ function read_popup_data() {
 // Function for add a new row data
 function new_row_data(){
     basic_add_new_html='<tr><td><input type="checkbox" required></td>'+
-    '<td><select type="text" class="input form-control roles" id="roles-1"  name="role" onchange="GetSelectedTextValue(this)"><option value="" disabled selected>Select your option</option>'+ roles_type_dropdown +'</select></td>'+
+    '<td><select type="text" class="input form-control roles" id="roles-1"  name="role" onchange="GetSelectedTextValue(this)">'+ roles_type_dropdown +'</select></td>'+
     '<td><input class="form-control description" type="text"  name="role_desc"  id="description-1" disabled></td>'+
     '<td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
     table_sort_filter('id_popup_table');
+    var rolesSelect = $("#roles-1");
+    GetSelectedTextValue(rolesSelect[0]);
 }
 
 // Function to get main table data

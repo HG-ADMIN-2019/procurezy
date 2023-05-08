@@ -189,7 +189,7 @@
             $("#id_error_msg").html(" ");
         });
         basic_add_new_html = '<tr ><td><input type="checkbox" required></td>'+
-        '<td><select type="text" class="input form-control documenttype" id="documenttype-'+inc_index+'" name="documenttype" onchange="GetSelectedTextValue(this)"><option value="" disabled selected>Select your option</option>'+ document_type_dropdown +'</select></td>'+
+        '<td><select type="text" class="input form-control documenttype" id="documenttype-'+inc_index+'" name="documenttype" onchange="GetSelectedTextValue(this)">'+ document_type_dropdown +'</select></td>'+
         '<td><input class="form-control description" type="text" id="description-'+inc_index+'" name="description" disabled></td>'+
         '<td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
         $('#id_popup_tbody').append(basic_add_new_html);
@@ -275,13 +275,32 @@
     }
 
     //**************************************************
-    function GetSelectedTextValue(documenttype) {
-        var selectedText = documenttype.options[documenttype.selectedIndex].innerHTML;
+<!--    function GetSelectedTextValue(documenttype) {-->
+<!--        var selectedText = documenttype.options[documenttype.selectedIndex].innerHTML;-->
+<!--        var selectedValue = documenttype.value;-->
+<!--	    var selectedId = (documenttype.id).split('-')[1];-->
+<!--        $.each (rendered_dropdown_db_values, function(i, item){-->
+<!--            if(selectedValue == item.field_type_id){-->
+<!--                $('#description-'+selectedId).val(item.field_type_desc);-->
+<!--            }-->
+<!--        });-->
+<!--    }-->
+<!--    -->
+        function GetSelectedTextValue(attribute) {
+        var selectedText = '';
         var selectedValue = documenttype.value;
-	    var selectedId = (documenttype.id).split('-')[1];
-        $.each (rendered_dropdown_db_values, function(i, item){
+        var selectedId = (documenttype.id).split('-')[1];
+
+        // Check if selectedValue is empty, if yes, display popup
+        if (selectedValue == '') {
+            // Add your code to display the popup here
+            return;
+        }
+
+        $.each(rendered_dropdown_values, function(i, item){
             if(selectedValue == item.field_type_id){
-                $('#description-'+selectedId).val(item.field_type_desc);
+                selectedText = item.field_type_desc;
+                $('#attribute_name-'+selectedId).val(selectedText);
             }
         });
     }

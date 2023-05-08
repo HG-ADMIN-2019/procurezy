@@ -356,7 +356,7 @@
                             $("#header_select").prop("hidden", true);
                         }
                         else if (GLOBAL_ACTION == "DELETE"){
-                            if ((row.cells[8].innerHTML=="False") || (row.cells[8].innerHTML=="false")){    
+                            if ((row.cells[8].innerHTML=="False") || (row.cells[8].innerHTML=="false")){
                                 check = '<input type="checkbox" disabled>'
                                 document.getElementById('delete_data').style.visibility='hidden';
                             } else {
@@ -416,34 +416,44 @@
     }
 
     // on click add icon display the row in to add the new entries
-    function add_popup_row() {
-        $("#error_msg_id").css("display", "none")
-        dropdown_value();
-        basic_add_new_html = '';
-        var display_db_data = '';
-        var getid = $(".attribute:last").attr("id");
-        var getindex = getid.split("-")[1]
-        var inc_index = Number(getindex)+1
-        $('#id_popup_table').DataTable().destroy();
-        $(".modal").on("hidden.bs.modal", function () {
-            $("#id_error_msg").html("");
-        });
-        basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select type="text" class="input form-control attribute" id="attribute-'+inc_index+'"  name="attribute" onchange="GetSelectedTextValue(this)"><option value="" disabled selected>Select your option</option>'+ attribute_id_dropdown +'</select></td><td><input class="form-control attribute_name" type="text" name="attribute_name" id="attribute_name-"+'+inc_index+' disabled></td><td><input type="checkbox" name="range_indicator" required></td><td><input type="checkbox" name="multiple_value" required></td><td><input type="checkbox" name="allow_defaults" required></td><td><input type="checkbox" name="inherit_values" required></td><td><input type="number" name="maxlength"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td><td class="id_del_ind_checkbox1" hidden><input type="checkbox" name = "del_ind_flag" required></td></tr>';
-        $('#id_popup_tbody').append(basic_add_new_html);
-        if (GLOBAL_ACTION == "org_attr_upload") {
-            $(".class_del_checkbox").prop("hidden", false);
-        }
-        table_sort_filter_popup('id_popup_table');
+function add_popup_row() {
+    $("#error_msg_id").css("display", "none");
+    dropdown_value();
+    var basic_add_new_html = '';
+    var display_db_data = '';
+    var getid = $(".attribute:last").attr("id");
+    var getindex = getid.split("-")[1];
+    var inc_index = Number(getindex)+1;
+    $('#id_popup_table').DataTable().destroy();
+    $(".modal").on("hidden.bs.modal", function () {
+        $("#id_error_msg").html("");
+    });
+    basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select type="text" class="input form-control attribute" id="attribute-' + inc_index + '" name="attribute" onchange="GetSelectedTextValue(this)">'+ attribute_id_dropdown +'</select></td><td><input class="form-control attribute_name" type="text" name="attribute_name" id="attribute_name-' + inc_index + '"  disabled></td><td><input type="checkbox" name="range_indicator" required></td><td><input type="checkbox" name="multiple_value" required></td><td><input type="checkbox" name="allow_defaults" required></td><td><input type="checkbox" name="inherit_values" required></td><td><input type="number" name="maxlength"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td><td class="id_del_ind_checkbox1" hidden><input type="checkbox" name="del_ind_flag" required></td></tr>';
+    $('#id_popup_tbody').append(basic_add_new_html);
+    if (GLOBAL_ACTION == "org_attr_upload") {
+        $(".class_del_checkbox").prop("hidden", false);
     }
+    GetSelectedTextValue($("#attribute-" + inc_index)[0]);
+    table_sort_filter_popup('id_popup_table');
+}
+
 
     //************************************
     function GetSelectedTextValue(attribute) {
-        var selectedText = attribute.options[attribute.selectedIndex].innerHTML;
+        var selectedText = '';
         var selectedValue = attribute.value;
         var selectedId = (attribute.id).split('-')[1];
-        $.each (rendered_dropdown_values, function(i, item){
+
+        // Check if selectedValue is empty, if yes, display popup
+        if (selectedValue == '') {
+            // Add your code to display the popup here
+            return;
+        }
+
+        $.each(rendered_dropdown_values, function(i, item){
             if(selectedValue == item.field_type_id){
-                $('#attribute_name-'+selectedId).val(item.field_type_desc);
+                selectedText = item.field_type_desc;
+                $('#attribute_name-'+selectedId).val(selectedText);
             }
         });
     }
