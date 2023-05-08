@@ -86,35 +86,37 @@
 
       {% if som_po_data %}
       <div class="card mt-5">
-        <table id="som_po_table" class="table table_sort_filter_export_excel">
-          <thead class="thead-light">
-          <tr>
-            <th> PO Number  </th>
-            <th> Company Name </th>
-            <th> Buyer Name </th>
-            <th> Buyer Email </th>
-            <th> Buyer Phone No.</th>
-            <th> Received Date</th>
-            <th> Total Value</th>
-            <th>Action</th>
-          </tr>
-          </thead>
-          <tbody id="supplier_detail_tbody">
-          {% for results in som_po_data %}
-          <tr id="table-{{results.doc_number}}">
-            <td><a href="{% url 'eProc_Supplier_Order_Management:som_po_doc_details' results.encrypted_po_doc_num %}" id="{{results.doc_number}}" class="deletepop" target="_blank">{{results.doc_number}}</a></td>
-            <td>{{results.requester_company_name}}</td>
-            <td>{{results.requester}}</td>
-            <td>{{results.requester_email}}</td>
-            <td>{{results.requester_mobile_num}}</td>
-            <td>{{results.ordered_at}}</td>
-            <td>{{results.total_value}}</td>
-            <td><a href=\{{results.pdf_path}} type="application/pdf" target="_blank">View Po Pdf</a>
-            </td>
-          </tr>
-          {% endfor %}
-          </tbody>
-        </table>
+        <div>
+          <table id="som_po_table" class="table table_sort_filter_export_excel">
+            <thead class="thead-light">
+            <tr>
+              <th> PO Number  </th>
+              <th> Company Name </th>
+              <th> Buyer Name </th>
+              <th> Buyer Email </th>
+              <th> Buyer Phone No.</th>
+              <th> Received Date</th>
+              <th> Total Value</th>
+              <th>Action</th>
+            </tr>
+            </thead>
+            <tbody id="supplier_detail_tbody">
+            {% for results in som_po_data %}
+            <tr id="table-{{results.doc_number}}">
+              <td><a href="{% url 'eProc_Supplier_Order_Management:som_po_doc_details' results.encrypted_po_doc_num %}" id="{{results.doc_number}}" class="deletepop" target="_blank">{{results.doc_number}}</a></td>
+              <td>{{results.requester_company_name}}</td>
+              <td>{{results.requester}}</td>
+              <td>{{results.requester_email}}</td>
+              <td>{{results.requester_mobile_num}}</td>
+              <td>{{results.ordered_at}}</td>
+              <td>{{results.total_value}}</td>
+              <td><a href=\{{results.pdf_path}} type="application/pdf" target="_blank">View Po Pdf</a>
+              </td>
+            </tr>
+            {% endfor %}
+            </tbody>
+          </table>
+        </div>
       </div>
       {% endif %}
     </form>
