@@ -665,7 +665,7 @@ function save_basic_details() {
                     success: function(Response) {
                         encrypted_supplier = Response.encrypted_supplier;
 <!--                        success_response(Response.message); // Function call to display response data-->
-                        document.getElementById('supplier_basic_update_success').innerHTML = message.success;
+                        document.getElementById('supplier_basic_update_success').innerHTML = Response.message;
                         $('#supplier_basic_update_success').show();
                         $('#save_error_div').hide();
                         CloseLoaderPopup();

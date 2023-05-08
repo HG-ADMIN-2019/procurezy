@@ -73,7 +73,7 @@
                             <th>Payment Term</th>
                             <th>Description</th>
                             <th>Day Limit</th>
-                            <th hidden>Del Indicator</th>
+                            <th  hidden>Del Indicator</th>
                             <th hidden>Guid</th>
                         </tr>
                     </thead>
