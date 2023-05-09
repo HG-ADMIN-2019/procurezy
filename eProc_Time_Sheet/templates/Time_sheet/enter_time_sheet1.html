@@ -93,10 +93,10 @@
         <hr color="#ffa500">
         <div id="timesheet">
             <div id="select_project">
-                                <form>{% csrf_token %}
+                <form>{% csrf_token %}
                     <span id="week_number" hidden>{{week_number}}</span>
                     <label for="choose_project">Select project to enter timesheet:</label>
-                   <select id="choose_project" class="form-control form-control-sm">
+                    <select id="choose_project" class="form-control form-control-sm">
                         <option value="">Select</option>
                         {% for project in project_details %}
                         <option value="{{project.project_id}}" data-desc="{{project.project_desc}}" data-start="{{project.start_date}}" data-end="{{project.end_date}}">{{project.project_id}}</option>
@@ -111,7 +111,7 @@
             </div>
             <br>
             <br>
-             <div id="project_det_div" style="display:none;">
+            <div id="project_det_div" style="display:none;">
                 <h1>Project Details</h1>
                 <table class="table">
                     <tr>
@@ -127,30 +127,131 @@
                         <td id="project_val"></td>
                     </tr>
                 </table>
+            </div>
 
+            <br>
+            <br>
+            <div id="timesheet_entries">
+                <h1>Timesheet Entries</h1>
+                <table class="table">
+                    <thead>
+                        <tr>
+                            <th>Project ID</th>
+                            <th>Username</th>
+                            <th>Calendar ID</th>
+                            <th>Project Category</th>
+                            <th>Effort</th>
+                            <th>Effort Day</th>
+                            <th>Effort Date</th>
+                            <th>Effort Week</th>
+                            <th>Effort Year</th>
+                            <th>Effort Description</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        {% for project_effort in project_efforts %}
+                        <tr>
+                            <td>{{ project_effort.project_id }}</td>
+                            <td>{{ project_effort.username }}</td>
+                            <td>{{ project_effort.calender_id }}</td>
+                            <td>{{ project_effort.project_category }}</td>
+                            <td>{{ project_effort.effort }}</td>
+                            <td>{{ project_effort.effort_day }}</td>
+                            <td>{{ project_effort.effort_date }}</td>
+                            <td>{{ project_effort.effort_week }}</td>
+                            <td>{{ project_effort.effort_year }}</td>
+                            <td>{{ project_effort.effort_description }}</td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
     </div>
 </div>
 
 
 <script>
-function get_project_details() {
-  // Get selected project from dropdown
-  const select_project = document.getElementById('choose_project');
-  const selected_option = select_project.options[select_project.selectedIndex];
-  const project_id = selected_option.value;
-  const project_desc = selected_option.getAttribute('data-desc');
-  const project_start = selected_option.getAttribute('data-start');
-  const project_end = selected_option.getAttribute('data-end');
-
-  // Update project details section with selected project info
-  document.getElementById('project_id').textContent = project_id;
-  document.getElementById('project_desc').textContent = project_desc;
-  document.getElementById('project_val').textContent = project_start + ' - ' + project_end;
-
-  // Show project details section
-  document.getElementById('project_det_div').style.display = 'block';
+// Function to show project details
+function showProjectDetails(project) {
+    $('#project_id').text(project.id);
+    $('#project_desc').text(project.desc);
+    $('#project_val').text(project.start + ' - ' + project.end);
+    $('#project_det_div').show();
 }
+
+// Function to hide project details
+function hideProjectDetails() {
+    $('#project_id').text('');
+    $('#project_desc').text('');
+    $('#project_val').text('');
+    $('#project_det_div').hide();
+}
+
+// Function to get project details
+function get_project_details() {
+    var projectId = $('#choose_project').val();
+    var projectDesc = $('#choose_project').find(':selected').data('desc');
+    var projectStart = $('#choose_project').find(':selected').data('start');
+    var projectEnd = $('#choose_project').find(':selected').data('end');
+
+    // Check if project ID is selected
+    if (projectId) {
+        var project = {
+            'id': projectId,
+            'desc': projectDesc,
+            'start': projectStart,
+            'end': projectEnd
+        };
+        showProjectDetails(project);
+    } else {
+        hideProjectDetails();
+    }
+}
+
+// Function to add a new row
+function addNewRow() {
+    var projectID = $('#choose_project').val();
+    var username = $('#username').val();
+    var calendarID = $('#calendar_id').val();
+    var projectCategory = $('#project_category').val();
+    var effort = $('#effort').val();
+    var effortDay = $('#effort_day').val();
+    var effortDate = $('#effort_date').val();
+    var effortWeek = $('#effort_week').val();
+    var effortYear = $('#effort_year').val();
+    var effortDescription = $('#effort_description').val();
+
+    // Check if all fields are filled
+    if (projectID && username && calendarID && projectCategory && effort && effortDay && effortDate && effortWeek && effortYear && effortDescription) {
+        var newRow = '<tr>' +
+                        '<td>' + projectID + '</td>' +
+                        '<td>' + username + '</td>' +
+                        '<td>' + calendarID + '</td>' +
+                        '<td>' + projectCategory + '</td>' +
+                        '<td>' + effort + '</td>' +
+                        '<td>' + effortDay + '</td>' +
+                        '<td>' + effortDate + '</td>' +
+                        '<td>' + effortWeek + '</td>' +
+                        '<td>' + effortYear + '</td>' +
+                        '<td>' + effortDescription + '</td>' +
+                     '</tr>';
+        $('tbody').append(newRow);
+        alert('New row added successfully!');
+    } else {
+        alert('Please fill all fields!');
+    }
+}
+
+// Event listener for Submit button
+$('#get_project_detail_btn').on('click', function() {
+    get_project_details();
+});
+
+// Event listener for Add button
+$('#add_row_btn').on('click', function() {
+    addNewRow();
+});
 
 </script>
 

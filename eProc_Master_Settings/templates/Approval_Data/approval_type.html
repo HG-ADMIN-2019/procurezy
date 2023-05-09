@@ -252,6 +252,9 @@
                 document.getElementById("id_del_add_button").style.display = "block";
                 $("#save_id").prop("hidden", false);
                 CloseLoaderPopup();
+                $('.approvaltype').each(function() {
+                GetSelectedTextValue(this);
+                });
             }
         });
     }
@@ -302,16 +305,20 @@
     }
 
     //*********************************************
-    function GetSelectedTextValue(approvaltype) {
-        var selectedText = approvaltype.options[approvaltype.selectedIndex].innerHTML;
-        var selectedValue = approvaltype.value;
-        var selectedId = (approvaltype.id).split('-')[1];
-        $.each(rendered_approval_type_values, function(i, item){
-            if(selectedValue == item.field_type_id){
-                $('#description-'+selectedId).val(item.field_type_desc);
-            }
-        });
+function GetSelectedTextValue(approvaltype) {
+    if (!approvaltype) {
+        return;
     }
+    var selectedText = approvaltype.options[approvaltype.selectedIndex].innerHTML;
+    var selectedValue = approvaltype.value;
+    var selectedId = (approvaltype.id).split('-')[1];
+    $.each(rendered_approval_type_values, function(i, item){
+        if(selectedValue == item.field_type_id){
+            $('#description-'+selectedId).val(item.field_type_desc);
+        }
+    });
+}
+
 
     //onclick of data Upload copy data to modal pop-up
     function onclick_display_csv_data() {
