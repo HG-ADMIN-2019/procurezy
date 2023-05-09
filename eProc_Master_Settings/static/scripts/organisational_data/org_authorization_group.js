@@ -146,11 +146,13 @@ function get_selected_row_data(){
 // Function for add a new row data
 function new_row_data(){
     basic_add_new_html = '<tr><td><input type="checkbox" required></td>'+
-    '<td><select type="text" class="input form-control authgroup"  id="authgroup-1" onchange="GetSelectedTextValue(this)"><option value="" disabled selected>Select your option</option>'+ auth_group_id_dropdown+'</select></td>'+
+    '<td><select type="text" class="input form-control authgroup"  id="authgroup-1" onchange="GetSelectedTextValue(this)">'+ auth_group_id_dropdown+'</select></td>'+
     '<td><input class="form-control description" type="text"  name="description"  id="description-1" disabled></td>'+
     '<td><select class="form-control">'+auth_level_dropdown+'</select></td>'+
     '<td><select class="form-control">'+auth_obj_id_dropdown+'</select></td>'+
     '<td hidden><input type="text" value="GUID"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
     table_sort_filter('id_popup_table');
+    var authgroupSelect = $("#authgroup-1");
+    GetSelectedTextValue(authgroupSelect[0]);
 }

@@ -112,7 +112,7 @@
     </div>
     <!--end of modal popup for Add,copy,update and upload-->
     <!-- modal popup to upload the csv file; save confirmation popup; delete confirmation popup -->
-    {% include 'configuration_common_pop_up.html' %}  
+    {% include 'configuration_common_pop_up.html' %}
     <div>
         {% if messages %} {% for message in messages %} {% if message.tags == 'success' %}
         <div style="color: green; ">{{ message }}</div>
@@ -193,7 +193,7 @@
                 display_error_message(error_message)
             }
         }
-        table_sort_filter('id_popup_table'); 
+        table_sort_filter('id_popup_table');
     }
 
     //delete the selected row in db................
@@ -221,10 +221,10 @@
             }
         });
     }
-   
+
     // *****************************************
     function GetSelectedTextValue(roles) {
-        var selectedText = roles.options[roles.selectedIndex].innerHTML;
+<!--        var selectedText = roles.options[roles.selectedIndex].innerHTML;-->
         var selectedValue = roles.value;
         var selectedId = (roles.id).split('-')[1];
         if (rendered_roles_type_values.length === 0) {

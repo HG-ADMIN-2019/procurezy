@@ -311,29 +311,29 @@
     }
 
     // on click add icon display the row in to add the new entries
-function add_popup_row() {
-    dropdown_value();
-    $("#error_msg_id").css("display", "none")
-    basic_add_new_html = '';
-    var display_db_data = '';
-    var getid = $(".authobject:last").attr("id");
-    var getindex = getid.split("-")[1]
-    var inc_index = Number(getindex)+1
-    $('#id_popup_table').DataTable().destroy();
-    $(".modal").on("hidden.bs.modal", function () {
-        $("#id_error_msg").html("");
-    });
-    basic_add_new_html = '<tr><td><input type="checkbox" required></td>'+
-    '<td><select type="text" class="input form-control authobject" id="authobject-'+inc_index+'"  name="authobject" onchange="GetSelectedTextValue(this)">'+ auth_obj_id_dropdown +'</select></td>'+
-    '<td><input class="form-control description" type="text"  name="description"  id="description-'+inc_index+'" disabled></td>'+'<td><select id="authobject_type" name="authobject_type"  class="input form-control">'+auth_type_dropdown+'</select></td>'+
-    '<td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
-    $('#id_popup_tbody').append(basic_add_new_html);
-    if (GLOBAL_ACTION == "auth_obj_upload") {
-        $(".class_del_checkbox").prop("hidden", false);
+    function add_popup_row() {
+        dropdown_value();
+        $("#error_msg_id").css("display", "none")
+        basic_add_new_html = '';
+        var display_db_data = '';
+        var getid = $(".authobject:last").attr("id");
+        var getindex = getid.split("-")[1]
+        var inc_index = Number(getindex)+1
+        $('#id_popup_table').DataTable().destroy();
+        $(".modal").on("hidden.bs.modal", function () {
+            $("#id_error_msg").html("");
+        });
+        basic_add_new_html = '<tr><td><input type="checkbox" required></td>'+
+            '<td><select type="text" class="input form-control authobject" id="authobject-'+inc_index+'"  name="authobject" onchange="GetSelectedTextValue(this)">'+ auth_obj_id_dropdown +'</select></td>'+
+            '<td><input class="form-control description" type="text"  name="description"  id="description-'+inc_index+'" disabled></td>'+'<td><select id="authobject_type" name="authobject_type"  class="input form-control">'+auth_type_dropdown+'</select></td>'+
+            '<td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+        $('#id_popup_tbody').append(basic_add_new_html);
+        if (GLOBAL_ACTION == "auth_obj_upload") {
+            $(".class_del_checkbox").prop("hidden", false);
+        }
+        GetSelectedTextValue($("#authobject-" + inc_index)[0]);
+        table_sort_filter('id_popup_table');
     }
-    GetSelectedTextValue($("#authobject-" + inc_index)[0]);
-    table_sort_filter('id_popup_table');
-}
 
     //**********************************************************
     function onclick_copy_update_button() {

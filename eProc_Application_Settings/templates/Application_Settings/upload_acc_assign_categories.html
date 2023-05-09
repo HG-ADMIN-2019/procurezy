@@ -264,12 +264,13 @@
             $("#id_error_msg").html("");
         });
         basic_add_new_html = '<tr><td><input type="checkbox" required></td>'+
-        '<td><select type="text" class="input form-control acct_assignment_category" id="acct_assignment_category-'+inc_index+'" name="acct_assignment_category" onchange="GetSelectedTextValue(this)"><option value="" disabled selected>Select your option</option>'+ aac_dropdown +'</select></td>'+
+        '<td><select type="text" class="input form-control acct_assignment_category" id="acct_assignment_category-'+inc_index+'" name="acct_assignment_category" onchange="GetSelectedTextValue(this)">'+ aac_dropdown +'</select></td>'+
         '<td><input class="form-control description check_special_char" type="text"  name="description"  id="description-'+inc_index+'" disabled></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
         $('#id_popup_tbody').append(basic_add_new_html);
         if (GLOBAL_ACTION == "aac_upload") {
             $(".class_del_checkbox").prop("hidden", false);
         }
+        GetSelectedTextValue($("#acct_assignment_category-" + inc_index)[0]);
     }
 
     // validating the  popup table for duplicate entries
