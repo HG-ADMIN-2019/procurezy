@@ -68,6 +68,7 @@ class MasterSettingsSave:
                     django_query_instance.django_filter_delete_query(UnspscCategoriesCust,
                                                                      {'prod_cat_id': prodcat_detail['prod_cat_id'],
                                                                       'client': self.client})
+                    self.create_unspsc_history_data(prodcat_detail)
                     prod_cat = prodcat_detail['prod_cat_id']
 
                     delete_prod_cat_image_to_db(prod_cat)
@@ -105,6 +106,7 @@ class MasterSettingsSave:
         upload_response = get_unspsc_cat_cust_data()
 
         return upload_response, message
+
 
     def save_product_cat_custdesc(self, prodcatdesc_data):
         """
@@ -2021,3 +2023,14 @@ def delete_prod_cat_image_to_db(prod_cat):
                                                          {'client': global_variables.GLOBAL_CLIENT,
                                                           'image_default': False,
                                                           'image_id': prod_cat})
+
+    def create_unspsc_history_data(prodcat_detail):
+        django_query_instance.django_create_query(UnspscCategoriesCustHistory,{
+            'client': global_variables.GLOBAL_CLIENT,
+            'prod_cat_id':prodcat_detail['prod_cat_id'],
+            'prod_cat_guid':prodcat_detail['prod_cat_guid'],
+            'unspsc_categories_cust_created_by':prodcat_detail['unspsc_categories_cust_created_by'],
+            'unspsc_categories_cust_created_at':prodcat_detail['unspsc_categories_cust_created_at'],
+            'unspsc_categories_cust_changed_by':prodcat_detail['unspsc_categories_cust_changed_by'],
+            'unspsc_categories_cust_changed_at':prodcat_detail['unspsc_categories_cust_changed_at']
+        })
