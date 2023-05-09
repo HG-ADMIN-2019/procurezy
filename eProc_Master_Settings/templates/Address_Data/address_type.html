@@ -14,17 +14,17 @@
         <div class="elements-space-between">
             <h3>Maintain Address Types</h3>
             <div>
-                <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Master_Settings:extract_address_type_template' %}'"type="button">
+                <button class="btn btn-outline-primary"  title="Template" onclick="location.href='{% url 'eProc_Master_Settings:extract_address_type_template' %}'"type="button">
                     <i class="fas fa-download"></i> template
                 </button>
                 <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Master_Settings:extract_address_type_data' %}'"type="button">
                     <i class="fas fa-download"></i> extract data
                 </button>
-                 <button class="btn btn-outline-primary modal_upload" id="id_upload_redirect_data" title="Upload Data" value="addresstype_upload"  onclick="onclick_upload_button()" type="button">
+                 <button class="btn btn-outline-primary modal_upload" id="id_upload_redirect_data" title="Upload" value="addresstype_upload"  onclick="onclick_upload_button()" type="button">
                                 <i class="fas fa-cloud-upload-alt"></i> upload data
                  </button>
-                 <button class="btn btn-primary" type="button" title="Address type" id="id_add_data" value="ADD" data-toggle="modal" data-target="#Adrs_Type_Modal" onclick="onclick_add_button(this)">
-                    <i class="fa fa-plus" aria-hidden="true"></i> add address type
+                 <button class="btn btn-primary" type="button" title="Address Type" id="id_add_data" value="ADD" data-toggle="modal" data-target="#Adrs_Type_Modal" onclick="onclick_add_button(this)">
+                    <i class="fa fa-plus" aria-hidden="true"></i> Add Address Type
                 </button>
                    <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"  onclick="window_close();">
                     <i class="fas fa-times"></i> close
@@ -103,10 +103,10 @@
                 <div class="modal-body">
                     <div class="popup-vertical-scroll">
                         <div id="id_del_add_button" class="mb-4">
-                            <button class="btn btn-primary" type="button" onclick="add_popup_row()">
+                            <button class="btn btn-primary" title="Add New Row" type="button" onclick="add_popup_row()">
                                 <i class="fa fa-plus"></i> add new row
                             </button>
-                            <button class="btn btn-outline-danger" onclick="application_settings_delete_Row('id_popup_table')">
+                            <button class="btn btn-outline-danger" title="Delete" onclick="application_settings_delete_Row('id_popup_table')">
                                 <i class="fa fa-trash"></i> delete
                             </button>
                         </div>
@@ -143,10 +143,10 @@
                 </div>
                 <!-- Modal footer -->
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-primary remove_upload_data" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
-                    <button id="id_delete_duplicate" class="btn btn-primary" style="display:none;" type="button" onclick="delete_duplicate()"><i class="fa fa-trash"></i> delete duplicates</button>
-                    <button id="id_check_data" style="display:none;" class="btn btn-primary" type="button" onclick="check_data()"><i class="fas fa-check"></i> check</button>
-                    <button class="btn btn-primary" id="save_id"><i class="fas fa-save"></i> save</button>
+                    <button type="button" class="btn btn-outline-primary remove_upload_data" title="Cancel" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
+                    <button id="id_delete_duplicate" class="btn btn-primary" title="Delete" style="display:none;" type="button" onclick="delete_duplicate()"><i class="fa fa-trash"></i> delete duplicates</button>
+                    <button id="id_check_data" style="display:none;" class="btn btn-primary" title="Check" type="button" onclick="check_data()"><i class="fas fa-check"></i> check</button>
+                    <button class="btn btn-primary" title="Save" id="save_id"><i class="fas fa-save"></i> save</button>
                 </div>
             </div>
         </div>
@@ -204,13 +204,6 @@
             company_dropdwn += '<option value="' + item.company_id + '">' + item.company_id + '</option>'
         });
     }
-
-<!--    //Date format-->
-<!--    function DateFormat() {-->
-<!--        $(".from_to_date").datepicker({-->
-<!--            dateFormat: 'yyyy-mm-dd',-->
-<!--        });-->
-<!--    }-->
 
     //onclick of add button display Adrs_Type_Modal popup and set GLOBAL_ACTION button value
     function onclick_add_button(button) {
@@ -291,7 +284,6 @@
                     }
                 }
                 $('#id_popup_table').append(edit_basic_data);
-<!--                DateFormat();-->
                 var i = 0;
                 $("#id_popup_table TBODY TR").each(function () {
                     var row = $(this);
@@ -314,54 +306,57 @@
 
     // validate and save for add,copy,update and upload data
     function popup_save_data() {
-    $('#success_msg_id').empty()
-    $('#id_popup_table').DataTable().destroy();
-    no_duplicate_entries = 'Y'
-    no_duplicate_value = 'Y'
-    var error_message = '';
-    get_main_table_data(); //Read data from main table
-    // compare for duplicates in popup
-    [no_duplicate_value, error_message] = compare_table_for_duplicate_entries(validate_add_attributes, addresstype_data)
-    if (error_message) {
-        display_error_message(error_message)
-    } else {
-        var dateValid;
-        [dateValid, error_message] = check_date(addresstype_data);
+        $('#success_msg_id').empty()
+        $('#id_popup_table').DataTable().destroy();
+        no_duplicate_entries = 'Y'
+        no_duplicate_value = 'Y'
+        var error_message = '';
+        get_main_table_data(); //Read data from main table
+        // compare for duplicates in popup
+        [no_duplicate_value, error_message] = compare_table_for_duplicate_entries(validate_add_attributes, addresstype_data)
         if (error_message) {
             display_error_message(error_message)
         } else {
-            if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
-                // compare main table and pop up for duplicate values
-                [no_duplicate_entries, error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
-            }
-            if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y') && (dateValid == 'Y')) {
-                var add_basic_data = '';
-                var address_type_data_array = addresstype_data;
-                $('#id_save_confirm_popup').modal('hide');
-                data = {'data':addresstype_data,'table_name':'OrgAddressMap','action':GLOBAL_ACTION}
-                OpenLoaderPopup();
-                $.ajax({
-                    type: 'POST',
-                    url: "{% url 'eProc_Master_Settings:create_update_master_data' %}",
-                    data:  JSON.stringify(data),
-                    contentType: "application/json; charset=utf-8",
-                    dataType: "json",
-                    success: function (Response) {
-                        rendered_address_type_data = Response[0];
-                        rendered_address_type_values = Response[2];
-                        display_basic_db_data();
-                        addtype_drp();
-                        $('#Adrs_Type_Modal').modal('hide');
-                        success_response(Response);  // Display Response data
-                        CloseLoaderPopup();
-                    }
-                });
-            } else if (error_message) {
+            var dateValid;
+            [dateValid, error_message] = check_date(addresstype_data);
+            if (error_message) {
                 display_error_message(error_message)
+            } else {
+                if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
+                    // compare main table and pop up for duplicate values
+                    [no_duplicate_entries, error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
+                    if(no_duplicate_entries == 'N'){
+                    $('#Adrs_Type_Modal').modal('show');
+                }
+                }
+                if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y') && (dateValid == 'Y')) {
+                    var add_basic_data = '';
+                    var address_type_data_array = addresstype_data;
+                    $('#id_save_confirm_popup').modal('hide');
+                    data = {'data':addresstype_data,'table_name':'OrgAddressMap','action':GLOBAL_ACTION}
+                    OpenLoaderPopup();
+                    $.ajax({
+                        type: 'POST',
+                        url: "{% url 'eProc_Master_Settings:create_update_master_data' %}",
+                        data:  JSON.stringify(data),
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function (Response) {
+                            rendered_address_type_data = Response[0];
+                            rendered_address_type_values = Response[2];
+                            display_basic_db_data();
+                            addtype_drp();
+                            $('#Adrs_Type_Modal').modal('hide');
+                            success_response(Response);  // Display Response data
+                            CloseLoaderPopup();
+                        }
+                    });
+                } else if (error_message) {
+                    display_error_message(error_message)
+                }
             }
         }
     }
-}
 
 
     //delete the selected row in db................
@@ -597,7 +592,7 @@
         function compare_table_for_duplicate_entries(validate_add_attributes, address_type) {
         add_attr_duplicates = false;
         var error_message = ''
-        var add_attr_duplicates_list = [];
+        var common = [];
         var add_attr_unique_list = [];
         var no_duplicate_value = 'Y'
         $.each(validate_add_attributes, function (index, value) {
@@ -605,25 +600,22 @@
                 add_attr_unique_list.push(value);
             }
             else {
-                if ($.inArray(value, add_attr_duplicates_list) == -1) {
-                    add_attr_duplicates_list.push(value);
+                if ($.inArray(value, common) == -1) {
+                    common.push(value);
                 }
             }
         });
-        if (add_attr_duplicates_list.length != 0) {
+        if (common.length != 0) {
+            $('#Adrs_Type_Modal').modal('show');
+            display_duplicate_entry(common);  //Function to highlight the rows in popup
             error_message = ui_messeges("JMSG001")// Get message details
             no_duplicate_value = 'N'
             return [no_duplicate_value,error_message]
         }
         else {
             $.each(address_type, function (i, item) {
-                if (item.address_number.length == 0) {
+                if  ((item.address_number == null) || (item.valid_from == '') || (item.valid_to == '')) {
                     error_message = ui_messeges("JMSG002")// Get message details
-                    no_duplicate_value = 'N'
-                    return [no_duplicate_value,error_message]
-                }
-                if ((item.valid_from == '') || (item.valid_to == '')) {
-                    error_message = ui_messeges("JMSG002") + " For Date "// Get message details
                     no_duplicate_value = 'N'
                     return [no_duplicate_value,error_message]
                 }
@@ -661,8 +653,6 @@
             });
         });
     }
-
 </script>
 <script src="{% static 'scripts/address_data/master_address_type.js' %}"></script>
-
 {% endblock %}

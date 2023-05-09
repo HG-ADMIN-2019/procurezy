@@ -117,44 +117,46 @@ $('#save_id').click(function () {
 
 //Read popup table data
 function read_popup_data() {
-  validate_add_attributes = [];
-  addresstype_data = new Array();
-  var check_dates = []
-  $("#id_popup_table TBODY TR").each(function () {
-    var row = $(this);
-    addresstype = {};
-    addresstype.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
-    addresstype.address_guid = row.find("TD").eq(7).find('input').val();
-    addresstype.address_number = row.find("TD").eq(3).find('select').val();
-    addresstype.address_type = row.find("TD").eq(2).find('select').val();
-    addresstype.company_id = row.find("TD").eq(1).find('select').val();
-    addresstype.valid_from = row.find("TD").eq(4).find('input[type="date"]').val();
-    addresstype.valid_to = row.find("TD").eq(5).find('input[type="date"]').val();
-    if ((addresstype.valid_from == undefined) || (addresstype.valid_from == '')) {
-      addresstype.valid_from = '';
-    } else {
-      var from_date = new Date(addresstype.valid_from).toISOString().slice(0, 10);
-      addresstype.valid_from = from_date;
-    }
-    addresstype.valid_to = row.find("TD").eq(5).find('input[type="date"]').val();
-    if ((addresstype.valid_to == undefined) || (addresstype.valid_to == '')) {
-      addresstype.valid_to = '';
-    } else {
-      var to_date = new Date(addresstype.valid_to).toISOString().slice(0, 10);
-      addresstype.valid_to = to_date;
-    }
-    var addresstype_compare = addresstype.address_number + '-' + addresstype.address_type + '-' + addresstype.company_id
-    if (addresstype == undefined) {
-      addresstype.address_number = row.find("TD").eq(2).find('input').val();
-    }
-    if (addresstype.address_guid == undefined) {
-      addresstype.address_guid = ''
-    }
-    check_dates.push([addresstype.valid_from, addresstype.valid_to])
-    validate_add_attributes.push(addresstype_compare);
-    addresstype_data.push(addresstype);
-  });
-  return addresstype_data;
+    $('#id_popup_table').DataTable().destroy();
+    validate_add_attributes = [];
+    addresstype_data = new Array();
+    var check_dates = []
+    $("#id_popup_table TBODY TR").each(function () {
+        var row = $(this);
+        addresstype = {};
+        addresstype.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
+        addresstype.address_guid = row.find("TD").eq(7).find('input').val();
+        addresstype.address_number = row.find("TD").eq(3).find('select').val();
+        addresstype.address_type = row.find("TD").eq(2).find('select').val();
+        addresstype.company_id = row.find("TD").eq(1).find('select').val();
+        addresstype.valid_from = row.find("TD").eq(4).find('input[type="date"]').val();
+        addresstype.valid_to = row.find("TD").eq(5).find('input[type="date"]').val();
+        if ((addresstype.valid_from == undefined) || (addresstype.valid_from == '')) {
+        addresstype.valid_from = '';
+        } else {
+        var from_date = new Date(addresstype.valid_from).toISOString().slice(0, 10);
+        addresstype.valid_from = from_date;
+        }
+        addresstype.valid_to = row.find("TD").eq(5).find('input[type="date"]').val();
+        if ((addresstype.valid_to == undefined) || (addresstype.valid_to == '')) {
+        addresstype.valid_to = '';
+        } else {
+        var to_date = new Date(addresstype.valid_to).toISOString().slice(0, 10);
+        addresstype.valid_to = to_date;
+        }
+        var addresstype_compare = addresstype.address_number + '-' + addresstype.address_type + '-' + addresstype.company_id
+        if (addresstype == undefined) {
+        addresstype.address_number = row.find("TD").eq(2).find('input').val();
+        }
+        if (addresstype.address_guid == undefined) {
+        addresstype.address_guid = ''
+        }
+        check_dates.push([addresstype.valid_from, addresstype.valid_to])
+        validate_add_attributes.push(addresstype_compare);
+        addresstype_data.push(addresstype);
+    });
+    table_sort_filter('id_popup_table');
+    return addresstype_data;
 }
 
 // Function for add a new row data
@@ -175,6 +177,7 @@ function new_row_data() {
 // Function to get main table data
 function get_main_table_data() {
     main_table_low_value = [];
+    $('#display_basic_table').DataTable().destroy();
     $("#display_basic_table TBODY TR").each(function () {
         var row = $(this);
         var main_attribute = {};
@@ -200,10 +203,6 @@ function get_main_table_data() {
              address_type_arr_obj.company_id = row.find("TD").eq(1).html();
             address_type_arr_obj.address_type = row.find("TD").eq(2).html();
             address_type_arr_obj.address_number = row.find("TD").eq(3).html();
-//            fromdate = address_type_arr_obj.valid_from;
-//            todate = address_type_arr_obj.valid_to;
-//            address_type_arr_obj.valid_from = fromdate
-//            address_type_arr_obj.valid_to = todate
             main_table_address_type_checked.push(address_type_arr_obj);
         }
     });

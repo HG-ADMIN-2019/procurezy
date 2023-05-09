@@ -8,7 +8,7 @@ $(".remove_upload_data").click(() => {
     $("#id_error_msg").html("");
     $("#id_popup_tbody").empty();
     $("#id_error_msg").empty();
-    $('#myModal').modal('hide');
+    $('#auth_group_Modal').modal('hide');
     $("#id_error_msg").prop("hidden", true);
     $("#id_error_msg_auth_group_code").prop("hidden", true);
     $("#id_error_msg_auth_group_name").prop("hidden", true);
@@ -70,12 +70,12 @@ function display_error_message(error_message){
     document.getElementById("error_message").style.color = "Red";
     $("#error_msg_id").css("display", "block")
     $('#id_save_confirm_popup').modal('hide');
-    $('#myModal').modal('show');
+    $('#auth_group_Modal').modal('show');
 }
 
 // Onclick of save button in popup
 $('#save_id').click(function () {
-    $('#myModal').modal('hide');
+    $('#auth_group_Modal').modal('hide');
     auth_group_data = read_popup_data();
     $('#id_save_confirm_popup').modal('show');
 });

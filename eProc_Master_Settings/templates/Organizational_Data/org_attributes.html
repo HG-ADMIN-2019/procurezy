@@ -11,7 +11,7 @@
                 <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Application_Settings:extract_attributes_data' %}'"type="button">
                     <i class="fas fa-download"></i> extract data
                 </button>
-                <button class="btn btn-primary" title="Add New Org Attribute" type="button" id="id_add_data" value="ADD" data-toggle="modal" data-target="#myModal" onclick="onclick_add_button(this)">
+                <button class="btn btn-primary" title="Add New Org Attribute" type="button" id="id_add_data" value="ADD" data-toggle="modal" data-target="#org_attr_Modal" onclick="onclick_add_button(this)">
                     <i class="fa fa-plus" ></i> Add New Org Attribute
                 </button>
                  <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"  onclick="window_close();">
@@ -41,7 +41,7 @@
                 <table id="display_basic_table" class="class_basic_org_attr_table table table-bordered custom-table">
                     <thead id="id_org_attr_table_header">
                     <tr>
-                        <th id="hg_select_checkbox" hidden>
+                        <th id="hg_select_checkbox"  hidden>
                             <div id="id_check_all" style="display:none;">
                                 <input type="checkbox" id="selectAll" name="chk[]">
                             </div>
@@ -100,7 +100,7 @@
         </div>
     </div>
     <!--modal popup for Add,copy,update and upload-->
-    <div class="modal fade" id="myModal">
+    <div class="modal fade" id="org_attr_Modal">
         <div class="modal-dialog modal-dialog-centered modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
@@ -213,34 +213,42 @@
         get_main_table_data(); //Read data from main table
         // compare for duplicates in popup
         [no_duplicate_value,error_message] = compare_table_for_duplicate_entries(validate_add_attributes, orgattr_data)
-        if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
-            [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
-        }
-        if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
-            var add_basic_data = '';
-            var org_attr_data_array = orgattr_data;
-            $('#id_save_confirm_popup').modal('hide');
-            data = {'data':orgattr_data,'table_name':'OrgAttributes','action':GLOBAL_ACTION}
-            OpenLoaderPopup();
-            $.ajax({
-            type: 'POST',
-            url: "{% url 'eProc_Configuration:create_update_application_data' %}",
-            data: JSON.stringify(data),
-            contentType: "application/json; charset=utf-8",
-            dataType: "json",
-            success: function(Response) {
-                rendered_org_attr_data = Response[0];
-                rendered_dropdown_values = Response[2];
-                display_basic_db_data();
-                dropdown_value();
-                $('#myModal').modal('hide');
-                success_response(Response);  // Display Response data
-                CloseLoaderPopup();
-                }
-            });
-        }
-        else if (error_message){
+        if (error_message){
             display_error_message(error_message)
+        }
+        else {
+            if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
+                [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
+                if(no_duplicate_entries == 'N'){
+                    $('#org_attr_Modal').modal('show');
+                }
+            }
+            if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
+                var add_basic_data = '';
+                var org_attr_data_array = orgattr_data;
+                $('#id_save_confirm_popup').modal('hide');
+                data = {'data':orgattr_data,'table_name':'OrgAttributes','action':GLOBAL_ACTION}
+                OpenLoaderPopup();
+                $.ajax({
+                type: 'POST',
+                url: "{% url 'eProc_Configuration:create_update_application_data' %}",
+                data: JSON.stringify(data),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function(Response) {
+                    rendered_org_attr_data = Response[0];
+                    rendered_dropdown_values = Response[2];
+                    display_basic_db_data();
+                    dropdown_value();
+                    $('#org_attr_Modal').modal('hide');
+                    success_response(Response);  // Display Response data
+                    CloseLoaderPopup();
+                    }
+                });
+            }
+            else if (error_message){
+                display_error_message(error_message)
+            }
         }
         table_sort_filter('id_popup_table');
     }
@@ -281,7 +289,7 @@
                 success: function(Response) {
                     rendered_org_attr_data = Response[0];
                     display_basic_db_data();
-                    $('#myModal').modal('hide');
+                    $('#org_attr_Modal').modal('hide');
                     success_response(Response); // Function call to display response data
                     CloseLoaderPopup();
                 }
@@ -289,7 +297,7 @@
         }
     }
 
-    //onclick of add button display myModal popup and set GLOBAL_ACTION button value
+    //onclick of add button display org_attr_Modal popup and set GLOBAL_ACTION button value
     function onclick_add_button(button) {
         OpenLoaderPopup();
         GLOBAL_ACTION == "ADD"
@@ -306,9 +314,8 @@
             display_button();
             $("#error_msg_id").css("display", "none")
             $( "#header_select").prop( "hidden", false );
-            $('#myModal').modal('show');
+            $('#org_attr_Modal').modal('show');
             $("#id_popup_tbody").empty();
-            $('#myModal').modal('show');
             new_row_data();   // Add a new row in popup
             $("#id_del_ind_checkbox").prop("hidden", true);
             document.getElementById("id_del_add_button").style.display = "block";
@@ -332,19 +339,20 @@
                 rendered_dropdown_values_onload = response.upload_dropdown_db_values_onload
                 dropdown_value();
                 display_button();
+                $("#error_msg_id").css("display", "none")
+                $('#id_popup_table').DataTable().destroy();
                 $("#id_popup_tbody").empty();
-                $('#display_basic_table').DataTable().destroy();
                 //Reference the Table.
-                var grid = document.getElementById("display_basic_table");
+                var res = get_all_checkboxes(); // Function to get all the checkboxes
+                var $chkbox_all = $('td input[type="checkbox"]', res);
                 //Reference the CheckBoxes in Table.
-                var checkBoxes = document.getElementsByClassName("checkbox_check");
                 var edit_basic_data = "";
                 var dropdown_values = [];
                 dropdown_value();
                 //Loop through the CheckBoxes.
-                for (var i = 0; i < checkBoxes.length; i++) {
-                    if (checkBoxes[i].checked) {
-                        var row = checkBoxes[i].parentNode.parentNode;
+                for (var i = 0; i < $chkbox_all.length; i++) {
+                    if ($chkbox_all[i].checked) {
+                        var row = $chkbox_all[i].parentNode.parentNode;
                         if(GLOBAL_ACTION == "UPDATE"){
                             edit_basic_data +=  '<tr><td hidden><input type="checkbox" required></td>'+
                             '<td><select type="text" class="input form-control" id="attributeid"  name="attributeid" disabled>'+ attribute_id_dropdown_onload +'</select></td>'+
@@ -407,8 +415,7 @@
                 });
                 display_button();
                 $("#id_del_ind_checkbox").prop("hidden", true);
-                $('#myModal').modal('show');
-                table_sort_filter('display_basic_table');
+                $('#org_attr_Modal').modal('show');
                 table_sort_filter('id_popup_table');
                 CloseLoaderPopup();
             }

@@ -131,9 +131,9 @@ $('#save_id').click(function () {
 
 //Read popup table data
 function read_popup_data(){
+    $('#id_popup_table').DataTable().destroy();
     validate_add_attributes = [];
     company_data = new Array();
-    var orgcompany = {};
     $("#id_popup_table TBODY TR").each(function() {
         var row = $(this);
         orgcompany = {};
@@ -158,6 +158,7 @@ function read_popup_data(){
         validate_add_attributes.push(orgcompany.company_id);
         company_data.push(orgcompany);
     });
+    table_sort_filter('id_popup_table');
     return company_data;
 }
 
@@ -218,6 +219,7 @@ function new_row_data(){
 // Function to get main table data
 function get_main_table_data(){
     main_table_low_value = [];
+    $('#display_basic_table').DataTable().destroy();
     $("#display_basic_table TBODY TR").each(function() {
         var row = $(this);
         var main_attribute = {};
@@ -244,6 +246,21 @@ function get_selected_row_data() {
     });
 }
 
+// Function to get main table data
+function get_main_table_data_upload() {
+    main_table_low_value = [];
+    $('#display_basic_table').DataTable().destroy();
+    $("#display_basic_table TBODY TR").each(function() {
+        var row = $(this);
+        var main_attribute = {};
+        main_attribute.company_id = row.find("TD").eq(1).html();
+        main_table_low_value.push(main_attribute.company_id);
+    });
+    table_sort_filter('display_basic_table');
+    return main_table_low_value
+}
+
+
 //Get message for check data function
 function get_msg_desc_check_data(msg){
     var msg_type ;
@@ -255,6 +272,7 @@ function get_msg_desc_check_data(msg){
 function delete_duplicate() {
     $('#id_popup_table').DataTable().destroy();
     var company_check = new Array
+    var main_table_low_value = new Array
     $("#id_popup_table TBODY TR").each(function () {
         var row = $(this);
         //*************** reading data from the pop-up ***************
@@ -266,6 +284,11 @@ function delete_duplicate() {
             $(row).remove();
         }
         company_check.push(company_id);
+         main_table_low_value = get_main_table_data_upload(); //Read data from main table
+        if (main_table_low_value.includes(company_id)) {
+            $(row).remove();
+        }
+        main_table_low_value.push(company_id);
     });
     table_sort_filter_popup_pagination('id_popup_table')
     check_data()

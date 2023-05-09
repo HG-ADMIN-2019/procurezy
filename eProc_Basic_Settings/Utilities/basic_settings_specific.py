@@ -50,7 +50,7 @@ class BasicSettingsSave:
                                                            'country_changed_at': self.current_date_time,
                                                            'country_changed_by': self.username,
                                                            'del_ind': country_detail['del_ind']})
-            bulk_create_entry_db(Country, country_db_list)
+        bulk_create_entry_db(Country, country_db_list)
 
     def save_country_data_into_db(self, country_data):
         """

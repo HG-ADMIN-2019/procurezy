@@ -8,13 +8,13 @@
         <div class="elements-space-between">
             <h3>Maintain Customer UNSPSC Code Descriptions</h3>
             <div>
-                <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Master_Settings:extract_cusprodcatdesc_template' %}'"type="button">
+                <button class="btn btn-outline-primary"  title="Template" onclick="location.href='{% url 'eProc_Master_Settings:extract_cusprodcatdesc_template' %}'"type="button">
                     <i class="fas fa-download"></i> template
                 </button>
                 <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Master_Settings:extract_cusprodcatdesc_data' %}'"type="button">
                     <i class="fas fa-download"></i> extract data
                 </button>
-                <button class="btn btn-outline-primary modal_upload" id="id_upload_redirect_data" title="Upload Data" value="cusprodcatdesc_upload"  onclick="onclick_upload_button()" type="button">
+                <button class="btn btn-outline-primary modal_upload" id="id_upload_redirect_data" title="Upload" value="cusprodcatdesc_upload"  onclick="onclick_upload_button()" type="button">
                     <i class="fas fa-cloud-upload-alt"></i> upload data
                 </button>
                 <button class="btn btn-primary" id="id_add_data"  title="Add Product Category Description" value="ADD" data-toggle="#custproddescModal" onclick="onclick_add_button(this);">
@@ -38,7 +38,7 @@
                     <button  class="btn btn-outline-danger btn-sm"  title= "Delete" id="id_delete_data" value="cusprodcatdesc_delete"  style="display:none;" onclick="onclick_delete_button()">
                                 <i class="fa fa-trash"></i> delete
                     </button>
-                    <button class="btn btn-primary btn-sm" title="Update" id="id_update_data" style="display:none;"   value="UPDATE"  type="button" onclick="onclick_update_button();">
+                    <button class="btn btn-primary btn-sm" title="Update" id="id_update_data" style="display:none;"   value="Update"  type="button" onclick="onclick_update_button();">
                         <i class="far fa-edit"></i> update
                     </button>
 
@@ -97,10 +97,10 @@
                 <div class="modal-body">
                     <div class="popup-vertical-scroll">
                         <div id="id_del_add_button" class="mb-4">
-                            <button class="btn btn-primary" type="button" onclick="add_popup_row()">
+                            <button class="btn btn-primary" title="Add New Row" type="button" onclick="add_popup_row()">
                                 <i class="fa fa-plus"></i> add new row
                             </button>
-                            <button class="btn btn-outline-danger" onclick="application_settings_delete_Row('id_popup_table')">
+                            <button class="btn btn-outline-danger" title="Delete" onclick="application_settings_delete_Row('id_popup_table')">
                                 <i class="fa fa-trash"></i> delete
                             </button>
                         </div>
@@ -137,8 +137,8 @@
                 <!-- Modal footer -->
              <div class="modal-footer">
                     <button type="button" class="btn btn-outline-primary remove_upload_data" title="Cancel" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
-                    <button id="id_delete_duplicate" class="btn btn-primary" style="display:none;" type="button" onclick="display_buttonp()"><i class="fa fa-trash"></i> delete duplicates</button>
-                    <button id="id_check_data" style="display:none;" class="btn btn-primary" type="button" onclick="check_data()"><i class="fas fa-check"></i> check</button>
+                    <button id="id_delete_duplicate" class="btn btn-primary" title="Delete" style="display:none;" type="button" onclick="display_buttonp()"><i class="fa fa-trash"></i> delete duplicates</button>
+                    <button id="id_check_data" style="display:none;" class="btn btn-primary" title="Check" type="button" onclick="check_data()"><i class="fas fa-check"></i> check</button>
                     <button class="btn btn-primary" title="Save" id="save_id"><i class="fas fa-save"></i> save</button>
                     <button class="btn btn-primary btn-sm" title="Delete" id="delete_data" value="DELETE" data-toggle="modal" data-target="#id_delete_confirm_popup">
                         <i class="fa fa-trash"></i> Delete
@@ -325,7 +325,6 @@
         var cusprodcatdesc = {};
         get_main_table_data(); //Read data from main table
         // compare for duplicates in popup
-        $("#id_error_msg").empty();
         [no_duplicate_value,error_message] = compare_table_for_duplicate_entries(validate_add_attributes, cusprodcatdesc_data)
         if (error_message){
             display_error_message(error_message)
@@ -334,6 +333,9 @@
             if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
                 // compare main table and pop up for duplicate values
                 [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
+                if(no_duplicate_entries == 'N'){
+                    $('#custproddescModal').modal('show');
+                }
             }
             if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
                 var add_basic_data = '';
@@ -361,6 +363,7 @@
                 display_error_message(error_message)
             }
         }
+        table_sort_filter('id_popup_table');
     }
 
     //onclick of add button display myModal popup and set GLOBAL_ACTION button value
@@ -464,7 +467,7 @@
     function compare_table_for_duplicate_entries(validate_add_attributes, cusprodcatdesc) {
         add_attr_duplicates = false;
         var error_message = ''
-        var add_attr_duplicates_list = [];
+        var common = [];
         var add_attr_unique_list = [];
         var no_duplicate_value = 'Y'
         var language_exists_flag
@@ -504,35 +507,27 @@
                 add_attr_unique_list.push(value);
             }
             else {
-                if ($.inArray(value, add_attr_duplicates_list) == -1) {
-                    add_attr_duplicates_list.push(value);
+                if ($.inArray(value, common) == -1) {
+                    common.push(value);
                 }
             }
         });
-        if (add_attr_duplicates_list.length != 0) {
+        if (common.length != 0) {
+            $('#custproddescModal').modal('show');
+            display_duplicate_entry(common);  //Function to highlight the rows in popup
             error_message = ui_messeges("JMSG001")// Get message details
             no_duplicate_value = 'N'
             return [no_duplicate_value,error_message]
         }
         else{
-                $.each(cusprodcatdesc, function (i, item) {
-                    if (item.prod_cat_id.length == 0) {
-                        error_message = ui_messeges("JMSG002")// Get message details
-                        no_duplicate_value = 'N'
-                        return [no_duplicate_value,error_message]
-                    }
-                    if (item.description.length == 0) {
-                        error_message = ui_messeges("JMSG002")// Get message details
-                        no_duplicate_value = 'N'
-                        return [no_duplicate_value,error_message]
-                    }
-                    if (item.language_id.length == 0) {
-                        error_message = ui_messeges("JMSG002")// Get message details
-                        no_duplicate_value = 'N'
-                        return [no_duplicate_value,error_message]
-                    }
-                });
-
+            $.each(cusprodcatdesc, function (i, item) {
+                if ((item.prod_cat_id == null) || (item.language_id == null) || (item.description.length == 0)) {
+                    $('#custproddescModal').modal('show');
+                    error_message = ui_messeges("JMSG002")// Get message details
+                    no_duplicate_value = 'N'
+                    return [no_duplicate_value,error_message]
+                }
+            });
         }
         return [no_duplicate_value,error_message]
     }
@@ -544,7 +539,6 @@
         $('#id_save_confirm_popup').modal('hide');
         $('#custproddescModal').modal('show');
     }
-
 
     // onclick add icon display the row in to add the new entries
     function add_popup_row() {
@@ -622,6 +616,7 @@
 
     //Read popup table data
     function read_popup_data() {
+        $('#id_popup_table').DataTable().destroy();
         var desc='';
         validate_add_attributes = [];
         duplicate_entry = [];
@@ -649,6 +644,7 @@
             validate_add_attributes.push(cusprodcatdesc_compare);
             cusprodcatdesc_data.push(cusprodcatdesc);
         });
+        table_sort_filter('id_popup_table');
         return cusprodcatdesc_data;
     }
 
@@ -835,31 +831,31 @@ function check_data() {
     }
 
 
-    // ajax Function to add catalog product
-    function ajax_dropdown_data(data) {
-        urlLink = "{% url 'eProc_Configuration:get_dropdown_data' %}";
-        let result = AjaxCallAPI(urlLink, data);
-        return result;
-    }
+    // // ajax Function to add catalog product
+    // function ajax_dropdown_data(data) {
+    //     urlLink = "{% url 'eProc_Configuration:get_dropdown_data' %}";
+    //     let result = AjaxCallAPI(urlLink, data);
+    //     return result;
+    // }
 
-    function AjaxCallAPI(urlLink, data){
-        jQuery.ajax({
-            async : false,
-            type: 'POST',
-            url: urlLink,
-            dataType :'json',
-            data: JSON.stringify(data),
-            success: function(result){
-                response = result;
-            },
-            error: function(xhr, resp, text) {
-            },
-            cache: false,
-            processData: false,
-            contentType: false,
-        });
-        return response;
-    };
+    // function AjaxCallAPI(urlLink, data){
+    //     jQuery.ajax({
+    //         async : false,
+    //         type: 'POST',
+    //         url: urlLink,
+    //         dataType :'json',
+    //         data: JSON.stringify(data),
+    //         success: function(result){
+    //             response = result;
+    //         },
+    //         error: function(xhr, resp, text) {
+    //         },
+    //         cache: false,
+    //         processData: false,
+    //         contentType: false,
+    //     });
+    //     return response;
+    // };
 
 //**********************************************************
 function onclick_copy_update_button(data){
@@ -1003,7 +999,7 @@ function onclick_copy_update_button(data){
             var cusprodcatdesc_compare =  main_attribute.prod_cat_id +'-'+ main_attribute.language_id
             main_table_low_value.push(cusprodcatdesc_compare);
         });
-          table_sort_filter('display_basic_table');
+        table_sort_filter('display_basic_table');
     }
 
     // Function to get the selected row data
