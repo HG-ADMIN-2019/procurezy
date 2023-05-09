@@ -441,6 +441,13 @@ def my_order_doc_details_new(req, flag, type, guid, mode, access_type):
                'is_approval_preview': is_approval_preview}
     return render(req, template, context)
 
+@login_required
+def my_order_doc_detail(req, encrypt_sc_header_guid):
+    """
+
+    """
+    header_guid = decrypt(encrypt_sc_header_guid)
+    shopping_cart_detail = get_sc_detail(header_guid)
 
 @login_required
 @authorize_view(CONST_MY_ORDER)

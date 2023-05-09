@@ -123,14 +123,15 @@ def get_shopping_cart_details(hdr_guid):
     return data
 
 
-def get_sc_supplier_internal_approver_note(header_guid,sc_item_guid_list):
+def get_sc_supplier_internal_approver_note(header_guid, sc_item_guid_list):
     """
 
     """
     supp_notes = get_notes(header_guid, sc_item_guid_list, CONST_SUPPLIER_NOTE, True)
-    int_notes = get_notes(header_guid,sc_item_guid_list,CONST_INTERNAL_NOTE, True)
-    appr_notes = get_notes(header_guid,sc_item_guid_list, CONST_APPROVER_NOTE, False)
-    return supp_notes,int_notes,appr_notes
+    int_notes = get_notes(header_guid, sc_item_guid_list, CONST_INTERNAL_NOTE, True)
+    appr_notes = get_notes(header_guid, sc_item_guid_list, CONST_APPROVER_NOTE, False)
+    return supp_notes, int_notes, appr_notes
+
 
 # Get attachments by path
 class GetAttachments:
@@ -457,3 +458,23 @@ def update_eform_scitem(header_guid):
         else:
             item_dictionary['image_url'] = ''
     return item_dictionary_list
+
+
+def get_sc_detail(header_guid):
+    """
+
+    """
+    if django_query_instance.django_existence_check(ScHeader,
+                                                    {'guid': header_guid,
+                                                     'client': global_variables.GLOBAL_CLIENT}):
+        sc_header_detail = django_query_instance.django_filter_query(ScHeader,
+                                                                     {'guid': header_guid,
+                                                                      'client': global_variables.GLOBAL_CLIENT},
+                                                                     None,
+                                                                     None)[0]
+    sc_item_details = django_query_instance.django_filter_query(ScItem,
+                                                                {'header_guid': header_guid,
+                                                                 'client': global_variables.GLOBAL_CLIENT},
+                                                                None,
+                                                                None)
+    sc_item_guid_list = dictionary_key_to_list(sc_item_details,'header_guid')
