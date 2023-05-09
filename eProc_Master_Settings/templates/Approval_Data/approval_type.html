@@ -294,19 +294,16 @@
     }
 
     //*********************************************
-function GetSelectedTextValue(approvaltype) {
-    if (!approvaltype) {
-        return;
-    }
-    var selectedText = approvaltype.options[approvaltype.selectedIndex].innerHTML;
-    var selectedValue = approvaltype.value;
-    var selectedId = (approvaltype.id).split('-')[1];
-    $.each(rendered_approval_type_values, function(i, item){
-        if(selectedValue == item.field_type_id){
-            $('#description-'+selectedId).val(item.field_type_desc);
+     function GetSelectedTextValue(approvaltype) {
+<!--            var selectedText = approvaltype.options[approvaltype.selectedIndex].innerHTML;-->
+            var selectedValue = approvaltype.value;
+            var selectedId = (approvaltype.id).split('-')[1];
+            $.each(rendered_approval_type_values, function(i, item){
+                if(selectedValue == item.field_type_id){
+                    $('#description-'+selectedId).val(item.field_type_desc);
+                }
+            });
         }
-    });
-}
 
 
     //onclick of data Upload copy data to modal pop-up
