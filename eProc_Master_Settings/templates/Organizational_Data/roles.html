@@ -126,6 +126,7 @@
 {{ roles|json_script:"roles" }}
 <script>
     var rendered_roles_data = JSON.parse(document.getElementById('roles').textContent);
+    var messages_list = {{messages_list|safe}};
     var rendered_roles_type_values
     var roles_data_array = {}
     var roles = '';
@@ -261,7 +262,7 @@
             $.each(roles, function (i, item) {
                 if ((item.role == null) || (item.role_desc.length == 0)){
                     $('#Roles_Modal').modal('show');
-                    error_message = ui_messeges("JMSG002]")// Get message details
+                    error_message = ui_messeges("JMSG002")// Get message details
                     no_duplicate_value = 'N'
                     return [no_duplicate_value,error_message]
                 }
