@@ -390,6 +390,7 @@
                 document.getElementById('delete_data').style.visibility='hidden';
                 document.getElementById("id_del_add_button").style.display = "block";
                 CloseLoaderPopup();
+                GetSelectedTextValue($("#prodid-" + inc_index)[0]);
             }
         });
     }
@@ -557,6 +558,7 @@
         if (GLOBAL_ACTION == "cusprodcatdesc_upload") {
             $(".class_del_checkbox").prop("hidden", false);
         }
+        GetSelectedTextValue($("#prodid-" + inc_index)[0]);
     }
 
     //onclick of cancel display the table in display mode............
@@ -970,21 +972,27 @@ function onclick_copy_update_button(data){
 
     //*****************************************
     function GetSelectedTextValue(prodid) {
+        if (!prodid || prodid.options.length === 0) {
+            return;
+        }
         var selectedText = prodid.options[prodid.selectedIndex].innerHTML;
         var selectedValue = prodid.value;
         var selectedId = (prodid.id).split('-')[1];
-        $.each (rendered_UNSPC_data,function(i, item){
+        $.each(rendered_UNSPC_data, function(i, item){
             if(selectedValue == item.prod_cat_id){
                 $('#description-'+selectedId).val(item.prod_cat_desc);
             }
         });
     }
 
+
     // Function for add a new row data
     function new_row_data(inc_index) {
-        basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select type="text" class="input form-control prodid" id="prodid-'+inc_index+'"  name="prodid" onchange="GetSelectedTextValue(this)"><option value=""selected>Select your option</option>'+prod_cat_id_dropdown+'</select></td><td><select class="form-control">'+language_id_dropdown+'</select></td><td><input class="form-control description" type="text"  name="description"  id="description-'+inc_index+'"></td><td hidden><guid></td><td hidden>< del_ind></td></tr>';
+        basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select type="text" class="input form-control prodid" id="prodid-'+inc_index+'"  name="prodid" onchange="GetSelectedTextValue(this)">'+prod_cat_id_dropdown+'</select></td><td><select class="form-control">'+language_id_dropdown+'</select></td><td><input class="form-control description" type="text"  name="description"  id="description-'+inc_index+'"></td><td hidden><guid></td><td hidden>< del_ind></td></tr>';
         $('#id_popup_tbody').append(basic_add_new_html);
         table_sort_filter('id_popup_table');
+        var prodidSelect = $("#prodid-1");
+        GetSelectedTextValue(prodidSelect[0]);
     }
 
     // Function to get main table data

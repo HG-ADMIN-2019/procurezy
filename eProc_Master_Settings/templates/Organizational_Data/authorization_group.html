@@ -290,12 +290,13 @@
             $("#id_error_msg").html("");
         });
         basic_add_new_html = '<tr><td><input type="checkbox" required></td>'+
-        '<td><select type="text" class="input form-control authgroup"  id="authgroup-'+inc_index+'" onchange="GetSelectedTextValue(this)"><option value="" disabled selected>Select your option</option>'+ auth_group_id_dropdown+'</select></td>'+
+        '<td><select type="text" class="input form-control authgroup"  id="authgroup-'+inc_index+'" onchange="GetSelectedTextValue(this)">'+ auth_group_id_dropdown+'</select></td>'+
         '<td><input class="form-control description" type="text"  name="description"  id="description-'+inc_index+'" disabled></td>'+
         '<td><select class="form-control">'+auth_level_dropdown+'</select></td>'+
         '<td><select class="form-control">'+auth_obj_id_dropdown+'</select></td>'+
         '<td hidden><input type="text" value="GUID"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
         $('#id_popup_tbody').append(basic_add_new_html);
+        GetSelectedTextValue($("#authgroup-" + inc_index)[0]);
         table_sort_filter('id_popup_table');
     }
 

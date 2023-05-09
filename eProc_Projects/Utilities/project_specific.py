@@ -2,6 +2,7 @@ from eProc_Basic.Utilities.functions.django_query_set import DjangoQueries
 from eProc_Basic.Utilities.functions.guid_generator import guid_generator
 from eProc_Basic.Utilities.global_defination import global_variables
 from eProc_Configuration.models.application_data import ProjectDetails
+from eProc_Time_Sheet.models import ProjectEfforts
 
 django_query_instance = DjangoQueries()
 
@@ -40,7 +41,29 @@ def get_project_filter_list(filter, query_count):
     """
 
     """
-    project_details = django_query_instance.django_filter_query_with_entry_count(ProjectDetails, filter, ['project_id'], None,
+    project_details = django_query_instance.django_filter_query_with_entry_count(ProjectDetails, filter, ['project_id'],
+                                                                                 None,
                                                                                  int(query_count))
 
     return project_details
+
+
+def get_efforts_filter_list(filter, query_count):
+    """
+
+    """
+    project_efforts = django_query_instance.django_filter_query_with_entry_count(ProjectEfforts,
+                                                                                 filter, ['project_id',
+                                                                                          'username',
+                                                                                          'calender_id',
+                                                                                          'project_category',
+                                                                                          'effort',
+                                                                                          'effort_day',
+                                                                                          'effort_date',
+                                                                                          'effort_week',
+                                                                                          'effort_year',
+                                                                                          'effort_description'],
+                                                                                 None,
+                                                                                 int(query_count))
+
+    return project_efforts
