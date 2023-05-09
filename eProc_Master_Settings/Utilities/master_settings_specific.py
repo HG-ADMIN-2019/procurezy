@@ -68,26 +68,27 @@ class MasterSettingsSave:
                     django_query_instance.django_filter_delete_query(UnspscCategoriesCust,
                                                                      {'prod_cat_id': prodcat_detail['prod_cat_id'],
                                                                       'client': self.client})
-                    self.create_unspsc_history_data(prodcat_detail)
+                    # self.create_unspsc_history_data(prodcat_detail)
                     prod_cat = prodcat_detail['prod_cat_id']
 
                     delete_prod_cat_image_to_db(prod_cat)
-                elif django_query_instance.django_existence_check(UnspscCategoriesCust,
-                                                                {'prod_cat_id': prodcat_detail['prod_cat_id'],
-                                                                 'client': self.client}):
-                    django_query_instance.django_update_query(UnspscCategoriesCust,
-                                                              {'prod_cat_id': prodcat_detail['prod_cat_id'],
-                                                               'client': self.client},
-                                                              {'prod_cat_id': UnspscCategories.objects.get(
-                                                                  prod_cat_id=prodcat_detail['prod_cat_id']),
-                                                                  'unspsc_categories_cust_changed_at': self.current_date_time,
-                                                                  'unspsc_categories_cust_changed_by': self.username,
-                                                                  'del_ind': prodcat_detail['del_ind'],
-                                                                  'client': OrgClients.objects.get(client=self.client)})
                 else:
-                    django_query_instance.django_filter_delete_query(UnspscCategoriesCust,
-                                                                     {'prod_cat_id': prodcat_detail['prod_cat_id'],
-                                                                      'client': self.client})
+                    if django_query_instance.django_existence_check(UnspscCategoriesCust,
+                                                                    {'prod_cat_id': prodcat_detail['prod_cat_id'],
+                                                                     'client': self.client}):
+                        django_query_instance.django_update_query(UnspscCategoriesCust,
+                                                                  {'prod_cat_id': prodcat_detail['prod_cat_id'],
+                                                                   'client': self.client},
+                                                                  {'prod_cat_id': UnspscCategories.objects.get(
+                                                                      prod_cat_id=prodcat_detail['prod_cat_id']),
+                                                                      'unspsc_categories_cust_changed_at': self.current_date_time,
+                                                                      'unspsc_categories_cust_changed_by': self.username,
+                                                                      'del_ind': prodcat_detail['del_ind'],
+                                                                      'client': OrgClients.objects.get(client=self.client)})
+                    else:
+                        django_query_instance.django_filter_delete_query(UnspscCategoriesCust,
+                                                                         {'prod_cat_id': prodcat_detail['prod_cat_id'],
+                                                                          'client': self.client})
 
 
         if prodcat_db_list:
