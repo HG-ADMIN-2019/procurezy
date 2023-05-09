@@ -13,7 +13,7 @@
                  <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Admin_Tool:extract_supplier_template' %}'"type="button">
                     <i class="fas fa-download"></i> download template
                 </button>
-                <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Basic_Settings:extract_employee_data' %}'"type="button">
+                <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Basic_Settings:extract_supplier_data' %}'"type="button">
                     <i class="fas fa-download"></i> extract
                 </button>
                 <button class="btn btn-outline-primary" id="basic_save_upld_redirect" onclick="onclick_upload_button()">
@@ -279,15 +279,15 @@
     var GLOBAL_SUPPLIER_GUID = '';
 
     function reload(){
-        localStorage.setItem("name1", document.getElementById("name1").value);
-        localStorage.setItem("name2", document.getElementById("name2").value);
-        localStorage.setItem("supplier_id", document.getElementById("supplier_id").value);
-        localStorage.setItem("email", document.getElementById("email").value);
-        localStorage.setItem("supplier_type", document.getElementById("supplier_type").value);
-        localStorage.setItem("city", document.getElementById("city").value);
-        localStorage.setItem("country_code", document.getElementById("country_code").value);
-        localStorage.setItem("porg", document.getElementById("porg").value);
-        localStorage.setItem("purchase_block", document.getElementById("purchase_block").checked);
+        localStorage.setItem("fname", document.getElementById("name1").value);
+        localStorage.setItem("lname", document.getElementById("name2").value);
+        localStorage.setItem("supp_id", document.getElementById("supplier_id").value);
+        localStorage.setItem("supp_email", document.getElementById("email").value);
+        localStorage.setItem("supp_type", document.getElementById("supplier_type").value);
+        localStorage.setItem("city_code", document.getElementById("city").value);
+        localStorage.setItem("country_id", document.getElementById("country_code").value);
+        localStorage.setItem("supp_porg", document.getElementById("porg").value);
+        localStorage.setItem("supp_purchase_block", document.getElementById("purchase_block").checked);
         OpenLoaderPopup();
     }
 
@@ -308,6 +308,7 @@
     // Function to delete User
     function delete_supplier(action) {
         $('#confirm_delete_pop_up').modal('hide');
+        $('#id_delete_confirm_popup').modal('hide');
         if(action == 'individual'){
             var user_data = [data_delete[1]]
             data = {'data':user_data}
@@ -323,6 +324,7 @@
                     main_table_product_checked.push(supplier_id);
                 }
             });
+              $('#confirm_delete_pop_up').modal('hide');
             data = {'data':main_table_product_checked}
         }
         OpenLoaderPopup();
@@ -330,15 +332,14 @@
             type: 'POST',
             url: "{% url 'eProc_Suppliers:delete_supplier' %}",
             data:JSON.stringify(data),
-            contentType: "application/json; charset=utf-8",
-            dataType: "json",
-            success: function (Response) {
-                display_supplier_data(Response.supplier_results);
-                $("#id_delete_confirm_popup").prop("hidden",true);
-                $("#success_msg_id").text(Response.success_message);
-                $("#error_msg_div").prop("hidden",false);
-                message_display_time();
-                CloseLoaderPopup();
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: function (Response) {
+            display_supplier_data(Response.supplier_results);
+            $('#success_msg_id').text(Response.success_message);
+            $("#error_msg_div").prop("hidden",false);
+<!--            message_display_time();-->
+            CloseLoaderPopup();
             }
         });
     }
@@ -393,7 +394,7 @@
         }
     }
     //onclick of select all checkbox
-    function checkAll(ele) {
+    function checkAll1(ele) {
         if (ele.checked) {
             $('.supplier_checkbox').each(function() {
                 var disable_check = this.disabled

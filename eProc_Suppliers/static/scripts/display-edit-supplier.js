@@ -33,17 +33,24 @@ $("#display_basic_org_table TBODY TR").each(function() {
 function edit_basic_supp_data(){
     $('#supplier_basic_update_success').hide();
     $(".hg_edit_display_mode").prop( "disabled", false );
-//    $(".hg_edit_display_mode").prop("disabled", true);
     if(GLOBAL_ACTION != 'CREATE'){
             $("#supplier_id").prop( "disabled", true );
             $("#sbd_edit_button").prop("hidden", true);
+            $("#cancel_button").prop("hidden", false);
+            document.getElementById('cancel_button').style.display = 'block';
             document.getElementById('sbd_save_cancel_button').style.display = 'block';
             $("#working_days").show();
+            $("#working_days").prop("hidden", false);
+            $("#working_days_id").prop("hidden", true);
     }
     $("#edit_mode").show();
-    $("#working_days").hide();
+    document.getElementById('display_mode').style.display = 'none' ;
+    $("#working_days_id").prop("hidden", false);
      $("#edit_mode").prop("hidden", false);
+     var num = w_days.match(/\d/g);
+     $("select[id=working_days_id]").val(num);
     document.getElementById('sbd_edit_button').style.display = 'none' ;
+     $("#cancel_button").prop("hidden", false);
     $("#sbd_edit_button").prop("hidden", true);
     document.getElementById('sbd_save_cancel_button').style.display = 'block';
     $("#sbd_save_cancel_button").prop("hidden", false);
@@ -53,6 +60,7 @@ function edit_basic_supp_data(){
 function cancel_basic_details(){
     $(".hg_edit_display_mode").prop( "disabled", true );
     document.getElementById('sbd_save_cancel_button').style.display = 'none'
+    document.getElementById('cancel_button').style.display = 'none'
     document.getElementById('sbd_edit_button').style.display = 'block'
     $("#sbd_edit_button").prop("hidden", false);
     $('#image-preview').hide();
@@ -248,6 +256,158 @@ var supplierid = global_supplier_id;
         return [is_valid, save_form_errors]
     }
 
+function save_basic_form_validation1(formdata){
+        var is_valid = true
+        var save_form_errors = ''
+        var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+        if(formdata.supplier_id == ''){
+            is_valid = false
+             var msg = "JMSG007";
+             var msg_type ;
+             msg_type = message_config_details(msg);
+             $("#error_msg_id").prop("hidden", false)
+             var display1 = msg_type.messages_id_desc + " Supplier Id ";
+            save_form_errors += display1;
+        }
+        else if(formdata.supplier_type == ''){
+            is_valid = false
+             var msg = "JMSG007";
+             var msg_type ;
+             msg_type = message_config_details(msg);
+             $("#error_msg_id").prop("hidden", false)
+             var display1 = msg_type.messages_id_desc + " Supplier Type ";
+            save_form_errors += display1;
+        }
+        else if(formdata.registration_number == ''){
+            is_valid = false
+             var msg = "JMSG007";
+             var msg_type ;
+             msg_type = message_config_details(msg);
+             $("#error_msg_id").prop("hidden", false)
+             var display1 = msg_type.messages_id_desc + " Supplier Registration Number ";
+            save_form_errors += display1;
+        }
+        else if (formdata.name1 == '') {
+            is_valid = false
+             var msg = "JMSG007";
+             var msg_type ;
+             msg_type = message_config_details(msg);
+             $("#error_msg_id").prop("hidden", false)
+             var display1 = msg_type.messages_id_desc + " First name ";
+            save_form_errors += display1;
+        }
+        else if (formdata.name2 == '') {
+            is_valid = false
+             var msg = "JMSG007";
+             var msg_type ;
+             msg_type = message_config_details(msg);
+             $("#error_msg_id").prop("hidden", false)
+             var display1 = msg_type.messages_id_desc+ " Last name";
+            save_form_errors += display1;
+        }
+        else if(formdata.currency_id == ''){
+            is_valid = false
+             var msg = "JMSG007";
+             var msg_type ;
+             msg_type = message_config_details(msg);
+             $("#error_msg_id").prop("hidden", false)
+             var display1 = msg_type.messages_id_desc + " Currency ";
+            save_form_errors += display1;
+        }
+        else if(formdata.language_id == ''){
+            is_valid = false
+             var msg = "JMSG007";
+             var msg_type ;
+             msg_type = message_config_details(msg);
+             $("#error_msg_id").prop("hidden", false)
+             var display1 = msg_type.messages_id_desc + " Language ";
+            save_form_errors += display1;
+        }
+        else if(formdata.country_code_id == ''){
+            is_valid = false
+             var msg = "JMSG007";
+             var msg_type ;
+             msg_type = message_config_details(msg);
+             $("#error_msg_id").prop("hidden", false)
+             var display1 = msg_type.messages_id_desc + " Country ";
+            save_form_errors += display1;
+        }
+        else if (formdata.city_id == '') {
+            is_valid = false
+              var msg = "JMSG007" ;
+             var msg_type ;
+             msg_type = message_config_details(msg);
+             $("#error_msg_id").prop("hidden", false)
+             var display1 = msg_type.messages_id_desc;
+            save_form_errors += display1 + " City ";
+        }
+        else if (formdata.postal_code_id == '') {
+            is_valid = false
+              var msg = "JMSG007" ;
+             var msg_type ;
+             msg_type = message_config_details(msg);
+             $("#error_msg_id").prop("hidden", false)
+             var display1 = msg_type.messages_id_desc;
+            save_form_errors += display1 + " Postal Code ";
+        }
+        else if ((formdata.email_id == '') || !(formdata.email_id.match(mailformat))) {
+            is_valid = false
+              var msg = "JMSG002";
+             var msg_type ;
+             msg_type = message_config_details(msg);
+             $("#error_msg_id").prop("hidden", false)
+             var display1 = msg_type.messages_id_desc;
+            save_form_errors += display1 + "Email Id";
+        }
+        else if (formdata.mobile_num_id == '') {
+            is_valid = false
+              var msg = "JMSG007" ;
+             var msg_type ;
+             msg_type = message_config_details(msg);
+             $("#error_msg_id").prop("hidden", false)
+             var display1 = msg_type.messages_id_desc;
+            save_form_errors += display1 + " Mobile Number";
+        }
+        else if (formdata.search_term1_id == '') {
+            is_valid = false
+              var msg = "JMSG007";
+             var msg_type ;
+             msg_type = message_config_details(msg);
+             $("#error_msg_id").prop("hidden", false)
+             var display1 = msg_type.messages_id_desc;
+            save_form_errors += display1 + " Search Term1";
+        }
+        else if (formdata.search_term1_id == '') {
+            is_valid = false
+              var msg = "JMSG007";
+             var msg_type ;
+             msg_type = message_config_details(msg);
+             $("#error_msg_id").prop("hidden", false)
+             var display1 = msg_type.messages_id_desc;
+            save_form_errors += display1 + " Search Term2";
+        }
+        else if (formdata.working_days_id == '') {
+            is_valid = false
+              var msg = "JMSG007";
+             var msg_type ;
+             msg_type = message_config_details(msg);
+             $("#error_msg_id").prop("hidden", false)
+             var display1 = msg_type.messages_id_desc;
+            save_form_errors += display1 + " working Days ";
+        }
+         else if (formdata.output_medium_id == '') {
+            is_valid = false
+              var msg = "JMSG007";
+             var msg_type ;
+             msg_type = message_config_details(msg);
+             $("#error_msg_id").prop("hidden", false)
+             var display1 = msg_type.messages_id_desc;
+            save_form_errors += display1 + " Output Medium ";
+        }
+        return [is_valid, save_form_errors]
+    }
+
+
 function enable_disable(action){
     $(".dummy_ft_button_class").hide();
     if(action == 'EDIT'){
@@ -390,4 +550,55 @@ function add_popup_row() {
     }
     table_sort_filter('id_popup_table');
     $('#delete_data').hide()
+}
+
+function values_reload(formdata){
+    localStorage.setItem("supplier_guid", document.getElementById("supplier_guid").value);
+    localStorage.setItem("supplier_image_id", document.getElementById("supplier_image_id").value);
+    localStorage.setItem("supplier_id", document.getElementById("supplier_id").value);
+    localStorage.setItem("supplier_type", document.getElementById("supplier_type").value);
+    localStorage.setItem("supplier_regnum", document.getElementById("supplier_regnum").value);
+    localStorage.setItem("name1", document.getElementById("name1").value);
+    localStorage.setItem("name2", document.getElementById("name2").value);
+    localStorage.setItem("city_id", document.getElementById("city_id").value);
+    localStorage.setItem("postal_code_id", document.getElementById("postal_code_id").value);
+    localStorage.setItem("street_id", document.getElementById("street_id").value);
+    localStorage.setItem("country_code_id", document.getElementById("country_code_id").value);
+    localStorage.setItem("currency_id", document.getElementById("currency_id").value);
+    localStorage.setItem("language_id", document.getElementById("language_id").value);
+    localStorage.setItem("landline_id", document.getElementById("landline_id").value);
+    localStorage.setItem("mobile_num_id", document.getElementById("mobile_num_id").value);
+    localStorage.setItem("fax_id", document.getElementById("fax_id").value);
+    localStorage.setItem("email_id", document.getElementById("email_id").value);
+     localStorage.setItem("search_term1_id", document.getElementById("search_term1_id").value);
+    localStorage.setItem("search_term2_id", document.getElementById("search_term2_id").value);
+    localStorage.setItem("working_days_id", document.getElementById("working_days_id").value);
+    localStorage.setItem("duns_number_id", document.getElementById("duns_number_id").value);
+    localStorage.setItem("output_medium_id", document.getElementById("output_medium_id").value);
+}
+function get_values_onerror(){
+    $('#supplier_guid').val(localStorage.getItem("supplier_guid"));
+   $('#supplier_image_id').val(localStorage.getItem("supplier_image_id"));
+   $('#supplier_id').val(localStorage.getItem("supplier_id"));
+    $('#supplier_type').val(localStorage.getItem("supplier_type"));
+   $('#supplier_regnum').val(localStorage.getItem("supplier_regnum"));
+   $('#name1').val(localStorage.getItem("name1"));
+    $('#name2').val(localStorage.getItem("name2"));
+   $('#city_id').val(localStorage.getItem("city_id"));
+   $('#postal_code_id').val(localStorage.getItem("postal_code_id"));
+    $('#street_id').val(localStorage.getItem("street_id"));
+   $('#country_code_id').val(localStorage.getItem("country_code_id")).attr('selected', 'selected');
+   $('#currency_id').val(localStorage.getItem("currency_id")).attr('selected', 'selected');
+    $('#language_id').val(localStorage.getItem("language_id")).attr('selected', 'selected');
+   $('#supplier_image_id').val(localStorage.getItem("supplier_image_id"));
+   $('#supplier_id').val(localStorage.getItem("supplier_id"));
+    $('#landline_id').val(localStorage.getItem("landline_id"));
+   $('#mobile_num_id').val(localStorage.getItem("mobile_num_id"));
+   $('#fax_id').val(localStorage.getItem("fax_id"));
+       $('#email_id').val(localStorage.getItem("email_id"));
+   $('#search_term1_id').val(localStorage.getItem("search_term1_id"));
+   $('#search_term2_id').val(localStorage.getItem("search_term2_id"));
+    $('#working_days_id').val(localStorage.getItem("working_days_id"));
+   $('#duns_number_id').val(localStorage.getItem("duns_number_id"));
+   $('#output_medium_id').val(localStorage.getItem("output_medium_id"));
 }
