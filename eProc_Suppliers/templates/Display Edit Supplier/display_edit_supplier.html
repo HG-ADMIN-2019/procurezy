@@ -57,9 +57,11 @@
                         <div class="d-flex justify-content-end">
                             <div id="sbd_save_cancel_button" >
                                 <button type="submit"  id="save_basic" name="save_basic" class="btn btn-primary" onclick="save_basic_details();"><i class="fas fa-save"></i> save</button>
-                                <button id="cancel_id" type="button" class="btn btn-primary" onclick="cancel_basic_details();"><i class="fas fa-times"></i> cancel</button>
                             </div>
-                            <div id="sbd_edit_button" >
+                            <div id="cancel_button" hidden style="padding-left: 5px;">
+                                 <button id="cancel_id" type="button" class="btn btn-primary" onclick="cancel_basic_details();"><i class="fas fa-times"></i> cancel</button>
+                            </div>
+                            <div id="sbd_edit_button" hidden>
                                 <button type="button" class="btn btn-primary" onclick="edit_basic_supp_data();"><i class="fas fa-edit"></i> edit</button>
                             </div>
                         </div>
@@ -233,9 +235,10 @@
                                     <div class="form-group col-md">
                                         <label> Working Days</label><span class="hg_required"></span><br>
 <!--                                        <input type="text" class="form-control hg_edit_display_mode" id="working_days" value="{{supplier_info.delivery_days}}">-->
-                                         <select type="text" class="multiple_select form-control "  id="working_days" name="working_days" multiple data-selected-text-format="count" data-actions-box="true" title='Select...' hidden>
+                                         <div  id="display_mode" >
+                                        <select type="text" class="multiple_select form-control "  id="working_days" name="working_days" multiple data-selected-text-format="count" data-actions-box="true" title='Select...' >
                                             <option value="1">Sunday</option> <option value="2">Monday</option> <option value="3">Tuesday</option> <option value="4">Wednesday</option> <option value="5">Thursday</option> <option value="6">Friday</option> <option value="7">Saturday</option>
-                                        </select>
+                                        </select></div>
                                         <div  id="edit_mode" hidden>
                                         <select type="text" class="multiple_select form-control "  id="working_days_id" name="working_days" multiple data-selected-text-format="count" data-actions-box="true" title='Select...' >
                                             <option value="1">Sunday</option> <option value="2">Monday</option> <option value="3">Tuesday</option> <option value="4">Wednesday</option> <option value="5">Thursday</option> <option value="6">Friday</option> <option value="7">Saturday</option>
@@ -465,17 +468,20 @@
     <div class="hg_spacer2"> &nbsp; </div>
     </div>
     {{ supplier_org_info|json_script:"supplier_org_info" }}
+    {{ supplier_info.delivery_days|json_script:"w_days" }}
     {% include 'configuration_common_pop_up.html' %}
 <script>
 var GLOBAL_ACTION
 var rendered_supp_org_data = JSON.parse(document.getElementById('supplier_org_info').textContent);
+var w_days = JSON.parse(document.getElementById('w_days').textContent);
 <!--var rendered_supp_org_data = "{{supplier_org_info | safe}}";-->
 var rendered_porg_data;
 var country_id = '{{supplier_info.country_code | safe}}';
 var curr_id = '{{supplier_info.currency_id | safe}}';
 var lang_id = '{{supplier_info.language_id | safe}}';
-var w_days = "{{supplier_info.delivery_days | safe}}";
+<!--var w_days = '{{supplier_info.delivery_days | safe}}';-->
 var img_url = '{{img_url.url | safe}}';
+var error_flag;
 
 $(document).ready(function(){
     $('#nav_menu_items').remove();
@@ -490,28 +496,35 @@ $(document).ready(function(){
       $("#sbd_save_cancel_button").prop("hidden", false);
       $("#sbd_edit_button").prop("hidden", true);
       document.getElementById('sbd_edit_button').style.display = 'none';
-      $("#cancel_id").prop("hidden", true);
      $("#working_days").prop("hidden", false);
+     $("#working_days_id").prop("hidden", true);
+     var flag = localStorage.getItem("error_flag");
+     if(flag == 1){
+        get_values_onerror();
+    }
     }
     else{
          document.getElementById('sbd_edit_button').style.display = 'block';
+         $("#sbd_edit_button").prop("hidden", false);
         $("#sbd_save_cancel_button").prop("hidden", true);
         $(".hg_edit_display_mode").prop( "disabled", true );
-    }
-
-    $("#country_code_id").val(country_id).attr('selected', 'selected');
+            $("#country_code_id").val(country_id).attr('selected', 'selected');
     $("#language_id").val(lang_id).attr('selected', 'selected');
     $("#currency_id").val(curr_id).attr('selected', 'selected');
+    $("#working_days_id").prop("hidden", false);
+    $("#working_days").prop("hidden", true);
+    }
     MultipleSelect();
     var wday_array = [];
     wday_array = w_days.split(",");
-    $("select[name=working_days]").val(wday_array);
+    var num = w_days.match(/\d/g);
+    $("select[id=working_days]").val(num);
     var working_days_values = [];
-    for(j=0; j<wday_array.length; j++)
+    for(j=0; j<num.length; j++)
     {
-          working_days_values[j] = get_days(wday_array[j]);
+          working_days_values[j] = get_days(num[j]);
     }
-    $("#working_days").val(working_days_values);
+    $("#working_days_id").val(working_days_values);
   });
 
 var workingdays_dropdown = '';
@@ -575,27 +588,29 @@ function ajax_update_supplier_basic_details(data) {
 const ajax_update_supplier_org_details_url = "{% url 'eProc_Suppliers:update_supplier_purch_details' %}";
 
 // Function to save edited supplier basic details data
+var formdata = {};
 function save_basic_details() {
     var is_save_form_valid='';
     var error_message = '';
     supplier_data = new Array();
+    var supp_id = $('#supplier_id').val();
+    var supp_type = $('#supplier_type').val();
+    var reg_num = $('#supplier_regnum').val();
     var name1_val= $('#name1').val();
     var name2_val= $('#name2').val();
+    var country_id = $('#country_code_id').val();
+    var curr_id = $('#currency_id').val();
+    var lang_id = $('#language_id').val();
     var city_val = $('#city_id').val();
+    var postal_code = $('#postal_code_id').val();
     var email_val = $('#email_id').val();
     var mobile_val = $('#mobile_num_id').val();
     var search_term1_val = $('#search_term1_id').val();
     var search_term2_val = $('#search_term2_id').val();
-    [is_save_form_valid,error_message] = save_basic_form_validation(name1_val,name2_val, city_val, email_val, mobile_val, search_term1_val, search_term2_val)
-<!--    if (is_save_form_valid != '') {-->
-<!--        $('#save_error_div').html(is_save_form_valid)-->
-<!--        $('#save_error_div').show();-->
-<!--        scroll_top()-->
-<!--        CloseLoaderPopup();-->
-<!--        return-->
-<!--    }-->
-    if(is_save_form_valid){
-<!--    formdata = new FormData();-->
+    var working_days = $('#working_days_id').val();
+    var output_med = $('#output_medium_id').val();
+<!--    [is_save_form_valid,error_message] = save_basic_form_validation(name1_val,name2_val, city_val, email_val, mobile_val, search_term1_val, search_term2_val)-->
+
     formdata = {};
     formdata.supplier_image = $('#supplier_image_id').prop('files')[0];
     formdata.supplier_guid = $('#supplier_guid').val();
@@ -616,92 +631,68 @@ function save_basic_details() {
     formdata.email_id = $('#email_id').val();
     formdata.search_term1_id = $('#search_term1_id').val();
     formdata.search_term2_id = $('#search_term2_id').val();
-    formdata.working_days_id = $('#working_days_id').val();
+    formdata.working_days_id = $('#working_days').val();
     formdata.duns_number_id = $('#duns_number_id').val();
-<!--    formdata.email1_id = $('#email_id1').val();-->
-<!--    formdata.email2_id = $('#email2_id').val();-->
-<!--    formdata.email3_id = $('#email3_id').val();-->
-<!--    formdata.email4_id = $('#email4_id').val();-->
-<!--    formdata.email5_id = $('#email5_id').val();-->
     formdata.output_medium_id = $('#output_medium_id').val();
     formdata.status = GLOBAL_ACTION;
     supplier_data.push(formdata);
 
-<!--    formdata.append("supplier_image",  $('#supplier_image_id').prop('files')[0]);-->
-<!--    formdata.append("supplier_guid",   $('#supplier_guid').val());-->
-<!--    formdata.append("supplier_id",   $('#supplier_id').val());-->
-<!--    formdata.append("supplier_type",   $('#supplier_type').val());-->
-<!--    formdata.append("registration_number",   $('#supplier_regnum').val());-->
-<!--    formdata.append("name1",$('#name1').val());-->
-<!--    formdata.append("name2",$('#name2').val());-->
-<!--    formdata.append("city_id",   $('#city_id').val());-->
-<!--    formdata.append("postal_code_id",   $('#postal_code_id').val());-->
-<!--    formdata.append("street_id",   $('#street_id').val());-->
-<!--    formdata.append("country_code_id",   $('#country_code_id').val());-->
-<!--    formdata.append("currency_id",   $('#currency_id').val());-->
-<!--    formdata.append("language_id",   $('#language_id').val());-->
-<!--    formdata.append("landline_id",   $('#landline_id').val());-->
-<!--    formdata.append("mobile_num_id",   $('#mobile_num_id').val());-->
-<!--    formdata.append("fax_id",   $('#fax_id').val());-->
-<!--    formdata.append("email_id",   $('#email_id').val());-->
-<!--    formdata.append("search_term1_id",   $('#search_term1_id').val());-->
-<!--    formdata.append("search_term2_id",   $('#search_term2_id').val());-->
-<!--    formdata.append("working_days_id",   $('#working_days_id').val());-->
-<!--    formdata.append("duns_number_id",   $('#duns_number_id').val());-->
-<!--    formdata.append("email1_id",   $('#email1_id').val());-->
-<!--    formdata.append("email2_id",   $('#email2_id').val());-->
-<!--    formdata.append("email3_id",   $('#email3_id').val());-->
-<!--    formdata.append("email4_id",   $('#email4_id').val());-->
-<!--    formdata.append("email5_id",   $('#email5_id').val());-->
-<!--    formdata.append("output_medium_id",   $('#output_medium_id').val());-->
-<!--    formdata.append("status",   GLOBAL_ACTION);-->
+    [is_save_form_valid,error_message] = save_basic_form_validation1(formdata);
+    if(is_save_form_valid){
     data = {formdata}
+    OpenLoaderPopup();
     $.ajax({
                     type: 'POST',
                     url: "{% url 'eProc_Suppliers:update_suppliers_basic_details' %}",
                     data: JSON.stringify(formdata),
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
-                    success: function(Response) {
-                        encrypted_supplier = Response.encrypted_supplier;
-<!--                        success_response(Response.message); // Function call to display response data-->
-                        document.getElementById('supplier_basic_update_success').innerHTML = message.success;
-                        $('#supplier_basic_update_success').show();
-                        $('#save_error_div').hide();
-                        CloseLoaderPopup();
-                    }
-                });
+                    success: function(response) {
+                           encrypted_supplier = response.encrypted_supplier
+                           message = response.message
+                            msg_type = response.msg_type
+                           // ajax success response
+                            if(msg_type.type=='success'){
+                                document.getElementById('supplier_basic_update_success').innerHTML = message;
+                                $('#supplier_basic_update_success').show();
+                                $('#save_error_div').hide();
+                                localStorage.setItem("error_flag", 0);
+                                CloseLoaderPopup();
+                            }
+                            if(msg_type.type=='error'){
+                                document.getElementById('save_error_div').innerHTML = message;
+                                $('#save_error_div').show();
+                                $('#supplier_basic_update_success').hide();
+                                CloseLoaderPopup();
+                                localStorage.setItem("error_flag", 1);
+                                values_reload(formdata);
+                                  return false;
+                            }
+<!--                             if(GLOBAL_ACTION == 'CREATE'){-->
+<!--        var url = '/admin_tool/supplier_management/supplier_details/' + encrypted_supplier + '';-->
+<!--        location.href = url-->
+<!--    }-->
+                  }
+    });
 
-//    response = ajax_update_supplier_basic_details(formdata)
-//    encrypted_supplier = response.encrypted_supplier
-//    message = response.message
-//    // ajax success response
-//    if(message.success){
-//        document.getElementById('supplier_basic_update_success').innerHTML = message.success;
-//        $('#supplier_basic_update_success').show();
-//        $('#save_error_div').hide();
-//        CloseLoaderPopup();
-//    }
-//    if(message.error){
-//        document.getElementById('save_error_div').innerHTML = message.error;
-//        $('#save_error_div').show();
-//        $('#supplier_basic_update_success').hide();
-////        CloseLoaderPopup();
-//    }
     }
-    $('html, body').animate({ scrollTop: 0 }, 'slow');
-    cancel_basic_details();
-    if(GLOBAL_ACTION == 'CREATE'){
-        var url = '/admin_tool/supplier_management/supplier_details/' + encrypted_supplier + '';
-        location.href = url
+    else if(error_message){
+        document.getElementById('save_error_div').innerHTML = error_message;
+        $('#save_error_div').show();
+        localStorage.setItem("error_flag", 1);
+        values_reload(formdata);
+        return false;
     }
+<!--    $('html, body').animate({ scrollTop: 0 }, 'slow');-->
+
+<!--    values_reload(formdata);-->
     return false;
 }
 
 
-$('#supplier_id').keypress(function (e) {
-    validationForSpecialchar(e);
-});
+<!--$('#supplier_id').keypress(function (e) {-->
+<!--    validationForSpecialchar(e);-->
+<!--});-->
 function validationForSpecialchar(e){
     var regex = new RegExp("^[a-zA-Z0-9-]+$");
     var str = String.fromCharCode(!e.charCode ? e.which : e.charCode);

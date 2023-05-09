@@ -227,8 +227,8 @@ def sup_details(req, supplier_id):
                                                                             'client': global_variables.GLOBAL_CLIENT})
 
     supplier_org_info = django_query_instance.django_filter_query(OrgSuppliers, {'supplier_id': supplier_id,
-                                                                                      'client': getClients(req),
-                                                                                      'del_ind': False}, None, None)
+                                                                                 'client': getClients(req),
+                                                                                 'del_ind': False}, None, None)
 
     django_query_instance.django_filter_value_list_query(Languages, {'del_ind': False}, 'language_id')
 
@@ -1232,7 +1232,8 @@ def extract_supplier_template(request):
          'LANDLINE', 'MOBILE_NUM', 'FAX', 'EMAIL', 'EMAIL1', 'EMAIL2', 'EMAIL3',
          'EMAIL4', 'EMAIL5', 'OUTPUT_MEDIUM', 'SEARCH_TERM1', 'SEARCH_TERM2', 'DUNS_NUMBER', 'BLOCK DATE',
          'BLOCK', 'DELIVERY_DAYS', 'IS_ACTIVE', 'REGISTRATION_NUMBER', 'COMPANY_ID', 'SUPPLIER_MASTER_SOURCE_SYSTEM',
-         'PREF_ROUTING', 'LOCK_DATE', 'GLOBAL_DUNS','DOMESTIC_DUNS', 'ICS_CODE', 'INTERNAL_IND', 'SBA_CODE', 'ETHNICITY',
+         'PREF_ROUTING', 'LOCK_DATE', 'GLOBAL_DUNS', 'DOMESTIC_DUNS', 'ICS_CODE', 'INTERNAL_IND', 'SBA_CODE',
+         'ETHNICITY',
          'HUBZONE', 'NO_VEND_TEXT', 'AGR_REG_NO', 'NO_MULT_ADDR', 'del_ind', 'COUNTRY_CODE', 'CURRENCY_ID',
          'LANGUAGE_ID'])
 

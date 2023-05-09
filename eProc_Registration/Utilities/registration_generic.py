@@ -1,4 +1,7 @@
 import datetime
+
+from django.http import JsonResponse
+
 from eProc_Basic.Utilities.constants.constants import CONST_SUPPLIER_IMAGE_TYPE
 from eProc_Basic.Utilities.functions.django_query_set import DjangoQueries
 from eProc_Basic.Utilities.functions.encryption_util import encrypt
@@ -54,7 +57,7 @@ def save_supplier_data(request):
     update_supplier_guid = ''
     data = JsonParser_obj.get_json_from_req(request)
     supplier_details = {}
-    status = request.POST.get('status')
+    status = data['status']
     supplier_details['supplier_id'] = data['supplier_id']
     supplier_details['registration_number'] = data['registration_number']
     supplier_details['supp_type'] = data['supplier_type']
@@ -81,7 +84,7 @@ def save_supplier_data(request):
     # supplier_details['email5'] = data['email5_id']
     supplier_details['output_medium'] = data['output_medium_id']
     encrypted_supp = encrypt(supplier_details['supplier_id'])
-    if status == 'UPDATE':
+    if status in ['UPDATE', 'update']:
         if django_query_instance.django_existence_check(SupplierMaster,
                                                         {'supplier_id': supplier_details['supplier_id'],
                                                          'client': global_variables.GLOBAL_CLIENT,
@@ -93,8 +96,8 @@ def save_supplier_data(request):
             msgid = 'MSG177'
             error_msg = get_message_desc(msgid)[1]
 
-            message['success'] = error_msg
-            return message, encrypted_supp
+            message['type'] = 'success'
+            return error_msg, encrypted_supp, message
     else:
         if django_query_instance.django_existence_check(SupplierMaster,
                                                         {'client': global_variables.GLOBAL_CLIENT,
@@ -103,8 +106,8 @@ def save_supplier_data(request):
             msgid = 'MSG190'
             error_msg = get_message_desc(msgid)[1]
 
-            message['error'] = error_msg
-            return message, encrypted_supp
+            message['type'] = 'error'
+            return error_msg, encrypted_supp, message
         elif django_query_instance.django_existence_check(SupplierMaster,
                                                           {'client': global_variables.GLOBAL_CLIENT,
                                                            'registration_number': supplier_details[
@@ -113,8 +116,8 @@ def save_supplier_data(request):
             msgid = 'MSG191'
             error_msg = get_message_desc(msgid)[1]
 
-            message['error'] = error_msg
-            return message, encrypted_supp
+            message['type'] = 'error'
+            return error_msg, encrypted_supp, message
         elif django_query_instance.django_existence_check(SupplierMaster,
                                                           {'client': global_variables.GLOBAL_CLIENT,
                                                            'email': supplier_details[
@@ -124,8 +127,8 @@ def save_supplier_data(request):
             error_msg = get_msg_desc(msgid)
             # msg = error_msg['message_desc'][0]
             error_msg = 'Supplier Email Already Exists'
-            message['error'] = error_msg
-            return message, encrypted_supp
+            message['type'] = 'error'
+            return error_msg, encrypted_supp, message
         else:
             supplier_details['supp_guid'] = guid_generator()
             supplier_details['client'] = global_variables.GLOBAL_CLIENT
@@ -139,6 +142,6 @@ def save_supplier_data(request):
                                                       supplier_details)
             msgid = 'MSG177'
             error_msg = get_message_desc(msgid)[1]
+            message['type'] = 'success'
 
-            message['success'] = error_msg
-    return message, encrypted_supp
+    return error_msg, encrypted_supp, message

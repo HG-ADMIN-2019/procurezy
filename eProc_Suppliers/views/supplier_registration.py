@@ -70,19 +70,19 @@ def supplier_registration_form(request):
     if request.method == 'POST':
         supplier_form = SupplierRegForm(request.POST or None)
 
-        if supplier_form.is_valid():
-            save_supplier_registration(request)
-            if 'supplier_image' in request.FILES:
-                supplier_file = request.FILES['supplier_image']
-                supplier_id = request.POST['supplier_id']
-                supplier_image_name = request.FILES['supplier_image'].name
-                save_supplier_image(supplier_file, supplier_id, supplier_image_name)
-                msgid = 'MSG177'
-                error_msg = get_message_desc(msgid)[1]
+        # if supplier_form.is_valid():
+        save_supplier_registration(request)
+        if 'supplier_image' in request.FILES:
+            supplier_file = request.FILES['supplier_image']
+            supplier_id = request.POST['supplier_id']
+            supplier_image_name = request.FILES['supplier_image'].name
+            save_supplier_image(supplier_file, supplier_id, supplier_image_name)
+            msgid = 'MSG177'
+            error_msg = get_message_desc(msgid)[1]
 
-            messages.success(request, error_msg)
-        else:
-            print(supplier_form.errors)
+        messages.success(request, error_msg)
+        # else:
+        print(supplier_form.errors)
 
     context = {
         'inc_nav': True,

@@ -25,6 +25,7 @@ def delete_supplier(request):
     """
     update_user_info(request)
     supplier_data = JsonParser_obj.get_json_from_req(request)
+    success_message = ''
     for supplier_id in supplier_data['data']:
         if django_query_instance.django_existence_check(SupplierMaster,
                                                         {'supplier_id': supplier_id,

@@ -41,7 +41,7 @@ def update_suppliers_basic_details(request):
     update_user_info(request)
     if request.method == 'POST':
         print(request.FILES)
-        message, encrypted_supp = save_supplier_data(request)
+        message, encrypted_supp, msg_type = save_supplier_data(request)
 
         if 'supplier_image' in request.FILES:
             supplier_file = request.FILES['supplier_image']
@@ -49,7 +49,7 @@ def update_suppliers_basic_details(request):
             supplier_image_name = request.FILES['supplier_image'].name
             save_supplier_image(supplier_file, supplier_id, supplier_image_name)
 
-    return JsonResponse({'message': message, 'encrypted_supplier': encrypted_supp})
+    return JsonResponse({'message': message, 'encrypted_supplier': encrypted_supp, 'msg_type': msg_type})
 
 
 @transaction.atomic
