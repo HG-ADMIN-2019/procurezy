@@ -275,9 +275,10 @@
                                 }
                                 language_id_list = language + language_list
                             });
-                            edit_basic_data += '<tr ><td><input type="checkbox" required></td><td><select type="text" class="form-control">value ="' + value[3] + '"'+prod_cat_id_list+'</select></td><td><select class="form-control" type="text">value ="' + value[2] + '"'+language_id_list+'</select></td><td><input class = "form-control" type="text" name="description" value ="' + value[0] + '" maxlength="200" onkeypress="return /[a-z ]/i.test(event.key)" required></td><td hidden></td><td>'+ del_ind +'</td></tr>';
+		                    edit_basic_data = '<tr><td><input type="checkbox" required></td><td><select type="text" class="input form-control prodid" id="prodid-'+inc_index+'"  name="prodid" onchange="GetSelectedTextValue(this)">value ="' + value[3] + '"'+prod_cat_id_list+'</select></td><td><select class="form-control" type="text">value ="' + value[2] + '"'+language_id_list+'</select></td><td><input class="form-control description" type="text"  name="description" value ="' + value[0] + '" id="description-'+inc_index+'"></td><td hidden><guid></td><td>'+ del_ind +'</td></tr>';
+                            inc_index += 1;
                         });
-                        $('#id_popup_table').append(edit_basic_data);
+                        $('#id_popup_tbody').append(edit_basic_data);
                         var i =0;
                         $("#id_popup_table TBODY TR").each(function() {
                             var row = $(this);
@@ -554,11 +555,25 @@
         $(".modal").on("hidden.bs.modal", function () {
             $("#id_error_msg").html(" ");
         });
-        new_row_data(inc_index);   // Add a new row in popup
-        document.getElementById('delete_data').style.visibility='hidden';
         if (GLOBAL_ACTION == "cusprodcatdesc_upload") {
+            basic_add_new_html = '<tr>'+
+                '<td><input type="checkbox" required></td>'+
+                '<td><select type="text" class="input form-control prodid" id="prodid-'+inc_index+'"  name="prodid" onchange="GetSelectedTextValue(this)">'+prod_cat_id_dropdown+'</select></td>'+
+                '<td><select class="form-control">'+language_id_dropdown+'</select></td>'+
+                '<td><input class="form-control description" type="text"  name="description"  id="description-'+inc_index+'"></td>'+
+                '<td hidden><guid></td>'+
+                '<td class="class_del_checkbox"><input type="checkbox" required></td>'+
+            '</tr>';
+            $('#id_popup_tbody').append(basic_add_new_html);
+            table_sort_filter('id_popup_table');
             $(".class_del_checkbox").prop("hidden", false);
+            $("#id_del_ind_checkbox").prop("hidden", false);
         }
+        else {
+              new_row_data(inc_index);   // Add a new row in popup
+              table_sort_filter('id_popup_table');
+        }
+         $('#delete_data').hide()
     }
 
     //onclick of cancel display the table in display mode............
@@ -1005,7 +1020,7 @@ function onclick_copy_update_button(data){
                                  $('#delete_data').prop('disabled', false);
                             }
                             unique_input = '<select class="form-control"  maxlength="20">' + prod_cat_id_dropdown + '</select>'
-                            edit_basic_data += '<tr><td>'+check+'</td><td>'+unique_input+' </td><td><select class="form-control">' +language_id_dropdown + ' </select></td><td><input class="form-control" value="' + row.cells[3].innerHTML + '" type="text" onkeypress="return /[a-z ]/i.test(event.key)"  name="description"  maxlength="200"  required></td><td hidden><input value="' + prod_cat_desc_guid + '"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+                            edit_basic_data += '<tr><td>'+check+'</td><td>'+unique_input+' </td><td><select class="form-control">' +language_id_dropdown + ' </select></td><td><input class="form-control" value="' + row.cells[3].innerHTML + '" type="text" onkeypress="return /[a-z ]/i.test(event.key)"  name="description"  maxlength="200"  required></td><td hidden><input value="' + row.cells[4].innerHTML + '"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
                             $("#header_select").prop("hidden", false);
                     }
                     else{

@@ -583,7 +583,7 @@ def roles(request):
     master_data_settings = 'master_data_settings'
     return render(request, 'Organizational_Data/roles.html',
                   {'roles': upload_roles, 'master_data_settings': master_data_settings, 'inc_nav': True,
-                   'dropdown_db_values': dropdown_db_values,' messages_list':messages_list})
+                   'dropdown_db_values': dropdown_db_values, ' messages_list':messages_list})
 
 
 def auth(request):

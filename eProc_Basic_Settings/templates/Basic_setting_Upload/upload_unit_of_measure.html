@@ -322,6 +322,7 @@
         var uom_id_check = new Array
         del_ind = ''
         $("#id_popup_table TBODY TR").each(function() {
+            $('#id_popup_table').DataTable().destroy();
             var row = $(this);
             uom_dic = {}
             //*************** reading data from the pop-up ***************
