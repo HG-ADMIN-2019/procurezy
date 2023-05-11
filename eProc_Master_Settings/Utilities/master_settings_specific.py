@@ -1974,7 +1974,7 @@ def get_paymentdesc_data():
     payment_desc_data = django_query_instance.django_filter_query(
         Payterms_desc, {'client': global_variables.GLOBAL_CLIENT, 'del_ind': False}, None,
         ['payment_term_guid', 'payment_term_key', 'day_limit',
-         'description', 'language_id'])
+         'description', 'language_id', 'del_ind'])
     return payment_desc_data
 
 

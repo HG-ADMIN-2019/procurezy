@@ -3,7 +3,7 @@ $(document).ready(function(){
         $('#configform')[0].reset();
         $('#myModal').modal('hide');
     });
-
+    set_value();
     $('#nav_menu_items').remove();
     $("body").css("padding-top", "4rem");
 });
@@ -28,17 +28,28 @@ function cancel_user_basic_info() {
     document.getElementById("save_cancel_user_info_btn").style.display = "none"
 }
 
+function set_value(){
+     localStorage.setItem("currency_id", document.getElementById("currency_id").value);
+     localStorage.setItem("language_id", document.getElementById("language_id").value);
+}
+
     // Funtion to save basic detail data
     function save_user_basic_info() {
      var name1_val= $('#first_name').val();
      var phone_num_val = $('#phone_num').val();
      var email_val = $('#email').val();
+     var err_flag;
+     OpenLoaderPopup();
       is_save_form_valid = save_user_form_validation(name1_val, phone_num_val, email_val)
         if (is_save_form_valid != '') {
             $('#save_error_div').html(is_save_form_valid)
             $('#save_error_div').show()
-            scroll_top()
+            scroll_top();
+            CloseLoaderPopup();
             return
+        }
+        else{
+            $('#language_id').val(localStorage.getItem("language_id"));
         }
         var user_data_dict = {}
 

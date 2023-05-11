@@ -2,7 +2,6 @@
 {% load static %}
 {% block title %} Payment Term Descriptions (Master Settings) {% endblock %}
 {% block maincontent %}
-
 {% include 'root/loader.html' %}
 
 <script type="text/javascript"
@@ -35,10 +34,10 @@
         <div class="configuration-table_section">
             <div id="err_msg_app_settings"> </div>
             <div id="err_msg_app_settings_t" class="alert alert-success" hidden> <span id="success_msg_id"></span></div>
-            <div class="table-container tcw-80">
+            <div class="table-container tcw-60">
                 <div class="edit-button-section mb-4">
-                    <button class="btn btn-secondary btn-sm" title="Edit" id="id_edit_data" onclick="onclick_edit_button()">
-                        <i class="fas fa-edit" id="edit"></i> edit
+                     <button class="btn  btn-secondary btn-sm" title="Edit" id="id_edit_data" onclick="onclick_edit_button()">
+                        <i class="fas fa-edit"></i> edit
                     </button>
                    <button class="btn btn-outline-danger  btn-sm" title="Delete" id="id_delete_data" value="DELETE" data-toggle="modal" data-target="#id_delete_confirm_popup" style="display:none;">
                         <i class="fa fa-trash"></i> delete
@@ -51,9 +50,8 @@
                         value="UPDATE" type="button" onclick="onclick_update_button()">
                         <i class="far fa-edit"></i> update
                     </button>
-                    <button class="btn btn-secondary btn-sm" title="Cancel" id="id_cancel_data" style="display:none;" type="button"
-                        onclick="display_basic_db_data()">
-                        <i class="fas fa-times"></i> cancel
+                    <button class="btn btn-secondary btn-sm" id="id_cancel_data" style="display:none;" type="button"
+                        onclick="display_basic_db_data()"><i class="fas fa-times"></i> cancel
                     </button>
                 </div>
                 <table id="display_basic_table" class="class_basic_country_table table table-bordered custom-table">
@@ -68,7 +66,7 @@
                             <th>Payment Term</th>
                             <th>Description</th>
                             <th>Day Limit</th>
-                            <th  hidden>Del Indicator</th>
+                            <th hidden>Del Indicator</th>
                             <th hidden>Guid</th>
                         </tr>
                     </thead>
@@ -84,7 +82,7 @@
                             <td>{{ data.payment_term_key}}</td>
                             <td>{{ data.description}}</td>
                             <td>{{ data.day_limit}}</td>
-                            <td hidden>{{ data.del_ind}}</td>
+                            <td hidden>del_ind</td> 
                             <td hidden>{{ data.payment_term_guid}}</td>
                         </tr>
                         {% endfor %}
@@ -146,9 +144,13 @@
                 </div>
                 <!-- Modal footer -->
                 <div class="modal-footer"> 
-                     <button type="button" class="btn btn-outline-primary remove_upload_data" title="Cancel" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
-                    <button id="id_delete_duplicate" class="btn btn-primary" title="Delete" style="display:none;" type="button" onclick="delete_duplicate()"><i class="fa fa-trash"></i> delete duplicates</button>
-                    <button id="id_check_data" style="display:none;" class="btn btn-primary" title="Check" type="button" onclick="check_data()"><i class="fas fa-check"></i> check</button>
+                    <button type="button" class="btn btn-outline-primary remove_upload_data" title="Cancel" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
+                    <button class="btn btn-primary" title="Delete" id="id_delete_duplicate" style="display:none;" type="button"
+                        onclick="delete_duplicate()"><i class="fas fa-check"></i> delete duplicates
+                    </button>
+                    <button class="btn btn-primary" title="Check" id="id_check_data" style="display:none;" type="button"
+                        onclick="check_data()"><i class="fas fa-check"></i> check
+                    </button>
                     <button class="btn btn-primary" title="Save" id="save_id"><i class="fas fa-save"></i> save</button>
                 </div>
             </div>
@@ -186,7 +188,7 @@
     var no_duplicate_entries = 'Y'
     var Tablename = uiConstants["CONST_TABLENAME_PAYMENT_TERM_DESC"]
     var appname = uiConstants["CONST_APPNAME01"]
-    var db_header_data = uiConstants['PAYMENT_TERM_KEY', 'DAY_LIMIT', 'DESCRIPTION', 'del_ind', 'LANGUAGE_ID']
+    var db_header_data = uiConstants['LANGUAGE_ID', 'PAYMENT_TERM_KEY','DESCRIPTION', 'DAY_LIMIT',  'del_ind']
     var payment_term_dropdown;
     var language_dropdown;
 
@@ -251,24 +253,25 @@
         no_duplicate_entries = 'Y'
         no_duplicate_value = 'Y'
 	    var error_message = '';
+        var payment_term = {};
         get_main_table_data(); //Read data from main table
         // compare for duplicates in popup
         [no_duplicate_value,error_message] = compare_table_for_duplicate_entries(validate_add_attributes, payment_term_data)
-		if (error_message){
+		if (error_message) {
             display_error_message(error_message)
     	}
     	else {
             if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
                 // compare main table and pop up for duplicate values
                 [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
-                if(no_duplicate_entries == 'N'){
+                if(no_duplicate_entries == 'N') {
                     $('#Paytrm_desc_Modal').modal('show');
                 }
             }
             if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
                 var add_basic_data = '';
                 var payment_term_data_array = payment_term_data;
-                $('#id_save_confirm_popup').modal('hide');;
+                $('#id_save_confirm_popup').modal('hide');
                 data = {'data':payment_term_data,'table_name':'Payterms_desc','action':GLOBAL_ACTION}
                 OpenLoaderPopup();
                 $.ajax({
@@ -293,6 +296,53 @@
         table_sort_filter('id_popup_table');
     }
 
+     //onclick of cancel display the table in display mode............
+    function display_basic_db_data() {
+        $('#display_basic_table').DataTable().destroy();
+        $('#id_payment_term_tbody').empty();
+        var data = {'table_name':'Payterms_desc'}
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'eProc_Configuration:get_dropdown_data' %}",
+            data: JSON.stringify(data),
+            success: function(response) {
+                rendered_payment_key_list = response.payterm_key_list
+                render_language_data = response.language_list
+                paytermdesc_drop();
+                var edit_basic_data = '';
+                var desc = '';
+                var lang_code;
+                $.each(rendered_payment_term_data, function (i, item) {
+                    lang_code = item.language_id;
+                    for (i = 0; i < render_language_data.length; i++) {
+                        if (lang_code == render_language_data[i].language_id)
+                            desc = render_language_data[i].description
+                    }
+                    edit_basic_data += '<tr><td class="class_select_checkbox"><input class="checkbox_check" onclick="valueChanged()" type="checkbox" required></td>'+
+                    '<td>' + desc + '</td>' +
+                    '<td>' + item.payment_term_key + '</td>' +
+                    '<td>' + item.description + '</td>' +
+                    '<td>' + item.day_limit + '</td>' +
+                    '<td hidden> <input type="checkbox"</td>' +
+                    '<td hidden>' + item.payment_term_guid + '</td></tr>';
+                });
+                $('#id_payment_term_tbody').append(edit_basic_data);
+                $("#hg_select_checkbox").prop("hidden", true);
+                $(".class_select_checkbox").prop("hidden", true);
+                $('input:checkbox').removeAttr('checked');
+                $('#id_edit_data').show();
+                $('#id_cancel_data').hide();
+                $('#id_delete_data').hide();
+                $('#id_copy_data').hide();
+                $('#id_update_data').hide();
+                $('#id_save_confirm_popup').modal('hide');
+                $('#id_delete_confirm_popup').modal('hide');
+                $('#id_check_all').hide();
+            }
+        });
+        table_sort_filter('display_basic_table');
+    }
+
     //delete the selected row in db................
     var main_table_payment_term_checked = [];
     function main_table_delete() {
@@ -300,7 +350,7 @@
     	GLOBAL_ACTION = 'DELETE'
 	    main_table_country_checked = [];
         var Tabledata = { "Dbl_clck_tbl_id": 'Payterms_desc' };
-        $('#display_basic_table').DataTable().destroy();
+<!--        $('#display_basic_table').DataTable().destroy();-->
         get_selected_row_data(); // Function call to get the selected row data
         $('#id_delete_confirm_popup').modal('hide');
 		data = {'data':main_table_payment_term_checked,'table_name':'Payterms_desc','action':GLOBAL_ACTION}
@@ -662,52 +712,6 @@
         $("#id_check_success_messages").prop("hidden",false)
     }
 
-    //onclick of cancel display the table in display mode............
-    function display_basic_db_data() {
-        var data = {'table_name':'Payterms_desc'}
-        $.ajax({
-            type: 'POST',
-            url: "{% url 'eProc_Configuration:get_dropdown_data' %}",
-            data: JSON.stringify(data),
-            success: function(response) {
-                rendered_payment_key_list = response.payterm_key_list
-                render_language_data = response.language_list
-                paytermdesc_drop();
-                $('#display_basic_table').DataTable().destroy();
-                $('#id_payment_term_tbody').empty();
-                var edit_basic_data = '';
-                var desc = ''; var lang_code;
-                $.each(rendered_payment_term_data, function (i, item) {
-                    lang_code = item.language_id;
-                    for (i = 0; i < render_language_data.length; i++) {
-                        if (lang_code == render_language_data[i].language_id)
-                            desc = render_language_data[i].description
-                    }
-                    edit_basic_data += '<tr><td class="class_select_checkbox"><input class="checkbox_check" onclick="valueChanged()" type="checkbox" required></td>'+
-                    '<td>' + desc + '</td>' +
-                    '<td>' + item.payment_term_key + '</td>' +
-                    '<td>' + item.description + '</td>' +
-                    '<td>' + item.day_limit + '</td>' +
-                    '<td hidden> <input type="checkbox"</td>' +
-                    '<td hidden>' + item.payment_term_guid + '</td></tr>';
-                });
-                $('#id_payment_term_tbody').append(edit_basic_data);
-                $("#hg_select_checkbox").prop("hidden", true);
-                $(".class_select_checkbox").prop("hidden", true);
-                $('input:checkbox').removeAttr('checked');
-                $('#id_edit_data').show();
-                $('#id_cancel_data').hide();
-                $('#id_delete_data').hide();
-                $('#id_copy_data').hide();
-                $('#id_update_data').hide();
-                $('#id_save_confirm_popup').modal('hide');
-                $('#id_delete_confirm_popup').modal('hide');
-                $('#id_check_all').hide();
-                table_sort_filter('display_basic_table');
-            }
-        });
-    }
-
     //Function to highlight duplicate records
     function display_duplicate_entry(common) {
         var paytrm_desc_check = new Array;
@@ -726,7 +730,6 @@
                     row_color_no_highlight(row);
                 }
             });
-
         });
     }
 </script>

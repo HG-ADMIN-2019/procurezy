@@ -174,6 +174,9 @@
         else {
             if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
                 [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
+                if(no_duplicate_entries == 'N'){
+                    $('#org_node_Modal').modal('show');
+                }
             }
             if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
                 var add_basic_data = '';
@@ -201,8 +204,8 @@
             else if (error_message){
                 display_error_message(error_message)
             }
-            table_sort_filter('id_popup_table');
         }
+        table_sort_filter('id_popup_table');
     }
 
     //delete the selected row in db
@@ -223,7 +226,19 @@
             $('#id_delete_confirm_popup').modal('hide');
         }
         else if(main_table_org_node_type_checked.length == "0"){  
-            error_message = ui_messeges("JMSG005")// Get message details
+            var msg = "JMSG005";
+            var msg_type ;
+            msg_type = message_config_details(msg);
+            $("#error_msg_id").prop("hidden", false);
+            if(msg_type.message_type == "ERROR"){
+                display_message("error_msg_id", msg_type.messages_id_desc)
+            }
+            else if(msg_type.message_type == "WARNING"){
+                display_message("id_warning_msg_id", msg_type.messages_id_desc)
+            }
+            else if(msg_type.message_type == "INFORMATION"){
+                display_message("id_info_msg_id", msg_type.messages_id_desc)
+            }
             var display4 = msg_type.messages_id_desc;
             document.getElementById("id_error_msg_checkbox").innerHTML = display4+ "Checkbox";
             $('#id_delete_confirm_popup').modal('hide');
@@ -302,24 +317,19 @@
 
     // on click add icon display the row in to add the new entries
     function add_popup_row(){
-        $("#error_msg_id").css("display", "none")
-        basic_add_new_html = '';
-        var display_db_data = '';
-        var getid = $(".nodetype:last").attr("id");
-        var getindex = getid.split("-")[1]
-        var inc_index = Number(getindex)+1;
+        $("#error_msg_id").css("display", "none");
         $('#id_popup_table').DataTable().destroy();
         $(".modal").on("hidden.bs.modal", function () {
             $("#id_error_msg").html("");
         });
-        basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select type="text" class="input form-control nodetype" id="nodetype-'+inc_index+'"  name="nodetype" onchange="GetSelectedTextValue(this)"><option value="" disabled selected>Select your option</option>'+ node_type_dropdown +'</select></td><td><input class="form-control description" type="text"  name="description"  id="description-'+inc_index+'" disabled></td><td hidden>guid</td><td class="class_del_checkbox" hidden><input type="checkbox" required></td><td class="id_del_ind_checkbox1" hidden><input type="checkbox" name = "del_ind_flag" required></td></tr>';
-        $('#id_popup_tbody').append(basic_add_new_html);
+        new_row_data();  // Add a new row in popup
         document.getElementById('delete_data').style.visibility='hidden';
         if (GLOBAL_ACTION == "org_node_type_upload") {
             $(".class_del_checkbox").prop("hidden", false);
         }
         table_sort_filter('id_popup_table');
     }
+
 
     //*********************
     function get_inc_val(){
@@ -329,22 +339,27 @@
     }
 
     //*********************
-    function GetSelectedTextValue(nodetype) {
-        var selectedText = nodetype.options[nodetype.selectedIndex].innerHTML;
+    function GetSelectedTextValue(nodetype, index) {
         var selectedValue = nodetype.value;
         var selectedId = (nodetype.id).split('-')[1];
-        $.each (rendered_dropdown_values,function(i, item){
-            if(selectedValue == item.field_type_id){
-                $('#description-'+selectedId).val(item.field_type_desc);
-            }
-        });
+        if (nodetype.options.length > 0) {
+            var selectedText = nodetype.options[nodetype.selectedIndex].innerHTML;
+            $.each(rendered_dropdown_values, function(i, item) {
+                if (selectedValue == item.field_type_id) {
+                    $('#description-' + index).val(item.field_type_desc);
+                }
+            });
+        } else {
+            $('#description-' + index).val('');
+        }
     }
+
 
     // validating the  popup table for duplicate entries
     function compare_table_for_duplicate_entries(validate_add_attributes, org_node_type) {
         add_attr_duplicates = false;
         var error_message = ''
-        var add_attr_duplicates_list = [];
+        var common = [];
         var add_attr_unique_list = [];
         var no_duplicate_value = 'Y'
         $.each(validate_add_attributes, function (index, value) {
@@ -352,12 +367,14 @@
                 add_attr_unique_list.push(value);
             }
             else {
-                if ($.inArray(value, add_attr_duplicates_list) == -1) {
-                    add_attr_duplicates_list.push(value);
+                if ($.inArray(value, common) == -1) {
+                    common.push(value);
                 }
             }
         });
-        if (add_attr_duplicates_list.length != 0) {
+        if (common.length != 0) {
+            $('#org_node_Modal').modal('show');
+            display_duplicate_entry(common);  //Function to highlight the rows in popup
             error_message = ui_messeges("JMSG001")// Get message details
             no_duplicate_value = 'N'
             return [no_duplicate_value,error_message]
@@ -365,6 +382,7 @@
         else{
             $.each(org_node_type, function (i, item) {
                 if ((item.node_type == null) || (item.description.length == 0)) {
+                    $('#org_node_Modal').modal('show');
                     error_message = ui_messeges("JMSG002")// Get message details
                     no_duplicate_value = 'N'
                     return [no_duplicate_value,error_message]

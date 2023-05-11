@@ -112,7 +112,7 @@ function get_main_table_data() {
     $.each(rendered_address_data, function (i, item) {
         var main_attribute = {};
         main_attribute.address_number = item.address_number;
-        var main_compare =  main_attribute.address_number
+        var main_compare =  main_attribute.address_number.toString();
         main_table_low_value.push(main_compare);
     });
     table_sort_filter('display_basic_table');

@@ -21,16 +21,16 @@
                     <i class="fas fa-info-circle"></i><span> Basic Data</span>
                 </div>
             </li>
-            <li data-tab-target="#org_data_tab" class="sub-tab">
-                <div class="sub-tab-link">
-                    <i class="fas fa-sitemap"></i><span> Organizational Information</span>
-                </div>
-            </li>
-            <li data-tab-target="#buisness_doc_tab" class="sub-tab">
-                <div class="sub-tab-link">
-                    <i class="fas fa-file-alt"></i><span> Business Document</span>
-                </div>
-            </li>
+<!--            <li data-tab-target="#org_data_tab" class="sub-tab">-->
+<!--                <div class="sub-tab-link">-->
+<!--                    <i class="fas fa-sitemap"></i><span> Organizational Information</span>-->
+<!--                </div>-->
+<!--            </li>-->
+<!--            <li data-tab-target="#buisness_doc_tab" class="sub-tab">-->
+<!--                <div class="sub-tab-link">-->
+<!--                    <i class="fas fa-file-alt"></i><span> Business Document</span>-->
+<!--                </div>-->
+<!--            </li>-->
         </ul>
 
         <div class="tab-content">
@@ -99,7 +99,6 @@
                                 <div class="row">
                                     <div class="form-group col-md">
                                         <label>First Name</label><span class="hg_required"></span><br>
-                                        
                                         {{ reg_form.first_name }}
                                     </div>
                                     <div class="form-group col-md">
@@ -250,6 +249,8 @@
 <script>
 
 $(document).ready(function(){
+     localStorage.setItem("currency_id", document.getElementById("currency_id").value);
+     localStorage.setItem("language_id", document.getElementById("language_id").value);
   $("#user_form_reset").click(function(){
     $('#user_register_form')[0].reset();
     $('#myModal').modal('hide');
@@ -268,6 +269,7 @@ $(document).ready(function(){
 
 $('#user_registration_submit').click(function () {
 <!--    OpenLoaderPopup();-->
+    $('#language_id').val(localStorage.getItem("language_id"));
 });
 
 </script>
