@@ -645,9 +645,7 @@ function save_basic_details() {
     $.ajax({
                     type: 'POST',
                     url: "{% url 'eProc_Suppliers:update_suppliers_basic_details' %}",
-                    data: JSON.stringify(formdata),
-                    contentType: "application/json; charset=utf-8",
-                    dataType: "json",
+                    data: formdata,
                     success: function(response) {
                            encrypted_supplier = response.encrypted_supplier
                            message = response.message
