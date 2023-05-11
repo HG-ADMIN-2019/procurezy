@@ -636,6 +636,8 @@ function save_basic_details() {
     formdata.output_medium_id = $('#output_medium_id').val();
     formdata.status = GLOBAL_ACTION;
     supplier_data.push(formdata);
+<!--    supplier_data.append("supplier_image",  $('#supplier_image_id').prop('files')[0]);-->
+
 
     [is_save_form_valid,error_message] = save_basic_form_validation1(formdata);
     if(is_save_form_valid){
@@ -773,7 +775,7 @@ function loadFile3(event) {
     var reader = new FileReader();
     reader.onload = function(){
         const uploadfile = document.getElementById('supplier_image_id');
-<!--        if (uploadfile.files.length > 0) {-->
+        if (uploadfile.files.length > 0) {
             const filedata = uploadfile.files[0];
             const fsize = filedata.size;
             const file_extension = ((filedata.name).split(".")[1]).toUpperCase();
@@ -795,7 +797,7 @@ function loadFile3(event) {
                 $('#image-upload-errors').html('Please attach jpg, jpeg, png, bmp, tif, tiff or gif');
                 $('#image-upload-errors').show();
             }
-<!--        }-->
+        }
     };
     reader.readAsDataURL(event.target.files[0]);
 };

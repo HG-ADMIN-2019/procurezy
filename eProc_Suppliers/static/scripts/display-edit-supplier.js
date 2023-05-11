@@ -590,8 +590,6 @@ function get_values_onerror(){
    $('#country_code_id').val(localStorage.getItem("country_code_id")).attr('selected', 'selected');
    $('#currency_id').val(localStorage.getItem("currency_id")).attr('selected', 'selected');
     $('#language_id').val(localStorage.getItem("language_id")).attr('selected', 'selected');
-   $('#supplier_image_id').val(localStorage.getItem("supplier_image_id"));
-   $('#supplier_id').val(localStorage.getItem("supplier_id"));
     $('#landline_id').val(localStorage.getItem("landline_id"));
    $('#mobile_num_id').val(localStorage.getItem("mobile_num_id"));
    $('#fax_id').val(localStorage.getItem("fax_id"));
