@@ -207,8 +207,8 @@
         })
     }
 
-  //onclick of data Upload copy data to modal pop-up
-  function onclick_display_csv_data() {
+    //onclick of data Upload copy data to modal pop-up
+    function onclick_display_csv_data() {
         document.getElementById('delete_data').style.visibility='hidden';
         $("#error_msg_id").css("display", "none")
         $('#id_popup_table').DataTable().destroy();
@@ -257,7 +257,7 @@
                             var prod_cat_list = '';
                             var prod_cat_id_list = '';
                             $.each(rendered_UNSPC_data, function(i, item){
-                                if( value[3] == item.prod_cat_id){
+                                if( value[1] == item.prod_cat_id){
                                     prod_cat = '<option value="' + item.prod_cat_id + '">' + item.prod_cat_id + '</option>';
                                 }else{
                                     prod_cat_list += '<option value="' + item.prod_cat_id + '">' + item.prod_cat_id + '</option>';
@@ -275,10 +275,9 @@
                                 }
                                 language_id_list = language + language_list
                             });
-		                    edit_basic_data = '<tr><td><input type="checkbox" required></td><td><select type="text" class="input form-control prodid" id="prodid-'+inc_index+'"  name="prodid" onchange="GetSelectedTextValue(this)">value ="' + value[3] + '"'+prod_cat_id_list+'</select></td><td><select class="form-control" type="text">value ="' + value[2] + '"'+language_id_list+'</select></td><td><input class="form-control description" type="text"  name="description" value ="' + value[0] + '" id="description-'+inc_index+'"></td><td hidden><guid></td><td>'+ del_ind +'</td></tr>';
-                            inc_index += 1;
+                            edit_basic_data += '<tr ><td><input type="checkbox" required></td><td><select type="text" class="form-control">value ="' + value[1] + '"'+prod_cat_id_list+'</select></td><td><select class="form-control" type="text">value ="' + value[2] + '"'+language_id_list+'</select></td><td><input class = "form-control" type="text" name="description" value ="' + value[0] + '" maxlength="200" onkeypress="return /[a-z ]/i.test(event.key)" required></td><td hidden></td><td>'+ del_ind +'</td></tr>';
                         });
-                        $('#id_popup_tbody').append(edit_basic_data);
+                        $('#id_popup_table').append(edit_basic_data);
                         var i =0;
                         $("#id_popup_table TBODY TR").each(function() {
                             var row = $(this);
@@ -315,7 +314,6 @@
             $('#id_data_upload').modal('show');
         }
     }
-
 
 
     // validate and save for add,copy,update and upload data
