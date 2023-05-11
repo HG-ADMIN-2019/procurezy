@@ -264,7 +264,7 @@
         no_duplicate_value = 'Y'
 	    var error_message = '';
         var payment_term = {};
-        $('#display_basic_table').DataTable().destroy();
+<!--        $('#display_basic_table').DataTable().destroy();-->
         get_main_table_data(); //Read data from main table
         // compare for duplicates in popup
         $("#error_msg_id").empty();
@@ -311,7 +311,7 @@
     	GLOBAL_ACTION = 'DELETE'
 	    main_table_country_checked = [];
         var Tabledata = { "Dbl_clck_tbl_id": 'Payterms_desc' };
-        $('#display_basic_table').DataTable().destroy();
+<!--        $('#display_basic_table').DataTable().destroy();-->
         get_selected_row_data(); // Function call to get the selected row data
         $('#id_delete_confirm_popup').modal('hide');
 		data = {'data':main_table_payment_term_checked,'table_name':'Payterms_desc','action':GLOBAL_ACTION}
@@ -691,7 +691,7 @@
                 rendered_payment_key_list = response.payterm_key_list
                 render_language_data = response.language_list
                 paytermdesc_drop();
-                $('#display_basic_table').DataTable().destroy();
+<!--                $('#display_basic_table').DataTable().destroy();-->
                 $('#id_payment_term_tbody').empty();
                 var edit_basic_data = '';
                 var desc = ''; var lang_code;
@@ -721,7 +721,7 @@
                 $('#id_save_confirm_popup').modal('hide');
                 $('#id_delete_confirm_popup').modal('hide');
                 $('#id_check_all').hide();
-                table_sort_filter('display_basic_table');
+<!--                table_sort_filter('display_basic_table');-->
             }
         });
     }
