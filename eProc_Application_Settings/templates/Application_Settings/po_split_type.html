@@ -315,20 +315,18 @@
 
     //***********************************
    function GetSelectedTextValue(aaccode) {
-  var selectedText = "";
-  var selectedValue = aaccode.value;
-  var selectedId = (aaccode.id).split('-')[1];
-
-  if (aaccode.length > 0) {
-    selectedText = aaccode.options[aaccode.selectedIndex].innerHTML;
-  }
-
-  $.each (rendered_aac_values, function(i, item){
-    if(selectedValue == item.field_type_id){
-      $('#description-'+selectedId).val(item.field_type_desc);
+      var selectedText = "";
+      var selectedValue = aaccode.value;
+      var selectedId = (aaccode.id).split('-')[1];
+      if (aaccode.length > 0) {
+        selectedText = aaccode.options[aaccode.selectedIndex].innerHTML;
+      }
+      $.each (rendered_aac_values, function(i, item){
+        if(selectedValue == item.field_type_id){
+          $('#description-'+selectedId).val(item.field_type_desc);
+        }
+      });
     }
-  });
-}
 
     //Function to highlight duplicate records
     function display_duplicate_entry(common) {

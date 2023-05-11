@@ -199,8 +199,7 @@
     var unique_acct_assmt_val = [];
 
     //************************************
-    function gl_account_dropdown() {
-        acc_ass_val_list = [];
+    function gl_account_dropdown(){
         glacc_dropdown = '';
         $.each(rendered_glacc_data, function (i, item) {
             glacc_dropdown += '<option value="' + item.account_assign_value + '">' + item.account_assign_value + '</option>'
@@ -210,31 +209,8 @@
             prod_cat_dropdown += '<option value="' + item.prod_cat_id + '">' + item.prod_cat_id + '</option>'
         });
         accasscat_dropdown = '';
-        accassval_dropdown = '';
-        $.each(rendered_acc_value_list, function (i, item) {
-            var acc_ass_cat_dropdown = '';
-            var acc_ass_val_dropdown = '';
-            $.each(item.account_assign_cat_list, function (j, cat) {
-                if (cat !== undefined && cat !== '-- Select Account Assignment Category --') {
-                    acc_ass_cat_dropdown += '<option value="' + cat + '">' + cat + '</option>';
-                }
-            });
-            $.each(item.account_assign_cat_value_list, function (k, val) {
-                if (val !== undefined) {
-                    acc_ass_val_dropdown += '<option value="' + val + '">' + val + '</option>';
-                    acc_ass_val_dict = {};
-                    acc_ass_val_dict.account_assign_value = val;
-                    acc_ass_val_dict.account_assign_cat = item.account_assign_cat_list[k];
-                    acc_ass_val_dict.company_id = item.company_id;
-                    acc_ass_val_list.push(acc_ass_val_dict);
-                    account_assign_array.push(val);
-                }
-            });
-            var company_dropdown = '';
-            company_dropdown += '<option value="' + item.company_id + '">' + item.company_id + '</option>';
-            $('#accasscat_dropdown_' + item.company_id).html(acc_ass_cat_dropdown);
-            $('#accassval_dropdown_' + item.company_id).html(acc_ass_val_dropdown);
-            $('#company_dropdown').append(company_dropdown);
+        $.each(rendered_accasscat_data, function (i, item) {
+            accasscat_dropdown += '<option value="' + item.account_assign_cat + '">' + item.account_assign_cat + '</option>'
         });
         currency_dropdown = '';
         $.each(rendered_currency_data, function (i, item) {
@@ -245,7 +221,6 @@
             company_dropdown += '<option value="' + item.company_id + '">' + item.company_id + '</option>'
         });
     }
-
 
 
     //onclick of cancel display the table in display mode............
