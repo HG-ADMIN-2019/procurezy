@@ -13,7 +13,7 @@ def project_search(**kwargs):
     project_desc_query = Q()
     project_name_query = Q()
     instance = ProjectDetails()
-    search_count = 10
+    search_count = kwargs.get('search_count', 10)
     for key, value in kwargs.items():
         value_list = []
         if value:

@@ -8,17 +8,17 @@
         <div class="elements-space-between">
             <h3>Maintain Work Flow Schemas</h3>
             <div>
-                <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Master_Settings:extract_workflowschema_template' %}'"type="button">
+                <button class="btn btn-outline-primary"  title="Template" onclick="location.href='{% url 'eProc_Master_Settings:extract_workflowschema_template' %}'"type="button">
                     <i class="fas fa-download"></i> template
                 </button>
                 <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Master_Settings:extract_workflowschema_data' %}'"type="button">
                     <i class="fas fa-download"></i> extract data
                 </button>
-                <button class="btn btn-outline-primary modal_upload" id="id_upload_redirect_data"  title="Upload Data" value="workflowsch_upload"  onclick="onclick_upload_button();" type="button">
+                <button class="btn btn-outline-primary modal_upload" id="id_upload_redirect_data"  title="Upload" value="workflowsch_upload"  onclick="onclick_upload_button();" type="button">
                     <i class="fas fa-cloud-upload-alt"></i> upload data
                 </button>
-                <button class="btn btn-primary " id="id_add_data" value="ADD" title="Add workflow schema," data-toggle="modal" onclick="onclick_add_button(this);">
-                    <i class="fa fa-plus"></i> add work flow schema
+                <button class="btn btn-primary " id="id_add_data" value="ADD" title="Add Workflow Schema," data-toggle="modal" onclick="onclick_add_button(this);">
+                    <i class="fa fa-plus"></i> Add Work Flow Schema
                 </button>
                   <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"  onclick="window_close();">
                     <i class="fas fa-times"></i> close
@@ -90,10 +90,10 @@
                 <div class="modal-body">
                      <div class="popup-vertical-scroll">
                     <div id="id_del_add_button" class="mb-4">
-                        <button class="btn btn-primary" type="button" onclick="add_popup_row()">
+                        <button class="btn btn-primary" title="Add New Row" type="button" onclick="add_popup_row()">
                             <i class="fa fa-plus"></i> add new row
                         </button>
-                        <button class="btn btn-outline-danger" onclick="application_settings_delete_Row('id_popup_table')">
+                        <button class="btn btn-outline-danger" title="Delete" onclick="application_settings_delete_Row('id_popup_table')">
                             <i class="fa fa-trash"></i> delete
                         </button>
                     </div>
@@ -126,10 +126,10 @@
                 </div>
                 <!-- Modal footer -->
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-primary remove_upload_data" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
-                    <button id="id_delete_duplicate" class="btn btn-primary" style="display:none;" type="button" onclick="delete_duplicate()"><i class="fa fa-trash"></i> delete duplicates</button>
-                    <button id="id_check_data" style="display:none;" class="btn btn-primary" type="button" onclick="check_data()"><i class="fas fa-check"></i> check</button>
-                    <button class="btn btn-primary" id="save_id"><i class="fas fa-save"></i> save</button>
+                    <button type="button" class="btn btn-outline-primary remove_upload_data" title="Cancel" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
+                    <button id="id_delete_duplicate" class="btn btn-primary" title="Delete" style="display:none;" type="button" onclick="delete_duplicate()"><i class="fa fa-trash"></i> delete duplicates</button>
+                    <button id="id_check_data" style="display:none;" class="btn btn-primary" title="Check" type="button" onclick="check_data()"><i class="fas fa-check"></i> check</button>
+                    <button class="btn btn-primary" title="Save" id="save_id"><i class="fas fa-save"></i> save</button>
                 </div>
             </div>
         </div>
@@ -152,7 +152,6 @@
         {% endif %}
     </div>
 </div>
-
 <script>
     var master_data_settings = '{{master_data_settings|safe}}';
     var rendered_wfschema_data = {{ work_flow_schema| safe}};
@@ -282,7 +281,6 @@
         no_duplicate_entries = 'Y'
         no_duplicate_value = 'Y'
         var error_message = '';
-        var wfschema = {};
         $('#display_basic_table').DataTable().destroy();
         get_main_table_data(); //Read data from main table
         // compare for duplicates in popup
@@ -294,6 +292,9 @@
             if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
                 // compare main table and pop up for duplicate values
                 [no_duplicate_entries,error_message]  = maintable_validation(validate_add_attributes, main_table_low_value)
+                if(no_duplicate_entries == 'N'){
+                    $('#Wfschema_Modal').modal('show');
+                }
             }
             if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
                 var add_basic_data = '';
@@ -321,11 +322,13 @@
                 display_error_message(error_message)
             }
         }
+        table_sort_filter('id_popup_table');
     }
 
    // Function to get main table data
     function get_main_table_data()  {
         main_table_low_value = [];
+        $('#display_basic_table').DataTable().destroy();
         $("#display_basic_table TBODY TR").each(function() {
             var row = $(this);
             var main_attribute = {};
@@ -498,7 +501,7 @@
     function compare_table_for_duplicate_entries(validate_add_attributes, wfschema) {
         add_attr_duplicates = false;
         var error_message = ''
-        var add_attr_duplicates_list = [];
+        var common = [];
         var add_attr_unique_list = [];
         var no_duplicate_value = 'Y'
         $.each(validate_add_attributes, function (index, value) {
@@ -506,29 +509,22 @@
                 add_attr_unique_list.push(value);
             }
             else {
-                if ($.inArray(value, add_attr_duplicates_list) == -1) {
-                    add_attr_duplicates_list.push(value);
+                if ($.inArray(value, common) == -1) {
+                    common.push(value);
                 }
             }
         });
-        if (add_attr_duplicates_list.length != 0) {
+        if (common.length != 0) {
+            $('#Wfschema_Modal').modal('show');
+            display_duplicate_entry(common);  //Function to highlight the rows in popup
             error_message = ui_messeges("JMSG001")// Get message details
             no_duplicate_value = 'N'
             return [no_duplicate_value,error_message]
         }
         else {
             $.each(wfschema, function (i, item) {
-                if (item.workflow_schema.length == 0) {
-                    error_message = ui_messeges("JMSG002")// Get message details
-                    no_duplicate_value = 'N'
-                    return [no_duplicate_value,error_message]
-                }
-                if (item.app_types.length == 0) {
-                    error_message = ui_messeges("JMSG002")// Get message details
-                    no_duplicate_value = 'N'
-                    return [no_duplicate_value,error_message]
-                }
-                if (item.company_id.length == 0) {
+                if ((item.company_id == null) || (item.workflow_schema == null) || (item.app_types== null)) {
+                    $('#Wfschema_Modal').modal('show');
                     error_message = ui_messeges("JMSG002")// Get message details
                     no_duplicate_value = 'N'
                     return [no_duplicate_value,error_message]
@@ -556,6 +552,7 @@
 
     //Read popup table data
     function read_popup_data() {
+        $('#id_popup_table').DataTable().destroy();
         wfschema_data = new Array();
         validate_add_attributes = [];
         duplicate_entry = [];
@@ -574,9 +571,10 @@
                 wfschema.workflow_schema_guid ='';
             }
             var wfschema_compare = wfschema.workflow_schema +'-'+ wfschema.company_id
-           validate_add_attributes.push(wfschema_compare);
-           wfschema_data.push(wfschema);
+            validate_add_attributes.push(wfschema_compare);
+            wfschema_data.push(wfschema);
        });
+       table_sort_filter('id_popup_table');
        return wfschema_data;
     }
 

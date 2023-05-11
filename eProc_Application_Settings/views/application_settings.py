@@ -441,7 +441,7 @@ def org_node_types(request):
     master_data_settings = 'master_data_settings'
     return render(request, 'Organizational_Data/org_node_types.html',
                   {'org_node_types': upload_orgnodetypes, 'master_data_settings': master_data_settings,
-                   'upload_dropdown_db_values': upload_dropdown_db_values,'messages_list': messages_list,
+                   'upload_dropdown_db_values': upload_dropdown_db_values, 'messages_list': messages_list,
                    'inc_nav': True})
 
 
@@ -473,7 +473,7 @@ def org_attributes(request):
     return render(request, 'Organizational_Data/org_attributes.html',
                   {'org_attributes': upload_orgattributes, 'master_data_settings': master_data_settings,
                    'upload_dropdown_db_values': upload_dropdown_db_values,
-                   'upload_dropdown_db_values_onload': upload_dropdown_db_values_onload,'messages_list' : messages_list,
+                   'upload_dropdown_db_values_onload': upload_dropdown_db_values_onload, 'messages_list': messages_list,
                    'inc_nav': True})
 
 
@@ -530,7 +530,8 @@ def auth_objects(request):
     return render(request, 'Organizational_Data/authorization_objects.html',
                   {'upload_authobj': upload_authobj, 'master_data_settings': master_data_settings,
                    'auth_obj_id_db_values': auth_obj_id_db_values, 'auth_type_db_values': auth_type_db_values,
-                   'auth_obj_id_db_values_onload': auth_obj_id_db_values_onload,'messages_list':messages_list, 'inc_nav': True})
+                   'auth_obj_id_db_values_onload': auth_obj_id_db_values_onload, 'messages_list': messages_list,
+                   'inc_nav': True})
 
 
 def auth_grp(request):
@@ -560,7 +561,7 @@ def auth_grp(request):
     return render(request, 'Organizational_Data/authorization_group.html',
                   {'auth_grp': upload_authgrp, 'upload_data_AuthorizationGroup': upload_data_AuthorizationGroup,
                    'master_data_settings': master_data_settings, 'auth_group_values': auth_group_db_values,
-                   'auth_level_value': auth_type_db_values,'messages_list':messages_list,
+                   'auth_level_value': auth_type_db_values, 'messages_list': messages_list,
                    'inc_nav': True})
 
 
@@ -583,7 +584,7 @@ def roles(request):
     master_data_settings = 'master_data_settings'
     return render(request, 'Organizational_Data/roles.html',
                   {'roles': upload_roles, 'master_data_settings': master_data_settings, 'inc_nav': True,
-                   'dropdown_db_values': dropdown_db_values,' messages_list':messages_list})
+                   'dropdown_db_values': dropdown_db_values, 'messages_list': messages_list})
 
 
 def auth(request):
@@ -593,7 +594,7 @@ def auth(request):
                                                                                                   'auth_obj_grp',
                                                                                                   'role'))
     upload_data_roles = list(
-        FieldTypeDescription.objects.filter(field_name='roles',del_ind=False,
+        FieldTypeDescription.objects.filter(field_name='roles', del_ind=False,
                                             client=global_variables.GLOBAL_CLIENT).values('field_type_id',
                                                                                           'field_type_desc'))
 
@@ -649,8 +650,8 @@ def transaction_type(request):
                   {'transaction_type': upload_transactiontype, 'application_settings': application_settings,
                    'document_type': document_type_render, 'upload_numberrange': number_range_sequence,
                    'rendered_active_inactive': rendered_active_inactive,
-                   'rendered_active_inactive_onload': rendered_active_inactive_onload,'messages_list':messages_list,
-                                         'inc_nav': True})
+                   'rendered_active_inactive_onload': rendered_active_inactive_onload, 'messages_list': messages_list,
+                   'inc_nav': True})
 
 
 def transaction_type_sc(request):
@@ -686,7 +687,7 @@ def transaction_type_sc(request):
                   'Transaction_type/Shopping_cart/transaction_type.html',
                   {'transaction_type': upload_transactiontype, 'application_settings': application_settings,
                    'document_type': document_type_render, 'upload_numberrange': number_range_sequence,
-                   'rendered_active_inactive': rendered_active_inactive,'messages_list':messages_list,
+                   'rendered_active_inactive': rendered_active_inactive, 'messages_list': messages_list,
                    'inc_nav': True})
 
 
@@ -724,7 +725,7 @@ def transaction_type_po(request):
                   'Transaction_type/Purchase_order/transaction_type.html',
                   {'transaction_type': upload_transactiontype, 'application_settings': application_settings,
                    'document_type': document_type_render, 'upload_numberrange': number_range_sequence,
-                   'rendered_active_inactive': rendered_active_inactive,'messages_list':messages_list,
+                   'rendered_active_inactive': rendered_active_inactive, 'messages_list': messages_list,
                    'inc_nav': True})
 
 
@@ -761,5 +762,5 @@ def transaction_type_gv(request):
                   'Transaction_type/Goods_verfication/transaction_type.html',
                   {'transaction_type': upload_transactiontype, 'application_settings': application_settings,
                    'document_type': document_type_render, 'upload_numberrange': number_range_sequence,
-                   'rendered_active_inactive': rendered_active_inactive,'messages_list':messages_list,
+                   'rendered_active_inactive': rendered_active_inactive, 'messages_list': messages_list,
                    'inc_nav': True})

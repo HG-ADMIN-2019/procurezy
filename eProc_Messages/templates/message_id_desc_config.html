@@ -145,6 +145,7 @@
     var rendered_message_id_desc_data = {{message_id_desc_data|safe}};
     var rendered_message_id_data = {{messages_id_list|safe}};
     var render_language_data = {{ language_list| safe}};
+    var messages_list = {{messages_list|safe}};
     var message_id_desc_data_array = {}
     var main_table_message_value =[];
     var message_id_desc = '';
@@ -196,6 +197,7 @@
     // validate and save for add,copy,update and upload data
     function popup_save_data() {
 		$('#success_msg_id').empty();
+        $('#id_popup_table').DataTable().destroy();
         var Tabledata = { "Dbl_clck_tbl_id": 'MessagesIdDesc' };
         no_duplicate_entries = 'Y'
         no_duplicate_value = 'Y'
@@ -234,6 +236,7 @@
                 display_error_message(error_message)
             }
         }
+        table_sort_filter('id_popup_table');
     }
 
     //delete the selected row in db................
@@ -351,7 +354,7 @@
     function compare_table_for_duplicate_entries(validate_add_attributes, message) {
         add_attr_duplicates = false;
         var error_message = ''
-        var add_attr_duplicates_list = [];
+        var common = [];
         var add_attr_unique_list = [];
         var no_duplicate_value = 'Y'
         $.each(validate_add_attributes, function (index, value) {
@@ -359,19 +362,24 @@
                 add_attr_unique_list.push(value);
             }
             else {
-                if ($.inArray(value, add_attr_duplicates_list) == -1) {
-                    add_attr_duplicates_list.push(value);
+                if ($.inArray(value, common) == -1) {
+                    common.push(value);
                 }
             }
         });
-        if(add_attr_duplicates_list.length != 0){ 
-            no_duplicate_value = 'N'
-            var url_new = "{% url 'eProc_Basic:get_message_description' %}";
-            get_message_details("MSG186"); // Get message details
-            error_message =  msg_type.messages_id_desc;
-            $('#id_save_confirm_popup').modal('hide');
+        if(common.length != 0){ 
+            // no_duplicate_value = 'N'
+            // var url_new = "{% url 'eProc_Basic:get_message_description' %}";
+            // get_message_details("MSG186"); // Get message details
+            // error_message =  msg_type.messages_id_desc;
+            // $('#id_save_confirm_popup').modal('hide');
+            // $('#msg_desc_Modal').modal('show');
+            // no_duplicate_entries = 'N'
             $('#msg_desc_Modal').modal('show');
-            no_duplicate_entries = 'N'
+            display_duplicate_entry(common);  //Function to highlight the rows in popup
+            error_message = ui_messeges("JMSG001")// Get message details
+            no_duplicate_value = 'N'
+            return [no_duplicate_value,error_message]
         }
         else {
             $.each(message, function (i, item) {

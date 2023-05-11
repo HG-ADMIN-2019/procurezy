@@ -65,7 +65,7 @@ function display_basic_db_data() {
     $('#id_update_data').hide();
     $('#id_save_confirm_popup').modal('hide');
     $('#id_delete_confirm_popup').modal('hide');
-    $('#id_check_all').hide(); 
+    $('#id_check_all').hide();
     table_sort_filter('display_basic_table');
 }
 
@@ -81,7 +81,7 @@ function check_date_error(check_dates) {
             document.getElementById("id_error_msg").innerHTML = display;
             document.getElementById("id_error_msg").style.color = "Red";
             $('#id_save_confirm_popup').modal('hide');
-            $('#myModal').modal('show');
+            $('#aav_Modal').modal('show');
             date_error = 'Y'
         }
     })
@@ -93,7 +93,7 @@ $(".remove_upload_data").click(() => {
     $("#id_error_msg").html("");
     $("#id_popup_tbody").empty();
     $("#id_error_msg").empty();
-    $('#myModal').modal('hide');
+    $('#aav_Modal').modal('hide');
     $("#id_error_msg").prop("hidden", true);
     $("#id_error_msg_aav_code").prop("hidden", true);
     $("#id_error_msg_aav_name").prop("hidden", true);
@@ -132,15 +132,14 @@ function delete_duplicate() {
 
 // Functtion to hide and display save related popups
 $('#save_id').click(function () {
-    $('#myModal').modal('hide');
-    aav_data = [];
+    $('#aav_Modal').modal('hide');
     aav_data = read_popup_data();
     $('#id_save_confirm_popup').modal('show');
 });
 
 //Read popup table data
 function read_popup_data() {
-    var aav={};
+    $('#id_popup_table').DataTable().destroy();
     validate_add_attributes = [];
     aav_data = new Array();
     var check_dates = []
@@ -179,6 +178,7 @@ function read_popup_data() {
         validate_add_attributes.push(compare);
         aav_data.push(aav);
     });
+    table_sort_filter('id_popup_table');
     return aav_data;
 }
 
@@ -189,7 +189,7 @@ function display_error_message(error_message){
     $('#error_message').css('color', 'red');
     $('#error_msg_id').css('display', 'block');
     $('#id_save_confirm_popup').modal('hide');
-    $('#myModal').modal('show');
+    $('#aav_Modal').modal('show');
 }
 
 //*****************************
@@ -214,6 +214,7 @@ function check_date(aav_data) {
 // Function to get main table data
 function get_main_table_data() {
     main_table_low_value = [];
+    $('#display_basic_table').DataTable().destroy();
     $("#display_basic_table TBODY TR").each(function() {
         var row = $(this);
         var main_attribute = {};

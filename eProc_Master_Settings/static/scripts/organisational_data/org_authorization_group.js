@@ -8,7 +8,7 @@ $(".remove_upload_data").click(() => {
     $("#id_error_msg").html("");
     $("#id_popup_tbody").empty();
     $("#id_error_msg").empty();
-    $('#myModal').modal('hide');
+    $('#auth_group_Modal').modal('hide');
     $("#id_error_msg").prop("hidden", true);
     $("#id_error_msg_auth_group_code").prop("hidden", true);
     $("#id_error_msg_auth_group_name").prop("hidden", true);
@@ -70,12 +70,12 @@ function display_error_message(error_message){
     document.getElementById("error_message").style.color = "Red";
     $("#error_msg_id").css("display", "block")
     $('#id_save_confirm_popup').modal('hide');
-    $('#myModal').modal('show');
+    $('#auth_group_Modal').modal('show');
 }
 
 // Onclick of save button in popup
 $('#save_id').click(function () {
-    $('#myModal').modal('hide');
+    $('#auth_group_Modal').modal('hide');
     auth_group_data = read_popup_data();
     $('#id_save_confirm_popup').modal('show');
 });
@@ -146,11 +146,13 @@ function get_selected_row_data(){
 // Function for add a new row data
 function new_row_data(){
     basic_add_new_html = '<tr><td><input type="checkbox" required></td>'+
-    '<td><select type="text" class="input form-control authgroup"  id="authgroup-1" onchange="GetSelectedTextValue(this)"><option value="" disabled selected>Select your option</option>'+ auth_group_id_dropdown+'</select></td>'+
+    '<td><select type="text" class="input form-control authgroup"  id="authgroup-1" onchange="GetSelectedTextValue(this)">'+ auth_group_id_dropdown+'</select></td>'+
     '<td><input class="form-control description" type="text"  name="description"  id="description-1" disabled></td>'+
     '<td><select class="form-control">'+auth_level_dropdown+'</select></td>'+
     '<td><select class="form-control">'+auth_obj_id_dropdown+'</select></td>'+
     '<td hidden><input type="text" value="GUID"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
     table_sort_filter('id_popup_table');
+    var authgroupSelect = $("#authgroup-1");
+    GetSelectedTextValue(authgroupSelect[0]);
 }

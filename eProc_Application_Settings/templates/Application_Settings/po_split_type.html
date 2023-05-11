@@ -154,7 +154,6 @@
     function popup_save_data() {
         $('#success_msg_id').empty()
         $('#id_popup_table').DataTable().destroy();
-        var main_table_low_value = [];
         no_duplicate_entries = 'Y'
         no_duplicate_value = 'Y'
         var error_message = '';
@@ -168,6 +167,9 @@
         else {
             if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
                 [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
+                if(no_duplicate_entries == 'N'){
+                    $('#potype_Modal').modal('show');
+                }
             }
             if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
                 var add_basic_data = '';
@@ -194,8 +196,8 @@
             else if (error_message){
                 display_error_message(error_message)
             }
-            table_sort_filter('id_popup_table');
         }
+        table_sort_filter('id_popup_table');
     }
 
     //delete the selected row in db................
@@ -264,13 +266,14 @@
             $("#id_error_msg").html(" ");
         });
         basic_add_new_html = '<tr ><td><input type="checkbox" required></td>'+
-            '<td><select type="text" class="input form-control aaccode" id="aaccode-'+inc_index+'" name="aaccode" onchange="GetSelectedTextValue(this)"><option value="" disabled selected>Select your option</option>'+ aac_dropdown +'</select></td>'+
+            '<td><select type="text" class="input form-control aaccode" id="aaccode-'+inc_index+'" name="aaccode" onchange="GetSelectedTextValue(this)">zzzz'+ aac_dropdown +'</select></td>'+
             '<td><input class="form-control description" type="text" id="description-'+inc_index+'" name="description" disabled></td>'+
             '<td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
         $('#id_popup_tbody').append(basic_add_new_html);
         if (GLOBAL_ACTION == "aac_upload") {
             $(".class_del_checkbox").prop("hidden", false);
         }
+        GetSelectedTextValue($("#aaccode-" + inc_index)[0]);
         table_sort_filter('id_popup_table');
     }
 
@@ -278,20 +281,22 @@
     function compare_table_for_duplicate_entries(validate_add_attributes, po_sp_t) {
         add_attr_duplicates = false;
         var error_message = ''
-        var add_attr_duplicates_list = [];
+        var common = [];
         var add_attr_unique_list = [];
         var no_duplicate_value = 'Y'
         $.each(validate_add_attributes, function (index, value) {
             if ($.inArray(value, add_attr_unique_list) == -1) {
                 add_attr_unique_list.push(value);
             } else {
-                if ($.inArray(value, add_attr_duplicates_list) == -1) {
-                    add_attr_duplicates_list.push(value);
+                if ($.inArray(value, common) == -1) {
+                    common.push(value);
                 }
             }
         });
-        if (add_attr_duplicates_list.length != 0) {
-            var url_new = "{% url 'eProc_Basic:get_message_description' %}";
+        if (common.length != 0) {
+            // var url_new = "{% url 'eProc_Basic:get_message_description' %}";
+            $('#potype_Modal').modal('show');
+            display_duplicate_entry(common);  //Function to highlight the rows in popup
             error_message = ui_messeges("JMSG001")// Get message details
             no_duplicate_value = 'N'
             return [no_duplicate_value,error_message]
@@ -309,16 +314,21 @@
     }
 
     //***********************************
-    function GetSelectedTextValue(aaccode) {
-        var selectedText = aaccode.options[aaccode.selectedIndex].innerHTML;
-        var selectedValue = aaccode.value;
-        var selectedId = (aaccode.id).split('-')[1];
-        $.each (rendered_aac_values, function(i, item){
-            if(selectedValue == item.field_type_id){
-                $('#description-'+selectedId).val(item.field_type_desc);
-            }
-        });
+   function GetSelectedTextValue(aaccode) {
+  var selectedText = "";
+  var selectedValue = aaccode.value;
+  var selectedId = (aaccode.id).split('-')[1];
+
+  if (aaccode.length > 0) {
+    selectedText = aaccode.options[aaccode.selectedIndex].innerHTML;
+  }
+
+  $.each (rendered_aac_values, function(i, item){
+    if(selectedValue == item.field_type_id){
+      $('#description-'+selectedId).val(item.field_type_desc);
     }
+  });
+}
 
     //Function to highlight duplicate records
     function display_duplicate_entry(common) {

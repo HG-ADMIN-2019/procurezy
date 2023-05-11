@@ -8,18 +8,18 @@
         <div class="elements-space-between">
             <h3>Maintain General Ledger Accounts</h3>
             <div>
-                  <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Master_Settings:extract_glaccount_template' %}'"type="button">
+                  <button class="btn btn-outline-primary"  title="Template" onclick="location.href='{% url 'eProc_Master_Settings:extract_glaccount_template' %}'"type="button">
                     <i class="fas fa-download"></i> template
                 </button>
                 <button class="btn btn-outline-primary" title="Extract" onclick="location.href='{% url 'eProc_Master_Settings:extract_glaccount_data' %}'" type="button">
                     <i class="fas fa-download"></i> extract data
                 </button>
-                <button class="btn btn-outline-primary modal_upload" title="Data upload" id="id_upload_redirect_data" value="detgl_upload"
+                <button class="btn btn-outline-primary modal_upload" title="Upload" id="id_upload_redirect_data" value="detgl_upload"
                         onclick="onclick_upload_button()" type="button"><i class="fas fa-cloud-upload-alt"></i> upload data
                 </button>
-                <button class="btn btn-primary" title="Add" type="button" id="id_add_data" value="ADD" data-toggle="modal"
+                <button class="btn btn-primary" title="Add General Ledger Account" type="button" id="id_add_data" value="ADD" data-toggle="modal"
                         data-target="#Detgl_Modal" onclick="onclick_add_button(this)">
-                    <i class="fa fa-plus"></i> add General Ledger Account
+                    <i class="fa fa-plus"></i> Add General Ledger Account
                 </button>
                   <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"  onclick="window_close();">
                     <i class="fas fa-times"></i> close
@@ -32,16 +32,16 @@
             <div id="err_msg_app_settings_t" class="alert alert-success" hidden><span id="success_msg_id"></span></div>
             <div class="table-container">
                 <div class="edit-button-section mb-4">
-                    <button class="btn btn-secondary btn-sm"  title="Edit" id="id_edit_data" onclick="onclick_edit_button()"><i
+                    <button class="btn btn-secondary btn-sm" title="Edit" id="id_edit_data" onclick="onclick_edit_button()"><i
                             class="fas fa-edit" id="edit" title="Edit"></i> edit
                     </button>
-                    <button id="id_delete_data" value="detgl_delete"  title="Delete" style="display:none;" data-toggle="modal" data-target="#id_delete_confirm_popup"
+                    <button id="id_delete_data" value="detgl_delete" title="Delete" style="display:none;" data-toggle="modal" data-target="#id_delete_confirm_popup"
                             class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> Delete
                     </button>
                     <button id="id_copy_data" style="display:none;" title="Copy"  value="COPY" class="btn btn-primary  btn-sm"
                             type="button" onclick="onclick_copy_button()"> <i class="fa fa-copy"></i> Copy
                     </button>
-                    <button id="id_cancel_data" style="display:none;"  title="Cancel" type="button" class="btn btn-secondary btn-sm"
+                    <button id="id_cancel_data" style="display:none;" title="Cancel" type="button" class="btn btn-secondary btn-sm"
                             onclick="display_basic_db_data()"> <i class="fas fa-times"></i> cancel
                     </button>
                 </div>
@@ -103,51 +103,54 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                 </div>
-                <div class="modal-body scrollbox">
-                    <div id="id_del_add_button" class="mb-2">
-                        <button class="btn btn-outline-primary" type="button" onclick="add_popup_row()">
-                            <i class="fa fa-plus"></i> add new row</button>
-                        <button class="btn btn-outline-danger" onclick="application_settings_delete_Row('id_popup_table')"><i
-                                class="fa fa-trash"></i>
-                            delete</button>
+                <div class="modal-body">
+                    <div class="popup-vertical-scroll">
+                        <div id="id_del_add_button" class="mb-2">
+                            <button class="btn btn-primary" title="Add New Row" type="button" onclick="add_popup_row()">
+                                <i class="fa fa-plus"></i> Add New Row
+                            </button>
+                            <button class="btn btn-outline-danger" title="Delete" onclick="application_settings_delete_Row('id_popup_table')">
+                                <i class="fa fa-trash"></i>delete
+                            </button>
+                        </div>
+                        <div id="id_check_success_messages" class="alert alert-success check_success_message" hidden></div>
+                        <div id="id_check_error_messages" class="alert alert-danger check_error_messages" hidden></div>
+                        <div id="id_check_special_character_messages"
+                            class="alert alert-danger check_special_character_messages" hidden>
+                            <p id="id_error_Prod_cat_id"></p>
+                            <p id="id_error_Fromvalue_lesserthan_Tovalue"></p>
+                            <p id="id_error_FromvalueTovalue_positive_num"></p>
+                        </div>
+                        <div id="error_msg_id" class="alert alert-danger display-none" role="alert"><span id="error_message"></span></div>
+                        <div id="id_warning_msg_id" class="alert alert-warning display-none" role="alert"></div>
+                        <div id="id_info_msg_id" class="alert alert-primary display-none" role="alert"></div>
+                        <table class="class_popup_table table table-bordered mt-2" id="id_popup_table">
+                            <thead>
+                            <tr>
+                                <th id="header_select">Select</th>
+                                <th>UNSPSC Code</th>
+                                <th>Company Number</th>
+                                <th>Account Assignment Category</th>
+                                <th>General Ledger Account</th>
+                                <th>Default</th>
+                                <th>Valid From Value</th>
+                                <th>Valid To Value</th>
+                                <th>Currency</th>
+                                <th hidden>Det Gl Acc Guid</th>
+                                <th id="id_del_ind_checkbox" hidden>Del Indicator</th>
+                            </tr>
+                            </thead>
+                            <tbody id=id_popup_tbody>
+                            </tbody>
+                        </table>
                     </div>
-                    <div id="id_check_success_messages" class="alert alert-success check_success_message" hidden></div>
-                    <div id="id_check_error_messages" class="alert alert-danger check_error_messages" hidden></div>
-                    <div id="id_check_special_character_messages"
-                         class="alert alert-danger check_special_character_messages" hidden>
-                        <p id="id_error_Prod_cat_id"></p>
-                        <p id="id_error_Fromvalue_lesserthan_Tovalue"></p>
-                        <p id="id_error_FromvalueTovalue_positive_num"></p>
-                    </div>
-                    <div id="error_msg_id" class="alert alert-danger display-none" role="alert"><span id="error_message"></span></div>
-                    <div id="id_warning_msg_id" class="alert alert-warning display-none" role="alert"></div>
-                    <div id="id_info_msg_id" class="alert alert-primary display-none" role="alert"></div>
-                    <table class="class_popup_table table table-bordered mt-2" id="id_popup_table">
-                        <thead>
-                        <tr>
-                            <th id="header_select">Select</th>
-                            <th>UNSPSC Code</th>
-                            <th>Company Number</th>
-                            <th>Account Assignment Category</th>
-                            <th>General Ledger Account</th>
-                            <th>Default</th>
-                            <th>Valid From Value</th>
-                            <th>Valid To Value</th>
-                            <th>Currency</th>
-                            <th hidden>Det Gl Acc Guid</th>
-                            <th id="id_del_ind_checkbox" hidden>Del Indicator</th>
-                        </tr>
-                        </thead>
-                        <tbody id=id_popup_tbody>
-                        </tbody>
-                    </table>
                 </div>
                 <!-- Modal footer -->
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-primary remove_upload_data" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
-                    <button id="id_delete_duplicate" class="btn btn-primary" style="display:none;" type="button" onclick="delete_duplicate()"><i class="fa fa-trash"></i> delete duplicates</button>
-                    <button id="id_check_data" style="display:none;" class="btn btn-primary" type="button" onclick="check_data()"><i class="fas fa-check"></i> check</button>
-                    <button class="btn btn-primary" id="save_id"><i class="fas fa-save"></i> save</button>
+                    <button type="button" class="btn btn-outline-primary remove_upload_data" title="Cancel" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
+                    <button id="id_delete_duplicate" class="btn btn-primary" title="Delete" style="display:none;" type="button" onclick="delete_duplicate()"><i class="fa fa-trash"></i> delete duplicates</button>
+                    <button id="id_check_data" style="display:none;" class="btn btn-primary" title="Check" type="button" onclick="check_data()"><i class="fas fa-check"></i> check</button>
+                    <button class="btn btn-primary" title="Save" id="save_id"><i class="fas fa-save"></i> save</button>
                 </div>
             </div>
         </div>
@@ -281,8 +284,6 @@
         no_duplicate_entries = 'Y'
         no_duplicate_value = 'Y'
         var error_message = '';
-        var detgl = {};
-        $('#display_basic_table').DataTable().destroy();
         get_main_table_data(); //Read data from main table
         // compare for duplicates in popup
         $("#id_error_msg").empty();
@@ -294,6 +295,9 @@
             if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
                 // compare main table and pop up for duplicate values
                 [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
+                if(no_duplicate_entries == 'N'){
+                    $('#Detgl_Modal').modal('show');
+                }
             }
             if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
                 var add_basic_data = '';
@@ -321,6 +325,7 @@
                 display_error_message(error_message)
             } 
         }
+        table_sort_filter('id_popup_table');
     }
 
     //delete the selected row in db................
@@ -707,7 +712,7 @@
     function compare_table_for_duplicate_entries(validate_add_attributes, detgl) {
         add_attr_duplicates = false;
         var error_message = ''
-        var add_attr_duplicates_list = [];
+        var common = [];
         var add_attr_unique_list = [];
         var no_duplicate_value = 'Y'
         $.each(validate_add_attributes, function (index, value) {
@@ -715,34 +720,22 @@
                 add_attr_unique_list.push(value);
             }
             else {
-                if ($.inArray(value, add_attr_duplicates_list) == -1) {
-                    add_attr_duplicates_list.push(value);
+                if ($.inArray(value, common) == -1) {
+                    common.push(value);
                 }
             }
         });
-        if (add_attr_duplicates_list.length != 0) {
+        if (common.length != 0) {
+            $('#Detgl_Modal').modal('show');
+            display_duplicate_entry(common);  //Function to highlight the rows in popup
             error_message = ui_messeges("JMSG001")// Get message details
             no_duplicate_value = 'N'
             return [no_duplicate_value,error_message]
         }
         else {
             $.each(detgl, function (i, item) {
-                if (item.prod_cat_id.length == 0) {
-                    error_message = ui_messeges("JMSG002")// Get message details
-                    no_duplicate_value = 'N'
-                    return [no_duplicate_value,error_message]
-                }
-                if (item.from_value.length == 0) {
-                    error_message = ui_messeges("JMSG002")// Get message details
-                    no_duplicate_value = 'N'
-                    return [no_duplicate_value,error_message]
-                }
-                if (item.to_value.length == 0) {
-                    error_message = ui_messeges("JMSG002")// Get message details
-                    no_duplicate_value = 'N'
-                    return [no_duplicate_value,error_message]
-                }
-                if (item.from_value >= detgl.to_value) {
+                if ((item.prod_cat_id == null) || (item.from_value.length == 0)
+                || (item.to_value.length == 0) || (item.from_value >= detgl.to_value)) {
                     error_message = ui_messeges("JMSG002")// Get message details
                     no_duplicate_value = 'N'
                     return [no_duplicate_value,error_message]
@@ -817,7 +810,7 @@
                 $("#id_popup_tbody").empty();
                 //Reference the Table.
                 var res = get_all_checkboxes(); // Function to get all the checkboxes
-                var $chkbox_all = $('td input[ class="class_basic_detgl_table]', res);
+                var $chkbox_all = $('td input[ class="checkbox_check]', res);
                 //Reference the CheckBoxes in Table.
                 var edit_basic_data = "";
                 var dropdown_array = [];
@@ -825,15 +818,15 @@
                 for (var i = 0; i < $chkbox_all.length; i++) {
                     if ($chkbox_all[i].checked) {
                         var row = $chkbox_all[i].parentNode.parentNode;
-                            guid = row.cells[9].innerHTML;
-                            unique_input = '<select class="form-control">' + prod_cat_dropdown + ' </select>'
-                            edit_basic_data += '<tr ><td><input type="checkbox" required></td>'+
-                            '<td>'+unique_input+'</td><td><select class="form-control">' + company_dropdown + ' </select></td>'+
-                            '<td><select class="form-control">' + accasscat_dropdown + '</select></td>' +
-                            '<td><select class="form-control">' + glacc_dropdown + '</select></td><td><input type="checkbox" name="gl_acc_default" required></td>'+
-                            '<td><input class="form-control" type="number" value="' + row.cells[6].innerHTML + '" onkeypress="return event.charCode >= 48" min="1" name="From_value"  required></td><td><input class="form-control" type="number" value="' + row.cells[7].innerHTML + '" onkeypress="return event.charCode >= 48" min="1" name="To_value"  required></td>' +
-                            '<td><select class="form-control">' + currency_dropdown + '</select></td><td hidden><input type="text" class ="form-control"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
-                            $("#header_select").prop("hidden", false);
+                        guid = row.cells[9].innerHTML;
+                        unique_input = '<select class="form-control">' + prod_cat_dropdown + ' </select>'
+                        edit_basic_data += '<tr ><td><input type="checkbox" required></td>'+
+                        '<td>'+unique_input+'</td><td><select class="form-control">' + company_dropdown + ' </select></td>'+
+                        '<td><select class="form-control">' + accasscat_dropdown + '</select></td>' +
+                        '<td><select class="form-control">' + glacc_dropdown + '</select></td><td><input type="checkbox" name="gl_acc_default" required></td>'+
+                        '<td><input class="form-control" type="number" value="' + row.cells[6].innerHTML + '" onkeypress="return event.charCode >= 48" min="1" name="From_value"  required></td><td><input class="form-control" type="number" value="' + row.cells[7].innerHTML + '" onkeypress="return event.charCode >= 48" min="1" name="To_value"  required></td>' +
+                        '<td><select class="form-control">' + currency_dropdown + '</select></td><td hidden><input type="text" class ="form-control"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+                        $("#header_select").prop("hidden", false);
                         var prod_cat = row.cells[1].innerHTML
                         var company_id = row.cells[2].innerHTML
                         var acc_ass_cat = row.cells[3].innerHTML
@@ -878,7 +871,6 @@
                 $("#id_del_ind_checkbox").prop("hidden", true);
                 $("#Detgl_Modal").modal('show');
                 table_sort_filter('id_popup_table');
-                $('#Detgl_Modal').modal('show');
                 CloseLoaderPopup();
             }
         });
