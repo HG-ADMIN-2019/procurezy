@@ -60,7 +60,6 @@
                         <i class="fas fa-times"></i> cancel
                     </button>
                 </div>
-
                 <table id="display_basic_table" class="class_basic_country_table table table-bordered custom-table">
                     <thead id="id_payment_term_table_header">
                         <tr>
@@ -691,7 +690,7 @@
                 rendered_payment_key_list = response.payterm_key_list
                 render_language_data = response.language_list
                 paytermdesc_drop();
-<!--                $('#display_basic_table').DataTable().destroy();-->
+                $('#display_basic_table').DataTable().destroy();
                 $('#id_payment_term_tbody').empty();
                 var edit_basic_data = '';
                 var desc = ''; var lang_code;
@@ -721,7 +720,7 @@
                 $('#id_save_confirm_popup').modal('hide');
                 $('#id_delete_confirm_popup').modal('hide');
                 $('#id_check_all').hide();
-<!--                table_sort_filter('display_basic_table');-->
+                table_sort_filter('display_basic_table');
             }
         });
     }
