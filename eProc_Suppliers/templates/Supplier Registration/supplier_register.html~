@@ -73,7 +73,7 @@
                             <div class="card-body">
                                 <div class="row">
                                     <div class="form-group col-md">
-                                        <label> Supplier Id:</label><span ></span><br>
+                                        <label> Supplier Id:</label><span class="hg_required"></span><br> 
                                         {{ supplier_form.supplier_id }}
                                     </div>
                                     <div class="form-group col-md">

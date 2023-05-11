@@ -21,7 +21,7 @@ import datetime
 
 
 class SupplierRegForm(forms.Form):
-    supplier_id = forms.CharField(label='Supplier id', required=True,
+    supplier_id = forms.CharField(label='Supplier id', required=False,
                                   widget=forms.TextInput(attrs={'class': 'form-control check_special_char'}),
                                   # validators=[RegexValidator('[+-/%]', inverse_match=True)]
                                   )
@@ -40,14 +40,14 @@ class SupplierRegForm(forms.Form):
         ('6', 'Friday'),
         ('7', 'Saturday')
     )
-    supp_type = forms.CharField(label='Communication Type', required=True,
+    supp_type = forms.CharField(label='Communication Type', required=False,
                                 widget=forms.Select(choices=supplier_types, attrs={'class': 'form-control'}))
-    name1 = forms.CharField(label='Name 1', required=True, widget=forms.TextInput(attrs={'class': 'form-control '
-                                                                                                  'check_special_char',
-                                                                                         'onkeyup': 'test()'}))
+    name1 = forms.CharField(label='Name 1', required=False, widget=forms.TextInput(attrs={'class': 'form-control '
+                                                                                                   'check_special_char',
+                                                                                          'onkeyup': 'test()'}))
     name2 = forms.CharField(label='Name 2', required=False, widget=forms.TextInput(attrs={'class': 'form-control '
                                                                                                    'check_special_char'}))
-    email = forms.EmailField(label='E-mail', required=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    email = forms.EmailField(label='E-mail', required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
     # email1 = forms.EmailField(label='E-mail 1', required=False, widget=forms.TextInput(attrs={'class':
     # 'form-control'})) email2 = forms.EmailField(label='E-mail 2', required=False, widget=forms.TextInput(attrs={
     # 'class': 'form-control'})) email3 = forms.EmailField(label='E-mail 3', required=False, widget=forms.TextInput(
@@ -56,31 +56,31 @@ class SupplierRegForm(forms.Form):
     # required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
     landline = forms.CharField(label='Landline', required=False,
                                widget=forms.TextInput(attrs={'class': 'form-control'}))
-    mobile_num = forms.CharField(label='Mobile', required=True,
+    mobile_num = forms.CharField(label='Mobile', required=False,
                                  widget=forms.TextInput(attrs={'class': 'form-control'}))
     fax = forms.CharField(label='Fax', required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
     street = forms.CharField(label='Street', required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
-    postal_code = forms.CharField(label='Postal code', required=False,
+    postal_code = forms.CharField(label='Postal code', required=True,
                                   widget=forms.TextInput(attrs={'class': 'form-control'}))
-    city = forms.CharField(label='City', required=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    city = forms.CharField(label='City', required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
     country_code = forms.ModelChoiceField(queryset=Country.objects.all(), label='Country',
-                                          empty_label=" Please select country from drop-down ", required=True,
+                                          empty_label=" Please select country from drop-down ", required=False,
                                           widget=forms.Select(
                                               attrs={'class': 'form-control'}))
-    language_id = forms.ModelChoiceField(queryset=Languages.objects.all(), required=True, label='Language',
+    language_id = forms.ModelChoiceField(queryset=Languages.objects.all(), required=False, label='Language',
                                          empty_label=" Please select language from drop-down ", widget=forms.Select(
             attrs={'class': 'form-control'}))
-    currency_id = forms.ModelChoiceField(queryset=Currency.objects.all(), required=True, label='Currency',
+    currency_id = forms.ModelChoiceField(queryset=Currency.objects.all(), required=False, label='Currency',
                                          empty_label=" Please select currency in drop-down ", widget=forms.Select(
             attrs={'class': 'form-control'}))
-    registration_number = forms.CharField(label='Registration number', required=True,
+    registration_number = forms.CharField(label='Registration number', required=False,
                                           widget=forms.TextInput(attrs={'class': 'form-control'}))
-    search_term1 = forms.CharField(label='Search Term 1', required=True,
+    search_term1 = forms.CharField(label='Search Term 1', required=False,
                                    widget=forms.TextInput(attrs={'class': 'form-control'}))
-    search_term2 = forms.CharField(label='Search Term 2', required=True,
+    search_term2 = forms.CharField(label='Search Term 2', required=False,
                                    widget=forms.TextInput(attrs={'class': 'form-control'}))
     working_days = forms.CharField(widget=forms.Select(choices=working_days_choices, attrs={'class': 'form-control'}),
-                                   required=True)
+                                   required=False)
     duns_number = forms.CharField(label='Duns Number', required=False,
                                   widget=forms.TextInput(attrs={'class': 'form-control'}))
     lockdate = forms.DateField(
@@ -96,86 +96,5 @@ class SupplierRegForm(forms.Form):
         ('XML / XI', 'XML / XI'),
     )
     output_medium = forms.CharField(widget=forms.Select(choices=output_medium_types, attrs={'class': 'form-control'}),
-                                    required=True)
+                                    required=False)
     supplier_image = forms.FileField(label='sample photo', widget=forms.FileInput, required=False)
-
-    def clean_name1(self):
-        """
-        # Name 1 validation
-        :return: first name
-        """
-        name1 = self.cleaned_data.get('name1')
-        if not (name1.isalpha() and re.match('[a-zA-Z]{4,30}', name1)):
-            error_msg = get_message_desc(MSG079)[1]
-            # msgid = 'MSG079'
-            # error_msg = get_msg_desc(msgid)
-            # msg = error_msg['message_desc'][0]
-            # error_msg = msg
-            raise forms.ValidationError(error_msg)
-            # raise forms.ValidationError(MSG079)
-        return name1
-
-    def clean_name2(self):
-        """
-        # Name 2 validation
-        :return: second name
-        """
-        lname = self.cleaned_data.get('name2')
-        if not (lname.isalpha() and re.match('[a-zA-Z]{1,30}', lname)):
-            error_msg = get_message_desc(MSG080)[1]
-            # msgid = 'MSG080'
-            # error_msg = get_msg_desc(msgid)
-            # msg = error_msg['message_desc'][0]
-            # error_msg = msg
-            raise forms.ValidationError(error_msg)
-            # raise forms.ValidationError(MSG080)
-        return lname
-
-    def clean_mobile_num(self):
-        """
-        # Mobile number validation
-        :return: mobile phone number
-        """
-        mnum = self.cleaned_data.get('mobile_num')
-        if not re.match('[0-9+()\-\ ]{10,30}', mnum) and len(mnum) > 0:
-            error_msg = get_message_desc(MSG076)[1]
-            # msgid = 'MSG076'
-            # error_msg = get_msg_desc(msgid)
-            # msg = error_msg['message_desc'][0]
-            # error_msg = msg
-            raise forms.ValidationError(error_msg)
-            # raise forms.ValidationError(MSG077)
-        else:
-            return mnum
-
-    def clean_supplier_id(self):
-        supp_id = self.cleaned_data.get('supplier_id')
-        if SupplierMaster.objects.filter(supplier_id=supp_id, client=global_variables.GLOBAL_CLIENT).exists():
-            error_msg = get_message_desc(MSG085)[1]
-            # msgid = 'MSG085'
-            # error_msg = get_msg_desc(msgid)
-            # msg = error_msg['message_desc'][0]
-            # error_msg = msg
-            raise forms.ValidationError(error_msg)
-            # raise forms.ValidationError(MSG085)
-        return supp_id
-
-    def clean_email(self):
-        email = self.cleaned_data.get('email')
-        check = SupplierMaster.objects.filter(email=email, client=global_variables.GLOBAL_CLIENT).exists()
-        if check:
-            error_msg = get_message_desc(MSG083)[1]
-            # msgid = 'MSG083'
-            # error_msg = get_msg_desc(msgid)
-            # msg = error_msg['message_desc'][0]
-            # error_msg = msg
-            raise forms.ValidationError(error_msg)
-            # raise forms.ValidationError(MSG083)
-        else:
-            return email
-
-    def clean_registration_number(self):
-        reg_number = self.cleaned_data.get('registration_number')
-        if SupplierMaster.objects.filter(registration_number=reg_number).exists():
-            raise forms.ValidationError('Supplier Registration number already exists')
-        return reg_number

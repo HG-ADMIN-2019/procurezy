@@ -596,12 +596,12 @@ class DBQueries:
 
     @staticmethod
     def get_product_details_by_fields(client, obj, supp_query, product_category_query, product_id_query,
-                                      short_desc_query, search_term1_query,
-                                      search_term2_query,
+                                      short_desc_query, email_query,
+                                      supp_type_query,
                                       products_detail_source_system_query, count):
         return list(ProductsDetail.objects.filter(supp_query, product_category_query,
-                                                  product_id_query, search_term1_query,
-                                                  search_term2_query,
+                                                  product_id_query, email_query,
+                                                  supp_type_query,
                                                   products_detail_source_system_query,
                                                   short_desc_query, client=client,
                                                   del_ind=False).values('product_id', 'short_desc', 'supplier_id',
@@ -801,10 +801,10 @@ class DBQueriesSupplier:
 
     @staticmethod
     def get_supplier_details_by_fields(client, block, obj, name1_query, name2_query, supplier_id_query,
-                                       search_term1_query,
-                                       search_term2_query, country_code_query, city_query):
-        return list(SupplierMaster.objects.filter(name1_query, name2_query, supplier_id_query, search_term1_query,
-                                                  search_term2_query, country_code_query, city_query, client=client,
+                                       email_query,
+                                       supp_type_query, country_code_query, city_query):
+        return list(SupplierMaster.objects.filter(name1_query, name2_query, supplier_id_query, email_query,
+                                                  supp_type_query, country_code_query, city_query, client=client,
                                                   del_ind=False, block=block).values().order_by('supplier_id'))
 
 

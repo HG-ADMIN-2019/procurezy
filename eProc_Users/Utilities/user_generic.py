@@ -93,8 +93,9 @@ def get_usertype_values():
 
 def get_emp_data():
     employee_results = django_query_instance.django_filter_query(UserData,
-                        {'client': global_variables.GLOBAL_CLIENT, 'del_ind': False, 'is_active': True},
-                        None, None)
+                                                                 {'client': global_variables.GLOBAL_CLIENT,
+                                                                  'del_ind': False, 'is_active': True},
+                                                                 None, None)
 
     for emails in employee_results:
         encrypted_email1 = encrypt(emails['email'])
@@ -120,3 +121,12 @@ def set_search_data(value):
     else:
         value = False
     return value
+
+
+def get_supplier_type_values():
+    dropdown_suptype_values = list(
+        FieldTypeDescription.objects.filter(field_name='supplier_type', del_ind=False,
+                                            client=global_variables.GLOBAL_CLIENT).values('field_type_id',
+                                                                                          'field_type_desc'
+                                                                                          ))
+    return dropdown_suptype_values

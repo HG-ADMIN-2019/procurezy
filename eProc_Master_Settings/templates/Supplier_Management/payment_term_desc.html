@@ -66,7 +66,7 @@
                             <th>Payment Term</th>
                             <th>Description</th>
                             <th>Day Limit</th>
-                            <th hidden>del_ind</th>
+                            <th hidden>Del Indicator</th>
                             <th hidden>Guid</th>
                         </tr>
                     </thead>
@@ -253,6 +253,7 @@
         no_duplicate_entries = 'Y'
         no_duplicate_value = 'Y'
 	    var error_message = '';
+        var payment_term = {};
         get_main_table_data(); //Read data from main table
         // compare for duplicates in popup
         [no_duplicate_value,error_message] = compare_table_for_duplicate_entries(validate_add_attributes, payment_term_data)
@@ -349,7 +350,7 @@
     	GLOBAL_ACTION = 'DELETE'
 	    main_table_country_checked = [];
         var Tabledata = { "Dbl_clck_tbl_id": 'Payterms_desc' };
-        $('#display_basic_table').DataTable().destroy();
+<!--        $('#display_basic_table').DataTable().destroy();-->
         get_selected_row_data(); // Function call to get the selected row data
         $('#id_delete_confirm_popup').modal('hide');
 		data = {'data':main_table_payment_term_checked,'table_name':'Payterms_desc','action':GLOBAL_ACTION}
