@@ -172,86 +172,23 @@
 
 
 <script>
-// Function to show project details
-function showProjectDetails(project) {
-    $('#project_id').text(project.id);
-    $('#project_desc').text(project.desc);
-    $('#project_val').text(project.start + ' - ' + project.end);
-    $('#project_det_div').show();
-}
-
-// Function to hide project details
-function hideProjectDetails() {
-    $('#project_id').text('');
-    $('#project_desc').text('');
-    $('#project_val').text('');
-    $('#project_det_div').hide();
-}
-
-// Function to get project details
 function get_project_details() {
-    var projectId = $('#choose_project').val();
-    var projectDesc = $('#choose_project').find(':selected').data('desc');
-    var projectStart = $('#choose_project').find(':selected').data('start');
-    var projectEnd = $('#choose_project').find(':selected').data('end');
+  // Get selected project from dropdown
+  const select_project = document.getElementById('choose_project');
+  const selected_option = select_project.options[select_project.selectedIndex];
+  const project_id = selected_option.value;
+  const project_desc = selected_option.getAttribute('data-desc');
+  const project_start = selected_option.getAttribute('data-start');
+  const project_end = selected_option.getAttribute('data-end');
 
-    // Check if project ID is selected
-    if (projectId) {
-        var project = {
-            'id': projectId,
-            'desc': projectDesc,
-            'start': projectStart,
-            'end': projectEnd
-        };
-        showProjectDetails(project);
-    } else {
-        hideProjectDetails();
-    }
+  // Update project details section with selected project info
+  document.getElementById('project_id').textContent = project_id;
+  document.getElementById('project_desc').textContent = project_desc;
+  document.getElementById('project_val').textContent = project_start + ' - ' + project_end;
+
+  // Show project details section
+  document.getElementById('project_det_div').style.display = 'block';
 }
-
-// Function to add a new row
-function addNewRow() {
-    var projectID = $('#choose_project').val();
-    var username = $('#username').val();
-    var calendarID = $('#calendar_id').val();
-    var projectCategory = $('#project_category').val();
-    var effort = $('#effort').val();
-    var effortDay = $('#effort_day').val();
-    var effortDate = $('#effort_date').val();
-    var effortWeek = $('#effort_week').val();
-    var effortYear = $('#effort_year').val();
-    var effortDescription = $('#effort_description').val();
-
-    // Check if all fields are filled
-    if (projectID && username && calendarID && projectCategory && effort && effortDay && effortDate && effortWeek && effortYear && effortDescription) {
-        var newRow = '<tr>' +
-                        '<td>' + projectID + '</td>' +
-                        '<td>' + username + '</td>' +
-                        '<td>' + calendarID + '</td>' +
-                        '<td>' + projectCategory + '</td>' +
-                        '<td>' + effort + '</td>' +
-                        '<td>' + effortDay + '</td>' +
-                        '<td>' + effortDate + '</td>' +
-                        '<td>' + effortWeek + '</td>' +
-                        '<td>' + effortYear + '</td>' +
-                        '<td>' + effortDescription + '</td>' +
-                     '</tr>';
-        $('tbody').append(newRow);
-        alert('New row added successfully!');
-    } else {
-        alert('Please fill all fields!');
-    }
-}
-
-// Event listener for Submit button
-$('#get_project_detail_btn').on('click', function() {
-    get_project_details();
-});
-
-// Event listener for Add button
-$('#add_row_btn').on('click', function() {
-    addNewRow();
-});
 
 </script>
 

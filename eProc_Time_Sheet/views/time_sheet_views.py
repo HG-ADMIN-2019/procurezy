@@ -47,20 +47,18 @@ def get_project_details(request):
     default_calendar_id = org_attr_value_instance.get_user_default_attr_value_list_by_attr_id(object_id_list, CONST_CALENDAR_ID)[1]
     filter_query = {'client': global_variables.GLOBAL_CLIENT, 'del_ind': False}
     project_details = get_project_filter_list(filter_query, 10)
-    project_efforts = get_efforts_filter_list(filter_query, 10)
-
-    # Fetch ProjectEfforts objects from the database
-    # project_efforts = ProjectEfforts.objects.filter(project_id=project_id)
+    project_efforts = get_efforts_filter_list(project_id,default_calendar_id)
 
     context = {
         'inc_nav': True,
         'inc_footer': True,
         'project_id': project_id,
         'default_calendar_id': default_calendar_id,
+        'username' : global_variables.GLOBAL_LOGIN_USERNAME,
         'is_slide_menu': True,
         'is_home_active': False,
         'project_details': project_details,
-        'project_efforts': project_efforts, # Include the project_efforts objects in the context
+        'project_efforts': project_efforts,
     }
 
     return render(request, 'Time_sheet/enter_time_sheet1.html', context)

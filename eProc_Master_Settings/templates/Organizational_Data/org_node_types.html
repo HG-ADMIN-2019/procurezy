@@ -226,7 +226,19 @@
             $('#id_delete_confirm_popup').modal('hide');
         }
         else if(main_table_org_node_type_checked.length == "0"){  
-            error_message = ui_messeges("JMSG005")// Get message details
+            var msg = "JMSG005";
+            var msg_type ;
+            msg_type = message_config_details(msg);
+            $("#error_msg_id").prop("hidden", false);
+            if(msg_type.message_type == "ERROR"){
+                display_message("error_msg_id", msg_type.messages_id_desc)
+            }
+            else if(msg_type.message_type == "WARNING"){
+                display_message("id_warning_msg_id", msg_type.messages_id_desc)
+            }
+            else if(msg_type.message_type == "INFORMATION"){
+                display_message("id_info_msg_id", msg_type.messages_id_desc)
+            }
             var display4 = msg_type.messages_id_desc;
             document.getElementById("id_error_msg_checkbox").innerHTML = display4+ "Checkbox";
             $('#id_delete_confirm_popup').modal('hide');
