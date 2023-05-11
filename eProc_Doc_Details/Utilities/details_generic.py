@@ -3,6 +3,7 @@
 
 import os
 
+from django.db.models.query_utils import Q
 from django.http import Http404
 from Majjaka_eProcure import settings
 from eProc_Attributes.Utilities.attributes_generic import OrgAttributeValues
@@ -123,14 +124,15 @@ def get_shopping_cart_details(hdr_guid):
     return data
 
 
-def get_sc_supplier_internal_approver_note(header_guid,sc_item_guid_list):
+def get_sc_supplier_internal_approver_note(header_guid, sc_item_guid_list):
     """
 
     """
     supp_notes = get_notes(header_guid, sc_item_guid_list, CONST_SUPPLIER_NOTE, True)
-    int_notes = get_notes(header_guid,sc_item_guid_list,CONST_INTERNAL_NOTE, True)
-    appr_notes = get_notes(header_guid,sc_item_guid_list, CONST_APPROVER_NOTE, False)
-    return supp_notes,int_notes,appr_notes
+    int_notes = get_notes(header_guid, sc_item_guid_list, CONST_INTERNAL_NOTE, True)
+    appr_notes = get_notes(header_guid, sc_item_guid_list, CONST_APPROVER_NOTE, False)
+    return supp_notes, int_notes, appr_notes
+
 
 # Get attachments by path
 class GetAttachments:
@@ -457,3 +459,64 @@ def update_eform_scitem(header_guid):
         else:
             item_dictionary['image_url'] = ''
     return item_dictionary_list
+
+
+def get_sc_detail(header_guid):
+    """
+
+    """
+    sc_header_detail = {}
+    sc_item_level_address = []
+    sc_item_details = []
+    sc_accounting_details = []
+    sc_header_level_address = {}
+    sc_approval_details = []
+    if django_query_instance.django_existence_check(ScHeader,
+                                                    {'guid': header_guid,
+                                                     'client': global_variables.GLOBAL_CLIENT,
+                                                     'del_ind': False}):
+        sc_header_detail = django_query_instance.django_filter_query(ScHeader,
+                                                                     {'guid': header_guid,
+                                                                      'client': global_variables.GLOBAL_CLIENT,
+                                                                      'del_ind': False},
+                                                                     None,
+                                                                     None)[0]
+        sc_item_details = django_query_instance.django_filter_query(ScItem,
+                                                                    {'header_guid': header_guid,
+                                                                     'client': global_variables.GLOBAL_CLIENT,
+                                                                     'del_ind': False},
+                                                                    ['item_num'],
+                                                                    None)
+        sc_item_guid_list = dictionary_key_to_list(sc_item_details, 'guid')
+        filter_queue = Q(header_guid=header_guid) | Q(item_guid__in=sc_item_guid_list)
+        sc_accounting_details = django_query_instance.django_queue_query(ScAccounting,
+                                                                         {'client': global_variables.GLOBAL_CLIENT,
+                                                                          'del_ind': False},
+                                                                         filter_queue,
+                                                                         ['acc_item_num'],
+                                                                         None)
+        sc_address_details = django_query_instance.django_queue_query(ScAddresses,
+                                                                      {'address_type': 'D',
+                                                                       'client': global_variables.GLOBAL_CLIENT,
+                                                                       'del_ind': False},
+                                                                      filter_queue,
+                                                                      ['item_num'],
+                                                                      None)
+        for sc_address_detail in sc_address_details:
+            if sc_address_detail['header_guid_id'] == header_guid:
+                sc_header_level_address = sc_address_detail
+            else:
+                sc_item_level_address.append(sc_address_detail)
+        sc_approval_details = django_query_instance.django_filter_query(ScPotentialApproval,
+                                                                        {'sc_header_guid': header_guid,
+                                                                         'client': global_variables.GLOBAL_CLIENT,
+                                                                         'del_ind': False},
+                                                                        ['step_num'],
+                                                                        None)
+    shopping_cart_detail = {'hdr_det':sc_header_detail,
+                            'item_dictionary_list':sc_item_details,
+                            'sc_accounting_details':sc_accounting_details,
+                            'sc_header_level_address':sc_header_level_address,
+                            'sc_item_level_address':sc_item_level_address,
+                            'sc_approval_details':sc_approval_details}
+    return shopping_cart_detail

@@ -4,6 +4,8 @@ from eProc_Basic.Utilities.functions.django_query_set import DjangoQueries
 from eProc_Basic.Utilities.global_defination import global_variables
 from eProc_Configuration.models import SupplierMaster, OrgPorg
 from eProc_Basic.Utilities.functions.django_q_query import django_q_query
+from eProc_Supplier_Order_Management.models.supplier_order_management_models import SOMPoHeader, \
+    get_som_po_details_by_fields
 from eProc_Suppliers.models import OrgSuppliers
 
 django_query_instance = DjangoQueries()
@@ -56,8 +58,8 @@ def supplier_detail_search(**kwargs):
     city_query = Q()
     instance = SupplierMaster()
     purch_org_list = django_query_instance.django_filter_value_list_query(OrgPorg, {
-            'client': global_variables.GLOBAL_CLIENT,
-            'del_ind': False,}, 'porg_id')
+        'client': global_variables.GLOBAL_CLIENT,
+        'del_ind': False, }, 'porg_id')
     porg_array = []
     for porg in purch_org_list:
         if porg != '*':
@@ -142,3 +144,50 @@ def get_supplier_email(supplier_id):
         supplier_email_addr = supplier_detail.email
 
     return supplier_email_addr
+
+
+def som_po_search(**kwargs):
+    """
+
+    """
+    search_query = {}
+    block = False
+    client = global_variables.GLOBAL_CLIENT
+    doc_number = Q()
+    name2_query = Q()
+    supplier_id_query = Q()
+    search_term1_query = Q()
+    search_term2_query = Q()
+    country_code_query = Q()
+    org_supplier_query = Q()
+    city_query = Q()
+
+    for key, value in kwargs.items():
+        value_list = []
+        if value:
+            if key == 'po_number':
+                if '*' not in value:
+                    value_list = [value]
+                doc_number = django_q_query(value, value_list, 'doc_number')
+            if key == 'company_name':
+                if '*' not in value:
+                    value_list = [value]
+                doc_number = django_q_query(value, value_list, 'requester_company_name')
+            if key == 'received_date':
+                if '*' not in value:
+                    value_list = [value]
+                doc_number = django_q_query(value, value_list, 'ordered_at')
+            if key == 'buyer_phone_num':
+                if '*' not in value:
+                    value_list = [value]
+                doc_number = django_q_query(value, value_list, 'requester_mobile_num')
+            if key == 'buyer_name':
+                if '*' not in value:
+                    value_list = [value]
+                doc_number = django_q_query(value, value_list, 'requester')
+            if key == 'buyer_email_id':
+                if '*' not in value:
+                    value_list = [value]
+                doc_number = django_q_query(value, value_list, 'requester_email')
+    som_po_data = get_som_po_details_by_fields(doc_number)
+    return som_po_data

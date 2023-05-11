@@ -1,5 +1,7 @@
 from django.db import models
 
+from eProc_Basic.Utilities.global_defination import global_variables
+
 
 class SOMPoHeader(models.Model):
     som_po_header_guid = models.CharField(db_column='SOM_PO_HEADER_GUID', primary_key=True, max_length=32)
@@ -52,6 +54,12 @@ class SOMPoHeader(models.Model):
     class Meta:
         managed = True
         db_table = 'MTD_SOM_PO_HEADER'
+
+
+def get_som_po_details_by_fields(doc_number):
+    return list(SOMPoHeader.objects.filter(doc_number,
+                                           client=global_variables.GLOBAL_CLIENT,
+                                           del_ind=False).values().order_by('ordered_at'))
 
 
 class SOMPoItem(models.Model):
