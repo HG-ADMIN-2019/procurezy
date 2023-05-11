@@ -666,17 +666,16 @@
         '</tr>';
         $('#id_popup_tbody').append(basic_add_new_html);
         if (GLOBAL_ACTION == "cusprodcat_upload") {
-            basic_add_new_html =
-            '<tr>'+
-                '<td><input type="checkbox" required></td>'+
-                '<td><select type="text" class="input form-control prodid" id="prodid-'+inc_index+'"  name="prodid" onchange="GetSelectedTextValue(this)">'+prod_cat_id_dropdown+'</select></td>'+
-                '<td hidden><input class="form-control description" type="text"  name="description"  id="description-'+inc_index+'" disabled></td>'+
-                '<td hidden><guid></td>'+
-                '<td class="class_del_checkbox"><input type="checkbox" required></td>'+
-            '</tr>';
+		   basic_add_new_html =
+			'<tr>'+
+				'<td><input type="checkbox" required></td>'+
+				'<td><select type="text" class="input form-control prodid" id="prodid-'+inc_index+'"  name="prodid" onchange="GetSelectedTextValue(this)">'+prod_cat_id_dropdown+'</select></td>'+
+				'<td hidden><input class="form-control description" type="text"  name="description"  id="description-'+inc_index+'" disabled></td>'+
+				'<td hidden><guid></td><td class="class_del_checkbox"><input type="checkbox" required></td>'+
+			'</tr>';
             $('#id_popup_tbody').append(basic_add_new_html);
             $("#desc_upload").prop("hidden", true);
-             table_sort_filter('id_popup_table');
+            table_sort_filter('id_popup_table');
             $(".class_del_checkbox").prop("hidden", false);
             $("#id_del_ind_checkbox").prop("hidden", false);
         }
