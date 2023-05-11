@@ -18,6 +18,7 @@ from eProc_Basic.Utilities.global_defination import global_variables
 from eProc_Calendar_Settings.Utilities.calender_settings_generic import calculate_delivery_date
 from eProc_Configuration.models import ImagesUpload
 from eProc_Doc_Details.Utilities.details_specific import get_notes
+from eProc_Doc_Search_and_Display.Utilities.search_display_specific import get_shopping_cart_approval
 from eProc_Exchange_Rates.Utilities.exchange_rates_generic import convert_currency
 from eProc_Notes_Attachments.models import Attachments, Notes
 from eProc_Price_Calculator.Utilities.price_calculator_generic import calculate_item_total_value
@@ -471,6 +472,11 @@ def get_sc_detail(header_guid):
     sc_accounting_details = []
     sc_header_level_address = {}
     sc_approval_details = []
+    requester_first_name = ''
+    sc_completion = []
+    sc_header = []
+    sc_header_level_acc = []
+    sc_item_level_acc = []
     if django_query_instance.django_existence_check(ScHeader,
                                                     {'guid': header_guid,
                                                      'client': global_variables.GLOBAL_CLIENT,
@@ -480,7 +486,7 @@ def get_sc_detail(header_guid):
                                                                       'client': global_variables.GLOBAL_CLIENT,
                                                                       'del_ind': False},
                                                                      None,
-                                                                     None)[0]
+                                                                     None)
         sc_item_details = django_query_instance.django_filter_query(ScItem,
                                                                     {'header_guid': header_guid,
                                                                      'client': global_variables.GLOBAL_CLIENT,
@@ -507,16 +513,40 @@ def get_sc_detail(header_guid):
                 sc_header_level_address = sc_address_detail
             else:
                 sc_item_level_address.append(sc_address_detail)
-        sc_approval_details = django_query_instance.django_filter_query(ScPotentialApproval,
-                                                                        {'sc_header_guid': header_guid,
+        for sc_accounting_detail in sc_accounting_details:
+            if sc_accounting_detail['header_guid_id'] == header_guid:
+                sc_header_level_acc.append(sc_accounting_detail)
+            else:
+                sc_item_level_acc.append(sc_accounting_detail)
+        sc_approval_details = django_query_instance.django_filter_query(ScApproval,
+                                                                        {'header_guid': header_guid,
                                                                          'client': global_variables.GLOBAL_CLIENT,
                                                                          'del_ind': False},
                                                                         ['step_num'],
                                                                         None)
-    shopping_cart_detail = {'hdr_det':sc_header_detail,
-                            'item_dictionary_list':sc_item_details,
-                            'sc_accounting_details':sc_accounting_details,
-                            'sc_header_level_address':sc_header_level_address,
-                            'sc_item_level_address':sc_item_level_address,
-                            'sc_approval_details':sc_approval_details}
+        sc_potential_approval_details = django_query_instance.django_filter_query(ScPotentialApproval,
+                                                                                  {'sc_header_guid': header_guid,
+                                                                                   'client': global_variables.GLOBAL_CLIENT,
+                                                                                   'del_ind': False},
+                                                                                  ['step_num'],
+                                                                                  None)
+        data = {'sc_item_details': sc_item_details,
+                'sc_approval_details': sc_approval_details,
+                'sc_potential_approval_details': sc_potential_approval_details,
+                'sc_header_details':sc_header_detail}
+
+        sc_header, sc_appr, sc_completion, requester_first_name = get_shopping_cart_approval(data)
+    shopping_cart_detail = {'hdr_det': sc_header_detail[0],
+                            'item_dictionary_list': sc_item_details,
+                            'header_acc_detail': sc_header_level_acc,
+                            'header_level_addr': sc_header_level_address,
+                            'sc_item_level_address': sc_item_level_address,
+                            'sc_appr': sc_approval_details,
+                            'sc_head': sc_header_detail[0],
+                            'requester_first_name': requester_first_name,
+                            'sc_completion': sc_completion,
+                            'sc_header': sc_header,
+                            'is_document_detail':True,
+                            'edit_address_flag':'0'
+                            }
     return shopping_cart_detail
