@@ -40,7 +40,7 @@ def update_suppliers_basic_details(request):
     message = ''
     update_user_info(request)
     if request.method == 'POST':
-        print(request.FILES)
+        print(request.POST.get('supplier_image'))
         message, encrypted_supp, msg_type = save_supplier_data(request)
 
         if 'supplier_image' in request.FILES:
