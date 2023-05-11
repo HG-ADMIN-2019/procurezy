@@ -7,12 +7,7 @@ from eProc_Basic.Utilities.functions.get_db_query import getClients, get_country
 from eProc_Basic.Utilities.global_defination import global_variables
 from eProc_Configuration.Utilities.application_settings_generic import get_configuration_data, get_product_criteria, \
     get_unspsc_data, get_ui_messages
-from eProc_Configuration.models import OrgClients, DocumentType, FieldTypeDescription, NumberRanges, \
-    AccountAssignmentCategory, \
-    CalenderConfig, Country, CalenderHolidays, MessagesId, MessagesIdDesc, Languages, UnspscCategories, OrgNodeTypes, \
-    OrgAttributes, AuthorizationObject, AuthorizationGroup, UserRoles, Authorization, TransactionTypes, \
-    OrgModelNodetypeConfig, PoSplitType, PoSplitCriteria, OrgCompanies, UnspscCategoriesCust, UnspscCategoriesCustDesc, \
-    DetermineGLAccount, PurchaseControl
+from eProc_Configuration.models import *
 
 from eProc_Configuration.views import weekday
 from eProc_Shopping_Cart.context_processors import update_user_info
@@ -584,7 +579,7 @@ def roles(request):
     master_data_settings = 'master_data_settings'
     return render(request, 'Organizational_Data/roles.html',
                   {'roles': upload_roles, 'master_data_settings': master_data_settings, 'inc_nav': True,
-                   'dropdown_db_values': dropdown_db_values, 'messages_list': messages_list})
+                   'dropdown_db_values': dropdown_db_values, ' messages_list':messages_list})
 
 
 def auth(request):

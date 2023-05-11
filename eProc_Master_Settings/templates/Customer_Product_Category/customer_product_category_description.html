@@ -137,7 +137,7 @@
                 <!-- Modal footer -->
              <div class="modal-footer">
                     <button type="button" class="btn btn-outline-primary remove_upload_data" title="Cancel" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
-                    <button id="id_delete_duplicate" class="btn btn-primary" title="Delete" style="display:none;" type="button" onclick="display_buttonp()"><i class="fa fa-trash"></i> delete duplicates</button>
+                    <button id="id_delete_duplicate" class="btn btn-primary" title="Delete" style="display:none;" type="button" onclick="delete_duplicate()"><i class="fa fa-trash"></i> delete duplicates</button>
                     <button id="id_check_data" style="display:none;" class="btn btn-primary" title="Check" type="button" onclick="check_data()"><i class="fas fa-check"></i> check</button>
                     <button class="btn btn-primary" title="Save" id="save_id"><i class="fas fa-save"></i> save</button>
                     <button class="btn btn-primary btn-sm" title="Delete" id="delete_data" value="DELETE" data-toggle="modal" data-target="#id_delete_confirm_popup">
@@ -209,7 +209,8 @@
 
     //onclick of data Upload copy data to modal pop-up
     function onclick_display_csv_data() {
-    $("#error_msg_id").css("display", "none")
+        document.getElementById('delete_data').style.visibility='hidden';
+        $("#error_msg_id").css("display", "none")
         $('#id_popup_table').DataTable().destroy();
         formdata = new FormData();
         attached_file = $('#id_file_data_upload').prop('files')[0]
@@ -256,7 +257,7 @@
                             var prod_cat_list = '';
                             var prod_cat_id_list = '';
                             $.each(rendered_UNSPC_data, function(i, item){
-                                if( value[1] == item.prod_cat_id){
+                                if( value[3] == item.prod_cat_id){
                                     prod_cat = '<option value="' + item.prod_cat_id + '">' + item.prod_cat_id + '</option>';
                                 }else{
                                     prod_cat_list += '<option value="' + item.prod_cat_id + '">' + item.prod_cat_id + '</option>';
@@ -274,9 +275,10 @@
                                 }
                                 language_id_list = language + language_list
                             });
-                            edit_basic_data += '<tr ><td><input type="checkbox" required></td><td><select type="text" class="form-control">value ="' + value[1] + '"'+prod_cat_id_list+'</select></td><td><select class="form-control" type="text">value ="' + value[2] + '"'+language_id_list+'</select></td><td><input class = "form-control" type="text" name="description" value ="' + value[0] + '" maxlength="200" onkeypress="return /[a-z ]/i.test(event.key)" required></td><td hidden></td><td>'+ del_ind +'</td></tr>';
+		                    edit_basic_data = '<tr><td><input type="checkbox" required></td><td><select type="text" class="input form-control prodid" id="prodid-'+inc_index+'"  name="prodid" onchange="GetSelectedTextValue(this)">value ="' + value[3] + '"'+prod_cat_id_list+'</select></td><td><select class="form-control" type="text">value ="' + value[2] + '"'+language_id_list+'</select></td><td><input class="form-control description" type="text"  name="description" value ="' + value[0] + '" id="description-'+inc_index+'"></td><td hidden><guid></td><td>'+ del_ind +'</td></tr>';
+                            inc_index += 1;
                         });
-                        $('#id_popup_table').append(edit_basic_data);
+                        $('#id_popup_tbody').append(edit_basic_data);
                         var i =0;
                         $("#id_popup_table TBODY TR").each(function() {
                             var row = $(this);
@@ -553,12 +555,26 @@
         $(".modal").on("hidden.bs.modal", function () {
             $("#id_error_msg").html(" ");
         });
-        new_row_data(inc_index);   // Add a new row in popup
-        document.getElementById('delete_data').style.visibility='hidden';
         if (GLOBAL_ACTION == "cusprodcatdesc_upload") {
+            basic_add_new_html = '<tr>'+
+                '<td><input type="checkbox" required></td>'+
+                '<td><select type="text" class="input form-control prodid" id="prodid-'+inc_index+'"  name="prodid" onchange="GetSelectedTextValue(this)">'+prod_cat_id_dropdown+'</select></td>'+
+                '<td><select class="form-control">'+language_id_dropdown+'</select></td>'+
+                '<td><input class="form-control description" type="text"  name="description"  id="description-'+inc_index+'"></td>'+
+                '<td hidden><guid></td>'+
+                '<td class="class_del_checkbox"><input type="checkbox" required></td>'+
+            '</tr>';
+            $('#id_popup_tbody').append(basic_add_new_html);
+            table_sort_filter('id_popup_table');
             $(".class_del_checkbox").prop("hidden", false);
+            $("#id_del_ind_checkbox").prop("hidden", false);
         }
-        GetSelectedTextValue($("#prodid-" + inc_index)[0]);
+        else {
+              new_row_data(inc_index);   // Add a new row in popup
+              table_sort_filter('id_popup_table');
+        }
+         $('#delete_data').hide()
+         GetSelectedTextValue($("#prodid-" + inc_index)[0]);
     }
 
     //onclick of cancel display the table in display mode............
@@ -594,20 +610,44 @@
     function delete_duplicate() {
         $('#id_popup_table').DataTable().destroy();
         var cusprodcatdesc_code_check = new Array
+        var main_table_low_value = new Array
         $("#id_popup_table TBODY TR").each(function () {
             var row = $(this);
             //*************** reading data from the pop-up ***************
-            cusprodcatdesc_prod_cat_desc = row.find("TD").eq(2).find('input[type="text"]').val().toUpperCase();
-            cusprodcatdesc_prod_cat_id = row.find("TD").eq(1).find('input[type="text"]').val().toUpperCase();
+            cusprodcatdesc_description = row.find("TD").eq(3).find('input[type="text"]').val();
+            cusprodcatdesc_language_id = row.find("TD").eq(2).find('select[type="text"]').val();
+            cusprodcatdesc_prod_cat_id = row.find("TD").eq(1).find('select[type="text"]').val();
             checked_box = row.find("TD").eq(3).find('input[type="checkbox"]').is(':checked')
-            if (cusprodcatdesc_prod_cat_id_check.includes(cusprodcatdesc_prod_cat_id)) {
+            if (cusprodcatdesc_code_check.includes(cusprodcatdesc_prod_cat_id)) {
                 $(row).remove();
             }
-            cusprodcatdesc_check.push(cusprodcatdesc_prod_cat_id);
+            cusprodcatdesc_code_check.push(cusprodcatdesc_prod_cat_id);
+            main_table_low_value = get_main_table_data_upload(); //Read data from main table
+            if (main_table_low_value.includes(cusprodcatdesc_prod_cat_id)) {
+                $(row).remove();
+            }
+            main_table_low_value.push(cusprodcatdesc_prod_cat_id);
         })
         table_sort_filter_popup_pagination('id_popup_table')
         check_data()
     }
+
+
+// Function to get main table data
+function get_main_table_data_upload() {
+     main_table_low_value = [];
+       $('#display_basic_table').DataTable().destroy();
+        $("#display_basic_table TBODY TR").each(function() {
+            var row = $(this);
+            var main_attribute = {};
+            main_attribute.prod_cat_id = row.find("TD").eq(1).html();
+            main_attribute.language_id = row.find("TD").eq(2).html();
+            var cusprodcatdesc_compare =  main_attribute.prod_cat_id +'-'+ main_attribute.language_id
+            main_table_low_value.push(cusprodcatdesc_compare);
+        });
+    table_sort_filter('display_basic_table');
+    return main_table_low_value
+}
 
     // Function to hide and display save related popups
     $('#save_id').click(function () {
@@ -721,23 +761,25 @@
 
 //check function restricting special char and diaplay the data count of csv file
 function check_data() {
-    $('#id_popup_table').DataTable().destroy();
-    $("#id_check_success_messages").empty()
-    $("#id_check_error_messages").empty()
-    $("#id_check_success_messages").prop("hidden",true)
-    $("#id_check_error_messages").prop("hidden",true)
-    $("#id_check_special_character_messages").prop("hidden",true)
-    document.getElementById("id_error_msg_prod_cat_id").innerHTML = "";
-    //document.getElementById("id_error_msg_prod_cat_desc").innerHTML = "";
-    document.getElementById("id_error_msg_language_id").innerHTML = "";
-    document.getElementById("id_error_msg_prod_cat_id_length").innerHTML = "";
-    count = 0;
-    var prodcatdesc_array = new Array
-    var DB_array = new Array
-    var prodcatdesc_list = new Array
-    var prodcatdesc_code_check = new Array
-    del_ind = ''
-    $("#id_popup_table TBODY TR").each(function() {
+        document.getElementById('delete_data').style.visibility='hidden';
+        $("#id_delete_duplicate").hide()
+        $('#id_popup_table').DataTable().destroy();
+        $("#id_check_success_messages").empty()
+        $("#id_check_error_messages").empty()
+        $("#id_check_success_messages").prop("hidden",true)
+        $("#id_check_error_messages").prop("hidden",true)
+        $("#id_check_special_character_messages").prop("hidden",true)
+        document.getElementById("id_error_msg_prod_cat_id").innerHTML = "";
+        document.getElementById("id_error_msg_description").innerHTML = "";
+        document.getElementById("id_error_msg_language_id").innerHTML = "";
+        document.getElementById("id_error_msg_prod_cat_id_length").innerHTML = "";
+        count = 0;
+        var prodcatdesc_array = new Array
+        var DB_array = new Array
+        var prodcatdesc_list = new Array
+        var prodcatdesc_code_check = new Array
+        del_ind = ''
+        $("#id_popup_table TBODY TR").each(function() {
         var row = $(this);
         unspsc_desc_dic = {}
         //*************** reading data from the pop-up ***************
@@ -752,64 +794,109 @@ function check_data() {
             unspsc_desc_dic.del_ind = '0'
         }
         prodcatdesc_list.push(unspsc_desc_dic)
-        var format = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
-            //*************** checking for max length for country code (max length = 2) ***************
-            if(unspsc_desc_dic.prod_cat_id.length >20){
-                error_message = ui_messeges("JMSG004")// Get message details
-                var display8 = msg_type.messages_id_desc;
-                document.getElementById("id_error_msg_prod_cat_id_length").innerHTML = display8  + "Product ID";
-                $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
-                count = count +1;
-            }
+        get_main_table_data();
+           var format = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
+
             //*************** checking for special characters for country code ***************
-            else if(format.test(unspsc_desc_dic.prod_cat_id)){
-                error_message = ui_messeges("JMSG003")// Get message details
-                var display = msg_type.messages_id_desc;
-                document.getElementById("id_error_msg_prod_cat_id").innerHTML = display + "Product ID";
+            if(format.test(unspsc_desc_dic.prod_cat_id)){
                 $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
-                count = count +1;
-            }
-            else{
-                $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "none");
-            }
-            //*************** checking for special characters for country name ***************
-            if(format.test(unspsc_desc_dic.description)){
+                row_color_highlight_special(row);
+                $("#id_error_msg_prod_cat_id").prop("hidden",false);
                 error_message = ui_messeges("JMSG003")// Get message details
-                var display = msg_type.messages_id_desc;
-                document.getElementById("id_error_msg_prod_cat_desc").innerHTML = display + "Description";
-                $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "1px solid #FF0000");
+                var display4 = error_message;
+                document.getElementById("id_error_msg_prod_cat_id").innerHTML = display4+ "Country Code";
                 count = count +1;
             }
             else{
                 $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "none");
+                row_color_no_highlight(row);
+                $(row).css("border", "");
+                $("#id_delete_duplicate").hide()
             }
-            if(prodcatdesc_code_check.includes(unspsc_desc_dic.prod_cat_id)){
-                $(row).css("border", "#f8d7da");
+            //*************** checking for empty records for country name (max length = 2) ***************
+            if(unspsc_desc_dic.description.length == 0){
+                $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
+                row_color_highlight_empty(row);
+                $("#id_error_msg_prod_cat_desc").prop("hidden",false);
+                error_message = ui_messeges("JMSG002")// Get message details
+                var display8 = error_message;
+                document.getElementById("id_error_msg_prod_cat_desc").innerHTML = display8+ "Country Name";
+                count = count +1;
+            }
+            //*************** checking for special characters for country name ***************
+            else if(format.test(unspsc_desc_dic.description)){
+                $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "1px solid #FF0000");
+                row_color_highlight_special(row);
+                $("#id_error_msg_prod_cat_desc").prop("hidden",false);
+                error_message = ui_messeges("JMSG003")// Get message details
+                var display3 = error_message;
+                document.getElementById("id_error_msg_prod_cat_desc").innerHTML = display3+ "Country Name";
+                count = count +1;
+            }
+            else if(prodcatdesc_code_check.includes(unspsc_desc_dic.prod_cat_id)){
+                 $(row).css("border", "#f8d7da");
+                 row_color_highlight(row);
+                 $("#id_check_error_messages").prop("hidden",false);
+                 var display7 = ui_messeges("JMSG001");
+                 document.getElementById("id_check_error_messages").innerHTML = display7;
+                 $("#save_id").prop("hidden", true);
+                 $("#id_delete_duplicate").show()
+                 $("#id_check_data").prop("hidden", false);
+                 count = count +1;
+            }
+            else if(main_table_low_value.includes(unspsc_desc_dic.prod_cat_id)){
+                 $(row).css("border", "#f8d7da");
+                 row_color_highlight(row);
+                 $("#id_check_error_messages").prop("hidden",false);
+                 var display7 = ui_messeges("JMSG001");
+                 document.getElementById("id_check_error_messages").innerHTML = display7;
+                 $("#save_id").prop("hidden", true);
+                 $("#id_delete_duplicate").show()
+                 $("#id_check_data").prop("hidden", false);
+                 count = count +1;
             }
             else{
+                $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "none");
+                row_color_no_highlight(row);
                 $(row).css("border", "");
+                $("#id_delete_duplicate").hide()
             }
             prodcatdesc_code_check.push(unspsc_desc_dic.prod_cat_id)
+            main_table_low_value.push(unspsc_desc_dic.prod_cat_id)
+<!--            table_sort_filter_popup_pagination('id_popup_table');-->
         });
+        $("#id_check_special_character_messages").prop("hidden",false);
         //*************** shows save button if there are no errors(special characters and max length) ***************
-        if(count == 0){
-                $("#id_check_special_character_messages").prop("hidden",true)
-                $("#save_id").prop("hidden", false);
-        }
-        popup_data_dict ={'data_list' : prodcatdesc_list}
-        OpenLoaderPopup();
-        $.ajax({
-            type: 'POST',
-            url: "{% url 'eProc_Configuration_Check:check_cust_unspsc_category_desc' %}",
-            data: JSON.stringify(popup_data_dict),
-            success: function(response) {
-                table_sort_filter_popup_pagination('id_popup_table')
-                var message = ''
-                update_check_message(response.messages)
-                CloseLoaderPopup();
+         if(count == 0){
+<!--            $('#id_popup_table').DataTable().destroy();-->
+            $("#id_popup_table").find("input,button,textarea,select").attr("disabled", "disabled");
+            document.getElementById("id_del_add_button").style.display = "none";
+            $("#save_id").prop("hidden", false);
+            $("#id_check_data").prop("hidden", true);
+            if (prodcatdesc_list == 0) {
+                $("#save_id").prop("hidden", true);
             }
-        });
-    }
+            popup_data_dict ={'data_list' : prodcatdesc_list}
+            OpenLoaderPopup();
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'eProc_Configuration_Check:check_cust_unspsc_category_desc' %}",
+                data: JSON.stringify(popup_data_dict),
+                success: function(response) {
+                    table_sort_filter_popup_pagination('id_popup_table')
+                    $("#id_check_special_character_messages").prop("hidden", false);
+                     if (count == 0) {
+                            $("#id_check_special_character_messages").prop("hidden", true);
+                     }
+                    var message = ''
+                    update_check_message(response.messages[1])
+                    CloseLoaderPopup();
+                }
+            });
+         }
+}
+
+
 
     function product_id_value_find(product_id) {
         corresponding_values = {};
@@ -934,7 +1021,7 @@ function onclick_copy_update_button(data){
                                  $('#delete_data').prop('disabled', false);
                             }
                             unique_input = '<select class="form-control"  maxlength="20">' + prod_cat_id_dropdown + '</select>'
-                            edit_basic_data += '<tr><td>'+check+'</td><td>'+unique_input+' </td><td><select class="form-control">' +language_id_dropdown + ' </select></td><td><input class="form-control" value="' + row.cells[3].innerHTML + '" type="text" onkeypress="return /[a-z ]/i.test(event.key)"  name="description"  maxlength="200"  required></td><td hidden><input value="' + prod_cat_desc_guid + '"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+                            edit_basic_data += '<tr><td>'+check+'</td><td>'+unique_input+' </td><td><select class="form-control">' +language_id_dropdown + ' </select></td><td><input class="form-control" value="' + row.cells[3].innerHTML + '" type="text" onkeypress="return /[a-z ]/i.test(event.key)"  name="description"  maxlength="200"  required></td><td hidden><input value="' + row.cells[4].innerHTML + '"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
                             $("#header_select").prop("hidden", false);
                     }
                     else{
@@ -1069,6 +1156,13 @@ function onclick_copy_update_button(data){
   }
 
 
+//Get message for check data function
+function get_msg_desc_check_data(msg){
+    var msg_type ;
+    msg_type = message_config_details(msg);
+    $("#error_msg_id").prop("hidden", false);
+    return msg_type.messages_id_desc;
+}
 
 </script>
 <!--<script src="{% static 'scripts/customer_product_category_description.js' %}"></script>-->
