@@ -187,27 +187,28 @@ def get_po_table_data(po_table_details, header_detail):
 
     for row_count, po_table_detail in enumerate(po_table_details['data']):
         for cell_count, text_data in enumerate(po_table_detail):
-            if row_count == 0:
-                if cell_count == 0:
-                    buyer_detail = text_data['text'].split('\r')
-                    header_detail['requester'] = buyer_detail[1]
-                    header_detail['requester_email'] = buyer_detail[2]
-                if cell_count == 1:
-                    supplier_contact = text_data['text'].split('\r')
-                    header_detail['supplier_contact'] = supplier_contact[1]
-                if cell_count == 2:
-                    ordered_at = text_data['text'].split('\r')
-                    header_detail['ordered_at'] = ordered_at[1]
-            if row_count == 1:
-                if cell_count == 0:
-                    requester_mobile_num = text_data['text'].split('\r')
-                    header_detail['requester_mobile_num'] = requester_mobile_num[1]
-                if cell_count == 2:
-                    supplier_mobile_num = text_data['text'].split('\r')
-                    header_detail['supplier_mobile_num'] = supplier_mobile_num[1]
-                if cell_count == 3:
-                    supplier_email = text_data['text'].split('\r')
-                    header_detail['supplier_email'] = supplier_email[1]
+            if text_data['text']:
+                if row_count == 0:
+                    if cell_count == 0:
+                        buyer_detail = text_data['text'].split('\r')
+                        header_detail['requester'] = buyer_detail[1]
+                        header_detail['requester_email'] = buyer_detail[2]
+                    if cell_count == 1:
+                        supplier_contact = text_data['text'].split('\r')
+                        header_detail['supplier_contact'] = supplier_contact[1]
+                    if cell_count == 2:
+                        ordered_at = text_data['text'].split('\r')
+                        header_detail['ordered_at'] = ordered_at[1]
+                if row_count == 1:
+                    if cell_count == 0:
+                        requester_mobile_num = text_data['text'].split('\r')
+                        header_detail['requester_mobile_num'] = requester_mobile_num[1]
+                    if cell_count == 2:
+                        supplier_mobile_num = text_data['text'].split('\r')
+                        header_detail['supplier_mobile_num'] = supplier_mobile_num[1]
+                    if cell_count == 3:
+                        supplier_email = text_data['text'].split('\r')
+                        header_detail['supplier_email'] = supplier_email[1]
 
     print("header details: ", header_detail)
     return header_detail
