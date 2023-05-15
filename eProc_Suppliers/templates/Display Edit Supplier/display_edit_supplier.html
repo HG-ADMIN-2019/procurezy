@@ -80,12 +80,12 @@
 
                                     <div class="form-group col-md">
                                         <label> Supplier Number</label><span class="hg_required"></span><br>
-                                        <input type="text" class="form-control hg_edit_display_mode" name="supplier_id" id="supplier_id" value="{{supplier_info.supplier_id}}" required>
+                                        <input type="text" class="form-control hg_edit_display_mode" name="supplier_id" id="supplier_id" value="{{supplier_info.supplier_id}}">
                                     </div>
 
                                     <div class="form-group col-md">
                                         <label> Supplier Type</label><span class="hg_required"></span><br>
-                                        <select name="supplier_type" id="supplier_type" class="form-control hg_edit_display_mode" required >
+                                        <select name="supplier_type" id="supplier_type" class="form-control hg_edit_display_mode">
                                             {% if supplier_info.supp_type %}
                                             <option value="{{supplier_info.supp_type}}">{{supplier_info.supp_type}}</option>
                                             {% else %}
@@ -99,14 +99,14 @@
 
                                     <div class="form-group col-md">
                                         <label> Registration Number</label><span class="hg_required"></span><br>
-                                        <input type="text" class="form-control hg_edit_display_mode" id="supplier_regnum" value="{{supplier_info.registration_number}}" required>
+                                        <input type="text" class="form-control hg_edit_display_mode" id="supplier_regnum" value="{{supplier_info.registration_number}}">
                                     </div>
                                 </div>
 
                                 <div class="row">
                                     <div class="form-group col-md">
                                         <label> First Name</label><span class="hg_required"></span><br>
-                                        <input type="text" class="form-control hg_edit_display_mode" id="name1" name="name1" value="{{supplier_info.name1}}" pattern="[A-Za-z]{1,25}" required>
+                                        <input type="text" class="form-control hg_edit_display_mode" id="name1" name="name1" value="{{supplier_info.name1}}" pattern="[A-Za-z]{1,25}">
                                     </div>
 
                                     <div class="form-group col-md">
@@ -118,7 +118,7 @@
                                 <div class="row">
                                     <div class="form-group col-md">
                                         <label> Currency</label><span class="hg_required"></span><br>
-                                        <select name="" id="currency_id" class="form-control hg_edit_display_mode" required >
+                                        <select name="" id="currency_id" class="form-control hg_edit_display_mode"  >
                                          <option value="" selected>Select</option>
                                             {% for items in currency_id %}
                                                 <option value="{{items.currency_id}}">{{items.currency_id}} - {{items.description}}</option>
@@ -138,7 +138,7 @@
 
                                     <div class="form-group col-md">
                                         <label> Country</label><span class="hg_required"></span><br>
-                                        <select name="" id="country_code_id" class="form-control hg_edit_display_mode" title="Select.." required>
+                                        <select name="" id="country_code_id" class="form-control hg_edit_display_mode" title="Select..">
                                         <option value="" selected>Select</option>
                                         {% for items in country_list %}
                                             <option value="{{items.country_code}}" {% if country_list.country_code == items.country_code %}selected{% endif %}>{{items.country_code}} - {{items.country_name}}</option>
@@ -150,7 +150,7 @@
                                 <div class="row">
                                     <div class="form-group col-md">
                                         <label> City</label><span class="hg_required"></span><br>
-                                        <input type="text" class="form-control hg_edit_display_mode" id="city_id" name="city_id" value="{{supplier_info.city}}" required>
+                                        <input type="text" class="form-control hg_edit_display_mode" id="city_id" name="city_id" value="{{supplier_info.city}}">
                                     </div>
 
                                     <div class="form-group col-md">
@@ -194,7 +194,7 @@
                                 <div class="row">
                                     <div class="form-group col-md">
                                         <label> E-mail</label><span class="hg_required"></span><br>
-                                        <input type="email" class="form-control hg_edit_display_mode" id="email_id" name="email_id" value="{{supplier_info.email}}" required>
+                                        <input type="email" class="form-control hg_edit_display_mode" id="email_id" name="email_id" value="{{supplier_info.email}}">
                                     </div>
 
                                     <div class="form-group col-md">
@@ -610,9 +610,9 @@ function save_basic_details() {
     var working_days = $('#working_days_id').val();
     var output_med = $('#output_medium_id').val();
 <!--    [is_save_form_valid,error_message] = save_basic_form_validation(name1_val,name2_val, city_val, email_val, mobile_val, search_term1_val, search_term2_val)-->
-
+    var supp_image = $('#supplier_image_id').prop('files')[0];
     formdata = {};
-    formdata.supplier_image = $('#supplier_image_id').prop('files')[0];
+    formdata.supplier_image = supp_image;
     formdata.supplier_guid = $('#supplier_guid').val();
     formdata.supplier_id = $('#supplier_id').val();
     formdata.supplier_type = $('#supplier_type').val();
@@ -638,17 +638,14 @@ function save_basic_details() {
     supplier_data.push(formdata);
 <!--    supplier_data.append("supplier_image",  $('#supplier_image_id').prop('files')[0]);-->
 
-
     [is_save_form_valid,error_message] = save_basic_form_validation1(formdata);
     if(is_save_form_valid){
-    data = {formdata}
+    data = formdata;
     OpenLoaderPopup();
     $.ajax({
                     type: 'POST',
                     url: "{% url 'eProc_Suppliers:update_suppliers_basic_details' %}",
                     data: JSON.stringify(formdata),
-                    contentType: "application/json; charset=utf-8",
-                    dataType: "json",
                     success: function(response) {
                            encrypted_supplier = response.encrypted_supplier
                            message = response.message
