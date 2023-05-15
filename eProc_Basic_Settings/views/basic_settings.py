@@ -38,6 +38,7 @@ from eProc_Registration.models.registration_model import UserData
 from eProc_Shopping_Cart.context_processors import update_user_info
 from eProc_Upload.Utilities.upload_data.upload_pk_tables import UploadBasicTables, CompareTableHeader
 import tabula
+
 JsonParser_obj = JsonParser()
 django_query_instance = DjangoQueries()
 
@@ -1104,6 +1105,58 @@ def extract_employee_data(request):
                     employee['language_id'],
                     employee['object_id'], employee['time_zone']]
         writer.writerow(emp_info)
+
+    return response
+
+
+def extract_supplier_data(request):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="SUPPLIER.CSV"'
+
+    writer = csv.writer(response)
+
+    writer.writerow(
+        ['SUPPLIER_ID', 'SUPP_TYPE', 'NAME1', 'NAME2', 'SUPPLIER_USERNAME', 'CITY', 'POSTAL_CODE', 'STREET',
+         'LANDLINE', 'MOBILE_NUM', 'FAX', 'EMAIL', 'EMAIL1', 'EMAIL2', 'EMAIL3',
+         'EMAIL4', 'EMAIL5', 'OUTPUT_MEDIUM', 'SEARCH_TERM1', 'SEARCH_TERM2', 'DUNS_NUMBER', 'BLOCK DATE',
+         'BLOCK', 'DELIVERY_DAYS', 'IS_ACTIVE', 'REGISTRATION_NUMBER', 'COMPANY_ID', 'SUPPLIER_MASTER_SOURCE_SYSTEM',
+         'PREF_ROUTING', 'LOCK_DATE', 'GLOBAL_DUNS', 'DOMESTIC_DUNS', 'ICS_CODE', 'INTERNAL_IND', 'SBA_CODE',
+         'ETHNICITY',
+         'HUBZONE', 'NO_VEND_TEXT', 'AGR_REG_NO', 'NO_MULT_ADDR', 'del_ind', 'COUNTRY_CODE', 'CURRENCY_ID',
+         'LANGUAGE_ID'])
+    # get only active record
+    supplier = django_query_instance.django_filter_query(SupplierMaster,
+                                                         {'del_ind': False}, None,
+                                                         ['supplier_id', 'supp_type', 'name1', 'name2',
+                                                          'supplier_username', 'city', 'postal_code', 'street',
+                                                          'landline', 'mobile_num', 'fax', 'email', 'email1', 'email2',
+                                                          'email3',
+                                                          'email4', 'email5', 'output_medium', 'search_term1',
+                                                          'search_term2', 'duns_number', 'block_date',
+                                                          'block', 'delivery_days', 'is_active', 'registration_number',
+                                                          'company_id', 'supplier_master_source_system',
+                                                          'pref_routing', 'lock_date', 'global_duns', 'domestic_duns',
+                                                          'ics_code', 'internal_ind', 'sba_code',
+                                                          'ethnicity',
+                                                          'hubzone', 'no_vend_text', 'agr_reg_no', 'no_mult_addr',
+                                                          'del_ind', 'country_code', 'currency_id',
+                                                          'language_id'])
+    supplier_data = query_update_del_ind(supplier)
+
+    for supp in supplier_data:
+        supp_info = [supp['supplier_id'], supp['supp_type'], supp['name1'], supp['name2'],
+                     supp['supplier_username'], supp['city'], supp['postal_code'], supp['street'],
+                     supp['landline'], supp['mobile_num'], supp['fax'], supp['email'],
+                     supp['email1'], supp['email2'], supp['email3'],
+                     supp['email4'], supp['email5'], supp['output_medium'],
+                     supp['search_term1'], supp['search_term2'], supp['duns_number'], supp['block_date'],
+                     supp['block'], supp['delivery_days'], supp['is_active'], supp['registration_number'],
+                     supp['company_id'], supp['supplier_master_source_system'], supp['pref_routing'], supp['lock_date'],
+                     supp['global_duns'], supp['domestic_duns'], supp['ics_code'], supp['internal_ind'],
+                     supp['sba_code'],
+                     supp['ethnicity'], supp['hubzone'], supp['no_vend_text'], supp['agr_reg_no'], supp['no_mult_addr'],
+                     supp['del_ind'], supp['country_code'], supp['currency_id'], supp['language_id']]
+        writer.writerow(supp_info)
 
     return response
 

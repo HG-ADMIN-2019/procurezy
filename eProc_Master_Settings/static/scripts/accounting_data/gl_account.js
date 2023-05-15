@@ -9,7 +9,6 @@ function onclick_upload_button() {
     $("#id_popup_tbody").empty();
     $('#id_data_upload').modal('show');
     document.getElementById('id_file_data_upload').value = "";
-
 }
 
 // on click copy icon display the selected checkbox data

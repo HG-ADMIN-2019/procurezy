@@ -35,7 +35,8 @@ from django.http import HttpResponseForbidden, JsonResponse
 from django.shortcuts import render
 from eProc_Basic.Utilities.functions.type_casting import type_cast_array_float_to_str
 from eProc_Doc_Details.Utilities.details_generic import GetAttachments, update_approval_status, update_sc_data, \
-    get_doc_details, update_eform_scitem, get_shopping_cart_details, get_sc_supplier_internal_approver_note
+    get_doc_details, update_eform_scitem, get_shopping_cart_details, get_sc_supplier_internal_approver_note, \
+    get_sc_detail
 from eProc_Doc_Details.Utilities.details_specific import *
 from eProc_Notes_Attachments.Utilities.notes_attachments_generic import download
 from eProc_Price_Calculator.Utilities.price_calculator_generic import calculate_item_total_value, calculate_item_price, \
@@ -441,6 +442,16 @@ def my_order_doc_details_new(req, flag, type, guid, mode, access_type):
                'is_approval_preview': is_approval_preview}
     return render(req, template, context)
 
+@login_required
+def my_order_document_detail(request, encrypt_sc_header_guid):
+    """
+
+    """
+    update_user_info(request)
+    header_guid = decrypt(encrypt_sc_header_guid)
+    shopping_cart_detail = get_sc_detail(header_guid)
+    context = shopping_cart_detail
+    return render(request,'Doc_Details/my_order_document_detail.html', context)
 
 @login_required
 @authorize_view(CONST_MY_ORDER)

@@ -1,5 +1,7 @@
 from django.db import models
 
+from eProc_Basic.Utilities.global_defination import global_variables
+
 
 class SOMPoHeader(models.Model):
     som_po_header_guid = models.CharField(db_column='SOM_PO_HEADER_GUID', primary_key=True, max_length=32)
@@ -18,6 +20,7 @@ class SOMPoHeader(models.Model):
     requester_mobile_num = models.CharField(max_length=40, db_column='REQUESTER_MOBILE_NUM', blank=True, null=True)
     requester_fax_no = models.CharField(max_length=40, db_column='REQUESTER_FAX_NO', blank=True, null=True)
     status = models.CharField(db_column='STATUS', max_length=20, blank=False, null=True, verbose_name='Status')
+    # ORDERED,READY_TO_SHIP,
     goods_recep = models.CharField(db_column='GOODS_RECEP', max_length=50, blank=True, null=True,
                                    verbose_name='Goods Recipient')
     supplier_note_text = models.CharField(db_column='SUPPLIER_NOTE_TEXT', null=True, max_length=1000)
@@ -37,7 +40,7 @@ class SOMPoHeader(models.Model):
                                    verbose_name='Supplier ID')
     supplier_username = models.CharField(max_length=40, db_column='SUPPLIER_USERNAME', blank=True, null=True)
     supplier_contact = models.CharField(db_column='SUPPLIER_CONTACT', max_length=100, blank=False, null=True,
-                                             verbose_name='supplier contact name')
+                                        verbose_name='supplier contact name')
     supplier_mobile_num = models.CharField(max_length=40, db_column='SUPPLIER_MOBILE_NUM', blank=True, null=True)
     supplier_fax_no = models.CharField(max_length=30, db_column='SUPPLIER_FAX_NO', blank=True, null=True)
     supplier_email = models.CharField(max_length=100, db_column='SUPPLIER_EMAIL', blank=True, null=True)
@@ -53,6 +56,12 @@ class SOMPoHeader(models.Model):
         db_table = 'MTD_SOM_PO_HEADER'
 
 
+def get_som_po_details_by_fields(doc_number):
+    return list(SOMPoHeader.objects.filter(doc_number,
+                                           client=global_variables.GLOBAL_CLIENT,
+                                           del_ind=False).values().order_by('ordered_at'))
+
+
 class SOMPoItem(models.Model):
     som_po_item_guid = models.CharField(db_column='SOM_PO_ITEM_GUID', primary_key=True, max_length=32)
     som_po_item_num = models.CharField(db_column='SOM_PO_ITEM_NUM', max_length=10, blank=True, null=True,
@@ -65,6 +74,8 @@ class SOMPoItem(models.Model):
     quantity = models.PositiveIntegerField(db_column='QUANTITY', null=False, verbose_name='Quantity')
     price = models.DecimalField(db_column='PRICE', max_digits=15, decimal_places=2, blank=True, null=True,
                                 verbose_name='Price')
+    value = models.DecimalField(db_column='VALUE', max_digits=15, decimal_places=2, blank=True, null=True,
+                                verbose_name='Value')  # (float(quantity) * float(gross price)) / int(price_unit)
     tax_value = models.DecimalField(db_column='TAX_VALUE', max_digits=15, decimal_places=2, blank=True, null=True,
                                     verbose_name='tax Value')  # (SGST *quantity)+(CGST *quantity)
     price_unit = models.CharField(db_column='PRICE_UNIT', max_length=5, blank=True, null=True,
@@ -102,6 +113,7 @@ class SOMEformFieldData(models.Model):
                                                  blank=False, null=False)
     eform_id = models.CharField(db_column='EFORM_ID', max_length=40, blank=False, null=True)
     eform_type = models.CharField(db_column='EFORM_TYPE', max_length=40, blank=False, null=True)
+    eform_description = models.CharField(db_column='EFORM_DESCRIPTION', max_length=400, blank=True, null=True)
     eform_field_name = models.CharField(db_column='EFORM_FIELD_NAME', null=True, max_length=200)
     eform_field_data = models.CharField(db_column='EFORM_FIELD_DATA', null=True, max_length=1000)
     eform_field_count = models.PositiveIntegerField(db_column='EFORM_FIELD_COUNT', blank=False, null=True)
@@ -181,7 +193,7 @@ class SOMPoAddresses(models.Model):
     address_type = models.CharField(db_column='ADDRESS_TYPE', max_length=1, null=True, blank=True)
     address_partner_type = models.ForeignKey('eProc_Configuration.AddressPartnerType', models.DO_NOTHING,
                                              db_column='ADDRESS_PARTNER_TYPE', null=True)
-    address_details = models.CharField(db_column='ADDRESS_DETAILS', max_length=40, null=True)
+    address_details = models.CharField(db_column='ADDRESS_DETAILS', max_length=400, null=True)
     mobile_number = models.CharField(db_column='MOBILE_NUMBER', max_length=20, verbose_name='Mobile', null=True,
                                      blank=True)
     telephone_number = models.CharField(db_column='TELEPHONE_NUMBER', max_length=20, verbose_name='Telephone',

@@ -3,79 +3,6 @@
 
 {% block title %} Supplier Management (Admin Tool) {% endblock %}
 {% block maincontent %}
-<style>
-    .toggle {
-    -webkit-box-sizing: border-box;
-    -moz-box-sizing: border-box;
-    box-sizing: border-box;
-    display: block;
-    height: auto;
-    width: 7.5rem;
-    margin: auto;
-    cursor: pointer;
-    }
-    .toggle-input {
-    display: none;
-    margin: 0;
-    }
-    .toggle-off,
-    .toggle-on {
-    height: 1.8125rem;
-    width: 1.8125rem;
-    color: rgba(46, 45, 44, 0.1);
-    vertical-align: top;
-    text-align: center;
-    line-height: 1.8125rem !important;
-    }
-    .toggle-input:checked + .toggle-controller.default-success {
-    border: 0.125rem solid rgba(108, 211, 61, 0.75);
-    background: rgba(108, 211, 61, 0.375);
-    }
-    .toggle-input:checked + .toggle-controller.default-success:after {
-    left: 1.5625rem;
-    }
-    .toggle-controller.default-success {
-    position: relative;
-    display: inline-block;
-    height: 1.5625rem;
-    width: 3.125rem;
-    border: 0.125rem solid rgba(46, 45, 44, 0.05);
-    -webkit-border-radius: 1.5625rem;
-    -moz-border-radius: 1.5625rem;
-    border-radius: 1.5625rem;
-    -webkit-box-shadow: inset 0 0 0.1875rem rgba(46, 45, 44, 0.25);
-    -moz-box-shadow: inset 0 0 0.1875rem rgba(46, 45, 44, 0.25);
-    box-shadow: inset 0 0 0.1875rem rgba(46, 45, 44, 0.25);
-    background: rgba(46, 45, 44, 0.025);
-    -webkit-transition: all 0.25s ease;
-    -moz-transition: all 0.25s ease;
-    -o-transition: all 0.25s ease;
-    transition: all 0.25s ease;
-    }
-    .toggle-controller.default-success:after {
-    position: absolute;
-    top: 0;
-    left: 0;
-    content: '';
-    display: block;
-    height: 1.5625rem;
-    width: 1.5625rem;
-    -webkit-border-radius: 1.5625rem;
-    -moz-border-radius: 1.5625rem;
-    border-radius: 1.5625rem;
-    -webkit-box-shadow: 0 0.0625rem 0.125rem rgba(46, 45, 44, 0.2);
-    -moz-box-shadow: 0 0.0625rem 0.125rem rgba(46, 45, 44, 0.2);
-    box-shadow: 0 0.0625rem 0.125rem rgba(46, 45, 44, 0.2);
-    background: white;
-    -webkit-transition: all 0.25s ease;
-    -moz-transition: all 0.25s ease;
-    -o-transition: all 0.25s ease;
-    transition: all 0.25s ease;
-    }
-    .toggle-off.active {color:red;}
-    .toggle-on.active {color:blue;}
-
-</style>
 
 <div class="container-fluid">
     <div class="mep-form_wrapper">
@@ -83,6 +10,12 @@
         <div class="d-flex justify-content-between">
             <h3>Supplier Management</h3>
             <div>
+                 <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Admin_Tool:extract_supplier_template' %}'"type="button">
+                    <i class="fas fa-download"></i> download template
+                </button>
+                <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Basic_Settings:extract_supplier_data' %}'"type="button">
+                    <i class="fas fa-download"></i> extract
+                </button>
                 <button class="btn btn-outline-primary" id="basic_save_upld_redirect" onclick="onclick_upload_button()">
                     <i class="fas fa-cloud-upload-alt"></i> 
                     upload data
@@ -128,12 +61,17 @@
                     <div id="supplier_adv_search" class="advanced-search-collapse collapse">
                         <div class="row">
                             <div class="col-md">
-                                <label for="">Search Term 1</label>
-                                <input type="text" class="form-control check_for_search" id="search_term1" name="search_term1">
+                              <label for="">Email</label>
+                                <input type="text" class="form-control" id="email" name="email">
                             </div>
                             <div class="col-md">
-                                <label for="">Search Term 2</label>
-                                <input type="text" class="form-control check_for_search" id="search_term2" name="search_term2">
+                                <label for="">Supplier Type</label>
+                                <select type="text" class="form-control" id="supplier_type" name="supplier_type">
+                                    <option value="">select</option>
+                                    {% for suptype in dropdown_suptype_values %}
+                                        <option value="{{suptype.field_type_id}}">{{suptype.field_type_desc}}</option>
+                                    {% endfor %}
+                                </select>
                             </div>
                             <div class="col-md">
                                 <label for="">Country</label>
@@ -160,7 +98,7 @@
                             </div>
                             <div class="col-md">
                                 <div class="form-check">
-                                    <input class="form-check-input" type="checkbox" name="block">
+                                    <input class="form-check-input" type="checkbox" name="block" id="purchase_block">
                                     <label class="form-check-label" for="">
                                         Purchase Block
                                     </label>
@@ -241,13 +179,15 @@
                             <td>{{results.registration_number}}</td>
                             <td>
                                 <label class="switch">
-                                    <label class="toggle">
+                                    <label class="toggle-control">
                                         {% if results.block %}
-                                        <input type="checkbox" id="{{results.supplier_id}}-block" class="toggle-input" checked>
+                                        <input type="checkbox" id="{{results.supplier_id}}-block" class="toggle-block" checked>
+                                        <span class="control"></span>
                                         {% else %}
-                                        <input type="checkbox" id="{{results.supplier_id}}-unblock" class="toggle-input">
+                                        <input type="checkbox" id="{{results.supplier_id}}-unblock" class="toggle-block">
+                                        <span class="control"></span>
                                         {% endif %}
-                                        <div class="toggle-controller default-success"></div>
+<!--                                        <div class="toggle-controller default-success"></div>-->
                                     </label>
                                 </label>
                             </td>
@@ -307,7 +247,7 @@
 <!--                    <button type="button" class="btn btn-outline-primary" data-dismiss="modal" onclick="reload_previous_state()"><i class="fas fa-times"></i> cancel</button>-->
 <!--                    <button type="button" onclick="lock_active_change()" class="btn btn-primary"><i class="fas fa-check"></i> yes </button>-->
                     <button type="button" class="btn btn-outline-primary" data-dismiss="modal" onclick="toggle()"><i class="fas fa-times"></i> cancel</button>
-                    <button type="button" onclick="block_unblock_supplier()" class="btn btn-primary"><i class="fas fa-check"></i> yes </button>
+                    <button type="button" onclick="block_unblock_supplier();" class="btn btn-primary"><i class="fas fa-check"></i> yes </button>
                 </div>
             </div>
         </div>
@@ -339,14 +279,15 @@
     var GLOBAL_SUPPLIER_GUID = '';
 
     function reload(){
-        localStorage.setItem("name1", document.getElementById("name1").value);
-        localStorage.setItem("name2", document.getElementById("name2").value);
-        localStorage.setItem("supplier_id", document.getElementById("supplier_id").value);
-        localStorage.setItem("search_term1", document.getElementById("search_term1").value);
-        localStorage.setItem("search_term2", document.getElementById("search_term2").value);
-        console.log(document.getElementById("city").value);
-        localStorage.setItem("city", document.getElementById("city").value);
-        localStorage.setItem("country_code", document.getElementById("country_code").value);
+        localStorage.setItem("fname", document.getElementById("name1").value);
+        localStorage.setItem("lname", document.getElementById("name2").value);
+        localStorage.setItem("supp_id", document.getElementById("supplier_id").value);
+        localStorage.setItem("supp_email", document.getElementById("email").value);
+        localStorage.setItem("supp_type", document.getElementById("supplier_type").value);
+        localStorage.setItem("city_code", document.getElementById("city").value);
+        localStorage.setItem("country_id", document.getElementById("country_code").value);
+        localStorage.setItem("supp_porg", document.getElementById("porg").value);
+        localStorage.setItem("supp_purchase_block", document.getElementById("purchase_block").checked);
         OpenLoaderPopup();
     }
 
@@ -367,6 +308,7 @@
     // Function to delete User
     function delete_supplier(action) {
         $('#confirm_delete_pop_up').modal('hide');
+        $('#id_delete_confirm_popup').modal('hide');
         if(action == 'individual'){
             var user_data = [data_delete[1]]
             data = {'data':user_data}
@@ -382,6 +324,7 @@
                     main_table_product_checked.push(supplier_id);
                 }
             });
+              $('#confirm_delete_pop_up').modal('hide');
             data = {'data':main_table_product_checked}
         }
         OpenLoaderPopup();
@@ -389,23 +332,21 @@
             type: 'POST',
             url: "{% url 'eProc_Suppliers:delete_supplier' %}",
             data:JSON.stringify(data),
-            contentType: "application/json; charset=utf-8",
-            dataType: "json",
-            success: function (Response) {
-                display_supplier_data(Response.supplier_results);
-                $("#id_delete_confirm_popup").prop("hidden",true);
-                $('#success_msg_id').text(Response.success_message)
-                //document.getElementById("success_msg_id").text = Response.success_message;
-                $("#error_msg_div").prop("hidden",false);
-                CloseLoaderPopup();
-                message_display_time();
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: function (Response) {
+            display_supplier_data(Response.supplier_results);
+            $('#success_msg_id').text(Response.success_message);
+            $("#error_msg_div").prop("hidden",false);
+<!--            message_display_time();-->
+            CloseLoaderPopup();
             }
         });
-    };
+    }
 
     var data = {}
     var block_id = '';
-    $('.toggle-input').change(function() {
+    $('.toggle-block').change(function() {
         if($(this).is(':checked')) {
             $('.toggle-off').removeClass('active');
             $('.toggle-on').addClass('active');
@@ -419,17 +360,21 @@
         block_id = id
         data.supplier_id = id.split('-')[0]
         $('#id_block_confirm_popup').modal('show');
-
     });
 
     function block_unblock_supplier(){
+        OpenLoaderPopup();
         jQuery.ajax({
             type: 'POST',
             url: "{% url 'eProc_Suppliers:supplier_blocking' %}",
             dataType :'json',
             data: JSON.stringify(data),
-            success: function(result){
+            success: function(response){
                     $('#id_block_confirm_popup').modal('hide');
+                     $('#success_msg_id').text(response.success_message);
+                    $("#error_msg_div").prop("hidden",false)
+<!--                    message_display_time();-->
+                    CloseLoaderPopup();
             },
             error: function(xhr, resp, text) {
             },
@@ -438,7 +383,6 @@
             contentType: false,
         });
     }
-
 
     function toggle(){
         var abc = $('#'+block_id)
@@ -449,9 +393,8 @@
             $('#'+block_id).prop("checked", true);
         }
     }
-
     //onclick of select all checkbox
-    function checkAll(ele) {
+    function checkAll1(ele) {
         if (ele.checked) {
             $('.supplier_checkbox').each(function() {
                 var disable_check = this.disabled
@@ -471,7 +414,6 @@
             });
         }
     }
-
 
     function valueChanged() {
         if ($('.supplier_checkbox').is(":checked")) {
@@ -495,15 +437,15 @@
                 is_active = 'Inactive'
             }
             if(supplier_detail.block){
-                block_input = '<input type="checkbox" id="'+ supplier_detail.supplier_id +'-block" class="toggle-input" checked>'
+                block_input = '<input type="checkbox" id="'+supplier_detail.supplier_id+'-block" class="toggle-block" checked><span class="control"></span>'
             }
             else{
-                block_input = '<input type="checkbox" id="'+ supplier_detail.supplier_id +'-unblock" class="toggle-input">'
+                block_input = '<input type="checkbox" id="'+supplier_detail.supplier_id+'-unblock" class="toggle-block"><span class="control"></span>'
             }
 
-            supplier_detail_html += '<tr id="table-'+ supplier_detail.supplier_id +'">'+
+            supplier_detail_html += '<tr id="'+supplier_detail.supplier_id+'">'+
                     '<td><input type="checkbox" class="supplier_checkbox" onclick="valueChanged();"></td>'+
-                    '<td><a href="#" class="dummy_supplier_detail"  id=" '+supplier_detail.supplier_id_encrypted+' " target="_blank">'+ supplier_detail.supplier_id +'</a></td>'+
+                    '<td><a href="#" class="dummy_supplier_detail"  id="'+supplier_detail.supplier_id+'" target="_blank">'+supplier_detail.supplier_id+'</a></td>'+
                     '<td>'+ supplier_detail.name1 +'</td>'+
                     '<td> '+ supplier_detail.name2 +'</td>'+
                     '<td>'+ supplier_detail.city +'</td>'+
@@ -511,10 +453,10 @@
                     '<td>'+ is_active +'</td>'+
                     '<td> '+ supplier_detail.country_code_id +'</td>'+
                     '<td>'+ supplier_detail.registration_number +'</td>'+
-                    '<td><label class="switch"><label class="toggle">'+ block_input +'<div class="toggle-controller default-success"></div></label></label></td>'+
-                    '<td class="item-action-icon-section"><span title="Delete supplier" onclick="get_user_detail_to_delete(this.id)" id="'+ supplier_detail.supp_guid +'-'+ supplier_detail.supplier_id +'" data-toggle="modal"  data-target="#confirm_delete_pop_up" onclick="get_supplier_detail_to_delete(this.id)">'+
+                    '<td><label class="switch"><label class="toggle-control">'+ block_input +'</label></label></td>'+
+                    '<td class="item-action-icon-section"><span title="Delete supplier" onclick="get_supplier_detail_to_delete(this.id)" id="'+ supplier_detail.supp_guid +'-'+ supplier_detail.supplier_id +'" data-toggle="modal"  data-target="#confirm_delete_pop_up" onclick="get_supplier_detail_to_delete(this.id)">'+
                         '<i class="material-icons item-action-icons">delete_outline</i></span></td>'+
-                    '</tr> '
+                    '</tr>';
         });
         $("#supplier_detail_tbody").append(supplier_detail_html);
         table_sort_filter('sup_tab');
@@ -527,7 +469,82 @@
         window.open(href_link,'_blank');
     });
 
+
     <!-- ----------------------------------------------------   -->
+var table = $('#sup_tab').DataTable();
+ var rows_selected = [];
+//onclick of select all checkbox
+$('#sup_tab tbody').on('click', 'input[class="supplier_checkbox"]', function(e){
+      var $row = $(this).closest('tr');
+      // Get row data
+      var data = table.row($row).data();
+      // Get row ID
+      var rowId = data[0];
+      // Determine whether row ID is in the list of selected row IDs
+      var index = $.inArray(rowId, rows_selected);
+      // If checkbox is checked and row ID is not in list of selected row IDs
+      if(this.checked && index === -1){
+         rows_selected.push(rowId);
+      // Otherwise, if checkbox is not checked and row ID is in list of selected row IDs
+      } else if (!this.checked && index !== -1){
+         rows_selected.splice(index, 1);
+      }
+      if(this.checked){
+         $row.addClass('selected');
+      } else {
+         $row.removeClass('selected');
+      }
+      // Update state of "Select all" control
+//      updateDataTableSelectAllCtrl(table);
+      // Prevent click event from propagating to parent
+      e.stopPropagation();
+   });
+   // Handle click on table cells with checkboxes
+<!--   $('#sup_tab').on('click', 'tbody td, thead th:first-child', function(e){-->
+<!--      $(this).parent().find('input[class="supplier_checkbox"]').trigger('click');-->
+<!--   });-->
+   // Handle click on "Select all" control
+   $('thead input[id="selectAll"]', table.table().container()).on('click', function(e){
+      if(this.checked){
+         $('#sup_tab tbody input[class="supplier_checkbox"]:not(:checked)').trigger('click');
+      } else {
+         $('#sup_tab tbody input[class="supplier_checkbox"]:checked').trigger('click');
+      }
+      // Prevent click event from propagating to parent
+      e.stopPropagation();
+   });
+   // Handle table draw event
+   table.on('draw', function(){
+      // Update state of "Select all" control
+      updateDataTableSelectAllCtrl(table);
+      valueChanged();
+//      e.stopPropagation();
+   });
+    function updateDataTableSelectAllCtrl(table){
+       var $table             = table.table().node();
+       var $chkbox_all        = $('tbody input[class="supplier_checkbox"]', $table);
+       var $chkbox_checked    = $('tbody input[class="supplier_checkbox"]:checked', $table);
+       var chkbox_select_all  = $('thead input[id="selectAll"]', $table).get(0);
+
+       // If none of the checkboxes are checked
+       if($chkbox_checked.length === 0){
+          chkbox_select_all.checked = false;
+          if('indeterminate' in chkbox_select_all){
+             chkbox_select_all.indeterminate = false;
+          }
+       // If all of the checkboxes are checked
+       } else if ($chkbox_checked.length === $chkbox_all.length){
+          chkbox_select_all.checked = true;
+          if('indeterminate' in chkbox_select_all){
+             chkbox_select_all.indeterminate = false;
+          }
+       } else {
+          chkbox_select_all.checked = true;
+          if('indeterminate' in chkbox_select_all){
+             chkbox_select_all.indeterminate = true;
+          }
+   }
+}
 
 
 </script>

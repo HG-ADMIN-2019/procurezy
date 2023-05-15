@@ -26,11 +26,11 @@
                     <i class="fas fa-sitemap"></i><span> Organizational Information</span>
                 </div>
             </li>
-            <li data-tab-target="#buisness_doc_tab" class="sub-tab" id="business_doc_tab">
-                <div class="sub-tab-link">
-                    <i class="fas fa-file-alt"></i><span> Business Document</span>
-                </div>
-            </li>
+<!--            <li data-tab-target="#buisness_doc_tab" class="sub-tab" id="business_doc_tab">-->
+<!--                <div class="sub-tab-link">-->
+<!--                    <i class="fas fa-file-alt"></i><span> Business Document</span>-->
+<!--                </div>-->
+<!--            </li>-->
         </ul>
 
         <div class="tab-content">
@@ -57,9 +57,11 @@
                         <div class="d-flex justify-content-end">
                             <div id="sbd_save_cancel_button" >
                                 <button type="submit"  id="save_basic" name="save_basic" class="btn btn-primary" onclick="save_basic_details();"><i class="fas fa-save"></i> save</button>
-                                <button id="cancel_id" type="button" class="btn btn-primary" onclick="cancel_basic_details();"><i class="fas fa-times"></i> cancel</button>
                             </div>
-                            <div id="sbd_edit_button" >
+                            <div id="cancel_button" hidden style="padding-left: 5px;">
+                                 <button id="cancel_id" type="button" class="btn btn-primary" onclick="cancel_basic_details();"><i class="fas fa-times"></i> cancel</button>
+                            </div>
+                            <div id="sbd_edit_button" hidden>
                                 <button type="button" class="btn btn-primary" onclick="edit_basic_supp_data();"><i class="fas fa-edit"></i> edit</button>
                             </div>
                         </div>
@@ -78,12 +80,12 @@
 
                                     <div class="form-group col-md">
                                         <label> Supplier Number</label><span class="hg_required"></span><br>
-                                        <input type="text" class="form-control hg_edit_display_mode" id="supplier_id" value="{{supplier_info.supplier_id}}" required>
+                                        <input type="text" class="form-control hg_edit_display_mode" name="supplier_id" id="supplier_id" value="{{supplier_info.supplier_id}}" required>
                                     </div>
 
                                     <div class="form-group col-md">
                                         <label> Supplier Type</label><span class="hg_required"></span><br>
-                                        <select name="" id="supplier_type" class="form-control hg_edit_display_mode" required >
+                                        <select name="supplier_type" id="supplier_type" class="form-control hg_edit_display_mode" required >
                                             {% if supplier_info.supp_type %}
                                             <option value="{{supplier_info.supp_type}}">{{supplier_info.supp_type}}</option>
                                             {% else %}
@@ -108,7 +110,7 @@
                                     </div>
 
                                     <div class="form-group col-md">
-                                        <label> Last Name</label><br>
+                                        <label> Last Name</label><span class="hg_required"></span><br>
                                         <input type="text" class="form-control hg_edit_display_mode" id="name2" value="{{supplier_info.name2}}" >
                                     </div>
                                 </div>
@@ -157,7 +159,7 @@
                                     </div>
 
                                     <div class="form-group col-md">
-                                        <label> Postal Code</label><br>
+                                        <label> Postal Code</label><span class="hg_required"></span><br>
                                         <input type="text" class="form-control hg_edit_display_mode check_postal_code" id="postal_code_id" value="{{supplier_info.postal_code}}">
                                     </div>
                                 </div>
@@ -170,7 +172,7 @@
                                             <div>
                                                 <label> Upload Supplier Image</label><br>
                                                 <input type="file" class="hg_edit_display_mode" name="supplier_image" id="supplier_image_id" onchange="loadFile3(event)">
-                                                <small class="form-text text-muted"> Help text here - supported images types </small>
+                                                <small class="form-text text-muted"> Supported images types - jpg, jpeg, png, bmp, tif, tiff or gif </small>
                                             </div>
                                             
                                            <div>
@@ -198,7 +200,6 @@
                                     <div class="form-group col-md">
                                         <label> Phone</label><br>
                                         <input type="text" class="form-control hg_edit_display_mode" id="landline_id" value="{{supplier_info.landline}}">
-                                        <small class="form-text text-muted help-text-phone-numbers"></small>
                                     </div>
 
                                     <div class="form-group col-md">
@@ -210,7 +211,8 @@
                                         <label> Fax</label><br>
                                         <input type="text" class="form-control hg_edit_display_mode" id="fax_id" value="{{supplier_info.fax}}">
                                     </div>
-                                </div>
+                                </div><br>
+                                <small class="form-text text-muted help-text-phone-numbers"></small>
                             </div>
                         </div>
 
@@ -233,8 +235,12 @@
                                     <div class="form-group col-md">
                                         <label> Working Days</label><span class="hg_required"></span><br>
 <!--                                        <input type="text" class="form-control hg_edit_display_mode" id="working_days" value="{{supplier_info.delivery_days}}">-->
-                                        <div  id="edit_mode">
-                                        <select type="text" class="multiple_select form-control hg_edit_display_mode"  id="working_days_id" name="working_days" multiple data-selected-text-format="count" data-actions-box="true" title='Select...'>
+                                         <div  id="display_mode" >
+                                        <select type="text" class="multiple_select form-control "  id="working_days" name="working_days" multiple data-selected-text-format="count" data-actions-box="true" title='Select...' >
+                                            <option value="1">Sunday</option> <option value="2">Monday</option> <option value="3">Tuesday</option> <option value="4">Wednesday</option> <option value="5">Thursday</option> <option value="6">Friday</option> <option value="7">Saturday</option>
+                                        </select></div>
+                                        <div  id="edit_mode" hidden>
+                                        <select type="text" class="multiple_select form-control "  id="working_days_id" name="working_days" multiple data-selected-text-format="count" data-actions-box="true" title='Select...' >
                                             <option value="1">Sunday</option> <option value="2">Monday</option> <option value="3">Tuesday</option> <option value="4">Wednesday</option> <option value="5">Thursday</option> <option value="6">Friday</option> <option value="7">Saturday</option>
                                         </select>
                                         </div>
@@ -278,7 +284,8 @@
                                 <h5>Organizational Details</h5>
 <!-- ---------------------------------------------------- -->
                                 <div>
-                                    <button class="btn btn-primary" id="id_add_data" value="ADD" title="Add Country" data-toggle="modal"  data-target="#supplierOrgModal" onclick="onclick_add_button(this);">
+                                    <button class="btn btn-primary" id="id_edit_data" onclick="onclick_edit_button();"><i class="fas fa-edit" title="Edit Organizational data" ></i> Edit</button>
+                                    <button class="btn btn-primary" id="id_add_data" value="ADD" title="Add Org Info" data-toggle="modal"  data-target="#supplierOrgModal" onclick="onclick_add_button(this);">
                                     <i class="fa fa-plus"></i> add organizational data
                                     </button>
                                 </div>
@@ -286,14 +293,10 @@
                         <div class="table-container tcw-60">
                             <div class="edit-button-section mb-4">
                                 <div  class="mb-3" style="display: block;">
-                                    <button class="btn btn-primary" id="id_edit_data" onclick="onclick_edit_button();"><i class="fas fa-edit" title="Edit Organizational data" ></i> Edit</button>
                                 </div>
                     <button class="btn btn-outline-danger btn-sm"  title="Delete" id="id_delete_data" value="DELETE" data-toggle="modal" data-target="#id_delete_confirm_popup" style="display:none;">
                         <i class="fa fa-trash"></i> delete
                     </button>
-<!--                    <button class="btn btn-primary  btn-sm" title="Copy" id="id_copy_data" value="COPY" onclick="onclick_copy_button()" style="display:none;" >-->
-<!--                        <i class="fa fa-copy"></i> copy-->
-<!--                    </button>-->
                     <button class="btn btn-primary btn-sm" title="Update" id="id_update_data" style="display:none;"  value="UPDATE" type="button" onclick="onclick_update_button()">
                         <i class="far fa-edit"></i> update
                     </button>
@@ -302,12 +305,12 @@
                     </button>
                 </div>
                 <div>
-                <table id="display_basic_table" class="org_registration_table " style="width:1400px;">
+                <table id="display_basic_org_table" class="org_registration_table" style="width:100%">
                                     <thead id="supp_org_header" class="thead-light">
                                     <tr>
                                         <th id="hg_select_checkbox"  hidden>
                                             <div id="id_check_all" style="display:none;">
-                                                <input type="checkbox" id="selectAll" name="chk[]">
+                                                <input type="checkbox" id="selectAll" name="chk[]" onclick="checkAll(this)">
                                             </div>
                                         </th>
                                         <th hidden>Guid</th>
@@ -334,44 +337,44 @@
                                         <td>{{data.incoterm_key_id}}</td>
                                         <td>
                                             {% if data.gr_ind %}
-                                            <input type="checkbox" name="gr_inv_vrf" value="" checked>
+                                            <input type="checkbox" name="gr_inv_vrf" value="" checked disabled>
                                             {% else %}
-                                            <input type="checkbox" name="gr_inv_vrf" value="">
+                                            <input type="checkbox" name="gr_inv_vrf" value="" disabled>
                                             {% endif %}
                                         </td>
                                         <td>
                                             {% if data.ir_ind %}
-                                            <input type="checkbox" name="inv_conf_exp" value="" checked>
+                                            <input type="checkbox" name="inv_conf_exp" value="" checked disabled>
                                             {% else %}
-                                            <input type="checkbox" name="inv_conf_exp" value="">
+                                            <input type="checkbox" name="inv_conf_exp" value="" disabled>
                                             {% endif %}
                                         </td>
                                         <td>
                                             {% if data.ir_gr_ind %}
-                                            <input type="checkbox" name="gr_conf_exp" value="" checked>
+                                            <input type="checkbox" name="gr_conf_exp" value="" checked disabled>
                                             {% else %}
-                                            <input type="checkbox" name="gr_conf_exp" value="">
+                                            <input type="checkbox" name="gr_conf_exp" value="" disabled>
                                             {% endif %}
                                         </td>
                                         <td>
                                             {% if data.po_resp %}
-                                            <input type="checkbox" name="po_resp" value="" checked>
+                                            <input type="checkbox" name="po_resp" value="" checked disabled>
                                             {% else %}
-                                            <input type="checkbox" name="po_resp" value="">
+                                            <input type="checkbox" name="po_resp" value="" disabled>
                                             {% endif %}
                                         </td>
                                         <td>
                                             {% if data.ship_notif_exp %}
-                                            <input type="checkbox" name="ship_notif_exp" value="" checked>
+                                            <input type="checkbox" name="ship_notif_exp" value="" checked disabled>
                                             {% else %}
-                                            <input type="checkbox" name="ship_notif_exp" value="">
+                                            <input type="checkbox" name="ship_notif_exp" value="" disabled>
                                             {% endif %}
                                         </td>
                                         <td>
                                             {% if data.purch_block %}
-                                            <input type="checkbox" name="purch_block" value="" checked>
+                                            <input type="checkbox" name="purch_block" value="" checked disabled>
                                             {% else %}
-                                            <input type="checkbox" name="purch_block" value="">
+                                            <input type="checkbox" name="purch_block" value="" disabled>
                                             {% endif %}
                                         </td>
                                     </tr>
@@ -422,7 +425,7 @@
                         <table class="class_popup_table table table-bordered mt-2" id="id_popup_table" >
                             <thead>
                             <tr>
-                                <th id="header_select">Select</th>
+                               <th id="header_select">Select</th>
                                         <th hidden>Guid</th>
                                         <th>Purchasing organization </th>
                                         <th>PO Currency</th>
@@ -465,17 +468,20 @@
     <div class="hg_spacer2"> &nbsp; </div>
     </div>
     {{ supplier_org_info|json_script:"supplier_org_info" }}
+    {{ supplier_info.delivery_days|json_script:"w_days" }}
     {% include 'configuration_common_pop_up.html' %}
 <script>
 var GLOBAL_ACTION
 var rendered_supp_org_data = JSON.parse(document.getElementById('supplier_org_info').textContent);
+var w_days = JSON.parse(document.getElementById('w_days').textContent);
 <!--var rendered_supp_org_data = "{{supplier_org_info | safe}}";-->
 var rendered_porg_data;
 var country_id = '{{supplier_info.country_code | safe}}';
 var curr_id = '{{supplier_info.currency_id | safe}}';
 var lang_id = '{{supplier_info.language_id | safe}}';
-var w_days = "{{supplier_info.delivery_days | safe}}";
+<!--var w_days = '{{supplier_info.delivery_days | safe}}';-->
 var img_url = '{{img_url.url | safe}}';
+var error_flag;
 
 $(document).ready(function(){
     $('#nav_menu_items').remove();
@@ -490,31 +496,36 @@ $(document).ready(function(){
       $("#sbd_save_cancel_button").prop("hidden", false);
       $("#sbd_edit_button").prop("hidden", true);
       document.getElementById('sbd_edit_button').style.display = 'none';
-      $("#cancel_id").prop("hidden", true);
+     $("#working_days").prop("hidden", false);
+     $("#working_days_id").prop("hidden", true);
+     var flag = localStorage.getItem("error_flag");
+     if(flag == 1){
+        get_values_onerror();
+    }
     }
     else{
          document.getElementById('sbd_edit_button').style.display = 'block';
+         $("#sbd_edit_button").prop("hidden", false);
         $("#sbd_save_cancel_button").prop("hidden", true);
         $(".hg_edit_display_mode").prop( "disabled", true );
-    }
-
-    $("#country_code_id").val(country_id).attr('selected', 'selected');
+            $("#country_code_id").val(country_id).attr('selected', 'selected');
     $("#language_id").val(lang_id).attr('selected', 'selected');
     $("#currency_id").val(curr_id).attr('selected', 'selected');
+    $("#working_days_id").prop("hidden", false);
+    $("#working_days").prop("hidden", true);
+    }
     MultipleSelect();
     var wday_array = [];
     wday_array = w_days.split(",");
-    $("select[name=working_days]").val(wday_array);
-
+    var num = w_days.match(/\d/g);
+    $("select[id=working_days]").val(num);
     var working_days_values = [];
-    for(j=0; j<wday_array.length; j++)
+    for(j=0; j<num.length; j++)
     {
-          working_days_values[j] = get_days(wday_array[j]);
+          working_days_values[j] = get_days(num[j]);
     }
-    console.log(working_days_values);
-    $("#working_days").val(working_days_values);
+    $("#working_days_id").val(working_days_values);
   });
-
 
 var workingdays_dropdown = '';
     workingdays_dropdown = '<option value="1">Sunday</option> <option value="2">Monday</option> <option value="3">Tuesday</option> <option value="4">Wednesday</option> <option value="5">Thursday</option> <option value="6">Friday</option> <option value="7">Saturday</option>';
@@ -546,25 +557,21 @@ function get_dropdown(){
     $.each(currency_list, function (i, item) {
                 currency_opt1 += '<option  value="' + item.currency_id + '">' + item.currency_id+'-'+item.description + '</option>'
             });
-
     var payterm_list = {{payterm_list|safe}}
     payterm_opt = ''
     for ( let payterm=0; payterm < payterm_list.length; payterm++ ){
         payterm_opt += '<option value="'+payterm_list[payterm]+'"> '+payterm_list[payterm]+' </option>'
     }
-
     var incoterm_list = {{incoterm_list|safe}}
     incoterm_opt = ''
     for ( let incoterm=0; incoterm < incoterm_list.length; incoterm++ ){
         incoterm_opt += '<option value="'+incoterm_list[incoterm]+'"> '+incoterm_list[incoterm]+' </option>'
     }
-
     var country_list = {{country_list|safe}}
     country_opt = ''
     $.each(country_list, function(i, value){
         country_opt += '<option> '+country_list[i]+' </option>'
     });
-
     var language_list = {{language_list|safe}}
     language_opt = ''
     $.each(language_list, function(i, value){
@@ -578,16 +585,116 @@ function ajax_update_supplier_basic_details(data) {
     return response
 }
 
-// function ajax_update_supplier_org_details(data) {
-//     let urlLink = "{% url 'eProc_Suppliers:update_supplier_purch_details' %}"
-//     AjaxCallAPI(urlLink, data)
-// }
-
 const ajax_update_supplier_org_details_url = "{% url 'eProc_Suppliers:update_supplier_purch_details' %}";
 
-$('#supplier_id').keypress(function (e) {
-    validationForSpecialchar(e);
-});
+// Function to save edited supplier basic details data
+var formdata = {};
+function save_basic_details() {
+    var is_save_form_valid='';
+    var error_message = '';
+    supplier_data = new Array();
+    var supp_id = $('#supplier_id').val();
+    var supp_type = $('#supplier_type').val();
+    var reg_num = $('#supplier_regnum').val();
+    var name1_val= $('#name1').val();
+    var name2_val= $('#name2').val();
+    var country_id = $('#country_code_id').val();
+    var curr_id = $('#currency_id').val();
+    var lang_id = $('#language_id').val();
+    var city_val = $('#city_id').val();
+    var postal_code = $('#postal_code_id').val();
+    var email_val = $('#email_id').val();
+    var mobile_val = $('#mobile_num_id').val();
+    var search_term1_val = $('#search_term1_id').val();
+    var search_term2_val = $('#search_term2_id').val();
+    var working_days = $('#working_days_id').val();
+    var output_med = $('#output_medium_id').val();
+<!--    [is_save_form_valid,error_message] = save_basic_form_validation(name1_val,name2_val, city_val, email_val, mobile_val, search_term1_val, search_term2_val)-->
+
+    formdata = {};
+    formdata.supplier_image = $('#supplier_image_id').prop('files')[0];
+    formdata.supplier_guid = $('#supplier_guid').val();
+    formdata.supplier_id = $('#supplier_id').val();
+    formdata.supplier_type = $('#supplier_type').val();
+    formdata.registration_number = $('#supplier_regnum').val();
+    formdata.name1 = $('#name1').val();
+    formdata.name2 = $('#name2').val();
+    formdata.city_id = $('#city_id').val();
+    formdata.postal_code_id = $('#postal_code_id').val();
+    formdata.street_id = $('#street_id').val();
+    formdata.country_code_id = $('#country_code_id').val();
+    formdata.currency_id = $('#currency_id').val();
+    formdata.language_id = $('#language_id').val();
+    formdata.landline_id = $('#landline_id').val();
+    formdata.mobile_num_id = $('#mobile_num_id').val();
+    formdata.fax_id = $('#fax_id').val();
+    formdata.email_id = $('#email_id').val();
+    formdata.search_term1_id = $('#search_term1_id').val();
+    formdata.search_term2_id = $('#search_term2_id').val();
+    formdata.working_days_id = $('#working_days').val();
+    formdata.duns_number_id = $('#duns_number_id').val();
+    formdata.output_medium_id = $('#output_medium_id').val();
+    formdata.status = GLOBAL_ACTION;
+    supplier_data.push(formdata);
+<!--    supplier_data.append("supplier_image",  $('#supplier_image_id').prop('files')[0]);-->
+
+
+    [is_save_form_valid,error_message] = save_basic_form_validation1(formdata);
+    if(is_save_form_valid){
+    data = {formdata}
+    OpenLoaderPopup();
+    $.ajax({
+                    type: 'POST',
+                    url: "{% url 'eProc_Suppliers:update_suppliers_basic_details' %}",
+                    data: JSON.stringify(formdata),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function(response) {
+                           encrypted_supplier = response.encrypted_supplier
+                           message = response.message
+                            msg_type = response.msg_type
+                           // ajax success response
+                            if(msg_type.type=='success'){
+                                document.getElementById('supplier_basic_update_success').innerHTML = message;
+                                $('#supplier_basic_update_success').show();
+                                $('#save_error_div').hide();
+                                localStorage.setItem("error_flag", 0);
+                                CloseLoaderPopup();
+                            }
+                            if(msg_type.type=='error'){
+                                document.getElementById('save_error_div').innerHTML = message;
+                                $('#save_error_div').show();
+                                $('#supplier_basic_update_success').hide();
+                                CloseLoaderPopup();
+                                localStorage.setItem("error_flag", 1);
+                                values_reload(formdata);
+                                  return false;
+                            }
+<!--                             if(GLOBAL_ACTION == 'CREATE'){-->
+<!--        var url = '/admin_tool/supplier_management/supplier_details/' + encrypted_supplier + '';-->
+<!--        location.href = url-->
+<!--    }-->
+                  }
+    });
+
+    }
+    else if(error_message){
+        document.getElementById('save_error_div').innerHTML = error_message;
+        $('#save_error_div').show();
+        localStorage.setItem("error_flag", 1);
+        values_reload(formdata);
+        return false;
+    }
+<!--    $('html, body').animate({ scrollTop: 0 }, 'slow');-->
+
+<!--    values_reload(formdata);-->
+    return false;
+}
+
+
+<!--$('#supplier_id').keypress(function (e) {-->
+<!--    validationForSpecialchar(e);-->
+<!--});-->
 function validationForSpecialchar(e){
     var regex = new RegExp("^[a-zA-Z0-9-]+$");
     var str = String.fromCharCode(!e.charCode ? e.which : e.charCode);
@@ -598,8 +705,6 @@ function validationForSpecialchar(e){
     return false;
 }
 function validationForNull(data){
-<!--    var data = document.getElementByName("value");-->
-<!--    console.log("data = ",data);-->
     if (data.value.length == 0) {
         return true;
     }
@@ -670,7 +775,7 @@ function loadFile3(event) {
     var reader = new FileReader();
     reader.onload = function(){
         const uploadfile = document.getElementById('supplier_image_id');
-<!--        if (uploadfile.files.length > 0) {-->
+        if (uploadfile.files.length > 0) {
             const filedata = uploadfile.files[0];
             const fsize = filedata.size;
             const file_extension = ((filedata.name).split(".")[1]).toUpperCase();
@@ -692,7 +797,7 @@ function loadFile3(event) {
                 $('#image-upload-errors').html('Please attach jpg, jpeg, png, bmp, tif, tiff or gif');
                 $('#image-upload-errors').show();
             }
-<!--        }-->
+        }
     };
     reader.readAsDataURL(event.target.files[0]);
 };
@@ -702,7 +807,7 @@ function loadFile3(event) {
         $('#success_msg_id').empty()
         GLOBAL_ACTION = 'DELETE'
         main_table_supp_checked = [];
-        $('#display_basic_table').DataTable().destroy();
+        $('#display_basic_org_table').DataTable().destroy();
         get_selected_row_data(); // Function call to get the selected row data
         $('#id_delete_confirm_popup').modal('hide');
         data = {'data':main_table_supp_checked,'table_name':'OrgSuppliers','action':GLOBAL_ACTION}
@@ -754,7 +859,7 @@ function onclick_copy_update_button(data) {
                 $('#id_popup_table').DataTable().destroy();
                 $("#id_popup_tbody").empty();
                 //Reference the Table.
-                var res = get_all_checkboxes(); // Function to get all the checkboxes
+                var res = get_all_org_checkboxes(); // Function to get all the checkboxes
                 var $chkbox_all = $('td input[class="checkbox_check"]', res);
                 //Reference the CheckBoxes in Table.
                 var edit_basic_data = "";
@@ -830,6 +935,7 @@ function onclick_copy_update_button(data) {
                     if(purch_block) {
                         $(row.find("TD").eq(11).find('input[name="purch_block_checkbox"]').attr('checked', 'checked'));
                     }
+                    i++;
                 });
                 $("#id_del_ind_checkbox").prop("hidden", true);
                 $('#supplierOrgModal').modal('show');
@@ -878,6 +984,37 @@ function supp_org_data_save(){
             console.log(error);
         }
     })
+}
+//onclick of select all checkbox
+    function checkAll(ele) {
+        if (ele.checked) {
+            $('.checkbox_check').each(function() {
+                var disable_check = this.disabled
+                if(disable_check == false){
+                    this.checked = true;
+                    $('#id_delete_data').show();
+                    $('#id_update_data').show();
+                }
+            });
+        }
+        else{
+            $('.checkbox_check').each(function() {
+                var disable_check = this.disabled
+                if(disable_check == false){
+                    this.checked = false;
+                    $('#id_delete_data').hide();
+                    $('#id_update_data').hide();
+                }
+            });
+        }
+    }
+
+    // Function to get all the checkboxes from main table
+function get_all_org_checkboxes(){
+    var table = $('#display_basic_org_table').DataTable();
+    var $table = table.table().node();
+    var res = table.rows().nodes();
+    return res;
 }
 
 </script>

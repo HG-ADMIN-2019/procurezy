@@ -9,7 +9,7 @@ var delete_supp_purch_data = []
 
 // Global variable - supplier purchasing data
 var supplier_org_data = new Array();
-$("#display_basic_table TBODY TR").each(function() {
+$("#display_basic_org_table TBODY TR").each(function() {
     var row = $(this);
     var save_supp_org_data = {};
     save_supp_org_data.supp_id = global_supplier_id;
@@ -36,11 +36,21 @@ function edit_basic_supp_data(){
     if(GLOBAL_ACTION != 'CREATE'){
             $("#supplier_id").prop( "disabled", true );
             $("#sbd_edit_button").prop("hidden", true);
+            $("#cancel_button").prop("hidden", false);
+            document.getElementById('cancel_button').style.display = 'block';
             document.getElementById('sbd_save_cancel_button').style.display = 'block';
+            $("#working_days").show();
+            $("#working_days").prop("hidden", false);
+            $("#working_days_id").prop("hidden", true);
     }
     $("#edit_mode").show();
-    $("#working_days").hide();
+    document.getElementById('display_mode').style.display = 'none' ;
+    $("#working_days_id").prop("hidden", false);
+     $("#edit_mode").prop("hidden", false);
+     var num = w_days.match(/\d/g);
+     $("select[id=working_days_id]").val(num);
     document.getElementById('sbd_edit_button').style.display = 'none' ;
+     $("#cancel_button").prop("hidden", false);
     $("#sbd_edit_button").prop("hidden", true);
     document.getElementById('sbd_save_cancel_button').style.display = 'block';
     $("#sbd_save_cancel_button").prop("hidden", false);
@@ -50,6 +60,7 @@ function edit_basic_supp_data(){
 function cancel_basic_details(){
     $(".hg_edit_display_mode").prop( "disabled", true );
     document.getElementById('sbd_save_cancel_button').style.display = 'none'
+    document.getElementById('cancel_button').style.display = 'none'
     document.getElementById('sbd_edit_button').style.display = 'block'
     $("#sbd_edit_button").prop("hidden", false);
     $('#image-preview').hide();
@@ -62,7 +73,7 @@ function cancel_basic_details(){
 function edit_supp_org(){
     var supp_org_body_data = '';
 // -----------------------------------------------
-    $('#display_basic_table').DataTable().destroy();
+    $('#display_basic_org_table').DataTable().destroy();
     $('#supp_org_body').empty();
     var edit_basic_data = '';
     $.each(rendered_supp_org_data, function (i, item) {
@@ -96,7 +107,7 @@ function edit_supp_org(){
             purch_block_checkbox += '<input type="checkbox"  checked disabled>'
         } else purch_block_checkbox += '<input type="checkbox" disabled>'
 
-        edit_basic_data += '<tr><td class="class_select_checkbox"><input class="checkbox_check" onclick="valueChanged()" type="checkbox"></td>'+
+        edit_basic_data += '<tr><td class="class_select_checkbox"><input class="checkbox_check"  onclick="valueChanged()" type="checkbox"></td>'+
          '<td hidden>'+item.guid+'</td>'+
          '<td>'+item.porg_id+'</td>'+
          '<td>'+item.currency_id_id+'</td>'+
@@ -113,7 +124,7 @@ function edit_supp_org(){
     $("#hg_select_checkbox").prop("hidden", true);
     $("#id_check_all").prop("hidden", false);
     $(".class_select_checkbox").prop("hidden", true);
-    $('input:checkbox').removeAttr('checked');
+//    $('input:checkbox').removeAttr('checked');
     $('#id_edit_data').show();
     $('#id_cancel_data').hide();
     $('#id_delete_data').hide();
@@ -121,7 +132,7 @@ function edit_supp_org(){
     $('#id_update_data').hide();
     $('#id_save_confirm_popup').modal('hide');
     $('#id_delete_confirm_popup').modal('hide');
-    table_sort_filter('display_basic_table');
+    table_sort_filter('display_basic_org_table');
 }
 
 // Function to cancel Edit operation
@@ -171,119 +182,35 @@ function cancel_supp_org_data(){
     document.getElementById("supp_org_cancel_save").style.display = "none";
 }
 
-// Function to delete rows from UI
-//function application_settings_delete_Row(myTable) {
-//    try {
-//        var table = document.getElementById(myTable);
-//        var rowCount = table.rows.length;
-//
-//        for (var i = 0; i < rowCount; i++) {
-//            var row = table.rows[i];
-//            var chkbox = row.cells[0].childNodes[0];
-//            if (null != chkbox && true == chkbox.checked) {
-//                table.deleteRow(i);
-//                rowCount--;
-//                i--;
-//            }
-//        }
-//        return rowCount;
-//    } catch (e) {
-//        alert(e);
-//    }
-//}
 
-// Function to save edited supplier basic details data
-function save_basic_details() {
-    OpenLoaderPopup();
-    var name1_val= $('#name1').val();
-    var city_val = $('#city_id').val();
-    var email_val = $('#email_id').val();
-    var mobile_val = $('#mobile_num_id').val();
-    var search_term1_val = $('#search_term1_id').val();
-    var search_term2_val = $('#search_term2_id').val();
-    is_save_form_valid = save_basic_form_validation(name1_val, city_val, email_val, mobile_val, search_term1_val, search_term2_val)
-    if (is_save_form_valid != '') {
-        $('#save_error_div').html(is_save_form_valid)
-        $('#save_error_div').show();
-        scroll_top()
-        CloseLoaderPopup();
-        return
-    }
-
-    formdata = new FormData();
-    formdata.append("supplier_image",  $('#supplier_image_id').prop('files')[0]);
-    formdata.append("supplier_guid",   $('#supplier_guid').val());
-    formdata.append("supplier_id",   $('#supplier_id').val()); supplier_type
-    formdata.append("supplier_type",   $('#supplier_type').val());
-    formdata.append("registration_number",   $('#supplier_regnum').val());
-    formdata.append("name1",$('#name1').val());
-    formdata.append("name2",$('#name2').val());
-    formdata.append("city_id",   $('#city_id').val());
-    formdata.append("postal_code_id",   $('#postal_code_id').val());
-    formdata.append("street_id",   $('#street_id').val());
-    formdata.append("country_code_id",   $('#country_code_id').val());
-    formdata.append("currency_id",   $('#currency_id').val());
-    formdata.append("language_id",   $('#language_id').val());
-    formdata.append("landline_id",   $('#landline_id').val());
-    formdata.append("mobile_num_id",   $('#mobile_num_id').val());
-    formdata.append("fax_id",   $('#fax_id').val());
-    formdata.append("email_id",   $('#email_id').val());
-    formdata.append("search_term1_id",   $('#search_term1_id').val());
-    formdata.append("search_term2_id",   $('#search_term2_id').val());
-    formdata.append("working_days_id",   $('#working_days_id').val());
-    formdata.append("duns_number_id",   $('#duns_number_id').val());
-    formdata.append("email1_id",   $('#email1_id').val());
-    formdata.append("email2_id",   $('#email2_id').val());
-    formdata.append("email3_id",   $('#email3_id').val());
-    formdata.append("email4_id",   $('#email4_id').val());
-    formdata.append("email5_id",   $('#email5_id').val());
-    formdata.append("output_medium_id",   $('#output_medium_id').val());
-    formdata.append("status",   GLOBAL_ACTION);
-    response = ajax_update_supplier_basic_details(formdata)
-    console.log(response);
-    encrypted_supplier = response.encrypted_supplier
-    message = response.message
-    // ajax success response
-    if(message.success){
-        document.getElementById('supplier_basic_update_success').innerHTML = message.success;
-        $('#supplier_basic_update_success').show();
-        $('#save_error_div').hide();
-        CloseLoaderPopup();
-    }
-    if(message.error){
-        document.getElementById('save_error_div').innerHTML = message.error;
-        $('#save_error_div').show();
-        $('#supplier_basic_update_success').hide();
-        CloseLoaderPopup();
-    }
-    $('html, body').animate({ scrollTop: 0 }, 'slow');
-    cancel_basic_details();
-    if(GLOBAL_ACTION == 'CREATE'){
-        var url = '/admin_tool/supplier_management/supplier_details/' + encrypted_supplier + '';
-        location.href = url
-    }
-    return false;
-}
 var supplierid = global_supplier_id;
 
    // Validation function
-   const save_basic_form_validation = (name1, city_id, email_id, mobile,search_term1, search_term2) => {
+   function save_basic_form_validation(name1,name2, city_id, email_id, mobile,search_term1, search_term2){
         var is_valid = true
         var save_form_errors = ''
         var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
         if (name1 == '') {
             is_valid = false
-
-             var msg = "JMSG007" + " First name";
+             var msg = "JMSG007";
              var msg_type ;
              msg_type = message_config_details(msg);
              $("#error_msg_id").prop("hidden", false)
-             var display1 = msg_type.messages_id_desc;
+             var display1 = msg_type.messages_id_desc + " First name ";
+            save_form_errors += display1;
+        }
+        else if (name2 == '') {
+            is_valid = false
+             var msg = "JMSG007";
+             var msg_type ;
+             msg_type = message_config_details(msg);
+             $("#error_msg_id").prop("hidden", false)
+             var display1 = msg_type.messages_id_desc+ " Last name";
             save_form_errors += display1;
         }
         else if (city_id == '') {
             is_valid = false
-              var msg = "JMSG007" + " City";
+              var msg = "JMSG007" ;
              var msg_type ;
              msg_type = message_config_details(msg);
              $("#error_msg_id").prop("hidden", false)
@@ -292,7 +219,7 @@ var supplierid = global_supplier_id;
         }
         else if ((email_id == '') || !(email_id.match(mailformat))) {
             is_valid = false
-              var msg = "JMSG002" + " in Email Id";
+              var msg = "JMSG002";
              var msg_type ;
              msg_type = message_config_details(msg);
              $("#error_msg_id").prop("hidden", false)
@@ -301,7 +228,7 @@ var supplierid = global_supplier_id;
         }
         else if (mobile == '') {
             is_valid = false
-              var msg = "JMSG007" + " Mobile Number";
+              var msg = "JMSG007" ;
              var msg_type ;
              msg_type = message_config_details(msg);
              $("#error_msg_id").prop("hidden", false)
@@ -310,7 +237,7 @@ var supplierid = global_supplier_id;
         }
         else if (search_term1 == '') {
             is_valid = false
-              var msg = "JMSG007" + " Search Term1";
+              var msg = "JMSG007";
              var msg_type ;
              msg_type = message_config_details(msg);
              $("#error_msg_id").prop("hidden", false)
@@ -319,16 +246,167 @@ var supplierid = global_supplier_id;
         }
         else if (search_term2 == '') {
             is_valid = false
-              var msg = "JMSG007" + " Search Term2";
+              var msg = "JMSG007";
              var msg_type ;
              msg_type = message_config_details(msg);
              $("#error_msg_id").prop("hidden", false)
              var display1 = msg_type.messages_id_desc;
             save_form_errors += display1 + " Search Term2";
         }
-
-        return is_valid, save_form_errors
+        return [is_valid, save_form_errors]
     }
+
+function save_basic_form_validation1(formdata){
+        var is_valid = true
+        var save_form_errors = ''
+        var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+        if(formdata.supplier_id == ''){
+            is_valid = false
+             var msg = "JMSG007";
+             var msg_type ;
+             msg_type = message_config_details(msg);
+             $("#error_msg_id").prop("hidden", false)
+             var display1 = msg_type.messages_id_desc + " Supplier Id ";
+            save_form_errors += display1;
+        }
+        else if(formdata.supplier_type == ''){
+            is_valid = false
+             var msg = "JMSG007";
+             var msg_type ;
+             msg_type = message_config_details(msg);
+             $("#error_msg_id").prop("hidden", false)
+             var display1 = msg_type.messages_id_desc + " Supplier Type ";
+            save_form_errors += display1;
+        }
+        else if(formdata.registration_number == ''){
+            is_valid = false
+             var msg = "JMSG007";
+             var msg_type ;
+             msg_type = message_config_details(msg);
+             $("#error_msg_id").prop("hidden", false)
+             var display1 = msg_type.messages_id_desc + " Supplier Registration Number ";
+            save_form_errors += display1;
+        }
+        else if (formdata.name1 == '') {
+            is_valid = false
+             var msg = "JMSG007";
+             var msg_type ;
+             msg_type = message_config_details(msg);
+             $("#error_msg_id").prop("hidden", false)
+             var display1 = msg_type.messages_id_desc + " First name ";
+            save_form_errors += display1;
+        }
+        else if (formdata.name2 == '') {
+            is_valid = false
+             var msg = "JMSG007";
+             var msg_type ;
+             msg_type = message_config_details(msg);
+             $("#error_msg_id").prop("hidden", false)
+             var display1 = msg_type.messages_id_desc+ " Last name";
+            save_form_errors += display1;
+        }
+        else if(formdata.currency_id == ''){
+            is_valid = false
+             var msg = "JMSG007";
+             var msg_type ;
+             msg_type = message_config_details(msg);
+             $("#error_msg_id").prop("hidden", false)
+             var display1 = msg_type.messages_id_desc + " Currency ";
+            save_form_errors += display1;
+        }
+        else if(formdata.language_id == ''){
+            is_valid = false
+             var msg = "JMSG007";
+             var msg_type ;
+             msg_type = message_config_details(msg);
+             $("#error_msg_id").prop("hidden", false)
+             var display1 = msg_type.messages_id_desc + " Language ";
+            save_form_errors += display1;
+        }
+        else if(formdata.country_code_id == ''){
+            is_valid = false
+             var msg = "JMSG007";
+             var msg_type ;
+             msg_type = message_config_details(msg);
+             $("#error_msg_id").prop("hidden", false)
+             var display1 = msg_type.messages_id_desc + " Country ";
+            save_form_errors += display1;
+        }
+        else if (formdata.city_id == '') {
+            is_valid = false
+              var msg = "JMSG007" ;
+             var msg_type ;
+             msg_type = message_config_details(msg);
+             $("#error_msg_id").prop("hidden", false)
+             var display1 = msg_type.messages_id_desc;
+            save_form_errors += display1 + " City ";
+        }
+        else if (formdata.postal_code_id == '') {
+            is_valid = false
+              var msg = "JMSG007" ;
+             var msg_type ;
+             msg_type = message_config_details(msg);
+             $("#error_msg_id").prop("hidden", false)
+             var display1 = msg_type.messages_id_desc;
+            save_form_errors += display1 + " Postal Code ";
+        }
+        else if ((formdata.email_id == '') || !(formdata.email_id.match(mailformat))) {
+            is_valid = false
+              var msg = "JMSG002";
+             var msg_type ;
+             msg_type = message_config_details(msg);
+             $("#error_msg_id").prop("hidden", false)
+             var display1 = msg_type.messages_id_desc;
+            save_form_errors += display1 + "Email Id";
+        }
+        else if (formdata.mobile_num_id == '') {
+            is_valid = false
+              var msg = "JMSG007" ;
+             var msg_type ;
+             msg_type = message_config_details(msg);
+             $("#error_msg_id").prop("hidden", false)
+             var display1 = msg_type.messages_id_desc;
+            save_form_errors += display1 + " Mobile Number";
+        }
+        else if (formdata.search_term1_id == '') {
+            is_valid = false
+              var msg = "JMSG007";
+             var msg_type ;
+             msg_type = message_config_details(msg);
+             $("#error_msg_id").prop("hidden", false)
+             var display1 = msg_type.messages_id_desc;
+            save_form_errors += display1 + " Search Term1";
+        }
+        else if (formdata.search_term1_id == '') {
+            is_valid = false
+              var msg = "JMSG007";
+             var msg_type ;
+             msg_type = message_config_details(msg);
+             $("#error_msg_id").prop("hidden", false)
+             var display1 = msg_type.messages_id_desc;
+            save_form_errors += display1 + " Search Term2";
+        }
+        else if (formdata.working_days_id == '') {
+            is_valid = false
+              var msg = "JMSG007";
+             var msg_type ;
+             msg_type = message_config_details(msg);
+             $("#error_msg_id").prop("hidden", false)
+             var display1 = msg_type.messages_id_desc;
+            save_form_errors += display1 + " working Days ";
+        }
+         else if (formdata.output_medium_id == '') {
+            is_valid = false
+              var msg = "JMSG007";
+             var msg_type ;
+             msg_type = message_config_details(msg);
+             $("#error_msg_id").prop("hidden", false)
+             var display1 = msg_type.messages_id_desc;
+            save_form_errors += display1 + " Output Medium ";
+        }
+        return [is_valid, save_form_errors]
+    }
+
 
 function enable_disable(action){
     $(".dummy_ft_button_class").hide();
@@ -346,7 +424,7 @@ function enable_disable(action){
 
 // Function for add a new row data
 function new_row_data(){
-    basic_add_new_html = '<tr><td><input type="checkbox" required></td>'+
+    basic_add_new_html = '<tr><td><input type="checkbox" class="checkbox_check" onclick="valueChanged();" required></td>'+
     '<td hidden><input type="text" name="supp_org_guid"></td>'+
     '<td><select class="form-control"  type="text"  name="porg_id" style="text-transform:uppercase;">'+porg_opt+'</select></td>'+
     '<td><select class="form-control" type="text"  name="currency_id">'+currency_opt1+'</select></td>'+
@@ -363,27 +441,58 @@ function new_row_data(){
 }
 //onclick of cancel display the table in display mode............
 function display_basic_db_data() {
-    $('#display_basic_table').DataTable().destroy();
+    $('#display_basic_org_table').DataTable().destroy();
     $('#supp_org_body').empty();
     var edit_basic_data = '';
     $.each(rendered_supp_org_data, function (i, item) {
+        var gr_inv_vrf = '', inv_conf_exp = '', gr_conf_exp = '', po_resp = '', ship_notif_exp='', purch_block='';
+        if (item.gr_ind == true){
+                gr_inv_vrf = '<input type="checkbox" name="gr_inv_vrf" value="" checked disabled>'
+        } else{
+                gr_inv_vrf = '<input type="checkbox" name="gr_inv_vrf" value="" disabled>'
+        }
+        if (item.ir_ind == true){
+                inv_conf_exp = '<input type="checkbox" name="inv_conf_exp" value="" checked disabled>'
+        } else{
+                inv_conf_exp = '<input type="checkbox" name="inv_conf_exp" value="" disabled>'
+        }
+         if (item.ir_gr_ind == true){
+                gr_conf_exp = '<input type="checkbox" name="gr_conf_exp" value="" checked disabled>'
+        } else{
+                gr_conf_exp = '<input type="checkbox" name="gr_conf_exp" value="" disabled>'
+        }
+         if (item.po_resp == true){
+                po_resp = '<input type="checkbox" name="po_resp" value="" checked disabled>'
+        } else{
+                po_resp = '<input type="checkbox" name="po_resp" value="" disabled>'
+        }
+        if (item.ship_notif_exp == true){
+                ship_notif_exp = '<input type="checkbox" name="ship_notif_exp" value="" checked disabled>'
+        } else{
+                ship_notif_exp = '<input type="checkbox" name="ship_notif_exp" value="" disabled>'
+        }
+        if (item.purch_block == true){
+                purch_block = '<input type="checkbox" name="purch_block" value="" checked disabled>'
+        } else{
+                purch_block = '<input type="checkbox" name="purch_block" value="" disabled>'
+        }
         edit_basic_data += '<tr><td class="class_select_checkbox"><input class="checkbox_check" onclick="valueChanged()" type="checkbox" required></td>'+
         '<td>' + item.porg_id + '</td>'+
         '<td>' + item.currency_id + '</td>'+
         '<td>' + item.payment_term_key + '</td>'+
         '<td>' + item.incoterm_key + '</td>'+
-        '<td>' + item.gr_ind + '</td>'+
-        '<td>' + item.ir_ind + '</td>'+
-        '<td>' + item.ir_gr_ind + '</td>'+
-        '<td>' + item.po_resp + '</td>'+
-        '<td>' + item.ship_notif_exp + '</td>'+
-        '<td>' + item.purch_block + '</td>'+
+        '<td>' + gr_inv_vrf + '</td>'+
+        '<td>' + inv_conf_exp + '</td>'+
+        '<td>' + gr_conf_exp+ '</td>'+
+        '<td>' + po_resp + '</td>'+
+        '<td>' + ship_notif_exp + '</td>'+
+        '<td>' + purch_block + '</td>'+
         '</tr>';
     });
     $('#supp_org_body').append(edit_basic_data);
     $("#hg_select_checkbox").prop("hidden", true);
     $(".class_select_checkbox").prop("hidden", true);
-    $('input:checkbox').removeAttr('checked');
+//    $('input:checkbox').removeAttr('checked');
     $('#id_edit_data').show();
     $('#id_cancel_data').hide();
     $('#id_delete_data').hide();
@@ -392,11 +501,11 @@ function display_basic_db_data() {
     $('#id_save_confirm_popup').modal('hide');
     $('#id_delete_confirm_popup').modal('hide');
     $('#id_check_all').hide();
-    table_sort_filter('display_basic_table');
+    table_sort_filter('display_basic_org_table');
 }
 // Function to get the selected row data
 function get_selected_row_data(){
-    $("#display_basic_table TBODY TR").each(function () {
+    $("#display_basic_org_table TBODY TR").each(function () {
         var row = $(this);
         var supp_arr_obj ={};
         supp_arr_obj.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
@@ -441,4 +550,53 @@ function add_popup_row() {
     }
     table_sort_filter('id_popup_table');
     $('#delete_data').hide()
+}
+
+function values_reload(formdata){
+    localStorage.setItem("supplier_guid", document.getElementById("supplier_guid").value);
+    localStorage.setItem("supplier_image_id", document.getElementById("supplier_image_id").value);
+    localStorage.setItem("supplier_id", document.getElementById("supplier_id").value);
+    localStorage.setItem("supplier_type", document.getElementById("supplier_type").value);
+    localStorage.setItem("supplier_regnum", document.getElementById("supplier_regnum").value);
+    localStorage.setItem("name1", document.getElementById("name1").value);
+    localStorage.setItem("name2", document.getElementById("name2").value);
+    localStorage.setItem("city_id", document.getElementById("city_id").value);
+    localStorage.setItem("postal_code_id", document.getElementById("postal_code_id").value);
+    localStorage.setItem("street_id", document.getElementById("street_id").value);
+    localStorage.setItem("country_code_id", document.getElementById("country_code_id").value);
+    localStorage.setItem("currency_id", document.getElementById("currency_id").value);
+    localStorage.setItem("language_id", document.getElementById("language_id").value);
+    localStorage.setItem("landline_id", document.getElementById("landline_id").value);
+    localStorage.setItem("mobile_num_id", document.getElementById("mobile_num_id").value);
+    localStorage.setItem("fax_id", document.getElementById("fax_id").value);
+    localStorage.setItem("email_id", document.getElementById("email_id").value);
+     localStorage.setItem("search_term1_id", document.getElementById("search_term1_id").value);
+    localStorage.setItem("search_term2_id", document.getElementById("search_term2_id").value);
+    localStorage.setItem("working_days_id", document.getElementById("working_days_id").value);
+    localStorage.setItem("duns_number_id", document.getElementById("duns_number_id").value);
+    localStorage.setItem("output_medium_id", document.getElementById("output_medium_id").value);
+}
+function get_values_onerror(){
+    $('#supplier_guid').val(localStorage.getItem("supplier_guid"));
+   $('#supplier_image_id').val(localStorage.getItem("supplier_image_id"));
+   $('#supplier_id').val(localStorage.getItem("supplier_id"));
+    $('#supplier_type').val(localStorage.getItem("supplier_type"));
+   $('#supplier_regnum').val(localStorage.getItem("supplier_regnum"));
+   $('#name1').val(localStorage.getItem("name1"));
+    $('#name2').val(localStorage.getItem("name2"));
+   $('#city_id').val(localStorage.getItem("city_id"));
+   $('#postal_code_id').val(localStorage.getItem("postal_code_id"));
+    $('#street_id').val(localStorage.getItem("street_id"));
+   $('#country_code_id').val(localStorage.getItem("country_code_id")).attr('selected', 'selected');
+   $('#currency_id').val(localStorage.getItem("currency_id")).attr('selected', 'selected');
+    $('#language_id').val(localStorage.getItem("language_id")).attr('selected', 'selected');
+    $('#landline_id').val(localStorage.getItem("landline_id"));
+   $('#mobile_num_id').val(localStorage.getItem("mobile_num_id"));
+   $('#fax_id').val(localStorage.getItem("fax_id"));
+       $('#email_id').val(localStorage.getItem("email_id"));
+   $('#search_term1_id').val(localStorage.getItem("search_term1_id"));
+   $('#search_term2_id').val(localStorage.getItem("search_term2_id"));
+    $('#working_days_id').val(localStorage.getItem("working_days_id"));
+   $('#duns_number_id').val(localStorage.getItem("duns_number_id"));
+   $('#output_medium_id').val(localStorage.getItem("output_medium_id"));
 }

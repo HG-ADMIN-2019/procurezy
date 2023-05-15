@@ -102,6 +102,7 @@
                             <p id="id_error_msg_country_name" ></p>
                             <p id="id_error_msg_country_length" ></p>
                         </div>
+
                         <div id="error_msg_id" class="alert alert-danger display-none" role="alert"><span id="error_message"></span></div>
                         <div id="id_warning_msg_id" class="alert alert-warning display-none" role="alert"></div>
                         <div id="id_info_msg_id" class="alert alert-primary display-none" role="alert"></div>
@@ -412,7 +413,7 @@
                  $(row).css("border", "#f8d7da");
                  row_color_highlight(row);
                  $("#id_check_error_messages").prop("hidden",false);
-                 var display7 = get_msg_desc_check_data("JMSG001");
+                 var display7 = ui_messeges("JMSG001");
                  document.getElementById("id_check_error_messages").innerHTML = display7;
                  $("#save_id").prop("hidden", true);
                  $("#id_delete_duplicate").show()
@@ -423,7 +424,7 @@
                  $(row).css("border", "#f8d7da");
                  row_color_highlight(row);
                  $("#id_check_error_messages").prop("hidden",false);
-                 var display7 = get_msg_desc_check_data("JMSG001");
+                 var display7 = ui_messeges("JMSG001");
                  document.getElementById("id_check_error_messages").innerHTML = display7;
                  $("#save_id").prop("hidden", true);
                  $("#id_delete_duplicate").show()

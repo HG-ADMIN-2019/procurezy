@@ -124,7 +124,7 @@ def check_unspsc_category_data(ui_data, status):
     dependent_count = 0
     valid_data_list = []
     for unspsc_desc in ui_data:
-        if django_query_instance.django_existence_check(UnspscCategories,
+        if django_query_instance.django_existence_check(UnspscCategoriesCustDesc,
                                                         {'del_ind': False,
                                                          'prod_cat_id': unspsc_desc['prod_cat_id']}):
             if unspsc_desc['del_ind'] in ['1', True]:

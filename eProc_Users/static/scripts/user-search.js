@@ -1,14 +1,44 @@
  // Script to generate sort and filter feature for tables
  $(document).ready( function() {
    nav_bar_admin();
+   $("body").css("padding-top", "4rem");
    $('#username').val(localStorage.getItem("username"));
    $('#first_name').val(localStorage.getItem("first_name"));
    $('#last_name').val(localStorage.getItem("last_name"));
    $('#email').val(localStorage.getItem("email"));
    $('#user_type').val(localStorage.getItem("user_type"));
    $('#employee_id').val(localStorage.getItem("employee_id"));
+   if(localStorage.getItem("user_locked") == "true"){
+        $('#user_locked_id').prop("checked", true)
+   }
+   else{ $('#user_locked_id').prop("checked", false)}
+   if(localStorage.getItem("pwd_locked") == "true"){
+        $('#pwd_locked_id').prop("checked", true)
+   }
+   else{ $('#pwd_locked_id').prop("checked", false)}
+   if(localStorage.getItem("is_active") == "true"){
+        $('#is_active_id').prop("checked", true)
+   }
+   else{ $('#is_active_id').prop("checked", false)}
+   const form = document.getElementById("search_form");
    table_sort_filter_basic("table_sort_filter_basic")
 });
+
+function validateForm(event) {
+    var temp = $('#username').val();
+    if($('#username').val() == ''){
+        if($('#first_name').val() == ''){
+            if($('#last_name').val() == ''){
+                $('#error_message_search').text("Please enter Username or First name or Last name");
+                document.getElementById("error_message_search").style.color = "Red";
+                $("#error_msg").css("display", "block")
+                CloseLoaderPopup();
+                event.preventDefault();
+                return false;
+            }
+        }
+    }
+}
 
 //onclick of upload button display id_data_upload popup and set GLOBAL_ACTION button value
 function onclick_upload_button() {

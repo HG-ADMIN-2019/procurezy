@@ -150,6 +150,17 @@
 
             </ul>
         </div>
+        <div id="som_sub_menu" style="display:none">
+            <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+                <li class="nav-item active" id="nav-item__som">
+                    {% url 'eProc_Supplier_Order_Management:po_extract'  as personal_settings_url %}
+                    <div class="nav-link" id="som_btn">
+                        <a href="{{personal_settings_url}}" {% if request.path == personal_settings_url %} class="active"{% endif %} > Supplier Order Management</a>
+                    </div>
+                </li>
+
+            </ul>
+        </div>
 
         <div id="time_sheet_sub_menu" style="display:none">
             <ul class="navbar-nav mr-auto mt-2 mt-lg-0">

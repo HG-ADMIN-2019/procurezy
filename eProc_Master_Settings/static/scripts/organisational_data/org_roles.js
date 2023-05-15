@@ -62,8 +62,8 @@ $('#save_id').click(function () {
 //Read popup table data
 function read_popup_data() {
     $('#id_popup_table').DataTable().destroy();
+    roles_data = new Array();
     validate_add_attributes = [];
-    var roles = {};
     $("#id_popup_table TBODY TR").each(function () {
         var row = $(this);
         roles = {};

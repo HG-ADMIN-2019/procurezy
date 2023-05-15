@@ -231,3 +231,4 @@ def user_details_email(request):
         email_notify(email_data, variant_name, client)
 
     return JsonResponse({'user_res': user_res})
+

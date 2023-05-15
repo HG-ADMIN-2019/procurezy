@@ -22,9 +22,10 @@
             </div>
         </div>
         <hr>
+        <div id="error_msg" class="alert alert-danger display-none" role="alert"><span id="error_message_search"></span></div>
         <div class="card card-shadow-1">
             <div class="card-body">
-                <form method="POST" id="search_form" name="search_form">
+                <form method="POST" id="search_form" name="search_form" >
                     {% csrf_token %}
                     <div class="row">
                         <div class="col-md">
@@ -40,7 +41,7 @@
                             <input type="text" class="form-control check_for_search" id="last_name" name='last_name' >
                         </div>
                         <div class="col-auto">
-                            <button class="button-search-users btn btn-primary" type="submit"
+                            <button id="id_search" class="button-search-users btn btn-primary" type="submit"
                                 title="Please click to get the search details!" onclick="reload()"><i class="fas fa-search"></i> search
                             </button>
                         </div>
@@ -59,10 +60,9 @@
                             <div class="col-md-3">
                                 <label for="">User Type</label>
                                 <select type="text" class="form-control" id="user_type" name="user_type">
-                                     {% for usertype in dropdown_usertype_values %}
-                                    <option value="{{usertype.field_type_id}}">{{usertype.field_type_desc}}</option>
+                                    {% for usertype in dropdown_usertype_values %}
+                                        <option value="{{usertype.field_type_id}}">{{usertype.field_type_desc}}</option>
                                     {% endfor %}
-    
                                 </select>
                             </div>
                             <div class="col-md-2">
@@ -71,7 +71,7 @@
                             </div>
                             <div class="col-md">
                                 <div class="form-check">
-                                    <input class="form-check-input checkbox-size" type="checkbox" name="user_locked">
+                                    <input class="form-check-input checkbox-size" type="checkbox" name="user_locked" id="user_locked_id">
                                     <label class="form-check-label" for="">
                                         User Locked
                                     </label>
@@ -79,7 +79,7 @@
                             </div>
                             <div class="col-md">
                                 <div class="form-check">
-                                    <input class="form-check-input checkbox-size" type="checkbox"  name="pwd_locked">
+                                    <input class="form-check-input checkbox-size" type="checkbox"  name="pwd_locked" id="pwd_locked_id">
                                     <label class="form-check-label" for="">
                                         Password Locked
                                     </label>
@@ -87,9 +87,9 @@
                             </div>
                             <div class="col-md">
                                 <div class="form-check">
-                                    <input class="form-check-input checkbox-size" type="checkbox" name="is_active">
+                                    <input class="form-check-input checkbox-size" type="checkbox" name="is_active" id="is_active_id">
                                     <label class="form-check-label" for="">
-                                        In Active
+                                        Inactive
                                     </label>
                                 </div>
                             </div>
@@ -105,14 +105,7 @@
                 </form>
             </div>
         </div>
-        {% if employee_results.count > 0 %}
-        <div class="search_result_count_card card">
-            <div class="card-body">
-                <h6 class="card-title">Total number of results found
-                    :{{employee_results.count}}</h6>
-            </div>
-        </div>
-        {% elif employee_results.count == 0  %}
+        {% if count == 0  %}
         <div class="search_result_count_card card">
             <div class="card-body">
                 <h6 class="card-title">No Results Found</h6>
@@ -160,25 +153,29 @@
                             </td>
                             <td>
                                 <label class="switch">
-                                    <label class="toggle">
+                                    <label class="toggle-control">
                                         {% if results.user_locked %}
-                                        <input type="checkbox" id="{{results.employee_id}}-LOCKED" class="toggle-input" checked>
+                                        <input type="checkbox" id="{{results.employee_id}}-LOCKED" class="toggle-block" checked>
+                                        <span class="control"></span>
                                         {% else %}
-                                        <input type="checkbox" id="{{results.employee_id}}-UNLOCKED" class="toggle-input">
+                                        <input type="checkbox" id="{{results.employee_id}}-UNLOCKED" class="toggle-block">
+                                        <span class="control"></span>
                                         {% endif %}
-                                        <div class="toggle-controller default-success"></div>
+<!--                                        <div class="toggle-controller default-success"></div>-->
                                     </label>
                                 </label>
                             </td>
                             <td>
                                 <label class="switch">
-                                    <label class="toggle">
+                                    <label class="toggle-control">
                                         {% if results.pwd_locked %}
-                                        <input type="checkbox" id="{{results.employee_id}}-PWDLOCKED" class="toggle-input" checked>
+                                        <input type="checkbox" id="{{results.employee_id}}-PWDLOCKED" class="toggle-block" checked>
+                                         <span class="control"></span>
                                         {% else %}
-                                        <input type="checkbox" id="{{results.employee_id}}-PWDUNLOCKED" class="toggle-input">
+                                        <input type="checkbox" id="{{results.employee_id}}-PWDUNLOCKED" class="toggle-block">
+                                         <span class="control"></span>
                                         {% endif %}
-                                        <div class="toggle-controller default-success"></div>
+<!--                                        <div class="toggle-controller default-success"></div>-->
                                     </label>
                                 </label>
                             </td>
@@ -210,7 +207,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                You are about to delete  "<span id="form_id_del"></span>". Are you sure?
+                You Are About To Delete  "<span id="form_id_del"></span>". Are You Sure?
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
@@ -231,7 +228,7 @@
                 </button>
             </div>
             <div class="modal-body">
-                <p>Are you sure you want to delete?.</p>
+                <p>Are You Sure You Want To Delete?.</p>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-outline-primary" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
@@ -389,7 +386,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <p>Are you sure you want to Change?.</p>
+                    <p>Are You Sure You Want To Change?.</p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-primary" data-dismiss="modal" onclick="toggle()"><i class="fas fa-times"></i> cancel</button>
@@ -411,7 +408,6 @@ var db_header_data = uiConstants['EMAIL','USERNAME','PERSON_NO','FORM_OF_ADDRESS
 var data_delete = '';
 var rendered_emp_data = JSON.parse(document.getElementById('employee_results').textContent);
 
-
 function reload()
 {
     localStorage.setItem("username", document.getElementById("username").value);
@@ -420,6 +416,9 @@ function reload()
     localStorage.setItem("email", document.getElementById("email").value);
     localStorage.setItem("user_type", document.getElementById("user_type").value);
     localStorage.setItem("employee_id", document.getElementById("employee_id").value);
+    localStorage.setItem("user_locked", document.getElementById("user_locked_id").checked);
+    localStorage.setItem("pwd_locked", document.getElementById("pwd_locked_id").checked);
+    localStorage.setItem("is_active", document.getElementById("is_active_id").checked);
     OpenLoaderPopup();
 }
 
@@ -449,6 +448,7 @@ function get_user_detail_to_delete(element) {
         data_delete = element;
         document.getElementById("form_id_del").innerHTML = data_delete;
         $('#confirm_delete_pop_up').modal('show')
+        $(".emp_checkbox").prop("checked", false);
     }
 function valueChanged() {
     if ($('.emp_checkbox').is(":checked")) {
@@ -483,34 +483,29 @@ function display_emp_data(emp_data){
     $('#user_tab').DataTable().destroy();
     $("#user_tab_tbody").empty();
     $.each(emp_data, function (i, emp) {
-        if(emp.employee_id){
-            checkbox_input = '<input type="checkbox" class="emp_checkbox" onclick="valueChanged()">'
-        }
-        else{
-            checkbox_input = '<input type="checkbox" class="emp_checkbox" onclick="valueChanged()" >'
-        }
+        checkbox_input = '<input type="checkbox" class="emp_checkbox" onclick="valueChanged();" >'
         var lock_id, pwd_lock;
         if(emp.user_locked){
-            lock_id = '<input type="checkbox" id="'+emp.employee_id.concat("-LOCKED")+'" class="toggle-input" checked>';
+            lock_id = '<input type="checkbox" id="'+emp.employee_id.concat("-LOCKED")+'" class="toggle-block" checked><span class="control"></span>';
             }
         else {
-            lock_id = '<input type="checkbox" id="'+emp.employee_id.concat("-UNLOCKED")+'" class="toggle-input">';
+            lock_id = '<input type="checkbox" id="'+emp.employee_id.concat("-UNLOCKED")+'" class="toggle-block"> <span class="control"></span>';
         }
         if(emp.pwd_locked){
-            pwd_lock = '<input type="checkbox" id="'+emp.employee_id.concat("-PWDLOCKED")+'" class="toggle-input" checked>';
+            pwd_lock = '<input type="checkbox" id="'+emp.employee_id.concat("-PWDLOCKED")+'" class="toggle-block" checked><span class="control"></span>';
         }
         else {
-            pwd_lock = '<input type="checkbox" id="'+emp.employee_id.concat("-PWDUNLOCKED")+'" class="toggle-input">';
+            pwd_lock = '<input type="checkbox" id="'+emp.employee_id.concat("-PWDUNLOCKED")+'" class="toggle-block"><span class="control"></span>';
             }
-        emp_detail_html += '<tr id="'+emp.employee_id+'"><td>'+checkbox_input+'</td> '+
+        emp_detail_html += '<tr id="tr_'+emp.email+'"><td class="class_select_checkbox">'+checkbox_input+'</td> '+
         '<td><a href="#" id="'+ emp.employee_id +'" class="deletepop" target="_blank">'+ emp.employee_id +'</a></td>'+
          '<td>'+ emp.username +'</td>'+
          '<td>'+ emp.first_name +'</td>'+
          '<td>'+ emp.last_name +'</td>'+
          '<td>'+ emp.email +'</td>'+
          '<td>' + emp.is_active + '</td>'+
-         '<td><label class="switch"><label class="toggle">' + lock_id + '<div class="toggle-controller default-success"></div></label></label></td>'+
-         '<td><label class="switch"><label class="toggle">' + pwd_lock + '<div class="toggle-controller default-success"></div></label></label></td>'+
+         '<td><label class="switch"><label class="toggle-control">' + lock_id + '</label></label></td>'+
+         '<td><label class="switch"><label class="toggle-control">' + pwd_lock + '</label></label></td>'+
          '<td class="item-action-icon-section"><span title="Delete employee" onclick="get_user_detail_to_delete(this.id)" id="'+ emp.email +'">'+
           '<i class="material-icons item-action-icons">delete_outline</i></span></td>'+
          '</tr>';
@@ -542,8 +537,7 @@ function main_table_delete(){
         success: function (Response) {
             display_emp_data(Response.employee_results);
             $('#success_msg_id').text(Response.success_message)
-            $("#error_msg_div").prop("hidden",false);
-            $("#id_delete_emp").prop("hidden",true);
+            $("#error_msg_div").prop("hidden",false)
             message_display_time();
             CloseLoaderPopup();
         }
@@ -905,7 +899,7 @@ function check_data() {
 }
 var data = {};
 var block_id = '';
- $('.toggle-input').change(function() {
+ $('.toggle-block').change(function() {
         $('#id_confirm_popup').modal('show')
         if($(this).is(':checked')) {
             $('.toggle-off').removeClass('active');
@@ -920,10 +914,11 @@ var block_id = '';
         data.employee_id = id;
         var id = this.id
         block_id = id
-        data.employee_id = id.split('-')[0]
+<!--        data.employee_id = id.split('-')[0]-->
   });
   var previous_state;
 function lock_active_change(){
+        OpenLoaderPopup();
         jQuery.ajax({
        type: 'POST',
        url: "{% url 'eProc_Admin_Tool:lock_unlock_emp' %}",
@@ -931,10 +926,11 @@ function lock_active_change(){
        data: JSON.stringify(data),
        success: function(result){
              $('#id_confirm_popup').modal('hide');
-              $('#success_msg_id').text("Changed Successfully");
+             $('#success_msg_id').text("Changed Successfully");
             previous_state = data.flag;
             $("#error_msg_div").prop("hidden",false)
             message_display_time();
+            CloseLoaderPopup();
        },
        error: function(xhr, resp, text) {
        },
@@ -944,16 +940,6 @@ function lock_active_change(){
         });
     }
 
-    function reload_previous_state(){
-        var emp_id = data.employee_id ;
-         $.each(rendered_emp_data, function(index, data){
-            var emp_num = emp_id.substring(0,emp_id.indexOf("-"));
-            if(data.employee_id == emp_num){
-                previous_state = data.user_locked;
-            }
-         });
-        document.getElementById(emp_id).checked = previous_state;
-    }
    function toggle(){
         var abc = $('#'+block_id)
         if($('#'+block_id).is(':checked')) {
@@ -963,13 +949,12 @@ function lock_active_change(){
             $('#'+block_id).prop("checked", true);
         }
     }
-
+<!--Check All -->
 <!-- ----------------------------------------------------   -->
 var table = $('#user_tab').DataTable();
  var rows_selected = [];
-//onclick of select all checkbox
+ //onclick of select all checkbox
 $('#user_tab tbody').on('click', 'input[class="emp_checkbox"]', function(e){
-     var table = $('#user_tab').DataTable();
       var $row = $(this).closest('tr');
       // Get row data
       var data = table.row($row).data();
@@ -994,16 +979,15 @@ $('#user_tab tbody').on('click', 'input[class="emp_checkbox"]', function(e){
       // Prevent click event from propagating to parent
       e.stopPropagation();
    });
-   // Handle click on table cells with checkboxes
-   $('#user_tab').on('click', 'tbody td, thead th:first-child', function(e){
-      $(this).parent().find('input[class="emp_checkbox"]').trigger('click');
-   });
+
    // Handle click on "Select all" control
    $('thead input[id="selectAll"]', table.table().container()).on('click', function(e){
       if(this.checked){
          $('#user_tab tbody input[class="emp_checkbox"]:not(:checked)').trigger('click');
+         $(".emp_checkbox").prop("checked", true);
       } else {
          $('#user_tab tbody input[class="emp_checkbox"]:checked').trigger('click');
+         $(".emp_checkbox").prop("checked", false);
       }
       // Prevent click event from propagating to parent
       e.stopPropagation();
@@ -1012,6 +996,7 @@ $('#user_tab tbody').on('click', 'input[class="emp_checkbox"]', function(e){
    table.on('draw', function(){
       // Update state of "Select all" control
       updateDataTableSelectAllCtrl(table);
+      valueChanged();
 //      e.stopPropagation();
    });
     function updateDataTableSelectAllCtrl(table){
@@ -1039,6 +1024,7 @@ $('#user_tab tbody').on('click', 'input[class="emp_checkbox"]', function(e){
           }
    }
 }
+
 
 </script>
 {% endblock %}

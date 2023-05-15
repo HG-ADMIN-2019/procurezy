@@ -7,6 +7,7 @@
     
       $('#nav_menu_items').remove();
       $("body").css("padding-top", "3.7rem");
+      $('.multiple_select').selectpicker();
   });
 
 

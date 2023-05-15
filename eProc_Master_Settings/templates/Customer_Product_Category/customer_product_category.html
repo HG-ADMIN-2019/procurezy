@@ -647,6 +647,7 @@
 
     // on click add icon display the row in to add the new entries
     function add_popup_row() {
+        $("#error_msg_id").css("display", "none")
         basic_add_new_html = '';
         var display_db_data = '';
         var getid = $(".prodid:last").attr("id");
@@ -656,7 +657,7 @@
         $(".modal").on("hidden.bs.modal", function () {
             $("#id_error_msg").html(" ");
         });
-        basic_add_new_html = 
+        basic_add_new_html =
         '<tr>'+
             '<td><input type="checkbox" required></td>'+
             '<td><select type="text" class="input form-control prodid" id="prodid-'+inc_index+'"  name="prodid" onchange="GetSelectedTextValue(this)">'+prod_cat_id_dropdown+'</select></td>'+
@@ -665,11 +666,32 @@
         '</tr>';
         $('#id_popup_tbody').append(basic_add_new_html);
         if (GLOBAL_ACTION == "cusprodcat_upload") {
+		   basic_add_new_html =
+			'<tr>'+
+				'<td><input type="checkbox" required></td>'+
+				'<td><select type="text" class="input form-control prodid" id="prodid-'+inc_index+'"  name="prodid" onchange="GetSelectedTextValue(this)">'+prod_cat_id_dropdown+'</select></td>'+
+				'<td hidden><input class="form-control description" type="text"  name="description"  id="description-'+inc_index+'" disabled></td>'+
+				'<td hidden><guid></td><td class="class_del_checkbox"><input type="checkbox" required></td>'+
+			'</tr>';
+            $('#id_popup_tbody').append(basic_add_new_html);
             $("#desc_upload").prop("hidden", true);
-            $(".id_del_ind_checkbox").prop("hidden", false);
+            table_sort_filter('id_popup_table');
+            $(".class_del_checkbox").prop("hidden", false);
+            $("#id_del_ind_checkbox").prop("hidden", false);
         }
-        GetSelectedTextValue($("#prodid-" + inc_index)[0]);
-        table_sort_filter_popup('id_popup_table');
+         else{
+               basic_add_new_html =
+                '<tr>'+
+                    '<td><input type="checkbox" required></td>'+
+                    '<td><select type="text" class="input form-control prodid" id="prodid-'+inc_index+'"  name="prodid" onchange="GetSelectedTextValue(this)">'+prod_cat_id_dropdown+'</select></td>'+
+                    '<td><input class="form-control description" type="text"  name="description"  id="description-'+inc_index+'" disabled></td>'+
+                    '<td hidden><guid></td><td hidden>< del_ind></td>'+
+                '</tr>';
+            $('#id_popup_tbody').append(basic_add_new_html);   // Add a new row in popup
+            GetSelectedTextValue($("#prodid-" + inc_index)[0]);
+            table_sort_filter_popup('id_popup_table');
+        }
+        $('#delete_data').hide()
     }
 
     //onclick of add button display cusprodcat_Modal popup and set GLOBAL_ACTION button value
@@ -734,13 +756,13 @@
         $("#id_popup_table TBODY TR").each(function () {
             var row = $(this);
             //*************** reading data from the pop-up ***************
-            cusprodcat_prod_cat_desc = row.find("TD").eq(2).find('input[type="text"]').val().toUpperCase();
-            cusprodcat_prod_cat_id = row.find("TD").eq(1).find('input[type="text"]').val().toUpperCase();
+            cusprodcat_prod_cat_desc = row.find("TD").eq(2).find('input[type="text"]').val();
+            cusprodcat_prod_cat_id = row.find("TD").eq(1).find('select[type="text"]').val();
             checked_box = row.find("TD").eq(3).find('input[type="checkbox"]').is(':checked')
-            if (cusprodcat_prod_cat_id_check.includes(cusprodcat_prod_cat_id)) {
+            if (cusprodcat_code_check.includes(cusprodcat_prod_cat_id)) {
                 $(row).remove();
             }
-            cusprodcat_check.push(cusprodcat_prod_cat_id);
+            cusprodcat_code_check.push(cusprodcat_prod_cat_id);
               main_table_low_value = get_main_table_data_upload(); //Read data from main table
             if (main_table_low_value.includes(cusprodcat_prod_cat_id)) {
                 $(row).remove();
@@ -783,6 +805,7 @@
                         var edit_basic_data = '';
                         var del_ind = '';
                         var dropdown_values = [];
+                        var inc_index=0;
                         $("#id_popup_tbody").empty();
                         $.each(response.data, function (i, value) {
                             var prod_cat_id_value = value[0]
@@ -813,8 +836,15 @@
                                 opt = '<option value="' + value[1] + '">' + value[1] + '</option>'
                             }
                             prod_cat_id_list = opt + prod_cat_id_list
-                            edit_basic_data += '<tr ><td><input type="checkbox" required></td><td><select type="text" class="form-control">value ="' + value[0] + '"'+prod_cat_id_list+'</select></td><td hidden></td><td hidden></td><td>'+ del_ind +'</td></tr>';
-                        });
+                            edit_basic_data +=
+                                    '<tr>'+
+                                        '<td><input type="checkbox" required></td>'+
+                                        '<td><select type="text" class="input form-control prodid" id="prodid-'+inc_index+'"  name="prodid" onchange="GetSelectedTextValue(this)">value ="' + value[0] + '"'+prod_cat_id_list+'</select></td>'+
+                                        '<td hidden><input class="form-control description" type="text"  name="description"  id="description-'+inc_index+'" disabled></td>'+
+                                        '<td hidden><guid></td><td>'+ del_ind +'</td>'+
+                                    '</tr>';
+                            inc_index += 1;
+                         });
                         $('#id_popup_tbody').append(edit_basic_data);
                         var i =0;
                         $("#id_popup_table TBODY TR").each(function() {
@@ -1115,6 +1145,7 @@
         var prod_cat_id_check = new Array
         del_ind = ''
         $("#id_popup_table TBODY TR").each(function() {
+            $('#id_popup_table').DataTable().destroy();
             var row = $(this);
             unspsc_dic = {}
             //*************** reading data from the pop-up ***************
@@ -1128,41 +1159,22 @@
             prodcat_list.push(unspsc_dic)
             var format = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
             get_main_table_data(); //Read data from main table
-            //*************** checking for empty records for country code ***************
-            if(unspsc_dic.prod_cat_id.length == 0){
-                $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
-                row_color_highlight_empty(row);
-                $("#id_error_msg_country_length").prop("hidden",false);
-                error_message = ui_messeges("JMSG002")// Get message details
-                var display8 = error_message;
-                document.getElementById("id_error_msg_country_length").innerHTML = display8+ "Country Code";
-                count = count +1;
-            }
-            //*************** checking for minimum length for country code (max length = 2) ***************
-            else if(unspsc_dic.prod_cat_id.length == 1){
-                    $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
-                    row_color_highlight_minlength(row);
-                    $("#id_error_msg_country_length").prop("hidden",false);
-                    error_message = ui_messeges("JMSG113")// Get message details
-                    var display8 = error_message;
-                    document.getElementById("id_error_msg_country_length").innerHTML = display8+ "Country Code";
-                    count = count +1;
-            }
+
             //*************** checking for special characters for country code ***************
-            else if(format.test(unspsc_dic.prod_cat_id)){
+            if(format.test(unspsc_dic.prod_cat_id)){
                 $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
                 row_color_highlight_special(row);
-                $("#id_error_msg_country_code").prop("hidden",false);
+                $("#id_error_msg_prod_cat_id").prop("hidden",false);
                 error_message = ui_messeges("JMSG003")// Get message details
                 var display4 = error_message;
-                document.getElementById("id_error_msg_country_code").innerHTML = display4+ "Country Code";
+                document.getElementById("id_error_msg_prod_cat_id").innerHTML = display4+ "Product Code";
                 count = count +1;
             }
             else if(prod_cat_id_check.includes(unspsc_dic.prod_cat_id)){
                  $(row).css("border", "#f8d7da");
                  row_color_highlight(row);
                  $("#id_check_error_messages").prop("hidden",false);
-                 var display7 = get_msg_desc_check_data("JMSG001");
+                 var display7 = ui_messeges("JMSG001");
                  document.getElementById("id_check_error_messages").innerHTML = display7;
                  $("#save_id").prop("hidden", true);
                  $("#id_delete_duplicate").show()
@@ -1173,7 +1185,7 @@
                  $(row).css("border", "#f8d7da");
                  row_color_highlight(row);
                  $("#id_check_error_messages").prop("hidden",false);
-                 var display7 = get_msg_desc_check_data("JMSG001");
+                 var display7 = ui_messeges("JMSG001");
                  document.getElementById("id_check_error_messages").innerHTML = display7;
                  $("#save_id").prop("hidden", true);
                  $("#id_delete_duplicate").show()
@@ -1201,21 +1213,21 @@
             if (prodcat_list == 0) {
                 $("#save_id").prop("hidden", true);
             }
-        popup_data_dict = {'data_list': prodcat_list}
-        OpenLoaderPopup();
-        $.ajax({
-            type: 'POST',
-            url: "{% url 'eProc_Configuration_Check:check_cust_unspsc_category' %}",
-            data: JSON.stringify(popup_data_dict),
-            success: function(response) {
-                table_sort_filter_popup_pagination('id_popup_table')
-                 $("#id_check_special_character_messages").prop("hidden", false);
-                 if (count == 0) {
-                    $("#id_check_special_character_messages").prop("hidden", true);
-                 }
-                var message = ''
-                update_check_message(response.messages[1])
-                CloseLoaderPopup();
+            popup_data_dict = {'data_list': prodcat_list}
+            OpenLoaderPopup();
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'eProc_Configuration_Check:check_cust_unspsc_category' %}",
+                data: JSON.stringify(popup_data_dict),
+                success: function(response) {
+                    table_sort_filter_popup_pagination('id_popup_table')
+                     $("#id_check_special_character_messages").prop("hidden", false);
+                     if (count == 0) {
+                        $("#id_check_special_character_messages").prop("hidden", true);
+                     }
+                    var message = ''
+                    update_check_message(response.messages[1])
+                    CloseLoaderPopup();
                 }
             });
         }
@@ -1269,11 +1281,19 @@ function get_main_table_data_upload() {
     $("#display_basic_table TBODY TR").each(function() {
         var row = $(this);
         var main_attribute = {};
-        main_attribute.prod_cat_id = row.find("TD").eq(1).html();
+        main_attribute.prod_cat_id = row.find("TD").eq(3).html();
         main_table_low_value.push(main_attribute.prod_cat_id);
     });
-    table_sort_filter('display_basic_table');
+   table_sort_filter('display_basic_table');
     return main_table_low_value
+}
+
+//Get message for check data function
+function get_msg_desc_check_data(msg){
+    var msg_type ;
+    msg_type = message_config_details(msg);
+    $("#error_msg_id").prop("hidden", false);
+    return msg_type.messages_id_desc;
 }
 
 </script>

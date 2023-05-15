@@ -61,26 +61,31 @@ class MasterSettingsSave:
 
                 prodcat_db_list.append(prodcat_db_dictionary)
             else:
-                if django_query_instance.django_existence_check(UnspscCategoriesCust,
-                                                                {'prod_cat_id': prodcat_detail['prod_cat_id'],
-                                                                 'client': self.client}):
-                    django_query_instance.django_update_query(UnspscCategoriesCust,
-                                                              {'prod_cat_id': prodcat_detail['prod_cat_id'],
-                                                               'client': self.client},
-                                                              {'prod_cat_id': UnspscCategories.objects.get(
-                                                                  prod_cat_id=prodcat_detail['prod_cat_id']),
-                                                                  'unspsc_categories_cust_changed_at': self.current_date_time,
-                                                                  'unspsc_categories_cust_changed_by': self.username,
-                                                                  'del_ind': prodcat_detail['del_ind'],
-                                                                  'client': OrgClients.objects.get(client=self.client)})
-                else:
+                if prodcat_detail['del_ind'] in ['1', True]:
                     django_query_instance.django_filter_delete_query(UnspscCategoriesCust,
                                                                      {'prod_cat_id': prodcat_detail['prod_cat_id'],
                                                                       'client': self.client})
-                if prodcat_detail['del_ind'] in ['1', True]:
                     prod_cat = prodcat_detail['prod_cat_id']
 
                     delete_prod_cat_image_to_db(prod_cat)
+                else:
+                    if django_query_instance.django_existence_check(UnspscCategoriesCust,
+                                                                    {'prod_cat_id': prodcat_detail['prod_cat_id'],
+                                                                     'client': self.client}):
+                        django_query_instance.django_update_query(UnspscCategoriesCust,
+                                                                  {'prod_cat_id': prodcat_detail['prod_cat_id'],
+                                                                   'client': self.client},
+                                                                  {'prod_cat_id': UnspscCategories.objects.get(
+                                                                      prod_cat_id=prodcat_detail['prod_cat_id']),
+                                                                      'unspsc_categories_cust_changed_at': self.current_date_time,
+                                                                      'unspsc_categories_cust_changed_by': self.username,
+                                                                      'del_ind': prodcat_detail['del_ind'],
+                                                                      'client': OrgClients.objects.get(
+                                                                          client=self.client)})
+                    else:
+                        django_query_instance.django_filter_delete_query(UnspscCategoriesCust,
+                                                                         {'prod_cat_id': prodcat_detail['prod_cat_id'],
+                                                                          'client': self.client})
 
         if prodcat_db_list:
             bulk_create_entry_db(UnspscCategoriesCust, prodcat_db_list)
@@ -127,20 +132,42 @@ class MasterSettingsSave:
 
                 prodcatdesc_db_list.append(prodcatdesc_db_dictionary)
             else:
-                django_query_instance.django_update_query(UnspscCategoriesCustDesc,
-                                                          {'prod_cat_id': prodcatdesc_detail['prod_cat_id'],
-                                                           'language_id': prodcatdesc_detail['language_id'],
-                                                           'client': self.client},
-                                                          {'category_desc': convert_to_camel_case(
-                                                              prodcatdesc_detail['description']),
-                                                              'prod_cat_id': UnspscCategories.objects.get(
-                                                                  prod_cat_id=prodcatdesc_detail['prod_cat_id']),
-                                                              'language_id': Languages.objects.get(
-                                                                  language_id=prodcatdesc_detail['language_id']),
-                                                              'unspsc_categories_cust_desc_changed_at': self.current_date_time,
-                                                              'unspsc_categories_cust_desc_changed_by': self.username,
-                                                              'del_ind': prodcatdesc_detail['del_ind'],
-                                                              'client': OrgClients.objects.get(client=self.client)})
+                if prodcatdesc_detail['del_ind'] in ['1', True]:
+                    django_query_instance.django_filter_delete_query(UnspscCategoriesCustDesc,
+                                                                     {'prod_cat_id': prodcatdesc_detail['prod_cat_id'],
+                                                                      'language_id': prodcatdesc_detail['language_id'],
+                                                                      'client': self.client})
+                    if prodcatdesc_detail['language_id'] == 'EN':
+                        django_query_instance.django_filter_delete_query(UnspscCategoriesCust,
+                                                                         {'prod_cat_id': prodcatdesc_detail[
+                                                                             'prod_cat_id'],
+                                                                          'client': self.client})
+                else:
+                    if django_query_instance.django_existence_check(UnspscCategoriesCustDesc,
+                                                                    {'prod_cat_id': prodcatdesc_detail['prod_cat_id'],
+                                                                     'client': self.client}):
+                        django_query_instance.django_update_query(UnspscCategoriesCustDesc,
+                                                                  {'prod_cat_id': prodcatdesc_detail['prod_cat_id'],
+                                                                   'language_id': prodcatdesc_detail['language_id'],
+                                                                   'client': self.client},
+                                                                  {'category_desc': convert_to_camel_case(
+                                                                      prodcatdesc_detail['description']),
+                                                                      'prod_cat_id': UnspscCategories.objects.get(
+                                                                          prod_cat_id=prodcatdesc_detail[
+                                                                              'prod_cat_id']),
+                                                                      'language_id': Languages.objects.get(
+                                                                          language_id=prodcatdesc_detail[
+                                                                              'language_id']),
+                                                                      'unspsc_categories_cust_desc_changed_at': self.current_date_time,
+                                                                      'unspsc_categories_cust_desc_changed_by': self.username,
+                                                                      'del_ind': prodcatdesc_detail['del_ind'],
+                                                                      'client': OrgClients.objects.get(
+                                                                          client=self.client)})
+                    else:
+                        django_query_instance.django_filter_delete_query(UnspscCategoriesCustDesc,
+                                                                         {'prod_cat_id': prodcatdesc_detail[
+                                                                             'prod_cat_id'],
+                                                                          'client': self.client})
 
         if prodcatdesc_db_list:
             bulk_create_entry_db(UnspscCategoriesCustDesc, prodcatdesc_db_list)
@@ -1585,7 +1612,6 @@ def get_gl_acc_dropdown():
     return data
 
 
-
 def get_acc_asg_cat_value_list(gl_acc_details, company_id):
     """
 
@@ -1948,7 +1974,7 @@ def get_paymentdesc_data():
     payment_desc_data = django_query_instance.django_filter_query(
         Payterms_desc, {'client': global_variables.GLOBAL_CLIENT, 'del_ind': False}, None,
         ['payment_term_guid', 'payment_term_key', 'day_limit',
-         'description', 'language_id'])
+         'description', 'language_id', 'del_ind'])
     return payment_desc_data
 
 
