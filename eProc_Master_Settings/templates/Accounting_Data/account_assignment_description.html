@@ -8,49 +8,45 @@
         <div class="elements-space-between">
             <h3>Maintain Account Assignment Descriptions</h3>
             <div>
-                <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Master_Settings:extract_accdesc_data_template' %}'"type="button">
+                <button class="btn btn-outline-primary"  title="Template" onclick="location.href='{% url 'eProc_Master_Settings:extract_accdesc_data_template' %}'"type="button">
                     <i class="fas fa-download"></i> template
                 </button>
                 <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Master_Settings:extract_accdesc_data' %}'"type="button">
                     <i class="fas fa-download"></i> extract data
                 </button>
-                <button class="btn btn-outline-primary modal_upload" id="id_upload_redirect_aad" value="aad_upload" onclick="onclick_upload_button()" type="button">
+                <button class="btn btn-outline-primary modal_upload" title="Upload" id="id_upload_redirect_aad" value="aad_upload" onclick="onclick_upload_button()" type="button">
                     <i class="fas fa-cloud-upload-alt"></i>  upload data
                 </button>
-                <button class="btn btn-primary" type="button" id="id_add_data" value="ADD" data-toggle="modal" data-target="#Acc_desc_Modal" onclick="onclick_add_button(this);">
-                    <i class="fa fa-plus"></i> add Account Assignment Description
+                <button class="btn btn-primary" title="Add Account Assignment Description" type="button" id="id_add_data" value="ADD" data-toggle="modal" data-target="#Acc_desc_Modal" onclick="onclick_add_button(this);">
+                    <i class="fa fa-plus"></i> Add Account Assignment Description
                 </button>
                    <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"  onclick="window_close();">
-                    <i class="fas fa-times"></i> close
+                        <i class="fas fa-times"></i> close
                 </button>
             </div>
         </div>
-
         <hr>
-
         <div class="configuration-table_section">
             <div id="err_msg_app_settings"> </div>
             <div id="err_msg_app_settings_t" class="alert alert-success" hidden><span id="success_msg_id"></span></div>
-
             <div class="table-container">
                 <div class="edit-button-section mb-4">
-                    <button class="btn btn-secondary btn-sm" id="id_edit_data" onclick="onclick_edit_button()">
+                    <button class="btn btn-secondary btn-sm" title="Edit" id="id_edit_data" onclick="onclick_edit_button()">
                         <i class="fas fa-edit"></i> Edit
                     </button>
-                    <button class="btn btn-outline-danger btn-sm" id="id_delete_data" value="aad_delete" style="display:none;" data-toggle="modal" data-target="#id_delete_confirm_popup">
+                    <button class="btn btn-outline-danger btn-sm" title="Delete" id="id_delete_data" value="aad_delete" style="display:none;" data-toggle="modal" data-target="#id_delete_confirm_popup">
                         <i class="fa fa-trash"></i> Delete
                     </button>
-                    <button class="btn btn-primary btn-sm" id="id_copy_data" style="display:none;" value="COPY" type="button" onclick="onclick_copy_button()">
+                    <button class="btn btn-primary btn-sm" title="Copy" id="id_copy_data" style="display:none;" value="COPY" type="button" onclick="onclick_copy_button()">
                         <i class="fa fa-copy"></i> Copy
                     </button>
-                    <button class="btn btn-primary btn-sm" id="id_update_data" style="display:none;" value="UPDATE" type="button" onclick="onclick_update_button()">
+                    <button class="btn btn-primary btn-sm" title="Update" id="id_update_data" style="display:none;" value="UPDATE" type="button" onclick="onclick_update_button()">
                         <i class="far fa-edit"></i> Update
                     </button>
-                    <button class="btn btn-secondary btn-sm" id="id_cancel_data" style="display:none;" type="button" onclick="display_basic_db_data()">
+                    <button class="btn btn-secondary btn-sm" title="Cancel" id="id_cancel_data" style="display:none;" type="button" onclick="display_basic_db_data()">
                         <i class="fas fa-times"></i> cancel
                     </button>
                 </div>
-
                 <!--   display basic aad table-->
                 <table id="display_basic_table" class="class_basic_aad_table table table-bordered custom-table">
                     <thead id="id_aad_table_header">
@@ -85,7 +81,6 @@
             </div>
         </div>
     </div>
-
     <div class="modal fade" id="Acc_desc_Modal" style="overflow:auto;">
         <div class="modal-dialog modal-dialog-centered modal-xl">
             <div class="modal-content">
@@ -99,10 +94,9 @@
                 <div class="modal-body">
                     <div class="popup-vertical-scroll">
                         <div id="id_del_add_button">
-                            <button class="btn btn-primary"  type="button" onclick="add_popup_row()"><i class="fa fa-plus"></i> add new row</button>
-                            <button class="btn btn-outline-danger" onclick="application_settings_delete_Row('id_popup_table')"><i class="fa fa-trash" aria-hidden="true" title="Delete Line"></i> delete</button>
+                            <button class="btn btn-primary" title="Add New Row" type="button" onclick="add_popup_row()"><i class="fa fa-plus"></i> add new row</button>
+                            <button class="btn btn-outline-danger" title="Delete" onclick="application_settings_delete_Row('id_popup_table')"><i class="fa fa-trash" aria-hidden="true"></i> delete</button>
                         </div>
-
                         <div id="id_check_success_messages" class="alert alert-success check_success_message" hidden></div>
                         <div id="id_check_error_messages" class="alert alert-danger check_error_messages" hidden></div>
                         <div id="id_check_special_character_messages" class="alert alert-danger check_special_character_messages" hidden>
@@ -113,7 +107,6 @@
                         <div id="error_msg_id" class="alert alert-danger display-none" role="alert"><span id="error_message"></span></div>
                         <div id="id_warning_msg_id" class="alert alert-warning display-none" role="alert"></div>
                         <div id="id_info_msg_id" class="alert alert-primary display-none" role="alert"></div>
-
                         <table class="class_popup_table table table-bordered mt-2" id="id_popup_table">
                             <thead>
                             <tr>
@@ -134,22 +127,19 @@
                         </table>
                     </div>
                 </div>
-
                 <!-- Modal footer -->
                 <div class="modal-footer">
-                    <button class="btn btn-primary" id="id_delete_invalid_aav"  style="display:none;" type="button" onclick="delete_invalid_aav()"><i class="fas fa-check"></i> delete invalid account values</button>
-                    <button type="button" class="btn btn-outline-primary remove_upload_data" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
-                    <button id="id_delete_duplicate" class="btn btn-primary" style="display:none;" type="button" onclick="delete_duplicate()"><i class="fa fa-trash"></i> delete duplicates</button>
-                    <button id="id_check_data" style="display:none;" class="btn btn-primary" type="button" onclick="check_data()"><i class="fas fa-check"></i> check</button>
-                    <button class="btn btn-primary" id="save_id"><i class="fas fa-save"></i> save</button>
+                    <button class="btn btn-primary" title="Delete" id="id_delete_invalid_aav"  style="display:none;" type="button" onclick="delete_invalid_aav()"><i class="fas fa-check"></i> delete invalid account values</button>
+                    <button type="button" class="btn btn-outline-primary remove_upload_data" title="Cancel" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
+                    <button id="id_delete_duplicate" class="btn btn-primary" title="Delete" style="display:none;" type="button" onclick="delete_duplicate()"><i class="fa fa-trash"></i> delete duplicates</button>
+                    <button id="id_check_data" title="Check" style="display:none;" class="btn btn-primary" type="button" onclick="check_data()"><i class="fas fa-check"></i> check</button>
+                    <button class="btn btn-primary" title="Save" id="save_id"><i class="fas fa-save"></i> save</button>
                </div>
             </div>
         </div>
     </div>
-
     <!-- modal popup to upload the csv file; save confirmation popup; delete confirmation popup -->
     {% include 'configuration_common_pop_up.html' %}
-
     <div>
         {% if messages %} {% for message in messages %} {% if message.tags == 'success' %}
         <div style="color: green; ">{{ message }}</div>
@@ -160,7 +150,6 @@
         {% endif %} {% endfor %} {% endif %}
     </div>
 </div>
-
 <script>
     var master_data_settings = '{{master_data_settings|safe}}';
     var rendered_accdatadescs_data ={{account_assignment|safe}};
@@ -192,66 +181,64 @@
 
     //************************************************
     function acc_value_desc_dropdown() {
-    acc_ass_val_list = [];
-    acc_ass_dropdwn = '';
-    var temp;
-    $.each(rendered_accasscat_data, function (i, item) {
-        temp = item.account_assign_cat;
-        acc_ass_dropdwn += '<option value="'+item.account_assign_cat+'">' + item.account_assign_cat + '</option>'
-    });
-    company_dropdwn = '';
-    $.each(rendered_company_data, function (i, item) {
-        company_dropdwn += '<option  value="' + item.company_id + '">' + item.company_id + '</option>'
-        $('drop_down_attr1').empty()
-        $('drop_down_attr1').append(company_dropdwn)
-    });
-    language_dropdwn = '';
-    $.each(rendered_language_data, function (i, item) {
-        language_dropdwn += '<option value="' + item.language_id + '">' + item.description + '</option>'
-    });
-    acc_ass_val_dropdwn = '';
-    $.each(rendered_accasscat_values, function (i, item) {
-        var validFrom = new Date(item.valid_from);
-        var validTo = new Date(item.valid_to);
+        acc_ass_val_list = [];
+        acc_ass_dropdwn = '';
+        var temp;
+        $.each(rendered_accasscat_data, function (i, item) {
+            temp = item.account_assign_cat;
+            acc_ass_dropdwn += '<option value="'+item.account_assign_cat+'">' + item.account_assign_cat + '</option>'
+        });
+        company_dropdwn = '';
+        $.each(rendered_company_data, function (i, item) {
+            company_dropdwn += '<option  value="' + item.company_id + '">' + item.company_id + '</option>'
+            $('drop_down_attr1').empty()
+            $('drop_down_attr1').append(company_dropdwn)
+        });
+        language_dropdwn = '';
+        $.each(rendered_language_data, function (i, item) {
+            language_dropdwn += '<option value="' + item.language_id + '">' + item.description + '</option>'
+        });
+        acc_ass_val_dropdwn = '';
+        $.each(rendered_accasscat_values, function (i, item) {
+            var validFrom = new Date(item.valid_from);
+            var validTo = new Date(item.valid_to);
+            var today = new Date();
+            if (validFrom <= today && validTo >= today) {
+                acc_ass_val_dropdwn += '<option value="'+item.account_assign_value+'">'+item.account_assign_value+'</option>'
+                acc_ass_val_dict = {};
+                acc_ass_val_dict.account_assign_value = item.account_assign_value
+                acc_ass_val_dict.account_assign_cat = item.account_assign_cat
+                acc_ass_val_dict.company_id = item.company_id
+                acc_ass_val_list.push(acc_ass_val_dict)
+                account_assign_array.push(item.account_assign_value)
+            }
+        });
+        company_dropdwn = '';
+        var unique_comp = [];
         var today = new Date();
-        if (validFrom <= today && validTo >= today) {
-            acc_ass_val_dropdwn += '<option value="'+item.account_assign_value+'">'+item.account_assign_value+'</option>'
-            acc_ass_val_dict = {};
-            acc_ass_val_dict.account_assign_value = item.account_assign_value
-            acc_ass_val_dict.account_assign_cat = item.account_assign_cat
-            acc_ass_val_dict.company_id = item.company_id
-            acc_ass_val_list.push(acc_ass_val_dict)
-            account_assign_array.push(item.account_assign_value)
-        }
-    });
-    company_dropdwn = '';
-    var unique_comp = [];
-    var today = new Date();
-    $.each(rendered_accasscat_values, function (i, item) {
-        var validTo = new Date(item.valid_to);
-        if (validTo >= today) {
-            company_dropdwn += '<option value="' + item.company_id + '">' + item.company_id + '</option>'
-            company_dict = {};
-            company_dict.account_assign_value = item.account_assign_value
-            company_dict.account_assign_cat = item.account_assign_cat
-            company_dict.company_id = item.company_id
-            company_list.push(company_dict)
-            company_array.push(item.company_id)
-            unique_comp.push(item.company_id);
-            unique_acct_assmt_val.push(item.account_assign_value);
-        }
-    });
-
-    $(unique_comp).each(function (index, item) {
-        if ($.inArray(item, arrDistinct) == -1)
-            arrDistinct.push(item);
-    });
-    company_dropdwn = '';
-    $(arrDistinct).each(function (index, item) {
-        company_dropdwn += '<option value="' + item + '">' + item + '</option>'
-    });
-
-}
+        $.each(rendered_accasscat_values, function (i, item) {
+            var validTo = new Date(item.valid_to);
+            if (validTo >= today) {
+                company_dropdwn += '<option value="' + item.company_id + '">' + item.company_id + '</option>'
+                company_dict = {};
+                company_dict.account_assign_value = item.account_assign_value
+                company_dict.account_assign_cat = item.account_assign_cat
+                company_dict.company_id = item.company_id
+                company_list.push(company_dict)
+                company_array.push(item.company_id)
+                unique_comp.push(item.company_id);
+                unique_acct_assmt_val.push(item.account_assign_value);
+            }
+        });
+        $(unique_comp).each(function (index, item) {
+            if ($.inArray(item, arrDistinct) == -1)
+                arrDistinct.push(item);
+        });
+        company_dropdwn = '';
+        $(arrDistinct).each(function (index, item) {
+            company_dropdwn += '<option value="' + item + '">' + item + '</option>'
+        });
+    }
 
     //onclick of data Upload copy data to modal pop-up
     function onclick_display_csv_data() {
@@ -369,12 +356,10 @@
     // validate and save for add,copy,update and upload data
     function popup_save_data() {
         $('#success_msg_id').empty()
-        var countries_data = new Array();
-        var aad = {};
+        $('#id_popup_table').DataTable().destroy();
         no_duplicate_entries = 'Y'
         no_duplicate_value = 'Y'
         var error_message = '';
-        $('#display_basic_table').DataTable().destroy();
         get_main_table_data(); //Read data from main table
         // compare for duplicates in popup
         [no_duplicate_value,error_message] = compare_table_for_duplicate_entries(validate_add_attributes, aad_data)
@@ -385,9 +370,11 @@
             if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
                 // compare main table and pop up for duplicate values
                 [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
+                if(no_duplicate_entries == 'N'){
+                    $('#Acc_desc_Modal').modal('show');
+                }
             }
             if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
-                var add_basic_data = '';
                 $('#id_save_confirm_popup').modal('hide');
                 data = {'data':aad_data,'table_name':'AccountingDataDesc','action':GLOBAL_ACTION}
                 OpenLoaderPopup();
@@ -410,6 +397,7 @@
                 display_error_message(error_message)
             }
         }
+        table_sort_filter('id_popup_table');
     }
 
     //delete the selected row in db................
@@ -541,31 +529,29 @@
     function compare_table_for_duplicate_entries(validate_add_attributes, aad) {
         add_attr_duplicates = false;
         var error_message = ''
-        var add_attr_duplicates_list = [];
+        var common = [];
         var add_attr_unique_list = [];
         var no_duplicate_value = 'Y'
         $.each(validate_add_attributes, function (index, value) {
             if ($.inArray(value, add_attr_unique_list) == -1) {
                 add_attr_unique_list.push(value);
             } else {
-                if ($.inArray(value, add_attr_duplicates_list) == -1) {
-                    add_attr_duplicates_list.push(value);
+                if ($.inArray(value, common) == -1) {
+                    common.push(value);
                 }
             }
         });
-        if (add_attr_duplicates_list.length != 0) {
+        if (common.length != 0) {
+            $('#Acc_desc_Modal').modal('show');
+            display_duplicate_entry(common);  //Function to highlight the rows in popup
             error_message = ui_messeges("JMSG001")// Get message details
             no_duplicate_value = 'N'
             return [no_duplicate_value,error_message]
         }
         else{
             $.each(aad, function (i, item) {
-                if (item.account_assign_value == 0) {
-                    error_message = ui_messeges("JMSG002")// Get message details
-                    no_duplicate_value = 'N'
-                    return [no_duplicate_value,error_message]
-                }
-                if (item.description.length == 0) {
+                if ((item.account_assign_value == null) || (item.description.length == 0)) {
+                    $('#Acc_desc_Modal').modal('show');
                     error_message = ui_messeges("JMSG002")// Get message details
                     no_duplicate_value = 'N'
                     return [no_duplicate_value,error_message]
@@ -758,8 +744,6 @@
             });
         });
     }
-
 </script>
-
 <script src="{% static 'scripts/accounting_data/acc_assign_desc.js' %}"></script>
 {% endblock %}

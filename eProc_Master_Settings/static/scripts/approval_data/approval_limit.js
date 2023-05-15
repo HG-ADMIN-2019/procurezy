@@ -61,7 +61,7 @@ $(".remove_upload_data").click(() => {
     $("#id_error_msg").html("");
     $("#id_popup_tbody").empty();
     $("#id_error_msg").empty();
-    $('#myModal').modal('hide');
+    $('#App_limt_Modal').modal('hide');
     $("#id_error_msg").prop("hidden", true);
     $("#id_error_msg_approval_limit_code").prop("hidden", true);
     $("#id_error_msg_approval_limit_name").prop("hidden", true);
@@ -146,13 +146,14 @@ function delete_duplicate() {
 
 // Functtion to hide and display save related popups
 $('#save_id').click(function () {
-    $('#myModal').modal('hide');
+    $('#App_limt_Modal').modal('hide');
     approval_limit_data = read_popup_data();
     $('#id_save_confirm_popup').modal('show');
 });
 
 //Read popup table data
 function read_popup_data() {
+    $('#id_popup_table').DataTable().destroy();
     validate_add_attributes = [];
     var approval_limit={};
     $("#id_popup_table TBODY TR").each(function () {
@@ -173,6 +174,7 @@ function read_popup_data() {
         validate_add_attributes.push(approval_limit_compare);
         approval_limit_data.push(approval_limit);
     });
+    table_sort_filter('id_popup_table');
     return approval_limit_data;
 }
 
@@ -181,7 +183,7 @@ function display_error_message(error_message){
     document.getElementById("error_message").style.color = "Red";
     $("#error_msg_id").css("display", "block")
     $('#id_save_confirm_popup').modal('hide');
-    $('#myModal').modal('show');
+    $('#App_limt_Modal').modal('show');
 }
 
 // Function for add a new row data
@@ -194,6 +196,7 @@ function new_row_data() {
 // Function to get main table data
 function get_main_table_data() {
     main_table_low_value = [];
+    $('#display_basic_table').DataTable().destroy();
     $("#display_basic_table TBODY TR").each(function() {
         var row = $(this);
         var main_attribute = {};

@@ -1,5 +1,6 @@
 var porg_data = new Array();
 var validate_add_attributes = [];
+var main_table_low_value = [];
 var porg={};
 
 //onclick of upload button display id_data_upload popup and set GLOBAL_ACTION button value
@@ -182,6 +183,7 @@ function display_error_message(error_message){
 function delete_duplicate() {
     $('#id_popup_table').DataTable().destroy();
     var porg_code_check = new Array
+    var main_table_low_value = new Array
     $("#id_popup_table TBODY TR").each(function () {
         var row = $(this);
         //*************** reading data from the pop-up ***************
@@ -194,6 +196,11 @@ function delete_duplicate() {
             $(row).remove();
         }
         porg_code_check.push(porg_id);
+         main_table_low_value = get_main_table_data_upload(); //Read data from main table
+        if (main_table_low_value.includes(porg_id)) {
+            $(row).remove();
+        }
+        main_table_low_value.push(porg_id);
     });
     table_sort_filter_popup_pagination('id_popup_table')
     check_data()
@@ -202,6 +209,13 @@ function delete_duplicate() {
 // Function to hide and display save related popups
 $('#save_id').click(function () {
     $('#Porg_Modal').modal('hide');
+    porg_data = read_popup_data();
+    $('#id_save_confirm_popup').modal('show');
+});
+
+//Read popup table data
+function read_popup_data() {
+    $('#id_popup_table').DataTable().destroy();
     porg_data = new Array();
     validate_add_attributes = [];
     $("#id_popup_table TBODY TR").each(function () {
@@ -224,9 +238,9 @@ $('#save_id').click(function () {
         validate_add_attributes.push(porg.porg_id);
         porg_data.push(porg);
     });
-    $('#id_save_confirm_popup').modal('show');
-});
-
+    table_sort_filter('id_popup_table');
+    return porg_data;
+}
 
 //**********************************************************
 function update_check_message(messages){
@@ -258,6 +272,21 @@ function get_main_table_data(){
         main_table_low_value.push(main_attribute.porg_id);
     });
     table_sort_filter('display_basic_table');
+}
+
+
+// Function to get main table data
+function get_main_table_data_upload() {
+    main_table_low_value = [];
+    $('#display_basic_table').DataTable().destroy();
+    $("#display_basic_table TBODY TR").each(function() {
+        var row = $(this);
+        var main_attribute = {};
+        main_attribute.porg_id = row.find("TD").eq(1).html();
+        main_table_low_value.push(main_attribute.porg_id);
+    });
+    table_sort_filter('display_basic_table');
+    return main_table_low_value
 }
 
 // Function to get the selected row data

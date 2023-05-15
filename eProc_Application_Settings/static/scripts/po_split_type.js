@@ -83,6 +83,7 @@ function display_error_message(error_message){
 // Function to get main table data
 function get_main_table_data(){
     main_table_low_value = [];
+    $('#display_basic_table').DataTable().destroy();
     $("#display_basic_table TBODY TR").each(function() {
         var row = $(this);
         var main_attribute = {};
@@ -109,9 +110,11 @@ function get_selected_row_data(){
 // Function for add a new row data
 function new_row_data(){
     basic_add_new_html = '<tr><td><input type="checkbox" required></td>'+
-        '<td><select type="text" class="input form-control aaccode" id="aaccode-1"  name="aaccode" onchange="GetSelectedTextValue(this)"><option value="" disabled selected>Select your option</option>' +aac_dropdown +'</select></td>'+
+        '<td><select type="text" class="input form-control aaccode" id="aaccode-1"  name="aaccode" onchange="GetSelectedTextValue(this)">' +aac_dropdown +'</select></td>'+
         '<td><input class="form-control description" type="text"  name="description"  id="description-1" disabled></td>'+
         '<td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
         $('#id_popup_tbody').append(basic_add_new_html);
         table_sort_filter('id_popup_table');
+        var aaccodeSelect = $("#aaccode-1");
+        GetSelectedTextValue(aaccodeSelect[0]);
     }

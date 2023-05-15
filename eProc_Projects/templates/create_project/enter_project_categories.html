@@ -206,7 +206,8 @@
             </div>
             <!-- Modal body -->
             <div class="modal-body scrollbox">
-
+                <div id="err_msg_app_settings"> </div>
+            <div id="err_msg_app_settings_t" class="alert alert-success" hidden> <span id="success_msg_id"></span></div>
                 <div class="alert alert-danger" role="alert"  id="save_project_error" style="display:none">
                     please fill all mandatory fields
                 </div>
@@ -413,6 +414,11 @@ function save_project(){
                 $("#add_update_modal").modal("hide");
             }
             else{
+                var error_message = ui_messeges("JMSG039")// Get message details
+        document.getElementById("err_msg_app_settings_t").innerHTML = error_message;
+<!--        document.getElementById("alert-message").style.display = "block";-->
+        $("#err_msg_app_settings_t").prop("hidden",false)
+        return error_message ;
                 $("#add_update_modal").modal("hide");
 <!--                window.location.reload();//reload the page-->
             }

@@ -186,6 +186,9 @@
         else {
             if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
                 [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
+                if(no_duplicate_entries == 'N'){
+                    $('#auth_obj_Modal').modal('show');
+                }
             }
             if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
                 var add_basic_data = '';
@@ -247,19 +250,21 @@
     function compare_table_for_duplicate_entries(validate_add_attributes, auth_obj) {
         add_attr_duplicates = false;
         var error_message = ''
-        var add_attr_duplicates_list = [];
+        var common = [];
         var add_attr_unique_list = [];
         var no_duplicate_value = 'Y'
         $.each(validate_add_attributes, function (index, value) {
             if ($.inArray(value, add_attr_unique_list) == -1) {
                 add_attr_unique_list.push(value);
             } else {
-                if ($.inArray(value, add_attr_duplicates_list) == -1) {
-                    add_attr_duplicates_list.push(value);
+                if ($.inArray(value, common) == -1) {
+                    common.push(value);
                 }
             }
         });
-        if (add_attr_duplicates_list.length != 0) {
+        if (common.length != 0) {
+            $('#auth_obj_Modal').modal('show');
+            display_duplicate_entry(common);  //Function to highlight the rows in popup
             error_message = ui_messeges("JMSG001")// Get message details
             no_duplicate_value = 'N'
             return [no_duplicate_value,error_message]
@@ -267,15 +272,11 @@
         else{
             $.each(auth_obj, function (i, item) {
                 if ((item.auth_obj_id == null) || (item.auth_level_ID.length == 0)) {
+                    $('#auth_obj_Modal').modal('show');
                     error_message = ui_messeges("JMSG002")// Get message details
                     no_duplicate_value = 'N'
                     return [no_duplicate_value,error_message]
                 }
-                // if (item.auth_level_ID.length == 0) {
-                //     error_message = ui_messeges("JMSG002")// Get message details
-                //     no_duplicate_value = 'N'
-                //     return [no_duplicate_value,error_message]
-                // }
             });
         }
         return [no_duplicate_value,error_message]
@@ -310,28 +311,29 @@
     }
 
     // on click add icon display the row in to add the new entries
-function add_popup_row() {
-    dropdown_value();
-    $("#error_msg_id").css("display", "none")
-    basic_add_new_html = '';
-    var display_db_data = '';
-    var getid = $(".authobject:last").attr("id");
-    var getindex = getid.split("-")[1]
-    var inc_index = Number(getindex)+1
-    $('#id_popup_table').DataTable().destroy();
-    $(".modal").on("hidden.bs.modal", function () {
-        $("#id_error_msg").html("");
-    });
-    basic_add_new_html = '<tr><td><input type="checkbox" required></td>'+
-    '<td><select type="text" class="input form-control authobject" id="authobject-'+inc_index+'"  name="authobject" onchange="GetSelectedTextValue(this)"><option value="" disabled selected>Select your option</option>'+ auth_obj_id_dropdown +'</select></td>'+
-    '<td><input class="form-control description" type="text"  name="description"  id="description-'+inc_index+'" disabled></td>'+'<td><select id="authobject_type" name="authobject_type"  class="input form-control">'+auth_type_dropdown+'</select></td>'+
-    '<td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
-    $('#id_popup_tbody').append(basic_add_new_html);
-    if (GLOBAL_ACTION == "auth_obj_upload") {
-        $(".class_del_checkbox").prop("hidden", false);
+    function add_popup_row() {
+        dropdown_value();
+        $("#error_msg_id").css("display", "none")
+        basic_add_new_html = '';
+        var display_db_data = '';
+        var getid = $(".authobject:last").attr("id");
+        var getindex = getid.split("-")[1]
+        var inc_index = Number(getindex)+1
+        $('#id_popup_table').DataTable().destroy();
+        $(".modal").on("hidden.bs.modal", function () {
+            $("#id_error_msg").html("");
+        });
+        basic_add_new_html = '<tr><td><input type="checkbox" required></td>'+
+            '<td><select type="text" class="input form-control authobject" id="authobject-'+inc_index+'"  name="authobject" onchange="GetSelectedTextValue(this)">'+ auth_obj_id_dropdown +'</select></td>'+
+            '<td><input class="form-control description" type="text"  name="description"  id="description-'+inc_index+'" disabled></td>'+'<td><select id="authobject_type" name="authobject_type"  class="input form-control">'+auth_type_dropdown+'</select></td>'+
+            '<td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+        $('#id_popup_tbody').append(basic_add_new_html);
+        if (GLOBAL_ACTION == "auth_obj_upload") {
+            $(".class_del_checkbox").prop("hidden", false);
+        }
+        GetSelectedTextValue($("#authobject-" + inc_index)[0]);
+        table_sort_filter('id_popup_table');
     }
-    table_sort_filter('id_popup_table');
-}
 
     //**********************************************************
     function onclick_copy_update_button() {

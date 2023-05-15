@@ -107,6 +107,7 @@ $('#save_id').click(function () {
 
 //Read popup table data
 function read_popup_data() {
+    $('#id_popup_table').DataTable().destroy();
     detgl_data = new Array();
     validate_add_attributes = [];
     $("#id_popup_table TBODY TR").each(function () {
@@ -129,6 +130,7 @@ function read_popup_data() {
         validate_add_attributes.push(compare);
         detgl_data.push(detgl);
     });
+    table_sort_filter('id_popup_table');
     return detgl_data;
 }
 
@@ -150,6 +152,7 @@ function new_row_data() {
 // Function to get main table data
 function get_main_table_data() {
     main_table_low_value = [];
+    $('#display_basic_table').DataTable().destroy();
     $("#display_basic_table TBODY TR").each(function () {
         var row = $(this);
         var main_attribute = {};
@@ -193,15 +196,21 @@ function account_assignment_value_find(company_num) {
     corresponding_values.acc_ass_dropdwn = '';
     corresponding_values.acc_ass_val_dropdwn = '';
     corresponding_values.other_dropdn = '';
-    acc_ass_val_list = acc_ass_val_list;
     unique_acct_cat= [];
     unique_acct_assmt_val = [];
-    for (var i = 0; i < acc_ass_val_list.length; i++) {
-        compare_dict = {};
-        compare_dict = acc_ass_val_list[i]
-        if (company_num == compare_dict.company_id) {
-            unique_acct_cat.push(compare_dict.account_assign_cat);
-            unique_acct_assmt_val.push(compare_dict.account_assign_value);
+    for (var i = 0; i < rendered_acc_value_list.length; i++) {
+        var item = rendered_acc_value_list[i];
+        if (item.company_id == company_num) {
+            for (var j = 0; j < item.account_assign_cat_list.length; j++) {
+                var cat = item.account_assign_cat_list[j];
+                var val = item.account_assign_cat_value_list[j];
+                if (cat !== undefined && cat !== '-- Select Account Assignment Category --') {
+                    unique_acct_cat.push(cat);
+                }
+                if (val !== undefined) {
+                    unique_acct_assmt_val.push(val);
+                }
+            }
         }
     }
     unique_acct_cat = unique_acct_cat.filter(function(item) {
@@ -210,27 +219,28 @@ function account_assignment_value_find(company_num) {
     unique_acct_assmt_val = unique_acct_assmt_val.filter(function(item) {
         return item !== undefined;
     });
-     for (var i = 0; i < arrDistinct.length; i++) {
+    for (var i = 0; i < arrDistinct.length; i++) {
         corresponding_values.other_dropdn += '<option value="'+arrDistinct[i]+'">' + arrDistinct[i] + '</option>'
-     }
-     assmtCatDistinct = [];
-     $(unique_acct_cat).each(function (index, item) {
-     if ($.inArray(item, assmtCatDistinct) == -1)
-        assmtCatDistinct.push(item);
-     });
-     for (var i = 0; i < assmtCatDistinct.length; i++) {
+    }
+    assmtCatDistinct = [];
+    $(unique_acct_cat).each(function (index, item) {
+        if ($.inArray(item, assmtCatDistinct) == -1)
+            assmtCatDistinct.push(item);
+    });
+    for (var i = 0; i < assmtCatDistinct.length; i++) {
         corresponding_values.acc_ass_dropdwn += '<option value="'+assmtCatDistinct[i]+'">' + assmtCatDistinct[i] + '</option>'
-     }
-     assmtValDistinct = [];
-     $(unique_acct_assmt_val).each(function (index, item) {
-     if ($.inArray(item, assmtValDistinct) == -1)
-        assmtValDistinct.push(item);
-     });
-     for (var i = 0; i < assmtValDistinct.length; i++) {
+    }
+    assmtValDistinct = [];
+    $(unique_acct_assmt_val).each(function (index, item) {
+        if ($.inArray(item, assmtValDistinct) == -1)
+            assmtValDistinct.push(item);
+    });
+    for (var i = 0; i < assmtValDistinct.length; i++) {
         corresponding_values.acc_ass_val_dropdwn += '<option value="'+assmtValDistinct[i]+'">' + assmtValDistinct[i] + '</option>'
-     }
-    return corresponding_values
+    }
+    return corresponding_values;
 }
+
 
 
 //***********************************88

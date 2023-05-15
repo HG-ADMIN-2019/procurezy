@@ -8,7 +8,7 @@
         <div class="elements-space-between">
             <h3>Maintain Customer UNSPSC Codes</h3>
             <div>
-                <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Master_Settings:extract_cusprodcat_template' %}'"type="button">
+                <button class="btn btn-outline-primary"  title="Template" onclick="location.href='{% url 'eProc_Master_Settings:extract_cusprodcat_template' %}'"type="button">
                     <i class="fas fa-download"></i> template
                 </button>
                 <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Master_Settings:extract_cusprodcat_data' %}'"type="button">
@@ -17,7 +17,7 @@
                  <button class="btn btn-outline-primary modal_upload" id="id_upload_redirect_data" title="Upload Data" value="cusprodcat_upload"  onclick="onclick_upload_button()" type="button">
                     <i class="fas fa-cloud-upload-alt"></i> upload data
                 </button>
-                <button class="btn btn-primary " id="id_add_data" value="ADD" title="Add Product Categories" data-toggle="modal" onclick="onclick_add_button(this);">
+                <button class="btn btn-primary " id="id_add_data" value="ADD" title="Add Product Categories" data-toggle="cusprodcat_Modal" onclick="onclick_add_button(this);">
                     <i class="fa fa-plus"></i> add customer UNSPSC code
                 </button>
                 <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"  onclick="window_close();">
@@ -83,7 +83,7 @@
         </div>
     </div>
     <!-- The Modal -->
-    <div class="modal fade" id="myModal" style="overflow:auto;">
+    <div class="modal fade" id="cusprodcat_Modal" style="overflow:auto;">
         <div class="modal-dialog modal-dialog-centered modal-lg">
             <div class="modal-content">
                 <!-- Modal Header -->
@@ -97,10 +97,10 @@
                 <div class="modal-body">
                     <div class="popup-vertical-scroll">
                         <div id="id_del_add_button" class="mb-4">
-                            <button class="btn btn-primary" type="button" onclick="add_popup_row()">
+                            <button class="btn btn-primary" title="Add New Row" type="button" onclick="add_popup_row()">
                                 <i class="fa fa-plus"></i> add new row
                             </button>
-                            <button class="btn btn-outline-danger" onclick="application_settings_delete_Row('id_popup_table')">
+                            <button class="btn btn-outline-danger" title="Delete" onclick="application_settings_delete_Row('id_popup_table')">
                                 <i class="fa fa-trash"></i> delete
                             </button>
                         </div>
@@ -111,7 +111,7 @@
                             <p id="id_error_msg_description" ></p>
                             <p id="id_error_msg_prod_cat_id_length" ></p>
                         </div>
-                        <div id="id_error_msg" class="alert alert-danger display-none" role="alert"><span id="error_message"></span></div>
+                        <div id="error_msg_id" class="alert alert-danger display-none" role="alert"><span id="error_message"></span></div>
                         <div id="id_warning_msg_id" class="alert alert-warning display-none" role="alert"></div>
                         <div id="id_info_msg_id" class="alert alert-primary display-none" role="alert"></div>
                         <table class="class_popup_table table table-bordered mt-2" id="id_popup_table">
@@ -132,10 +132,10 @@
                 </div>
                 <!-- Modal footer -->
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-primary remove_upload_data" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
-                    <button id="id_delete_duplicate" class="btn btn-primary" style="display:none;" type="button" onclick="delete_duplicate()"><i class="fa fa-trash"></i> delete duplicates</button>
-                    <button id="id_check_data" style="display:none;" class="btn btn-primary" type="button" onclick="check_data()"><i class="fas fa-check"></i> check</button>
-                    <button class="btn btn-primary" id="save_id"><i class="fas fa-save"></i> save</button>
+                    <button type="button" class="btn btn-outline-primary remove_upload_data" title="Cancel" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
+                    <button id="id_delete_duplicate" class="btn btn-primary" style="display:none;" title="Delete" type="button" onclick="delete_duplicate()"><i class="fa fa-trash"></i> delete duplicates</button>
+                    <button id="id_check_data" style="display:none;" class="btn btn-primary" title="Check" type="button" onclick="check_data()"><i class="fas fa-check"></i> check</button>
+                    <button class="btn btn-primary" title="Save" id="save_id"><i class="fas fa-save"></i> save</button>
                 </div>
             </div>
         </div>
@@ -205,6 +205,7 @@
     var content_managment_settings = '{{content_managment_settings|safe}}';
     var rendered_cust_prod_cat_data ={{upload_cust_prod_cat|safe}};
     var rendered_UNSPC_data = {{upload_ProdCat|safe}};
+    var messages_list = {{messages_list|safe}};
     var cusprodcat_data_array = {}
     var main_table_cusprodcat_value =[];
     var main_table_low_value = [];
@@ -406,7 +407,7 @@
         var validate_add_attributes = [];
            $("#dis_tab TBODY TR").each(function () {
                 var row = $(this);
-                $('#myModal').modal('show');
+                $('#cusprodcat_Modal').modal('show');
                 prod_cat_id = row.find("TD").eq(1).find('input[type="number"]').val();
                 if (prod_cat_id == undefined){
                     prod_cat_id = row.find("TD").eq(1).find('input[type="number"]').val();
@@ -442,7 +443,7 @@
             if(common.length != 0 || add_attr_duplicates_list.length != 0){
                 document.getElementById("add_att_error_msg").innerHTML = messageConstants["JMSG001"];
                 document.getElementById("add_att_error_msg").style.color = "Red";
-                $('#myModal').modal('show');
+                $('#cusprodcat_Modal').modal('show');
             }
             else{
                 var add_basic_data = '';
@@ -454,9 +455,9 @@
                 });
                 $('#display_basic_table').DataTable().destroy();
                 $('#display_basic_table').append(add_basic_data);
-                $('#myModal').modal('hide');
+                $('#cusprodcat_Modal').modal('hide');
                 table_sort_filter('display_basic_table');
-                $('#myModal').find('input:text').val('');
+                $('#cusprodcat_Modal').find('input:text').val('');
             }
         });
     });
@@ -646,22 +647,54 @@
 
     // on click add icon display the row in to add the new entries
     function add_popup_row() {
+        $("#error_msg_id").css("display", "none")
         basic_add_new_html = '';
         var display_db_data = '';
+        var getid = $(".prodid:last").attr("id");
+        var getindex = getid.split("-")[1]
+        var inc_index = Number(getindex)+1
         $('#id_popup_table').DataTable().destroy();
         $(".modal").on("hidden.bs.modal", function () {
-        $("#id_error_msg").html(" ");
+            $("#id_error_msg").html(" ");
         });
-        basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select type="text" class="input form-control prodid" id="prodid-1"  name="prodid" onchange="GetSelectedTextValue(this)"><option value=""selected>Select your option</option>'+prod_cat_id_dropdown+'</select></td><td><input class="form-control description" type="text"  name="description"  id="description-1" disabled></td><td hidden><guid></td><td hidden>< del_ind></td></tr>';
+        basic_add_new_html =
+        '<tr>'+
+            '<td><input type="checkbox" required></td>'+
+            '<td><select type="text" class="input form-control prodid" id="prodid-'+inc_index+'"  name="prodid" onchange="GetSelectedTextValue(this)">'+prod_cat_id_dropdown+'</select></td>'+
+            '<td><input class="form-control description" type="text"  name="description"  id="description-'+inc_index+'" disabled></td>'+
+            '<td hidden><guid></td><td hidden>< del_ind></td>'+
+        '</tr>';
         $('#id_popup_tbody').append(basic_add_new_html);
         if (GLOBAL_ACTION == "cusprodcat_upload") {
+		   basic_add_new_html =
+			'<tr>'+
+				'<td><input type="checkbox" required></td>'+
+				'<td><select type="text" class="input form-control prodid" id="prodid-'+inc_index+'"  name="prodid" onchange="GetSelectedTextValue(this)">'+prod_cat_id_dropdown+'</select></td>'+
+				'<td hidden><input class="form-control description" type="text"  name="description"  id="description-'+inc_index+'" disabled></td>'+
+				'<td hidden><guid></td><td class="class_del_checkbox"><input type="checkbox" required></td>'+
+			'</tr>';
+            $('#id_popup_tbody').append(basic_add_new_html);
             $("#desc_upload").prop("hidden", true);
-            $(".id_del_ind_checkbox").prop("hidden", false);
+            table_sort_filter('id_popup_table');
+            $(".class_del_checkbox").prop("hidden", false);
+            $("#id_del_ind_checkbox").prop("hidden", false);
         }
-        table_sort_filter_popup('id_popup_table');
+         else{
+               basic_add_new_html =
+                '<tr>'+
+                    '<td><input type="checkbox" required></td>'+
+                    '<td><select type="text" class="input form-control prodid" id="prodid-'+inc_index+'"  name="prodid" onchange="GetSelectedTextValue(this)">'+prod_cat_id_dropdown+'</select></td>'+
+                    '<td><input class="form-control description" type="text"  name="description"  id="description-'+inc_index+'" disabled></td>'+
+                    '<td hidden><guid></td><td hidden>< del_ind></td>'+
+                '</tr>';
+            $('#id_popup_tbody').append(basic_add_new_html);   // Add a new row in popup
+            GetSelectedTextValue($("#prodid-" + inc_index)[0]);
+            table_sort_filter_popup('id_popup_table');
+        }
+        $('#delete_data').hide()
     }
 
-    //onclick of add button display myModal popup and set GLOBAL_ACTION button value
+    //onclick of add button display cusprodcat_Modal popup and set GLOBAL_ACTION button value
     function onclick_add_button(button) {
         OpenLoaderPopup();
         var data = {'table_name':'UnspscCategoriesCust'}
@@ -676,13 +709,15 @@
                 $("#header_select").prop( "hidden", false );
                 GLOBAL_ACTION = button.value
                 $("#id_popup_tbody").empty();
-                $('#myModal').modal('show');
-                basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select type="text" class="input form-control prodid" id="prodid-1"  name="prodid" onchange="GetSelectedTextValue(this)"><option value=""selected>Select your option</option>'+prod_cat_id_dropdown+'</select></td><td><input class="form-control description" type="text"  name="description"  id="description-1" disabled></td><td hidden><guid></td><td hidden>< del_ind></td></tr>';
+                $('#cusprodcat_Modal').modal('show');
+                basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select type="text" class="input form-control prodid" id="prodid-1"  name="prodid" onchange="GetSelectedTextValue(this)">'+prod_cat_id_dropdown+'</select></td><td><input class="form-control description" type="text"  name="description"  id="description-1" disabled></td><td hidden><guid></td><td hidden>< del_ind></td></tr>';
                 $('#id_popup_tbody').append(basic_add_new_html);
                 $("#id_del_ind_checkbox").prop("hidden", true);
                 document.getElementById("id_del_add_button").style.display = "block";
                 $("#save_id").prop("hidden", false);
                 CloseLoaderPopup();
+                var prodidSelect = $("#prodid-1");
+                GetSelectedTextValue(prodidSelect[0]);
             }
         });
     }
@@ -701,7 +736,7 @@
         $("#id_error_msg").html("");
         $("#id_popup_tbody").empty();
         $("#id_error_msg").empty();
-        $('#myModal').modal('hide');
+        $('#cusprodcat_Modal').modal('hide');
         $("#id_error_msg").prop("hidden", true);
         $("#id_error_msg_country_code").prop("hidden", true);
         $("#id_error_msg_country_name").prop("hidden", true);
@@ -717,17 +752,23 @@
     function delete_duplicate() {
         $('#id_popup_table').DataTable().destroy();
         var cusprodcat_code_check = new Array
+        var main_table_low_value = new Array
         $("#id_popup_table TBODY TR").each(function () {
             var row = $(this);
             //*************** reading data from the pop-up ***************
-            cusprodcat_prod_cat_desc = row.find("TD").eq(2).find('input[type="text"]').val().toUpperCase();
-            cusprodcat_prod_cat_id = row.find("TD").eq(1).find('input[type="text"]').val().toUpperCase();
+            cusprodcat_prod_cat_desc = row.find("TD").eq(2).find('input[type="text"]').val();
+            cusprodcat_prod_cat_id = row.find("TD").eq(1).find('select[type="text"]').val();
             checked_box = row.find("TD").eq(3).find('input[type="checkbox"]').is(':checked')
-            if (cusprodcat_prod_cat_id_check.includes(cusprodcat_prod_cat_id)) {
+            if (cusprodcat_code_check.includes(cusprodcat_prod_cat_id)) {
                 $(row).remove();
             }
-            cusprodcat_check.push(cusprodcat_prod_cat_id);
-        })
+            cusprodcat_code_check.push(cusprodcat_prod_cat_id);
+              main_table_low_value = get_main_table_data_upload(); //Read data from main table
+            if (main_table_low_value.includes(cusprodcat_prod_cat_id)) {
+                $(row).remove();
+            }
+            main_table_low_value.push(cusprodcat_prod_cat_id);
+        });
         table_sort_filter_popup_pagination('id_popup_table')
         check_data()
     }
@@ -764,6 +805,7 @@
                         var edit_basic_data = '';
                         var del_ind = '';
                         var dropdown_values = [];
+                        var inc_index=0;
                         $("#id_popup_tbody").empty();
                         $.each(response.data, function (i, value) {
                             var prod_cat_id_value = value[0]
@@ -794,8 +836,15 @@
                                 opt = '<option value="' + value[1] + '">' + value[1] + '</option>'
                             }
                             prod_cat_id_list = opt + prod_cat_id_list
-                            edit_basic_data += '<tr ><td><input type="checkbox" required></td><td><select type="text" class="form-control">value ="' + value[0] + '"'+prod_cat_id_list+'</select></td><td hidden></td><td hidden></td><td>'+ del_ind +'</td></tr>';
-                        });
+                            edit_basic_data +=
+                                    '<tr>'+
+                                        '<td><input type="checkbox" required></td>'+
+                                        '<td><select type="text" class="input form-control prodid" id="prodid-'+inc_index+'"  name="prodid" onchange="GetSelectedTextValue(this)">value ="' + value[0] + '"'+prod_cat_id_list+'</select></td>'+
+                                        '<td hidden><input class="form-control description" type="text"  name="description"  id="description-'+inc_index+'" disabled></td>'+
+                                        '<td hidden><guid></td><td>'+ del_ind +'</td>'+
+                                    '</tr>';
+                            inc_index += 1;
+                         });
                         $('#id_popup_tbody').append(edit_basic_data);
                         var i =0;
                         $("#id_popup_table TBODY TR").each(function() {
@@ -808,7 +857,7 @@
                         $( "#header_select").prop( "hidden", false );
                         $( ".class_del_checkbox").prop( "hidden", false );
                         $("#desc_upload").prop("hidden", true);
-                        $('#myModal').modal('show');
+                        $('#cusprodcat_Modal').modal('show');
                         $('#id_data_upload').modal('hide');
                         document.getElementById("id_del_add_button").style.display = "block";
                         $('#id_check_data').show();
@@ -889,8 +938,8 @@
         no_duplicate_entries = 'Y'
         no_duplicate_value = 'Y'
         var error_message = '';
-        cusprodcat = {};
         get_main_table_data(); //Read data from main table
+        // compare for duplicates in popup
         [no_duplicate_value,error_message] = compare_table_for_duplicate_entries(validate_add_attributes, cust_prod_cat_data)
         if (error_message){
             display_error_message(error_message)
@@ -898,6 +947,9 @@
         else {
             if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
                 [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
+                if(no_duplicate_entries == 'N') {
+                    $('#cusprodcat_Modal').modal('show');
+                }
             }
             if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
                 var add_basic_data = '';
@@ -924,6 +976,7 @@
                 display_error_message(error_message)
             }
         }
+        table_sort_filter('id_popup_table');
     }
 
     // Function to get main table data
@@ -933,30 +986,31 @@
         $("#display_basic_table TBODY TR").each(function() {
             var row = $(this);
             var main_attribute = {};
-            main_attribute.prod_cat_id = row.find("TD").eq(1).html();
-           main_table_low_value.push(main_attribute.prod_cat_id);
+            main_attribute.prod_cat_id = row.find("TD").eq(3).html();  
+            main_table_low_value.push(main_attribute.prod_cat_id);
         });
         table_sort_filter('display_basic_table');
     }
 
     // Function to hide and display save related popups
     $('#save_id').click(function () {
-        $('#myModal').modal('hide');
+        $('#cusprodcat_Modal').modal('hide');
         cust_prod_cat_data = read_popup_data();
         $('#id_save_confirm_popup').modal('show');
     });
 
     //Read popup table data
     function read_popup_data() {
+        $('#id_popup_table').DataTable().destroy();
         validate_add_attributes = [];
         cust_prod_cat_data = [];
         $("#id_popup_table TBODY TR").each(function() {
             var row = $(this);
             cusprodcat = {};
             cusprodcat.del_ind = row.find("TD").eq(4).find('input[type="checkbox"]').is(':checked');
-            cusprodcat.prod_cat_guid = row.find("TD").eq(3).find('input').val();
+            cusprodcat.prod_cat_id = row.find("TD").eq(1).find('select').val();
             cusprodcat.category_desc = row.find("TD").eq(2).find("input").val();
-            cusprodcat.prod_cat_id = row.find("TD").eq(1).find('select option:selected').val();
+            cusprodcat.prod_cat_guid = row.find("TD").eq(3).find('input').val();
             if (cusprodcat == undefined) {
                 cusprodcat.prod_cat_id = row.find("TD").eq(1).find('select').val();
             }
@@ -966,6 +1020,7 @@
             validate_add_attributes.push(cusprodcat.prod_cat_id);
             cust_prod_cat_data.push(cusprodcat);
         });
+        table_sort_filter('id_popup_table');
         return cust_prod_cat_data;
     }
 
@@ -1016,7 +1071,7 @@
     function compare_table_for_duplicate_entries(validate_add_attributes, cusprodcat) {
         add_attr_duplicates = false;
         var error_message = ''
-        var add_attr_duplicates_list = [];
+        var common = [];
         var add_attr_unique_list = [];
         var no_duplicate_value = 'Y'
         $.each(validate_add_attributes, function (index, value) {
@@ -1024,20 +1079,23 @@
                 add_attr_unique_list.push(value);
             }
             else {
-                if ($.inArray(value, add_attr_duplicates_list) == -1) {
-                    add_attr_duplicates_list.push(value);
+                if ($.inArray(value, common) == -1) {
+                    common.push(value);
                 }
             }
         });
-        if (add_attr_duplicates_list.length != 0) {
-            get_message_details("JMSG001"); // Get message details
+        if (common.length != 0) {
+            $('#cusprodcat_Modal').modal('show');
+            display_duplicate_entry(common);  //Function to highlight the rows in popup
+            error_message = ui_messeges("JMSG001")// Get message details
             no_duplicate_value = 'N'
             return [no_duplicate_value,error_message]
         }
         else {
             $.each(cusprodcat, function (i, item) {
-                if (item.prod_cat_id.length == 0) {
-                    get_message_details("JMSG002"); // Get message details
+                if ((item.prod_cat_id == null) || (item.category_desc.length == 0)){
+                    $('#cusprodcat_Modal').modal('show');
+                    error_message = ui_messeges("JMSG002")// Get message details
                     no_duplicate_value = 'N'
                     return [no_duplicate_value,error_message]
                 }
@@ -1052,7 +1110,7 @@
         document.getElementById("error_message").style.color = "Red";
         $("#error_msg_id").css("display", "block")
         $('#id_save_confirm_popup').modal('hide');
-        $('#myModal').modal('show');
+        $('#cusprodcat_Modal').modal('show');
     }
 
     //********************************************
@@ -1070,9 +1128,10 @@
         return corresponding_values
     }
 
-
-  //check function restricting special char and diaplay the data count of csv file
+//check function restricting special char and diaplay the data count of csv file
     function check_data() {
+        $("#id_delete_duplicate").hide()
+        $('#id_popup_table').DataTable().destroy();
         $("#id_check_success_messages").empty()
         $("#id_check_error_messages").empty()
         $("#id_check_success_messages").prop("hidden", true)
@@ -1086,6 +1145,7 @@
         var prod_cat_id_check = new Array
         del_ind = ''
         $("#id_popup_table TBODY TR").each(function() {
+            $('#id_popup_table').DataTable().destroy();
             var row = $(this);
             unspsc_dic = {}
             //*************** reading data from the pop-up ***************
@@ -1098,47 +1158,79 @@
             }
             prodcat_list.push(unspsc_dic)
             var format = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
-            //*************** checking for special characters for prodcat code ***************
-            if(unspsc_dic.prod_cat_id.length >20){
-                get_message_details("JMSG003"); // Get message details
-                var display = msg_type.messages_id_desc;
-                document.getElementById("id_error_msg_prod_cat_id").innerHTML = display+ "Product Category Code";
+            get_main_table_data(); //Read data from main table
+
+            //*************** checking for special characters for country code ***************
+            if(format.test(unspsc_dic.prod_cat_id)){
                 $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
-                count = count + 1;
-            } else {
-                $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "none");
+                row_color_highlight_special(row);
+                $("#id_error_msg_prod_cat_id").prop("hidden",false);
+                error_message = ui_messeges("JMSG003")// Get message details
+                var display4 = error_message;
+                document.getElementById("id_error_msg_prod_cat_id").innerHTML = display4+ "Product Code";
+                count = count +1;
             }
-            if (prod_cat_id_check.includes(unspsc_dic.prod_cat_id)) {
-                $(row).css({
-                    "background-color": "#E0FFFF",
-                    "border": "1px solid #000000"
-                });
-            } else {
-                $(row).css("background-color", "");
+            else if(prod_cat_id_check.includes(unspsc_dic.prod_cat_id)){
+                 $(row).css("border", "#f8d7da");
+                 row_color_highlight(row);
+                 $("#id_check_error_messages").prop("hidden",false);
+                 var display7 = ui_messeges("JMSG001");
+                 document.getElementById("id_check_error_messages").innerHTML = display7;
+                 $("#save_id").prop("hidden", true);
+                 $("#id_delete_duplicate").show()
+                 $("#id_check_data").prop("hidden", false);
+                 count = count +1;
+            }
+            else if(main_table_low_value.includes(unspsc_dic.prod_cat_id)){
+                 $(row).css("border", "#f8d7da");
+                 row_color_highlight(row);
+                 $("#id_check_error_messages").prop("hidden",false);
+                 var display7 = ui_messeges("JMSG001");
+                 document.getElementById("id_check_error_messages").innerHTML = display7;
+                 $("#save_id").prop("hidden", true);
+                 $("#id_delete_duplicate").show()
+                 $("#id_check_data").prop("hidden", false);
+                 count = count +1;
+            }
+            else{
+                $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "none");
+                row_color_no_highlight(row);
+                $(row).css("border", "");
+                $("#id_delete_duplicate").hide()
             }
             prod_cat_id_check.push(unspsc_dic.prod_cat_id)
+            main_table_low_value.push(unspsc_dic.prod_cat_id)
+            table_sort_filter_popup_pagination('id_popup_table');
         });
+        $("#id_check_special_character_messages").prop("hidden",false);
         //*************** shows save button if there are no errors(special characters and max length) ***************
-        if (count == 0) {
-            $("#id_check_special_character_messages").prop("hidden", true)
+        if(count == 0){
+            $('#id_popup_table').DataTable().destroy();
+            $("#id_popup_table").find("input,button,textarea,select").attr("disabled", "disabled");
+            document.getElementById("id_del_add_button").style.display = "none";
             $("#save_id").prop("hidden", false);
-        }
-        popup_data_dict = {
-            'data_list': prodcat_list,
-        }
-        OpenLoaderPopup();
-        $.ajax({
-            type: 'POST',
-            url: "{% url 'eProc_Configuration_Check:check_cust_unspsc_category' %}",
-            data: JSON.stringify(popup_data_dict),
-            success: function(response) {
-                table_sort_filter_popup_pagination('id_popup_table')
-                var message = ''
-                update_check_message(response.messages)
-                CloseLoaderPopup();
-
+            $("#id_check_data").prop("hidden", true);
+            if (prodcat_list == 0) {
+                $("#save_id").prop("hidden", true);
             }
-        });
+            popup_data_dict = {'data_list': prodcat_list}
+            OpenLoaderPopup();
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'eProc_Configuration_Check:check_cust_unspsc_category' %}",
+                data: JSON.stringify(popup_data_dict),
+                success: function(response) {
+                    table_sort_filter_popup_pagination('id_popup_table')
+                     $("#id_check_special_character_messages").prop("hidden", false);
+                     if (count == 0) {
+                        $("#id_check_special_character_messages").prop("hidden", true);
+                     }
+                    var message = ''
+                    update_check_message(response.messages[1])
+                    CloseLoaderPopup();
+                }
+            });
+        }
     }
 
      //Function to highlight duplicate records
@@ -1181,6 +1273,28 @@
             }
         });
     }
+
+ // Function to get main table data
+function get_main_table_data_upload() {
+    main_table_low_value = [];
+    $('#display_basic_table').DataTable().destroy();
+    $("#display_basic_table TBODY TR").each(function() {
+        var row = $(this);
+        var main_attribute = {};
+        main_attribute.prod_cat_id = row.find("TD").eq(3).html();
+        main_table_low_value.push(main_attribute.prod_cat_id);
+    });
+   table_sort_filter('display_basic_table');
+    return main_table_low_value
+}
+
+//Get message for check data function
+function get_msg_desc_check_data(msg){
+    var msg_type ;
+    msg_type = message_config_details(msg);
+    $("#error_msg_id").prop("hidden", false);
+    return msg_type.messages_id_desc;
+}
 
 </script>
 {% endblock %}

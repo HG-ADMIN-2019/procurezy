@@ -147,6 +147,7 @@ $('#save_id').click(function () {
 
 //Read popup table data
 function read_popup_data() {
+    $('#id_popup_table').DataTable().destroy();
     incoterms_data = new Array();
     validate_add_attributes = [];
     $("#id_popup_table TBODY TR").each(function () {
@@ -161,6 +162,7 @@ function read_popup_data() {
         validate_add_attributes.push(incoterm.incoterm_key);
         incoterms_data.push(incoterm);
     });
+    table_sort_filter('id_popup_table');
     return incoterms_data;
 }
 
@@ -177,6 +179,7 @@ function new_row_data() {
 // Function to get main table data
 function get_main_table_data() {
     main_table_low_value = [];
+    $('#display_basic_table').DataTable().destroy();
     $("#display_basic_table TBODY TR").each(function () {
         var row = $(this);
         var main_attribute = {};
