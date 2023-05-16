@@ -65,7 +65,7 @@ function display_basic_db_data() {
     $('#id_update_data').hide();
     $('#id_save_confirm_popup').modal('hide');
     $('#id_delete_confirm_popup').modal('hide');
-    $('#id_check_all').hide(); 
+    $('#id_check_all').hide();
     table_sort_filter('display_basic_table');
 }
 

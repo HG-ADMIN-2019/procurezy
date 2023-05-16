@@ -159,13 +159,16 @@ m {% extends 'root/base.html' %}
         get_main_table_data();  //Read data from main table
         // compare for duplicates in popup
         [no_duplicate_value,error_message] = compare_table_for_duplicate_entries(validate_add_attributes, clients_data)
-        // if (error_message){
-        //     display_error_message(error_message)
-        // }
-        // else {
+        if (error_message){
+            display_error_message(error_message)
+        }
+        else {
             if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
                 // compare main table and pop up for duplicate values
                 [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
+                if(no_duplicate_entries == 'N'){
+                    $('#upload_client_Modal').modal('show');
+                }
             }
             if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
                 $('#id_save_confirm_popup').modal('hide');
@@ -188,8 +191,8 @@ m {% extends 'root/base.html' %}
             else if (error_message){
                 display_error_message(error_message)
             }
-            table_sort_filter('id_popup_table');
-        // }
+        }
+        table_sort_filter('id_popup_table');
     }
 
     //delete the selected row in db................
@@ -236,6 +239,8 @@ m {% extends 'root/base.html' %}
             }
         });
         if (common.length != 0) {
+            $('#upload_client_Modal').modal('show');
+            display_duplicate_entry(common);  //Function to highlight the rows in popup
             error_message = ui_messeges("JMSG001"); // Get message details
             no_duplicate_value = 'N'
             return [no_duplicate_value,error_message]
@@ -243,6 +248,7 @@ m {% extends 'root/base.html' %}
         else{
             $.each(client, function (i, item) {
                 if ((item.client.length == 0) || (item.description.length == 0)) {
+                    $('#upload_client_Modal').modal('show');
                     error_message = ui_messeges("JMSG002"); // Get message details
                     no_duplicate_value = 'N'
                     return [no_duplicate_value,error_message]

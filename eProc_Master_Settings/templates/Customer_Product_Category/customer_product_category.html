@@ -111,7 +111,7 @@
                             <p id="id_error_msg_description" ></p>
                             <p id="id_error_msg_prod_cat_id_length" ></p>
                         </div>
-                        <div id="id_error_msg" class="alert alert-danger display-none" role="alert"><span id="error_message"></span></div>
+                        <div id="error_msg_id" class="alert alert-danger display-none" role="alert"><span id="error_message"></span></div>
                         <div id="id_warning_msg_id" class="alert alert-warning display-none" role="alert"></div>
                         <div id="id_info_msg_id" class="alert alert-primary display-none" role="alert"></div>
                         <table class="class_popup_table table table-bordered mt-2" id="id_popup_table">
@@ -657,6 +657,14 @@
         $(".modal").on("hidden.bs.modal", function () {
             $("#id_error_msg").html(" ");
         });
+        basic_add_new_html =
+        '<tr>'+
+            '<td><input type="checkbox" required></td>'+
+            '<td><select type="text" class="input form-control prodid" id="prodid-'+inc_index+'"  name="prodid" onchange="GetSelectedTextValue(this)">'+prod_cat_id_dropdown+'</select></td>'+
+            '<td><input class="form-control description" type="text"  name="description"  id="description-'+inc_index+'" disabled></td>'+
+            '<td hidden><guid></td><td hidden>< del_ind></td>'+
+        '</tr>';
+        $('#id_popup_tbody').append(basic_add_new_html);
         if (GLOBAL_ACTION == "cusprodcat_upload") {
 		   basic_add_new_html =
 			'<tr>'+
@@ -702,12 +710,14 @@
                 GLOBAL_ACTION = button.value
                 $("#id_popup_tbody").empty();
                 $('#cusprodcat_Modal').modal('show');
-                basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select type="text" class="input form-control prodid" id="prodid-1"  name="prodid" onchange="GetSelectedTextValue(this)"><option value=""selected>Select your option</option>'+prod_cat_id_dropdown+'</select></td><td><input class="form-control description" type="text"  name="description"  id="description-1" disabled></td><td hidden><guid></td><td hidden>< del_ind></td></tr>';
+                basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select type="text" class="input form-control prodid" id="prodid-1"  name="prodid" onchange="GetSelectedTextValue(this)">'+prod_cat_id_dropdown+'</select></td><td><input class="form-control description" type="text"  name="description"  id="description-1" disabled></td><td hidden><guid></td><td hidden>< del_ind></td></tr>';
                 $('#id_popup_tbody').append(basic_add_new_html);
                 $("#id_del_ind_checkbox").prop("hidden", true);
                 document.getElementById("id_del_add_button").style.display = "block";
                 $("#save_id").prop("hidden", false);
                 CloseLoaderPopup();
+                var prodidSelect = $("#prodid-1");
+                GetSelectedTextValue(prodidSelect[0]);
             }
         });
     }

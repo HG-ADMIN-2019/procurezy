@@ -102,7 +102,7 @@ var org_attr={};
             $("#id_del_ind_checkbox").prop("hidden", true);
             table_sort_filter("id_popup_table");
             table_sort_filter('display_basic_table');
-            $('#myModal').modal('show');
+            $('#org_attr_Modal').modal('show');
     }
 
     //***************************
@@ -122,7 +122,7 @@ var org_attr={};
         $("#id_error_msg").html("");
         $("#id_popup_tbody").empty();
         $("#id_error_msg").empty();
-        $('#myModal').modal('hide');
+        $('#org_attr_Modal').modal('hide');
         $("#id_error_msg").prop("hidden", true);
         $("#id_error_msg_org_attr_code").prop("hidden", true);
         $("#id_error_msg_org_attr_name").prop("hidden", true);
@@ -140,7 +140,7 @@ var org_attr={};
         document.getElementById("error_message").style.color = "Red";
         $("#error_msg_id").css("display", "block")
         $('#id_save_confirm_popup').modal('hide');
-        $('#myModal').modal('show');
+        $('#org_attr_Modal').modal('show');
     }
 
     //onclick of cancel display the table in display mode............
@@ -215,7 +215,7 @@ var org_attr={};
 
     // Function to hide and display save related popups
     $('#save_id').click(function () {
-        $('#myModal').modal('hide');
+        $('#org_attr_Modal').modal('hide');
         orgattr_data = read_popup_data();
         $('#id_save_confirm_popup').modal('show');
     });
@@ -284,11 +284,14 @@ var org_attr={};
 }
 
     // Function for add a new row data
-    function new_row_data(){
-        basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select type="text" class="input form-control attribute" id="attribute-1"  name="attribute" onchange="GetSelectedTextValue(this)"><option value="" disabled selected>Select your option</option>'+ attribute_id_dropdown +'</select></td><td><input class="form-control attribute_name" type="text" name="attribute_name" id="attribute_name-1" disabled></td><td><input type="checkbox" name="range_indicator" required></td><td><input type="checkbox" name="multiple_value" required></td><td><input type="checkbox" name="allow_defaults" required></td><td><input type="checkbox" name="inherit_values" required></td><td><input type="number" name="maxlength"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td><td class="id_del_ind_checkbox1" hidden><input type="checkbox" name = "del_ind_flag" required></td></tr>';
+    function new_row_data() {
+        basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select type="text" class="input form-control attribute" id="attribute-1"  name="attribute">'+ attribute_id_dropdown +'</select></td><td><input class="form-control attribute_name" type="text" name="attribute_name" id="attribute_name-1" disabled></td><td><input type="checkbox" name="range_indicator" required></td><td><input type="checkbox" name="multiple_value" required></td><td><input type="checkbox" name="allow_defaults" required></td><td><input type="checkbox" name="inherit_values" required></td><td><input type="number" name="maxlength"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td><td class="id_del_ind_checkbox1" hidden><input type="checkbox" name = "del_ind_flag" required></td></tr>';
         $('#id_popup_tbody').append(basic_add_new_html);
         table_sort_filter('id_popup_table');
+        var attributeSelect = $("#attribute-1");
+        GetSelectedTextValue(attributeSelect[0]);
     }
+
 
     //Get message for check data function
     function get_msg_desc_check_data(msg){

@@ -51,7 +51,7 @@ from eProc_Suppliers.Utilities.supplier_generic import supplier_detail_search
 from eProc_Suppliers.Utilities.supplier_specific import get_supplier_data, update_country_encrypt
 from eProc_Suppliers.models import OrgSuppliers
 from eProc_Users.Utilities.user_generic import user_detail_search, get_usertype_values, \
-    get_emp_data, emp_search_data, set_search_data
+    get_emp_data, emp_search_data, set_search_data, get_supplier_type_values
 from django.http import QueryDict
 import sys
 from datetime import datetime
@@ -75,11 +75,6 @@ def admin_tool(req):
 
 def user_search(request):
     update_user_info(request)
-    # dropdown_usertype_values = list(
-    #     FieldTypeDescription.objects.filter(field_name='user_type', del_ind=False,
-    #                                         client=global_variables.GLOBAL_CLIENT).values('field_type_id',
-    #                                                                                       'field_type_desc'
-    #                                                                                       ))
     context = {
         'inc_nav': True,
         'inc_footer': True,
@@ -91,9 +86,10 @@ def user_search(request):
 
     if request.method == 'GET':
         encrypted_email = []
-
         employee_results = get_emp_data()
         context['employee_results'] = employee_results
+        count = len(employee_results)
+        context['count'] = count
     if request.method == 'POST':
         search_fields = {}
         for data in request.POST:
@@ -116,6 +112,8 @@ def user_search(request):
         search_fields['employee_id'] = request.POST.get('employee_id')
 
         employee_results = emp_search_data(search_fields)
+        count = len(employee_results)
+        context['count'] = count
         context['employee_results'] = employee_results
 
     return render(request, 'User Search/user_search.html', context)
@@ -138,7 +136,8 @@ def supplier_search(request):
         'purch_org_list': django_query_instance.django_filter_value_list_query(OrgPorg, {
             'client': global_variables.GLOBAL_CLIENT,
             'del_ind': False}, 'porg_id'),
-        'is_admin_active': True
+        'is_admin_active': True,
+        'dropdown_suptype_values': get_supplier_type_values(),
     }
 
     if request.method == 'GET':
@@ -161,20 +160,17 @@ def supplier_search(request):
                 if value != '':
                     search_fields[data] = value
 
-        # search_fields['client'] = client
-        # search_fields['del_ind'] = False
         search_fields['name1'] = request.POST.get('name1')
         search_fields['name2'] = request.POST.get('name2')
         search_fields['supplier_id'] = request.POST.get('supplier_id')
-        search_fields['search_term1'] = request.POST.get('search_term1')
-        search_fields['search_term2'] = request.POST.get('search_term2')
+        search_fields['email'] = request.POST.get('email')
+        search_fields['supplier_type'] = request.POST.get('supplier_type')
         search_fields['country_code'] = request.POST.get('country_code')
         search_fields['city'] = request.POST.get('city')
         search_fields['block'] = request.POST.get('block')
         search_fields['purchasing_org'] = request.POST.get('purchasing_org')
 
         supplier_results = supplier_detail_search(**search_fields)
-        print("supplier_results", supplier_results)
         context['supplier_results'] = update_country_encrypt(supplier_results)
 
     return render(request, 'Supplier Search/supplier_search.html', context)
@@ -201,8 +197,6 @@ def user_details(request, email):
         'inc_nav': True,
         'inc_footer': True,
         'user_info': user_info,
-        # 'currency_id': django_query_instance.django_filter_value_list_query(Currency, {'del_ind': False},
-        #                                                                     'currency_id'),
         'currency_id': django_query_instance.django_filter_query(Currency, {'del_ind': False}, None,
                                                                  ['currency_id', 'description']),
         'time_zones': django_query_instance.django_filter_value_list_query(TimeZone, {'del_ind': False}, 'time_zone'),
@@ -233,8 +227,8 @@ def sup_details(req, supplier_id):
                                                                             'client': global_variables.GLOBAL_CLIENT})
 
     supplier_org_info = django_query_instance.django_filter_query(OrgSuppliers, {'supplier_id': supplier_id,
-                                                                                      'client': getClients(req),
-                                                                                      'del_ind': False}, None, None)
+                                                                                 'client': getClients(req),
+                                                                                 'del_ind': False}, None, None)
 
     django_query_instance.django_filter_value_list_query(Languages, {'del_ind': False}, 'language_id')
 
@@ -244,7 +238,6 @@ def sup_details(req, supplier_id):
     img_url = []
     for img in supp_img_info:
         img_url.append(img.image_url)
-    print(img_url)
 
     context = {
         'inc_nav': True,
@@ -301,17 +294,12 @@ def user_report(request):
 
         # ---------------------------------------------------------------------
         user_list_star = django_query_instance.django_filter_only_query(UserData, {'is_active': True})
-        print(user_list_star)
         ####################################################################################
-
         if default_comp_id is not None:
             # UserData
             company_details = OrgCompanies.objects.filter(client=client, del_ind=False, company_id=default_comp_id)
-
             # Using the company code number and CCODE node type get the company details from Org Model table
             for comp_det in company_details:
-                print(comp_det.object_id)
-
                 comp_obj_id_info = OrgModel.objects.filter(Q(object_id=comp_det.object_id_id, node_type='CCODE',
                                                              client=client, del_ind=False))
 
@@ -328,13 +316,6 @@ def user_report(request):
 
                         # Using the user_list from the Org Model read the user details
                         for user_obj_id in user_list:
-                            print("user_obj_id.object_id", user_obj_id.object_id)
-
-                            # if inp_active == 'on':
-                            #     active = True
-                            # else:
-                            #     active = False
-
                             user_details = UserData.objects.filter(
                                 Q(object_id=user_obj_id.object_id, is_active=True,
                                   client=client, del_ind=False))
@@ -342,7 +323,6 @@ def user_report(request):
                             final_array = []
 
                             for user in user_details:
-                                print('User in Company:', user.first_name, user.username)
                                 final_array.append(comp_det.company_id)
                                 final_array.append(concatenate_str(comp_det.name1, comp_det.name2))
                                 final_array.append(user.username)
@@ -391,23 +371,16 @@ def user_report(request):
                     print(list.email)
             else:
                 user_list_star = django_query_instance.django_filter_only_query(UserData, {'is_active': active})
-                print(user_list_star)
             ####################################################################################
-
             if inp_comp_code is not None:
                 # UserData
                 company_details = OrgCompanies.objects.filter(client=client, del_ind=False, company_guid=inp_comp_code)
-
                 # Using the company code number and CCODE node type get the company details from Org Model table
                 for comp_det in company_details:
-                    print(comp_det.company_id)
-
                     comp_obj_id_info = OrgModel.objects.filter(Q(object_id=comp_det.object_id_id, node_type='CCODE',
                                                                  client=client, del_ind=False))
-
                     ###################################################################
                     if inp_username is not None and inp_username != '':
-
                         for user_info in user_list_star:
                             confirm_in_comp = OrgModel.objects.filter(
                                 Q(node_type='USER', name=user_info.username,
@@ -423,7 +396,6 @@ def user_report(request):
                                 final_array.append(user_info.user_locked)
                                 final_list.append(final_array)
                     else:
-
                         # Using the Company Details - node_guid read the NODE type which has company code node_guid
                         # as parent_node from the Org Model table
                         for comp in comp_obj_id_info:
@@ -437,19 +409,10 @@ def user_report(request):
 
                                 # Using the user_list from the Org Model read the user details
                                 for user_obj_id in user_list:
-                                    print("user_obj_id.object_id", user_obj_id.object_id)
-
-                                    # if inp_active == 'on':
-                                    #     active = True
-                                    # else:
-                                    #     active = False
-
                                     user_details = UserData.objects.filter(
                                         Q(object_id=user_obj_id.object_id, is_active=True,
                                           client=client, del_ind=False))
-
                                     final_array = []
-
                                     for user in user_details:
                                         print('User in Company:', user.first_name, user.username)
                                         final_array.append(comp_det.company_id)
@@ -1254,6 +1217,25 @@ def extract_employee_template(request):
          'DATE_JOINED', 'FIRST_LOGIN', 'LAST_LOGIN', 'IS_ACTIVE', 'IS_SUPERUSER', 'IS_STAFF', 'DATE_FORMAT',
          'EMPLOYEE_ID', 'DECIMAL_NOTATION', 'USER_TYPE', 'LOGIN_ATTEMPTS', 'USER_LOCKED', 'PWD_LOCKED', 'SSO_USER',
          'VALID_FROM', 'VALID_TO', 'del_ind', 'CURRENCY_ID', 'LANGUAGE_ID', 'OBJECT_ID', 'TIME_ZONE'])
+
+    return response
+
+
+def extract_supplier_template(request):
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename="Supplier_Template.CSV"'
+
+    writer = csv.writer(response)
+
+    writer.writerow(
+        ['SUPPLIER_ID', 'SUPP_TYPE', 'NAME1', 'NAME2', 'SUPPLIER_USERNAME', 'CITY', 'POSTAL_CODE', 'STREET',
+         'LANDLINE', 'MOBILE_NUM', 'FAX', 'EMAIL', 'EMAIL1', 'EMAIL2', 'EMAIL3',
+         'EMAIL4', 'EMAIL5', 'OUTPUT_MEDIUM', 'SEARCH_TERM1', 'SEARCH_TERM2', 'DUNS_NUMBER', 'BLOCK DATE',
+         'BLOCK', 'DELIVERY_DAYS', 'IS_ACTIVE', 'REGISTRATION_NUMBER', 'COMPANY_ID', 'SUPPLIER_MASTER_SOURCE_SYSTEM',
+         'PREF_ROUTING', 'LOCK_DATE', 'GLOBAL_DUNS', 'DOMESTIC_DUNS', 'ICS_CODE', 'INTERNAL_IND', 'SBA_CODE',
+         'ETHNICITY',
+         'HUBZONE', 'NO_VEND_TEXT', 'AGR_REG_NO', 'NO_MULT_ADDR', 'del_ind', 'COUNTRY_CODE', 'CURRENCY_ID',
+         'LANGUAGE_ID'])
 
     return response
 

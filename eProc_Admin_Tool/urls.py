@@ -26,6 +26,7 @@ urlpatterns = [
     path('org_announcements/', views.org_announcements_search, name='org_announcements_search'),
     path('org_announcement_details/<str:announcement_guid>/', views.org_announcement_details, name='org_announcement_details'),
     path('extract_employee_template', views.extract_employee_template, name='extract_employee_template'),
+    path('extract_supplier_template', views.extract_supplier_template, name='extract_supplier_template'),
     path('admin_report/get_acct_report', views.get_acct_report, name='get_acct_report'),
     path('application_monitoring/documents', views.application_monitoring, name='application_monitoring'),
     path('application_monitoring/emails', views.email_user_monitoring, name='email_user_monitoring'),

@@ -44,14 +44,13 @@ $(".remove_upload_data").click(() => {
 //**********************************************
 function display_error_message(error_message){
     $('#error_message').text(error_message);
-    $('#error_msg_id').text(error_message);
     document.getElementById("error_msg_id").style.color = "Red";
     $("#error_msg_id").css("display", "block");
     $('#id_save_confirm_popup').modal('hide');
     $('#Paytrm_desc_Modal').modal('show');
 }
 
-// Functtion to hide and display save related popups
+// Function to hide and display save related popups
 $('#save_id').click(function () {
     $('#Paytrm_desc_Modal').modal('hide');
     payment_term_data = read_popup_data();
@@ -88,24 +87,21 @@ function read_popup_data() {
 
 // Function for add a new row data
 function new_row_data() {
-    basic_add_new_html =
-    `<tr>
-        <td><input type="checkbox" required></td>'  
-        <td><select id="language" name="language" class="form-control"  type="text">${language_dropdown}</select></td> 
-        <td><select id="payterm_key" name="payterm_key" class="form-control"  type="text">${payment_term_dropdown}</select></td> 
-        <td><input  type="text"  name="description" class="form-control check_special_char" maxlength="50"></td> 
-        <td><input  type="number"  name="day_limit" class="form-control check_number" maxlength="10"></td> 
-        <td class="class_del_checkbox" hidden><input type="checkbox" required></td> 
-        <td hidden><input  type="text"  name="guid"></td>
-    </tr>`
+    basic_add_new_html ='<tr><td><input type="checkbox" required></td>'+
+        '<td><select id="language" name="language" class="form-control"  type="text">'+language_dropdown+'</select></td>'+
+        '<td><select id="payterm_key" name="payterm_key" class="form-control"  type="text">'+payment_term_dropdown+'</select></td>'+
+        '<td><input  type="text"  name="description" class="form-control check_special_char" maxlength="50"></td>'+
+        '<td><input  type="number"  name="day_limit" class="form-control check_number" maxlength="10"></td>'+
+        '<td class="class_del_checkbox" hidden><input type="checkbox" required></td>'+
+        '<td hidden><input  type="text"  name="guid"></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
-    table_sort_filter('id_popup_table');
+//    table_sort_filter('id_popup_table');
 }
 
 // Function to get main table data
 function get_main_table_data() {
     main_table_low_value = [];
-     $('#display_basic_table').DataTable().destroy();
+    $('#display_basic_table').DataTable().destroy();
     $("#display_basic_table TBODY TR").each(function () {
         var row = $(this);
         var main_attribute = {};
@@ -115,7 +111,7 @@ function get_main_table_data() {
         var paytrm_desc_maintable = desc+'-'+ main_attribute.payment_term_key
         main_table_low_value.push(paytrm_desc_maintable);
     });
-    table_sort_filter('display_basic_table');
+//    table_sort_filter('display_basic_table');
 }
 
 // Function to get the selected row data

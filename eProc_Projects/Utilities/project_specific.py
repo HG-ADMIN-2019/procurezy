@@ -1,8 +1,11 @@
+from eProc_Basic.Utilities.constants.constants import CONST_PROJECT_ID
 from eProc_Basic.Utilities.functions.django_query_set import DjangoQueries
 from eProc_Basic.Utilities.functions.guid_generator import guid_generator
 from eProc_Basic.Utilities.global_defination import global_variables
 from eProc_Configuration.models.application_data import ProjectDetails
-
+from eProc_Time_Sheet.models import ProjectEfforts
+from datetime import datetime, date, timedelta
+import datetime
 django_query_instance = DjangoQueries()
 
 
@@ -40,7 +43,47 @@ def get_project_filter_list(filter, query_count):
     """
 
     """
-    project_details = django_query_instance.django_filter_query_with_entry_count(ProjectDetails, filter, ['project_id'], None,
+    project_details = django_query_instance.django_filter_query_with_entry_count(ProjectDetails, filter, ['project_id'],
+                                                                                 None,
                                                                                  int(query_count))
 
     return project_details
+
+
+# def get_efforts_filter_list(project_id,default_calendar_id):
+#     project_efforts = django_query_instance.django_filter_query_with_entry_count(ProjectEfforts,{
+#                                                                 'username': global_variables.GLOBAL_LOGIN_USERNAME,
+#                                                                 'calender_id': default_calendar_id,
+#                                                                 'project_id': project_id})
+#     return project_efforts
+
+
+def get_efforts_filter_list(project_id, default_calendar_id):
+    today = date.today()
+    week_number = today.isocalendar()[1]
+
+    project_efforts = ProjectEfforts.objects.filter(
+        username=global_variables.GLOBAL_LOGIN_USERNAME,
+        calender_id=default_calendar_id,
+        project_id=project_id,
+        effort_week=week_number
+    ).order_by('project_id')
+
+    # loop through project_efforts queryset and create a list of dictionaries
+    data = []
+    for pe in project_efforts:
+        data.append({
+            'project_id': pe.project_id,
+            'username': pe.username,
+            'calender_id': pe.calender_id,
+            'project_category': pe.project_category,
+            'effort': pe.effort,
+            'effort_day': pe.effort_day,
+            'effort_date': pe.effort_date,
+            'effort_week': pe.effort_week,
+            'effort_year': pe.effort_year,
+            'effort_description': pe.effort_description
+        })
+
+    return data
+
