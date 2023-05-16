@@ -655,8 +655,8 @@ class MasterSettingsSave:
                                      'account_assign_value': aav_detail['account_assign_value'],
                                      'account_assign_cat': AccountAssignmentCategory.objects.get(
                                          account_assign_cat=aav_detail['account_assign_cat']),
-                                     'valid_from': aav_detail['valid_from'],
-                                     'valid_to': aav_detail['valid_to'],
+                                     'valid_from': datetime.strptime(aav_detail['valid_from'], "%d-%m-%Y"),
+                                     'valid_to': datetime.strptime(aav_detail['valid_to'], "%d-%m-%Y"),
                                      'company_id': aav_detail['company_id'],
                                      'del_ind': False,
                                      'client': self.client,
@@ -679,8 +679,8 @@ class MasterSettingsSave:
                                                           {'account_assign_value': aav_detail[
                                                               'account_assign_value'],
                                                            'account_assign_cat': aav_detail['account_assign_cat'],
-                                                           'valid_from': aav_detail['valid_from'],
-                                                           'valid_to': aav_detail['valid_to'],
+                                                           'valid_from': datetime.strptime(aav_detail['valid_from'], "%d-%m-%Y"),
+                                                           'valid_to': datetime.strptime(aav_detail['valid_to'], "%d-%m-%Y"),
                                                            'company_id': aav_detail['company_id'],
                                                            'accounting_data_changed_at': self.current_date_time,
                                                            'accounting_data_changed_by': self.username,
@@ -1474,8 +1474,8 @@ def get_account_assignment_value():
             data["del_ind_flag"] = False
         else:
             data["del_ind_flag"] = True
-        data["valid_from"] = data["valid_from"].strftime("%Y-%m-%d")
-        data["valid_to"] = data["valid_to"].strftime("%Y-%m-%d")
+        # data["valid_from"] = data["valid_from"].strftime("%Y-%m-%d")
+        # data["valid_to"] = data["valid_to"].strftime("%Y-%m-%d")
     return upload_data_accounting
 
 

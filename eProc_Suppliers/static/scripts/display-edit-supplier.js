@@ -578,7 +578,7 @@ function values_reload(formdata){
 }
 function get_values_onerror(){
     $('#supplier_guid').val(localStorage.getItem("supplier_guid"));
-   $('#supplier_image_id').val(localStorage.getItem("supplier_image_id"));
+//   $('#supplier_image_id').val(localStorage.getItem("supplier_image_id"));
    $('#supplier_id').val(localStorage.getItem("supplier_id"));
     $('#supplier_type').val(localStorage.getItem("supplier_type"));
    $('#supplier_regnum').val(localStorage.getItem("supplier_regnum"));
