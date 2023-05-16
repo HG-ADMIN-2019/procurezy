@@ -50,7 +50,6 @@ function add_popup_row() {
 function display_basic_db_data() {
     $('#display_basic_table').DataTable().destroy();
     $('#id_aav_tbody').empty();
-    console.log(format("16-02-2022"));
     var edit_basic_data = '';
     $.each(rendered_account_assignment_value, function(index, value) {
         edit_basic_data += '<tr><td class="class_select_checkbox"><input class="checkbox_check" onclick="valueChanged()" type="checkbox" required></td><td>' + value.company_id + '</td><td>' + value.account_assign_cat + '</td><td>' + value.account_assign_value + '</td><td>' + format(value.valid_from) + '</td><td>' + format(value.valid_to)+ '</td><td hidden>' + value.account_assign_guid + '</td> <td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
