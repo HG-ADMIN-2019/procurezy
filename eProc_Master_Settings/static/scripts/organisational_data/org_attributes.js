@@ -17,93 +17,93 @@ var org_attr={};
         document.getElementById("id_del_add_button").style.display = "none";
     }
 
-    //************************************
-    function onclick_copy_update_button(data) {
-        $('#display_basic_table').DataTable().destroy();
-        $('#id_popup_table').DataTable().destroy();
-        $("#id_popup_tbody").empty();
-        $("#error_msg_id").css("display", "none");
-        //Reference the Table.
-        var grid = document.getElementById("display_basic_table");
-        //Reference the CheckBoxes in Table.
-        var checkBoxes = document.getElementsByClassName("checkbox_check");
-        var edit_basic_data = "";
-        var dropdown_values = [];
-        dropdown_value();
-        //Loop through the CheckBoxes.
-        for (var i = 0; i < checkBoxes.length; i++) {
-            if (checkBoxes[i].checked) {
-                var row = checkBoxes[i].parentNode.parentNode;
-                if(GLOBAL_ACTION == "UPDATE"){
-                    edit_basic_data +=  '<tr><td hidden><input type="checkbox" required></td>'+
-                    '<td><select type="text" class="input form-control" id="attributeid"  name="attributeid"  disabled><option>'+ row.cells[1].innerHTML +'</option></select></td>'+
-                    '<td><input class="form-control attribute_name" type="text" value="' + row.cells[2].innerHTML + '" name="attribute_name" id="attribute_name-1" disabled></td>'+
-                    '<td><input type="checkbox"  name="range_indicator" required></td>'+
-                    '<td><input type="checkbox"  name="multiple_value" required></td>'+
-                    '<td><input type="checkbox" name="allow_defaults" required></td>'+
-                    '<td><input type="checkbox"  name="inherit_values" required></td>'+
-                    '<td><input type="number" value="' + row.cells[7].innerHTML + '" name="maxlength"></td>'+
-                    '<td class="class_del_checkbox" hidden><input type="checkbox" required></td>'+
-                    '<td class="class_del_checkbox1" hidden><input type="checkbox" required></td></tr>';
-                     $("#header_select").prop("hidden", true);
-                }
-                else if (GLOBAL_ACTION == "DELETE"){
-                    if ((row.cells[8].innerHTML=="False") || (row.cells[8].innerHTML=="false")){
-                        check = '<input type="checkbox" disabled>'
-                        $('#delete_data').prop('disabled', true);
-                    }
-                    else
-                    {
-                        check = '<input type="checkbox">'
-                        $('#delete_data').prop('disabled', false);
-                    }
-                    unique_input = '<input class="form-control" type="text" value="' + row.cells[1].innerHTML + '" name="prod_cat_id" onkeypress="return /[0-9]/i.test(event.key)" maxlength="20" style="text-transform:uppercase" required>'
-                    edit_basic_data += '<tr><td>'+check+'</td><td>'+unique_input+'</td>'+
-                    '<td><input type="text" class="form-control" value="' + row.cells[2].innerHTML + '" name="prod_cat_desc" onkeypress="return /[a-z ]/i.test(event.key)" maxlength="100" required></td>'+
-                    '<td><input type="checkbox"  name="range_indicator" required></td><td><input type="checkbox"  name="multiple_value" required></td>'+
-                    '<td><input type="checkbox" name="allow_defaults" required></td><td><input type="checkbox"  name="inherit_values" required></td>'+
-                    '<td><input type="number" value="' + row.cells[7].innerHTML + '" name="maxlength"></td>'+
-                    '<td class="class_del_checkbox" hidden><input type="checkbox" required></td>'+
-                    '<td class="id_del_ind_checkbox1" hidden><input type="text" name = "del_ind_flag" value="' + row.cells[8].innerHTML + '"></td></tr>';
-                    $("#header_select").prop("hidden", false);
-                }
-                var attribute = row.cells[1].innerHTML;
-                var range_indicator = row.cells[3].children.range_indicator.checked
-                var multiple_value = row.cells[4].children.multiple_value.checked
-                var allow_defaults = row.cells[5].children.allow_defaults.checked
-                var inherit_values = row.cells[6].children.inherit_values.checked
-                dropdown_values.push([attribute,range_indicator,multiple_value,allow_defaults,inherit_values])
-            }
-        }
-        $('#id_popup_tbody').append(edit_basic_data);
-        var i = 0;
-        $("#id_popup_table TBODY TR").each(function () {
-            var row = $(this);
-            var attribute = dropdown_values[i][0];
-            var range_indicator = dropdown_values[i][1];
-            var multiple_value = dropdown_values[i][2];
-            var allow_defaults = dropdown_values[i][3];
-            var inherit_values = dropdown_values[i][4];
-            if(range_indicator) {
-                $(row.find("TD").eq(3).find('input[name="range_indicator"]').attr('checked', 'checked'));
-            }
-            if(multiple_value) {
-                $(row.find("TD").eq(4).find('input[name="multiple_value"]').attr('checked', 'checked'));
-            }
-            if(allow_defaults) {
-                $(row.find("TD").eq(5).find('input[name="allow_defaults"]').attr('checked', 'checked'));
-            }
-            if(inherit_values) {
-                $(row.find("TD").eq(6).find('input[name="inherit_values"]').attr('checked', 'checked'));
-            }
-            i++;
-          });
-            display_button();
-            $("#id_del_ind_checkbox").prop("hidden", true);
-            table_sort_filter("id_popup_table");
-            table_sort_filter('display_basic_table');
-            $('#org_attr_Modal').modal('show');
-    }
+    // //************************************
+    // function onclick_copy_update_button(data) {
+    //     $('#display_basic_table').DataTable().destroy();
+    //     $('#id_popup_table').DataTable().destroy();
+    //     $("#id_popup_tbody").empty();
+    //     $("#error_msg_id").css("display", "none");
+    //     //Reference the Table.
+    //     var grid = document.getElementById("display_basic_table");
+    //     //Reference the CheckBoxes in Table.
+    //     var checkBoxes = document.getElementsByClassName("checkbox_check");
+    //     var edit_basic_data = "";
+    //     var dropdown_values = [];
+    //     dropdown_value();
+    //     //Loop through the CheckBoxes.
+    //     for (var i = 0; i < checkBoxes.length; i++) {
+    //         if (checkBoxes[i].checked) {
+    //             var row = checkBoxes[i].parentNode.parentNode;
+    //             if(GLOBAL_ACTION == "UPDATE"){
+    //                 edit_basic_data +=  '<tr><td hidden><input type="checkbox" required></td>'+
+    //                 '<td><select type="text" class="input form-control" id="attributeid"  name="attributeid"  disabled><option>'+ row.cells[1].innerHTML +'</option></select></td>'+
+    //                 '<td><input class="form-control attribute_name" type="text" value="' + row.cells[2].innerHTML + '" name="attribute_name" id="attribute_name-1" disabled></td>'+
+    //                 '<td><input type="checkbox"  name="range_indicator" required></td>'+
+    //                 '<td><input type="checkbox"  name="multiple_value" required></td>'+
+    //                 '<td><input type="checkbox" name="allow_defaults" required></td>'+
+    //                 '<td><input type="checkbox"  name="inherit_values" required></td>'+
+    //                 '<td><input type="number" value="' + row.cells[7].innerHTML + '" name="maxlength"></td>'+
+    //                 '<td class="class_del_checkbox" hidden><input type="checkbox" required></td>'+
+    //                 '<td class="class_del_checkbox1" hidden><input type="checkbox" required></td></tr>';
+    //                  $("#header_select").prop("hidden", true);
+    //             }
+    //             else if (GLOBAL_ACTION == "DELETE"){
+    //                 if ((row.cells[8].innerHTML=="False") || (row.cells[8].innerHTML=="false")){
+    //                     check = '<input type="checkbox" disabled>'
+    //                     $('#delete_data').prop('disabled', true);
+    //                 }
+    //                 else
+    //                 {
+    //                     check = '<input type="checkbox">'
+    //                     $('#delete_data').prop('disabled', false);
+    //                 }
+    //                 unique_input = '<input class="form-control" type="text" value="' + row.cells[1].innerHTML + '" name="prod_cat_id" onkeypress="return /[0-9]/i.test(event.key)" maxlength="20" style="text-transform:uppercase" required>'
+    //                 edit_basic_data += '<tr><td>'+check+'</td><td>'+unique_input+'</td>'+
+    //                 '<td><input type="text" class="form-control" value="' + row.cells[2].innerHTML + '" name="prod_cat_desc" onkeypress="return /[a-z ]/i.test(event.key)" maxlength="100" required></td>'+
+    //                 '<td><input type="checkbox"  name="range_indicator" required></td><td><input type="checkbox"  name="multiple_value" required></td>'+
+    //                 '<td><input type="checkbox" name="allow_defaults" required></td><td><input type="checkbox"  name="inherit_values" required></td>'+
+    //                 '<td><input type="number" value="' + row.cells[7].innerHTML + '" name="maxlength"></td>'+
+    //                 '<td class="class_del_checkbox" hidden><input type="checkbox" required></td>'+
+    //                 '<td class="id_del_ind_checkbox1" hidden><input type="text" name = "del_ind_flag" value="' + row.cells[8].innerHTML + '"></td></tr>';
+    //                 $("#header_select").prop("hidden", false);
+    //             }
+    //             var attribute = row.cells[1].innerHTML;
+    //             var range_indicator = row.cells[3].children.range_indicator.checked
+    //             var multiple_value = row.cells[4].children.multiple_value.checked
+    //             var allow_defaults = row.cells[5].children.allow_defaults.checked
+    //             var inherit_values = row.cells[6].children.inherit_values.checked
+    //             dropdown_values.push([attribute,range_indicator,multiple_value,allow_defaults,inherit_values])
+    //         }
+    //     }
+    //     $('#id_popup_tbody').append(edit_basic_data);
+    //     var i = 0;
+    //     $("#id_popup_table TBODY TR").each(function () {
+    //         var row = $(this);
+    //         var attribute = dropdown_values[i][0];
+    //         var range_indicator = dropdown_values[i][1];
+    //         var multiple_value = dropdown_values[i][2];
+    //         var allow_defaults = dropdown_values[i][3];
+    //         var inherit_values = dropdown_values[i][4];
+    //         if(range_indicator) {
+    //             $(row.find("TD").eq(3).find('input[name="range_indicator"]').attr('checked', 'checked'));
+    //         }
+    //         if(multiple_value) {
+    //             $(row.find("TD").eq(4).find('input[name="multiple_value"]').attr('checked', 'checked'));
+    //         }
+    //         if(allow_defaults) {
+    //             $(row.find("TD").eq(5).find('input[name="allow_defaults"]').attr('checked', 'checked'));
+    //         }
+    //         if(inherit_values) {
+    //             $(row.find("TD").eq(6).find('input[name="inherit_values"]').attr('checked', 'checked'));
+    //         }
+    //         i++;
+    //       });
+    //         display_button();
+    //         $("#id_del_ind_checkbox").prop("hidden", true);
+    //         table_sort_filter("id_popup_table");
+    //         table_sort_filter('display_basic_table');
+    //         $('#org_attr_Modal').modal('show');
+    // }
 
     //***************************
     function display_button(){
