@@ -46,7 +46,7 @@ def get_project_details(request):
     project_id_list, project_id =  org_attr_value_instance.get_user_default_attr_value_list_by_attr_id(object_id_list, CONST_PROJECT_ID)
     default_calendar_id = org_attr_value_instance.get_user_default_attr_value_list_by_attr_id(object_id_list, CONST_CALENDAR_ID)[1]
     project_details = get_project_filter_list(project_id)
-    project_efforts = get_efforts_filter_list(project_id)
+    project_efforts = get_efforts_filter_list(project_id, object_id_list)
 
     context = {
         'inc_nav': True,

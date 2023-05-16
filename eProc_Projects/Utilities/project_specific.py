@@ -59,12 +59,11 @@ def get_project_filter_list(project_id):
 #     return project_efforts
 
 
-def get_efforts_filter_list(project_id):
+def get_efforts_filter_list(project_id, object_id_list):
     today = date.today()
-    week_start = today - timedelta(days=today.weekday())  # get the start date of the current week
-    week_end = week_start + timedelta(days=6)  # get the end date of the current week
+    week_number = today.isocalendar()[1]
 
-    filter_query = {'project_id': project_id, 'effort_date__gte': week_start, 'effort_date__lte': week_end}
+    filter_query = {'project_id': project_id, 'effort_week': week_number, 'username': global_variables.GLOBAL_LOGIN_USERNAME }
 
     project_efforts = django_query_instance.django_filter_query(ProjectEfforts, filter_query,
                                                                 ['project_id', 'username', 'calender_id'],
