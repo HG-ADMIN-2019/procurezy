@@ -69,15 +69,6 @@ function display_basic_db_data() {
     $('#id_check_all').hide();
     table_sort_filter('display_basic_table');
 }
-function format(date) {
-  date = new Date(date);
-
-  var day = ('0' + date.getDate()).slice(-2);
-  var month = ('0' + (date.getMonth() + 1)).slice(-2);
-  var year = date.getFullYear();
-
-  return day + '-' + month + '-' + year;
-}
 
 //*******************************************
 function check_date_error(check_dates) {
@@ -268,5 +259,6 @@ function get_selected_row_data() {
     '<td class="class_del_checkbox" hidden><input type="checkbox" required></td>'+
     '<td class="class_del_checkbox1" hidden><input type="checkbox" required></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
+    DatePicker();
     table_sort_filter("id_popup_table");
  }
