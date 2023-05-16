@@ -752,3 +752,11 @@ function get_all_checkboxes(){
     var res = table.rows().nodes();
     return res;
 }
+
+function format(date) {
+  date = new Date(date);
+  var day = ('0' + date.getDate()).slice(-2);
+  var month = ('0' + (date.getMonth() + 1)).slice(-2);
+  var year = date.getFullYear();
+  return day + '-' + month + '-' + year;
+}
