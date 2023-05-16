@@ -268,6 +268,5 @@ function get_selected_row_data() {
     '<td class="class_del_checkbox" hidden><input type="checkbox" required></td>'+
     '<td class="class_del_checkbox1" hidden><input type="checkbox" required></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
-    DatePicker();
     table_sort_filter("id_popup_table");
  }
