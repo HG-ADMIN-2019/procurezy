@@ -110,7 +110,7 @@
                                     <div class="form-group col-md">
                                         <label> Currency</label><span class="hg_required"></span><br>
 <!--                                        {{ reg_form.currency_id }}-->
-                                        <select name="currency_id" id="id_currency_id" class="form-control hg_edit_display_mode" required >
+                                        <select name="currency_id" id="id_currency_id" class="form-control hg_edit_display_mode" >
                                          <option value="" selected>Select</option>
                                             {% for items in currency_list %}
                                                 <option value="{{items.currency_id}}">{{items.currency_id}} - {{items.description}}</option>
