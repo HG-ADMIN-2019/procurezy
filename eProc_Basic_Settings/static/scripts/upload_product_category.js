@@ -45,6 +45,7 @@ function onclick_delete_button() {
 
 function onclick_copy_update_button(data) {
     $("#error_msg_id").css("display", "none")
+    $('#id_popup_table').DataTable().destroy();
     $("#id_popup_tbody").empty();
     //Reference the Table.
     var res = get_all_checkboxes(); // Function to get all the checkboxes
