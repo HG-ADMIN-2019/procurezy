@@ -278,35 +278,37 @@
     }
 
     //**************************************************
-<!--    function GetSelectedTextValue(documenttype) {-->
-<!--        var selectedText = documenttype.options[documenttype.selectedIndex].innerHTML;-->
-<!--        var selectedValue = documenttype.value;-->
-<!--	    var selectedId = (documenttype.id).split('-')[1];-->
-<!--        $.each (rendered_dropdown_db_values, function(i, item){-->
-<!--            if(selectedValue == item.field_type_id){-->
-<!--                $('#description-'+selectedId).val(item.field_type_desc);-->
-<!--            }-->
-<!--        });-->
-<!--    }-->
-<!--    -->
-        function GetSelectedTextValue(attribute) {
-        var selectedText = '';
+    function GetSelectedTextValue(documenttype) {
+        // var selectedText = documenttype.options[documenttype.selectedIndex].innerHTML;
         var selectedValue = documenttype.value;
-        var selectedId = (documenttype.id).split('-')[1];
-
-        // Check if selectedValue is empty, if yes, display popup
-        if (selectedValue == '') {
-            // Add your code to display the popup here
+	    var selectedId = (documenttype.id).split('-')[1];
+        if (rendered_dropdown_db_values.length === 0) {
             return;
         }
-
-        $.each(rendered_dropdown_values, function(i, item){
+        $.each (rendered_dropdown_db_values, function(i, item){
             if(selectedValue == item.field_type_id){
-                selectedText = item.field_type_desc;
-                $('#attribute_name-'+selectedId).val(selectedText);
+                $('#description-'+selectedId).val(item.field_type_desc);
             }
         });
     }
+
+
+    // function GetSelectedTextValue(attribute) {
+    //     var selectedText = '';
+    //     var selectedValue = documenttype.value;
+    //     var selectedId = (documenttype.id).split('-')[1];
+    //     // Check if selectedValue is empty, if yes, display popup
+    //     if (selectedValue == '') {
+    //         // Add your code to display the popup here
+    //         return;
+    //     }
+    //     $.each(rendered_dropdown_values, function(i, item){
+    //         if(selectedValue == item.field_type_id){
+    //             selectedText = item.field_type_desc;
+    //             $('#attribute_name-'+selectedId).val(selectedText);
+    //         }
+    //     });
+    // }
 
     // validating the  popup table for duplicate entries
     function compare_table_for_duplicate_entries(validate_add_attributes, doctype) {

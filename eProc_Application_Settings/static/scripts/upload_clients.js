@@ -34,7 +34,7 @@ function onclick_update_button() {
 //**********************************************************
 function onclick_copy_update_button() {
     $("#error_msg_id").css("display", "none")
-    // $('#id_popup_table').DataTable().destroy();
+    $('#id_popup_table').DataTable().destroy();
     $("#id_popup_tbody").empty();
     //Reference the Table.
     var res = get_all_checkboxes(); // Function to get all the checkboxes
@@ -53,7 +53,10 @@ function onclick_copy_update_button() {
             }
             else{
                unique_input = '<input class="form-control check_special_char" type="text" value="' + row.cells[1].innerHTML + '" name="client code"  maxlength="8" style="text-transform:uppercase" required>'
-               edit_basic_data += '<tr><td ><input type="checkbox" required></td><td>'+unique_input+'</td><td><input class="form-control check_special_char" value="' + row.cells[2].innerHTML + '" type="text"  name="description"  maxlength="30"  required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+               edit_basic_data += '<tr><td ><input type="checkbox" required></td>'+
+               '<td>'+unique_input+'</td>'+
+               '<td><input class="form-control check_special_char" value="' + row.cells[2].innerHTML + '" type="text"  name="description"  maxlength="30"  required></td>'+
+               '<td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
                $("#header_select").prop("hidden", false);
             }
         }

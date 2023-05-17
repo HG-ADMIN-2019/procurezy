@@ -115,15 +115,15 @@ function read_popup_data() {
         detgl = {};
         detgl.del_ind = row.find("TD").eq(10).find('input[type="checkbox"]').is(':checked');
         detgl.prod_cat_id = row.find("TD").eq(1).find('select option:selected').val();
+        detgl.company_id = row.find("TD").eq(2).find("select option:selected").val();
+        detgl.account_assign_cat = row.find("TD").eq(3).find("select option:selected").val();
         detgl.gl_acc_num = row.find("TD").eq(4).find("select option:selected").val();
         detgl.gl_acc_default = row.find("TD").eq(5).find('input[type="checkbox"]').is(':checked');
-        detgl.account_assign_cat = row.find("TD").eq(3).find("select option:selected").val();
-        detgl.company_id = row.find("TD").eq(2).find("select option:selected").val();
         detgl.from_value = row.find("TD").eq(6).find('input[type="number"]').val();
         detgl.to_value = row.find("TD").eq(7).find('input[type="number"]').val();
         detgl.currency_id = row.find("TD").eq(8).find("select option:selected").val();
         detgl.det_gl_acc_guid = row.find("TD").eq(9).find('input[type="text"]').val();
-        var compare = detgl.gl_acc_num + '-' + detgl.account_assign_cat + '-' + detgl.company_id+'-'+detgl.prod_cat_id
+        var compare = detgl.prod_cat_id + '-' + detgl.company_id + '-' + detgl.account_assign_cat +'-'+ detgl.gl_acc_num
         if (detgl == undefined) {
             detgl.prod_cat_id = row.find("TD").eq(1).find('input[type="text"]').val();
         }
@@ -163,7 +163,7 @@ function get_main_table_data() {
         main_attribute.item_from_value = row.find("TD").eq(6).html();
         main_attribute.item_to_value = row.find("TD").eq(7).html();
         main_attribute.currency_id = row.find("TD").eq(8).html();
-        var detgl_compare = main_attribute.gl_acc_num + '-' + main_attribute.account_assign_cat + '-' + main_attribute.company_id+'-'+main_attribute.prod_cat_id
+        var detgl_compare = main_attribute.prod_cat_id + '-' + main_attribute.company_id + '-' + main_attribute.account_assign_cat +'-'+ main_attribute.gl_acc_num
         main_table_low_value.push(detgl_compare);
     });
     table_sort_filter('display_basic_table');

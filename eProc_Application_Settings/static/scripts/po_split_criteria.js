@@ -39,7 +39,7 @@ function read_popup_data() {
         po_split_criteria.del_ind = row.find("TD").eq(5).find('input[type="checkbox"]').is(':checked');
         po_split_criteria.activate = row.find("TD").eq(3).find('select[type="text"]').val();
         po_split_criteria.company_code_id = row.find("TD").eq(2).find('select[type="text"]').val();
-        po_split_criteria.po_split_type = row.find("TD").eq(1).find('select[type="text"]').val();
+        po_split_criteria.po_split_type = parseInt(row.find("TD").eq(1).find('select[type="text"]').val());
         po_split_criteria.po_split_criteria_guid = row.find("TD").eq(4).find('input[type="text"]').val();
         if (po_split_criteria == undefined){
             po_split_criteria.po_split_type = row.find("TD").eq(1).find('select[type="text"]').val();
@@ -85,7 +85,7 @@ function get_main_table_data() {
     $("#display_basic_table TBODY TR").each(function() {
         var row = $(this);
         var main_attribute = {};
-        main_attribute.po_split_type = row.find("TD").eq(1).html();
+        main_attribute.po_split_type = parseInt(row.find("TD").eq(1).html());
         main_attribute.company_code_id = row.find("TD").eq(2).html();
         main_attribute.activate = row.find("TD").eq(3).html();
         var data = '';

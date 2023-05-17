@@ -324,6 +324,7 @@
         else if (error_message){
             display_error_message(error_message)
         }
+        table_sort_filter('id_popup_table');
     }
   
     //delete the selected row in db................
@@ -388,32 +389,29 @@
     function compare_table_for_duplicate_entries(validate_add_attributes, transaction_types) {
         add_attr_duplicates = false;
         var error_message = ''
-        var add_attr_duplicates_list = [];
+        var common = [];
         var add_attr_unique_list = [];
         var no_duplicate_value = 'Y'
         $.each(validate_add_attributes, function (index, value) {
             if ($.inArray(value, add_attr_unique_list) == -1) {
                 add_attr_unique_list.push(value);
             } else {
-                if ($.inArray(value, add_attr_duplicates_list) == -1) {
-                    add_attr_duplicates_list.push(value);
+                if ($.inArray(value, common) == -1) {
+                    common.push(value);
                 }
             }
         });
-        if (add_attr_duplicates_list.length != 0) {
-            get_message_details("JMSG001"); // Get message details
+        if (common.length != 0) {
+            $('#myModal').modal('show');
+            display_duplicate_entry(common);  //Function to highlight the rows in popup
+            error_message = ui_messeges("JMSG001")// Get message details
             no_duplicate_value = 'N'
             return [no_duplicate_value,error_message]
         }
         else {
             $.each(transaction_types, function (i, item) {
-                if (item.transaction_type.length == 0) {
-                    get_message_details("JMSG002"); // Get message details
-                    no_duplicate_value = 'N'
-                    return [no_duplicate_value,error_message]
-                }
-                if (item.description.length == 0) {
-                    get_message_details("JMSG002"); // Get message details
+                if ((item.transaction_type.length == 0) || (item.description.length == 0)) {
+                    error_message = ui_messeges("JMSG002")// Get message details
                     no_duplicate_value = 'N'
                     return [no_duplicate_value,error_message]
                 }
