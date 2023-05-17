@@ -2,7 +2,6 @@
     //// Ajax call function for submitting formdata
 function FormAjaxCallAPI(urlLink,data){
     console.log(urlLink)
-    OpenLoaderPopup();
   {
        jQuery.ajax({
            async : false,
