@@ -477,6 +477,9 @@ def get_sc_detail(header_guid):
     sc_header = []
     sc_header_level_acc = []
     sc_item_level_acc = []
+    supp_notes = []
+    int_notes = []
+    appr_notes = []
     if django_query_instance.django_existence_check(ScHeader,
                                                     {'guid': header_guid,
                                                      'client': global_variables.GLOBAL_CLIENT,
@@ -530,6 +533,7 @@ def get_sc_detail(header_guid):
                                                                                    'del_ind': False},
                                                                                   ['step_num'],
                                                                                   None)
+        supp_notes, int_notes, appr_notes = get_sc_supplier_internal_approver_note(header_guid, sc_item_guid_list)
         data = {'sc_item_details': sc_item_details,
                 'sc_approval_details': sc_approval_details,
                 'sc_potential_approval_details': sc_potential_approval_details,
@@ -539,14 +543,18 @@ def get_sc_detail(header_guid):
     shopping_cart_detail = {'hdr_det': sc_header_detail[0],
                             'item_dictionary_list': sc_item_details,
                             'header_acc_detail': sc_header_level_acc,
+                            'acc_det':sc_item_level_acc,
                             'header_level_addr': sc_header_level_address,
-                            'sc_item_level_address': sc_item_level_address,
+                            'addr_det': sc_item_level_address,
                             'sc_appr': sc_approval_details,
                             'sc_head': sc_header_detail[0],
                             'requester_first_name': requester_first_name,
                             'sc_completion': sc_completion,
                             'sc_header': sc_header,
                             'is_document_detail':True,
+                            'supp_notes':supp_notes,
+                            'int_notes':int_notes,
+                            'appr_notes':appr_notes,
                             'edit_address_flag':'0'
                             }
     return shopping_cart_detail

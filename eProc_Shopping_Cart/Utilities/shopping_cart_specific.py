@@ -48,6 +48,7 @@ from eProc_Exchange_Rates.Utilities.exchange_rates_generic import convert_curren
 from eProc_System_Settings.Utilities.system_settings_generic import sys_attributes
 from eProc_Workflow.Utilities.work_flow_generic import save_sc_approval
 import datetime
+
 django_query_instance = DjangoQueries()
 
 
@@ -357,12 +358,12 @@ def get_login_user_spend_limit(company_code, client, login_username):
     max_sl_value = 0
 
     sl_code_id = django_query_instance.django_filter_value_list_query(SpendLimitId, {
-        'company_id': company_code, 'spender_username': login_username, 'client': client,'del_ind':False
+        'company_id': company_code, 'spender_username': login_username, 'client': client, 'del_ind': False
     }, 'spend_code_id')
 
     if sl_code_id:
         sl_value = django_query_instance.django_filter_value_list_query(SpendLimitValue, {
-            'company_id': company_code, 'spend_code_id__in': sl_code_id, 'client': client,'del_ind':False
+            'company_id': company_code, 'spend_code_id__in': sl_code_id, 'client': client, 'del_ind': False
         }, 'upper_limit_value')
         if sl_value:
             max_sl_value = max(sl_value)
@@ -550,6 +551,7 @@ def get_manger_detail(client, login_username, acc_default, total_value, default_
                                                                                             'company_id': default_cmp_code,
                                                                                             'del_ind': False},
                                                                            'app_types')
+    acc_detail_list = []
 
     if workflow_schema:
 
@@ -569,10 +571,10 @@ def get_manger_detail(client, login_username, acc_default, total_value, default_
                             'company_id': default_cmp_code, 'account_assign_cat': acc_default,
                             'acc_value': acc_value, 'client': client, 'del_ind': False
                         }).values_list('app_username', 'sup_acc_value', 'sup_company_id', 'currency_id',
-                                       'sup_account_assign_cat', 'company_id'))
+                                       'sup_account_assign_cat', 'company_id','account_assign_cat','acc_value'))
                         count = 1
                         if app_limit:
-                            for app_user, sup_acc_val, sup_company_id, currency_id, sup_account_assign_cat, company_id in app_limit:
+                            for app_user, sup_acc_val, sup_company_id, currency_id, sup_account_assign_cat, company_id,account_assign_cat,acc_value in app_limit:
                                 app_username = []
                                 if not sup_acc_val:
                                     manger_list = []
@@ -594,12 +596,23 @@ def get_manger_detail(client, login_username, acc_default, total_value, default_
                             #                                                                   schema_step_type,
                             #                                                                   app_limit_value,
                             #                                                                   manger_list)
+
                             if msg_info:
                                 return manger_list, msg_info
                             approver_detail = list(approver_detail)
                             app_id = []
                             for app_datails in approver_detail:
                                 app_id.append(app_datails[0])
+                                acc_detail_list.append({'acc_value': acc_value, 'account_assign_cat': acc_default,
+                                                        'company_id': default_cmp_code
+                                                        })
+                                if ((acc_value == app_datails[1]) and (app_datails[2] == default_cmp_code) and (
+                                        app_datails[4] == acc_default)):
+                                    msgid = 'MSG173'
+                                    error_msg = get_message_desc(msgid)[1]
+                                    msg_info = error_msg
+                                    return manger_list, msg_info
+
                             if len(app_id) > 1:
                                 app_id_value = CONST_MULTIPLE
                                 app_id_detail = ",".join(app_id)
@@ -617,7 +630,9 @@ def get_manger_detail(client, login_username, acc_default, total_value, default_
                             else:
                                 while float(total_value) > max(app_limit_value):
                                     superior_flag = False
+                                    current_acc_detail = approver_detail
                                     for approver_detail in approver_detail:
+
                                         workflow_approver_details = list(
                                             django_query_instance.django_filter_only_query(WorkflowACC, {
                                                 'company_id': approver_detail[2],
@@ -625,7 +640,12 @@ def get_manger_detail(client, login_username, acc_default, total_value, default_
                                                 'acc_value': approver_detail[1], 'client': client, 'del_ind': False
                                             }).values_list('app_username', 'sup_acc_value', 'sup_company_id',
                                                            'currency_id',
-                                                           'sup_account_assign_cat', 'company_id'))
+                                                           'sup_account_assign_cat', 'company_id','account_assign_cat','acc_value'))
+                                        acc_detail_list.append(
+                                            {'acc_value': approver_detail[1],
+                                             'account_assign_cat': approver_detail[4],
+                                             'company_id': approver_detail[2],
+                                             })
                                         if not workflow_approver_details:
                                             manger_list = []
                                             msgid = 'MSG188'
@@ -648,7 +668,7 @@ def get_manger_detail(client, login_username, acc_default, total_value, default_
                                         msg_info = error_msg
                                         return manger_list, msg_info
                                     else:
-                                        for app_user, sup_acc_val, sup_company_id, currency_id, sup_account_assign_cat, company_id in app_limit:
+                                        for app_user, sup_acc_val, sup_company_id, currency_id, sup_account_assign_cat, company_id,account_assign_cat,acc_value  in app_limit:
                                             if not django_query_instance.django_existence_check(UserData, {
                                                 'client': client, 'username': app_user
                                             }):
@@ -664,7 +684,14 @@ def get_manger_detail(client, login_username, acc_default, total_value, default_
                                             user_currency,
                                             client,
                                             schema_step_type)
-
+                                        check_flag = check_approver_exists(acc_detail_list,
+                                                                           approver_detail)
+                                        if check_flag:
+                                            msgid = 'MSG173'
+                                            manger_list = []
+                                            error_msg = get_message_desc(msgid)[1]
+                                            msg_info = error_msg
+                                            return manger_list, msg_info
                                         # manger_list, msg_info, app_limit_value, currency = get_appr_limit(
                                         #     default_cmp_code,
                                         #     app_user,
@@ -679,8 +706,17 @@ def get_manger_detail(client, login_username, acc_default, total_value, default_
                                             # default_cmp_code = sup_company_id
                                         approver_detail = list(approver_detail)
                                         app_id = []
+
                                         for app_datails in approver_detail:
                                             app_id.append(app_datails[0])
+                                            if ((approver_detail[1] == app_datails[1]) and
+                                                    (approver_detail[2] == app_datails[2]) and
+                                                    (approver_detail[4] == app_datails[4])):
+
+                                                msgid = 'MSG173'
+                                                error_msg = get_message_desc(msgid)[1]
+                                                msg_info = error_msg
+                                                return manger_list, msg_info
                                         if len(app_id) > 1:
                                             app_id_value = CONST_MULTIPLE
                                             app_id_detail = ",".join(app_id)
@@ -708,6 +744,20 @@ def get_manger_detail(client, login_username, acc_default, total_value, default_
     return manger_list, msg_info
 
 
+def check_approver_exists(acc_detail_list, app_details):
+    """
+    """
+    approve_exists_flag = False
+    for app_detail in app_details:
+        app_detail = list(app_detail)
+        for acc_detail in acc_detail_list:
+            if (acc_detail['acc_value'] == app_detail[7]) and (acc_detail['account_assign_cat'] == app_detail[6]) and (acc_detail['company_id'] == app_detail[5]):
+                approve_exists_flag = True
+                return approve_exists_flag
+    return approve_exists_flag
+
+
+
 def get_approvers_id_and_limit_value(app_limit, default_cmp_code, user_currency, client, schema_step_type):
     """
     """
@@ -718,7 +768,7 @@ def get_approvers_id_and_limit_value(app_limit, default_cmp_code, user_currency,
     approver_detail = []
     max_app_limit_value = 0
     msg_info = None
-    for app_user, sup_acc_val, sup_company_id, currency_id, sup_account_assign_cat, company_id in app_limit:
+    for app_user, sup_acc_val, sup_company_id, currency_id, sup_account_assign_cat, company_id,account_assign_cat,acc_value  in app_limit:
         app_limit_value = []
         manger_list, msg_info, approver_limit, currency = get_appr_limit(company_id,
                                                                          app_user,
@@ -726,15 +776,6 @@ def get_approvers_id_and_limit_value(app_limit, default_cmp_code, user_currency,
                                                                          schema_step_type,
                                                                          app_limit_value,
                                                                          manger_list)
-        # app_code_id = django_query_instance.django_filter_value_list_query(ApproverLimit,
-        #                                                                   {'company_id':default_cmp_code,
-        #                                                                    'approver_username':app_user,
-        #                                                                    'currency_id':currency_id},'app_code_id')[0]
-        # approver_limit = django_query_instance.django_filter_value_list_query(ApproverLimitValue,
-        #                                                                       {'client':global_variables.GLOBAL_CLIENT,
-        #                                                                        'app_code_id':app_code_id,
-        #                                                                        'currency_id':currency_id,
-        #                                                                        'company_id':default_cmp_code})[0]
 
         if msg_info:
             return msg_info, approver_detail, max_app_limit_value
@@ -1107,6 +1148,7 @@ def get_highest_acc_detail(header_guid):
         account_assignment_value = highest_item_accounting_data.wbs_ele
     return account_assignment_category, account_assignment_value
 
+
 def get_default_cart_name(requester_first_name):
     """
 
@@ -1211,15 +1253,16 @@ def get_SC_details(sc_header_guid):
     return context
 
 
-def get_cart_default_name_and_user_first_name(first_name,last_name):
+def get_cart_default_name_and_user_first_name(first_name, last_name):
     """
 
     """
     requester_first_name = requester_field_info(global_variables.GLOBAL_LOGIN_USERNAME, 'first_name')
     # Get default shopping cart name
     cart_name = get_default_cart_name(requester_first_name)
-    receiver_name = concatenate_str_with_space(first_name,last_name)
-    return requester_first_name, cart_name ,receiver_name
+    receiver_name = concatenate_str_with_space(first_name, last_name)
+    return requester_first_name, cart_name, receiver_name
+
 
 def get_cart_default_name_and_user_first_name_last_name():
     """
