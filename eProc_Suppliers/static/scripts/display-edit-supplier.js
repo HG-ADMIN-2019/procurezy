@@ -197,9 +197,10 @@ function save_basic_form_validation(formdata){
              var msg = "JMSG007";
              var msg_type ;
              msg_type = message_config_details(msg);
-             $("#error_msg_id").prop("hidden", false)
-             var display1 = msg_type.messages_id_desc + " Supplier Id ";
-            save_form_errors += display1;
+             $("#err_supp_id").prop("hidden", false);
+             $("#err_supp_id").text = msg_type.messages_id_desc + " Supplier Id ";
+//             var display1 = msg_type.messages_id_desc + " Supplier Id ";
+//            save_form_errors += display1;
         }
         else if(formdata.get("supplier_type") == ''){
             is_valid = false
@@ -336,7 +337,7 @@ function save_basic_form_validation(formdata){
              var display1 = msg_type.messages_id_desc;
             save_form_errors += display1 + " Output Medium ";
         }
-        return [is_valid, save_form_errors]
+        return is_valid
     }
 
 
