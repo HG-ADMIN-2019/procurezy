@@ -641,11 +641,7 @@ def get_manger_detail(client, login_username, acc_default, total_value, default_
                                             }).values_list('app_username', 'sup_acc_value', 'sup_company_id',
                                                            'currency_id',
                                                            'sup_account_assign_cat', 'company_id','account_assign_cat','acc_value'))
-                                        acc_detail_list.append(
-                                            {'acc_value': approver_detail[1],
-                                             'account_assign_cat': approver_detail[4],
-                                             'company_id': approver_detail[2],
-                                             })
+
                                         if not workflow_approver_details:
                                             manger_list = []
                                             msgid = 'MSG188'
@@ -709,6 +705,11 @@ def get_manger_detail(client, login_username, acc_default, total_value, default_
 
                                         for app_datails in approver_detail:
                                             app_id.append(app_datails[0])
+                                            acc_detail_list.append(
+                                                {'acc_value': approver_detail[1],
+                                                 'account_assign_cat': approver_detail[4],
+                                                 'company_id': approver_detail[2],
+                                                 })
                                             if ((approver_detail[1] == app_datails[1]) and
                                                     (approver_detail[2] == app_datails[2]) and
                                                     (approver_detail[4] == app_datails[4])):
