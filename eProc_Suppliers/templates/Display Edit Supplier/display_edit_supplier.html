@@ -177,7 +177,7 @@
                                             
                                            <div>
                                              {% for x in supp_img_info %}
-                                                <img id="image-preview3" class="upload-img-style" src="{{ x.image_url.url }}" style="height:200px;width:200px; margin: 10px;border: 2px solid blue" onerror='this.src="/static/images/no-image-cropped.png"'>
+                                                <img id="image-preview3" class="upload-img-style" src="{{ x.image_url.url }}" style="height:200px;width:200px; margin: 10px;border: 2px solid blue" onerror='this.src="{{ x.image_url.url }}"'>
                                             {% endfor %}
                                                <img id="image-preview" class="upload-img-style display-none" src="" style="height:200px;width:200px; margin: 0px;border: 2px solid blue" onerror='this.src="/static/images/no-image-cropped.png"'>
                                            </div> 
