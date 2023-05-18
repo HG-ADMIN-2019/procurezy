@@ -1,7 +1,7 @@
 var purhcase_control_data = new Array();
 var validate_add_attributes = [];
 var main_table_low_value = [];
-var purchase_control = {};
+var purchase_contrl = {};
 
 // on click update icon display the selected checkbox data to update
 function onclick_update_button() {
@@ -101,10 +101,10 @@ function read_popup_data() {
         var row = $(this);
         purchase_contrl = {};
         purchase_contrl.del_ind = row.find("TD").eq(5).find('input[type="checkbox"]').is(':checked');
-        purchase_contrl.purchase_control_guid = row.find("TD").eq(4).find('input[type="text"]').val();
         purchase_contrl.company_code_id = row.find("TD").eq(1).find('select[type="text"]').val();
         purchase_contrl.call_off = row.find("TD").eq(2).find('select[type="text"]').val();
         purchase_contrl.purchase_ctrl_flag = row.find("TD").eq(3).find('select[type="text"]').val();
+        purchase_contrl.purchase_control_guid = row.find("TD").eq(4).find('input[type="text"]').val();
         var data = '';
         if (purchase_contrl.purchase_ctrl_flag == 'Activate'){
             data = true
