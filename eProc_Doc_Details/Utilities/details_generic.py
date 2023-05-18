@@ -17,6 +17,7 @@ from eProc_Basic.Utilities.functions.get_db_query import getClients, get_object_
 from eProc_Basic.Utilities.global_defination import global_variables
 from eProc_Calendar_Settings.Utilities.calender_settings_generic import calculate_delivery_date
 from eProc_Configuration.models import ImagesUpload
+from eProc_Configuration.models.development_data import AccountAssignmentCategory
 from eProc_Doc_Details.Utilities.details_specific import get_notes
 from eProc_Doc_Search_and_Display.Utilities.search_display_specific import get_shopping_cart_approval
 from eProc_Exchange_Rates.Utilities.exchange_rates_generic import convert_currency
@@ -517,6 +518,7 @@ def get_sc_detail(header_guid):
             else:
                 sc_item_level_address.append(sc_address_detail)
         for sc_accounting_detail in sc_accounting_details:
+            sc_accounting_detail['acc_value_desc'] = get_acc_description(sc_accounting_detail['acc_cat'])
             if sc_accounting_detail['header_guid_id'] == header_guid:
                 sc_header_level_acc.append(sc_accounting_detail)
             else:
@@ -537,13 +539,13 @@ def get_sc_detail(header_guid):
         data = {'sc_item_details': sc_item_details,
                 'sc_approval_details': sc_approval_details,
                 'sc_potential_approval_details': sc_potential_approval_details,
-                'sc_header_details':sc_header_detail}
+                'sc_header_details': sc_header_detail}
 
         sc_header, sc_appr, sc_completion, requester_first_name = get_shopping_cart_approval(data)
     shopping_cart_detail = {'hdr_det': sc_header_detail[0],
                             'item_dictionary_list': sc_item_details,
                             'header_acc_detail': sc_header_level_acc,
-                            'acc_det':sc_item_level_acc,
+                            'acc_det': sc_item_level_acc,
                             'header_level_addr': sc_header_level_address,
                             'addr_det': sc_item_level_address,
                             'sc_appr': sc_approval_details,
@@ -551,10 +553,23 @@ def get_sc_detail(header_guid):
                             'requester_first_name': requester_first_name,
                             'sc_completion': sc_completion,
                             'sc_header': sc_header,
-                            'is_document_detail':True,
-                            'supp_notes':supp_notes,
-                            'int_notes':int_notes,
-                            'appr_notes':appr_notes,
-                            'edit_address_flag':'0'
+                            'is_document_detail': True,
+                            'supp_notes': supp_notes,
+                            'int_notes': int_notes,
+                            'appr_notes': appr_notes,
+                            'edit_address_flag': '0'
                             }
     return shopping_cart_detail
+
+
+def get_acc_description(acc):
+    """
+
+    """
+    acc_value_desc = acc
+    if django_query_instance.django_existence_check(AccountAssignmentCategory, {'account_assign_cat': acc}):
+        acc_value_desc = django_query_instance.django_filter_value_list_query(AccountAssignmentCategory,
+                                                                              {'account_assign_cat': acc},
+                                                                              'description')[0]
+        acc_value_desc = acc + ' - ' + acc_value_desc
+    return acc_value_desc
