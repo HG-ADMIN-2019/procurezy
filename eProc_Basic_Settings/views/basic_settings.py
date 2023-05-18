@@ -351,6 +351,8 @@ def data_upload(request):
 
         result['error_message'], result['data'] = upload_csv.csv_preview_data(header_detail, data_set_val)
 
+
+
         # retrieving correct ordered data from csv_data_arrangement() - basic_settings_specific.py
         # correct_order_list = csv_data_arrangement(db_header, data_set_val)
         return JsonResponse(result, safe=False)
