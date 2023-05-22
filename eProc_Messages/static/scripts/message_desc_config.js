@@ -1,8 +1,6 @@
 var message_id_desc_data = new Array();
 var validate_add_attributes = [];
 var main_table_low_value = [];
-var duplicate_entry = [];
-var lang_values = [];
 var message_id_desc={};
 
 $(document).ready(function () {
@@ -92,22 +90,19 @@ function display_basic_db_data() {
     $('#id_message_tbody').empty();
     var edit_basic_data = '';
     var desc = ''; var lang_code;
-
     $.each(rendered_message_id_desc_data, function (i, item) {
-
-           lang_code = item.language_id;
-            for (i = 0; i < render_language_data.length; i++) {
-                if (lang_code == render_language_data[i].language_id)
-                    desc = render_language_data[i].description
-            }
+        lang_code = item.language_id;
+        for (i = 0; i < render_language_data.length; i++) {
+            if (lang_code == render_language_data[i].language_id)
+                desc = render_language_data[i].description
+        }
         edit_basic_data += '<tr><td class="class_message_checkbox"><input class="checkbox_check" onclick="valueChanged()" type="checkbox" required></td>'+
         '<td>' + item.messages_id + '</td><td>' + item.messages_id_desc + '</td>'+
-         '<td>' + desc + '</td>'+
+        '<td>' + desc + '</td>'+
         '<td hidden>' + item.msg_id_desc_guid + '</td>'+
        '</tr>';
     });
     $('#id_message_tbody').append(edit_basic_data);
-
     $("#hg_select_checkbox").prop("hidden", true);
     $(".class_message_checkbox").prop("hidden", true);
     $('input:checkbox').removeAttr('checked');
@@ -119,7 +114,6 @@ function display_basic_db_data() {
     $('#id_save_confirm_popup').modal('hide');
     $("#id_delete_confirm_popup").hide();
     $("#id_check_all").hide();
-    table_sort_filter('id_popup_table');
     table_sort_filter('display_basic_table');
 }
 
@@ -143,16 +137,14 @@ function read_popup_data() {
     $('#id_popup_table').DataTable().destroy();
     message_id_desc_data = new Array();
     validate_add_attributes = [];
-    lang_values = [];
-    duplicate_entry = [];
     $("#id_popup_table TBODY TR").each(function () {
         var row = $(this);
         message_id_desc={};
-        message_id_desc.msg_id_desc_guid = row.find("TD").eq(5).find('input[type="text"]').val();
-        message_id_desc.del_ind = row.find("TD").eq(4).find('input[type="checkbox"]').is(':checked');
-        message_id_desc.language_id = row.find("TD").eq(3).find('select[type="text"]').val();
-        message_id_desc.messages_id_desc = row.find("TD").eq(2).find('input[type="text"]').val();
         message_id_desc.messages_id = row.find("TD").eq(1).find('select[type="text"]').val();
+        message_id_desc.messages_id_desc = row.find("TD").eq(2).find('input[type="text"]').val();
+        message_id_desc.language_id = row.find("TD").eq(3).find('select[type="text"]').val();
+        message_id_desc.del_ind = row.find("TD").eq(4).find('input[type="checkbox"]').is(':checked');
+        message_id_desc.msg_id_desc_guid = row.find("TD").eq(5).find('input[type="text"]').val();
         if (message_id_desc == undefined){
             message_id_desc.messages_id = row.find("TD").eq(1).find('select[type="text"]').val();
         }
