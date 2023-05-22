@@ -216,7 +216,7 @@
         });
     }
 
-    //***************************************
+    //***************************************  rendered_active_inactive, document_type_render, number_range_sequence
     function onclick_copy_update_button() {
         OpenLoaderPopup();
         var data = {'table_name':'TransactionTypesFC'}
@@ -227,7 +227,7 @@
             success: function(response) {
                 rendered_active_inactive = response.rendered_active_inactive
                 rendered_document_type = response.document_type_render
-                rendered_sequence = response.number_range_sequence
+                rendered_sequence = response.rendered_sequence
                 dropdown_value();
                 $("#error_msg_id").css("display", "none")
                 $('#id_popup_table').DataTable().destroy();

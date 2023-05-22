@@ -4,6 +4,7 @@ var main_table_low_value = [];
 
 //*****************************
 $(document).ready(function () {
+    $('#display_basic_table').DataTable().destroy();
     $('#nav_menu_items').remove();
     $("body").css("padding-top", "3.7rem");
     table_sort_filter('display_basic_table');
