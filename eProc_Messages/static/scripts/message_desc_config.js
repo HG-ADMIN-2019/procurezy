@@ -6,7 +6,7 @@ var message_id_desc={};
 $(document).ready(function () {
     $('#nav_menu_items').remove();
     $("body").css("padding-top", "3.7rem");
-    $("#display_basic_table").DataTable({
+    $("#display_basic_table").DataTable().destroy()({
            "columnDefs": [{
            'searchable':false,
             'orderable':false,
@@ -89,7 +89,8 @@ function display_basic_db_data() {
     $('#display_basic_table').DataTable().destroy();
     $('#id_message_tbody').empty();
     var edit_basic_data = '';
-    var desc = ''; var lang_code;
+    var desc = '';
+    var lang_code;
     $.each(rendered_message_id_desc_data, function (i, item) {
         lang_code = item.language_id;
         for (i = 0; i < render_language_data.length; i++) {
