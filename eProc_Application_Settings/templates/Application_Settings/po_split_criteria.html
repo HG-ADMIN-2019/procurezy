@@ -17,8 +17,7 @@
                 <button type="button" id="id_add_data" title="Add Purchase Order Slit Criteria" value="ADD" class="btn btn-primary" data-toggle="modal" data-target="#po_criteria_Modal" onclick="onclick_add_button(this)">
                     <i class="fa fa-plus"></i> add purchase order slit criteria
                 </button>
-                <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"
-                        onclick="GetReferrer();">
+                <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"  onclick="window_close();">
                     <i class="fas fa-times"></i> close
                 </button>
             </div>
@@ -241,9 +240,11 @@
         else {
             if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
                 [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
+                if(no_duplicate_entries == 'N'){
+                    $('#po_criteria_Modal').modal('show');
+                }
             }
             if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
-                var add_basic_data = '';
                 var aac_data_array = po_split_criteria_data;
                 $('#id_save_confirm_popup').modal('hide');
                 data = {'data':po_split_criteria_data,'table_name':'PoSplitCriteria','action':GLOBAL_ACTION}
@@ -266,8 +267,8 @@
             else if (error_message){
                 display_error_message(error_message)
             }
-            table_sort_filter('id_popup_table');
         }
+        table_sort_filter('id_popup_table');
     }
 
     // on click add icon display the row in to add the new entries
@@ -317,6 +318,7 @@
                 $("#error_msg_id").css("display", "none")
                 $( "#header_select").prop( "hidden", false );
                 GLOBAL_ACTION = button.value
+                $('#id_popup_table').DataTable().destroy();
                 $("#id_popup_tbody").empty();
                 $('#po_criteria_Modal').modal('show');
                 new_row_data();   // Add a new row in popup
@@ -359,19 +361,21 @@
     function compare_table_for_duplicate_entries(validate_add_attributes, po_spl_crit) {
         add_attr_duplicates = false;
         var error_message = ''
-        var add_attr_duplicates_list = [];
+        var common = [];
         var add_attr_unique_list = [];
         var no_duplicate_value = 'Y'
         $.each(validate_add_attributes, function (index, value) {
             if ($.inArray(value, add_attr_unique_list) == -1) {
                 add_attr_unique_list.push(value);
             } else {
-                if ($.inArray(value, add_attr_duplicates_list) == -1) {
-                    add_attr_duplicates_list.push(value);
+                if ($.inArray(value, common) == -1) {
+                    common.push(value);
                 }
             }
         });
-        if (add_attr_duplicates_list.length != 0) {
+        if (common.length != 0) {
+            $('#po_criteria_Modal').modal('show');
+            display_duplicate_entry(common);  //Function to highlight the rows in popup
             error_message = ui_messeges("JMSG001")// Get message details
             no_duplicate_value = 'N'
             return [no_duplicate_value,error_message]
@@ -379,6 +383,7 @@
         else {
             $.each(po_spl_crit, function (i, item) {
                 if ((item.po_split_type == null) || (item.company_code_id == null) || (item.activate == null)) {
+                    $('#po_criteria_Modal').modal('show');
                     error_message = ui_messeges("JMSG002")// Get message details
                     no_duplicate_value = 'N'
                     return [no_duplicate_value,error_message]
@@ -442,7 +447,6 @@
                 $("#id_del_ind_checkbox").prop("hidden", true);
                 $('#po_criteria_Modal').modal('show');
                 table_sort_filter('id_popup_table');
-                $('#po_criteria_Modal').modal('show');
                 CloseLoaderPopup();
             }
         });

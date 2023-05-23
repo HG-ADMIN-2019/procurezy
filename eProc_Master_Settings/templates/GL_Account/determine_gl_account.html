@@ -857,9 +857,11 @@
         $("#id_popup_table TBODY TR").each(function() {
             var row = $(this);
             detgl_dic = {}
+            detgl_dic.prod_cat_id = row.find("TD").eq(1).find('select option:selected').val();
             detgl_dic.company_id = row.find("TD").eq(2).find("select option:selected").val();
-            detgl_dic.unspsc_code = row.find("TD").eq(1).find("select option:selected").val();
-            var compare = detgl.gl_acc_num + '-' + detgl.account_assign_cat + '-' + detgl.company_id+'-'+ detgl_dic.unspsc_code
+            detgl_dic.account_assign_cat = row.find("TD").eq(3).find("select option:selected").val();
+            detgl_dic.gl_acc_num = row.find("TD").eq(4).find("select option:selected").val();
+            var compare = detgl_dic.prod_cat_id + '-' + detgl_dic.company_id + '-' +  detgl_dic.account_assign_cat +'-'+  detgl_dic.gl_acc_num
             detgl_check.push(compare);
             jQuery.grep(detgl_check, function(el) {
                 if (jQuery.inArray(el, common) != -1) {

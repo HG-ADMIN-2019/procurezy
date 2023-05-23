@@ -74,7 +74,7 @@
                     </button>
                 </div>
                 <!-- Modal body -->
-                <div class="modal-body scrollbox">
+                <div class="modal-body">
                     <div class="popup-vertical-scroll">
                         <div id="id_del_add_button" class="mb-4">
                             <button class="btn btn-primary" type="button" title="Add New Row" onclick="add_popup_row()"><i class="fa fa-plus"></i> add new row </button>
@@ -241,6 +241,7 @@
                 $("#error_msg_id").css("display", "none")
                 $( "#header_select").prop( "hidden", false );
                 GLOBAL_ACTION = button.value
+                $('#id_popup_table').DataTable().destroy();
                 $("#id_popup_tbody").empty();
                 $('#potype_Modal').modal('show');
                 new_row_data();   // Add a new row in popup

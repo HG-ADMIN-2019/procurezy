@@ -229,7 +229,6 @@
             else if (error_message) {
                 display_error_message(error_message)
             }
-            table_sort_filter('id_popup_table');
         }
         table_sort_filter('id_popup_table');
     }
@@ -277,6 +276,7 @@
                 $("#header_select").prop("hidden", false);
                 GLOBAL_ACTION = button.value
                 basic_add_new_html = '';
+                $('#id_popup_table').DataTable().destroy();
                 $("#id_popup_tbody").empty();
                 $('#purchase_ctrl_Modal').modal('show');
                 new_row_data();   // Add a new row in popup
