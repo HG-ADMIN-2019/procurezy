@@ -44,6 +44,7 @@ def register_page(request):
     message_desc = ''
     update_user_info(request)
     reg_form = RegForm()
+    msg_flag = 0
     if request.method == 'POST':
         reg_form = RegForm(request.POST or None)
         if reg_form.is_valid():
@@ -58,12 +59,16 @@ def register_page(request):
                                                              'client': global_variables.GLOBAL_CLIENT}):
                 message_desc = get_message_desc('MSG205')[1]
                 messages.error(request, message_desc)
+                msg_flag = 1
             else:
                 is_created = RegFncts.create_user(request, new_user, global_variables.GLOBAL_CLIENT, password)
                 if is_created:
                     message_desc = get_message_desc('MSG017')[1]
                 messages.success(request, message_desc)
+                msg_flag = 0
                 return redirect('eProc_Users:register_page')
+        else:
+            msg_flag = 1
 
     context = {
         'inc_nav': True,
@@ -75,6 +80,7 @@ def register_page(request):
                                                                    ['language_id', 'description']),
         'time_zone': django_query_instance.django_filter_query(TimeZone, {'del_ind': False}, None,
                                                                ['time_zone', 'description']),
+        'msg_flag': msg_flag,
     }
 
     return render(request, 'User Registration/user_register.html', context)

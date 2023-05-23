@@ -247,10 +247,14 @@
 
 
 <script>
-
+var msg_flag = {{msg_flag|safe}};
 $(document).ready(function(){
-     localStorage.setItem("currency_id", document.getElementById("currency_id").value);
-     localStorage.setItem("language_id", document.getElementById("language_id").value);
+    if(msg_flag){
+        $('#id_currency_id').val(localStorage.getItem("currency_id"));
+        $('#id_language_id').val(localStorage.getItem("language_id"));
+        $('#id_time_zone').val(localStorage.getItem("time_zone"));
+    }
+
   $("#user_form_reset").click(function(){
     $('#user_register_form')[0].reset();
     $('#myModal').modal('hide');
@@ -269,7 +273,10 @@ $(document).ready(function(){
 
 $('#user_registration_submit').click(function () {
 <!--    OpenLoaderPopup();-->
-    $('#language_id').val(localStorage.getItem("language_id"));
+    localStorage.setItem("currency_id", document.getElementById("id_currency_id").value);
+    localStorage.setItem("language_id", document.getElementById("id_language_id").value);
+    localStorage.setItem("time_zone", document.getElementById("id_time_zone").value);
+
 });
 
 </script>

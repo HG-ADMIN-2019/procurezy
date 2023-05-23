@@ -187,159 +187,37 @@ var supplierid = global_supplier_id;
 
    // Validation function
 
-function save_basic_form_validation(formdata){
+function save_basic_form_validation(){
         var is_valid = true
         var save_form_errors = ''
         var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 
-        if(formdata.get("supplier_id") == ''){
-            is_valid = false
-             var msg = "JMSG007";
-             var msg_type ;
-             msg_type = message_config_details(msg);
-             $("#err_supp_id").prop("hidden", false);
-             $("#err_supp_id").text = msg_type.messages_id_desc + " Supplier Id ";
-//             var display1 = msg_type.messages_id_desc + " Supplier Id ";
-//            save_form_errors += display1;
-        }
-        else if(formdata.get("supplier_type") == ''){
-            is_valid = false
-             var msg = "JMSG007";
-             var msg_type ;
-             msg_type = message_config_details(msg);
-             $("#error_msg_id").prop("hidden", false)
-             var display1 = msg_type.messages_id_desc + " Supplier Type ";
-            save_form_errors += display1;
-        }
-        else if(formdata.get("registration_number") == ''){
-            is_valid = false
-             var msg = "JMSG007";
-             var msg_type ;
-             msg_type = message_config_details(msg);
-             $("#error_msg_id").prop("hidden", false)
-             var display1 = msg_type.messages_id_desc + " Supplier Registration Number ";
-            save_form_errors += display1;
-        }
-        else if (formdata.get("name1") == '') {
-            is_valid = false
-             var msg = "JMSG007";
-             var msg_type ;
-             msg_type = message_config_details(msg);
-             $("#error_msg_id").prop("hidden", false)
-             var display1 = msg_type.messages_id_desc + " First name ";
-            save_form_errors += display1;
-        }
-        else if (formdata.get("name2") == '') {
-            is_valid = false
-             var msg = "JMSG007";
-             var msg_type ;
-             msg_type = message_config_details(msg);
-             $("#error_msg_id").prop("hidden", false)
-             var display1 = msg_type.messages_id_desc+ " Last name";
-            save_form_errors += display1;
-        }
-        else if(formdata.get("currency_id") == ''){
-            is_valid = false
-             var msg = "JMSG007";
-             var msg_type ;
-             msg_type = message_config_details(msg);
-             $("#error_msg_id").prop("hidden", false)
-             var display1 = msg_type.messages_id_desc + " Currency ";
-            save_form_errors += display1;
-        }
-        else if(formdata.get("language_id") == ''){
-            is_valid = false
-             var msg = "JMSG007";
-             var msg_type ;
-             msg_type = message_config_details(msg);
-             $("#error_msg_id").prop("hidden", false)
-             var display1 = msg_type.messages_id_desc + " Language ";
-            save_form_errors += display1;
-        }
-        else if(formdata.get("country_code_id") == ''){
-            is_valid = false
-             var msg = "JMSG007";
-             var msg_type ;
-             msg_type = message_config_details(msg);
-             $("#error_msg_id").prop("hidden", false)
-             var display1 = msg_type.messages_id_desc + " Country ";
-            save_form_errors += display1;
-        }
-        else if (formdata.get("city_id") == '') {
-            is_valid = false
-              var msg = "JMSG007" ;
-             var msg_type ;
-             msg_type = message_config_details(msg);
-             $("#error_msg_id").prop("hidden", false)
-             var display1 = msg_type.messages_id_desc;
-            save_form_errors += display1 + " City ";
-        }
-        else if (formdata.get("postal_code_id") == '') {
-            is_valid = false
-              var msg = "JMSG007" ;
-             var msg_type ;
-             msg_type = message_config_details(msg);
-             $("#error_msg_id").prop("hidden", false)
-             var display1 = msg_type.messages_id_desc;
-            save_form_errors += display1 + " Postal Code ";
-        }
-        else if ((formdata.get("email_id") == '') || !((formdata.get("email_id")).match(mailformat))) {
-            is_valid = false
-              var msg = "JMSG002";
-             var msg_type ;
-             msg_type = message_config_details(msg);
-             $("#error_msg_id").prop("hidden", false)
-             var display1 = msg_type.messages_id_desc;
-            save_form_errors += display1 + "Email Id";
-        }
-        else if (formdata.get("mobile_num_id") == '') {
-            is_valid = false
-              var msg = "JMSG007" ;
-             var msg_type ;
-             msg_type = message_config_details(msg);
-             $("#error_msg_id").prop("hidden", false)
-             var display1 = msg_type.messages_id_desc;
-            save_form_errors += display1 + " Mobile Number";
-        }
-        else if (formdata.get("search_term1_id") == '') {
-            is_valid = false
-              var msg = "JMSG007";
-             var msg_type ;
-             msg_type = message_config_details(msg);
-             $("#error_msg_id").prop("hidden", false)
-             var display1 = msg_type.messages_id_desc;
-            save_form_errors += display1 + " Search Term1";
-        }
-        else if (formdata.get("search_term1_id") == '') {
-            is_valid = false
-              var msg = "JMSG007";
-             var msg_type ;
-             msg_type = message_config_details(msg);
-             $("#error_msg_id").prop("hidden", false)
-             var display1 = msg_type.messages_id_desc;
-            save_form_errors += display1 + " Search Term2";
-        }
-        else if (formdata.get("working_days_id") == '') {
-            is_valid = false
-              var msg = "JMSG007";
-             var msg_type ;
-             msg_type = message_config_details(msg);
-             $("#error_msg_id").prop("hidden", false)
-             var display1 = msg_type.messages_id_desc;
-            save_form_errors += display1 + " working Days ";
-        }
-         else if (formdata.get("output_medium_id") == '') {
-            is_valid = false
-              var msg = "JMSG007";
-             var msg_type ;
-             msg_type = message_config_details(msg);
-             $("#error_msg_id").prop("hidden", false)
-             var display1 = msg_type.messages_id_desc;
-            save_form_errors += display1 + " Output Medium ";
+        var err_text1 = '';
+        var temp = document.getElementsByClassName('mandatory_fields');
+        for (var i = 0; i<temp.length; i++) {
+            if(temp[i].nodeName == "SELECT"){
+                if(temp[i].value == ''){
+                    err_text1 = temp[i].parentNode.children[0].innerHTML;
+                    $('#temp[i].nextElementSibling.id').prop('hidden', false);
+                    $('#temp[i].nextElementSibling.id').html("required");
+                    document.getElementById(temp[i].nextElementSibling.id).innerHTML = err_text1 + " required";
+                    is_valid = false;
+                }
+                else{ $('#temp[i].nextElementSibling.id').prop('hidden', true);
+                    $(".error_message").prop("hidden", true);
+                }
+            }
+            else{
+                if(temp[i].value == ''){
+                    var err_text = temp[i].parentNode.children[0].innerHTML;
+                    $(".error_message").prop("hidden", false);
+                    temp[i].nextElementSibling.innerHTML = err_text + " required";
+                   is_valid = false;
+                }
+            }
         }
         return is_valid
     }
-
 
 function enable_disable(action){
     $(".dummy_ft_button_class").hide();
@@ -532,4 +410,5 @@ function get_values_onerror(){
     $('#working_days_id').val(localStorage.getItem("working_days_id"));
    $('#duns_number_id').val(localStorage.getItem("duns_number_id"));
    $('#output_medium_id').val(localStorage.getItem("output_medium_id"));
+   return false;
 }

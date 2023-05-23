@@ -17,7 +17,11 @@ $(document).ready( function() {
 });
 
 $("#porg").change(function () {
-    if(document.getElementById("porg").value != '*'){
-
+    if(document.getElementById("porg").value != ''){
+         $('#porg_change').prop("hidden", false)
+    }
+    else
+    {
+        $('#porg_change').prop("hidden", true)
     }
 })

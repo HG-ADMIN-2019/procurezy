@@ -55,8 +55,14 @@ def update_suppliers_basic_details(request):
 @transaction.atomic
 def update_supplier_purch_details(request):
     error_msg = ''
+    client_id = getClients(request)
     supp_org_data = JsonParser().get_json_from_req(request)
-    # supplier_id = org_data['supp_id']
+    supp_org_data = create_or_update_supp_org(supp_org_data, client_id)
+
+    return JsonResponse(supp_org_data, safe=False)
+
+
+def create_or_update_supp_org(supp_org_data, client_id):
     org_sup_db_list = []
     for org_data in supp_org_data['data']:
         if not django_query_instance.django_existence_check(OrgSuppliers,
@@ -79,13 +85,13 @@ def update_supplier_purch_details(request):
                                      'ship_notif_exp': org_data['ship_notif_exp'],
                                      'purch_block': org_data['purch_block'],
                                      'porg_id': org_data['porg_id'],
-                                     'client_id': getClients(request),
+                                     'client_id': client_id,
                                      }
             org_sup_db_list.append(org_sup_db_dictionary)
         else:
             django_query_instance.django_update_query(OrgSuppliers,
                                                       {'porg_id': org_data['porg_id'],
-                                                       'client': getClients(request),
+                                                       'client': client_id,
                                                        'supplier_id': org_data['supp_id'],
                                                        },
                                                       {'supplier_id': org_data['supp_id'],
@@ -104,20 +110,17 @@ def update_supplier_purch_details(request):
                                                        'ship_notif_exp': org_data['ship_notif_exp'],
                                                        'purch_block': org_data['purch_block'],
                                                        'porg_id': org_data['porg_id'],
-                                                       'client_id': getClients(request),
+                                                       'client_id': client_id,
                                                        'del_ind': org_data['del_ind']
                                                        })
         if org_sup_db_list:
             bulk_create_entry_db(OrgSuppliers, org_sup_db_list)
-
-    if supp_org_data['action'] == CONST_ACTION_DELETE:
-        msgid = 'MSG113'
-    else:
-        msgid = 'MSG112'
-
-    client_id= getClients(request),
-    supp_org_data = get_data(org_data['supp_id'], client_id, msgid)
-    return JsonResponse(supp_org_data, safe=False)
+        if supp_org_data['action'] == CONST_ACTION_DELETE:
+            msgid = 'MSG113'
+        else:
+            msgid = 'MSG112'
+        supp_org_data = get_data(org_data['supp_id'], client_id, msgid)
+    return supp_org_data
 
 
 def get_data(supplier_id, client_id, msgid):
@@ -126,7 +129,6 @@ def get_data(supplier_id, client_id, msgid):
                                                                 {'del_ind': False, 'supplier_id': supplier_id,
                                                                  'client_id': client_id}, None,
                                                                 None)
-    print(upload_response)
     return upload_response, message
 
 
@@ -138,8 +140,6 @@ def delete_supplier_org_info(request):
     update_user_info(request)
     success_message = ''
     supp_org_data = JsonParser_obj.get_json_from_req(request)
-    # supp_org_details = django_query_instance.django_get_query(OrgSuppliers,
-    #                                                           {'porg_id': annsmt_data['porg_id']})
     for org_data in supp_org_data['data']:
         if django_query_instance.django_existence_check(OrgSuppliers,
                                                         {'porg_id': org_data['porg_id'],

@@ -3,7 +3,8 @@ $(document).ready(function(){
         $('#configform')[0].reset();
         $('#myModal').modal('hide');
     });
-    set_value();
+//    set_value();
+    get_values();
     $('#nav_menu_items').remove();
     $("body").css("padding-top", "4rem");
 });
@@ -29,8 +30,14 @@ function cancel_user_basic_info() {
 }
 
 function set_value(){
-     localStorage.setItem("currency_id", document.getElementById("currency_id").value);
-     localStorage.setItem("language_id", document.getElementById("language_id").value);
+     localStorage.setItem("currency_id", document.getElementById("id_currency_id").value);
+     localStorage.setItem("language_id", document.getElementById("id_language_id").value);
+     localStorage.setItem("time_zone", document.getElementById("id_time_zone").value);
+}
+function get_values(){
+    $('#id_currency_id').val(localStorage.getItem("currency_id"));
+   $('#id_language_id').val(localStorage.getItem("language_id"));
+    $('#id_time_zone').val(localStorage.getItem("time_zone"));
 }
 
     // Funtion to save basic detail data
@@ -39,6 +46,7 @@ function set_value(){
      var phone_num_val = $('#phone_num').val();
      var email_val = $('#email').val();
      var err_flag;
+     set_value();
      OpenLoaderPopup();
       is_save_form_valid = save_user_form_validation(name1_val, phone_num_val, email_val)
         if (is_save_form_valid != '') {
@@ -50,6 +58,7 @@ function set_value(){
         }
         else{
             $('#language_id').val(localStorage.getItem("language_id"));
+            get_values();
         }
         var user_data_dict = {}
 
