@@ -3,19 +3,19 @@ var validate_add_attributes = [];
 var main_table_low_value = [];
 var message_id_desc={};
 
-$(document).ready(function () {
-    $('#nav_menu_items').remove();
-    $("body").css("padding-top", "3.7rem");
-    $("#display_basic_table").DataTable().destroy()({
-           "columnDefs": [{
-           'searchable':false,
-            'orderable':false,
-            "bSort":false,
-            "selectAllPages": false,
-       }],
-     })
-    table_sort_filter('display_basic_table');
-});
+// $(document).ready(function () {
+//     $('#nav_menu_items').remove();
+//     $("body").css("padding-top", "3.7rem");
+//     $("#display_basic_table").DataTable({
+//            "columnDefs": [{
+//            'searchable':false,
+//             'orderable':false,
+//             "bSort":false,
+//             "selectAllPages": false,
+//        }],
+//      })
+//     table_sort_filter('display_basic_table');
+// });
 
 //******************
 // on click copy icon display the selected checkbox data
@@ -54,43 +54,42 @@ $(".remove_upload_data").click(() => {
 
 });
 
-//*************************
-// on click edit icon display the data in edit mode
-function onclick_edit_button() {
-    //display the add,cancel and upload buttons and select all checkbox,select heading and checkboxes for each row
-    $('#display_basic_table').DataTable().destroy();
-    $("#hg_select_checkbox").prop("hidden", false);
-    $(".class_message_checkbox").prop("hidden", false);
-    $("#hg_select_checkbox").show();
-    //hide the edit,delete,copy and update buttons
-    $("#id_edit_data").hide();
-    $("#id_check_all").show();
-    $("#id_cancel_data").show();
-    table_sort_filter('display_basic_table');
-}
+// //*************************
+// // on click edit icon display the data in edit mode
+// function onclick_edit_button() {
+//     //display the add,cancel and upload buttons and select all checkbox,select heading and checkboxes for each row
+//     $('#display_basic_table').DataTable().destroy();
+//     $("#hg_select_checkbox").prop("hidden", false);
+//     $(".class_message_checkbox").prop("hidden", false);
+//     $("#hg_select_checkbox").show();
+//     //hide the edit,delete,copy and update buttons
+//     $("#id_edit_data").hide();
+//     $("#id_check_all").show();
+//     $("#id_cancel_data").show();
+//     table_sort_filter('display_basic_table');
+// }
 
 //**********************************
-//onclick of checkbox display delete,update and copy Buttons
-function valueChanged() {
-    if ($('.checkbox_check').is(":checked")) {
-        $("#id_delete_data").show();
-        $("#id_copy_data").show();
-        $("#id_update_data").show();
-    }
-    else {
-        $("#id_delete_data").hide();
-        $("#id_copy_data").hide();
-        $("#id_update_data").hide();
-    }
-}
+// //onclick of checkbox display delete,update and copy Buttons
+// function valueChanged() {
+//     if ($('.checkbox_check').is(":checked")) {
+//         $("#id_delete_data").show();
+//         $("#id_copy_data").show();
+//         $("#id_update_data").show();
+//     }
+//     else {
+//         $("#id_delete_data").hide();
+//         $("#id_copy_data").hide();
+//         $("#id_update_data").hide();
+//     }
+// }
 
 //onclick of cancel display the table in display mode............
 function display_basic_db_data() {
     $('#display_basic_table').DataTable().destroy();
     $('#id_message_tbody').empty();
     var edit_basic_data = '';
-    var desc = '';
-    var lang_code;
+    var desc = ''; var lang_code;
     $.each(rendered_message_id_desc_data, function (i, item) {
         lang_code = item.language_id;
         for (i = 0; i < render_language_data.length; i++) {

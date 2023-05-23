@@ -173,15 +173,9 @@
     var country_dropdwn = [];
 
     workingdays_dropdown =
-    `<select style="height: 50px; width: 130px; overflow-y: scroll;" type="text" class="form-control multiple_select working_days" type="text" name="working_days"  multiple  title="Select.." >
-        <option value="1">Sunday</option>
-        <option value="2">Monday</option> 
-        <option value="3">Tuesday</option> 
-        <option value="4">Wednesday</option>
-        <option value="5">Thursday</option>
-        <option value="6">Friday</option>
-        <option value="7">Saturday</option>
-    </select>`
+    <select type="text" class="multiple_select form-control "  id="working_days_id" name="working_days" multiple data-selected-text-format="count" data-actions-box="true" title='Select...' >
+        <option value="1">Sunday</option> <option value="2">Monday</option> <option value="3">Tuesday</option> <option value="4">Wednesday</option> <option value="5">Thursday</option> <option value="6">Friday</option> <option value="7">Saturday</option>
+    </select>
 
     //******************************
     function calendar_drpdown(){
