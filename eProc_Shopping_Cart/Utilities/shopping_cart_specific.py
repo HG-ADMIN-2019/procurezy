@@ -606,8 +606,8 @@ def get_manger_detail(client, login_username, acc_default, total_value, default_
                                 acc_detail_list.append({'acc_value': acc_value, 'account_assign_cat': acc_default,
                                                         'company_id': default_cmp_code
                                                         })
-                                if ((acc_value == app_datails[1]) and (app_datails[2] == default_cmp_code) and (
-                                        app_datails[4] == acc_default)):
+                                if ((app_datails[7] == app_datails[1]) and (app_datails[2] == app_datails[5]) and (
+                                        app_datails[4] == app_datails[6])):
                                     msgid = 'MSG173'
                                     error_msg = get_message_desc(msgid)[1]
                                     msg_info = error_msg
@@ -705,15 +705,15 @@ def get_manger_detail(client, login_username, acc_default, total_value, default_
 
                                         for app_datails in approver_detail:
                                             app_id.append(app_datails[0])
+                                            app_datails = list(app_datails)
                                             acc_detail_list.append(
-                                                {'acc_value': approver_detail[1],
-                                                 'account_assign_cat': approver_detail[4],
-                                                 'company_id': approver_detail[2],
+                                                {'acc_value': app_datails[1],
+                                                 'account_assign_cat': app_datails[4],
+                                                 'company_id': app_datails[2],
                                                  })
-                                            if ((approver_detail[1] == app_datails[1]) and
-                                                    (approver_detail[2] == app_datails[2]) and
-                                                    (approver_detail[4] == app_datails[4])):
-
+                                            if ((app_datails[7] == app_datails[1]) and (
+                                                    app_datails[2] == app_datails[5]) and (
+                                                    app_datails[4] == app_datails[6])):
                                                 msgid = 'MSG173'
                                                 error_msg = get_message_desc(msgid)[1]
                                                 msg_info = error_msg

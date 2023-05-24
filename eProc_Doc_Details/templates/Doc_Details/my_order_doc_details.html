@@ -405,6 +405,7 @@
         var check_sc_data = '';
         if (type != 'approval_workflow') {
             check_sc_data = get_data_for_check()
+            header_level_data = get_sc_header_data()
         }
         var total_val = $('#ScHeader-total_value-' + GLOBAL_HEADER_GUID).text();
         data = {
@@ -414,7 +415,8 @@
             'check_sc_data': check_sc_data,
             'type': type,
             'requester': $('#shopping_cart_requester').val(),
-            'sc_header_guid': GLOBAL_HEADER_GUID
+            'sc_header_guid': GLOBAL_HEADER_GUID,
+            'header_level_data':header_level_data
         }
 
         $.ajax({
