@@ -47,28 +47,28 @@ def register_page(request):
     msg_flag = 0
     if request.method == 'POST':
         reg_form = RegForm(request.POST or None)
-        if reg_form.is_valid():
-            new_user = reg_form.save(commit=False)
-            password = random_alpha_numeric(8)
-            new_user.password = make_password(password)
-            new_user.password2 = make_password(password)
-            emp_id = request.POST['employee_id']
-            if django_query_instance.django_existence_check(UserData,
-                                                            {'employee_id': emp_id,
-                                                             'del_ind': False,
-                                                             'client': global_variables.GLOBAL_CLIENT}):
-                message_desc = get_message_desc('MSG205')[1]
-                messages.error(request, message_desc)
-                msg_flag = 1
-            else:
-                is_created = RegFncts.create_user(request, new_user, global_variables.GLOBAL_CLIENT, password)
-                if is_created:
-                    message_desc = get_message_desc('MSG017')[1]
-                messages.success(request, message_desc)
-                msg_flag = 0
-                return redirect('eProc_Users:register_page')
-        else:
+        # if reg_form.is_valid():
+        new_user = reg_form.save(commit=False)
+        password = random_alpha_numeric(8)
+        new_user.password = make_password(password)
+        new_user.password2 = make_password(password)
+        emp_id = request.POST['employee_id']
+        if django_query_instance.django_existence_check(UserData,
+                                                        {'employee_id': emp_id,
+                                                         'del_ind': False,
+                                                         'client': global_variables.GLOBAL_CLIENT}):
+            message_desc = get_message_desc('MSG205')[1]
+            messages.error(request, message_desc)
             msg_flag = 1
+        else:
+            is_created = RegFncts.create_user(request, new_user, global_variables.GLOBAL_CLIENT, password)
+            if is_created:
+                message_desc = get_message_desc('MSG017')[1]
+            messages.success(request, message_desc)
+            msg_flag = 0
+            return redirect('eProc_Users:register_page')
+        # else:
+        #     msg_flag = 1
 
     context = {
         'inc_nav': True,

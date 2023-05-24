@@ -32,6 +32,10 @@
 
         <div class="card card-shadow-1">
             <div class="card-body">
+                <div class="elements-space-between">
+                    <div></div>
+                     <div> <span class="badge help-text-badge help-text-star-search"></span></div>
+                </div>
                 <form method="POST">
                     {% csrf_token %}
                     <div class="row">
@@ -88,13 +92,13 @@
                             </div>
                             <div class="col-md">
                                 <label for="">Purchasing Organization</label>
-<!--                                <input type="text" class="form-control check_for_search" id="porg" name="purchasing_org">-->
                                 <select name="purchasing_org" id="porg" class="form-control">
                                     <option value="">select</option>
                                     {% for porg in purch_org_list %}
                                     <option value="{{porg}}">{{porg}}</option>
                                     {% endfor %}
                                 </select>
+                                <small id="porg_change" class="form-text text-muted help-text-porg_dropdown" hidden></small>
                             </div>
                             <div class="col-md">
                                 <div class="form-check">
@@ -109,9 +113,7 @@
                     <br>
                     <div class="elements-space-between">
                         <input type="reset" value="Clear filters" class="ip-form-clear-filters">
-                        <div>
-                            <span class="badge help-text-badge help-text-star-search"></span>
-                        </div>
+
                     </div>
                 </form>
             </div>
@@ -437,10 +439,10 @@
                 is_active = 'Inactive'
             }
             if(supplier_detail.block){
-                block_input = '<input type="checkbox" id="'+supplier_detail.supplier_id+'-block" class="toggle-block" checked><span class="control"></span>'
+                block_input = '<input type="checkbox" id="'+supplier_detail.supplier_id+'-block" class="toggle-block dummy_supplier_block" checked><span class="control"></span>'
             }
             else{
-                block_input = '<input type="checkbox" id="'+supplier_detail.supplier_id+'-unblock" class="toggle-block"><span class="control"></span>'
+                block_input = '<input type="checkbox" id="'+supplier_detail.supplier_id+'-unblock" class="toggle-block dummy_supplier_block"><span class="control"></span>'
             }
 
             supplier_detail_html += '<tr id="'+supplier_detail.supplier_id+'">'+
@@ -467,6 +469,12 @@
         var id = $(this).attr('id');
         var href_link = url.replace('123', id)
         window.open(href_link,'_blank');
+    });
+     $(document).on('click', '.dummy_supplier_block', function () {
+        var id = this.id
+        block_id = id
+        data.supplier_id = id.split('-')[0];
+        $('#id_block_confirm_popup').modal('show');
     });
 
 

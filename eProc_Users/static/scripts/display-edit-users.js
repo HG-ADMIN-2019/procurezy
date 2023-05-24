@@ -3,7 +3,8 @@ $(document).ready(function(){
         $('#configform')[0].reset();
         $('#myModal').modal('hide');
     });
-    set_value();
+//    set_value();
+    get_values();
     $('#nav_menu_items').remove();
     $("body").css("padding-top", "4rem");
 });
@@ -12,9 +13,9 @@ $(document).ready(function(){
 function edit_user_basic_info() {
     $('#user_basic_update_success').hide();
     $(".hg_edit_display_mode").prop("disabled", false);
-    $("#language_id").append(language_opt)
-    $("#currency_id").append(currency_opt)
-    $("#time_zone").append(timezone_opt)
+    $("#id_language_id").append(language_opt)
+    $("#id_currency_id").append(currency_opt)
+    $("#id_time_zone").append(timezone_opt)
     $("#decimal_notation").append(decimal_opt)
     $("#date_format").append(date_format_opt)
     document.getElementById("edit_user_info_btn").style.display = "none"
@@ -29,8 +30,14 @@ function cancel_user_basic_info() {
 }
 
 function set_value(){
-     localStorage.setItem("currency_id", document.getElementById("currency_id").value);
-     localStorage.setItem("language_id", document.getElementById("language_id").value);
+     localStorage.setItem("currency_id", document.getElementById("id_currency_id").value);
+     localStorage.setItem("language_id", document.getElementById("id_language_id").value);
+     localStorage.setItem("time_zone", document.getElementById("id_time_zone").value);
+}
+function get_values(){
+    $('#id_currency_id').val(localStorage.getItem("currency_id"));
+   $('#id_language_id').val(localStorage.getItem("language_id"));
+    $('#id_time_zone').val(localStorage.getItem("time_zone"));
 }
 
     // Funtion to save basic detail data
@@ -39,28 +46,20 @@ function set_value(){
      var phone_num_val = $('#phone_num').val();
      var email_val = $('#email').val();
      var err_flag;
+     set_value();
      OpenLoaderPopup();
-      is_save_form_valid = save_user_form_validation(name1_val, phone_num_val, email_val)
-        if (is_save_form_valid != '') {
-            $('#save_error_div').html(is_save_form_valid)
-            $('#save_error_div').show()
-            scroll_top();
-            CloseLoaderPopup();
-            return
-        }
-        else{
-            $('#language_id').val(localStorage.getItem("language_id"));
-        }
-        var user_data_dict = {}
+      is_save_form_valid = save_user_form_validation()
+        if (is_save_form_valid) {
+            var user_data_dict = {}
 
         user_data_dict.username = $('#username').val();
         user_data_dict.first_name = $('#first_name').val();
         user_data_dict.last_name= $('#last_name').val();
         user_data_dict.employee_id= $('#employee_id').val();
         user_data_dict.user_type= $('#user_type').val();
-        user_data_dict.language_id= $('#language_id').val();
-        user_data_dict.currency_id=$('#currency_id').val();
-        user_data_dict.time_zone= $('#time_zone').val();
+        user_data_dict.language_id= $('#id_language_id').val();
+        user_data_dict.currency_id=$('#id_currency_id').val();
+        user_data_dict.time_zone= $('#id_time_zone').val();
         user_data_dict.email= $('#email').val();
         user_data_dict.phone_num= $('#phone_num').val();
         user_data_dict.date_format= $('#date_format').val();
@@ -72,80 +71,49 @@ function set_value(){
 
         ajax_update_user_basic_data(user_data_dict)
 
-        document.getElementById('user_basic_update_success').innerHTML = response.message.message_desc;
+        document.getElementById('user_basic_update_success').innerHTML = "Saved Successfully";
           $('#save_error_div').hide()
         $('#user_basic_update_success').show();
         $('html, body').animate({ scrollTop: 0 }, 'slow');
         cancel_user_basic_info();
+        CloseLoaderPopup();
+        }
+        else{
+            $('#language_id').val(localStorage.getItem("language_id"));
+            get_values();
+        }
 
     }
 // Validation function
-   const save_user_form_validation = (name1_val, phone_num_val, email_val) => {
-        var is_valid = true
+function save_user_form_validation(){
+   var is_valid = true;
         var save_form_errors = ''
         var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-        if (name1_val == '') {
-            is_valid = false
-             var msg = "JMSG007";
-                            var msg_type ;
-                          msg_type = message_config_details(msg);
-                          $("#error_msg_id").prop("hidden", false)
 
-                          if(msg_type.message_type == "ERROR"){
-                                display_message("error_msg_id", msg_type.messages_id_desc)
-                          }
-                          else if(msg_type.message_type == "WARNING"){
-                             display_message("id_warning_msg_id", msg_type.messages_id_desc)
-                          }
-                          else if(msg_type.message_type == "INFORMATION"){
-                             display_message("id_info_msg_id", msg_type.messages_id_desc)
-                          }
-
-                           var display5 = msg_type.messages_id_desc;
-            save_form_errors +=  display5 + "First Name";
+        var err_text1 = '';
+        var temp = document.getElementsByClassName('mandatory_fields');
+        for (var i = 0; i<temp.length; i++) {
+            if(temp[i].nodeName == "SELECT"){
+                if(temp[i].value == ''){
+                    err_text1 = temp[i].parentNode.children[0].innerHTML;
+                    $('#temp[i].nextElementSibling.id').prop('hidden', false);
+                    $('#temp[i].nextElementSibling.id').html("required");
+                    document.getElementById(temp[i].nextElementSibling.id).innerHTML = err_text1 + " required";
+                    is_valid = false;
+                }
+                else{ $('#temp[i].nextElementSibling.id').prop('hidden', true);
+                    $(".error_message").prop("hidden", true);
+                }
+            }
+            else{
+                if(temp[i].value == ''){
+                    var err_text = temp[i].parentNode.children[0].innerHTML;
+                    $(".error_message").prop("hidden", false);
+                    temp[i].nextElementSibling.innerHTML = err_text + " required";
+                   is_valid = false;
+                }
+            }
         }
-        if (phone_num_val == '') {
-            is_valid = false
-             var msg = "JMSG007";
-                            var msg_type ;
-                          msg_type = message_config_details(msg);
-                          $("#error_msg_id").prop("hidden", false)
-
-                          if(msg_type.message_type == "ERROR"){
-                                display_message("error_msg_id", msg_type.messages_id_desc)
-                          }
-                          else if(msg_type.message_type == "WARNING"){
-                             display_message("id_warning_msg_id", msg_type.messages_id_desc)
-                          }
-                          else if(msg_type.message_type == "INFORMATION"){
-                             display_message("id_info_msg_id", msg_type.messages_id_desc)
-                          }
-
-                           var display6 = msg_type.messages_id_desc;
-            save_form_errors += display6 + "Phone number";
-        }
-        if ((email_val == '') || !(email_val.match(mailformat))) {
-            is_valid = false
-
-                            var msg = "JMSG004";
-                            var msg_type ;
-                          msg_type = message_config_details(msg);
-                          $("#error_msg_id").prop("hidden", false)
-
-                          if(msg_type.message_type == "ERROR"){
-                                display_message("error_msg_id", msg_type.messages_id_desc)
-                          }
-                          else if(msg_type.message_type == "WARNING"){
-                             display_message("id_warning_msg_id", msg_type.messages_id_desc)
-                          }
-                          else if(msg_type.message_type == "INFORMATION"){
-                             display_message("id_info_msg_id", msg_type.messages_id_desc)
-                          }
-
-                           var display8 = msg_type.messages_id_desc;
-            save_form_errors += display8+ "Email Id";
-        }
-
-
-        return is_valid, save_form_errors
+        return is_valid
     }
+
