@@ -49,18 +49,8 @@ function get_values(){
      set_value();
      OpenLoaderPopup();
       is_save_form_valid = save_user_form_validation()
-        if (is_save_form_valid != '') {
-            $('#save_error_div').html(is_save_form_valid)
-            $('#save_error_div').show()
-            scroll_top();
-            CloseLoaderPopup();
-            return
-        }
-        else{
-            $('#language_id').val(localStorage.getItem("language_id"));
-            get_values();
-        }
-        var user_data_dict = {}
+        if (is_save_form_valid) {
+            var user_data_dict = {}
 
         user_data_dict.username = $('#username').val();
         user_data_dict.first_name = $('#first_name').val();
@@ -81,11 +71,17 @@ function get_values(){
 
         ajax_update_user_basic_data(user_data_dict)
 
-        document.getElementById('user_basic_update_success').innerHTML = response.message.message_desc;
+        document.getElementById('user_basic_update_success').innerHTML = "Saved Successfully";
           $('#save_error_div').hide()
         $('#user_basic_update_success').show();
         $('html, body').animate({ scrollTop: 0 }, 'slow');
         cancel_user_basic_info();
+        CloseLoaderPopup();
+        }
+        else{
+            $('#language_id').val(localStorage.getItem("language_id"));
+            get_values();
+        }
 
     }
 // Validation function
