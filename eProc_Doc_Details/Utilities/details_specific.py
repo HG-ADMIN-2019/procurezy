@@ -66,8 +66,8 @@ def get_notes(header_guid,sc_item_guid_list,note_type, item_flag):
                                                               {'item_guid__in':sc_item_guid_list,
                                                                'note_type':note_type,
                                                                'client':global_variables.GLOBAL_CLIENT},
-                                                              None,
-                                                              ['item_num'])
+                                                              ['item_num'],
+                                                              None)
     else:
         item_note = django_query_instance.django_filter_query(Notes,
                                                               {'header_guid': header_guid,

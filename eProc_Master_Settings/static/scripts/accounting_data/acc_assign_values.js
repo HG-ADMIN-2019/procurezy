@@ -50,9 +50,10 @@ function add_popup_row() {
 function display_basic_db_data() {
     $('#display_basic_table').DataTable().destroy();
     $('#id_aav_tbody').empty();
+    console.log(format("16-02-2022"));
     var edit_basic_data = '';
     $.each(rendered_account_assignment_value, function(index, value) {
-        edit_basic_data += '<tr><td class="class_select_checkbox"><input class="checkbox_check" onclick="valueChanged()" type="checkbox" required></td><td>' + value.company_id + '</td><td>' + value.account_assign_cat + '</td><td>' + value.account_assign_value + '</td><td>' + value.valid_from + '</td><td>' + value.valid_to+ '</td><td hidden>' + value.account_assign_guid + '</td> <td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+        edit_basic_data += '<tr><td class="class_select_checkbox"><input class="checkbox_check" onclick="valueChanged()" type="checkbox" required></td><td>' + value.company_id + '</td><td>' + value.account_assign_cat + '</td><td>' + value.account_assign_value + '</td><td>' + format(value.valid_from) + '</td><td>' + format(value.valid_to)+ '</td><td hidden>' + value.account_assign_guid + '</td> <td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
     });
     $('#id_aav_tbody').append(edit_basic_data);
     $("#hg_select_checkbox").prop("hidden", true);
@@ -115,8 +116,8 @@ function delete_duplicate() {
         //*************** reading data from the pop-up ***************
 
         account_assign_value = row.find("TD").eq(3).find('input[type="number"]').val();
-        valid_from = row.find("TD").eq(4).find('input[type="date"]').val()
-        valid_to = row.find("TD").eq(5).find('input[type="date"]').val()
+        valid_from = row.find("TD").eq(4).find('input[type="text"]').val()
+        valid_to = row.find("TD").eq(5).find('input[type="text"]').val()
         account_assign_cat = row.find("TD").eq(2).find('Select').val()
         company_id = row.find("TD").eq(1).find('Select').val()
 
@@ -150,22 +151,22 @@ function read_popup_data() {
         aav.company_id = row.find("TD").eq(1).find('Select').val()
         aav.account_assign_cat = row.find("TD").eq(2).find('Select').val()
         aav.account_assign_value = row.find("TD").eq(3).find('input[type="number"]').val();
-        aav.valid_from = row.find("TD").eq(4).find('input[type="date"]').val()
-        aav.valid_to = row.find("TD").eq(5).find('input[type="date"]').val()
+        aav.valid_from = row.find("TD").eq(4).find('input[type="text"]').val()
+        aav.valid_to = row.find("TD").eq(5).find('input[type="text"]').val()
         if((aav.valid_from == undefined) || (aav.valid_from == '')){
             aav.valid_from = '';
         }
         else
         {
-            var from_date = new Date(aav.valid_from).toISOString().slice(0, 10);
-            aav.valid_from = from_date;
+//            var from_date = new Date(aav.valid_from).toISOString().slice(0, 10);
+//            aav.valid_from = from_date;
         }
         if((aav.valid_to == undefined) || (aav.valid_to == '')){
             aav.valid_to = '';
         }
         else{
-            var to_date = new Date(aav.valid_to).toISOString().slice(0, 10);
-            aav.valid_to = to_date;
+//            var to_date = new Date(aav.valid_to).toISOString().slice(0, 10);
+//            aav.valid_to = to_date;
         }
         var compare = aav.company_id + '-' + aav.account_assign_cat + '-' + aav.account_assign_value;
         if (aav == undefined) {
@@ -236,8 +237,8 @@ function get_selected_row_data() {
          disable_check = row.find("TD").eq(7).find('input[type="text"]').val();
          if(aav_arr_obj.del_ind){
             aav_arr_obj.account_assign_value = row.find("TD").eq(3).find('input[type="number"]').val();
-            aav_arr_obj.valid_from = row.find("TD").eq(4).find('input[type="date"]').val()
-            aav_arr_obj.valid_to = row.find("TD").eq(5).find('input[type="date"]').val()
+            aav_arr_obj.valid_from = row.find("TD").eq(4).find('input[type="text"]').val()
+            aav_arr_obj.valid_to = row.find("TD").eq(5).find('input[type="text"]').val()
             aav_arr_obj.account_assign_cat = row.find("TD").eq(2).find('select option:selected').val()
             aav_arr_obj.company_id = row.find("TD").eq(1).find('select option:selected').val()
             aav_arr_obj.account_assign_guid = row.find("TD").eq(6).find('input').val()
@@ -252,11 +253,12 @@ function get_selected_row_data() {
     '<td><select class="form-control" id="company_dropdw">' + company_dropdwn + '</select></td>'+
     '<td><select class="form-control" id="acc_ass_val_dropdw">' + acc_ass_dropdwn + ' </select></td>'+
     '<td><input class="form-control check_number" type="number" minlength="4" maxlength="40" name="Account Assignment Value" required></td>'+
-    '<td><input class="form-control" type="date" maxlength="10" name="valid_from" required></td>'+
-    '<td><input class="form-control" type="date" maxlength="10" name="Valid To Date" required></td>'+
+    '<td><input class="form-control formatDate" type="text"  name="valid_from" required></td>'+
+    '<td><input class="form-control formatDate" type="text"  name="Valid To Date" required></td>'+
     '<td hidden><input value=""></td>'+
     '<td class="class_del_checkbox" hidden><input type="checkbox" required></td>'+
     '<td class="class_del_checkbox1" hidden><input type="checkbox" required></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
+    DatePicker();
     table_sort_filter("id_popup_table");
  }

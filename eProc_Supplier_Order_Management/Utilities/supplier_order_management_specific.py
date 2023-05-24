@@ -14,6 +14,7 @@ from eProc_Basic.Utilities.functions.encryption_util import encrypt
 from eProc_Basic.Utilities.functions.file_system_related_function import delete_all_files
 from eProc_Basic.Utilities.functions.guid_generator import guid_generator, random_int
 from eProc_Basic.Utilities.functions.string_related_functions import remove_space
+from eProc_Basic.Utilities.functions.type_casting import get_date_value
 from eProc_Basic.Utilities.global_defination import global_variables
 from eProc_Configuration.models.development_data import AddressPartnerType
 from eProc_Supplier_Order_Management.models.supplier_order_management_models import SOMPoHeader, SOMPoItem, \
@@ -187,27 +188,34 @@ def get_po_table_data(po_table_details, header_detail):
 
     for row_count, po_table_detail in enumerate(po_table_details['data']):
         for cell_count, text_data in enumerate(po_table_detail):
-            if row_count == 0:
-                if cell_count == 0:
-                    buyer_detail = text_data['text'].split('\r')
-                    header_detail['requester'] = buyer_detail[1]
-                    header_detail['requester_email'] = buyer_detail[2]
-                if cell_count == 1:
-                    supplier_contact = text_data['text'].split('\r')
-                    header_detail['supplier_contact'] = supplier_contact[1]
-                if cell_count == 2:
-                    ordered_at = text_data['text'].split('\r')
-                    header_detail['ordered_at'] = ordered_at[1]
-            if row_count == 1:
-                if cell_count == 0:
-                    requester_mobile_num = text_data['text'].split('\r')
-                    header_detail['requester_mobile_num'] = requester_mobile_num[1]
-                if cell_count == 2:
-                    supplier_mobile_num = text_data['text'].split('\r')
-                    header_detail['supplier_mobile_num'] = supplier_mobile_num[1]
-                if cell_count == 3:
-                    supplier_email = text_data['text'].split('\r')
-                    header_detail['supplier_email'] = supplier_email[1]
+            if text_data['text']:
+                if row_count == 0:
+                    if cell_count == 0:
+                        buyer_detail = text_data['text'].split('\r')
+                        if len(buyer_detail)>1:
+                            header_detail['requester'] = buyer_detail[1]
+                            header_detail['requester_email'] = buyer_detail[2]
+                    if cell_count == 1:
+                        supplier_contact = text_data['text'].split('\r')
+                        if len(supplier_contact)>1:
+                            header_detail['supplier_contact'] = supplier_contact[1]
+                    if cell_count == 2:
+                        ordered_at = text_data['text'].split('\r')
+                        if len(ordered_at) >1:
+                            header_detail['ordered_at'] = ordered_at[1]
+                if row_count == 1:
+                    if cell_count == 0:
+                        requester_mobile_num = text_data['text'].split('\r')
+                        if len(requester_mobile_num) > 1:
+                            header_detail['requester_mobile_num'] = requester_mobile_num[1]
+                    if cell_count == 2:
+                        supplier_mobile_num = text_data['text'].split('\r')
+                        if len(supplier_mobile_num) >1:
+                            header_detail['supplier_mobile_num'] = supplier_mobile_num[1]
+                    if cell_count == 3:
+                        supplier_email = text_data['text'].split('\r')
+                        if len(supplier_email) >1:
+                            header_detail['supplier_email'] = supplier_email[1]
 
     print("header details: ", header_detail)
     return header_detail
@@ -222,8 +230,9 @@ def save_po_data(header_detail, po_item_details, address):
     print("po addr", address)
     save_som_po_instance = SaveSOMPO()
     save_som_po_instance.save_som_po_header(header_detail)
-    save_som_po_instance.save_som_po_items(po_item_details)
-    save_som_po_instance.save_som_po_address(address)
+    if not save_som_po_instance.doc_number_flag:
+        save_som_po_instance.save_som_po_items(po_item_details)
+        save_som_po_instance.save_som_po_address(address)
 
     return header_detail
 
@@ -238,6 +247,7 @@ class SaveSOMPO:
         self.supplier_email = ''
         self.requester_mobile_num = ''
         self.requester_email = ''
+        self.doc_number_flag = True
 
     def save_som_po_header(self, header_detail):
         """
@@ -246,9 +256,11 @@ class SaveSOMPO:
         if not django_query_instance.django_existence_check(SOMPoHeader,
                                                         {'doc_number': header_detail['doc_number'],
                                                          'client': global_variables.GLOBAL_CLIENT}):
+            ordered_at = get_date_value(header_detail['ordered_at'])
+            self.doc_number_flag = False
             self.requester = header_detail['goods_recep']
             header_detail['som_po_header_guid'] = self.som_po_header_guid
-            header_detail['ordered_at'] = datetime.datetime.strptime(header_detail['ordered_at'], '%m-%d-%Y')
+            header_detail['ordered_at'] = ordered_at
             header_detail['posting_date'] = header_detail['ordered_at']
             header_detail['status'] = 'ORDERED'
             header_detail['time_zone'] = ''

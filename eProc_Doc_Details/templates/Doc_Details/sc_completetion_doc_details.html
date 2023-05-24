@@ -581,7 +581,8 @@
             'check_sc_data': check_sc_data,
             'type': type,
             'requester': $('#shopping_cart_requester').val(),
-            'sc_header_guid': GLOBAL_HEADER_GUID
+            'sc_header_guid': GLOBAL_HEADER_GUID,
+            'check_type':'sc_completion'
         }
         $('#hg_loader').modal('show');
         $.ajax({
@@ -676,6 +677,7 @@
     }
 
     //==================================== END ON CLICK OF CHECK BUTTON========================================================
+
 
     //==================================== START ON CLICK OF EDIT BUTTON======================================================================
 
