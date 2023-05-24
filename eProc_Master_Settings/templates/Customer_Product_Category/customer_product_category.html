@@ -798,14 +798,14 @@
                         $('#id_data_upload').modal('show');
                     }
                     else{
-                        var cusprodcat_data_array = response.data;
+                        var cusprodcat_data_array = response.valid_data_list;
                         var edit_basic_data = '';
                         var del_ind = '';
                         var dropdown_values = [];
                         var inc_index=0;
                         $("#id_popup_tbody").empty();
-                        $.each(response.data, function (i, value) {
-                            var prod_cat_id_value = value[0]
+                        $.each(cusprodcat_data_array, function (i, value) {
+                            var prod_cat_id_value = value.prod_cat_id
                             dropdown_values.push([prod_cat_id_value])
                             del_ind = '<td>' + value[1] + '</td>'
                             if (value[1] == 1) {
@@ -842,7 +842,7 @@
                                     '</tr>';
                             inc_index += 1;
                          });
-                        $('#id_popup_tbody').append(edit_basic_data);
+                        $('#id_popup_table').append(edit_basic_data);
                         var i =0;
                         $("#id_popup_table TBODY TR").each(function() {
                             var row = $(this);
@@ -850,8 +850,6 @@
                             $(row.find("TD").eq(1).find("select option[value="+prod_cat_id_list+"]")).attr('selected','selected');
                             i = i + 1;
                         });
-                        $("#id_check_special_character_messages").prop("hidden",false);
-                        $("#id_check_special_character_messages").prop("hidden",false);
                         $( "#id_del_ind_checkbox").prop( "hidden", false );
                         $( "#header_select").prop( "hidden", false );
                         $( ".class_del_checkbox").prop( "hidden", false );
@@ -862,6 +860,7 @@
                         $('#id_check_data').show();
                         $("#id_check_data").prop("hidden", false);
                         $("#save_id").prop("hidden", true);
+                        table_sort_filter('id_popup_table')
                     }
                     CloseLoaderPopup();
                 },
