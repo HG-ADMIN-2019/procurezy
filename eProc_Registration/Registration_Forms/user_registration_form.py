@@ -20,24 +20,24 @@ from eProc_Registration.models import UserData
 
 class RegForm(ModelForm):
     username = forms.CharField(label='User Name',
-                               widget=forms.TextInput(attrs={'class': 'form-control check_special_char'}),
-                               required=True)
+                               widget=forms.TextInput(attrs={'class': 'form-control check_special_char mandatory_fields'}),
+                               )
     first_name = forms.CharField(label='First Name',
-                                 widget=forms.TextInput(attrs={'class': 'form-control check_special_char'}),
-                                 required=True)
+                                 widget=forms.TextInput(attrs={'class': 'form-control check_special_char mandatory_fields'}),
+                                 )
     last_name = forms.CharField(label='Last Name', widget=forms.TextInput(attrs={'class': 'form-control '
                                                                                           'check_special_char'}),
                                 required=False)
     phone_num = forms.CharField(label='Phone Number',
-                                widget=forms.TextInput(attrs={'class': 'form-control check_phone_number'}),
+                                widget=forms.TextInput(attrs={'class': 'form-control check_phone_number mandatory_fields'}),
                                 required=False)
     language_id = forms.ModelChoiceField(queryset=Languages.objects.all(), empty_label="None", widget=forms.Select(
-        attrs={'class': 'form-control'}), label='Language')
+        attrs={'class': 'form-control mandatory_fields'}), label='Language')
     currency_id = forms.ModelChoiceField(queryset=Currency.objects.all(), empty_label="None", widget=forms.Select(
-        attrs={'class': 'form-control'}), label='Currency')
+        attrs={'class': 'form-control mandatory_fields'}), label='Currency')
     time_zone = forms.ModelChoiceField(queryset=TimeZone.objects.all(), empty_label="None", widget=forms.Select(
-        attrs={'class': 'form-control'}), label='TimeZone')
-    email = forms.EmailField(label='E-mail', required=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
+        attrs={'class': 'form-control mandatory_fields'}), label='TimeZone')
+    email = forms.EmailField(label='E-mail', widget=forms.TextInput(attrs={'class': 'form-control mandatory_fields'}))
 
     # Meta data for UserData model
     class Meta:
@@ -68,85 +68,27 @@ class RegForm(ModelForm):
             'decimal_notation': forms.Select(choices=DECIMAL_NOTATION_CHOICES,
                                              attrs={'class': 'form-control'}),
             'user_type': forms.Select(choices=USER_TYPE, attrs={'class': 'form-control'}),
-            'employee_id': forms.TextInput(attrs={'class': 'form-control check_special_char'}),
+            'employee_id': forms.TextInput(attrs={'class': 'form-control check_special_char mandatory_fields'}),
 
         }
 
-    def clean_username(self):
-        """
-        # User name validation
-        :return: username in uppercase
-        """
-        uname = self.cleaned_data.get('username')
-
-        if not re.match('\w', uname):
-            raise forms.ValidationError("Your username must contain at least four alphanumeric characters")
-        elif not (uname.isalnum() and re.match('[A-Za-z0-9]{4,16}', uname)):
-            raise forms.ValidationError("Must contain min four alphanumeric characters without special characters")
-        elif UserData.objects.filter(username=uname, client=global_variables.GLOBAL_CLIENT, del_ind=False).exists():
-            raise forms.ValidationError('Username already exists')
-
-        return uname.upper()
-
-    def clean_first_name(self):
-        """
-        # First name validation
-        :return: first name
-        """
-        fname = self.cleaned_data.get('first_name')
-        if not (fname.isalpha() and re.match('[a-zA-Z]{4,30}', fname)):
-            raise forms.ValidationError("Must contain min four characters without special characters/numbers")
-        return fname.capitalize()
-
-    def clean_last_name(self):
-        """
-        # Last name validation
-        :return: lastname
-        """
-        lname = self.cleaned_data.get('last_name')
-        if not (lname.isalpha() and re.match('[a-zA-Z]{1,30}', lname)):
-            raise forms.ValidationError("Must contain min one character without special characters/numbers")
-        return lname
-
-    def clean_phone_num(self):
-        """
-        # Phone number validation
-        :return: phone number
-        """
-        pnum = self.cleaned_data.get('phone_num')
-        if not re.match('[0-9+()\-\ ]{10,30}', pnum) and len(pnum) > 0:
-            raise forms.ValidationError("Must contain atleast 10 digits")
-        return pnum
-
-    def clean_email(self):
-        email = self.cleaned_data.get('email')
-        if UserData.objects.filter(email=email, client=global_variables.GLOBAL_CLIENT, del_ind=False).exists():
-            raise forms.ValidationError("User email already exists")
-        return email
-
-    def clean_empId(self):
-        emp_id = self.cleaned_data.get('employee_id')
-        if UserData.objects.filter(employee_id=emp_id, client=global_variables.GLOBAL_CLIENT, del_ind=False).exists():
-            raise forms.ValidationError("Employee Id already exists")
-        return emp_id
-
 
 class UserRegForm(ModelForm):
-    username = forms.CharField(label='User Name', widget=forms.TextInput(attrs={'class': 'form-control'}),
-                               required=True)
-    first_name = forms.CharField(label='First Name', widget=forms.TextInput(attrs={'class': 'form-control'}),
-                                 required=True)
+    username = forms.CharField(label='User Name', widget=forms.TextInput(attrs={'class': 'form-control mandatory_fields'}),
+                               )
+    first_name = forms.CharField(label='First Name', widget=forms.TextInput(attrs={'class': 'form-control mandatory_fields'}),
+                                 )
     last_name = forms.CharField(label='Last Name', widget=forms.TextInput(attrs={'class': 'form-control'}),
                                 required=False)
-    phone_num = forms.CharField(label='Phone Number', widget=forms.TextInput(attrs={'class': 'form-control'}),
-                                required=True)
+    phone_num = forms.CharField(label='Phone Number', widget=forms.TextInput(attrs={'class': 'form-control mandatory_fields'}),
+                                )
     language_id = forms.ModelChoiceField(queryset=Languages.objects.all(), empty_label="None", widget=forms.Select(
-        attrs={'class': 'form-control'}), label='Language', required=True)
+        attrs={'class': 'form-control mandatory_fields'}), label='Language', )
     currency_id = forms.ModelChoiceField(queryset=Currency.objects.all(), empty_label="None", widget=forms.Select(
-        attrs={'class': 'form-control'}), label='Currency', required=True)
+        attrs={'class': 'form-control mandatory_fields'}), label='Currency', )
     time_zone = forms.ModelChoiceField(queryset=TimeZone.objects.all(), empty_label="None", widget=forms.Select(
-        attrs={'class': 'form-control'}), label='TimeZone', required=True)
-    email = forms.EmailField(label='E-mail', required=True, widget=forms.TextInput(attrs={'class': 'form-control'}))
+        attrs={'class': 'form-control mandatory_fields'}), label='TimeZone', )
+    email = forms.EmailField(label='E-mail', widget=forms.TextInput(attrs={'class': 'form-control mandatory_fields'}))
 
     # Meta data for UserData model
     class Meta:
@@ -177,5 +119,5 @@ class UserRegForm(ModelForm):
             'decimal_notation': forms.Select(choices=DECIMAL_NOTATION_CHOICES,
                                              attrs={'class': 'form-control'}),
             'user_type': forms.Select(choices=USER_TYPE, attrs={'class': 'form-control'}),
-            'employee_id': forms.TextInput(attrs={'class': 'form-control'}),
+            'employee_id': forms.TextInput(attrs={'class': 'form-control mandatory_fields'}),
         }

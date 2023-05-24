@@ -204,7 +204,7 @@
                                 <div class="row">
                                     <div class="form-group col-md">
                                         <label> E-mail</label><span class="hg_required"></span><br>
-                                        <input type="email" class="form-control hg_edit_display_mode mandatory_fields" id="email_id" name="email_id" value="{{supplier_info.email}}">
+                                        <input type="text" class="form-control hg_edit_display_mode mandatory_fields" id="email_id" name="email_id" value="{{supplier_info.email}}">
                                         <span id="err_email" class="error_message" hidden></span>
                                     </div>
 
@@ -551,9 +551,10 @@ $(document).ready(function(){
         $('#event.currentTarget.nextElementSibling.id').prop('hidden', true);
         document.getElementById(event.currentTarget.nextElementSibling.id).style.display = "block";
     }
-    else{
+    else if(event.currentTarget.value.length >=4 ){
         document.getElementById(event.currentTarget.nextElementSibling.id).style.display = "none";
     }
+
  });
  $('form').on('submit',function (e) {
     OpenLoaderPopup();
@@ -676,27 +677,34 @@ function save_basic_details() {
     formdata.append("working_days_id",working_days);
      setTimeout(function() {
                    OpenLoaderPopup();
-     }, 2000);;
-    response = ajax_update_supplier_basic_details(formdata)
-    encrypted_supplier = response.encrypted_supplier
-    message = response.message
-    msg_type = response.msg_type
-    if(msg_type.type=='success'){
-        document.getElementById('supplier_basic_update_success').innerHTML = message;
-        $('#supplier_basic_update_success').show();
-        $('#save_error_div').hide();
-        localStorage.setItem("error_flag", 0);
+     }, 500);
+     var valid_data = data_validation(formdata);
+     if(valid_data){
+        response = ajax_update_supplier_basic_details(formdata)
+        encrypted_supplier = response.encrypted_supplier
+        message = response.message
+        msg_type = response.msg_type
+        if(msg_type.type=='success'){
+            document.getElementById('supplier_basic_update_success').innerHTML = message;
+            $('#supplier_basic_update_success').show();
+            $('#save_error_div').hide();
+            localStorage.setItem("error_flag", 0);
+            CloseLoaderPopup();
+        }
+        if(msg_type.type=='error'){
+            document.getElementById('save_error_div').innerHTML = message;
+            $('#save_error_div').show();
+            $('#supplier_basic_update_success').hide();
+            CloseLoaderPopup();
+            localStorage.setItem("error_flag", 1);
+            values_reload();
+            return false;
+             get_values_onerror();
+        }
+     }
+    else{
         CloseLoaderPopup();
-    }
-    if(msg_type.type=='error'){
-        document.getElementById('save_error_div').innerHTML = message;
         $('#save_error_div').show();
-        $('#supplier_basic_update_success').hide();
-        CloseLoaderPopup();
-        localStorage.setItem("error_flag", 1);
-        values_reload();
-        return false;
-         get_values_onerror();
     }
 }
 

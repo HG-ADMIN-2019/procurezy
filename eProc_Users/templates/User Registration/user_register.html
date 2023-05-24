@@ -21,16 +21,6 @@
                     <i class="fas fa-info-circle"></i><span> Basic Data</span>
                 </div>
             </li>
-<!--            <li data-tab-target="#org_data_tab" class="sub-tab">-->
-<!--                <div class="sub-tab-link">-->
-<!--                    <i class="fas fa-sitemap"></i><span> Organizational Information</span>-->
-<!--                </div>-->
-<!--            </li>-->
-<!--            <li data-tab-target="#buisness_doc_tab" class="sub-tab">-->
-<!--                <div class="sub-tab-link">-->
-<!--                    <i class="fas fa-file-alt"></i><span> Business Document</span>-->
-<!--                </div>-->
-<!--            </li>-->
         </ul>
 
         <div class="tab-content">
@@ -85,14 +75,17 @@
                                     <div class="form-group col-md">
                                         <label>User Name </label><span class="hg_required"></span><br>
                                         {{ reg_form.username }}
+                                        <span id="err_username" class="error_message" hidden></span>
                                     </div>
                                     <div class="form-group col-md">
                                         <label>Employee Id</label><span class="hg_required"></span><br>
                                         {{ reg_form.employee_id }}
+                                        <span id="err_employee_id" class="error_message" hidden></span>
                                     </div>
                                     <div class="form-group col-md">
                                         <label>User Type</label><span class="hg_required"></span><br>
                                         {{ reg_form.user_type }}
+                                        <span id="err_user_type" class="error_message" hidden></span>
                                     </div>
                                     
                                 </div>
@@ -100,6 +93,7 @@
                                     <div class="form-group col-md">
                                         <label>First Name</label><span class="hg_required"></span><br>
                                         {{ reg_form.first_name }}
+                                        <span id="err_first_name" class="error_message" hidden></span>
                                     </div>
                                     <div class="form-group col-md">
                                         <label>Last Name</label><br>
@@ -110,32 +104,35 @@
                                     <div class="form-group col-md">
                                         <label> Currency</label><span class="hg_required"></span><br>
 <!--                                        {{ reg_form.currency_id }}-->
-                                        <select name="currency_id" id="id_currency_id" class="form-control hg_edit_display_mode" >
+                                        <select name="currency_id" id="id_currency_id" class="form-control hg_edit_display_mode mandatory_fields" >
                                          <option value="" selected>Select</option>
                                             {% for items in currency_list %}
                                                 <option value="{{items.currency_id}}">{{items.currency_id}} - {{items.description}}</option>
                                             {% endfor %}
                                         </select>
+                                        <span id="err_currency_id" class="error_message" hidden> </span>
                                     </div>
                                     <div class="form-group col-md">
                                         <label>Language</label><span class="hg_required"></span><br>
 <!--                                        {{ reg_form.language_id }}-->
-                                        <select name="language_id" id="id_language_id" class="form-control hg_edit_display_mode" >
+                                        <select name="language_id" id="id_language_id" class="form-control hg_edit_display_mode mandatory_fields" >
                                         <option value="" selected>Select</option>
                                         {% for items in language_list %}
                                             <option value="{{items.language_id}}">{{items.language_id}} - {{items.description}}</option>
                                         {% endfor %}
                                         </select>
+                                        <span id="err_language_id" class="error_message" hidden></span>
                                     </div>
                                     <div class="form-group col-md">
                                         <label> Time Zone</label><span class="hg_required"></span><br>
 <!--                                        {{ reg_form.time_zone }}-->
-                                        <select name="time_zone" id="id_time_zone" class="form-control hg_edit_display_mode" >
+                                        <select name="time_zone" id="id_time_zone" class="form-control hg_edit_display_mode mandatory_fields" >
                                         <option value="" selected>Select</option>
                                         {% for items in time_zone %}
                                             <option value="{{items.time_zone}}">{{items.time_zone}} - {{items.description}}</option>
                                         {% endfor %}
                                         </select>
+                                        <span id="err_time_zone" class="error_message" hidden></span>
                                     </div>
 
                                 </div>
@@ -152,10 +149,12 @@
                                     <div class="form-group col-md">
                                         <label>E-mail</label><span class="hg_required"></span><br>
                                         {{ reg_form.email }}
+                                         <span id="err_email" class="error_message" hidden></span>
                                     </div>
                                     <div class="form-group col-md">
                                         <label>Phone Number</label><span class="hg_required"></span><br>
                                         {{ reg_form.phone_num }}
+                                         <span id="err_phone_num" class="error_message" hidden></span>
                                         <small class="form-text text-muted help-text-phone-numbers"></small>
                                     </div>
                                 </div>
@@ -171,10 +170,12 @@
                                     <div class="form-group col-md">
                                         <label>Date Format</label><span class="hg_required"></span><br>
                                         {{ reg_form.date_format }}
+                                        <span id="err_date_format" class="error_message" hidden></span>
                                     </div>
                                     <div class="form-group col-md">
                                         <label>Decimal Notation</label><span class="hg_required"></span><br>
                                         {{ reg_form.decimal_notation }}
+                                         <span id="err_decimal_notation" class="error_message" hidden></span>
                                     </div>
                                     <div class="form-group col-md hg-mt-2rem" >
                                         <label>SSO User</label>&nbsp;&nbsp;<input type="checkbox" name="SSO User" value="SSO User">
@@ -273,11 +274,57 @@ $(document).ready(function(){
 
 $('#user_registration_submit').click(function () {
 <!--    OpenLoaderPopup();-->
+    var is_save_form_valid;
     localStorage.setItem("currency_id", document.getElementById("id_currency_id").value);
     localStorage.setItem("language_id", document.getElementById("id_language_id").value);
     localStorage.setItem("time_zone", document.getElementById("id_time_zone").value);
-
+    is_save_form_valid = save_user_form_validation();
+    if(!is_save_form_valid){
+        return false;
+    }
 });
+
+ function save_user_form_validation(){
+   var is_valid = true;
+        var save_form_errors = ''
+        var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+
+        var err_text1 = '';
+        var temp = document.getElementsByClassName('mandatory_fields');
+        for (var i = 0; i<temp.length; i++) {
+            if(temp[i].nodeName == "SELECT"){
+                if(temp[i].value == ''){
+                    err_text1 = temp[i].parentNode.children[0].innerHTML;
+                    $('#temp[i].nextElementSibling.id').prop("hidden", false);
+                    document.getElementById(temp[i].nextElementSibling.id).style.display = "block";
+                    $('#temp[i].nextElementSibling.id').html("required");
+                    document.getElementById(temp[i].nextElementSibling.id).innerHTML = err_text1 + " required";
+                    is_valid = false;
+                }
+                else{ $('#temp[i].nextElementSibling.id').prop('hidden', true);
+                    $("#temp[i].nextElementSibling.id").prop("hidden", true);
+                }
+            }
+            else{
+                if(temp[i].value == ''){
+                    var err_text = temp[i].parentNode.children[0].innerHTML;
+                    $(".error_message").prop("hidden", false);
+                    temp[i].nextElementSibling.innerHTML = err_text + " required";
+                   is_valid = false;
+                }
+            }
+        }
+        return is_valid
+    }
+$("body").on("keypress keyup change", ".mandatory_fields", function (event) {
+    if(event.currentTarget.value == "") {
+        $('#event.currentTarget.nextElementSibling.id').prop('hidden', true);
+        document.getElementById(event.currentTarget.nextElementSibling.id).style.display = "block";
+    }
+    else{
+        document.getElementById(event.currentTarget.nextElementSibling.id).style.display = "none";
+    }
+ });
 
 </script>
 

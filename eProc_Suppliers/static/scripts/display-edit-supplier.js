@@ -188,7 +188,7 @@ var supplierid = global_supplier_id;
    // Validation function
 
 function save_basic_form_validation(){
-        var is_valid = true
+        var is_valid = true;
         var save_form_errors = ''
         var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 
@@ -214,10 +214,34 @@ function save_basic_form_validation(){
                     temp[i].nextElementSibling.innerHTML = err_text + " required";
                    is_valid = false;
                 }
+                else if(temp[i].value.length <= 4){
+                    var err_text = temp[i].parentNode.children[0].innerHTML;
+                    $(".error_message").prop("hidden", false);
+                    $('#temp[i].nextElementSibling.id').prop('hidden', false);
+                    temp[i].nextElementSibling.innerHTML = "Please enter min 4 chars for "+ err_text;
+                   is_valid = false;
+                }
             }
         }
         return is_valid
     }
+
+function data_validation(formdata){
+    var save_form_errors = ''
+    var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+     if (!(formdata.get("email_id")).match(mailformat)) {
+            valid_data = false
+             var msg = "JMSG002";
+             var msg_type ;
+             msg_type = message_config_details(msg);
+             $("#error_msg_id").prop("hidden", false)
+             var display1 = msg_type.messages_id_desc;
+            save_form_errors += display1 + " for Email Id";
+            document.getElementById("save_error_div").innerHTML = save_form_errors;
+
+        }
+    return valid_data;
+}
 
 function enable_disable(action){
     $(".dummy_ft_button_class").hide();

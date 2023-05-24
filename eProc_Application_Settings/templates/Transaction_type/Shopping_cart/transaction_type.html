@@ -234,7 +234,7 @@
                 $("#id_popup_tbody").empty();
                 //Reference the Table.
                 var res = get_all_checkboxes(); // Function to get all the checkboxes
-                var $chkbox_all = $('td input[type="checkbox_check"]', res);
+                var $chkbox_all = $('td input[class="checkbox_check"]', res);
                 //Reference the CheckBoxes in Table.
                 var edit_basic_data = "";
                 var dropdown_val = [];
@@ -270,7 +270,13 @@
                     var sequence = dropdown_val[i][1]
                     var active_inactive = dropdown_val[i][2]
                     $(row.find("TD").eq(2).find("select option[value=" + document_type + "]")).attr('selected', 'selected');
-                    $(row.find("TD").eq(3).find("select option[value=" + sequence + "]")).attr('selected', 'selected');
+                    if (GLOBAL_ACTION == "UPDATE") {
+                         var seq_val = '<option value="'+ sequence +'" selected>' + sequence + '</option>'
+                        $(row.find("TD").eq(3).find("select")).prepend(seq_val);
+                    }
+                    else {
+                        $(row.find("TD").eq(3).find("select option[value="+sequence+"]")).attr('selected', 'selected');
+                    }
                     if(active_inactive) {
                         $(row.find("TD").eq(5).find('input[name="active_inactive"]').attr('checked', 'checked'));
                     }
@@ -351,6 +357,7 @@
             success: function(Response) {
                 console.log(Response);
                 rendered_transaction_types_data = Response[0];
+                eliminate_used_sequence();
                 display_basic_db_data();
                 success_response(Response); // Function call to display response data
                 table_sort_filter('id_popup_table');
