@@ -161,6 +161,7 @@ def display_purchase_control(request):
 
 def display_calendar(request):
     country_list = get_country_data()
+    val_dict = ''
     calender_data = django_query_instance.django_filter_query(CalenderConfig,
                                                               {'del_ind': False},
                                                               None,
@@ -579,7 +580,7 @@ def roles(request):
     master_data_settings = 'master_data_settings'
     return render(request, 'Organizational_Data/roles.html',
                   {'roles': upload_roles, 'master_data_settings': master_data_settings, 'inc_nav': True,
-                   'dropdown_db_values': dropdown_db_values, ' messages_list':messages_list})
+                   'dropdown_db_values': dropdown_db_values, 'messages_list': messages_list})
 
 
 def auth(request):
