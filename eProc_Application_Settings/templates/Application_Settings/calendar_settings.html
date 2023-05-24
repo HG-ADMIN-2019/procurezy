@@ -168,14 +168,10 @@
     var appname = uiConstants["CONST_APPNAME01"]
     var db_header_data = uiConstants["CONST_HEADER_DATA_COUNTRY"]
     var workingdays_dropdown = '';
+    workingdays_dropdown = '<option value="1">Sunday</option> <option value="2">Monday</option> <option value="3">Tuesday</option> <option value="4">Wednesday</option> <option value="5">Thursday</option> <option value="6">Friday</option> <option value="7">Saturday</option>';
     var working_days_values = [];
     var wday_array = [];
     var country_dropdwn = [];
-
-    workingdays_dropdown =
-    <select type="text" class="multiple_select form-control "  id="working_days_id" name="working_days" multiple data-selected-text-format="count" data-actions-box="true" title='Select...' >
-        <option value="1">Sunday</option> <option value="2">Monday</option> <option value="3">Tuesday</option> <option value="4">Wednesday</option> <option value="5">Thursday</option> <option value="6">Friday</option> <option value="7">Saturday</option>
-    </select>
 
     //******************************
     function calendar_drpdown(){
@@ -211,14 +207,14 @@
                 $('#id_popup_table').DataTable().destroy();
                 $("#id_popup_tbody").empty();
                 $('#Calendar_Modal').modal('show');
-                basic_add_new_html = '<tr> <td><input type="checkbox"> </td>'+
-                '<td><input class="form-control" type="text"  pattern="[A-Z]" maxlength="10"  name="calender_id" style="text-transform:uppercase;" required></td>'+
-                '<td><select id="country" class="input form-control" type="text" name="country"> {% for country in country_list %} <option value="{{country.country_code}}">{{country.country_name}}</option> {% endfor %} </select> </td>'+
-                '<td> <input class="form-control check_special_char" type="text" name="description"> </td>'+
-                '<td> <input class="form-control yearPicker" type="text" maxlength="4"  name="year"> </td>'+
-                '<td '+workingdays_dropdown+'</td>'+
-                '<td class="class_del_checkbox" hidden> <input type="checkbox"> </td>'+
-                '<td input type="text" id="calendar_config_guid" hidden></td></tr>';
+                basic_add_new_html = `<tr> <td><input type="checkbox"> </td>
+                <td><input class="form-control" type="text"  pattern="[A-Z]" maxlength="10"  name="calender_id" style="text-transform:uppercase;" required></td>
+                <td><select id="country" class="input form-control" type="text" name="country"> {% for country in country_list %} <option value="{{country.country_code}}">{{country.country_name}}</option> {% endfor %} </select> </td>
+                <td><input class="form-control check_special_char" type="text" name="description"> </td>
+                <td><input class="form-control yearPicker" type="text" maxlength="4"  name="year"> </td>
+                <td><select type="text" class="multiple_select form-control "  id="working_days_id" name="working_days" multiple data-selected-text-format="count" data-actions-box="true" title='Select...' >${workingdays_dropdown}</td>
+                <td class="class_del_checkbox" hidden> <input type="checkbox"> </td>
+                <td input type="text" id="calendar_config_guid" hidden></td></tr>`;
                 $('#id_popup_tbody').append(basic_add_new_html);
                 DatePicker();
                 MultipleSelect();
@@ -258,7 +254,7 @@
                     if (cntry_name == render_country_data[i].country_name)
                         country_code = render_country_data[i].country_code;
                     }
-                    edit_basic_data +=
+                    edit_basic_data += 
                     '<tr>'+
                         '<td hidden><input type="checkbox" required></td>'+
                         '<td><input class="form-control" type="text" value="' + row.cells[1].innerHTML + '" name="calender_id"  maxlength="10" style="text-transform:uppercase" disabled></td>'+
@@ -283,12 +279,12 @@
         var day_val = '';
         $("#id_popup_table TBODY TR").each(function() {
             var row = $(this);
-            var country_drp_values = dropdown_values[i][0]
+            var country_drp_values = dropdown_values[i][0] 
             var workingdays_value = dropdown_values[i][1]
             for(k=0;k<wday_copy_values.length;k++){
                 day_val = get_values(wday_copy_values[k]);
                 $(row.find("TD").eq(5).find("select option[value="+ day_val +"]")).attr('selected','selected');
-            }
+            }  
             $(row.find("TD").eq(2).find("select option[value="+country_code+"]")).attr('selected','selected');
             i++;
         });
@@ -345,10 +341,10 @@
             }
             else if (error_message) {
                 display_error_message(error_message)
-            }
+            } 
         }
         table_sort_filter('id_popup_table');
-    }
+    } 
 
     // on click add icon display the row in to add the new entries
     function add_popup_row() {
@@ -530,6 +526,9 @@
             });
         });
     }
+
 </script>
+
 <script src="{% static 'scripts/calender_settings.js' %}"></script>
+
 {% endblock %}

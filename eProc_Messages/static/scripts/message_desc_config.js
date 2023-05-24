@@ -50,39 +50,37 @@ $(".remove_upload_data").click(() => {
     $("#id_check_special_character_messages").prop("hidden", true)
     $("#id_check_data").prop("hidden", true);
     $('#id_popup_table').DataTable().destroy();
-
-
 });
 
-// //*************************
-// // on click edit icon display the data in edit mode
-// function onclick_edit_button() {
-//     //display the add,cancel and upload buttons and select all checkbox,select heading and checkboxes for each row
-//     $('#display_basic_table').DataTable().destroy();
-//     $("#hg_select_checkbox").prop("hidden", false);
-//     $(".class_message_checkbox").prop("hidden", false);
-//     $("#hg_select_checkbox").show();
-//     //hide the edit,delete,copy and update buttons
-//     $("#id_edit_data").hide();
-//     $("#id_check_all").show();
-//     $("#id_cancel_data").show();
-//     table_sort_filter('display_basic_table');
-// }
+//*************************
+// on click edit icon display the data in edit mode
+function onclick_edit_button() {
+    //display the add,cancel and upload buttons and select all checkbox,select heading and checkboxes for each row
+    $('#display_basic_table').DataTable().destroy();
+    $("#hg_select_checkbox").prop("hidden", false);
+    $(".class_message_checkbox").prop("hidden", false);
+    $("#hg_select_checkbox").show();
+    //hide the edit,delete,copy and update buttons
+    $("#id_edit_data").hide();
+    $("#id_check_all").show();
+    $("#id_cancel_data").show();
+    table_sort_filter('display_basic_table');
+}
 
-//**********************************
-// //onclick of checkbox display delete,update and copy Buttons
-// function valueChanged() {
-//     if ($('.checkbox_check').is(":checked")) {
-//         $("#id_delete_data").show();
-//         $("#id_copy_data").show();
-//         $("#id_update_data").show();
-//     }
-//     else {
-//         $("#id_delete_data").hide();
-//         $("#id_copy_data").hide();
-//         $("#id_update_data").hide();
-//     }
-// }
+// **********************************
+//onclick of checkbox display delete,update and copy Buttons
+function valueChanged() {
+    if ($('.checkbox_check').is(":checked")) {
+        $("#id_delete_data").show();
+        $("#id_copy_data").show();
+        $("#id_update_data").show();
+    }
+    else {
+        $("#id_delete_data").hide();
+        $("#id_copy_data").hide();
+        $("#id_update_data").hide();
+    }
+}
 
 //onclick of cancel display the table in display mode............
 function display_basic_db_data() {
@@ -186,7 +184,7 @@ function get_main_table_data() {
         main_attribute.messages_id = row.find("TD").eq(1).html();
         main_attribute.messages_desc = row.find("TD").eq(2).html();
         main_attribute.language_id = row.find("TD").eq(3).html();
-        main_table_low_value.push(main_attribute);
+        main_table_low_value.push(main_attribute.messages_id);
     });
     table_sort_filter('display_basic_table');
 }

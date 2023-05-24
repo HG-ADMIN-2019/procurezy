@@ -212,6 +212,9 @@
             if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD") ) {
                 // compare main table and pop up for duplicate values
                 no_duplicate_entries = maintable_validation(validate_add_attributes, main_table_low_value)
+                if(no_duplicate_entries == 'N'){
+                    $('#msg_desc_Modal').modal('show');
+                }
             }
             if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
                 $('#id_save_confirm_popup').modal('hide');
