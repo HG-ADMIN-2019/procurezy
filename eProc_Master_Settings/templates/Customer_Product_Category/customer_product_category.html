@@ -657,14 +657,6 @@
         $(".modal").on("hidden.bs.modal", function () {
             $("#id_error_msg").html(" ");
         });
-        basic_add_new_html =
-        '<tr>'+
-            '<td><input type="checkbox" required></td>'+
-            '<td><select type="text" class="input form-control prodid" id="prodid-'+inc_index+'"  name="prodid" onchange="GetSelectedTextValue(this)">'+prod_cat_id_dropdown+'</select></td>'+
-            '<td><input class="form-control description" type="text"  name="description"  id="description-'+inc_index+'" disabled></td>'+
-            '<td hidden><guid></td><td hidden>< del_ind></td>'+
-        '</tr>';
-        $('#id_popup_tbody').append(basic_add_new_html);
         if (GLOBAL_ACTION == "cusprodcat_upload") {
 		   basic_add_new_html =
 			'<tr>'+
@@ -722,6 +714,11 @@
         });
     }
 
+    // onclick of valid popup
+    function valid_popup(){
+      $('#id_data_upload').modal('hide');
+      $("#valid_upload").modal('show');
+    }
 
     //onclick of upload button display id_data_upload popup and set GLOBAL_ACTION button value
     function onclick_upload_button() {
@@ -775,8 +772,8 @@
 
     //onclick of data Upload copy data to modal pop-up
     function onclick_display_csv_data() {
-    $("#error_msg_id").css("display", "none")
-        $('#id_popup_table').DataTable().destroy();
+        $("#valid_upload").modal('hide');
+        $("#error_msg_id").css("display", "none")
         formdata = new FormData();
         attached_file = $('#id_file_data_upload').prop('files')[0]
         file_extension = (attached_file.name).split(".")[1]
@@ -800,15 +797,15 @@
                         document.getElementById("id_error_msg_upload").style.color = "Red";
                         $('#id_data_upload').modal('show');
                     }
-                    else {
-                        var cusprodcat_data_array = response.data;
+                    else{
+                        var cusprodcat_data_array = response.valid_data_list;
                         var edit_basic_data = '';
                         var del_ind = '';
                         var dropdown_values = [];
                         var inc_index=0;
                         $("#id_popup_tbody").empty();
-                        $.each(response.data, function (i, value) {
-                            var prod_cat_id_value = value[0]
+                        $.each(cusprodcat_data_array, function (i, value) {
+                            var prod_cat_id_value = value.prod_cat_id
                             dropdown_values.push([prod_cat_id_value])
                             del_ind = '<td>' + value[1] + '</td>'
                             if (value[1] == 1) {
@@ -845,7 +842,7 @@
                                     '</tr>';
                             inc_index += 1;
                          });
-                        $('#id_popup_tbody').append(edit_basic_data);
+                        $('#id_popup_table').append(edit_basic_data);
                         var i =0;
                         $("#id_popup_table TBODY TR").each(function() {
                             var row = $(this);
@@ -863,6 +860,7 @@
                         $('#id_check_data').show();
                         $("#id_check_data").prop("hidden", false);
                         $("#save_id").prop("hidden", true);
+                        table_sort_filter('id_popup_table')
                     }
                     CloseLoaderPopup();
                 },

@@ -31,7 +31,7 @@
                 <!-- Modal footer -->
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-primary" onclick="cancel_upload()"><i class="fas fa-times"></i> cancel</button>
-                    <button id="popup_save"  class="btn btn-primary" onclick="onclick_display_csv_data()"><i class="fas fa-save"></i> Upload File</button>
+                    <button id="popup_save"  class="btn btn-primary" onclick="valid_popup()"><i class="fas fa-save"></i> Upload File</button>
                 </div>
             </div>
         </div>
@@ -89,11 +89,29 @@
                     <p>Please maintain at least one record before deleting.</p>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-primary"  onclick="display_popup()" > Ok</button>
+                    <button type="button" class="btn btn-primary"  onclick="onclick_display_csv_data()" > Ok</button>
                 </div>
             </div>
         </div>
     </div>
    <!-------------------------------------end of delete--------------------------->
+
+
+<!--      valid confirm popup-->
+    <div class="modal fade" id="valid_upload">
+        <div class="modal-dialog modal-dialog-centered ">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <p>Only valid records will be uploaded to backend</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-primary"  onclick="onclick_display_csv_data()" > Ok</button>
+                    <button type="button" class="btn btn-outline-primary" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
+<!--   end of valid confirm popup-->
+
     <script src="{% static 'scripts/configuration_common_scripts.js' %}"></script>
 

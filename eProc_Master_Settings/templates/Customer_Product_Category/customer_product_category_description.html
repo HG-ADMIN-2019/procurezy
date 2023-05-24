@@ -209,6 +209,7 @@
 
     //onclick of data Upload copy data to modal pop-up
     function onclick_display_csv_data() {
+         $("#valid_upload").modal('hide');
         document.getElementById('delete_data').style.visibility='hidden';
         $("#error_msg_id").css("display", "none")
         $('#id_popup_table').DataTable().destroy();
@@ -407,6 +408,12 @@
             $('#delete_data').hide();
         }
    }
+
+    // onclick of valid popup
+    function valid_popup(){
+      $('#id_data_upload').modal('hide');
+      $("#valid_upload").modal('show');
+    }
 
     //onclick of upload button display id_data_upload popup and set GLOBAL_ACTION button value
     function onclick_upload_button() {
@@ -789,7 +796,6 @@ function check_data() {
         prodcatdesc_list.push(unspsc_desc_dic)
         get_main_table_data();
            var format = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
-
              //*************** checking for length and  special characters for product code ***************
            if(format.test(unspsc_desc_dic.prod_cat_id.length == 0)){
                 $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "1px solid #FF0000");

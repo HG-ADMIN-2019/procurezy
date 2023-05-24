@@ -325,6 +325,11 @@
     color: red;
 }
 
+.error_message {
+    color: red;
+    font-size: 14px;
+}
+
 .hg_pb5 {
     padding-bottom:5px;
 }
