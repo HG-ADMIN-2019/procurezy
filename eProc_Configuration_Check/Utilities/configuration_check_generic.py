@@ -1280,8 +1280,7 @@ def check_purchase_control_data(ui_data, status):
         if po_split['del_ind'] in ['1', True]:
             if status == 'SAVE':
                 if django_query_instance.django_existence_check(PurchaseControl,
-                                                                {'call_off': int(po_split[
-                                                                                          'call_off']),
+                                                                {'call_off': int(po_split['call_off']),
                                                                  'company_code_id':
                                                                      po_split['company_code_id'],
                                                                  'client': global_variables.GLOBAL_CLIENT

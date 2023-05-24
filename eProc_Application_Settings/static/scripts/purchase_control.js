@@ -155,7 +155,7 @@ function get_selected_row_data() {
         purchase_contrl_type_dic.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
          if (purchase_contrl_type_dic.del_ind) {
             purchase_contrl_type_dic.company_code_id = row.find("TD").eq(1).html();
-            purchase_contrl_type_dic.call_off = row.find("TD").eq(2).html();
+            purchase_contrl_type_dic.call_off = parseInt(row.find("TD").eq(2).html());
             purchase_contrl_type_dic.purchase_ctrl_flag = row.find("TD").eq(3).html();
             purchase_contrl_type_dic.purchase_control_guid = row.find("TD").eq(4).html();
             var data = '';

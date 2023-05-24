@@ -207,14 +207,16 @@
                 $('#id_popup_table').DataTable().destroy();
                 $("#id_popup_tbody").empty();
                 $('#Calendar_Modal').modal('show');
-                basic_add_new_html = `<tr> <td><input type="checkbox"> </td>
-                <td><input class="form-control" type="text"  pattern="[A-Z]" maxlength="10"  name="calender_id" style="text-transform:uppercase;" required></td>
-                <td><select id="country" class="input form-control" type="text" name="country"> {% for country in country_list %} <option value="{{country.country_code}}">{{country.country_name}}</option> {% endfor %} </select> </td>
-                <td><input class="form-control check_special_char" type="text" name="description"> </td>
-                <td><input class="form-control yearPicker" type="text" maxlength="4"  name="year"> </td>
-                <td><select type="text" class="multiple_select form-control "  id="working_days_id" name="working_days" multiple data-selected-text-format="count" data-actions-box="true" title='Select...' >${workingdays_dropdown}</td>
-                <td class="class_del_checkbox" hidden> <input type="checkbox"> </td>
-                <td input type="text" id="calendar_config_guid" hidden></td></tr>`;
+                basic_add_new_html = '<tr> <td><input type="checkbox"> </td>'+
+                '<td><input class="form-control" type="text"  pattern="[A-Z]" maxlength="10"  name="calender_id" style="text-transform:uppercase;" required></td>'+
+                '<td><select id="country" class="input form-control" type="text" name="country"> {% for country in country_list %} <option value="{{country.country_code}}">{{country.country_name}}</option> {% endfor %} </select> </td>'+
+                '<td> <input class="form-control check_special_char" type="text" name="description"> </td>'+
+                '<td> <input class="form-control yearPicker" type="text" maxlength="4"  name="year"> </td>'+
+                '<td style="max-width: 100px;"> <select type="text" class="form-control multiple_select working_days" type="text" name="working_days"  multiple  title="Select.." >'+
+                '<option value="1">Sunday</option><option value="2">Monday</option><option value="3">Tuesday</option><option value="4">Wednesday</option><option value="5">Thursday</option><option value="6">Friday</option><option value="7">Saturday</option></select>'+
+                '</td>'+
+                '<td class="class_del_checkbox" hidden> <input type="checkbox"> </td>'+
+                '<td input type="text" id="calendar_config_guid" hidden></td></tr>';
                 $('#id_popup_tbody').append(basic_add_new_html);
                 DatePicker();
                 MultipleSelect();
