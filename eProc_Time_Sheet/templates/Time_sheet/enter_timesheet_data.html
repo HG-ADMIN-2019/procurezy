@@ -1,51 +1,78 @@
-<style>
-  table {
-    border-collapse: collapse;
-    width: 100%;
-  }
-  th, td {
-    border: 1px solid black;
-    padding: 8px;
-    text-align: left;
-  }
-  th {
-    background-color: #ddd;
-    font-weight: bold;
-  }
-  tr:nth-child(even) {
-    background-color: #f2f2f2;
-  }
-</style>
 
-<table>
-  <thead>
-    <tr>
-      <th>Project ID</th>
-      <th>Username</th>
-      <th>Calendar ID</th>
-      <th>Project Category</th>
-      <th>Effort</th>
-      <th>Effort Day</th>
-      <th>Effort Date</th>
-      <th>Effort Week</th>
-      <th>Effort Year</th>
-      <th>Effort Description</th>
-    </tr>
-  </thead>
-  <tbody>
-    {% for project_effort in project_efforts %}
-      <tr>
-        <td>{{ project_effort.project_id }}</td>
-        <td>{{ project_effort.username }}</td>
-        <td>{{ project_effort.calender_id }}</td>
-        <td>{{ project_effort.project_category }}</td>
-        <td>{{ project_effort.effort }}</td>
-        <td>{{ project_effort.effort_day }}</td>
-        <td>{{ project_effort.effort_date }}</td>
-        <td>{{ project_effort.effort_week }}</td>
-        <td>{{ project_effort.effort_year }}</td>
-        <td>{{ project_effort.effort_description }}</td>
-      </tr>
-    {% endfor %}
-  </tbody>
-</table>
+                      <table class="table">
+                        <thead>
+                          <tr>
+                            <th >Date</th>
+                            <th >Total Time Spent</th>
+                            <th >Actions</th>
+                          </tr>
+                        </thead>
+                        <tbody>
+                          <tr>
+                            <td>Monday-2023-04-23</td>
+                            <td>Total Time Spent : 10 hrs</td>
+                            <td>
+                              <button type="button" class="btn btn-sm btn-primary mr-1">View</button>
+                              <button type="button" class="btn btn-sm btn-primary mr-1">Manage</button>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>Tuesday-2023-04-24</td>
+                            <td>Total Time Spent : 12 hrs</td>
+                            <td>
+                              <button type="button" class="btn btn-sm btn-primary mr-1">View</button>
+                              <button type="button" class="btn btn-sm btn-primary mr-1">Manage</button>
+                            </td>
+                          </tr>
+                           <tr>
+                            <td>wednesday-2023-04-24</td>
+                            <td>Total Time Spent : 12 hrs</td>
+                            <td>
+                              <button type="button" class="btn btn-sm btn-primary mr-1">View</button>
+                              <button type="button" class="btn btn-sm btn-primary mr-1">Manage</button>
+                            </td>
+                          </tr>
+                          <tr>
+                            <td>thursday-2023-04-24</td>
+                            <td>Total Time Spent : 12 hrs</td>
+                            <td>
+                              <button type="button" class="btn btn-sm btn-primary mr-1">View</button>
+                              <button type="button" class="btn btn-sm btn-primary mr-1">Manage</button>
+                            </td>
+                          </tr>
+                          <tr class="table-warning">
+                            <td>Friday-2023-04-27</td>
+                            <td>Total Time Spent : 10 hrs</td>
+                            <td>
+                              <button type="button" class="btn btn-sm btn-primary mr-1">View</button>
+                              <button type="button" class="btn btn-sm btn-primary mr-1">Manage</button>
+                            </td>
+                          </tr>
+
+                          <tr class="table-success">
+                            <td>Saturday-2023-04-28</td>
+                            <td>Total Time Spent : 10 hrs</td>
+                            <td>
+                              <button type="button" class="btn btn-sm btn-primary mr-1">View</button>
+                              <button type="button" class="btn btn-sm btn-primary mr-1">Manage</button>
+                            </td>
+                          </tr>
+                         <tr class="table-success">
+                            <td>Sunday-2023-04-28</td>
+                            <td>Total Time Spent : 10 hrs</td>
+                            <td>
+                              <button type="button" class="btn btn-sm btn-primary mr-1">View</button>
+                              <button type="button" class="btn btn-sm btn-primary mr-1">Manage</button>
+                            </td>
+                          </tr>
+                        </tbody>
+                      </table>
+
+                      <div class="d-flex justify-content-center mt-3">
+                        <div class="btn-group" >
+                          <button type="button" class="btn btn-sm btn-primary mr-1">Prev</button>
+                          <button type="button" class="btn btn-sm btn-primary mr-1">Current</button>
+                          <button type="button" class="btn btn-sm btn-primary mr-1">Next</button>
+                        </div>
+                      </div>
+                    </div>
