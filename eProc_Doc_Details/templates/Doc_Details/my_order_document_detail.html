@@ -29,28 +29,12 @@
         <h3>Shopping Cart #{{hdr_det.doc_number}}</h3>
         <div class="d-flex">
             <div class="mo-doc-button-group__saved">
-                <button id="delete_sc" class="btn btn-outline-danger editable_mode" data-toggle="modal" data-target="#delete_saved_sc"><i class="far fa-trash-alt"></i> Delete</button>
                 <button type="button" class="btn btn-outline-primary" onclick="window.close()"><i class="fas fa-times"></i> Close</button>
-                <button class="btn btn-primary" id="add_approver_note_btn" data-toggle="modal" data-target="#add_approver_note"><i class="fa fa-plus" aria-hidden="true"></i> approver note</button>
-                <button id="id_check_sc" onclick="check_shopping_cart('check', 'sc_data', highest_item_acc_asgn_cat, highest_item_change_acc_value);" class="btn btn-primary editable_mode"><i class="fa fa-check" aria-hidden="true"></i> Check</button>
-                <button id="id_save_sc" class="btn btn-primary editable_mode"><i class="fa fa-save" aria-hidden="true"></i> Save</button>
 
-                {% if sc_appr and sc_completion %}
-                <button id="id_order_sc" class="btn btn-primary editable_mode"><i class="fas fa-sign-in-alt" aria-hidden="true"></i> send to purchasing team</button>
-                {% endif %}
-
-                {% if sc_appr.0.app_id != 'Auto' and not sc_completion %}
-                <button id="id_order_sc" class="btn btn-primary editable_mode"><i class="fas fa-sign-in-alt" aria-hidden="true"></i> submit for approval</button>
-                {% endif %}
-
-                {% if sc_appr.0.app_id == 'Auto' and not sc_completion %}
-                <button id="id_order_sc" class="btn btn-primary editable_mode"><i class="fas fa-sign-in-alt" aria-hidden="true"></i> place order</button>
-                {% endif %}
-
-                {% if sc_header_data.status == 'SAVED'%}
-                <button type="button" id="id_edit_sc" class="btn btn-primary">
+                {% if hdr_det.status == 'SAVED'%}
+                <button type="button" id="id_proceed_to_checkout" class="btn btn-primary">
                     <i class="fas fa-edit"></i>
-                    Edit
+                    Proceed to checkout
                 </button>
                 {% endif %}
             </div>
@@ -209,5 +193,55 @@
 
 <!--  start of manager detail pop up-->
 {% include 'Workflow/manager_detail_modal.html' %}
+<script>
+    var item_number_attached = '';
+// Function to get attachment data from session and display based on item
+function get_attachment_IDB(item_number) {
+    var item_number_check;
+    var total_keys_available = []
+    attachment_data_array = new Array();
+    total_items = total_items;
+    var objectStore = db.transaction("attachments").objectStore("attachments");
+    objectStore.openCursor().onsuccess = function (event) {
+        var cursor = event.target.result;
+        if (cursor) {
+            attachment_data_object = {}
+            attachment_pk = cursor.value.attachment_data
+            if (attachment_pk.includes('attachment_data' + item_number)) {
+                attachment_data_object.id = attachment_pk
+                item_number_check = cursor.value.attachment_data.substr(-3).split('_')[0]
+                if (item_number_check.includes(item_number_attached)) {
+                    total_keys_available.push(parseInt(cursor.value.attachment_data.substr(-1)))
+                }
+                attachment_data_object.dataUrl = cursor.value.dataUrl
+                attachment_data_object.file_extension = cursor.value.file_extension_id
+                attachment_data_object.file_name = cursor.value.file_name
+                attachment_data_object.no_attachments = cursor.value.no_attachments
+                attachment_data_object.attachment_name = cursor.value.attachment_name
+                attachment_data_object.type = cursor.value.type
+                attachment_data_array.push(attachment_data_object)
+            }
+            cursor.continue();
+        } else {
+            max_number_of_file_attached = Math.max.apply(Math, total_keys_available)
+            if (typeof item_number_check != 'undefined') { sessionStorage.setItem('last_added_file_number_doc_detail-' + item_number_check, max_number_of_file_attached) }
+            var attachment_tbody_content = '';
+            for (i = 0; i < attachment_data_array.length; i++) {
+                $('#attachment_tbody_id-' + item_number).empty()
+                array_data = attachment_data_array[i]
+                item_file_number = array_data.id.substr(-3)
+                file_name = array_data.file_name
+                attachment_name = array_data.attachment_name
+                attachment_data = array_data.dataUrl
+                type = array_data.type
+                attachment_tbody_content += window['previous_attachment-' + item_number] + '<tr><td>' + '<a href="' + attachment_data + '" download="' + file_name + '">' + attachment_name + '</a>' + '</td><td>' + type + '</td><td>' + file_name + '<td class="hg_is_hidden"><i style="color: #F0B64D;" id="delete_attachment-' + item_file_number + '" onclick="delete_attachments(this)" class="fas fa-trash-alt"></td></tr>'
+                $('#attachment_tbody_id-' + item_number).append(attachment_tbody_content)
+                document.getElementById('added_attachments_display-' + item_number).style.display = 'block';
+            }
+        }
+    };
+}
 
+
+</script>
 {% endblock %}

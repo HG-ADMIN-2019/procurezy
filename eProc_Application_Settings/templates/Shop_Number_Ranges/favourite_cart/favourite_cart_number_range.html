@@ -252,7 +252,7 @@
         }
         else{
             $.each(number_range, function (i, item) {
-                if (item.sequence.length == 0 || item.starting.length == 0 || item.ending.length == 0 || item.current.length == 0) {
+                if (item.sequence.length == 0 || isNaN(item.starting) || isNaN(item.ending) || isNaN(item.current)) {
                     error_message = ui_messeges("JMSG002")// Get message details
                     no_duplicate_value = 'N'
                     return [no_duplicate_value,error_message]
@@ -312,6 +312,27 @@
         }
         return [no_duplicate_entries,error_message]
     }   
+
+    //Function to highlight duplicate records
+    function display_duplicate_entry(common) {
+        var fv_num_check = new Array;
+        $("#id_popup_table TBODY TR").each(function() {
+            var row = $(this);
+            fv_num_dic = {}
+            fv_num_dic.sequence = row.find("TD").eq(1).find('input[type="number"]').val();
+            var compare = fv_num_dic.sequence
+            fv_num_check.push(compare);
+            jQuery.grep(fv_num_check, function(el) {
+                if (jQuery.inArray(el, common) != -1) {
+                    row_color_highlight(row);
+                }
+                else {
+                    row_color_no_highlight(row);
+                }
+            });
+
+        });
+    }
 </script>
 <script src="{% static 'scripts/Number_ranges/fc_number_ranges.js' %}"></script>
 {% endblock %}

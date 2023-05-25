@@ -44,10 +44,10 @@ class SupplierRegForm(forms.Form):
                                 widget=forms.Select(choices=supplier_types, attrs={'class': 'form-control'}))
     name1 = forms.CharField(label='Name 1', required=False, widget=forms.TextInput(attrs={'class': 'form-control '
                                                                                                    'check_special_char',
-                                                                                          'onkeyup': 'test()'}))
+                                                                                          }))
     name2 = forms.CharField(label='Name 2', required=False, widget=forms.TextInput(attrs={'class': 'form-control '
                                                                                                    'check_special_char'}))
-    email = forms.EmailField(label='E-mail', required=False, widget=forms.TextInput(attrs={'class': 'form-control'}))
+    email = forms.CharField(label='E-mail', widget=forms.TextInput(attrs={'class': 'form-control'}))
     # email1 = forms.EmailField(label='E-mail 1', required=False, widget=forms.TextInput(attrs={'class':
     # 'form-control'})) email2 = forms.EmailField(label='E-mail 2', required=False, widget=forms.TextInput(attrs={
     # 'class': 'form-control'})) email3 = forms.EmailField(label='E-mail 3', required=False, widget=forms.TextInput(

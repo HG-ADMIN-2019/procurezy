@@ -216,7 +216,7 @@
         });
     }
 
-    //***************************************
+    //***************************************  rendered_active_inactive, document_type_render, number_range_sequence
     function onclick_copy_update_button() {
         OpenLoaderPopup();
         var data = {'table_name':'TransactionTypesFC'}
@@ -227,14 +227,14 @@
             success: function(response) {
                 rendered_active_inactive = response.rendered_active_inactive
                 rendered_document_type = response.document_type_render
-                rendered_sequence = response.number_range_sequence
+                rendered_sequence = response.rendered_sequence
                 dropdown_value();
                 $("#error_msg_id").css("display", "none")
                 $('#id_popup_table').DataTable().destroy();
                 $("#id_popup_tbody").empty();
                 //Reference the Table.
                 var res = get_all_checkboxes(); // Function to get all the checkboxes
-                var $chkbox_all = $('td input[type="checkbox"]', res);
+                var $chkbox_all = $('td input[class="checkbox_check"]', res);
                 //Reference the CheckBoxes in Table.
                 var edit_basic_data = "";
                 var dropdown_val = [];
@@ -254,11 +254,11 @@
                         if (GLOBAL_ACTION == "UPDATE") {
                             guid = row.cells[6].innerHTML
                             eliminate_used_sequence()
-                            edit_basic_data += '<tr ><td><input type="checkbox" required></td><td><input class="input form-control check_special_char" type="text" maxlength="15" value="' + row.cells[1].innerHTML + '"  name="transaction type" style="text-transform:uppercase;" disabled></td><td><select class="input form-control" disabled>' + document_type_dropdown + '</select></td><td><select class="input form-control" disabled>' + sequence_dropdown + '</select></td><td><input type="text" class= "form-control check_special_char" maxlength="100" value="' + row.cells[4].innerHTML + '"  name="transaction description"  required></td><td><input type="checkbox"  name="active_inactive" required></td><td hidden><input type="text" class= "form-control" value="' + guid + '"></td><td hidden><input type="checkbox" required></td></tr>';
+                            edit_basic_data += '<tr><td><input class="checkbox_check" type="checkbox" required></td><td><input class="input form-control check_special_char" type="text" maxlength="15" value="' + row.cells[1].innerHTML + '"  name="transaction type" style="text-transform:uppercase;" disabled></td><td><select class="input form-control" disabled>' + document_type_dropdown + '</select></td><td><select id="id_sequence" class="input form-control" disabled>' + sequence_dropdown + '</select></td><td><input type="text" class= "form-control check_special_char" maxlength="100" value="' + row.cells[4].innerHTML + '"  name="transaction description"  required></td><td><input type="checkbox"  name="active_inactive" required></td><td hidden><input type="text" class= "form-control" value="' + guid + '"></td><td hidden><input type="checkbox" required></td></tr>';
                         }
                         else{
                             eliminate_used_sequence()
-                            edit_basic_data += '<tr ><td><input type="checkbox" required></td><td><input class="input form-control check_special_char" type="text" maxlength="15" value="' + row.cells[1].innerHTML + '"  name="transaction type" style="text-transform:uppercase;"></td><td><select class="input form-control" disabled>' + document_type_dropdown + '</select></td><td><select class="input form-control">' + sequence_dropdown + '</select></td><td><input type="text" class= "form-control check_special_char" maxlength="100" value="' + row.cells[4].innerHTML + '"  name="transaction description"  required></td><td><input type="checkbox"  name="active_inactive" required></td><td hidden><input type="text" class= "form-control" value="' + guid + '"></td><td hidden><input type="checkbox" required></td></tr>';
+                            edit_basic_data += '<tr><td><input class="checkbox_check" type="checkbox" required></td><td><input class="input form-control check_special_char" type="text" maxlength="15" value="' + row.cells[1].innerHTML + '"  name="transaction type" style="text-transform:uppercase;"></td><td><select class="input form-control" disabled>' + document_type_dropdown + '</select></td><td><select id="id_sequence" class="input form-control">' + sequence_dropdown + '</select></td><td><input type="text" class= "form-control check_special_char" maxlength="100" value="' + row.cells[4].innerHTML + '"  name="transaction description"  required></td><td><input type="checkbox"  name="active_inactive" required></td><td hidden><input type="text" class= "form-control" value="' + guid + '"></td><td hidden><input type="checkbox" required></td></tr>';
                         }
                     }
                 }
@@ -270,7 +270,13 @@
                     var sequence = dropdown_val[i][1]
                     var active_inactive = dropdown_val[i][2]
                     $(row.find("TD").eq(2).find("select option[value=" + document_type + "]")).attr('selected', 'selected');
-                    $(row.find("TD").eq(3).find("select option[value=" + sequence + "]")).attr('selected', 'selected');
+                    if(GLOBAL_ACTION == "UPDATE"){
+                        var seq_val = '<option value="'+ sequence +'" selected>' + sequence + '</option>'
+                        $(row.find("TD").eq(3).find("select")).prepend(seq_val);
+                    }
+                    else{
+                        $(row.find("TD").eq(3).find("select option[value=" + sequence + "]")).attr('selected', 'selected');
+                    }
                     if(active_inactive) {
                         $(row.find("TD").eq(5).find('input[name="active_inactive"]').attr('checked', 'checked'));
                     }
@@ -329,8 +335,8 @@
             else if (error_message){
                 display_error_message(error_message)
             }
-            table_sort_filter('id_popup_table');
         }
+        table_sort_filter('id_popup_table');
     }
 
     //delete the selected row in db................
@@ -352,7 +358,7 @@
             dataType: "json",
             success: function(Response) {
                 rendered_transaction_types_data = Response[0];
-                eliminate_used_sequence()
+                eliminate_used_sequence();
                 display_basic_db_data();
                 success_response(Response); // Function call to display response data
                 table_sort_filter('id_popup_table');
@@ -395,19 +401,21 @@
     function compare_table_for_duplicate_entries(validate_add_attributes, transaction_types) {
         add_attr_duplicates = false;
         var error_message = ''
-        var add_attr_duplicates_list = [];
+        var common = [];
         var add_attr_unique_list = [];
         var no_duplicate_value = 'Y'
         $.each(validate_add_attributes, function (index, value) {
             if ($.inArray(value, add_attr_unique_list) == -1) {
                 add_attr_unique_list.push(value);
             } else {
-                if ($.inArray(value, add_attr_duplicates_list) == -1) {
-                    add_attr_duplicates_list.push(value);
+                if ($.inArray(value, common) == -1) {
+                    common.push(value);
                 }
             }
         });
-        if (add_attr_duplicates_list.length != 0) {
+        if (common.length != 0) {
+            $('#myModal').modal('show');
+            display_duplicate_entry(common);  //Function to highlight the rows in popup
             error_message = ui_messeges("JMSG001")// Get message details
             no_duplicate_value = 'N'
             return [no_duplicate_value,error_message]
@@ -415,6 +423,7 @@
         else {
             $.each(transaction_types, function (i, item) {
                 if ((item.transaction_type.length == 0) || (item.description.length == 0)) {
+                    $('#myModal').modal('show');
                     error_message = ui_messeges("JMSG002")// Get message details
                     no_duplicate_value = 'N'
                     return [no_duplicate_value,error_message]

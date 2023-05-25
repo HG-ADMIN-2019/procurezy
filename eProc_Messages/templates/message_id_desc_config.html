@@ -42,7 +42,7 @@
                     </button>
                 </div>
                 <!--   display basic Message Id table-->
-                <table id="display_basic_table" class="class_basic_message_table table table-bordered custom-table">
+                <table id="display_basic_table" class="class_basic_country_table table table-bordered custom-table">
                     <thead id="id_message_table_header">
                     <tr>
                         <th id="hg_select_checkbox" hidden>
@@ -211,7 +211,10 @@
         else{
             if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD") ) {
                 // compare main table and pop up for duplicate values
-                no_duplicate_entries = maintable_validation(validate_add_attributes, main_table_low_value)
+                [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
+                if(no_duplicate_entries == 'N'){
+                    $('#msg_desc_Modal').modal('show');
+                }
             }
             if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
                 $('#id_save_confirm_popup').modal('hide');
@@ -290,6 +293,9 @@
                 for (var i = 0; i < $chkbox_all.length; i++) {
                     if ($chkbox_all[i].checked) {
                         var row = $chkbox_all[i].parentNode.parentNode;
+                        var message_id_value = row.cells[1].innerHTML
+                        var language_value = row.cells[3].innerHTML
+                        dropdown_values.push([message_id_value, language_value])
                         if(GLOBAL_ACTION == "UPDATE"){
                             unique_input = '<select id="messages_id" name="messages_id" class="form-control"  type="text" title="Select..." disabled>' +message_id_dropdown+'</select>'
                             edit_basic_data += '<tr><td hidden><input type="checkbox" required></td>' +
@@ -308,9 +314,6 @@
                             '<td class="class_del_checkbox" hidden><input type="checkbox" required></td> <td hidden><input class="form-control" type="text" value="' + row.cells[4].innerHTML + '"></td></tr>';
                             $("#header_select").prop("hidden", false);
                         }
-                        var message_id_value = row.cells[1].innerHTML
-                        var language_value = row.cells[3].innerHTML
-                        dropdown_values.push([message_id_value, language_value])
                     }
                 }
                 $('#id_popup_tbody').append(edit_basic_data);
@@ -383,7 +386,7 @@
         }
         else {
             $.each(message, function (i, item) {
-                if ((item.message_id == null) || (item.messages_id_desc.length == 0) ) {
+                if ((item.messages_id == null) || (item.messages_id_desc.length == 0) || (item.language_id == null) ) {
                     error_message = ui_messeges("JMSG002")// Get message details
                     no_duplicate_value = 'N'
                     return [no_duplicate_value,error_message]
@@ -400,8 +403,7 @@
             var row = $(this);
             message_id_desc_dic = {}
             message_id_desc_dic.messages_id = row.find("TD").eq(1).find('select[type="text"]').val();
-            var compare =message_id_desc_dic.messages_id
-            message_id_desc_check.push(compare);
+            message_id_desc_check.push(message_id_desc_dic.messages_id);
             jQuery.grep(message_id_desc_check, function(el) {
                 if (jQuery.inArray(el, common) != -1) {
                     row_color_highlight(row);

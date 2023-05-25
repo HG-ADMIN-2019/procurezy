@@ -1,7 +1,7 @@
  // Script to generate sort and filter feature for tables
  $(document).ready( function() {
    nav_bar_admin();
-   $("body").css("padding-top", "4rem");
+   $("body").css("padding-top", "7rem");
    $('#username').val(localStorage.getItem("username"));
    $('#first_name').val(localStorage.getItem("first_name"));
    $('#last_name').val(localStorage.getItem("last_name"));
