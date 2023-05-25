@@ -300,16 +300,7 @@
     function display_basic_db_data() {
         $('#display_basic_table').DataTable().destroy();
         $('#id_payment_term_tbody').empty();
-        var data = {'table_name':'Payterms_desc'}
-        $.ajax({
-            type: 'POST',
-            url: "{% url 'eProc_Configuration:get_dropdown_data' %}",
-            data: JSON.stringify(data),
-            success: function(response) {
-                rendered_payment_key_list = response.payterm_key_list
-                render_language_data = response.language_list
-                paytermdesc_drop();
-                var edit_basic_data = '';
+          var edit_basic_data = '';
                 var desc = '';
                 var lang_code;
                 $.each(rendered_payment_term_data, function (i, item) {
@@ -338,8 +329,6 @@
                 $('#id_save_confirm_popup').modal('hide');
                 $('#id_delete_confirm_popup').modal('hide');
                 $('#id_check_all').hide();
-            }
-        });
         table_sort_filter('display_basic_table');
     }
 
@@ -350,7 +339,6 @@
     	GLOBAL_ACTION = 'DELETE'
 	    main_table_country_checked = [];
         var Tabledata = { "Dbl_clck_tbl_id": 'Payterms_desc' };
-<!--        $('#display_basic_table').DataTable().destroy();-->
         get_selected_row_data(); // Function call to get the selected row data
         $('#id_delete_confirm_popup').modal('hide');
 		data = {'data':main_table_payment_term_checked,'table_name':'Payterms_desc','action':GLOBAL_ACTION}

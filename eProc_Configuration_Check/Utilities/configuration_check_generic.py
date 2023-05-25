@@ -20,7 +20,7 @@ def get_check_message(message_count_dic):
     update_count_message = get_message_desc('MSG196')[1] + str(message_count_dic['update_count'])
     insert_count_message = get_message_desc('MSG195')[1] + str(message_count_dic['insert_count'])
     dependent_count_message = get_message_desc('MSG200')[1] + str(message_count_dic['dependent_count'])
-    message = [db_count_message,file_count_message, insert_count_message, update_count_message,
+    message = [db_count_message, file_count_message, insert_count_message, update_count_message,
                duplicate_count_message, delete_count_message, invalid_count_message, dependent_count_message]
     return message
 
@@ -261,7 +261,7 @@ def check_acc_assign_desc_data(ui_data, status):
             print(acc_desc['account_assign_value'])
             dependent_count = dependent_count + 1
 
-        print("desc ",acc_desc)
+        print("desc ", acc_desc)
     # append message with count
     message_count_dic = {'file_count': file_count, 'delete_count': delete_count, 'invalid_count': invalid_count,
                          'duplicate_count': duplicate_count, 'update_count': update_count,
@@ -316,14 +316,16 @@ def check_acc_assign_values_data(ui_data, status):
                 else:
                     invalid_count = invalid_count + 1
         else:
+            from_val = datetime.strptime(acc_value['valid_from'], "%d-%m-%Y")
+            to_val = datetime.strptime(acc_value['valid_to'], "%d-%m-%Y")
             if django_query_instance.django_existence_check(AccountingData,
                                                             {'del_ind': False,
                                                              'client': global_variables.GLOBAL_CLIENT,
                                                              'account_assign_value': acc_value['account_assign_value'],
                                                              'company_id': acc_value['company_id'],
                                                              'account_assign_cat': acc_value['account_assign_cat'],
-                                                             'valid_from': acc_value['valid_from'],
-                                                             'valid_to': acc_value['valid_to']
+                                                             'valid_from': from_val,
+                                                             'valid_to': to_val
                                                              }):
                 duplicate_count = duplicate_count + 1
             elif django_query_instance.django_existence_check(AccountingData,
@@ -2375,22 +2377,23 @@ def check_address_data(ui_data, status):
                                                              'address_number': com_value['address_number'],
                                                              'name1': com_value['name1'],
                                                              'name2': com_value['name2'],
-                                                             'street':com_value['street'],
-                                                             'area':com_value['area'],
-                                                             'landmark':com_value['landmark'],
-                                                             'city':com_value['city'],
-                                                             'address_partner_type':com_value['address_partner_type'],
-                                                             'org_address_source_system':com_value['org_address_source_system'],
-                                                             'postal_code':com_value['postal_code'],
-                                                             'region':com_value['region'],
-                                                             'mobile_number':com_value['mobile_number'],
-                                                             'telephone_number':com_value['telephone_number'],
-                                                             'fax_number':com_value['fax_number'],
-                                                             'email':com_value['email'],
-                                                             'country_code':com_value['country_code'],
-                                                             'language_id':com_value['language_id'],
-                                                             'time_zone':com_value[ 'time_zone']
-                                                            }):
+                                                             'street': com_value['street'],
+                                                             'area': com_value['area'],
+                                                             'landmark': com_value['landmark'],
+                                                             'city': com_value['city'],
+                                                             'address_partner_type': com_value['address_partner_type'],
+                                                             'org_address_source_system': com_value[
+                                                                 'org_address_source_system'],
+                                                             'postal_code': com_value['postal_code'],
+                                                             'region': com_value['region'],
+                                                             'mobile_number': com_value['mobile_number'],
+                                                             'telephone_number': com_value['telephone_number'],
+                                                             'fax_number': com_value['fax_number'],
+                                                             'email': com_value['email'],
+                                                             'country_code': com_value['country_code'],
+                                                             'language_id': com_value['language_id'],
+                                                             'time_zone': com_value['time_zone']
+                                                             }):
                 duplicate_count = duplicate_count + 1
             elif django_query_instance.django_existence_check(OrgAddress,
                                                               {'del_ind': False,
@@ -2551,7 +2554,7 @@ def check_paymentterm_desc_data(ui_data, status):
                                                                    'client': global_variables.GLOBAL_CLIENT,
                                                                    'payment_term_key': payment_term_desc[
                                                                        'payment_term_key']
-                                                                  }):
+                                                                   }):
                     update_count = update_count + 1
                     valid_data_list.append(payment_term_desc)
                 else:
@@ -2776,7 +2779,7 @@ def get_valid_country_data(ui_data, status):
     message_count_dic = {'file_count': file_count, 'delete_count': delete_count, 'invalid_count': invalid_count,
                          'duplicate_count': duplicate_count, 'update_count': update_count,
                          'insert_count': insert_count,
-                         'dependent_count': dependent_count,'db_count':db_count}
+                         'dependent_count': dependent_count, 'db_count': db_count}
     message = get_check_message(message_count_dic)
     return valid_data_list, message
 

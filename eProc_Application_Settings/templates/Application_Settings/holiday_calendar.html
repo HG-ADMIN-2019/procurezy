@@ -174,7 +174,7 @@
         $('#id_popup_table').DataTable().destroy();
         //Reference the Table.
         var res = get_all_checkboxes(); // Function to get all the checkboxes
-        var $chkbox_all = $('td input[type="checkbox"]', res);
+        var $chkbox_all = $('td input[class="checkbox_check"]', res);
         //Reference the CheckBoxes in Table.
         $("#id_popup_tbody").empty();
         var edit_basic_data = "";
@@ -191,7 +191,7 @@
                     empty_resp = '';
                     $("#id_popup_tbody").empty();
                     empty_resp += '<tr>';
-                    empty_resp += '<td><input type="checkbox" name="hg_checkbox" required></td>';
+                    empty_resp += '<td><input type="checkbox" name="checkbox_check" required></td>';
                     empty_resp += '<td><input class="holiday_description input" type="text" id="holiday_description1"  name="holiday_description"  required></td>';
                     empty_resp += '<td><input  type="text" class="from_date input"   name="from_date"></td>';
                     empty_resp += '<td><input type="text"  class="to_date input" name="to_date"></td>';
@@ -213,7 +213,7 @@
                         if(from_date < currentDate){
                             i = i + 1;
                             content += '<tr>';
-                            content += '<td><input type="checkbox" name="hg_checkbox" required></td>';
+                            content += '<td><input type="checkbox" name="checkbox_check" required></td>';
                             content += '<td><input class="holiday_description input" id="holiday_description2" required  type="text"  +  name="holiday_description" + value="' + value.fields.holiday_description + '" onkeypress="return /[A-Z 0-9]/i.test(event.key)"  / disabled></td>';
                             content += '<td><input  class="from_date input" type="text"  + name="from_date" + value="' + value.fields.from_date + '" / disabled></td>';
                             content += '<td><input  class="to_date input" type="text" + name="to_date"  + value="' + value.fields.to_date + '" / disabled></td>';
@@ -230,7 +230,7 @@
 <!--                            $("#id_popup_tbody").empty();-->
                             i = i + 1;
                             content += '<tr>';
-                            content += '<td><input type="checkbox" name="hg_checkbox" required></td>';
+                            content += '<td><input type="checkbox" name="checkbox_check" required></td>';
                             content += '<td><input class="holiday_description input" id="holiday_description2" required  type="text"  +  name="holiday_description" + value="' + value.fields.holiday_description + '" onkeypress="return /[A-Z 0-9]/i.test(event.key)"  /></td>';
                             content += '<td><input  class="from_date input" type="text"  + name="from_date" + value="' + value.fields.from_date + '" /></td>';
                             content += '<td><input  class="to_date input" type="text" + name="to_date"  + value="' + value.fields.to_date + '" /></td>';
@@ -350,7 +350,7 @@
         $("#id_popup_tbody").empty();   
         //Reference the Table.
         var res = get_all_checkboxes(); // Function to get all the checkboxes
-        var $chkbox_all = $('td input[type="checkbox"]', res);
+        var $chkbox_all = $('td input[class="checkbox_check"]', res);
         //Reference the CheckBoxes in Table.
         var edit_basic_data = "";
         var unique_input = '';
@@ -365,7 +365,7 @@
                 if (response.length == 0) {
                     empty_resp = '';
                     empty_resp += '<tr>';
-                    empty_resp += '<td><input type="checkbox" name="hg_checkbox" required></td>';
+                    empty_resp += '<td><input type="checkbox" name="checkbox_check" required></td>';
                     empty_resp += '<td><input class="holiday_description input" type="text" id="holiday_description1"  name="holiday_description"  required></td>';
                     empty_resp += '<td><input  type="text" class="from_date input"   name="from_date"></td>';
                     empty_resp += '<td><input type="text"  class="to_date input" name="to_date"></td>';

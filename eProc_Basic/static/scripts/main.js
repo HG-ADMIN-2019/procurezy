@@ -14,6 +14,8 @@ $(document).ready(function () {
     $('.help-text-phone-numbers').text('Valid characters for Phone, Mobile and Fax are 0-9 [-+ ]')
     // <small class="form-text text-muted help-text-phone-numbers"></small>
 
+    $('.help-text-porg_dropdown').text('Porg is the precedence and override other search crieteria')
+
 });
 
 var GLOBAL_MANAGER_DETAIL = []
@@ -751,4 +753,12 @@ function get_all_checkboxes(){
     var $table = table.table().node();
     var res = table.rows().nodes();
     return res;
+}
+
+function format(date) {
+  date = new Date(date);
+  var day = ('0' + date.getDate()).slice(-2);
+  var month = ('0' + (date.getMonth() + 1)).slice(-2);
+  var year = date.getFullYear();
+  return day + '-' + month + '-' + year;
 }
