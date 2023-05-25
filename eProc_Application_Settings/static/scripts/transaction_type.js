@@ -30,7 +30,7 @@ function read_sequence() {
         sequence_remove_array.push(value.sequence)
     });
 
-    $.each(rendered_sequence, function (i, item) {
+    $.each(rendered_sequence_num, function (i, item) {
         rendered_sequence_array.push(item.sequence)
     });
 }

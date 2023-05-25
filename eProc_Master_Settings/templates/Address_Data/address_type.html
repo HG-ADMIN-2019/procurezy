@@ -78,8 +78,8 @@
                             <td>{{ data.company_id}}</td>
                             <td>{{ data.address_type}}</td>
                             <td>{{ data.address_number}}</td>
-                            <td>{{ data.valid_from|date:"Y-m-d" }}</td>
-                            <td>{{ data.valid_to|date:"Y-m-d" }}</td>
+                            <td>{{ data.valid_from|date:"d-m-Y" }}</td>
+                            <td>{{ data.valid_to|date:"d-m-Y" }}</td>
                             <td hidden>{{ data.del_ind}}</td>
                             <td hidden>{{ data.address_guid}}</td>
                         </tr>
@@ -271,8 +271,8 @@
                             '<td>'+unique_input+'</td>' +
                             '<td><select class="form-control" >'+address_type_dropdown+'</select></td>' +
                             '<td><select class="form-control">'+address_number_dropdwn+'</select></td>' +
-                            '<td><input  type="date" name = "valid_from" value="' + row.cells[4].innerHTML + '" class="form-control from_to_date"></td>'+
-                            '<td><input  type="date"  name = "valid_to" value="' + row.cells[5].innerHTML + '" class="form-control from_to_date"></td>'+
+                            '<td><input  type="text" name = "valid_from" value="' + row.cells[4].innerHTML + '" class="form-control formatDate"></td>'+
+                            '<td><input  type="text"  name = "valid_to" value="' + row.cells[5].innerHTML + '" class="form-control formatDate"></td>'+
                             '<td class="class_del_checkbox" hidden><input type="checkbox" ></td>' +
                             '<td hidden><input  type="text" class="form-control"  value="' + row.cells[7].innerHTML + '"  name="guid"></td></tr>';
                             $("#header_select").prop("hidden", false);
@@ -295,6 +295,7 @@
                     $(row.find("TD").eq(3).find("select option[value=" + address_number + "]")).attr('selected', 'selected');
                     i++;
                 });
+                DatePicker();
                 $("#id_del_ind_checkbox").prop("hidden", true);
                 table_sort_filter('id_popup_table');
                 $('#Adrs_Type_Modal').modal('show');
@@ -303,6 +304,13 @@
             }
         });
     }
+
+    function DatePicker() {
+     $(".formatDate").datepicker({
+            format: "dd-mm-yyyy",
+            autoclose:true
+        });
+        }
 
     // validate and save for add,copy,update and upload data
     function popup_save_data() {

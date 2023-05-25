@@ -7,17 +7,18 @@ const date = new Date();
 let day = date.getDate();
 let month = date.getMonth() + 1;
 let year = date.getFullYear();
-let currentDate = `${year}-${month}-${day}`; 
+let currentDate = `${year}-${month}-${day}`;
 
 //Date picker format
 var GLOBAL_CALENDER_ID = '';
 function DatePicker() {
-    $('#yearPicker').datepicker({
-        format: "yyyy",
-        viewMode: "years",
-        minViewMode: "years"
+    $(".formatDate").datepicker({
+        format: "dd-mm-yyyy",
+        autoclose: true
     });
 }
+
+
 
 function MultipleSelect() {
     $('#working_days').selectpicker();
@@ -25,11 +26,13 @@ function MultipleSelect() {
 
 var dateToday = new Date();
 function HolidayDatePicker() {
-    $('#from_date, #to_date,.from_date,.to_date').datepicker({
-        format: "yyyy-mm-dd",
+    $('#from_date, #to_date, .from_date, .to_date').datepicker({
+        format: "dd-mm-yyyy",
         startDate: new Date()
     });
 }
+
+
 
 // on click edit icon display the data in edit mode
  function onclick_holiday_edit_button() {
@@ -86,24 +89,61 @@ function display_error_message(error_message){
 
 // on click add icon display the row in to add the new entries
 function add_popup_row() {
-    basic_add_new_html = '';
-    var display_db_data = '';
-    $("#error_msg_id").prop("hidden", true)
+    var basic_add_new_html = '<tr>' +
+        '<td><input type="checkbox" class="checkbox_check" name="hg_checkbox"></td>' +
+        '<td><input class="holiday_description input" type="text" id="holiday_description" name="holiday_description" onkeypress="return /[a-z 0-9]/i.test(event.key)"></td>' +
+        '<td><input type="text" class="form-control formatDate" name="from_date"></td>' +
+        '<td><input type="text" class="form-control formatDate" name="to_date"></td>' +
+        '<td class="class_del_checkbox" hidden><input type="checkbox" required></td>' +
+        '<td hidden><input class="input" type="text" name="calender_holiday_guid"></td>' +
+        '</tr>';
+
+    $("#error_msg_id").prop("hidden", true);
     $(".modal").on("hidden.bs.modal", function () {
         $("#error_msg_id").html("");
     });
-    basic_add_new_html = '<tr><td><input type="checkbox" name="hg_checkbox">' +
-        '<td><input class="holiday_description input" type="text" id="holiday_description" name="holiday_description" onkeypress="return /[a-z 0-9]/i.test(event.key)"></td>' +
-        '<td><input type="text" class="from_date input"   name="from_date"></td>' +
-        '<td><input  type="text" class="to_date input"  name="to_date"></td>' +
-        '<td class="class_del_checkbox" hidden><input type="checkbox" required></td>' +
-        '<td hidden><input class="input" type="text"  name="calender_holiday_guid"></td></tr>';
+
     $('#id_popup_tbody').append(basic_add_new_html);
-    HolidayDatePicker();
-    if (GLOBAL_ACTION == "calendar_upload") {
+    DatePicker();
+
+    if (GLOBAL_ACTION === "calendar_upload") {
         $(".class_del_checkbox").prop("hidden", false);
     }
+
     MultipleSelect();
+}
+
+function updateDataTableSelectAllCtrl(table) {
+   var $table = table.table().node();
+   var $chkbox_all = $('tbody input[class="checkbox_check"]', $table);
+   var $chkbox_checked = $('tbody input[class="checkbox_check"]:checked', $table);
+   var chkbox_select_all = $('thead input[id="selectAll"]', $table).get(0);
+
+   // If none of the checkboxes are checked
+   if ($chkbox_checked.length === 0) {
+      if (chkbox_select_all) {
+         chkbox_select_all.checked = false;
+         if ('indeterminate' in chkbox_select_all) {
+            chkbox_select_all.indeterminate = false;
+         }
+      }
+   }
+   // If all of the checkboxes are checked
+   else if ($chkbox_checked.length === $chkbox_all.length) {
+      if (chkbox_select_all) {
+         chkbox_select_all.checked = true;
+         if ('indeterminate' in chkbox_select_all) {
+            chkbox_select_all.indeterminate = false;
+         }
+      }
+   } else {
+      if (chkbox_select_all) {
+         chkbox_select_all.checked = true;
+         if ('indeterminate' in chkbox_select_all) {
+            chkbox_select_all.indeterminate = true;
+         }
+      }
+   }
 }
 
 //onclick of cancel display the table in display mode............
@@ -120,23 +160,24 @@ function add_popup_row() {
 
 // Function to hide and display save related popups
 $('#save_id').click(function () {
-    calendar_data_array = read_popup_data(); 
+    $('#holidayModal').modal('hide');
+    calendar_data_array = read_popup_data();
     $('#id_save_confirm_popup').modal('show');
 });
 
 //Read popup table data
 function read_popup_data() {
     calendar_data_array = new Array();
-    $('#holidayModal').modal('hide');
+    validate_add_attributes = [];
     $("#id_popup_table tbody tr").each(function (index) {
         var row = $(this);
         var calendar_object = {};
-        guid = row.find("TD").eq(5).find('input[type="text"]').val()
+//        guid = row.find("TD").eq(5).find('input[type="text"]').val()
         calendar_object.calender_holiday_guid = row.find("TD").eq(5).find('input[type="text"]').val();
-        calendar_object.del_ind = row.find("TD").eq(4).find('input[type="checkbox"]').is(':checked');
+        calendar_object.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
         calendar_object.holiday_description = row.find("TD").eq(1).find('input[type="text"]').val();
-        calendar_object.from_date = row.find("TD").eq(2).find('input[type="text"]').val();
-        calendar_object.to_date = row.find("TD").eq(3).find('input[type="text"]').val();
+        calendar_object.from_date = formatDate(row.find("TD").eq(2).find('input[type="text"]').val());
+        calendar_object.to_date = formatDate(row.find("TD").eq(3).find('input[type="text"]').val());
         calendar_object.calender_id = GLOBAL_CALENDER_ID;
         if (calendar_object.calender_holiday_guid == undefined) {
             calendar_object.calender_holiday_guid = '';
@@ -148,8 +189,15 @@ function read_popup_data() {
 
         calendar_data_array.push(calendar_object);
     });
+    table_sort_filter('id_popup_table');
     return calendar_data_array;
 }
+
+function formatDate(dateString) {
+    var dateParts = dateString.split('-');
+    return dateParts[2] + '-' + dateParts[1] + '-' + dateParts[0];
+}
+
 
 //onclick of delete,delete the row.
 function application_settings_delete_Row1(myTable) {
@@ -161,6 +209,8 @@ function application_settings_delete_Row1(myTable) {
            var chkbox = row.cells[0].childNodes[0];
            console.log(chkbox);
            if ( true == chkbox.checked) {
+               get_selected_row_data();
+               calendar_data_array.push(main_table_calendar_checked);
                table.deleteRow(i);
                rowCount--;
                i--;
@@ -197,12 +247,47 @@ function get_selected_row_data() {
         var isSelect = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
         if(isSelect){
             calendar_arr_obj.holiday_description = row.find("TD").eq(1).find('input[type="text"]').val();
-            calendar_arr_obj.from_date = row.find("TD").eq(2).find('input[type="text"]').val();
-            calendar_arr_obj.to_date = row.find("TD").eq(3).find('input[type="text"]').val();
+            calendar_arr_obj.from_date = formatDate(row.find("TD").eq(2).find('input[type="text"]').val());
+            calendar_arr_obj.to_date = formatDate(row.find("TD").eq(3).find('input[type="text"]').val());
             calendar_arr_obj.del_ind = isSelect;
             calendar_arr_obj.calender_holiday_guid = row.find("TD").eq(5).find('input[type="text"]').val();
+//            var from_date = convert_date("30-05-2023");
+
+
+//            if((calendar_arr_obj.from_date == undefined) || (calendar_arr_obj.from_date == '')){
+//                calendar_arr_obj.from_date = '';
+//            }
+//            else
+//            {
+//                var from_date = new Date(calendar_arr_obj.from_date).toISOString().slice(0, 10);
+//                calendar_arr_obj.from_date = from_date;
+//            }
+//            if((calendar_arr_obj.to_date == undefined) || (calendar_arr_obj.to_date == '')){
+//                calendar_arr_obj.to_date = '';
+//            }
+//            else{
+//                var to_date = new Date(calendar_arr_obj.to_date).toISOString().slice(0, 10);
+//                calendar_arr_obj.to_date = to_date;
+//        }
+
             calendar_arr_obj.calender_id = GLOBAL_CALENDER_ID;
             main_table_calendar_checked.push(calendar_arr_obj);
         }
+    });
+}
+format = function date2str(x, y) {
+    var z = {
+        M: x.getMonth() + 1,
+        d: x.getDate(),
+        h: x.getHours(),
+        m: x.getMinutes(),
+        s: x.getSeconds()
+    };
+    y = y.replace(/(M+|d+|h+|m+|s+)/g, function(v) {
+        return ((v.length > 1 ? "0" : "") + z[v.slice(-1)]).slice(-2)
+    });
+
+    return y.replace(/(y+)/g, function(v) {
+        return x.getFullYear().toString().slice(-v.length)
     });
 }
