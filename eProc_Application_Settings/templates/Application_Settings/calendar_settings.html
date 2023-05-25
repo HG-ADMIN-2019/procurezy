@@ -212,7 +212,7 @@
                 '<td><select id="country" class="input form-control" type="text" name="country"> {% for country in country_list %} <option value="{{country.country_code}}">{{country.country_name}}</option> {% endfor %} </select> </td>'+
                 '<td> <input class="form-control check_special_char" type="text" name="description"> </td>'+
                 '<td> <input class="form-control yearPicker" type="text" maxlength="4"  name="year"> </td>'+
-                '<td> <select class="input form-control" name="working_days" title="Select..">'+ workingdays_dropdown +'</td>'+
+                '<td> <select class="input form-control" name="working_days" title="Select.." multiple>'+ workingdays_dropdown +'</td>'+
                 '<td class="class_del_checkbox" hidden> <input type="checkbox"> </td>'+
                 '<td input type="text" id="calendar_config_guid" hidden></td></tr>';
                 $('#id_popup_tbody').append(basic_add_new_html);
