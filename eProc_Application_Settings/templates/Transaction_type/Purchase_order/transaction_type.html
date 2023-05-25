@@ -152,12 +152,13 @@
         {% endif %} {% endfor %} {% endif %}
     </div>
 </div>
-{{ upload_transactiontype|json_script:"upload_transactiontype" }}
+{{ transaction_type|json_script:"transaction_type" }}
+
 <script>
-    var rendered_transaction_types_data = JSON.parse(document.getElementById('upload_transactiontype').textContent);
+    var rendered_transaction_types_data = JSON.parse(document.getElementById('transaction_type').textContent);
     var rendered_document_type
     var rendered_active_inactive
-    var rendered_sequence = {{upload_numberrange|safe}};
+    var rendered_sequence_num = {{upload_numberrange|safe}};
     var messages_list = {{messages_list|safe}};
     var transaction_types_data_array = {}
     var transaction_types = '';
@@ -234,7 +235,7 @@
                 $("#id_popup_tbody").empty();
                 //Reference the Table.
                 var res = get_all_checkboxes(); // Function to get all the checkboxes
-                var $chkbox_all = $('td input[type="checkbox_check"]', res);
+                var $chkbox_all = $('td input[class="checkbox_check"]', res);
                 //Reference the CheckBoxes in Table.
                 var edit_basic_data = "";
                 var dropdown_val = [];
@@ -270,7 +271,13 @@
                     var sequence = dropdown_val[i][1]
                     var active_inactive = dropdown_val[i][2]
                     $(row.find("TD").eq(2).find("select option[value=" + document_type + "]")).attr('selected', 'selected');
-                    $(row.find("TD").eq(3).find("select option[value=" + sequence + "]")).attr('selected', 'selected');
+                     if(GLOBAL_ACTION == "UPDATE"){
+                        var seq_val = '<option value="'+ sequence +'" selected>' + sequence + '</option>'
+                        $(row.find("TD").eq(3).find("select")).prepend(seq_val);
+                    }
+                    else{
+                        $(row.find("TD").eq(3).find("select option[value=" + sequence + "]")).attr('selected', 'selected');
+                    }
                     if(active_inactive) {
                         $(row.find("TD").eq(5).find('input[name="active_inactive"]').attr('checked', 'checked'));
                     }

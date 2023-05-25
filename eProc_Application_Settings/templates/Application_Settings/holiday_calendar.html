@@ -92,7 +92,7 @@
                 <div class="modal-body scrollbox">
                     <div id="id_del_add_button" class="mb-4">
                         <button type="button" class="btn btn-primary" title="Add New Row" id="new-row" onclick="add_popup_row()"> add new row</button>
-                        <button class="btn btn-outline-danger" title="Delete" onclick="application_settings_delete_Row('id_popup_table')"><i class="fa fa-trash"></i> delete
+                        <button class="btn btn-outline-danger" title="Delete" onclick="application_settings_delete_Row1('id_popup_table')"><i class="fa fa-trash"></i> delete
                         </button>
                     </div>
                     <div id="id_check_success_messages" class="alert alert-success check_success_message" hidden></div>
@@ -160,6 +160,7 @@
     var calendar = '';
     var edit_basic_data ='';
     var GLOBAL_ACTION='';
+    var ROW_DELETE='';
     var no_duplicate_entries = 'Y'
     var Tablename = uiConstants["CONST_TABLENAME_CALENDERHOLIDAYS"]
     var appname = uiConstants["CONST_APPNAME01"]
@@ -201,7 +202,8 @@ function onclick_Maintain_holiday_button(calender_id) {
                 empty_resp += '</tr>';
                 table_content = empty_resp;
                 $('#id_popup_table tbody').append(empty_resp);
-                HolidayDatePicker();
+<!--                HolidayDatePicker();-->
+                DatePicker();
                 table_sort_filter('id_popup_table');
             } else {
                 var i = 0;
@@ -232,7 +234,8 @@ function onclick_Maintain_holiday_button(calender_id) {
                 });
                 $('#id_popup_tbody').append(content);
                 table_content = content;
-                HolidayDatePicker();
+<!--                HolidayDatePicker();-->
+                DatePicker();
                 table_sort_filter('id_popup_table');
 
             }
@@ -243,7 +246,8 @@ function onclick_Maintain_holiday_button(calender_id) {
         }
     });
 
-    HolidayDatePicker();
+<!--    HolidayDatePicker();-->
+    DatePicker();
     $("#id_del_ind_checkbox").prop("hidden", true);
     setTimeout(function () { $('#holidayModal').modal('show'); }, 400);
 }
@@ -252,11 +256,9 @@ function onclick_Maintain_holiday_button(calender_id) {
 function popup_save_data() {
     $('#success_msg_id').empty();
     $('#id_popup_table').DataTable().destroy();
-<!--    var calendar_data = new Array();-->
     no_duplicate_entries = 'Y';
     no_duplicate_value = 'Y';
     var error_message = '';
-<!--    var calendar = {};-->
     get_main_table_data(); // Read data from main table
     // compare for duplicates in popup
     [no_duplicate_value, error_message] = compare_table_for_duplicate_entries(validate_add_attributes, calendar_data_array);
@@ -297,7 +299,8 @@ function popup_save_data() {
                         $('#holidayModal').modal('hide');
                         success_response(Response); // Function call to display response data
                         MultipleSelect();
-                        HolidayDatePicker();
+<!--                        HolidayDatePicker();-->
+                        DatePicker();
                         CloseLoaderPopup();
                     }
                 });
@@ -401,12 +404,13 @@ function popup_save_data() {
                 $('#id_popup_tbody').append(content);
                 table_content = content;
                 HolidayDatePicker();
+                DatePicker();
 
             }
             CloseLoaderPopup();
         },
         error: function (error) {
-            error_msg.innerHTML = error.responseText
+<!--            error_msg.innerHTML = error.responseText-->
         }
     });
 
@@ -451,7 +455,7 @@ function popup_save_data() {
         }
         else {
             $.each(calendar, function (i, item) {
-                if (item.holiday_description.length == 0) {
+                if (item.holiday_description == '') {
                     get_message_details("JMSG002"); // Get message details
                     no_duplicate_value = 'N'
                     return [no_duplicate_value,error_message]

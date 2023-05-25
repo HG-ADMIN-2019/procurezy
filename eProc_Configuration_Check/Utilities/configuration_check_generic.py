@@ -1229,8 +1229,7 @@ def check_po_split_creteria_data(ui_data, status):
         if po_split['del_ind'] in ['1', True]:
             if status == 'SAVE':
                 if django_query_instance.django_existence_check(PoSplitCriteria,
-                                                                {'po_split_type': int(po_split[
-                                                                                          'po_split_type']),
+                                                                {'po_split_type': po_split['po_split_type'],
                                                                  'company_code_id':
                                                                      po_split['company_code_id'],
                                                                  'client': global_variables.GLOBAL_CLIENT
@@ -1239,8 +1238,7 @@ def check_po_split_creteria_data(ui_data, status):
                     valid_data_list.append(po_split)
         else:
             if django_query_instance.django_existence_check(PoSplitCriteria,
-                                                            {'po_split_type': int(po_split[
-                                                                                      'po_split_type']),
+                                                            {'po_split_type': po_split['po_split_type'],
                                                              'company_code_id':
                                                                  po_split['company_code_id'],
                                                              'client': global_variables.GLOBAL_CLIENT
@@ -1282,8 +1280,7 @@ def check_purchase_control_data(ui_data, status):
         if po_split['del_ind'] in ['1', True]:
             if status == 'SAVE':
                 if django_query_instance.django_existence_check(PurchaseControl,
-                                                                {'call_off': int(po_split[
-                                                                                     'call_off']),
+                                                                {'call_off': po_split['call_off'],
                                                                  'company_code_id':
                                                                      po_split['company_code_id'],
                                                                  'client': global_variables.GLOBAL_CLIENT
@@ -1292,8 +1289,7 @@ def check_purchase_control_data(ui_data, status):
                     valid_data_list.append(po_split)
         else:
             if django_query_instance.django_existence_check(PurchaseControl,
-                                                            {'call_off': int(po_split[
-                                                                                 'call_off']),
+                                                            {'call_off': po_split['call_off'],
                                                              'company_code_id':
                                                                  po_split['company_code_id'],
                                                              'client': global_variables.GLOBAL_CLIENT
