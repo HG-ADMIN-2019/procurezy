@@ -350,10 +350,14 @@ def data_upload(request):
     try:
 
         result['error_message'], result['data'] = upload_csv.csv_preview_data(header_detail, data_set_val)
-
+        convertion_list = convert_to_dictionary(result['data'])
+        valid_data_list, message = check_unspsc_category_data(convertion_list, 'UPLOAD')
+        context = {'valid_data_list': valid_data_list}
         # retrieving correct ordered data from csv_data_arrangement() - basic_settings_specific.py
         # correct_order_list = csv_data_arrangement(db_header, data_set_val)
-        return JsonResponse(result, safe=False)
+        return JsonResponse(context, safe=False)
+
+
 
     except MultiValueDictKeyError:
         csv_file = False
@@ -368,6 +372,14 @@ def data_upload(request):
     print(basic_save)
     # else:
     return JsonResponse(basic_save, safe=False)
+
+
+def convert_to_dictionary(arr):
+    convertion_list = []
+    for row in arr:
+        dictionary = {'del_ind': row[0], 'prod_cat_id': row[1]}
+        convertion_list.append(dictionary)
+    return convertion_list
 
 
 class DB_count:

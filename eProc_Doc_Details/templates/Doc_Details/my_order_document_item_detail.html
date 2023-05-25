@@ -613,3 +613,62 @@
 </div>
 
 {% include 'ProductDetailPopup/basic_product_detail_popup.html' %}
+<script>
+var GLOBAL_SELECT_ITEM_NUM = 0
+
+// Function to hide and show hidden table row contents
+function showSection(obj, data) {
+    item_number = data.split('-')[1]
+    GLOBAL_SELECT_ITEM_NUM = item_number
+    document.getElementById('item_info_tr-'+item_number).hidden = false;
+    if (data.includes('attachments')) {
+        get_attachment_IDB(item_number)
+    }
+    var dropdownContentClass = data;
+    var rowId = document.getElementById(dropdownContentClass);
+    var rowClass = rowId.className;
+    var hideableRowSection = document.getElementsByClassName(rowClass);
+
+    for (var i = 0; i < hideableRowSection.length; i++) {
+        var current_element = hideableRowSection[i].id
+        if (current_element == dropdownContentClass) {
+            hideableRowSection[i].style.display = 'block';
+        } else {
+            hideableRowSection[i].style.display = 'none';
+        }
+    }
+}
+
+// Function to toggle note type textarea
+function selectNoteType(data) {
+    var getNotebtnClass1 = data.className.split(" ")[0]
+    var getNotebtnClass2 = data.className.split(" ")[1]
+    var activeNoteBtn = document.getElementsByClassName(getNotebtnClass1);
+    var noteBtnId = data.id
+    var textareaId = document.getElementById(getNotebtnClass2);
+    var textareaClass = textareaId.className;
+    var hideableNoteText = document.getElementsByClassName(textareaClass);
+
+
+    for (var i = 0; i < hideableNoteText.length; i++) {
+        var current_element = hideableNoteText[i].id
+        if (current_element == getNotebtnClass2) {
+            hideableNoteText[i].style.display = 'block';
+        } else {
+            hideableNoteText[i].style.display = 'none';
+        }
+    }
+
+    for (var i = 0; i < activeNoteBtn.length; i++) {
+        var current_button = activeNoteBtn[i].id
+        if (current_button==noteBtnId){
+            activeNoteBtn[i].style.backgroundColor = '#007bff';
+            activeNoteBtn[i].style.color = '#ffffff';
+        } else{
+            activeNoteBtn[i].style.backgroundColor = '#dbdad9';
+            activeNoteBtn[i].style.color = '#000000';
+        }
+    }
+
+}
+</script>
