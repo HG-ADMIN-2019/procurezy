@@ -52,6 +52,7 @@ def get_project_details(request):
         'inc_nav': True,
         'inc_footer': True,
         'project_id': project_id,
+        'project_id_list' : project_id_list,
         'default_calendar_id': default_calendar_id,
         'username' : global_variables.GLOBAL_LOGIN_USERNAME,
         'is_slide_menu': True,

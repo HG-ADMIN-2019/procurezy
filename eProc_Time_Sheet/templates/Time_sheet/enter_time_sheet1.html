@@ -94,15 +94,14 @@
         <div id="timesheet">
             <div id="select_project">
                 <form>{% csrf_token %}
-                    <span id="week_number" hidden>{{week_number}}</span>
-                    <label for="choose_project">Select project to enter timesheet:</label>
-                    <select id="choose_project" class="form-control form-control-sm" onchange="showProjectDetails()">
-                        <option value="">Select</option>
-                        {% for project in project_details %}
-                        <option value="{{project.project_id}}" data-desc="{{project.project_desc}}" data-start="{{project.start_date}}" data-end="{{project.end_date}}">{{project.project_id}}</option>
-                        {% endfor %}
-                    </select>
-                </form>
+    <span id="week_number" hidden>{{week_number}}</span>
+    <label for="choose_project">Select project to enter timesheet:</label>
+    <select id="choose_project" class="form-control form-control-sm" onchange="showProjectDetails()">
+        {% for project in project_details %}
+        <option value="{{project.project_id}}" data-desc="{{project.project_desc}}" data-start="{{project.start_date}}" data-end="{{project.end_date}}" {% if project.project_id == default_project_id %}selected{% endif %}>{{project.project_id}}</option>
+        {% endfor %}
+    </select>
+</form>
             </div>
             <br>
             <br>
@@ -169,23 +168,26 @@
 
 <script>
 function showProjectDetails() {
-  // Get selected project from dropdown
-  const select_project = document.getElementById('choose_project');
-  const selected_option = select_project.options[select_project.selectedIndex];
-  const project_id = selected_option.value;
-  const project_desc = selected_option.getAttribute('data-desc');
-  const project_start = selected_option.getAttribute('data-start');
-  const project_end = selected_option.getAttribute('data-end');
+    // Get selected project from dropdown
+    const select_project = document.getElementById('choose_project');
+    const selected_option = select_project.options[select_project.selectedIndex];
+    const project_id = selected_option.value;
+    const project_desc = selected_option.getAttribute('data-desc');
+    const project_start = selected_option.getAttribute('data-start');
+    const project_end = selected_option.getAttribute('data-end');
 
-  // Update project details section with selected project info
-  document.getElementById('project_id').textContent = project_id;
-  document.getElementById('project_desc').textContent = project_desc;
-  document.getElementById('project_val').textContent = project_start + ' - ' + project_end;
+    // Update project details section with selected project info
+    document.getElementById('project_id').textContent = project_id;
+    document.getElementById('project_desc').textContent = project_desc;
+    document.getElementById('project_val').textContent = project_start + ' - ' + project_end;
 
-  // Show project details section
-  document.getElementById('project_det_div').style.display = 'block';
-  document.getElementById('timesheet_entries').style.display = 'block';
-}
+    // Show project details section
+    document.getElementById('project_det_div').style.display = 'block';
+    document.getElementById('timesheet_entries').style.display = 'block';
+  }
+
+  // Call showProjectDetails() on page load to display default project details
+  document.addEventListener('DOMContentLoaded', showProjectDetails);
 
 </script>
 

@@ -198,6 +198,7 @@
     var GLOBAL_ACTION = '';
     var no_duplicate_entries = 'Y'
     var spend_limit_id_data = new Array();
+    var duplicate_entry = [];
     var validate_add_attributes = [];
     var  spend_limit={};
     var company_list = [] ;
@@ -628,7 +629,7 @@
         var aad = {};
         get_main_table_data(); //Read data from main table
         // compare for duplicates in popup
-        [no_duplicate_value,error_message] = compare_table_for_duplicate_entries(validate_add_attributes, aad)
+        [no_duplicate_value,error_message] = compare_table_for_duplicate_entries(validate_add_attributes, spend_limit_id_data)
         if (error_message){
             display_error_message(error_message)
         }
@@ -684,7 +685,7 @@
     }
 
     // validating the  popup table for duplicate entries
-    function compare_table_for_duplicate_entries(validate_add_attributes, aad) {
+    function compare_table_for_duplicate_entries(validate_add_attributes, spend_limit) {
         add_attr_duplicates = false;
         var common = [];
         var add_attr_unique_list = [];
@@ -707,8 +708,8 @@
             return [no_duplicate_value,error_message]
         }
         else {
-            $.each(aad, function (i, item) {
-                if ((aad.company_id.length == 0) || (aad.spend_code_id.length == 0)|| (aad.spender_username.length == 0)) {
+            $.each(spend_limit, function (i, item) {
+                if ((spend_limit.company_id == null) || (spend_limit.spend_code_id == null)|| (spend_limit.spender_username.length == 0)) {
                     $('#Spend_id_Modal').modal('show');
                     error_message = ui_messeges("JMSG002") // Get message details
                     no_duplicate_value = 'N'
@@ -718,10 +719,6 @@
         }
         return [no_duplicate_value,error_message]
     }
-
-    var spend_limit_id_data = new Array();
-    var spend_limit={};
-    var duplicate_entry = [];
 
     //onclick of upload button display id_data_upload popup and set GLOBAL_ACTION button value
     function onclick_upload_button() {
@@ -938,7 +935,7 @@
             spender_username = row.find("TD").eq(2).find("select option:selected").val();
             spend_code_id = row.find("TD").eq(3).find('input[type="text"]').val().toUpperCase();
             spendlimid_guid = row.find("TD").eq(4).find('input[type="text"]').val().toUpperCase()
-            spend_limit_compare = company_id +'-'+ spender_username
+            spend_limit_compare = company_id +'-'+ spend_code_id
             if (spend_limit_code_check.includes(spend_limit_compare)) {
                 $(row).remove();
             }
@@ -950,10 +947,9 @@
 
     // Functtion to hide and display save related popups
     $('#save_id').click(function () {
-        $('#id_popup_table').DataTable().destroy();
         $('#Spend_id_Modal').modal('hide');
+        $('#id_popup_table').DataTable().destroy();
         spend_limit_id_data = new Array();
-        var spend_limit = {};
         validate_add_attributes = [];
         $("#id_popup_table tbody tr").each(function() {
             var row = $(this);
@@ -969,7 +965,7 @@
                 if(spend_limit.spend_guid == undefined) {
                 spend_limit.spend_guid = '';
             }
-            var compare = spend_limit.company_id + '-' + spend_limit.spender_username
+            var compare = spend_limit.company_id + '-' + spend_limit.spend_code_id
             validate_add_attributes.push(compare);
             spend_limit_id_data.push(spend_limit);
         });
@@ -1015,8 +1011,8 @@
             var row = $(this);
             spend_id_dic = {}
             spend_id_dic.company_id = row.find("TD").eq(1).find("select option:selected").val();
-            spend_id_dic.spender_username = row.find("TD").eq(2).find('input[type="text"]').val().toUpperCase();
-            var compare = spend_id_dic.company_id + '-' + spend_id_dic.spender_username
+            spend_id_dic.spend_code_id = row.find("TD").eq(3).find('select').val();
+            var compare = spend_id_dic.company_id + '-' + spend_id_dic.spend_code_id
             spend_id_check.push(compare);
             jQuery.grep(spend_id_check, function(el) {
                 if (jQuery.inArray(el, common) != -1) {
