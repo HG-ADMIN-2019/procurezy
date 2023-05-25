@@ -172,7 +172,7 @@
         var data = {'table_name':'MessagesIdDesc'}
         $.ajax({
             type: 'POST',
-            url: "{% url 'eProc_Configuration:get_dropdown_data' %}",
+            url: "{% url 'eProc_Configuration:get_dropdown_data' %}",F
             data: JSON.stringify(data),
             success: function(response) {
                 rendered_message_id_data = response.messages_id_list
@@ -297,7 +297,7 @@
                         var language_value = row.cells[3].innerHTML
                         dropdown_values.push([message_id_value, language_value])
                         if(GLOBAL_ACTION == "UPDATE"){
-                            unique_input = '<select id="messages_id" name="messages_id" class="form-control"  type="text" title="Select..." disabled>' +message_id_dropdown+'</select>'
+                            unique_input = '<input class="form-control" value="' + row.cells[1].innerHTML + '"  type="text" id="messages_id" name="messages_id" disabled>' 
                             edit_basic_data += '<tr><td hidden><input type="checkbox" required></td>' +
                             '<td>'+ unique_input +'</td>' +
                             '<td><input class="input form-control check_special_char" type="text" id="messages_desc" name="messages_desc" value="' + row.cells[2].innerHTML + '"  required></td>'+
