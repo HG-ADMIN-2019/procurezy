@@ -200,7 +200,7 @@ function formatDate(dateString) {
 
 
 //onclick of delete,delete the row.
-function application_settings_delete_Row1(myTable) {
+function delete_popup_row(myTable) {
    try {
        var table = document.getElementById(myTable);
        var rowCount = table.rows.length;
@@ -209,8 +209,6 @@ function application_settings_delete_Row1(myTable) {
            var chkbox = row.cells[0].childNodes[0];
            console.log(chkbox);
            if ( true == chkbox.checked) {
-               get_selected_row_data();
-               calendar_data_array.push(main_table_calendar_checked);
                table.deleteRow(i);
                rowCount--;
                i--;
@@ -251,43 +249,8 @@ function get_selected_row_data() {
             calendar_arr_obj.to_date = formatDate(row.find("TD").eq(3).find('input[type="text"]').val());
             calendar_arr_obj.del_ind = isSelect;
             calendar_arr_obj.calender_holiday_guid = row.find("TD").eq(5).find('input[type="text"]').val();
-//            var from_date = convert_date("30-05-2023");
-
-
-//            if((calendar_arr_obj.from_date == undefined) || (calendar_arr_obj.from_date == '')){
-//                calendar_arr_obj.from_date = '';
-//            }
-//            else
-//            {
-//                var from_date = new Date(calendar_arr_obj.from_date).toISOString().slice(0, 10);
-//                calendar_arr_obj.from_date = from_date;
-//            }
-//            if((calendar_arr_obj.to_date == undefined) || (calendar_arr_obj.to_date == '')){
-//                calendar_arr_obj.to_date = '';
-//            }
-//            else{
-//                var to_date = new Date(calendar_arr_obj.to_date).toISOString().slice(0, 10);
-//                calendar_arr_obj.to_date = to_date;
-//        }
-
             calendar_arr_obj.calender_id = GLOBAL_CALENDER_ID;
             main_table_calendar_checked.push(calendar_arr_obj);
         }
-    });
-}
-format = function date2str(x, y) {
-    var z = {
-        M: x.getMonth() + 1,
-        d: x.getDate(),
-        h: x.getHours(),
-        m: x.getMinutes(),
-        s: x.getSeconds()
-    };
-    y = y.replace(/(M+|d+|h+|m+|s+)/g, function(v) {
-        return ((v.length > 1 ? "0" : "") + z[v.slice(-1)]).slice(-2)
-    });
-
-    return y.replace(/(y+)/g, function(v) {
-        return x.getFullYear().toString().slice(-v.length)
     });
 }
