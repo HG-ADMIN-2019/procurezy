@@ -246,7 +246,7 @@ function onclick_Maintain_holiday_button(calender_id) {
 function popup_save_data() {
     $('#success_msg_id').empty();
     $('#id_popup_table').DataTable().destroy();
-    no_duplicate_entries = 'Y';
+    GLOBAL_ACTION = "ADD";
     no_duplicate_value = 'Y';
     var error_message = '';
     get_main_table_data(); // Read data from main table
@@ -261,7 +261,7 @@ function popup_save_data() {
             display_error_message(error_message);
         } else {
             if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
-                if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y') && (dateValid == 'Y')) {
+                if ((no_duplicate_value == 'Y')  && (dateValid == 'Y')) {
                     var add_basic_data = '';
                     $('#id_save_confirm_popup').modal('hide');
                     data = {
@@ -330,6 +330,7 @@ function popup_save_data() {
         $("#save_id").prop("hidden", true);
         onclick_copy_update_button(calender_id);
         document.getElementById("id_del_add_button").style.display = "none";
+
     }
 
     // Onclick of Config Holiday link, display or add the rows
@@ -337,15 +338,13 @@ function popup_save_data() {
     $("#error_msg_id").css("display", "none");
     GLOBAL_CALENDER_ID = calender_id.split('-')[0];
     $("#hg_select_checkbox").prop("hidden", true);
-    $("#id_popup_tbody").empty();
 
+    $("#id_popup_tbody").empty();
     var res = get_all_checkboxes();
     var $chkbox_all = $('td input[class="checkbox_check"]', res);
-
     var edit_basic_data = "";
     var unique_input = '';
     OpenLoaderPopup();
-
     $.ajax({
         type: 'POST',
         url: "{% url 'eProc_Configuration:get_holiday_from_calenderid' %}",
@@ -353,6 +352,7 @@ function popup_save_data() {
             calender_id: GLOBAL_CALENDER_ID
         },
         success: function (response) {
+            $('#id_popup_table').DataTable().destroy();
             $("#id_popup_tbody").empty(); // Clear previous content
 
             if (response.length == 0) {
@@ -367,6 +367,7 @@ function popup_save_data() {
                 empty_resp += '</tr>';
                 table_content = empty_resp;
                 $('#id_popup_table tbody').append(empty_resp);
+                table_sort_filter('id_popup_table');
                 DatePicker();
             } else {
                 var i = 0;
@@ -383,12 +384,13 @@ function popup_save_data() {
                     content += '</tr>';
                 });
                 $('#id_popup_tbody').append(content);
+
                 table_content = content;
                 HolidayDatePicker();
                 DatePicker();
-
             }
             CloseLoaderPopup();
+
         },
         error: function (error) {
         }

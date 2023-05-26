@@ -78,7 +78,7 @@ function check_date(calendar) {
 }
 
 function display_error_message(error_message){
-//    table_sort_filter('render_holiday_data');
+    table_sort_filter('render_holiday_data');
     $("#error_msg_id").css("display", "none")
     $('#error_message').text(error_message);
     document.getElementById("error_msg_id").style.color = "Red";
@@ -97,30 +97,63 @@ function add_popup_row() {
         '<td class="class_del_checkbox" hidden><input type="checkbox" required></td>' +
         '<td hidden><input class="input" type="text" name="calender_holiday_guid"></td>' +
         '</tr>';
+
     $("#error_msg_id").prop("hidden", true);
     $(".modal").on("hidden.bs.modal", function () {
         $("#error_msg_id").html("");
     });
     $('#id_popup_tbody').append(basic_add_new_html);
-    table_sort_filter('id_popup_table');
     DatePicker();
+    table_sort_filter('id_popup_table');
     if (GLOBAL_ACTION === "calendar_upload") {
         $(".class_del_checkbox").prop("hidden", false);
     }
     MultipleSelect();
 }
 
+function updateDataTableSelectAllCtrl(table) {
+   var $table = table.table().node();
+   var $chkbox_all = $('tbody input[class="checkbox_check"]', $table);
+   var $chkbox_checked = $('tbody input[class="checkbox_check"]:checked', $table);
+   var chkbox_select_all = $('thead input[id="selectAll"]', $table).get(0);
+
+   // If none of the checkboxes are checked
+   if ($chkbox_checked.length === 0) {
+      if (chkbox_select_all) {
+         chkbox_select_all.checked = false;
+         if ('indeterminate' in chkbox_select_all) {
+            chkbox_select_all.indeterminate = false;
+         }
+      }
+   }
+   // If all of the checkboxes are checked
+   else if ($chkbox_checked.length === $chkbox_all.length) {
+      if (chkbox_select_all) {
+         chkbox_select_all.checked = true;
+         if ('indeterminate' in chkbox_select_all) {
+            chkbox_select_all.indeterminate = false;
+         }
+      }
+   } else {
+      if (chkbox_select_all) {
+         chkbox_select_all.checked = true;
+         if ('indeterminate' in chkbox_select_all) {
+            chkbox_select_all.indeterminate = true;
+         }
+      }
+   }
+}
+
 //onclick of cancel display the table in display mode............
  function display_basic_db_data() {
-//    $('#display_basic_table').DataTable().destroy();
+    $('#display_basic_table').DataTable().destroy();
     $('#id_cancel_data').hide();
     $('#id_edit_data').show();
     $(".maintain-calendar-holiday-config").prop("hidden", true);
     $('.view-calendar-holiday-config').show();
     $('#id_save_confirm_popup').modal('hide');
     $('#id_delete_confirm_popup').modal('hide');
-//    table_sort_filter('display_basic_table');
-
+    table_sort_filter('display_basic_table');
 }
 
 // Function to hide and display save related popups
