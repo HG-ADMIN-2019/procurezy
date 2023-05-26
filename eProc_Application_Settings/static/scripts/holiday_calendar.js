@@ -102,14 +102,12 @@ function add_popup_row() {
     $(".modal").on("hidden.bs.modal", function () {
         $("#error_msg_id").html("");
     });
-
     $('#id_popup_tbody').append(basic_add_new_html);
     DatePicker();
-
+    table_sort_filter('id_popup_table');
     if (GLOBAL_ACTION === "calendar_upload") {
         $(".class_del_checkbox").prop("hidden", false);
     }
-
     MultipleSelect();
 }
 
