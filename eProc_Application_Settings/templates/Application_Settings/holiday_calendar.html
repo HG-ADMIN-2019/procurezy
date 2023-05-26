@@ -384,13 +384,11 @@ function popup_save_data() {
                     content += '</tr>';
                 });
                 $('#id_popup_tbody').append(content);
-
                 table_content = content;
                 HolidayDatePicker();
                 DatePicker();
             }
             CloseLoaderPopup();
-
         },
         error: function (error) {
         }
