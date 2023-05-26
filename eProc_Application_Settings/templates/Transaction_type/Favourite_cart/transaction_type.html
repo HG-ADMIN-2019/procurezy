@@ -198,6 +198,7 @@
             success: function(response) {
                 rendered_active_inactive = response.rendered_active_inactive;
                 rendered_document_type = response.document_type_render;
+                rendered_sequence_num = response.rendered_sequence;
                 eliminate_used_sequence();
                 dropdown_value();
                 $("#error_msg_id").css("display", "none")
@@ -228,7 +229,7 @@
             success: function(response) {
                 rendered_active_inactive = response.rendered_active_inactive
                 rendered_document_type = response.document_type_render
-                rendered_sequence = response.rendered_sequence
+                rendered_sequence_num = response.rendered_sequence
                 eliminate_used_sequence();
                 dropdown_value();
                 $("#error_msg_id").css("display", "none")

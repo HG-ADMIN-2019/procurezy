@@ -108,7 +108,7 @@
                     <table class="class_popup_table table table-bordered mt-2" id="id_popup_table" >
                         <thead>
                             <tr>
-                                <th id="hg_select_checkbox" scope="col"> <div id="id_check_all"> <input type="checkbox" id="selectAll" onclick="checkAll1(this)"></div></th>
+                                <th id="hg_select_checkbox" scope="col"> <div id="id_check_all"> <input type="checkbox" id="selectAll" onclick="checkAllHoliday(this)"></div></th>
                                 <th>Holiday Description</th>
                                 <th>From Date</th>
                                 <th>To Date</th>
@@ -168,15 +168,13 @@ function onclick_Maintain_holiday_button(calender_id) {
     $("#error_msg_id").css("display", "none");
     GLOBAL_CALENDER_ID = calender_id.split('-')[0];
     $("#id_check_all").show();
+    $('#id_popup_table').DataTable().destroy();
     $("#id_popup_tbody").empty();
-
     var res = get_all_checkboxes();
     var $chkbox_all = $('td input[class="checkbox_check"]', res);
-
     var edit_basic_data = "";
     var unique_input = '';
     OpenLoaderPopup();
-
     $.ajax({
         type: 'POST',
         url: "{% url 'eProc_Configuration:get_holiday_from_calenderid' %}",
@@ -184,8 +182,8 @@ function onclick_Maintain_holiday_button(calender_id) {
             calender_id: GLOBAL_CALENDER_ID
         },
         success: function (response) {
+            $('#id_popup_table').DataTable().destroy();
             $("#id_popup_tbody").empty(); // Clear previous content
-
             if (response.length == 0) {
                 empty_resp = '';
                 empty_resp += '<tr>';
@@ -198,9 +196,8 @@ function onclick_Maintain_holiday_button(calender_id) {
                 empty_resp += '</tr>';
                 table_content = empty_resp;
                 $('#id_popup_table tbody').append(empty_resp);
-<!--                HolidayDatePicker();-->
-                DatePicker();
                 table_sort_filter('id_popup_table');
+                DatePicker();
             } else {
                 var i = 0;
                 content = '';
@@ -229,11 +226,9 @@ function onclick_Maintain_holiday_button(calender_id) {
                     }
                 });
                 $('#id_popup_tbody').append(content);
-                table_content = content;
-<!--                HolidayDatePicker();-->
-                DatePicker();
                 table_sort_filter('id_popup_table');
-
+                table_content = content;
+                DatePicker();
             }
             CloseLoaderPopup();
         },
@@ -241,11 +236,10 @@ function onclick_Maintain_holiday_button(calender_id) {
             error_msg.innerHTML = error.responseText
         }
     });
-
-<!--    HolidayDatePicker();-->
     DatePicker();
     $("#id_del_ind_checkbox").prop("hidden", true);
     setTimeout(function () { $('#holidayModal').modal('show'); }, 400);
+
 }
 
     // validate and save for add,copy,update and upload data
@@ -267,50 +261,41 @@ function popup_save_data() {
             display_error_message(error_message);
         } else {
             if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
-                // compare main table and pop up for duplicate values
-<!--                [no_duplicate_entries, error_message] = maintable_validation(validate_add_attributes, main_table_low_value);-->
-                if (no_duplicate_entries == 'N') {
-                    $('#holidayModal').modal('show');
-                }
-            }
-            if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y') && (dateValid == 'Y')) {
-                var add_basic_data = '';
-<!--                var calendar_data = calendar_data_array;-->
-                $('#id_save_confirm_popup').modal('hide');
-                data = {
-                    'data': calendar_data_array,
-                    'table_name': 'CalenderHolidays',
-                    'action': GLOBAL_ACTION
-                };
-                OpenLoaderPopup();
-                $.ajax({
-                    type: 'POST',
-                    url: "{% url 'eProc_Configuration:create_update_application_data' %}",
-                    data: JSON.stringify(data),
-                    contentType: "application/json; charset=utf-8",
-                    dataType: "json",
-                    success: function (Response) {
-                        render_holiday_data = Response[0];
-                        display_basic_db_data();
-                        $('#holidayModal').modal('hide');
-                        success_response(Response); // Function call to display response data
-                        MultipleSelect();
-<!--                        HolidayDatePicker();-->
-                        DatePicker();
-                        CloseLoaderPopup();
+                if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y') && (dateValid == 'Y')) {
+                    var add_basic_data = '';
+                    $('#id_save_confirm_popup').modal('hide');
+                    data = {
+                        'data': calendar_data_array,
+                        'table_name': 'CalenderHolidays',
+                        'action': GLOBAL_ACTION
                     }
-                });
-            } else if (error_message) {
+                    OpenLoaderPopup();
+                    $.ajax({
+                        type: 'POST',
+                        url: "{% url 'eProc_Configuration:create_update_application_data' %}",
+                        data: JSON.stringify(data),
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function (Response) {
+                            render_holiday_data = Response[0];
+                            display_basic_db_data();
+                            $('#holidayModal').modal('hide');
+                            success_response(Response); // Function call to display response data
+                            MultipleSelect();
+                            DatePicker();
+                            CloseLoaderPopup();
+                        }
+                    });
+                } else if (error_message) {
                 display_error_message(error_message);
             }
         }
     }
+    }
     table_sort_filter('id_popup_table');
 }
 
-
-
-    //delete the selected row in db
+//delete the selected row in db
     var main_table_calendar_checked = [];
     function main_table_delete() {
         $('#success_msg_id').empty();
@@ -406,10 +391,8 @@ function popup_save_data() {
             CloseLoaderPopup();
         },
         error: function (error) {
-<!--            error_msg.innerHTML = error.responseText-->
         }
     });
-
     DatePicker();
     $("#id_del_ind_checkbox").prop("hidden", true);
     setTimeout(function () {
@@ -463,13 +446,12 @@ function popup_save_data() {
     }
 
     //onclick of select all checkbox
-    function checkAll1(ele) {
+    function checkAllHoliday(ele) {
         if (ele.checked) {
             $('.checkbox_check').each(function() {
                 var disable_check = this.disabled
                 if(disable_check == false){
                     this.checked = true;
-<!--                    $("#id_delete_supplier").show();-->
                 }
             });
         }
@@ -478,7 +460,6 @@ function popup_save_data() {
                 var disable_check = this.disabled
                 if(disable_check == false){
                     this.checked = false;
-<!--                    $("#id_delete_supplier").hide();-->
                 }
             });
         }
