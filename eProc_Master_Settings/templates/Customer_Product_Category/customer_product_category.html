@@ -219,6 +219,7 @@
 
     //Drop dropdown function
     var prod_cat_id_dropdown = '';
+    var usedProdCatIds = [];
     function unspsc_dropdown() {
       prod_cat_id_dropdown = '';
       var usedProdCatIds = [];
@@ -669,14 +670,14 @@
             $("#id_error_msg").html(" ");
         });
         if (GLOBAL_ACTION == "cusprodcat_upload") {
-		   basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select type="text" class="input form-control prodid" id="prodid-1"  name="prodid" onchange="GetSelectedTextValue(this)">'+prod_cat_id_dropdown+'</select></td><td hidden><input class="form-control description" type="text"  name="description"  id="description-1" disabled></td><td hidden><guid></td><td class="class_del_checkbox"><input type="checkbox" required></td></tr>';
+		    basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select type="text" class="input form-control prodid" id="prodid-1"  name="prodid" onchange="GetSelectedTextValue(this)">'+prod_cat_id_dropdown+'</select></td><td hidden><input class="form-control description" type="text"  name="description"  id="description-1" disabled></td><td hidden><guid></td><td class="class_del_checkbox"><input type="checkbox" required></td></tr>';
             $('#id_popup_tbody').append(basic_add_new_html);
             $("#desc_upload").prop("hidden", true);
             $(".class_del_checkbox").prop("hidden", false);
             $("#id_del_ind_checkbox").prop("hidden", false);
-            table_sort_filter('id_popup_table');
             var CustprodSelect = $("#prodid-" + inc_index);
             GetSelectedTextValue(CustprodSelect[0]);
+            table_sort_filter('id_popup_table');
         }
          else{
                basic_add_new_html =
@@ -825,44 +826,28 @@
                                 del_ind= '<input type="checkbox" value="' + value.del_ind + '" required>'
                             }
                             $("#desc_upload").prop( "hidden", true );
-                            var prod_cat = '';
-                            var prod_cat_list = '';
-                            var prod_cat_id_list = '';
-                            var ex_flag = false;
-                            var opt = '';
-                            $.each(rendered_cust_prod_cat_data, function(i, item){
-                                if(value.prod_cat_id == item.prod_cat_id){
-                                    ex_flag = true;
-                                    prod_cat = '<option value="' + item.prod_cat_id + '">' + item.prod_cat_id + '</option>';
-                                }else{
-                                    prod_cat_list += '<option value="' + item.prod_cat_id + '">' + item.prod_cat_id + '</option>';
-                                }
-
-                                prod_cat_id_list = prod_cat + prod_cat_list
-                            });
-                             //Drop dropdown function
-                            var prod_cat_id_dropdown = '';
-                            function unspsc_dropdown() {
-                              prod_cat_id_dropdown = '';
-                              var usedProdCatIds = [];
-
-                              // Loop through the main table dictionary and collect the used prod_cat_ids
+                             // Loop through the main table dictionary and collect the used prod_cat_ids
                               $.each(rendered_cust_prod_cat_data, function(i, item) {
                                 usedProdCatIds.push(item.prod_cat_id);
                               });
 
-                              // Loop through the dropdown dictionary and check if each prod_cat_id is unused
-                              $.each(rendered_UNSPC_data, function(j, item1) {
-                                if (usedProdCatIds.indexOf(item1.prod_cat_id) === -1) {
-                                  prod_cat_id_dropdown += '<option value="' + item1.prod_cat_id + '">' + item1.prod_cat_id + '</option>';
-                                }
-                              });
-                            }
+                            var prod_cat = '';
+                            var prod_cat_list = '';
+                            var prod_cat_id_list = '';
+                            var opt = '';
 
-                            if (ex_flag == false){
-                                opt = '<option value="' + value.prod_cat_id + '">' +value.prod_cat_id+ '</option>'
-                            }
-                            prod_cat_id_list = opt + prod_cat_id_dropdown
+                            $.each(rendered_UNSPC_data.upload_ProdCat, function(j, item1){
+                                if(value.prod_cat_id == item1.prod_cat_id){
+                                    prod_cat = '<option value="' + item1.prod_cat_id + '">' + item1.prod_cat_id + '</option>';
+                                }else{
+                                     if (usedProdCatIds.indexOf(item1.prod_cat_id) === -1) {
+                                        prod_cat_list += '<option value="' + item1.prod_cat_id + '">' + item1.prod_cat_id + '</option>';
+                                    }
+                                }
+
+                                prod_cat_id_list = prod_cat + prod_cat_list
+                            });
+
                             edit_basic_data +=
                                     '<tr>'+
                                         '<td><input type="checkbox" required></td>'+
@@ -915,7 +900,7 @@
         $('#success_msg_id').empty()
         GLOBAL_ACTION = 'DELETE'
         main_table_cusprodcat_checked = [];
-
+f
         $('#display_basic_table').DataTable().destroy();
         get_selected_row_data(); // Function call to get the selected row data
         $('#id_delete_confirm_popup').modal('hide');
