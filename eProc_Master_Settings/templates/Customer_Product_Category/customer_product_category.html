@@ -1121,7 +1121,7 @@
         }
         else {
             $.each(cusprodcat, function (i, item) {
-                if ((item.prod_cat_id == null) || (item.category_desc.length == 0)){
+                if (item.prod_cat_id == null){
                     $('#cusprodcat_Modal').modal('show');
                     error_message = ui_messeges("JMSG002")// Get message details
                     no_duplicate_value = 'N'
