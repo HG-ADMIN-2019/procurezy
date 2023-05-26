@@ -867,7 +867,7 @@
                                     '<tr>'+
                                         '<td><input type="checkbox" required></td>'+
                                         '<td><select type="text" class="input form-control prodid" id="prodid-'+inc_index+'"  name="prodid" onchange="GetSelectedTextValue(this)">value ="' + value.prod_cat_id + '"'+prod_cat_id_list+'</select></td>'+
-                                        '<td hidden><input class="form-control description" type="text"  name="description"  id="description-'+inc_index+'" disabled></td>'+
+                                        '<td hidden><input class="form-control description" type="text"  name="description" id="description-'+inc_index+'" disabled>value ="' + value.category_desc + '"</td>'+
                                         '<td hidden><guid></td><td>'+ del_ind +'</td>'+
                                     '</tr>';
                             inc_index += 1;
@@ -1121,7 +1121,7 @@
         }
         else {
             $.each(cusprodcat, function (i, item) {
-                if ((item.prod_cat_id == null) || (item.category_desc.length == 0)){
+                if (item.prod_cat_id == null){
                     $('#cusprodcat_Modal').modal('show');
                     error_message = ui_messeges("JMSG002")// Get message details
                     no_duplicate_value = 'N'
