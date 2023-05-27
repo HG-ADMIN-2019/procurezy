@@ -40,15 +40,23 @@ def save_project_to_db(project_data):
     return project_data_response
 
 
-def get_project_filter_list(project_id):
+def get_project_filter_list(project_id, project_id_list):
     """
+    Retrieves project details based on the project ID.
+    """
+    project_details = django_query_instance.django_filter_query(ProjectDetails, {'project_id': project_id}, ['project_id'], None)
 
-    """
-    project_details = django_query_instance.django_filter_query(ProjectDetails, {'project_id': project_id},
-                                                                ['project_id'],
-                                                                None, )
+    # Add project ID to each project detail dictionary
+    for project_detail in project_details:
+        project_detail['project_id'] = project_id
+
+    # Create a dictionary for each project ID in the project ID list
+    for pid in project_id_list:
+        project_detail = {'project_id': pid}
+        project_details.append(project_detail)
 
     return project_details
+
 
 
 # def get_efforts_filter_list(project_id,default_calendar_id):
