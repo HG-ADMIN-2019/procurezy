@@ -14,7 +14,7 @@ function add_popup_row() {
         $("#id_error_msg").html("");
     });
     eliminate_used_sequence()
-    basic_add_new_html = '<tr><td><input class="checkbox_check" type="checkbox" required></td><td><input class="input form-control check_special_char" type="text" maxlength="15"  name="transaction type" style="text-transform:uppercase;" required></td><td><select class="input form-control" disabled>'+ document_type_dropdown +'</select></td><td><select id="id_sequence" class="input form-control">' + sequence_dropdown + '</select></td><td><input type="text" class="form-control check_special_char" maxlength="10"  name="transaction description"  required></td><td><input type="checkbox"  name="active_inactive" required></td><td hidden><input type="text" class= "form-control" name=" guid "></td><td hidden><input type="checkbox" required></td></tr>';
+    basic_add_new_html = '<tr><td><input class="checkbox_check" type="checkbox" required></td><td><input class="input form-control check_special_char" type="text" maxlength="15"  name="transaction type" style="text-transform:uppercase;" required></td><td><select class="input form-control" disabled>'+ document_type_dropdown +'</select></td><td><select type="text" id="id_sequence" class="input form-control">' + sequence_dropdown + '</select></td><td><input type="text" class="form-control check_special_char" maxlength="10"  name="transaction description"  required></td><td><input type="checkbox"  name="active_inactive" required></td><td hidden><input type="text" class= "form-control" name=" guid "></td><td hidden><input type="checkbox" required></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
     if (GLOBAL_ACTION == "transaction_types_upload") {
         $(".class_del_checkbox").prop("hidden", false);
@@ -118,7 +118,7 @@ function read_popup_data() {
         transaction_types.del_ind = row.find("TD").eq(7).find('input[type="checkbox"]').is(':checked');
         transaction_types.transaction_type = row.find("TD").eq(1).find('input[type="text"]').val();
         transaction_types.document_type = row.find("TD").eq(2).find("select option:selected").val();
-        transaction_types.sequence = row.find("TD").eq(3).find("select option:selected").val();
+        transaction_types.sequence = row.find("TD").eq(3).find('Select').val();
         transaction_types.description = row.find("TD").eq(4).find('input[type="text"]').val();
         transaction_types.active_inactive = row.find("TD").eq(5).find('input[type="checkbox"]').is(':checked');
         transaction_types.guid = row.find("TD").eq(6).find('input[type="text"]').val();
@@ -139,7 +139,7 @@ function read_popup_data() {
 
 // Function for add a new row data
 function new_row_data() {
-    basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><input class="input form-control check_special_char" type="text" maxlength="15"  name="transaction type" style="text-transform:uppercase;" required></td><td><select class="input form-control" disabled>'+ document_type_dropdown +'</select></td><td><select class="input form-control">' + sequence_dropdown + '</select></td><td><input type="text" class="form-control check_special_char" maxlength="10"  name="transaction description"  required></td><td><input type="checkbox"  name="active_inactive" required></td><td hidden><input type="text" class= "form-control" name=" guid "></td><td hidden><input type="checkbox" required></td></tr>';
+    basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><input class="input form-control check_special_char" type="text" maxlength="15"  name="transaction type" style="text-transform:uppercase;" required></td><td><select class="input form-control" disabled>'+ document_type_dropdown +'</select></td><td><select type="text" class="input form-control">' + sequence_dropdown + '</select></td><td><input type="text" class="form-control check_special_char" maxlength="10"  name="transaction description"  required></td><td><input type="checkbox"  name="active_inactive" required></td><td hidden><input type="text" class= "form-control" name=" guid "></td><td hidden><input type="checkbox" required></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
     table_sort_filter('id_popup_table');
 }

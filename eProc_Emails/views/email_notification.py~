@@ -41,7 +41,7 @@ def email_notification_form(req):
     variant_list = []
     keyword_list = []
 
-    # django_query_instance.django_filter_only_query(EmailObjectTypes, {'client': client, 'del_ind': False})
+    django_query_instance.django_filter_only_query(EmailObjectTypes, {'client': client, 'del_ind': False})
     object_type_data = django_query_instance.django_filter_only_query(EmailObjectTypes,
                                                                       {'client': client,
                                                                        'del_ind': False}).values('object_type')

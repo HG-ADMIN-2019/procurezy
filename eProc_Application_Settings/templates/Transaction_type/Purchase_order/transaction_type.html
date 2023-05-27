@@ -199,6 +199,8 @@
             success: function(response) {
                 rendered_active_inactive = response.rendered_active_inactive
                 rendered_document_type = response.document_type_render
+                rendered_sequence_num = response.rendered_sequence
+                eliminate_used_sequence();
                 dropdown_value();
                 $("#error_msg_id").css("display", "none")
                 $( "#header_select").prop( "hidden", false );
@@ -228,7 +230,8 @@
             success: function(response) {
                 rendered_active_inactive = response.rendered_active_inactive
                 rendered_document_type = response.document_type_render
-                rendered_sequence = response.number_range_sequence
+                rendered_sequence_num = response.rendered_sequence
+                eliminate_used_sequence();
                 dropdown_value();
                 $("#error_msg_id").css("display", "none")
                 $('#id_popup_table').DataTable().destroy();
@@ -357,9 +360,9 @@
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             success: function(Response) {
-                console.log(Response);
                 rendered_transaction_types_data = Response[0];
                 rendered_active_inactive = Response[2];
+                eliminate_used_sequence();
                 display_basic_db_data();
                 success_response(Response); // Function call to display response data
                 table_sort_filter('id_popup_table');
@@ -423,7 +426,7 @@
         }
         else {
             $.each(transaction_types, function (i, item) {
-                if ((item.transaction_type.length == 0) || (item.description.length == 0)){
+                if ((item.transaction_type.length == 0) || (item.description.length == 0) || (item.sequence.length == 0)){
                     $('#myModal').modal('show');
                     error_message = ui_messeges("JMSG002")// Get message details
                     no_duplicate_value = 'N'

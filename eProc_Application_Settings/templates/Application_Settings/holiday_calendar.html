@@ -92,7 +92,7 @@
                 <div class="modal-body scrollbox">
                     <div id="id_del_add_button" class="mb-4">
                         <button type="button" class="btn btn-primary" title="Add New Row" id="new-row" onclick="add_popup_row()"> add new row</button>
-                        <button class="btn btn-outline-danger" title="Delete" onclick="application_settings_delete_Row1('id_popup_table')"><i class="fa fa-trash"></i> delete
+                        <button class="btn btn-outline-danger" title="Delete" onclick="delete_popup_row('id_popup_table')"><i class="fa fa-trash"></i> delete
                         </button>
                     </div>
                     <div id="id_check_success_messages" class="alert alert-success check_success_message" hidden></div>
@@ -108,11 +108,7 @@
                     <table class="class_popup_table table table-bordered mt-2" id="id_popup_table" >
                         <thead>
                             <tr>
-                                <th id="hg_select_checkbox">
-                                    <div id="id_check_all" style="display:none;">
-                                        <input type="checkbox" id="selectAll" name="chk[]">
-                                    </div>
-                                </th>
+                                <th id="hg_select_checkbox" scope="col"> <div id="id_check_all"> <input type="checkbox" id="selectAll" onclick="checkAllHoliday(this)"></div></th>
                                 <th>Holiday Description</th>
                                 <th>From Date</th>
                                 <th>To Date</th>
@@ -172,15 +168,13 @@ function onclick_Maintain_holiday_button(calender_id) {
     $("#error_msg_id").css("display", "none");
     GLOBAL_CALENDER_ID = calender_id.split('-')[0];
     $("#id_check_all").show();
+    $('#id_popup_table').DataTable().destroy();
     $("#id_popup_tbody").empty();
-
     var res = get_all_checkboxes();
     var $chkbox_all = $('td input[class="checkbox_check"]', res);
-
     var edit_basic_data = "";
     var unique_input = '';
     OpenLoaderPopup();
-
     $.ajax({
         type: 'POST',
         url: "{% url 'eProc_Configuration:get_holiday_from_calenderid' %}",
@@ -188,8 +182,8 @@ function onclick_Maintain_holiday_button(calender_id) {
             calender_id: GLOBAL_CALENDER_ID
         },
         success: function (response) {
+            $('#id_popup_table').DataTable().destroy();
             $("#id_popup_tbody").empty(); // Clear previous content
-
             if (response.length == 0) {
                 empty_resp = '';
                 empty_resp += '<tr>';
@@ -202,9 +196,8 @@ function onclick_Maintain_holiday_button(calender_id) {
                 empty_resp += '</tr>';
                 table_content = empty_resp;
                 $('#id_popup_table tbody').append(empty_resp);
-<!--                HolidayDatePicker();-->
-                DatePicker();
                 table_sort_filter('id_popup_table');
+                DatePicker();
             } else {
                 var i = 0;
                 content = '';
@@ -233,11 +226,9 @@ function onclick_Maintain_holiday_button(calender_id) {
                     }
                 });
                 $('#id_popup_tbody').append(content);
-                table_content = content;
-<!--                HolidayDatePicker();-->
-                DatePicker();
                 table_sort_filter('id_popup_table');
-
+                table_content = content;
+                DatePicker();
             }
             CloseLoaderPopup();
         },
@@ -245,18 +236,17 @@ function onclick_Maintain_holiday_button(calender_id) {
             error_msg.innerHTML = error.responseText
         }
     });
-
-<!--    HolidayDatePicker();-->
     DatePicker();
     $("#id_del_ind_checkbox").prop("hidden", true);
     setTimeout(function () { $('#holidayModal').modal('show'); }, 400);
+
 }
 
     // validate and save for add,copy,update and upload data
 function popup_save_data() {
     $('#success_msg_id').empty();
     $('#id_popup_table').DataTable().destroy();
-    no_duplicate_entries = 'Y';
+    GLOBAL_ACTION = "ADD";
     no_duplicate_value = 'Y';
     var error_message = '';
     get_main_table_data(); // Read data from main table
@@ -271,50 +261,41 @@ function popup_save_data() {
             display_error_message(error_message);
         } else {
             if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
-                // compare main table and pop up for duplicate values
-<!--                [no_duplicate_entries, error_message] = maintable_validation(validate_add_attributes, main_table_low_value);-->
-                if (no_duplicate_entries == 'N') {
-                    $('#holidayModal').modal('show');
-                }
-            }
-            if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y') && (dateValid == 'Y')) {
-                var add_basic_data = '';
-<!--                var calendar_data = calendar_data_array;-->
-                $('#id_save_confirm_popup').modal('hide');
-                data = {
-                    'data': calendar_data_array,
-                    'table_name': 'CalenderHolidays',
-                    'action': GLOBAL_ACTION
-                };
-                OpenLoaderPopup();
-                $.ajax({
-                    type: 'POST',
-                    url: "{% url 'eProc_Configuration:create_update_application_data' %}",
-                    data: JSON.stringify(data),
-                    contentType: "application/json; charset=utf-8",
-                    dataType: "json",
-                    success: function (Response) {
-                        render_holiday_data = Response[0];
-                        display_basic_db_data();
-                        $('#holidayModal').modal('hide');
-                        success_response(Response); // Function call to display response data
-                        MultipleSelect();
-<!--                        HolidayDatePicker();-->
-                        DatePicker();
-                        CloseLoaderPopup();
+                if ((no_duplicate_value == 'Y')  && (dateValid == 'Y')) {
+                    var add_basic_data = '';
+                    $('#id_save_confirm_popup').modal('hide');
+                    data = {
+                        'data': calendar_data_array,
+                        'table_name': 'CalenderHolidays',
+                        'action': GLOBAL_ACTION
                     }
-                });
-            } else if (error_message) {
+                    OpenLoaderPopup();
+                    $.ajax({
+                        type: 'POST',
+                        url: "{% url 'eProc_Configuration:create_update_application_data' %}",
+                        data: JSON.stringify(data),
+                        contentType: "application/json; charset=utf-8",
+                        dataType: "json",
+                        success: function (Response) {
+                            render_holiday_data = Response[0];
+                            display_basic_db_data();
+                            $('#holidayModal').modal('hide');
+                            success_response(Response); // Function call to display response data
+                            MultipleSelect();
+                            DatePicker();
+                            CloseLoaderPopup();
+                        }
+                    });
+                } else if (error_message) {
                 display_error_message(error_message);
             }
         }
     }
+    }
     table_sort_filter('id_popup_table');
 }
 
-
-
-    //delete the selected row in db
+//delete the selected row in db
     var main_table_calendar_checked = [];
     function main_table_delete() {
         $('#success_msg_id').empty();
@@ -349,6 +330,7 @@ function popup_save_data() {
         $("#save_id").prop("hidden", true);
         onclick_copy_update_button(calender_id);
         document.getElementById("id_del_add_button").style.display = "none";
+
     }
 
     // Onclick of Config Holiday link, display or add the rows
@@ -356,15 +338,13 @@ function popup_save_data() {
     $("#error_msg_id").css("display", "none");
     GLOBAL_CALENDER_ID = calender_id.split('-')[0];
     $("#hg_select_checkbox").prop("hidden", true);
-    $("#id_popup_tbody").empty();
 
+    $("#id_popup_tbody").empty();
     var res = get_all_checkboxes();
     var $chkbox_all = $('td input[class="checkbox_check"]', res);
-
     var edit_basic_data = "";
     var unique_input = '';
     OpenLoaderPopup();
-
     $.ajax({
         type: 'POST',
         url: "{% url 'eProc_Configuration:get_holiday_from_calenderid' %}",
@@ -372,6 +352,7 @@ function popup_save_data() {
             calender_id: GLOBAL_CALENDER_ID
         },
         success: function (response) {
+            $('#id_popup_table').DataTable().destroy();
             $("#id_popup_tbody").empty(); // Clear previous content
 
             if (response.length == 0) {
@@ -386,6 +367,7 @@ function popup_save_data() {
                 empty_resp += '</tr>';
                 table_content = empty_resp;
                 $('#id_popup_table tbody').append(empty_resp);
+                table_sort_filter('id_popup_table');
                 DatePicker();
             } else {
                 var i = 0;
@@ -405,15 +387,12 @@ function popup_save_data() {
                 table_content = content;
                 HolidayDatePicker();
                 DatePicker();
-
             }
             CloseLoaderPopup();
         },
         error: function (error) {
-<!--            error_msg.innerHTML = error.responseText-->
         }
     });
-
     DatePicker();
     $("#id_del_ind_checkbox").prop("hidden", true);
     setTimeout(function () {
@@ -428,6 +407,7 @@ function popup_save_data() {
         onclick_Maintain_holiday_button(calender_id);
         $("#save_id").prop("hidden", false);
         document.getElementById("id_del_add_button").style.display = "block";
+        $("#hg_select_checkbox").prop("hidden", false);
     }
 
     // validating the  popup table for duplicate entries
@@ -464,6 +444,103 @@ function popup_save_data() {
         }
         return [no_duplicate_value,error_message]
     }
+
+    //onclick of select all checkbox
+    function checkAllHoliday(ele) {
+        if (ele.checked) {
+            $('.checkbox_check').each(function() {
+                var disable_check = this.disabled
+                if(disable_check == false){
+                    this.checked = true;
+                }
+            });
+        }
+        else{
+            $('.checkbox_check').each(function() {
+                var disable_check = this.disabled
+                if(disable_check == false){
+                    this.checked = false;
+                }
+            });
+        }
+        table_sort_filter('id_popup_table');
+    }
+
+    // -----------------------------------------
+    var table = $('#id_popup_table').DataTable();
+ var rows_selected = [];
+//onclick of select all checkbox
+$('#id_popup_table tbody').on('click', 'input[class="checkbox_check"]', function(e){
+      var $row = $(this).closest('tr');
+      // Get row data
+      var data = table.row($row).data();
+      // Get row ID
+      var rowId = data[0];
+      // Determine whether row ID is in the list of selected row IDs
+      var index = $.inArray(rowId, rows_selected);
+      // If checkbox is checked and row ID is not in list of selected row IDs
+      if(this.checked && index === -1){
+         rows_selected.push(rowId);
+      // Otherwise, if checkbox is not checked and row ID is in list of selected row IDs
+      } else if (!this.checked && index !== -1){
+         rows_selected.splice(index, 1);
+      }
+      if(this.checked){
+         $row.addClass('selected');
+      } else {
+         $row.removeClass('selected');
+      }
+      // Update state of "Select all" control
+//      updateDataTableSelectAllCtrl(table);
+      // Prevent click event from propagating to parent
+      e.stopPropagation();
+   });
+
+   // Handle click on "Select all" control
+   $('thead input[id="selectAll"]', table.table().container()).on('click', function(e){
+      if(this.checked){
+         $('#id_popup_table tbody input[class="checkbox_check"]:not(:checked)').trigger('click');
+      } else {
+         $('#id_popup_table tbody input[class="checkbox_check"]:checked').trigger('click');
+      }
+      // Prevent click event from propagating to parent
+      e.stopPropagation();
+      table_sort_filter('id_popup_table');
+   });
+   // Handle table draw event
+   table.on('draw', function(){
+      // Update state of "Select all" control
+      updateDataTableSelectAllCtrl(table);
+      valueChanged();
+//      e.stopPropagation();
+   });
+    function updateDataTableSelectAllCtrl(table){
+       var $table             = table.table().node();
+       var $chkbox_all        = $('tbody input[class="checkbox_check"]', $table);
+       var $chkbox_checked    = $('tbody input[class="checkbox_check"]:checked', $table);
+       var chkbox_select_all  = $('thead input[id="selectAll"]', $table).get(0);
+
+       // If none of the checkboxes are checked
+       if($chkbox_checked.length === 0){
+          chkbox_select_all.checked = false;
+          if('indeterminate' in chkbox_select_all){
+             chkbox_select_all.indeterminate = false;
+          }
+       // If all of the checkboxes are checked
+       } else if ($chkbox_checked.length === $chkbox_all.length){
+          chkbox_select_all.checked = true;
+          if('indeterminate' in chkbox_select_all){
+             chkbox_select_all.indeterminate = false;
+          }
+       } else {
+          chkbox_select_all.checked = true;
+          if('indeterminate' in chkbox_select_all){
+             chkbox_select_all.indeterminate = true;
+          }
+   }
+}
+
+
 </script>
 <script src="{% static 'scripts/holiday_calendar.js' %}"></script>
 {% endblock %}

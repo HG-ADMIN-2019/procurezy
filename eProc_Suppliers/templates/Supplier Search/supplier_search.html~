@@ -507,7 +507,10 @@ $('#sup_tab tbody').on('click', 'input[class="supplier_checkbox"]', function(e){
       // Prevent click event from propagating to parent
       e.stopPropagation();
    });
-
+   // Handle click on table cells with checkboxes
+<!--   $('#sup_tab').on('click', 'tbody td, thead th:first-child', function(e){-->
+<!--      $(this).parent().find('input[class="supplier_checkbox"]').trigger('click');-->
+<!--   });-->
    // Handle click on "Select all" control
    $('thead input[id="selectAll"]', table.table().container()).on('click', function(e){
       if(this.checked){
