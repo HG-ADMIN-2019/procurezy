@@ -308,7 +308,7 @@
                         }
                         else {
                             guid =row.cells[4].innerHTML;
-                            unique_input = '<select id="messages_id" name="messages_id" class="form-control" type="text" title="Select...">'+ message_id_dropdown +'</select>'
+                            unique_input = '<select id="messages_id" name="messages_id" class="form-control" type="text"  value="' + row.cells[1].innerHTML + '" title="Select...">'+ message_id_dropdown +'</select>'
                             edit_basic_data += '<tr><td><input type="checkbox" required></td>' +
                             '<td>'+ unique_input +'</td>' +
                             '<td><input class="input form-control check_special_char" type="text" id="messages_desc" name="messages_desc" value="' + row.cells[2].innerHTML + '"  required></td>'+
