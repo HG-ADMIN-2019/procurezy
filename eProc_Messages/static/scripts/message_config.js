@@ -1,6 +1,7 @@
 var message_id_data = new Array();
 var validate_add_attributes = [];
 var main_table_low_value = [];
+var message_id={};
 
 //*****************************
 $(document).ready(function () {
@@ -72,7 +73,6 @@ function display_error_message(error_message){
 // on click add icon display the row in to add the new entries
 function add_popup_row() {
     basic_add_new_html = '';
-    var display_db_data = '';
     $('#id_popup_table').DataTable().destroy();
     $(".modal").on("hidden.bs.modal", function () {
         $("#id_error_msg_id").html("");
@@ -119,13 +119,13 @@ function read_popup_data() {
     $('#id_popup_table').DataTable().destroy();
     message_id_data = new Array();
     validate_add_attributes = [];
-    $("#id_popup_table TBODY TR").each(function () {
+    $("#id_popup_table tbody tr").each(function() {
         var row = $(this);
         message_id={};
-        message_id.msg_id_guid = row.find("TD").eq(4).find('input[type="text"]').val();
         message_id.del_ind = row.find("TD").eq(3).find('input[type="checkbox"]').is(':checked');
-        message_id.message_type = row.find("TD").eq(2).find('select[type="text"]').val();
         message_id.message_id = row.find("TD").eq(1).find('select[type="text"]').val();
+        message_id.message_type = row.find("TD").eq(2).find('select[type="text"]').val();
+        message_id.msg_id_guid = row.find("TD").eq(4).find('input[type="text"]').val();
         if (message_id == undefined){
             message_id.message_id = row.find("TD").eq(1).find('input[type="text"]').val();
         }
@@ -158,8 +158,8 @@ function get_main_table_data() {
     $("#display_basic_table TBODY TR").each(function() {
         var row = $(this);
         var main_attribute = {};
-        main_attribute.messages_id = row.find("TD").eq(1).html();
-        main_table_low_value.push(main_attribute.messages_id);
+        main_attribute.message_id = row.find("TD").eq(1).html();
+        main_table_low_value.push(main_attribute.message_id);
     });
     table_sort_filter('display_basic_table');
 }

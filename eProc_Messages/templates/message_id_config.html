@@ -178,6 +178,7 @@
                 $("#error_msg_id").css("display", "none")
                 $( "#header_select").prop( "hidden", false );
                 GLOBAL_ACTION=button.value
+                $('#id_popup_table').DataTable().destroy();
                 $("#id_popup_tbody").empty();
                 new_row_data();   // Add a new row in popup
                 $("#id_del_ind_checkbox").prop( "hidden", true );
@@ -218,7 +219,7 @@
                         unique_input = '<select class="form-control" type="text" value="' + row.cells[1].innerHTML + '" name="message_id"  disabled>'+ msg_id_dropdown +'</select>'
                         edit_basic_data += '<tr><td hidden><input type="checkbox" required></td>' +
                             '<td>'+ unique_input +'</td>' +
-                            '<td><select id="message_type" class="input form-control" type="text" name="message_type">'+ msg_type_dropdown +'</select></td>'+
+                            '<td><select id="message_type" class="input form-control" value="' + row.cells[1].innerHTML + '" type="text" name="message_type">'+ msg_type_dropdown +'</select></td>'+
                             '<td class="class_del_checkbox" hidden><input type="checkbox" required></td> <td hidden><input class="form-control" type="text" value="' + row.cells[3].innerHTML + '"></td></tr>';
                             $("#header_select").prop("hidden", true);
                         }
