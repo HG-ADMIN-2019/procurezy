@@ -330,9 +330,9 @@
                     var messageid_value = dropdown_values[i][0]
                     var lang_value = dropdown_values[i][1]
                     var lang_id;
-                    for (i = 0; i < render_language_data.length; i++) {
-                        if (lang_value == render_language_data[i].description)
-                            lang_id = render_language_data[i].language_id;
+                    for (j = 0; j < render_language_data.length; j++) {
+                        if (lang_value == render_language_data[j].description)
+                            lang_id = render_language_data[j].language_id;
                     }
                     $(row.find("TD").eq(1).find("select option[value="+messageid_value+"]")).attr('selected','selected');
                     $(row.find("TD").eq(3).find("select option[value="+lang_id+"]")).attr('selected','selected');
