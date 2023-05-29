@@ -9,24 +9,30 @@ from Majjaka_eProcure import settings
 from eProc_Attributes.Utilities.attributes_generic import OrgAttributeValues
 from eProc_Basic.Utilities.constants.constants import CONST_SC_HEADER_APPROVED, CONST_COMPLETED, CONST_SC_APPR_APPROVED, \
     CONST_SC_HEADER_AWAITING_APPROVAL, CONST_ACTIVE, CONST_AUTO, CONST_INITIATED, CONST_SC_APPR_OPEN, CONST_PR_CALLOFF, \
-    CONST_CALENDAR_ID, CONST_CATALOG_CALLOFF, CONST_SUPPLIER_NOTE, CONST_INTERNAL_NOTE, CONST_APPROVER_NOTE
+    CONST_CALENDAR_ID, CONST_CATALOG_CALLOFF, CONST_SUPPLIER_NOTE, CONST_INTERNAL_NOTE, CONST_APPROVER_NOTE, \
+    CONST_DEFAULT_LANGUAGE, CONST_GLACC
 from eProc_Basic.Utilities.functions.dict_check_key import checkKey
 from eProc_Basic.Utilities.functions.dictionary_key_to_list import dictionary_key_to_list
 from eProc_Basic.Utilities.functions.django_query_set import DjangoQueries
 from eProc_Basic.Utilities.functions.get_db_query import getClients, get_object_id_from_username
+from eProc_Basic.Utilities.functions.type_casting import type_cast_array_str_to_decimal
 from eProc_Basic.Utilities.global_defination import global_variables
 from eProc_Calendar_Settings.Utilities.calender_settings_generic import calculate_delivery_date
 from eProc_Configuration.models import ImagesUpload
 from eProc_Configuration.models.development_data import AccountAssignmentCategory
+from eProc_Configuration.models.master_data import AccountingDataDesc
 from eProc_Doc_Details.Utilities.details_specific import get_notes
 from eProc_Doc_Search_and_Display.Utilities.search_display_specific import get_shopping_cart_approval
+from eProc_Emails.Utilities.email_notif_generic import get_unit_description
 from eProc_Exchange_Rates.Utilities.exchange_rates_generic import convert_currency
 from eProc_Notes_Attachments.models import Attachments, Notes
 from eProc_Price_Calculator.Utilities.price_calculator_generic import calculate_item_total_value
 from eProc_Purchase_Order.models.purchase_order import *
 
 # Importing  the models from m_database app
-from eProc_Shopping_Cart.Utilities.shopping_cart_generic import update_eform_details_scitem, get_image_url
+from eProc_Registration.models.registration_model import UserData
+from eProc_Shopping_Cart.Utilities.shopping_cart_generic import update_eform_details_scitem, get_image_url, \
+    get_currency_converted_price_data
 from eProc_Shopping_Cart.Utilities.shopping_cart_specific import get_login_user_spend_limit
 
 from eProc_Shopping_Cart.models import *
@@ -481,22 +487,32 @@ def get_sc_detail(header_guid):
     supp_notes = []
     int_notes = []
     appr_notes = []
+    total_item_value = []
+    actual_price = []
+    discount_value = []
+    tax_value = []
     if django_query_instance.django_existence_check(ScHeader,
                                                     {'guid': header_guid,
                                                      'client': global_variables.GLOBAL_CLIENT,
                                                      'del_ind': False}):
-        sc_header_detail = django_query_instance.django_filter_query(ScHeader,
-                                                                     {'guid': header_guid,
-                                                                      'client': global_variables.GLOBAL_CLIENT,
-                                                                      'del_ind': False},
-                                                                     None,
-                                                                     None)
+        sc_header_details = django_query_instance.django_filter_query(ScHeader,
+                                                                      {'guid': header_guid,
+                                                                       'client': global_variables.GLOBAL_CLIENT,
+                                                                       'del_ind': False},
+                                                                      None,
+                                                                      None)
+        sc_header_detail = sc_header_details[0]
         sc_item_details = django_query_instance.django_filter_query(ScItem,
                                                                     {'header_guid': header_guid,
                                                                      'client': global_variables.GLOBAL_CLIENT,
                                                                      'del_ind': False},
                                                                     ['item_num'],
                                                                     None)
+        highest_item_guid = get_highest_item_guid_detail(sc_item_details)
+        for sc_item_detail in sc_item_details:
+            sc_item_detail['unit_desc'] = get_unit_description(sc_item_detail['unit'])
+        actual_price, discount_value, tax_value, total_item_value, sc_item_details = get_currency_converted_price_data(
+            sc_item_details)
         sc_item_guid_list = dictionary_key_to_list(sc_item_details, 'guid')
         filter_queue = Q(header_guid=header_guid) | Q(item_guid__in=sc_item_guid_list)
         sc_accounting_details = django_query_instance.django_queue_query(ScAccounting,
@@ -517,8 +533,15 @@ def get_sc_detail(header_guid):
                 sc_header_level_address = sc_address_detail
             else:
                 sc_item_level_address.append(sc_address_detail)
+        acc_cat = dictionary_key_to_list(sc_accounting_details, 'acc_cat')
+        acc_cat_detail = get_acc_description(acc_cat)
         for sc_accounting_detail in sc_accounting_details:
-            sc_accounting_detail['acc_value_desc'] = get_acc_description(sc_accounting_detail['acc_cat'])
+            if sc_accounting_detail['acc_cat']:
+                sc_accounting_detail['acc_desc'] = get_acc_detail_desc(acc_cat_detail, sc_accounting_detail['acc_cat'])
+                sc_accounting_detail['acc_value_desc'] = get_acc_value_description(sc_accounting_detail,
+                                                                                   sc_header_detail['co_code'])
+                sc_accounting_detail['gl_account_value_desc'] = get_gl_acc_desc(sc_accounting_detail,
+                                                                                sc_header_detail['co_code'])
             if sc_accounting_detail['header_guid_id'] == header_guid:
                 sc_header_level_acc.append(sc_accounting_detail)
             else:
@@ -539,17 +562,20 @@ def get_sc_detail(header_guid):
         data = {'sc_item_details': sc_item_details,
                 'sc_approval_details': sc_approval_details,
                 'sc_potential_approval_details': sc_potential_approval_details,
-                'sc_header_details': sc_header_detail}
+                'sc_header_details': sc_header_details}
 
         sc_header, sc_appr, sc_completion, requester_first_name = get_shopping_cart_approval(data)
-    shopping_cart_detail = {'hdr_det': sc_header_detail[0],
+    requester_full_name = django_query_instance.django_get_query(UserData,
+                                                                 {'username': sc_header_detail['requester'],
+                                                                  'client': global_variables.GLOBAL_CLIENT})
+    shopping_cart_detail = {'hdr_det': sc_header_detail,
                             'item_dictionary_list': sc_item_details,
                             'header_acc_detail': sc_header_level_acc,
                             'acc_det': sc_item_level_acc,
                             'header_level_addr': sc_header_level_address,
                             'addr_det': sc_item_level_address,
                             'sc_appr': sc_approval_details,
-                            'sc_head': sc_header_detail[0],
+                            'sc_head': sc_header_detail,
                             'requester_first_name': requester_first_name,
                             'sc_completion': sc_completion,
                             'sc_header': sc_header,
@@ -557,7 +583,14 @@ def get_sc_detail(header_guid):
                             'supp_notes': supp_notes,
                             'int_notes': int_notes,
                             'appr_notes': appr_notes,
-                            'edit_address_flag': '0'
+                            'edit_address_flag': '0',
+                            'acct_assignment_category': '0',
+                            'button_status': True,
+                            'requester_full_name': requester_full_name,
+                            'total_value': format(total_item_value, '.2f'),
+                            'actual_price': format(actual_price, '.2f'),
+                            'discount_value': format(discount_value, '.2f'),
+                            'tax_value': format(tax_value, '.2f'),
                             }
     return shopping_cart_detail
 
@@ -566,10 +599,145 @@ def get_acc_description(acc):
     """
 
     """
-    acc_value_desc = acc
-    if django_query_instance.django_existence_check(AccountAssignmentCategory, {'account_assign_cat': acc}):
-        acc_value_desc = django_query_instance.django_filter_value_list_query(AccountAssignmentCategory,
-                                                                              {'account_assign_cat': acc},
-                                                                              'description')[0]
-        acc_value_desc = acc + ' - ' + acc_value_desc
+    acc_value_desc = django_query_instance.django_filter_query(AccountAssignmentCategory,
+                                                               {'account_assign_cat__in': acc,
+                                                                'del_ind': False},
+                                                               None,
+                                                               ['account_assign_cat', 'description'])
     return acc_value_desc
+
+
+def get_acc_value_description(sc_accounting_detail, company_code):
+    """
+
+    """
+    acc_desc_detail = None
+    acc_desc = ''
+    acc_value = get_account_asg_value(sc_accounting_detail)
+    if django_query_instance.django_existence_check(AccountingDataDesc,
+                                                    {'client': global_variables.GLOBAL_CLIENT,
+                                                     'del_ind': False,
+                                                     'account_assign_cat': sc_accounting_detail['acc_cat'],
+                                                     'account_assign_value': acc_value,
+                                                     'company_id': company_code,
+                                                     'language_id': global_variables.GLOBAL_USER_LANGUAGE}):
+        acc_desc_detail = django_query_instance.django_filter_query(AccountingDataDesc,
+                                                                    {'client': global_variables.GLOBAL_CLIENT,
+                                                                     'del_ind': False,
+                                                                     'account_assign_cat': sc_accounting_detail[
+                                                                         'acc_cat'],
+                                                                     'account_assign_value': acc_value,
+                                                                     'company_id': company_code,
+                                                                     'language_id': global_variables.GLOBAL_USER_LANGUAGE},
+                                                                    None,
+                                                                    None)[0]
+    elif django_query_instance.django_existence_check(AccountingDataDesc,
+                                                      {'client': global_variables.GLOBAL_CLIENT,
+                                                       'del_ind': False,
+                                                       'account_assign_cat': sc_accounting_detail['acc_cat'],
+                                                       'account_assign_value': acc_value,
+                                                       'company_id': company_code,
+                                                       'language_id': CONST_DEFAULT_LANGUAGE}):
+        acc_desc_detail = django_query_instance.django_filter_query(AccountingDataDesc,
+                                                                    {'client': global_variables.GLOBAL_CLIENT,
+                                                                     'del_ind': False,
+                                                                     'account_assign_cat': sc_accounting_detail[
+                                                                         'acc_cat'],
+                                                                     'account_assign_value': acc_value,
+                                                                     'company_id': company_code,
+                                                                     'language_id': CONST_DEFAULT_LANGUAGE},
+                                                                    None,
+                                                                    None)[0]
+    if acc_desc_detail:
+        acc_desc = acc_desc_detail['account_assign_value'] + ' - ' + acc_desc_detail['description']
+    return acc_desc
+
+
+def get_account_asg_value(sc_accounting_detail):
+    """
+
+    """
+    account_assignment_category = sc_accounting_detail['acc_cat']
+    if account_assignment_category == 'CC':
+        account_assignment_value = sc_accounting_detail['cost_center']
+
+    elif account_assignment_category == 'AS':
+        account_assignment_value = sc_accounting_detail['asset_number']
+
+    elif account_assignment_category == 'OR':
+        account_assignment_value = sc_accounting_detail['internal_order']
+
+    else:
+        account_assignment_value = sc_accounting_detail['wbs_ele']
+    return account_assignment_value
+
+
+def get_acc_detail_desc(acc_cat_details, acc_cat):
+    """
+
+    """
+    for acc_cat_detail in acc_cat_details:
+        if acc_cat_detail['account_assign_cat'] == acc_cat:
+            return acc_cat + ' - ' + acc_cat_detail['description']
+    return acc_cat
+
+
+def get_gl_acc_desc(sc_accounting_detail, company_code):
+    """
+
+    """
+    acc_desc_detail = None
+    acc_desc = ''
+    if django_query_instance.django_existence_check(AccountingDataDesc,
+                                                    {'client': global_variables.GLOBAL_CLIENT,
+                                                     'del_ind': False,
+                                                     'account_assign_cat': CONST_GLACC,
+                                                     'account_assign_value': sc_accounting_detail['gl_acc_num'],
+                                                     'company_id': company_code,
+                                                     'language_id': global_variables.GLOBAL_USER_LANGUAGE}):
+        acc_desc_detail = django_query_instance.django_filter_query(AccountingDataDesc,
+                                                                    {'client': global_variables.GLOBAL_CLIENT,
+                                                                     'del_ind': False,
+                                                                     'account_assign_cat': CONST_GLACC,
+                                                                     'account_assign_value': sc_accounting_detail[
+                                                                         'gl_acc_num'],
+                                                                     'company_id': company_code,
+                                                                     'language_id': global_variables.GLOBAL_USER_LANGUAGE},
+                                                                    None,
+                                                                    None)[0]
+    elif django_query_instance.django_existence_check(AccountingDataDesc,
+                                                      {'client': global_variables.GLOBAL_CLIENT,
+                                                       'del_ind': False,
+                                                       'account_assign_cat': CONST_GLACC,
+                                                       'account_assign_value': sc_accounting_detail['gl_acc_num'],
+                                                       'company_id': company_code,
+                                                       'language_id': CONST_DEFAULT_LANGUAGE}):
+        acc_desc_detail = django_query_instance.django_filter_query(AccountingDataDesc,
+                                                                    {'client': global_variables.GLOBAL_CLIENT,
+                                                                     'del_ind': False,
+                                                                     'account_assign_cat': CONST_GLACC,
+                                                                     'account_assign_value': sc_accounting_detail[
+                                                                         'gl_acc_num'],
+                                                                     'company_id': company_code,
+                                                                     'language_id': CONST_DEFAULT_LANGUAGE},
+                                                                    None,
+                                                                    None)[0]
+    if acc_desc_detail:
+        acc_desc = acc_desc_detail['account_assign_value'] + ' - ' + acc_desc_detail['description']
+    return acc_desc
+
+
+def get_highest_item_guid_detail(item_details):
+    max_item_guid = 0
+    price_array = []
+    item_guid = []
+    if item_details:
+        for item_price in item_details:
+            price_array.append(item_price['value'])
+            item_guid.append(item_price['guid'])
+        item_value_list = type_cast_array_str_to_decimal(price_array)
+        max_item_price = max(item_value_list)
+        if max_item_price in price_array:
+            max_item_price_index = price_array.index(max_item_price)
+            max_item_guid = item_guid[max_item_price_index]
+    return max_item_guid

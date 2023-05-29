@@ -10,7 +10,7 @@ Author:
 """
 
 # convert string to datetime format
-import datetime
+from datetime import datetime
 from decimal import Decimal
 from decimal import Decimal
 

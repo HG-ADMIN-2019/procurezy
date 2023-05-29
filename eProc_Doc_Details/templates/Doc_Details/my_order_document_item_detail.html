@@ -377,18 +377,12 @@
                                     </span>
                                     <span id="change_acc_value_{{ forloop.counter }}">
                                         <span id=ScAccounting-acc_val-{{acc.guid}} class="check_account_assignment_values">
-                                            {{acc.acc_value_desc.attribute_values_description}}
+                                            {{acc.acc_value_desc}}
                                         </span>
                                     </span> <br>
                                     <div id="secondary_accounting-{{acc.guid}}"></div>
                                     <span class="h6">GL Account Number: </span><span id="ScAccounting-gl_acc_num-{{acc.guid}}">{{ acc.gl_account_value_desc }}</span>
                                     <br><br>
-    
-                                    {% if acct_assignment_category == '1' %}
-                                    <button class="btn btn-primary hg_is_hidden" id="change_accounting_data-item-{{acc.guid}}" onclick="changeAccCat(this.id,{{forloop.counter}})" hidden><i class="far fa-edit"></i> Change account assignment</button>
-                                    {% elif acct_assignment_category == '0' %}
-                                    <button class="btn btn-secondary" id="change_accounting_data-item-{{acc.guid}}"  disabled><i class="far fa-edit"></i> Change account assignment</button>
-                                    {% endif %}
                                 </div>
                             </div>
                             {% endif %}

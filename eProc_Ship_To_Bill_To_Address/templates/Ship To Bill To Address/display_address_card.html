@@ -85,7 +85,9 @@
         <hr>
         <div class="elements-space-between">
             <div>
+                {% if not button_status %}
                 <span class="h6">Receiver: </span> <span id="ScHeader-requester-{{ sc_header_data.guid }}">{{ requester_full_name.first_name }} {{ requester_full_name.last_name }}</span>
+                {% endif %}
             </div>
             <div>
                 <button type="button" class="hg_button_edit editable_mode" data-toggle="modal"
