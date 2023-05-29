@@ -542,8 +542,8 @@ class MasterSettingsSave:
                                              'address_number': addresstype_detail['address_number'],
                                              'address_type': (addresstype_detail['address_type']).upper(),
                                              'company_id': addresstype_detail['company_id'],
-                                             'valid_from': addresstype_detail['valid_from'],
-                                             'valid_to': addresstype_detail['valid_to'],
+                                             'valid_from': datetime.strptime(addresstype_detail['valid_from'], "%d-%m-%Y"),
+                                             'valid_to': datetime.strptime(addresstype_detail['valid_to'], "%d-%m-%Y"),
                                              'org_address_map_created_at': self.current_date_time,
                                              'org_address_map_created_by': self.username,
                                              'org_address_map_changed_at': self.current_date_time,
@@ -563,8 +563,8 @@ class MasterSettingsSave:
                                                            'address_type': (
                                                                addresstype_detail['address_type']).upper(),
                                                            'company_id': addresstype_detail['company_id'],
-                                                           'valid_from': addresstype_detail['valid_from'],
-                                                           'valid_to': addresstype_detail['valid_to'],
+                                                           'valid_from': datetime.strptime(addresstype_detail['valid_from'], "%d-%m-%Y"),
+                                                           'valid_to': datetime.strptime(addresstype_detail['valid_to'], "%d-%m-%Y"),
                                                            'org_address_map_changed_at': self.current_date_time,
                                                            'org_address_map_changed_by': self.username,
                                                            'client': OrgClients.objects.get(client=self.client),
@@ -1949,13 +1949,16 @@ def get_orgaddtype_data():
     address_type_data = list(
         OrgAddressMap.objects.filter(del_ind=False).values('address_guid', 'address_number', 'address_type',
                                                            'company_id', 'valid_from', 'valid_to'))
-    for valid_from in address_type_data:
-        if valid_from['valid_from'] is None:
-            valid_from['valid_from'] = ''
+    for data in address_type_data:
+        if data['valid_from'] is None:
+            data['valid_from'] = ''
+        else:
+            data['valid_from'] = data['valid_from'].strftime('%d-%m-%Y')
 
-    for valid_to in address_type_data:
-        if valid_to['valid_to'] is None:
-            valid_to['valid_to'] = ''
+        if data['valid_to'] is None:
+            data['valid_to'] = ''
+        else:
+            data['valid_to'] = data['valid_to'].strftime('%d-%m-%Y')
 
     return address_type_data
 

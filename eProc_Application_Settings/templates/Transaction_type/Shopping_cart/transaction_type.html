@@ -157,7 +157,7 @@
     var rendered_transaction_types_data = JSON.parse(document.getElementById('transaction_type').textContent);
     var rendered_document_type
     var rendered_active_inactive
-    var rendered_sequence = {{upload_numberrange|safe}};
+    var rendered_sequence_num = {{upload_numberrange|safe}};
     var transaction_types_data_array = {}
     var transaction_types = '';
     var edit_basic_data = '';
@@ -197,7 +197,8 @@
             success: function(response) {
                 rendered_active_inactive = response.rendered_active_inactive
                 rendered_document_type = response.document_type_render
-                // rendered_sequence = response.upload_numberrange
+                rendered_sequence_num = response.rendered_sequence
+                eliminate_used_sequence();
                 dropdown_value();
                 $("#error_msg_id").css("display", "none")
                 $( "#header_select").prop( "hidden", false );
@@ -227,7 +228,8 @@
             success: function(response) {
                 rendered_active_inactive = response.rendered_active_inactive
                 rendered_document_type = response.document_type_render
-                rendered_sequence = response.number_range_sequence
+                rendered_sequence_num = response.rendered_sequence
+                eliminate_used_sequence();
                 dropdown_value();
                 $("#error_msg_id").css("display", "none")
                 $('#id_popup_table').DataTable().destroy();
@@ -254,11 +256,11 @@
                         if (GLOBAL_ACTION == "UPDATE") {
                             guid = row.cells[6].innerHTML
                         eliminate_used_sequence()
-                        edit_basic_data += '<tr ><td><input type="checkbox" required></td><td><input class="input form-control check_special_char" type="text" maxlength="15" value="' + row.cells[1].innerHTML + '"  name="transaction type" style="text-transform:uppercase;" disabled></td><td><select class="input form-control" disabled>' + document_type_dropdown + '</select></td><td><select class="input form-control" disabled>' + sequence_dropdown + '</select></td><td><input type="text" class= "form-control check_special_char" maxlength="100" value="' + row.cells[4].innerHTML + '"  name="transaction description"  required></td><td><input type="checkbox"  name="active_inactive" required></td><td hidden><input type="text" class= "form-control" value="' + guid + '"></td><td hidden><input type="checkbox" required></td></tr>';
+                        edit_basic_data += '<tr ><td><input type="checkbox" required></td><td><input class="input form-control check_special_char" type="text" maxlength="15" value="' + row.cells[1].innerHTML + '"  name="transaction type" style="text-transform:uppercase;" disabled></td><td><select class="input form-control" disabled>' + document_type_dropdown + '</select></td><td><select type="text" class="input form-control" disabled>' + sequence_dropdown + '</select></td><td><input type="text" class= "form-control check_special_char" maxlength="100" value="' + row.cells[4].innerHTML + '"  name="transaction description"  required></td><td><input type="checkbox"  name="active_inactive" required></td><td hidden><input type="text" class= "form-control" value="' + guid + '"></td><td hidden><input type="checkbox" required></td></tr>';
                         }
                         else{
                             eliminate_used_sequence()
-                            edit_basic_data += '<tr ><td><input type="checkbox" required></td><td><input class="input form-control check_special_char" type="text" maxlength="15" value="' + row.cells[1].innerHTML + '"  name="transaction type" style="text-transform:uppercase;"></td><td><select class="input form-control" disabled>' + document_type_dropdown + '</select></td><td><select class="input form-control">' + sequence_dropdown + '</select></td><td><input type="text" class= "form-control check_special_char" maxlength="100" value="' + row.cells[4].innerHTML + '"  name="transaction description"  required></td><td><input type="checkbox"  name="active_inactive" required></td><td hidden><input type="text" class= "form-control" value="' + guid + '"></td><td hidden><input type="checkbox" required></td></tr>';
+                            edit_basic_data += '<tr ><td><input type="checkbox" required></td><td><input class="input form-control check_special_char" type="text" maxlength="15" value="' + row.cells[1].innerHTML + '"  name="transaction type" style="text-transform:uppercase;"></td><td><select class="input form-control" disabled>' + document_type_dropdown + '</select></td><td><select type="text" class="input form-control">' + sequence_dropdown + '</select></td><td><input type="text" class= "form-control check_special_char" maxlength="100" value="' + row.cells[4].innerHTML + '"  name="transaction description"  required></td><td><input type="checkbox"  name="active_inactive" required></td><td hidden><input type="text" class= "form-control" value="' + guid + '"></td><td hidden><input type="checkbox" required></td></tr>';
                         }
                     }
                 }
@@ -323,6 +325,7 @@
                     success: function(Response) {
                         rendered_transaction_types_data = Response[0];
                         display_basic_db_data();
+                        dropdown_value();
                         $('#myModal').modal('hide');
                         success_response(Response); // Function call to display response data
                         table_sort_filter('id_popup_table');
@@ -355,7 +358,6 @@
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             success: function(Response) {
-                console.log(Response);
                 rendered_transaction_types_data = Response[0];
                 eliminate_used_sequence();
                 display_basic_db_data();
@@ -427,6 +429,13 @@
                     no_duplicate_value = 'N'
                     return [no_duplicate_value,error_message]
                 }
+                if((item.sequence == null)){
+                    $('#myModal').modal('show');
+                    error_message = ui_messeges("JMSG002")// Get message details
+                    no_duplicate_value = 'N'
+                    return [no_duplicate_value,error_message];
+                }
+
             });
         }
         return [no_duplicate_value,error_message]
