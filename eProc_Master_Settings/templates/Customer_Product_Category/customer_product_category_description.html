@@ -1070,12 +1070,11 @@ function onclick_copy_update_button(data){
                 var row = $(this);
                 var prod_cat_id_value = dropdown_values[i][0]
                 var language_id_value = dropdown_values[i][1]
-                    var lang_id;
+                var lang_id;
                 for (j = 0; j < render_language_data.length; j++) {
-                        if (language_id_value == render_language_data[j].description)
-                            lang_id = render_language_data[j].language_id;
+                    if (language_id_value == render_language_data[j].description)
+                        lang_id = render_language_data[j].language_id;
                 }
-
                 $(row.find("TD").eq(1).find("select option[value="+prod_cat_id_value+"]")).attr('selected','selected');
                 $(row.find("TD").eq(2).find("select option[value="+lang_id+"]")).attr('selected','selected');
                 i++;

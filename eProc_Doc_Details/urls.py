@@ -2,6 +2,7 @@
 
 from django.urls import path
 from . import views
+from .views.details import proceed_checkout
 
 app_name = 'eProc_Doc_Details'
 
@@ -20,5 +21,6 @@ urlpatterns = [
     path('delete_attachments/', views.delete_attachments, name='delete_attachments'),
     path('auto_complete_goods_receiver', views.auto_complete_goods_receiver, name='auto_complete_goods_receiver'),
     path('update_user_name', views.update_user_name, name='update_user_name'),
-    path('update_saved_item/', views.update_saved_item, name='update_saved_item')
+    path('update_saved_item/', views.update_saved_item, name='update_saved_item'),
+    path('proceed_checkout/<str:encrypt_sc_header_guid>', proceed_checkout, name='proceed_checkout'),
 ]

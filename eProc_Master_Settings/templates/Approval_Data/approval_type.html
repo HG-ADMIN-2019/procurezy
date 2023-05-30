@@ -446,15 +446,19 @@
         var common = [];
         var add_attr_unique_list = [];
         var no_duplicate_value = 'Y'
+
         $.each(validate_add_attributes, function(index, value) {
-            if ($.inArray(value, add_attr_unique_list) == -1) {
-                add_attr_unique_list.push(value);
-            } else {
-                if ($.inArray(value, common) == -1) {
-                    common.push(value);
+            if(value != null){
+                if ($.inArray(value, add_attr_unique_list) == -1) {
+                    add_attr_unique_list.push(value);
+                } else {
+                    if ($.inArray(value, common) == -1) {
+                        common.push(value.toUpperCase());
+                    }
                 }
             }
         });
+
         if (common.length != 0) {
             $('#App_Type_Modal').modal('show');
             display_duplicate_entry(common);  //Function to highlight the rows in popup
@@ -481,6 +485,25 @@
             $("#id_check_success_messages").append('<p>' + message  + '</p>')
         });
         $("#id_check_success_messages").prop("hidden",false)
+    }
+    //Function to highlight duplicate records
+    function display_duplicate_entry(common) {
+        var approvaltype_check = new Array;
+        $("#id_popup_table TBODY TR").each(function() {
+            var row = $(this);
+            approvaltype_dic = {}
+            approvaltype_dic.approval_type = row.find("TD").eq(1).find('select[type="text"]').val().toUpperCase();
+            var compare =  approvaltype_dic.approval_type
+            approvaltype_check.push(compare);
+            jQuery.grep(approvaltype_check, function(el) {
+                if (jQuery.inArray(el, common) != -1) {
+                    row_color_highlight(row);
+                }
+                else {
+                    row_color_no_highlight(row);
+                }
+            });
+        });
     }
 
 </script>

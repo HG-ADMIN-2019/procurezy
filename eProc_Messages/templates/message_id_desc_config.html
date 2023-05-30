@@ -288,33 +288,39 @@
                 var $chkbox_all = $('td input[type="checkbox"]', res);
                 //Reference the CheckBoxes in Table.
                 var edit_basic_data = "";
+                var guid = '';
                 var unique_input = '';
                 var dropdown_values = [];
                 //Loop through the CheckBoxes.
                 for (var i = 0; i < $chkbox_all.length; i++) {
                     if ($chkbox_all[i].checked) {
                         var row = $chkbox_all[i].parentNode.parentNode;
-                        var message_id_value = row.cells[1].innerHTML
-                        var language_value = row.cells[3].innerHTML
-                        dropdown_values.push([message_id_value, language_value])
                         if(GLOBAL_ACTION == "UPDATE"){
-                            unique_input = '<input id="messages_id" name="messages_id" class="form-control" value="' + row.cells[1].innerHTML + '"  type="text" disabled>' 
+                            guid = row.cells[4].innerHTML;
+                            unique_input = '<select id="messages_id" name="messages_id" class="form-control" value="' + row.cells[1].innerHTML + '" type="text" title="Select..." disabled>' +message_id_dropdown+'</select>' 
                             edit_basic_data += '<tr><td hidden><input type="checkbox" required></td>' +
                             '<td>'+ unique_input +'</td>' +
                             '<td><input class="input form-control check_special_char" type="text" id="messages_desc" name="messages_desc" value="' + row.cells[2].innerHTML + '"  required></td>'+
                             '<td><select id="language" name="language" class="form-control" value="' + row.cells[3].innerHTML + '" type="text" >'+ language_dropdown +'</select></td>' +
-                            '<td class="class_del_checkbox" hidden><input type="checkbox" required></td> <td hidden><input class="form-control" type="text" value="' + row.cells[5].innerHTML + '"></td></tr>';
+                            '<td hidden><input type="text" value="'+guid+'" hidden></td>'+
+                            '<td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
                             $("#header_select").prop("hidden", true);
                         }
                         else {
-                            unique_input = '<select id="messages_id" name="messages_id" class="form-control" value="' + row.cells[1].innerHTML + '" type="text" title="Select...">' +message_id_dropdown+'</select>'
+                            guid =row.cells[4].innerHTML;
+                            unique_input = '<select id="messages_id" name="messages_id" class="form-control" type="text"  value="' + row.cells[1].innerHTML + '" title="Select...">'+ message_id_dropdown +'</select>'
                             edit_basic_data += '<tr><td><input type="checkbox" required></td>' +
                             '<td>'+ unique_input +'</td>' +
                             '<td><input class="input form-control check_special_char" type="text" id="messages_desc" name="messages_desc" value="' + row.cells[2].innerHTML + '"  required></td>'+
                             '<td><select id="language" name="language" class="form-control" value="' + row.cells[3].innerHTML + '" title="Select..." type="text" >'+ language_dropdown +'</select></td>' +
-                            '<td class="class_del_checkbox" hidden><input type="checkbox" required></td> <td hidden><input class="form-control" type="text" value="' + row.cells[5].innerHTML + '"></td></tr>';
+                            '<td hidden><input type="text" value="'+guid+'" hidden></td>'+
+                            '<td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
                             $("#header_select").prop("hidden", false);
                         }
+                        var row = $chkbox_all[i].parentNode.parentNode;
+                        var message_id_value = row.cells[1].innerHTML
+                        var language_value = row.cells[3].innerHTML
+                        dropdown_values.push([message_id_value, language_value])
                     }
                 }
                 $('#id_popup_tbody').append(edit_basic_data);
@@ -324,9 +330,9 @@
                     var messageid_value = dropdown_values[i][0]
                     var lang_value = dropdown_values[i][1]
                     var lang_id;
-                    for (i = 0; i < render_language_data.length; i++) {
-                        if (lang_value == render_language_data[i].description)
-                            lang_id = render_language_data[i].language_id;
+                    for (j = 0; j < render_language_data.length; j++) {
+                        if (lang_value == render_language_data[j].description)
+                            lang_id = render_language_data[j].language_id;
                     }
                     $(row.find("TD").eq(1).find("select option[value="+messageid_value+"]")).attr('selected','selected');
                     $(row.find("TD").eq(3).find("select option[value="+lang_id+"]")).attr('selected','selected');

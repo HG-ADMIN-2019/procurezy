@@ -13,11 +13,13 @@ import json
 import shutil
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
+from django.http.response import HttpResponseRedirect
 
 from eProc_Account_Assignment.Utilities.account_assignment_generic import AccountAssignment, get_header_level_gl_acc, \
     get_acc_value_and_description_append, AccountAssignmentCategoryDetails
 from eProc_Add_Item.views import save_eform_data
 from eProc_Basic.Utilities.functions.dictionary_key_to_list import dictionary_key_to_list
+from eProc_Basic.Utilities.functions.django_query_set import bulk_create_entry_db
 from eProc_Basic.Utilities.functions.encryption_util import decrypt, encrypt
 from eProc_Basic.Utilities.functions.get_description import get_gl_acc_description
 from eProc_Basic.Utilities.functions.get_system_setting_attributes import *
@@ -27,13 +29,16 @@ from eProc_Basic.decorators import authorize_view
 from eProc_Doc_Details.Utilities.update_saved_item import UpdateSavedItem
 from eProc_Doc_Search_and_Display.Utilities.search_display_specific import get_sc_header_app, get_shopping_cart_approval
 from eProc_Emails.Utilities.email_notif_generic import appr_notify, send_po_attachment_email
+from eProc_Form_Builder.models.form_builder import EformFieldData
 from eProc_Purchase_Order.Utilities.purchase_order_generic import CreatePurchaseOrder
 from eProc_Related_Documents.Utilities.related_documents_generic import get_item_level_related_documents
+from eProc_Shopping_Cart.models.add_to_cart import CartItemDetails
+from eProc_Shopping_Cart.models.shopping_cart import *
 from eProc_System_Settings.Utilities.system_settings_generic import sys_attributes
 from eProc_User_Settings.Utilities.user_settings_specific import append_attrlow_desc
 from django.http import HttpResponseForbidden, JsonResponse
 from django.shortcuts import render
-from eProc_Basic.Utilities.functions.type_casting import type_cast_array_float_to_str
+from eProc_Basic.Utilities.functions.type_casting import type_cast_array_float_to_str, get_date_value
 from eProc_Doc_Details.Utilities.details_generic import GetAttachments, update_approval_status, update_sc_data, \
     get_doc_details, update_eform_scitem, get_shopping_cart_details, get_sc_supplier_internal_approver_note, \
     get_sc_detail
@@ -48,7 +53,6 @@ from eProc_Shopping_Cart.Utilities.shopping_cart_generic import get_supplier_fir
 from eProc_Shopping_Cart.Utilities.shopping_cart_specific import get_manger_detail, get_prod_cat_dropdown, \
     get_users_first_name, update_supplier_uom_for_prod, update_supplier_uom
 from eProc_Shopping_Cart.context_processors import update_user_info
-from eProc_Shopping_Cart.models import ScHeader, ScApproval, ScItem, PurchasingUser, ScPotentialApproval
 from eProc_Calendar_Settings.Utilities.calender_settings_generic import calculate_delivery_date, \
     calculate_delivery_date_base_on_lead_time
 from eProc_Basic.Utilities.functions.get_db_query import *
@@ -321,10 +325,11 @@ def my_order_doc_details_new(req, flag, type, guid, mode, access_type):
         return HttpResponseForbidden()
     item_dictionary_list = []
     actual_price, discount_value, \
-    tax_value, total_value, shopping_cart_data['sc_item_details'] = validate_get_currency_converted_price_data(shopping_cart_data['sc_item_details'],
-                                                                                                               global_variables.GLOBAL_REQUESTER_CURRENCY,
-                                                                                                               None,
-                                                                                                               False)
+    tax_value, total_value, shopping_cart_data['sc_item_details'] = validate_get_currency_converted_price_data(
+        shopping_cart_data['sc_item_details'],
+        global_variables.GLOBAL_REQUESTER_CURRENCY,
+        None,
+        False)
     for sc_items in sc_item_details:
         item_details = {'prod_cat': sc_items['prod_cat_id'], 'value': sc_items['value'], 'guid': sc_items['guid']}
         item_detail_list.append(item_details)
@@ -442,6 +447,7 @@ def my_order_doc_details_new(req, flag, type, guid, mode, access_type):
                'is_approval_preview': is_approval_preview}
     return render(req, template, context)
 
+
 @login_required
 def my_order_document_detail(request, encrypt_sc_header_guid):
     """
@@ -451,7 +457,9 @@ def my_order_document_detail(request, encrypt_sc_header_guid):
     header_guid = decrypt(encrypt_sc_header_guid)
     shopping_cart_detail = get_sc_detail(header_guid)
     context = shopping_cart_detail
-    return render(request,'Doc_Details/my_order_document_detail.html', context)
+    context['encrypt_sc_header_guid'] = encrypt_sc_header_guid
+    return render(request, 'Doc_Details/my_order_document_detail.html', context)
+
 
 @login_required
 @authorize_view(CONST_MY_ORDER)
@@ -1251,3 +1259,93 @@ def update_saved_item(request):
             'price_details': price_details,
             'item_with_highest_value': item_with_highest_value,
         })
+
+
+def proceed_checkout(request,encrypt_sc_header_guid):
+    """
+
+    """
+    update_user_info(request)
+    sc_guid = decrypt(encrypt_sc_header_guid)
+    response = {}
+    django_query_instance.django_filter_delete_query(CartItemDetails,
+                                                     {'username': global_variables.GLOBAL_LOGIN_USERNAME,
+                                                      'client': global_variables.GLOBAL_CLIENT})
+    if django_query_instance.django_existence_check(ScHeader,
+                                                    {'guid': sc_guid,
+                                                                 'client': global_variables.GLOBAL_CLIENT,
+                                                                 'del_ind': False}):
+        sc_item_details = django_query_instance.django_filter_query(ScItem,
+                                                                    {'header_guid': sc_guid,
+                                                                     'client':global_variables.GLOBAL_CLIENT,
+                                                                     'del_ind':False},
+                                                                    None,
+                                                                    None)
+        cart_list = []
+        for items_details in sc_item_details:
+            guid = guid_generator()
+            defaults = {
+                'guid': guid,
+                'item_num': items_details['item_num'],
+                'description': items_details['description'],
+                'prod_cat_desc': items_details['prod_cat_desc'],
+                'prod_cat_id': items_details['prod_cat_id'],
+                'int_product_id': items_details['int_product_id'],
+                'quantity': items_details['quantity'],
+                'unit': items_details['unit'],
+                'price': items_details['price'],
+                'base_price': items_details['base_price'],
+                'additional_price': items_details['additional_price'],
+                'actual_price': items_details['actual_price'],
+                'discount_percentage': items_details['discount_percentage'],
+                'discount_value': items_details['discount_value'],
+                'sgst': items_details['sgst'],
+                'cgst': items_details['cgst'],
+                'vat': items_details['vat'],
+                'tax_value': items_details['tax_value'],
+                'gross_price': items_details['gross_price'],
+                'price_unit': items_details['price_unit'],
+                'currency': items_details['currency'],
+                'supplier_id': items_details['supplier_id'],
+                'pref_supplier': items_details['pref_supplier'],
+                'lead_time': items_details['lead_time'],
+                'value': items_details['value'],
+                'manu_part_num': items_details['manu_part_num'],
+                'manu_code_num': items_details['manu_code_num'],
+                'supp_product_id': items_details['supp_product_id'],
+                'call_off': items_details['call_off'],
+                'supplier_mobile_num': items_details['supplier_mobile_num'],
+                'supplier_fax_no': items_details['supplier_fax_no'],
+                'supplier_email': items_details['supplier_email'],
+                'quantity_min': items_details['quantity_min'],
+                'value_min': items_details['value_min'],
+                'tiered_flag': items_details['tiered_flag'],
+                'bundle_flag': items_details['bundle_flag'],
+                'tax_code': items_details['tax_code'],
+                'catalog_id': items_details['catalog_id'],
+                'ctr_num': items_details['ctr_num'],
+                'prod_type': items_details['prod_type'],
+                'item_del_date': items_details['item_del_date'],
+                'start_date': items_details['start_date'],
+                'end_date': items_details['end_date'],
+                'ir_gr_ind_limi': items_details['ir_gr_ind_limi'],
+                'gr_ind_limi': items_details['gr_ind_limi'],
+                'overall_limit': items_details['overall_limit'],
+                'expected_value': items_details['expected_value'],
+                'username': global_variables.GLOBAL_LOGIN_USERNAME,
+                'eform_id': items_details['eform_id'],
+                'client_id': global_variables.GLOBAL_CLIENT
+            }
+            cart_list.append(defaults)
+            if items_details['eform_id']:
+                django_query_instance.django_update_query(EformFieldData,
+                                                          {'eform_id': items_details[
+                                                              'eform_id'],
+                                                           'favourite_cart_guid': items_details[
+                                                               'favourite_cart_guid'],
+                                                           'client': global_variables.GLOBAL_CLIENT},
+                                                          {'cart_guid': guid}
+                                                          )
+        bulk_create_entry_db(CartItemDetails, cart_list)
+
+    return HttpResponseRedirect('/shop/create_shopping_cart/')
