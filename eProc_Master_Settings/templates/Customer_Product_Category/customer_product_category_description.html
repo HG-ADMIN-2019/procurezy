@@ -237,13 +237,13 @@
                         $('#id_data_upload').modal('show');
                     }
                     else {
-                        cusprodcatdesc_data_array = response.data;
+                        cusprodcatdesc_data_array = response.valid_data_list;
                         var edit_basic_data = '';
                         var del_ind = '';
                         var dropdown_values = [];
                         var inc_index=0;
                         $("#id_popup_tbody").empty();
-                        $.each(response.data, function (i, value) {
+                        $.each(response.valid_data_list, function (i, value) {
                             var prod_cat_id_value = value[1]
                             var language_id_value = value[2]
                             dropdown_values.push([prod_cat_id_value, language_id_value])
