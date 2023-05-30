@@ -112,8 +112,8 @@
                                     <div class="row h5 mt-2" >
                                         <div class="col">
                                             {% if inp_doc_type == 'DOC01' %}
-                                            <a href="{% url 'eProc_Doc_Details:my_order_doc_details' sc_completion_flag 'SC' encrypted_guid 'display' 'my_order' %}" class="link-blue" target="_blank">{{ sc_head.doc_number }}</a>
-<!--                                            <a href="{% url 'eProc_Doc_Details:my_order_document_detail' encrypted_guid %}" class="link-blue" target="_blank">{{ sc_head.doc_number }}</a>-->
+<!--                                            <a href="{% url 'eProc_Doc_Details:my_order_doc_details' sc_completion_flag 'SC' encrypted_guid 'display' 'my_order' %}" class="link-blue" target="_blank">{{ sc_head.doc_number }}</a>-->
+                                            <a href="{% url 'eProc_Doc_Details:my_order_document_detail' encrypted_guid %}" class="link-blue" target="_blank">{{ sc_head.doc_number }}</a>
                                             {% else %}
                                             <a href="{% url 'eProc_Purchase_Order:po_doc_details' encrypted_guid %}" class="link-blue" target="_blank">{{ sc_head.doc_number }}</a>
                                             {% endif %}

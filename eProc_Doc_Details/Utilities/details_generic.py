@@ -491,6 +491,7 @@ def get_sc_detail(header_guid):
     actual_price = []
     discount_value = []
     tax_value = []
+    highest_item_guid = ''
     if django_query_instance.django_existence_check(ScHeader,
                                                     {'guid': header_guid,
                                                      'client': global_variables.GLOBAL_CLIENT,
@@ -565,6 +566,7 @@ def get_sc_detail(header_guid):
                 'sc_header_details': sc_header_details}
 
         sc_header, sc_appr, sc_completion, requester_first_name = get_shopping_cart_approval(data)
+
     requester_full_name = django_query_instance.django_get_query(UserData,
                                                                  {'username': sc_header_detail['requester'],
                                                                   'client': global_variables.GLOBAL_CLIENT})
@@ -591,6 +593,7 @@ def get_sc_detail(header_guid):
                             'actual_price': format(actual_price, '.2f'),
                             'discount_value': format(discount_value, '.2f'),
                             'tax_value': format(tax_value, '.2f'),
+                            'highest_item_guid':highest_item_guid
                             }
     return shopping_cart_detail
 
