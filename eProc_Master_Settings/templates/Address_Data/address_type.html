@@ -297,7 +297,7 @@
                 });
                 DatePicker();
                 $("#id_del_ind_checkbox").prop("hidden", true);
-                table_sort_filter('id_popup_table');
+<!--                table_sort_filter('id_popup_table');-->
                 $('#Adrs_Type_Modal').modal('show');
                 table_sort_filter('id_popup_table');
                 CloseLoaderPopup();
@@ -334,7 +334,7 @@
                     // compare main table and pop up for duplicate values
                     [no_duplicate_entries, error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
                     if(no_duplicate_entries == 'N'){
-                    $('#Adrs_Type_Modal').modal('show');
+                        $('#Adrs_Type_Modal').modal('show');
                 }
                 }
                 if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y') && (dateValid == 'Y')) {
@@ -355,7 +355,7 @@
                             display_basic_db_data();
                             addtype_drp();
                             $('#Adrs_Type_Modal').modal('hide');
-                            success_response(Response);  // Display Response data
+                            success_response(Response);  // Function call to display response data
                             CloseLoaderPopup();
                         }
                     });
@@ -364,6 +364,7 @@
                 }
             }
         }
+        table_sort_filter('id_popup_table');
     }
 
 
