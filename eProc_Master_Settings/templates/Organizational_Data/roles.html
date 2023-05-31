@@ -76,7 +76,7 @@
                 <!-- Modal body -->
                 <div class="modal-body">
                     <div class="popup-vertical-scroll">
-                        <div id="id_del_add_button">
+                        <div id="id_del_add_button" class="mb-4">
                             <button class="btn btn-primary" title="Add New Row" type="button" onclick="add_popup_row()"><i class="fa fa-plus"></i> add new row </button>
                             <button class="btn btn-outline-danger" title="Delete" onclick="application_settings_delete_Row('id_popup_table')"><i class="fa fa-trash" aria-hidden="true" title="Delete"></i> delete</button>
                         </div>
@@ -256,24 +256,24 @@
                     common.push(value);
                 }
             }
-        });
-        if (common.length != 0) {
-            $('#Roles_Modal').modal('show');
-            display_duplicate_entry(common);  //Function to highlight the rows in popup
-            error_message = ui_messeges("JMSG001")// Get message details
-            no_duplicate_value = 'N'
-            return [no_duplicate_value,error_message]
-        }
-        else {
-            $.each(roles, function (i, item) {
-                if ((item.role == null) || (item.role_desc.length == 0)){
+        }); 
+        $.each(roles, function (i, item) {
+            if ((item.role == null) || (item.role_desc.length == 0)){
+                $('#Roles_Modal').modal('show');
+                error_message = ui_messeges("JMSG002")// Get message details
+                no_duplicate_value = 'N'
+                return [no_duplicate_value,error_message]
+            }
+            else {
+                if (common.length != 0) {
                     $('#Roles_Modal').modal('show');
-                    error_message = ui_messeges("JMSG002")// Get message details
+                    display_duplicate_entry(common);  //Function to highlight the rows in popup
+                    error_message = ui_messeges("JMSG001")// Get message details
                     no_duplicate_value = 'N'
                     return [no_duplicate_value,error_message]
                 }
-            });
-        }
+            }
+        });
         return [no_duplicate_value,error_message]
     }
 
@@ -291,6 +291,7 @@
                 $("#error_msg_id").css("display", "none")
                 $("#header_select").prop( "hidden", false );
                 GLOBAL_ACTION = button.value
+                $('#id_popup_table').DataTable().destroy();
                 $("#id_popup_tbody").empty();
                 $('#Roles_Modal').modal('show');
                 new_row_data(); // Function for add a new row data
