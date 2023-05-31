@@ -40,7 +40,6 @@ $(".remove_upload_data").click(() => {
     $("#id_error_msg_id").empty();
     $('#msg_desc_Modal').modal('hide');
     $("#id_error_msg_id").prop("hidden", true);
-    $("#id_error_msg_id").prop("hidden", true);
     $("#id_error_msg_length").prop("hidden", true);
     $("#id_check_error_messages").prop("hidden", true);
     $("#id_check_success_messages").prop("hidden", true);
@@ -113,6 +112,7 @@ function display_basic_db_data() {
 }
 
 function display_error_message(error_message){
+    $("#error_msg_id").css("display", "none")
     $('#error_message').text(error_message);
     document.getElementById("error_message").style.color = "Red";
     $("#error_msg_id").css("display", "block")
