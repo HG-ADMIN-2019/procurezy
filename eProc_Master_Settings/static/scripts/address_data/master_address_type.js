@@ -194,19 +194,37 @@ function check_date(addresstype_data) {
     var validDate = 'Y';
     var error_message = ''
     $.each(addresstype_data, function (i, item) {
-        if ((Date.parse(item.valid_to) < Date.parse(item.valid_from)) == true) {
-            error_message = 'From Date Is Greater Than To Date'; // set the error message
+var validFromParts = item.valid_from.split('-');
+        var validToParts = item.valid_to.split('-');
+        var validFrom = new Date(validFromParts[2], validFromParts[1] - 1, validFromParts[0]);
+        var validTo = new Date(validToParts[2], validToParts[1] - 1, validToParts[0]);
+        var formattedValidFrom = validFrom.toLocaleDateString('en-GB');
+        var formattedValidTo = validTo.toLocaleDateString('en-GB');
+
+        if (validFrom > validTo) {
+            $("#id_error_msg").prop("hidden", false);
+            var msg = "JMSG017";
+            var msg_type = message_config_details(msg);
+            $("#error_msg_id").prop("hidden", false);
+
+            if (msg_type.message_type == "ERROR") {
+                display_message("error_msg_id", msg_type.messages_id_desc);
+            } else if (msg_type.message_type == "WARNING") {
+                display_message("id_warning_msg_id", msg_type.messages_id_desc);
+            } else if (msg_type.message_type == "INFORMATION") {
+                display_message("id_info_msg_id", msg_type.messages_id_desc);
+            }
+
+            var display = msg_type.messages_id_desc;
+            $('#id_save_confirm_popup').modal('hide');
+//            onclick_copy_update_button(item.account_assign_value);
+            $('#Adrs_Type_Modal').modal('show');
             validDate = 'N';
-            return false; // exit the loop as soon as an invalid date range is found
         }
     });
-    if (validDate == 'N') {
-        display_error_message(error_message); // display the error message
-    } else {
-        $('#error_msg_id').css('display', 'none'); // hide the error message if no invalid date ranges were found
-    }
     return [validDate, error_message];
 }
+
 
 //*******************************************
 function check_date_error(check_dates) {

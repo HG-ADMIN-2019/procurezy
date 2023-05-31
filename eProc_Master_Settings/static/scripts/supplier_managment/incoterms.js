@@ -84,9 +84,11 @@ function onclick_add_button(button) {
     $("#error_msg_id").css("display", "none")
     $( "#header_select").prop( "hidden", false );
     GLOBAL_ACTION = button.value
+    $('#id_popup_table').DataTable().destroy();
     $("#id_popup_tbody").empty();
     $('#Incoterms_Modal').modal('show');
     new_row_data();   // Add a new row in popup
+    table_sort_filter('id_popup_table');
     $("#id_del_ind_checkbox").prop("hidden", true);
     document.getElementById("id_del_add_button").style.display = "block";
     $("#save_id").prop("hidden", false);

@@ -44,10 +44,10 @@ $(".remove_upload_data").click(() => {
 //**********************************************
 function display_error_message(error_message){
     $('#error_message').text(error_message);
-    document.getElementById("error_msg_id").style.color = "Red";
-    $("#error_msg_id").css("display", "block");
+    $('#error_message').css('color', 'red');
+    $('#error_msg_id').css('display', 'block');
     $('#id_save_confirm_popup').modal('hide');
-    $('#Paytrm_desc_Modal').modal('show');
+    $('#aav_Modal').modal('show');
 }
 
 // Function to hide and display save related popups
@@ -69,10 +69,10 @@ function read_popup_data() {
         payment_term.payment_term_key = row.find("TD").eq(2).find('select[type="text"]').val();
         payment_term.description = row.find("TD").eq(3).find('input[type="text"]').val();
         payment_term.day_limit = row.find("TD").eq(4).find('input[type="number"]').val();
-        payment_term.payment_term_guid = row.find("TD").eq(6).find('input[type="text"]').val();
-        payment_term.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
+        payment_term.payment_term_guid = row.find("TD").eq(5).find('input[type="text"]').val();
+        payment_term.del_ind = row.find("TD").eq(6).find('input[type="checkbox"]').is(':checked');
         if (payment_term == undefined) {
-            payment_term.payment_term_key = row.find("TD").eq(1).find('input[type="text"]').val();
+            payment_term.payment_term_key = row.find("TD").eq(2).find('input[type="text"]').val();
         }
         if (payment_term.payment_term_guid == undefined) {
             payment_term.payment_term_guid = '';
@@ -107,11 +107,11 @@ function get_main_table_data() {
         var main_attribute = {};
         main_attribute.language_id = row.find("TD").eq(1).html();
         main_attribute.payment_term_key = row.find("TD").eq(2).html();
-        var desc = get_language(render_language_data,main_attribute.language_id)
-        var paytrm_desc_maintable = desc+'-'+ main_attribute.payment_term_key
+//        var desc = get_language(render_language_data,main_attribute.language_id)
+        var paytrm_desc_maintable = main_attribute.language_id +'-'+ main_attribute.payment_term_key
         main_table_low_value.push(paytrm_desc_maintable);
     });
-//    table_sort_filter('display_basic_table');
+    table_sort_filter('display_basic_table');
 }
 
 // Function to get the selected row data

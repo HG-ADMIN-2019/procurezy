@@ -249,11 +249,11 @@
     function popup_save_data() {
 		$('#success_msg_id').empty()
         $('#id_popup_table').DataTable().destroy();
-        var Tabledata = { "Dbl_clck_tbl_id": 'Payterms_desc' };
+<!--        var Tabledata = { "Dbl_clck_tbl_id": 'Payterms_desc' };-->
         no_duplicate_entries = 'Y'
         no_duplicate_value = 'Y'
 	    var error_message = '';
-        var payment_term = {};
+<!--        var payment_term = {};-->
         get_main_table_data(); //Read data from main table
         // compare for duplicates in popup
         [no_duplicate_value,error_message] = compare_table_for_duplicate_entries(validate_add_attributes, payment_term_data)
@@ -379,46 +379,46 @@
                 //Reference the CheckBoxes in Table.
                 var edit_basic_data = "";
                  var lang_id;
+                 var unique_input = '';
                 var dropdown_values = [];
                 //Loop through the CheckBoxes.
                 for (var i = 0; i < $chkbox_all.length; i++) {
-                    if ($chkbox_all[i].checked) {
-                        var row = $chkbox_all[i].parentNode.parentNode;
-                        var lang_val = row.cells[1].innerHTML;
-                        if(GLOBAL_ACTION == "UPDATE") {
-                            lang_id = get_language(render_language_data,lang_val);
-                            unique_input = '<select id="payterm_key" name="payterm_key"  class="form-control"  type="text" disabled><option>'+row.cells[2].innerHTML+'</option> </select>';
-                            edit_basic_data += '<tr><td hidden><input type="checkbox" required></td>' +
-                                '<td><select id="language" name="language" class="form-control"   type="text" disabled><option value="'+lang_id+'">'+row.cells[1].innerHTML+'</option></select></td>' +
-                                '<td>'+ unique_input +'</td>' +
-                                '<td><input  type="text" maxlength="50" name="description" value="' + row.cells[3].innerHTML + '" class="form-control check_special_char"></td>' +
-                                '<td><input  type="number" maxlength="10"  name="day_limit" value="' + row.cells[4].innerHTML + '" class="form-control check_number"></td>' +
-                                '<td class="class_del_checkbox" hidden><input type="checkbox" required></td>' +
-                                '<td hidden><input  type="text" value="' + row.cells[6].innerHTML + '"  name="guid"></td></tr>';
-                                $("#header_select").prop("hidden", true);
-                        }
-                        else {                                                                                                          
-                            unique_input = '<select  class="form-control"  type="text">'+ language_dropdown +'</select>';
-                            edit_basic_data += '<tr><td><input type="checkbox" required></td>' +
-                                '<td>'+ unique_input +'</td>' +
-                                '<td><select class="form-control"  type="text">'+  payment_term_dropdown  +'</select></td>' +
-                                '<td><input  type="text" maxlength="50"  name="description" value="' + row.cells[3].innerHTML + '" class="form-control check_special_char"></td>' +
-                                '<td><input  type="number" maxlength="10"  name="day_limit" value="' + row.cells[4].innerHTML + '" class="form-control check_number"></td>' +
-                                '<td class="class_del_checkbox" hidden><input type="checkbox" required></td>' +
-                                '<td hidden><input  type="text" value="' + row.cells[6].innerHTML + '"  name="guid"></td></tr>';
-                            $("#header_select").prop("hidden", false);
-                        }
-                        var language_value = row.cells[1].innerHTML;
-                        var payment_term_value = row.cells[2].innerHTML;
-                        var lang_desc;
-                        var lang_code;
-                        for (i = 0; i < render_language_data.length; i++) {
-                            if (language_value == render_language_data[i].description)
-                                lang_code = render_language_data[i].language_id
-                        }
-                        dropdown_values.push([lang_code, payment_term_value])
+                if ($chkbox_all[i].checked) {
+                    var row = $chkbox_all[i].parentNode.parentNode;
+                    var lang_val = row.cells[1].innerHTML;
+                    if (GLOBAL_ACTION == "UPDATE") {
+                        lang_id = get_language(render_language_data, lang_val);
+                        unique_input = '<select id="payterm_key" name="payterm_key"  class="form-control"  type="text" disabled><option>' + row.cells[2].innerHTML + '</option> </select>';
+                        edit_basic_data += '<tr><td hidden><input type="checkbox" required></td>' +
+                            '<td><select id="language" name="language" class="form-control"   type="text" disabled><option value="' + lang_id + '">' + row.cells[1].innerHTML + '</option></select></td>' +
+                            '<td>' + unique_input + '</td>' +
+                            '<td><input  type="text" maxlength="50" name="description" value="' + row.cells[3].innerHTML + '" class="form-control check_special_char"></td>' +
+                            '<td><input  type="number" maxlength="10"  name="day_limit" value="' + row.cells[4].innerHTML + '" class="form-control check_number"></td>' +
+                            '<td class="class_del_checkbox" hidden><input type="checkbox" required></td>' +
+                            '<td hidden><input  type="text" value="' + row.cells[6].innerHTML + '"  name="guid"></td></tr>';
+                        $("#header_select").prop("hidden", true);
+                    } else {
+                        unique_input = '<select  class="form-control"  type="text">' + language_dropdown + '</select>';
+                        edit_basic_data += '<tr><td><input type="checkbox" required></td>' +
+                            '<td>' + unique_input + '</td>' +
+                            '<td><select class="form-control"  type="text">' + payment_term_dropdown + '</select></td>' +
+                            '<td><input  type="text" maxlength="50"  name="description" value="' + row.cells[3].innerHTML + '" class="form-control check_special_char"></td>' +
+                            '<td><input  type="number" maxlength="10"  name="day_limit" value="' + row.cells[4].innerHTML + '" class="form-control check_number"></td>' +
+                            '<td class="class_del_checkbox" hidden><input type="checkbox" required></td>' +
+                            '<td hidden><input  type="text" value="' + row.cells[6].innerHTML + '"  name="guid"></td></tr>';
+                        $("#header_select").prop("hidden", false);
                     }
+                    var language_value = row.cells[1].innerHTML;
+                    var payment_term_value = row.cells[2].innerHTML;
+                    var lang_desc;
+                    var lang_code;
+                    for (var j = 0; j < render_language_data.length; j++) {
+                        if (language_value == render_language_data[j].description)
+                            lang_code = render_language_data[j].language_id;
+                    }
+                    dropdown_values.push([lang_code, payment_term_value]);
                 }
+            }
                 $('#id_popup_tbody').append(edit_basic_data);
                 var j=0;
                 $("#id_popup_table TBODY TR").each(function() {
