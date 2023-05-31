@@ -234,6 +234,7 @@
                 display_error_message(error_message)
             }
         }
+        table_sort_filter('id_popup_table');
     }
 
     //delete the selected row in db................
@@ -270,26 +271,7 @@
         var add_attr_duplicates_list = [];
         var add_attr_unique_list = [];
         var no_duplicate_value = 'Y'
-        $.each(validate_add_attributes, function (index, value) {
-            if ($.inArray(value, add_attr_unique_list) == -1) {
-                add_attr_unique_list.push(value);
-            }
-            else {
-                if ($.inArray(value, add_attr_duplicates_list) == -1) {
-                    add_attr_duplicates_list.push(value);
-                }
-            }
-        });
-        if (add_attr_duplicates_list.length != 0) {
-            $('#emailsModal').modal('show');
-            display_duplicate_entry(add_attr_duplicates_list);  //Function to highlight the rows in popup
-            error_message = ui_messeges("JMSG001")// Get message details
-            no_duplicate_value = 'N'
-            return [no_duplicate_value,error_message]
-
-        }                      
-        else {
-            $.each(email_setting_data, function (i, item) {
+        $.each(email_setting_data, function (i, item) {
                 if(item.email_type==null) {
                     $('#emailsModal').modal('show');
                     error_message = ui_messeges("JMSG005")// Get message details
@@ -302,7 +284,25 @@
                     no_duplicate_value = 'N'
                     return [no_duplicate_value,error_message]
                 }
+        });
+        if(no_duplicate_value == 'Y'){
+            $.each(validate_add_attributes, function (index, value) {
+                if ($.inArray(value, add_attr_unique_list) == -1) {
+                    add_attr_unique_list.push(value);
+                }
+                else {
+                    if ($.inArray(value, add_attr_duplicates_list) == -1) {
+                        add_attr_duplicates_list.push(value);
+                    }
+                }
             });
+            if (add_attr_duplicates_list.length != 0) {
+                $('#emailsModal').modal('show');
+                display_duplicate_entry(add_attr_duplicates_list);  //Function to highlight the rows in popup
+                error_message = ui_messeges("JMSG001")// Get message details
+                no_duplicate_value = 'N'
+                return [no_duplicate_value,error_message]
+            }
         }
         return [no_duplicate_value,error_message]
     }
