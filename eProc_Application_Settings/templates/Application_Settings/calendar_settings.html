@@ -333,7 +333,7 @@
                     success: function (Response) {
                         rendered_calendar_data = Response[0];
                         display_basic_db_data();
-                        $('#Calendar_Modal').modal('hide');
+                        $("#Calendar_Modal").modal("hide");
                         success_response(Response);
                         DatePicker();
                         MultipleSelect();
@@ -362,7 +362,7 @@
         '<td><select id="country" class="input form-control" type="text" name="country">' + country_dropdwn + '</select></td>'+
         '<td> <input class="form-control check_special_char" type="text" name="description"> </td>'+
         '<td> <input class="form-control yearPicker" type="text" maxlength="4"  name="year" style="width:150px"> </td>'+
-        '<td> <select type="text" class="input form-control multiple_select" type="text" name="working_days" title="Select.." multiple style="max-height: 30px;overflow-y: auto;z-index:2;position: fixed; " data-selected-text-format="count" data-actions-box="true">'+
+        '<td> <select type="text" class="input form-control multiple_select" type="text" name="working_days" title="Select.." multiple style="position:relative; " data-selected-text-format="count" data-actions-box="true">'+
         '<option value="1">Sunday</option><option value="2">Monday</option><option value="3">Tuesday</option><option value="4">Wednesday</option><option value="5">Thursday</option><option value="6">Friday</option><option value="7">Saturday</option></select>'+
         '</td>'+
         '<td class="class_del_checkbox" hidden> <input type="checkbox"> </td>'+
