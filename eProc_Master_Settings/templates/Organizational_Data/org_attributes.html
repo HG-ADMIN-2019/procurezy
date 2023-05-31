@@ -315,6 +315,7 @@
             $("#error_msg_id").css("display", "none")
             $( "#header_select").prop( "hidden", false );
             $('#org_attr_Modal').modal('show');
+            $('#id_popup_table').DataTable().destroy();
             $("#id_popup_tbody").empty();
             new_row_data();   // Add a new row in popup
             $("#id_del_ind_checkbox").prop("hidden", true);
@@ -477,23 +478,23 @@
                 }
             }
         });
-        if (common.length != 0) {
+        $.each(org_attr, function (i, item) {
             $('#org_attr_Modal').modal('show');
-            display_duplicate_entry(common);  //Function to highlight the rows in popup
-            error_message = ui_messeges("JMSG001")// Get message details
-            no_duplicate_value = 'N'
-            return [no_duplicate_value,error_message]
+            if((item.attribute_id == null) || (item.attribute_name.length == 0) || (item.maximum_length.length == 0)){
+                error_message = ui_messeges("JMSG002")// Get message details
+                no_duplicate_value = 'N'
+                return [no_duplicate_value,error_message] 
             }
-        else{
-            $.each(org_attr, function (i, item) {
-                $('#org_attr_Modal').modal('show');
-                if((item.attribute_id == null) || (item.attribute_name.length == 0) || (item.maximum_length.length == 0)){
-                    error_message = ui_messeges("JMSG002")// Get message details
+            else{
+                if (common.length != 0) {
+                    $('#org_attr_Modal').modal('show');
+                    display_duplicate_entry(common);  //Function to highlight the rows in popup
+                    error_message = ui_messeges("JMSG001")// Get message details
                     no_duplicate_value = 'N'
-                    return [no_duplicate_value,error_message] 
+                    return [no_duplicate_value,error_message]
                 }
-            });
-        }
+            }
+        });
         return [no_duplicate_value,error_message]
     }
 

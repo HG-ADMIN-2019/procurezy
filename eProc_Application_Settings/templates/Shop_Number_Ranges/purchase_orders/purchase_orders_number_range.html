@@ -84,7 +84,7 @@
                 <!-- Modal body -->
                 <div class="modal-body">
                     <div class="popup-vertical-scroll">
-                        <div id="id_del_add_button">
+                        <div id="id_del_add_button" class="mb-4">
                             <button class="btn btn-primary" type="button" onclick="add_popup_row()"><i class="fa fa-plus"></i> add new row</button>
                             <button class="btn btn-outline-danger" onclick="delete_popup_row('id_popup_table')"><i class="fa fa-trash"></i> delete</button>
                         </div>
@@ -246,48 +246,45 @@
                 }
             }
         });
-        if (common.length != 0) {
-            display_duplicate_entry(common);  //Function to highlight the rows in popup
-            error_message = ui_messeges("JMSG001")// Get message details
-            no_duplicate_value = 'N'
-            return [no_duplicate_value,error_message]
-        }
-        else{
-            $.each(number_range, function (i, item) {
-                if (item.sequence.length == 0 || isNaN(item.starting) || isNaN(item.ending) || isNaN(item.current)) {
-                    error_message = ui_messeges("JMSG002")// Get message details
-                    no_duplicate_value = 'N'
-                    return [no_duplicate_value,error_message]
-                } else if (item.starting >= item.ending) {
-                    error_message = ui_messeges("JMSG035")// Get message details
-                    no_duplicate_value = 'N'
-                    return [no_duplicate_value,error_message]
-                } else if (item.current <= item.starting) {
-                    error_message = ui_messeges("JMSG036")// Get message details
-                    no_duplicate_value = 'N'
-                    return [no_duplicate_value,error_message]
-                } else if (item.current >= item.ending) {
-                    error_message = ui_messeges("JMSG037")// Get message details
+        $.each(number_range, function (i, item) {
+            if (item.sequence.length == 0 || isNaN(item.starting) || isNaN(item.ending) || isNaN(item.current)) {
+                error_message = ui_messeges("JMSG002")// Get message details
+                no_duplicate_value = 'N'
+                return [no_duplicate_value,error_message]
+            } else if (item.starting >= item.ending) {
+                error_message = ui_messeges("JMSG035")// Get message details
+                no_duplicate_value = 'N'
+                return [no_duplicate_value,error_message]
+            } else if (item.current <= item.starting) {
+                error_message = ui_messeges("JMSG036")// Get message details
+                no_duplicate_value = 'N'
+                return [no_duplicate_value,error_message]
+            } else if (item.current >= item.ending) {
+                error_message = ui_messeges("JMSG037")// Get message details
+                no_duplicate_value = 'N'
+                return [no_duplicate_value,error_message]
+            } else if (common.length != 0) {
+                display_duplicate_entry(common);  //Function to highlight the rows in popup
+                error_message = ui_messeges("JMSG001")// Get message details
+                no_duplicate_value = 'N'
+                return [no_duplicate_value,error_message]
+            }
+            var range_check = list_out_of_range(number_range)
+            if (range_check){
+                error_message = ui_messeges("JMSG016")// Get message details
+                no_duplicate_value = 'N'
+                return [no_duplicate_value,error_message]
+            }
+            else{
+                check_number_range = number_range
+                validation_error = range_check_function(number_range,check_number_range)
+                if(!validation_error){
+                    error_message = ui_messeges("JMSG109")// Get message details
                     no_duplicate_value = 'N'
                     return [no_duplicate_value,error_message]
                 }
-                var range_check = list_out_of_range(number_range)
-                if (range_check){
-                    error_message = ui_messeges("JMSG016")// Get message details
-                    no_duplicate_value = 'N'
-                    return [no_duplicate_value,error_message]
-                }
-                else{
-                    check_number_range = number_range
-                    validation_error = range_check_function(number_range,check_number_range)
-                    if(!validation_error){
-                        error_message = ui_messeges("JMSG109")// Get message details
-                        no_duplicate_value = 'N'
-                        return [no_duplicate_value,error_message]
-                    }
-                }
-            });
-        }
+            }
+        });
         return [no_duplicate_value,error_message]
     }
 
