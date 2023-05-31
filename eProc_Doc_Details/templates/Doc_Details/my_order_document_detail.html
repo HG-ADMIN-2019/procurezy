@@ -8,21 +8,6 @@
 {% block maincontent %}
 <!--Display header based on document type-->
 
-{% if hdr_det.status == 'SAVED' %}
-<div class="sc-status-header">
-    <div class="sc-status-page-title">
-        <h5 id="shopping_cart_mode">Display Shopping Cart</h5>
-        <p class="hg_subtext_color" id="p_tag_head">Please check your shopping cart details before you send it for approval.</p>
-    </div>
-
-    <div class="sc-status-img-container">
-        <img src="{% static 'images/Status-bar2.png'%}" class="sc-status-img" id="status_bar">
-
-    </div>
-
-</div>
-{% endif %}
-
 <div class="container-fluid">
 
     <div id="button" class="mo-doc-button-container">
@@ -31,14 +16,21 @@
             <div class="mo-doc-button-group__saved">
                 <button type="button" class="btn btn-outline-primary" onclick="window.close()"><i class="fas fa-times"></i> Close</button>
 
-                {% if hdr_det.status == 'SAVED'%}
-                <button type="button" id="id_proceed_to_checkout" class="btn btn-primary">
-                    <i class="fas fa-edit"></i>
-                    Proceed to checkout
+                <button class="btn btn-primary" data-toggle="modal" data-target="#proceed_to_checkout"><i
+                        class="fa fa-trash" aria-hidden="true"></i> proceed to checkout
                 </button>
-                {% endif %}
             </div>
+            {% if sc_appr and sc_completion %}
+            <button id="id_order_sc" class="btn btn-primary editable_mode"><i class="fas fa-sign-in-alt" aria-hidden="true"></i> send to purchasing team</button>
+            {% endif %}
 
+            {% if sc_appr.0.app_id != 'Auto' and not sc_completion %}
+            <button id="id_order_sc" class="btn btn-primary editable_mode"><i class="fas fa-sign-in-alt" aria-hidden="true"></i> submit for approval</button>
+            {% endif %}
+
+            {% if sc_appr.0.app_id == 'Auto' and not sc_completion %}
+            <button id="id_order_sc" class="btn btn-primary editable_mode"><i class="fas fa-sign-in-alt" aria-hidden="true"></i> place order</button>
+            {% endif %}
             {% if is_approval_preview %}
             {% if eligible_approver_flag %}
 
@@ -177,6 +169,31 @@
 </div>
 <!-- Start of POP-UP Section -->
 
+<!-- Pop-Up to delete all the items in shopping cart -->
+<div class="modal fade" id="proceed_to_checkout">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">Please Confirm</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <!-- Modal body -->
+            <div class="modal-body">
+                This action will empty the shopping cart. Would you like to proceed with it?
+            </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-primary" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
+
+                <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="window.location.href='{% url 'eProc_Doc_Details:proceed_checkout' encrypt_sc_header_guid %}'"><i class="fas fa-trash-alt"></i> proceed to checkout</button>
+            </div>
+        </div>
+    </div>
+</div>
 <!-- Start of Change Account assignment category pop up-->
 {% include 'Account Assignment/change_account_assignment_modal.html' %}
 <!-- End of Change Account assignment category pop up-->
@@ -194,6 +211,26 @@
 <!--  start of manager detail pop up-->
 {% include 'Workflow/manager_detail_modal.html' %}
 <script>
+
+var rendered_acc_guid = []
+{% for sc_acc in acc_det %}
+    rendered_acc_guid.push('{{sc_acc.guid|safe}}')
+{% endfor %}
+
+// store rendered highest item guid in global variable
+var GLOBAL_HIGHEST_ITEM_GUID = '{{highest_item_guid|safe}}';
+
+// add class to
+$("#ScIem-value-" + GLOBAL_HIGHEST_ITEM_GUID).addClass('hg_dummy_highest_item');
+
+// Assign Highest item value's row in table
+var GLOBAL_HIGHEST_VALUE_ITEM_ROW = rendered_item_guid.indexOf(GLOBAL_HIGHEST_ITEM_GUID) + 1;
+var highest_item_acc_asgn_cat = (document.getElementById('ScAccounting-acc_cat-' + rendered_acc_guid[GLOBAL_HIGHEST_VALUE_ITEM_ROW - 1]).innerHTML).split(' - ')[0].trim()
+var highest_item_change_acc_value = (document.getElementById('ScAccounting-acc_val-' + rendered_acc_guid[GLOBAL_HIGHEST_VALUE_ITEM_ROW - 1]).innerHTML).split(' - ')[0].trim()
+// ###################################### End of setting highest account assignment category and value ############################################################
+
+
+
     var item_number_attached = '';
 // Function to get attachment data from session and display based on item
 function get_attachment_IDB(item_number) {
@@ -241,7 +278,130 @@ function get_attachment_IDB(item_number) {
         }
     };
 }
+// Function to trigger check SC on click of button
+$("#id_order_sc").on("click", function () {
+    check_shopping_cart('order', 'sc_data', highest_item_acc_asgn_cat, highest_item_change_acc_value);
 
+});
+
+// on click of check button
+    function check_shopping_cart(type, sc_data, acc_default, acc_default_val) {
+        OpenLoaderPopup();
+        $('#sc_error_msg').hide()
+        $('#sc_success_messages').hide();
+        $('#sc_error_msg').html('');
+        var error_messages = '';
+        var check_sc_data = '';
+        if (type != 'approval_workflow') {
+            check_sc_data = get_data_for_check()
+            header_level_data = get_sc_header_data()
+        }
+        var total_val = $('#ScHeader-total_value-' + GLOBAL_HEADER_GUID).text();
+        data = {
+            'acc_default': highest_item_acc_asgn_cat,
+            'acc_default_val': highest_item_change_acc_value,
+            'total_val': total_val,
+            'check_sc_data': check_sc_data,
+            'type': type,
+            'requester': $('#shopping_cart_requester').val(),
+            'sc_header_guid': GLOBAL_HEADER_GUID,
+            'header_level_data':header_level_data
+        }
+
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'eProc_Shopping_Cart:check_shopping_cart' %}",
+            data: JSON.stringify(data),
+            success: function (response) {
+                manager_detail = response.manager_detail.length
+                GLOBAL_MANAGER_DETAIL = response.approver_id;
+
+                sc_errors = response.sc_error
+                error_messages += check_ui_errors_warnings(error_messages);
+                if (sc_errors.length == 0 && manager_detail != 0 && internal_supplier_error_itemNumber.length == 0) {
+                    $('#sc_error_msg').html('');
+
+                                var msg = "JMSG042";
+                                var msg_type ;
+                              msg_type = message_config_details(msg);
+                              $("#error_msg_id").prop("hidden", false)
+
+                              if(msg_type.message_type == "ERROR"){
+                                    display_message("error_msg_id", msg_type.messages_id_desc)
+                              }
+                              else if(msg_type.message_type == "WARNING"){
+                                 display_message("id_warning_msg_id", msg_type.messages_id_desc)
+                              }
+                              else if(msg_type.message_type == "INFORMATION"){
+                                 display_message("id_info_msg_id", msg_type.messages_id_desc)
+                              }
+                              var display = msg_type.messages_id_desc;
+                              $('#sc_success_messages').html(display);
+
+                    $('#sc_success_messages').show();
+                    if (type == 'order' && manager_detail != 0) {
+                        $('#sc_error_msg').hide()
+                        save_my_order_doc_detail('order')
+                    }
+                } else {
+                    $('#sc_success_messages').hide();
+                    if (type == 'order') {
+
+                            var msg = "JMSG043";
+                            var msg_type ;
+                          msg_type = message_config_details(msg);
+                          $("#error_msg_id").prop("hidden", false)
+
+                          if(msg_type.message_type == "ERROR"){
+                                display_message("error_msg_id", msg_type.messages_id_desc)
+                          }
+                          else if(msg_type.message_type == "WARNING"){
+                             display_message("id_warning_msg_id", msg_type.messages_id_desc)
+                          }
+                          else if(msg_type.message_type == "INFORMATION"){
+                             display_message("id_info_msg_id", msg_type.messages_id_desc)
+                          }
+                          var display = msg_type.messages_id_desc;
+                          error_messages += display;
+
+                    }
+                    for (i = 0; i < sc_errors.length; i++) {
+                        dict_obj = sc_errors[i]
+                        for (var key in dict_obj) {
+                            error_messages += 'Error at item ' + key + ': ' + dict_obj[key] + '<br>'
+                        }
+                    }
+
+                    $('#sc_error_msg').html(error_messages);
+                    $('#sc_error_msg').show();
+                }
+                if (type == 'save') {
+                    save_shopping_cart_ajax(sc_data)
+                }
+                GLOBAL_MANAGER_DETAIL = response.approver_id;
+                $('#div_manager_detail').empty();
+                var manager_icon = '';
+                $('#id_dynamic').empty();
+                if (response.manager_detail) {
+                    $.each(response.manager_detail, function (i, item) {
+                        double_angular = '<div class="workflow-overview__next-icon-container"><i class="fas fa-angle-double-right fa-3x"></i></div>';
+                        manager_icon += '' + double_angular + '<div class="workflow-overview__user-icon-container"><div class="workflow-user-bg workflow-inactive"><i class="fas fa-user-tie fa-3x" aria-hidden="true"> </i></div><button type="button" class="button-workflow-user">' + item.first_name + '</button></div>';
+                    });
+                }
+                if (response.msg_info) {
+                    // error_msg = '<br><br><span style="color:red;">' + response.msg_info + '</span>'
+                    $('#sc_error_msg').append(response.msg_info)
+                    $('#sc_error_msg').show()
+                }
+                $('#div_manager_detail').append(manager_icon);
+                if(type == 'check'){
+                    // $('#hg_loader').modal('hide');
+                }
+                CloseLoaderPopup();
+            }
+        });
+
+    }
 
 </script>
 {% endblock %}

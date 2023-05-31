@@ -717,6 +717,7 @@ def get_manger_detail(client, login_username, acc_default, total_value, default_
                                                 msgid = 'MSG173'
                                                 error_msg = get_message_desc(msgid)[1]
                                                 msg_info = error_msg
+                                                manger_list = []
                                                 return manger_list, msg_info
                                         if len(app_id) > 1:
                                             app_id_value = CONST_MULTIPLE

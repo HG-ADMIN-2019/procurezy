@@ -179,7 +179,8 @@ function read_popup_data(){
         if (email == undefined){
             email.email_type = row.find("TD").eq(1).find('select[type="text"]').val();
         }
-        validate_add_attributes.push(email.email_type);
+        var compare = email.email_type+'-'+email.language_id
+        validate_add_attributes.push(compare);
         email_setting_data.push(email);
     });
     return email_setting_data;

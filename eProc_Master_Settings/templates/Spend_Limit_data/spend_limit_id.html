@@ -678,7 +678,7 @@
             main_attribute.company_id = row.find("TD").eq(1).html();  
             main_attribute.spender_username = row.find("TD").eq(2).html();
             main_attribute.spend_code_id = row.find("TD").eq(3).html();
-            compare_maintable = main_attribute.company_id + '-' + main_attribute.spender_username;
+            compare_maintable = main_attribute.company_id + '-' + main_attribute.spender_username + '-' + main_attribute.spend_code_id;
             main_table_low_value.push(compare_maintable);
         });
         table_sort_filter('display_basic_table');
@@ -709,7 +709,7 @@
         }
         else {
             $.each(spend_limit, function (i, item) {
-                if ((spend_limit.company_id == null) || (spend_limit.spend_code_id == null)|| (spend_limit.spender_username.length == 0)) {
+                if ((item.company_id == null) || (item.spend_code_id == null) || (!item.spender_username || item.spender_username.trim().length === 0)) {
                     $('#Spend_id_Modal').modal('show');
                     error_message = ui_messeges("JMSG002") // Get message details
                     no_duplicate_value = 'N'
@@ -935,7 +935,7 @@
             spender_username = row.find("TD").eq(2).find("select option:selected").val();
             spend_code_id = row.find("TD").eq(3).find('input[type="text"]').val().toUpperCase();
             spendlimid_guid = row.find("TD").eq(4).find('input[type="text"]').val().toUpperCase()
-            spend_limit_compare = company_id +'-'+ spend_code_id
+            spend_limit_compare = company_id +'-'+ spender_username +'-'+ spend_code_id
             if (spend_limit_code_check.includes(spend_limit_compare)) {
                 $(row).remove();
             }
@@ -965,7 +965,7 @@
                 if(spend_limit.spend_guid == undefined) {
                 spend_limit.spend_guid = '';
             }
-            var compare = spend_limit.company_id + '-' + spend_limit.spend_code_id
+            var compare = spend_limit.company_id + '-' + spend_limit.spender_username + '-' + spend_limit.spend_code_id
             validate_add_attributes.push(compare);
             spend_limit_id_data.push(spend_limit);
         });
@@ -1012,7 +1012,7 @@
             spend_id_dic = {}
             spend_id_dic.company_id = row.find("TD").eq(1).find("select option:selected").val();
             spend_id_dic.spend_code_id = row.find("TD").eq(3).find('select').val();
-            var compare = spend_id_dic.company_id + '-' + spend_id_dic.spend_code_id
+            var compare = spend_id_dic.company_id + '-' + spend_id_dic.spender_username + '-' + spend_id_dic.spend_code_id
             spend_id_check.push(compare);
             jQuery.grep(spend_id_check, function(el) {
                 if (jQuery.inArray(el, common) != -1) {

@@ -282,6 +282,7 @@
         });
         if (add_attr_duplicates_list.length != 0) {
             $('#emailsModal').modal('show');
+            display_duplicate_entry(add_attr_duplicates_list);  //Function to highlight the rows in popup
             error_message = ui_messeges("JMSG001")// Get message details
             no_duplicate_value = 'N'
             return [no_duplicate_value,error_message]
