@@ -392,7 +392,7 @@ def convert_UNSPSC_to_dictionary(arr):
 def convert_UNSPSCDESC_to_dictionary(arr):
     convertion_list = []
     for row in arr:
-        dictionary = {'prod_cat_id': row[3], 'language_id':row[2], 'category_desc':row[0], 'del_ind': row[1]}
+        dictionary = {'description': row[0], 'del_ind': row[1], 'language_id':row[2], 'prod_cat_id': row[3]}
         convertion_list.append(dictionary)
     return convertion_list
 

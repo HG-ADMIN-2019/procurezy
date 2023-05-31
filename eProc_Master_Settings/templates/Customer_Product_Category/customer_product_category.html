@@ -670,14 +670,14 @@
             $("#id_error_msg").html(" ");
         });
         if (GLOBAL_ACTION == "cusprodcat_upload") {
-		    basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select type="text" class="input form-control prodid" id="prodid-1"  name="prodid" onchange="GetSelectedTextValue(this)">'+prod_cat_id_dropdown+'</select></td><td hidden><input class="form-control description" type="text"  name="description"  id="description-1" disabled></td><td hidden><guid></td><td class="class_del_checkbox"><input type="checkbox" required></td></tr>';
+		    basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select type="text" class="input form-control prodid" id="prodid-'+inc_index+'"  name="prodid" onchange="GetSelectedTextValue(this)">'+prod_cat_id_dropdown+'</select></td><td hidden><input class="form-control description" type="text"  name="description"  id="description-'+inc_index+'" disabled></td><td hidden><guid></td><td class="class_del_checkbox"><input type="checkbox" required></td></tr>';
             $('#id_popup_tbody').append(basic_add_new_html);
             $("#desc_upload").prop("hidden", true);
             $(".class_del_checkbox").prop("hidden", false);
             $("#id_del_ind_checkbox").prop("hidden", false);
+            table_sort_filter('id_popup_table');
             var CustprodSelect = $("#prodid-" + inc_index);
             GetSelectedTextValue(CustprodSelect[0]);
-            table_sort_filter('id_popup_table');
         }
          else{
                basic_add_new_html =
@@ -851,8 +851,8 @@
                             edit_basic_data +=
                                     '<tr>'+
                                         '<td><input type="checkbox" required></td>'+
-                                        '<td><select type="text" class="input form-control prodid" id="prodid-'+inc_index+'"  name="prodid" onchange="GetSelectedTextValue(this)">value ="' + value.prod_cat_id + '"'+prod_cat_id_list+'</select></td>'+
-                                        '<td hidden><input class="form-control description" type="text"  name="description" id="description-'+inc_index+'" disabled>value ="' + value.category_desc + '"</td>'+
+                                        '<td><select type="text" class="input form-control prodid" id="prodid-1"  name="prodid" onchange="GetSelectedTextValue(this)">value ="' + value.prod_cat_id + '"'+prod_cat_id_list+'</select></td>'+
+                                        '<td hidden><input class="form-control description" type="text"  name="description"  id="description-1" disabled>value ="' + value.category_desc + '"</td>'+
                                         '<td hidden><guid></td><td>'+ del_ind +'</td>'+
                                     '</tr>';
                             inc_index += 1;
