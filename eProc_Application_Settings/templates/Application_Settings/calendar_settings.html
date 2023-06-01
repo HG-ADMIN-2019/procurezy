@@ -333,8 +333,9 @@
                     success: function (Response) {
                         rendered_calendar_data = Response[0];
                         display_basic_db_data();
-                        $("#Calendar_Modal").modal("hide");
-                        $("#Calendar_Modal").prop("hidden", true);
+                         setTimeout(function() {
+                                $("#Calendar_Modal").modal("hide");
+                         },500);
                         success_response(Response);
                         DatePicker();
                         MultipleSelect();
