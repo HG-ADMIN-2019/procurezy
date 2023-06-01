@@ -22,7 +22,12 @@ $(".remove_upload_data").click(() => {
 
 function display_error_message(error_message){
     $('#error_message').text(error_message);
-    document.getElementById("error_message").style.color = "Red";
+    // document.getElementById("error_message").style.color = "Red";
+    var errorElement = document.getElementById("error_message");
+    if (errorElement) {
+        errorElement.textContent = error_message;
+        errorElement.style.color = "Red";
+    }
     $("#error_msg_id").css("display", "block")
     $('#id_save_confirm_popup').modal('hide');
     $('#accasscat_Modal').modal('show');
@@ -115,18 +120,15 @@ function GetSelectedTextValue(acct_assignment_category) {
         // open popup here
         return;
     }
-
     var selectedText = acct_assignment_category.options[acct_assignment_category.selectedIndex].innerHTML;
     var selectedValue = acct_assignment_category.value;
     var selectedId = (acct_assignment_category.id).split('-')[1];
-
     $.each(rendered_aac_values, function(i, item){
         if(selectedValue == item.field_type_id){
             $('#description-'+selectedId).val(item.field_type_desc);
         }
     });
 }
-
 
 // Function to get the selected row data
 function get_selected_row_data(){
