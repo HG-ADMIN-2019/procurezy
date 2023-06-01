@@ -176,6 +176,7 @@ function get_selected_row_data(){
 
 //*******************************************
 function display_error_message(error_message){
+    $('#error_message').text(error_message);
     var errorElement = document.getElementById("error_message");
     if (errorElement) {
         errorElement.textContent = error_message;
