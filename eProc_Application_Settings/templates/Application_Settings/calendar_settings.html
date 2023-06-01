@@ -79,7 +79,7 @@
     </div>
     <!--modal popup for Add,copy,update and upload-->
     <div class="modal fade" id="Calendar_Modal" style="overflow:auto;">
-        <div class="modal-dialog modal-dialog-centered" style="max-width: 95%;">
+        <div class="modal-dialog modal-dialog-centered modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title"> Maintain Calendar</h5>
@@ -334,6 +334,7 @@
                         rendered_calendar_data = Response[0];
                         display_basic_db_data();
                         $("#Calendar_Modal").modal("hide");
+                        $("#Calendar_Modal").prop("hidden", true);
                         success_response(Response);
                         DatePicker();
                         MultipleSelect();

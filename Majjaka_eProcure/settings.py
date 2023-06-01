@@ -117,12 +117,10 @@ MIDDLEWARE = [
 
 ROOT_URLCONF = 'Majjaka_eProcure.urls'
 
-
 # SESSION_EXPIRE_SECONDS = 120
 # SESSION_EXPIRE_AFTER_LAST_ACTIVITY = True
 # SESSION_EXPIRE_AFTER_LAST_ACTIVITY_GRACE_PERIOD = 60 # group by minute
 # SESSION_TIMEOUT_REDIRECT =  '/login/'
-
 
 
 TEMPLATES = [
@@ -222,8 +220,8 @@ PHONE_NUM = '9845648568'
 
 STATIC_URL = '/static/'  # Path for static files
 ################################# Deployment ###########################
-STATIC_ROOT = 'staticfiles' # for deployment
-STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),) # for deployment
+STATIC_ROOT = 'staticfiles'  # for deployment
+STATICFILES_DIRS = (os.path.join(BASE_DIR, 'static'),)  # for deployment
 ################################# Deployment ###########################
 
 LOGIN_URL = '/'  # Login URL
