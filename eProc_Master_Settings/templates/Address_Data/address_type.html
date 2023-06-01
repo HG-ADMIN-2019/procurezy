@@ -297,7 +297,7 @@
                 });
                 DatePicker();
                 $("#id_del_ind_checkbox").prop("hidden", true);
-<!--                table_sort_filter('id_popup_table');-->
+                table_sort_filter('id_popup_table');
                 $('#Adrs_Type_Modal').modal('show');
                 table_sort_filter('id_popup_table');
                 CloseLoaderPopup();
@@ -335,10 +335,10 @@
                     [no_duplicate_entries, error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
                     if(no_duplicate_entries == 'N'){
                         $('#Adrs_Type_Modal').modal('show');
-                }
+                    }
                 }
                 if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y') && (dateValid == 'Y')) {
-                    var add_basic_data = '';
+<!--                    var add_basic_data = '';-->
                     var address_type_data_array = addresstype_data;
                     $('#id_save_confirm_popup').modal('hide');
                     data = {'data':addresstype_data,'table_name':'OrgAddressMap','action':GLOBAL_ACTION}
@@ -353,7 +353,7 @@
                             rendered_address_type_data = Response[0];
                             rendered_address_type_values = Response[2];
                             display_basic_db_data();
-                            addtype_drp();
+<!--                            addtype_drp();-->
                             $('#Adrs_Type_Modal').modal('hide');
                             success_response(Response);  // Function call to display response data
                             CloseLoaderPopup();
@@ -604,31 +604,31 @@
         var common = [];
         var add_attr_unique_list = [];
         var no_duplicate_value = 'Y'
-        $.each(validate_add_attributes, function (index, value) {
-            if ($.inArray(value, add_attr_unique_list) == -1) {
-                add_attr_unique_list.push(value);
-            }
-            else {
-                if ($.inArray(value, common) == -1) {
-                    common.push(value);
-                }
+        $.each(address_type, function (i, item) {
+            if  ((item.address_number == null) || (item.valid_from == '') || (item.valid_to == '')) {
+                error_message = ui_messeges("JMSG002")// Get message details
+                no_duplicate_value = 'N'
+                return [no_duplicate_value,error_message]
             }
         });
-        if (common.length != 0) {
-            $('#Adrs_Type_Modal').modal('show');
-            display_duplicate_entry(common);  //Function to highlight the rows in popup
-            error_message = ui_messeges("JMSG001")// Get message details
-            no_duplicate_value = 'N'
-            return [no_duplicate_value,error_message]
-        }
-        else {
-            $.each(address_type, function (i, item) {
-                if  ((item.address_number == null) || (item.valid_from == '') || (item.valid_to == '')) {
-                    error_message = ui_messeges("JMSG002")// Get message details
-                    no_duplicate_value = 'N'
-                    return [no_duplicate_value,error_message]
+        if(no_duplicate_value == 'Y'){
+            $.each(validate_add_attributes, function (index, value) {
+                if ($.inArray(value, add_attr_unique_list) == -1) {
+                    add_attr_unique_list.push(value);
+                }
+                else {
+                    if ($.inArray(value, common) == -1) {
+                        common.push(value);
+                    }
                 }
             });
+            if (common.length != 0) {
+                $('#Adrs_Type_Modal').modal('show');
+                display_duplicate_entry(common);  //Function to highlight the rows in popup
+                error_message = ui_messeges("JMSG001")// Get message details
+                no_duplicate_value = 'N'
+                return [no_duplicate_value,error_message]
+            }
         }
         return [no_duplicate_value,error_message]
     }

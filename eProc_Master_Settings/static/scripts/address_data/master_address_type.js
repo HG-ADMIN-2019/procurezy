@@ -76,12 +76,15 @@ function display_basic_db_data() {
     var edit_basic_data = '';
 
     $.each(rendered_address_type_data, function (i, item) {
+        var validFromDate = item.valid_from.split('T')[0].split('-').reverse().join('-');
+        var validToDate = item.valid_to.split('T')[0].split('-').reverse().join('-');
+
         edit_basic_data += '<tr><td class="class_select_checkbox"><input class="checkbox_check" onclick="valueChanged()" type="checkbox" required></td>' +
         '<td>'+ item.company_id +'</td>'+
         '<td>' + item.address_type + '</td>' +
         '<td>' + item.address_number + '</td>' +
-        '<td>'+ item.valid_from +'</td>'+
-        '<td>'+ item.valid_to +'</td>'+
+        '<td>'+ validFromDate +'</td>'+
+        '<td>'+ validToDate +'</td>'+
         '<td hidden> <input type="checkbox"></td>' +
         '<td hidden>' + item.address_guid + '</td></tr>';
     });
@@ -100,6 +103,7 @@ function display_basic_db_data() {
     $('#id_check_all').hide();
     table_sort_filter('display_basic_table');
 }
+
 
 
 

@@ -44,6 +44,7 @@ $(".remove_upload_data").click(() => {
 
 // on click add icon display the row in to add the new entries
 function add_popup_row() {
+    $("#error_msg_id").css("display", "none")
     basic_add_new_html = '';
     var display_db_data = '';
     $('#id_popup_table').DataTable().destroy();
@@ -115,6 +116,7 @@ $('#save_id').click(function () {
 function read_popup_data() {
     $('#id_popup_table').DataTable().destroy();
     validate_add_attributes = [];
+    var alv_data = new Array();
     var alv={};
     $("#id_popup_table TBODY TR").each(function () {
         var row = $(this);
@@ -157,7 +159,7 @@ function new_row_data() {
 
 // Function to get the selected row data
 function get_selected_row_data() {
-    $("#display_basic_table TBODY TR").each(function() {
+    $("#id_popup_table TBODY TR").each(function() {
         var row = $(this);
         var alv_arr_obj = {};
         alv_arr_obj.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');

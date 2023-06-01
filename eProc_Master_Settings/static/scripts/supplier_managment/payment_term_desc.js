@@ -69,10 +69,10 @@ function read_popup_data() {
         payment_term.payment_term_key = row.find("TD").eq(2).find('select[type="text"]').val();
         payment_term.description = row.find("TD").eq(3).find('input[type="text"]').val();
         payment_term.day_limit = row.find("TD").eq(4).find('input[type="number"]').val();
-        payment_term.payment_term_guid = row.find("TD").eq(5).find('input[type="text"]').val();
-        payment_term.del_ind = row.find("TD").eq(6).find('input[type="checkbox"]').is(':checked');
+        payment_term.payment_term_guid = row.find("TD").eq(6).find('input[type="text"]').val();
+        payment_term.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
         if (payment_term == undefined) {
-            payment_term.payment_term_key = row.find("TD").eq(2).find('input[type="text"]').val();
+            payment_term.payment_term_key = row.find("TD").eq(1).find('input[type="text"]').val();
         }
         if (payment_term.payment_term_guid == undefined) {
             payment_term.payment_term_guid = '';
@@ -95,7 +95,7 @@ function new_row_data() {
         '<td class="class_del_checkbox" hidden><input type="checkbox" required></td>'+
         '<td hidden><input  type="text"  name="guid"></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
-//    table_sort_filter('id_popup_table');
+    table_sort_filter('id_popup_table');
 }
 
 // Function to get main table data
