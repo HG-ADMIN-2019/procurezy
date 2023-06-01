@@ -469,15 +469,6 @@
         var common = [];
         var add_attr_unique_list = [];
         var no_duplicate_value = 'Y'
-        $.each(validate_add_attributes, function (index, value) {
-            if ($.inArray(value, add_attr_unique_list) == -1) {
-                add_attr_unique_list.push(value);
-            } else {
-                if ($.inArray(value, common) == -1) {
-                    common.push(value);
-                }
-            }
-        });
         $.each(org_attr, function (i, item) {
             $('#org_attr_Modal').modal('show');
             if((item.attribute_id == null) || (item.attribute_name.length == 0) || (item.maximum_length.length == 0)){
@@ -485,16 +476,25 @@
                 no_duplicate_value = 'N'
                 return [no_duplicate_value,error_message] 
             }
-            else{
-                if (common.length != 0) {
-                    $('#org_attr_Modal').modal('show');
-                    display_duplicate_entry(common);  //Function to highlight the rows in popup
-                    error_message = ui_messeges("JMSG001")// Get message details
-                    no_duplicate_value = 'N'
-                    return [no_duplicate_value,error_message]
-                }
-            }
         });
+        if (no_duplicate_value == 'Y') {
+            $.each(validate_add_attributes, function (index, value) {
+                if ($.inArray(value, add_attr_unique_list) == -1) {
+                    add_attr_unique_list.push(value);
+                } else {
+                    if ($.inArray(value, common) == -1) {
+                        common.push(value);
+                    }
+                }
+            });
+            if (common.length != 0) {
+                $('#org_attr_Modal').modal('show');
+                display_duplicate_entry(common);  //Function to highlight the rows in popup
+                error_message = ui_messeges("JMSG001")// Get message details
+                no_duplicate_value = 'N'
+                return [no_duplicate_value,error_message]
+            }
+        }
         return [no_duplicate_value,error_message]
     }
 

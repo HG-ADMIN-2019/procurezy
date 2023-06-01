@@ -22,12 +22,7 @@ $(".remove_upload_data").click(() => {
 
 function display_error_message(error_message){
     $('#error_message').text(error_message);
-    // document.getElementById("error_message").style.color = "Red";
-    var errorElement = document.getElementById("error_message");
-    if (errorElement) {
-        errorElement.textContent = error_message;
-        errorElement.style.color = "Red";
-    }
+    document.getElementById("error_message").style.color = "Red";
     $("#error_msg_id").css("display", "block")
     $('#id_save_confirm_popup').modal('hide');
     $('#accasscat_Modal').modal('show');
@@ -154,5 +149,5 @@ function get_main_table_data() {
         main_attribute.account_assign_cat = row.find("TD").eq(1).html();
         main_table_low_value.push(main_attribute.account_assign_cat);
     });
-    table_sort_filter_page('display_basic_table');
+    table_sort_filter('display_basic_table');
 }
