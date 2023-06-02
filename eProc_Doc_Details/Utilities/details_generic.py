@@ -33,7 +33,7 @@ from eProc_Purchase_Order.models.purchase_order import *
 from eProc_Registration.models.registration_model import UserData
 from eProc_Shopping_Cart.Utilities.shopping_cart_generic import update_eform_details_scitem, get_image_url, \
     get_currency_converted_price_data
-from eProc_Shopping_Cart.Utilities.shopping_cart_specific import get_login_user_spend_limit
+from eProc_Shopping_Cart.Utilities.shopping_cart_specific import get_login_user_spend_limit, update_supplier_desc
 
 from eProc_Shopping_Cart.models import *
 import datetime
@@ -336,9 +336,19 @@ def update_approval_status(scheader_guid):
     :param scheader_guid:
     :return:
     """
+    app_id = ''
     sc_approval = ScApproval.objects.filter(header_guid=scheader_guid).order_by('-step_num').first()
     received_time, proc_time = get_received_proc_time(sc_approval)
     proc_lvl_sts, app_sts = get_proc_appr_level_status(sc_approval)
+    if django_query_instance.django_existence_check(ScPotentialApproval,
+                                                    {'sc_header_guid': scheader_guid,
+                                                                   'client':global_variables.GLOBAL_CLIENT,
+                                                                   'del_ind':False}):
+        app_id = django_query_instance.django_filter_value_list_query(ScPotentialApproval,
+                                                                      {'sc_header_guid': scheader_guid,
+                                                                       'client':global_variables.GLOBAL_CLIENT,
+                                                                       'del_ind':False},
+                                                                      'app_id')[0]
     django_query_instance.django_update_query(ScApproval,
                                               {'header_guid': scheader_guid,
                                                'client': global_variables.GLOBAL_CLIENT,
@@ -347,6 +357,7 @@ def update_approval_status(scheader_guid):
                                                'proc_time': proc_time,
                                                'proc_lvl_sts': proc_lvl_sts,
                                                'app_sts': app_sts})
+    return app_id
 
     # sc_approval.received_time = received_time
     # sc_approval.proc_time = proc_time
@@ -491,6 +502,7 @@ def get_sc_detail(header_guid):
     actual_price = []
     discount_value = []
     tax_value = []
+    highest_item_guid = ''
     if django_query_instance.django_existence_check(ScHeader,
                                                     {'guid': header_guid,
                                                      'client': global_variables.GLOBAL_CLIENT,
@@ -511,6 +523,7 @@ def get_sc_detail(header_guid):
         highest_item_guid = get_highest_item_guid_detail(sc_item_details)
         for sc_item_detail in sc_item_details:
             sc_item_detail['unit_desc'] = get_unit_description(sc_item_detail['unit'])
+            update_supplier_desc(sc_item_detail)
         actual_price, discount_value, tax_value, total_item_value, sc_item_details = get_currency_converted_price_data(
             sc_item_details)
         sc_item_guid_list = dictionary_key_to_list(sc_item_details, 'guid')
@@ -565,6 +578,7 @@ def get_sc_detail(header_guid):
                 'sc_header_details': sc_header_details}
 
         sc_header, sc_appr, sc_completion, requester_first_name = get_shopping_cart_approval(data)
+
     requester_full_name = django_query_instance.django_get_query(UserData,
                                                                  {'username': sc_header_detail['requester'],
                                                                   'client': global_variables.GLOBAL_CLIENT})
@@ -591,6 +605,7 @@ def get_sc_detail(header_guid):
                             'actual_price': format(actual_price, '.2f'),
                             'discount_value': format(discount_value, '.2f'),
                             'tax_value': format(tax_value, '.2f'),
+                            'highest_item_guid':highest_item_guid
                             }
     return shopping_cart_detail
 

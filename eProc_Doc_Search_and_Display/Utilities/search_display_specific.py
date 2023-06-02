@@ -1,3 +1,4 @@
+from collections import Counter
 from datetime import date, timedelta
 
 from eProc_Attributes.models.org_attribute_models import OrgAttributesLevel
@@ -62,8 +63,10 @@ def get_shopping_cart_approval(data):
     guid_completion = []
     requester_first_name = ''
     sc_approval_guid = dictionary_key_to_list(data['sc_potential_approval_details'], 'sc_approval_guid_id')
+    sc_approval_guid_counter = Counter(sc_approval_guid)
     for sc_app in data['sc_approval_details']:
-        if sc_app['guid'] in sc_approval_guid:
+        sc_app_guid = sc_app['guid']
+        if sc_approval_guid_counter[sc_app_guid] > 1:
             sc_app['app_id'] = CONST_MULTIPLE
         else:
             approver_detail = dictionary_check_get_value_based_for_key(data['sc_potential_approval_details'],
