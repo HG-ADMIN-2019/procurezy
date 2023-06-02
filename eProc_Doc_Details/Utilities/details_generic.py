@@ -33,7 +33,7 @@ from eProc_Purchase_Order.models.purchase_order import *
 from eProc_Registration.models.registration_model import UserData
 from eProc_Shopping_Cart.Utilities.shopping_cart_generic import update_eform_details_scitem, get_image_url, \
     get_currency_converted_price_data
-from eProc_Shopping_Cart.Utilities.shopping_cart_specific import get_login_user_spend_limit
+from eProc_Shopping_Cart.Utilities.shopping_cart_specific import get_login_user_spend_limit, update_supplier_desc
 
 from eProc_Shopping_Cart.models import *
 import datetime
@@ -512,6 +512,7 @@ def get_sc_detail(header_guid):
         highest_item_guid = get_highest_item_guid_detail(sc_item_details)
         for sc_item_detail in sc_item_details:
             sc_item_detail['unit_desc'] = get_unit_description(sc_item_detail['unit'])
+            update_supplier_desc(sc_item_detail)
         actual_price, discount_value, tax_value, total_item_value, sc_item_details = get_currency_converted_price_data(
             sc_item_details)
         sc_item_guid_list = dictionary_key_to_list(sc_item_details, 'guid')

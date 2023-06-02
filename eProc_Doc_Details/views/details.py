@@ -1113,7 +1113,9 @@ def update_delivery_date(request):
                     updated_date[item_guid] = item_del_date
             count += 1
         total_item_value = django_query_instance.django_filter_value_list_query(ScItem,
-                                                                                {},
+                                                                                {'client': global_variables.GLOBAL_CLIENT,
+                                                                                 'del_ind':False,
+                                                                                 'header_guid':header_guid},
                                                                                 'value')
         total_value_sc = round(sum(total_item_value), 2)
         return JsonResponse({'updated_date': updated_date,
