@@ -56,7 +56,7 @@ function onclick_edit_button() {
 var table = $('#display_basic_table').DataTable();
  var rows_selected = [];
 //onclick of select all checkbox
-$('#display_basic_table tbody').on('click', 'input[type="checkbox"]', function(e){
+$('#display_basic_table tbody').on('click', 'input[class="checkbox_check"]', function(e){
      var table = $('#display_basic_table').DataTable();
       var $row = $(this).closest('tr');
       // Get row data
