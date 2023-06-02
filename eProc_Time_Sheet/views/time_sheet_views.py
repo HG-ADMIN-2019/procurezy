@@ -43,16 +43,16 @@ def get_project_details(request):
     update_user_info(request)
     object_id_list = get_object_id_list_user(global_variables.GLOBAL_CLIENT, global_variables.GLOBAL_LOGIN_USER_OBJ_ID)
     org_attr_value_instance = OrgAttributeValues()
-    project_id = OrgAttributeValues.get_user_attr_value_list_by_attr_id(object_id_list, CONST_PROJECT_ID)
+    project_id_list, project_id =  org_attr_value_instance.get_user_default_attr_value_list_by_attr_id(object_id_list, CONST_PROJECT_ID)
     default_calendar_id = org_attr_value_instance.get_user_default_attr_value_list_by_attr_id(object_id_list, CONST_CALENDAR_ID)[1]
-    filter_query = {'client': global_variables.GLOBAL_CLIENT, 'del_ind': False}
-    project_details = get_project_filter_list(filter_query, 10)
-    project_efforts = get_efforts_filter_list(project_id,default_calendar_id)
+    project_details = get_project_filter_list(project_id, project_id_list)
+    project_efforts = get_efforts_filter_list(project_id, object_id_list)
 
     context = {
         'inc_nav': True,
         'inc_footer': True,
         'project_id': project_id,
+        'project_id_list' : project_id_list,
         'default_calendar_id': default_calendar_id,
         'username' : global_variables.GLOBAL_LOGIN_USERNAME,
         'is_slide_menu': True,

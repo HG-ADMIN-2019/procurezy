@@ -179,7 +179,8 @@ function read_popup_data(){
         if (email == undefined){
             email.email_type = row.find("TD").eq(1).find('select[type="text"]').val();
         }
-        validate_add_attributes.push(email.email_type);
+        var compare = email.email_type+'-'+email.language_id
+        validate_add_attributes.push(compare);
         email_setting_data.push(email);
     });
     return email_setting_data;
@@ -187,7 +188,7 @@ function read_popup_data(){
 
 // Function for add a new row data
 function new_row_data(){
-    basic_add_new_html = '<tr><td><input type="checkbox" required></td>'+
+    basic_add_new_html = '<tr><td><input  type="checkbox" required></td>'+
     '<td><select class="form-control"  type="text"  name="email_type" required>'+email_type_dropdwn+'</select></td>'+
     '<td><select class="form-control"  type="text"  name="language_id" required>'+language_dropdown+'</select></td>'+
     '<td><textarea class="form-control " type="text"  name="email_subject" required></textarea></td>'+

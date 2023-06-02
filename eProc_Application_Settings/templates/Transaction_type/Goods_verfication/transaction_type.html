@@ -157,7 +157,7 @@
     var rendered_transaction_types_data = JSON.parse(document.getElementById('transaction_type').textContent);
     var rendered_document_type
     var rendered_active_inactive
-    var rendered_sequence = {{upload_numberrange|safe}};
+    var rendered_sequence_num = {{upload_numberrange|safe}};
     var messages_list = {{messages_list|safe}};
     var transaction_types_data_array = {}
     var transaction_types = '';
@@ -198,6 +198,8 @@
             success: function(response) {
                 rendered_active_inactive = response.rendered_active_inactive
                 rendered_document_type = response.document_type_render
+                rendered_sequence_num = response.rendered_sequence
+                eliminate_used_sequence();
                 dropdown_value();
                 $("#error_msg_id").css("display", "none")
                 $( "#header_select").prop( "hidden", false );
@@ -227,13 +229,15 @@
             success: function(response) {
                 rendered_active_inactive = response.rendered_active_inactive
                 rendered_document_type = response.document_type_render
+                rendered_sequence_num = response.rendered_sequence
+                eliminate_used_sequence();
                 dropdown_value();
                 $("#error_msg_id").css("display", "none")
                 $('#id_popup_table').DataTable().destroy();
                 $("#id_popup_tbody").empty();
                 //Reference the Table.
                 var res = get_all_checkboxes(); // Function to get all the checkboxes
-                var $chkbox_all = $('td input[type="checkbox"]', res);
+                var $chkbox_all = $('td input[class="checkbox_check"]', res);
                 //Reference the CheckBoxes in Table.
                 var edit_basic_data = "";
                 var dropdown_val = [];
@@ -269,7 +273,13 @@
                     var sequence = dropdown_val[i][1]
                     var active_inactive = dropdown_val[i][2]
                     $(row.find("TD").eq(2).find("select option[value=" + document_type + "]")).attr('selected', 'selected');
-                    $(row.find("TD").eq(3).find("select option[value=" + sequence + "]")).attr('selected', 'selected');
+                    if(GLOBAL_ACTION == "UPDATE"){
+                        var seq_val = '<option value="'+ sequence +'" selected>' + sequence + '</option>'
+                        $(row.find("TD").eq(3).find("select")).prepend(seq_val);
+                    }
+                    else{
+                        $(row.find("TD").eq(3).find("select option[value=" + sequence + "]")).attr('selected', 'selected');
+                    }
                     if(active_inactive) {
                         $(row.find("TD").eq(5).find('input[name="active_inactive"]').attr('checked', 'checked'));
                     }
@@ -295,34 +305,39 @@
         // compare for duplicates in popup
         $("#id_error_msg").empty();
         [no_duplicate_value,error_message] = compare_table_for_duplicate_entries(validate_add_attributes, transaction_types_data)
-        if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
-            [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
-        }
-        if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
-            var transaction_types_data_array = transaction_types_data; 
-            $('#id_save_confirm_popup').modal('hide');
-            data = {'data':transaction_types_data,'table_name':'TransactionTypes','action':GLOBAL_ACTION}
-            OpenLoaderPopup();
-            $.ajax({
-                type: 'POST',
-                url: "{% url 'eProc_Configuration:create_update_application_data' %}",
-                data: JSON.stringify(data),
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                success: function(Response) {
-                    rendered_transaction_types_data = Response[0];
-                    rendered_active_inactive = Response[2];
-                    display_basic_db_data();
-                    dropdown_value();
-                    $('#myModal').modal('hide');
-                    success_response(Response); // Function call to display response data
-                    table_sort_filter('id_popup_table');
-                    CloseLoaderPopup();
-                }
-            });
-        }
-        else if (error_message){
+        if (error_message){
             display_error_message(error_message)
+        }
+        else {
+            if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
+                [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
+            }
+            if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
+                var transaction_types_data_array = transaction_types_data;
+                $('#id_save_confirm_popup').modal('hide');
+                data = {'data':transaction_types_data,'table_name':'TransactionTypes','action':GLOBAL_ACTION}
+                OpenLoaderPopup();
+                $.ajax({
+                    type: 'POST',
+                    url: "{% url 'eProc_Configuration:create_update_application_data' %}",
+                    data: JSON.stringify(data),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function(Response) {
+                        rendered_transaction_types_data = Response[0];
+                        rendered_active_inactive = Response[2];
+                        display_basic_db_data();
+                        dropdown_value();
+                        $('#myModal').modal('hide');
+                        success_response(Response); // Function call to display response data
+                        table_sort_filter('id_popup_table');
+                        CloseLoaderPopup();
+                    }
+                });
+            }
+            else if (error_message){
+                display_error_message(error_message)
+            }
         }
         table_sort_filter('id_popup_table');
     }
@@ -345,8 +360,8 @@
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             success: function(Response) {
-                console.log(Response);
                 rendered_transaction_types_data = Response[0];
+                eliminate_used_sequence();
                 display_basic_db_data();
                 success_response(Response); // Function call to display response data
                 table_sort_filter('id_popup_table');
@@ -367,7 +382,7 @@
             } else{
                 data = '<input type="checkbox" name="active_inactive" value="" disabled>'
             }
-            edit_basic_data += '<tr ><td class="class_select_checkbox"><input class="checkbox_check" onclick="valueChanged()" type="checkbox" required></td><td>' + item.transaction_type + '</td><td>' + item.document_type + '</td><td>' + item.sequence + '</td><td>' + item.description + '</td><td>' + data + '</td><td hidden>' + item.guid + '</td><td hidden>' + item.del_ind + '</td></tr>';
+            edit_basic_data += '<tr><td class="class_select_checkbox"><input class="checkbox_check" onclick="valueChanged()" type="checkbox" required></td><td>' + item.transaction_type + '</td><td>' + item.document_type + '</td><td>' + item.sequence + '</td><td>' + item.description + '</td><td>' + data + '</td><td hidden>' + item.guid + '</td><td hidden>' + item.del_ind + '</td></tr>';
             sequence_remove_array.push(item.sequence)
         });
         $('#id_transaction_types_tbody').append(edit_basic_data);
@@ -391,31 +406,31 @@
         var error_message = ''
         var common = [];
         var add_attr_unique_list = [];
-        var no_duplicate_value = 'Y'
-        $.each(validate_add_attributes, function (index, value) {
-            if ($.inArray(value, add_attr_unique_list) == -1) {
-                add_attr_unique_list.push(value);
-            } else {
-                if ($.inArray(value, common) == -1) {
-                    common.push(value);
-                }
-            }
-        });
-        if (common.length != 0) {
-            $('#myModal').modal('show');
-            display_duplicate_entry(common);  //Function to highlight the rows in popup
-            error_message = ui_messeges("JMSG001")// Get message details
-            no_duplicate_value = 'N'
-            return [no_duplicate_value,error_message]
-        }
-        else {
-            $.each(transaction_types, function (i, item) {
-                if ((item.transaction_type.length == 0) || (item.description.length == 0)) {
+        var no_duplicate_value = 'Y';
+        $.each(transaction_types, function (i, item) {
+                if ((item.transaction_type.length == 0) || (item.description.length == 0) || (item.sequence == null)) {
                     error_message = ui_messeges("JMSG002")// Get message details
                     no_duplicate_value = 'N'
                     return [no_duplicate_value,error_message]
                 }
+        });
+        if(no_duplicate_value == 'Y'){
+            $.each(validate_add_attributes, function (index, value) {
+                if ($.inArray(value, add_attr_unique_list) == -1) {
+                    add_attr_unique_list.push(value);
+                } else {
+                    if ($.inArray(value, common) == -1) {
+                        common.push(value);
+                    }
+                }
             });
+            if (common.length != 0) {
+                $('#myModal').modal('show');
+                display_duplicate_entry(common);  //Function to highlight the rows in popup
+                error_message = ui_messeges("JMSG001")// Get message details
+                no_duplicate_value = 'N'
+                return [no_duplicate_value,error_message]
+            }
         }
         return [no_duplicate_value,error_message]
     }   

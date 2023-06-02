@@ -1,4 +1,4 @@
-m {% extends 'root/base.html' %} 
+{% extends 'root/base.html' %}
 {% load static %}
 {% block title %} Clients (Application Settings) {% endblock %}
 {% block maincontent %} 
@@ -82,7 +82,7 @@ m {% extends 'root/base.html' %}
                 <div class="modal-body scrollbox">
                     <div class="popup-vertical-scroll">
                         <div id="id_del_add_button" class="mb-4">
-                            <button class="btn btn-primary" title="Add New Wow" type="button" onclick="add_popup_row()">
+                            <button class="btn btn-primary" title="Add New Row" type="button" onclick="add_popup_row()">
                                 <i class="fa fa-plus"></i> Add New Row
                             </button>
                             <button class="btn btn-outline-danger" title="Delete" onclick="application_settings_delete_Row('id_popup_table')">
@@ -229,31 +229,31 @@ m {% extends 'root/base.html' %}
         var common = [];
         var add_attr_unique_list = [];
         var no_duplicate_value = 'Y'
-        $.each(validate_add_attributes, function(index, value) {
-            if ($.inArray(value, add_attr_unique_list) == -1) {
-                add_attr_unique_list.push(value);
-            } else {
-                if ($.inArray(value, common) == -1) {
-                    common.push(value);
-                }
+        $.each(client, function (i, item) {
+            if ((item.client.length == 0) || (item.description.length == 0)) {
+                $('#upload_client_Modal').modal('show');
+                error_message = ui_messeges("JMSG002"); // Get message details
+                no_duplicate_value = 'N'
+                return [no_duplicate_value,error_message]
             }
         });
-        if (common.length != 0) {
-            $('#upload_client_Modal').modal('show');
-            display_duplicate_entry(common);  //Function to highlight the rows in popup
-            error_message = ui_messeges("JMSG001"); // Get message details
-            no_duplicate_value = 'N'
-            return [no_duplicate_value,error_message]
-        }
-        else{
-            $.each(client, function (i, item) {
-                if ((item.client.length == 0) || (item.description.length == 0)) {
-                    $('#upload_client_Modal').modal('show');
-                    error_message = ui_messeges("JMSG002"); // Get message details
-                    no_duplicate_value = 'N'
-                    return [no_duplicate_value,error_message]
+        if (no_duplicate_value == 'Y') {
+            $.each(validate_add_attributes, function(index, value) {
+                if ($.inArray(value, add_attr_unique_list) == -1) {
+                    add_attr_unique_list.push(value);
+                } else {
+                    if ($.inArray(value, common) == -1) {
+                        common.push(value);
+                    }
                 }
             });
+            if (common.length != 0) {
+                $('#upload_client_Modal').modal('show');
+                display_duplicate_entry(common);  //Function to highlight the rows in popup
+                error_message = ui_messeges("JMSG001"); // Get message details
+                no_duplicate_value = 'N'
+                return [no_duplicate_value,error_message]
+            }
         }
         return [no_duplicate_value,error_message]
     }

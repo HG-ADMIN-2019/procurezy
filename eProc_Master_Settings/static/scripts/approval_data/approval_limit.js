@@ -75,7 +75,7 @@ $(".remove_upload_data").click(() => {
 
 // on click add icon display the row in to add the new entries
 function add_popup_row() {
-$("#error_msg_id").css("display", "none")
+    $("#error_msg_id").css("display", "none")
     basic_add_new_html = '';
     var display_db_data = '';
     $('#id_popup_table').DataTable().destroy();
@@ -155,7 +155,7 @@ $('#save_id').click(function () {
 function read_popup_data() {
     $('#id_popup_table').DataTable().destroy();
     validate_add_attributes = [];
-    var approval_limit={};
+    var approval_limit_data = new Array();
     $("#id_popup_table TBODY TR").each(function () {
         var row = $(this);
         approval_limit = {};

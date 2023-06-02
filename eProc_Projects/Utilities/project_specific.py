@@ -5,7 +5,8 @@ from eProc_Basic.Utilities.global_defination import global_variables
 from eProc_Configuration.models.application_data import ProjectDetails
 from eProc_Time_Sheet.models import ProjectEfforts
 from datetime import datetime, date, timedelta
-import datetime
+from datetime import date, timedelta
+
 django_query_instance = DjangoQueries()
 
 
@@ -39,15 +40,23 @@ def save_project_to_db(project_data):
     return project_data_response
 
 
-def get_project_filter_list(filter, query_count):
+def get_project_filter_list(project_id, project_id_list):
     """
+    Retrieves project details based on the project ID.
+    """
+    project_details = django_query_instance.django_filter_query(ProjectDetails, {'project_id': project_id}, ['project_id'], None)
 
-    """
-    project_details = django_query_instance.django_filter_query_with_entry_count(ProjectDetails, filter, ['project_id'],
-                                                                                 None,
-                                                                                 int(query_count))
+    # Add project ID to each project detail dictionary
+    for project_detail in project_details:
+        project_detail['project_id'] = project_id
+
+    # Create a dictionary for each project ID in the project ID list
+    for pid in project_id_list:
+        project_detail = {'project_id': pid}
+        project_details.append(project_detail)
 
     return project_details
+
 
 
 # def get_efforts_filter_list(project_id,default_calendar_id):
@@ -58,32 +67,14 @@ def get_project_filter_list(filter, query_count):
 #     return project_efforts
 
 
-def get_efforts_filter_list(project_id, default_calendar_id):
+def get_efforts_filter_list(project_id, object_id_list):
     today = date.today()
     week_number = today.isocalendar()[1]
 
-    project_efforts = ProjectEfforts.objects.filter(
-        username=global_variables.GLOBAL_LOGIN_USERNAME,
-        calender_id=default_calendar_id,
-        project_id=project_id,
-        effort_week=week_number
-    ).order_by('project_id')
+    filter_query = {'project_id': project_id, 'effort_week': week_number, 'username': global_variables.GLOBAL_LOGIN_USERNAME }
 
-    # loop through project_efforts queryset and create a list of dictionaries
-    data = []
-    for pe in project_efforts:
-        data.append({
-            'project_id': pe.project_id,
-            'username': pe.username,
-            'calender_id': pe.calender_id,
-            'project_category': pe.project_category,
-            'effort': pe.effort,
-            'effort_day': pe.effort_day,
-            'effort_date': pe.effort_date,
-            'effort_week': pe.effort_week,
-            'effort_year': pe.effort_year,
-            'effort_description': pe.effort_description
-        })
+    project_efforts = django_query_instance.django_filter_query(ProjectEfforts, filter_query,
+                                                                ['project_id', 'username', 'calender_id'],
+                                                                None)
 
-    return data
-
+    return project_efforts

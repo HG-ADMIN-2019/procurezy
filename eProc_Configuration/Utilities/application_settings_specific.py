@@ -212,10 +212,11 @@ class ApplicationSettingsSave:
                                                  ['guid', 'sequence', 'starting', 'ending',
                                                   'current', 'document_type',
                                                   ])
-        sequence = NumberRanges.objects.filter(client=global_variables.GLOBAL_CLIENT, document_type=doc_type, del_ind=False).aggregate(
+        sequence = NumberRanges.objects.filter(client=global_variables.GLOBAL_CLIENT, document_type=doc_type,
+                                               del_ind=False).aggregate(
             Max('sequence'))
         sequence_max = sequence['sequence__max']
-        data = {'upload_response':upload_response,'sequence_max':sequence_max}
+        data = {'upload_response': upload_response, 'sequence_max': sequence_max}
         return data, message
 
     def save_document_type_data(self, documenttype_data):
@@ -324,6 +325,18 @@ class ApplicationSettingsSave:
                                                                'transaction_types_changed_by': self.username,
                                                                'client': self.client,
                                                                'del_ind': transactiontype_detail['del_ind']})
+                else:
+                    django_query_instance.django_update_query(TransactionTypes,
+                                                              {'transaction_type': transactiontype_detail[
+                                                                  'transaction_type'],
+                                                               'sequence': transactiontype_detail['sequence'],
+                                                               'client': self.client},
+                                                              {'description': convert_to_camel_case(
+                                                                  transactiontype_detail[
+                                                                      'description']),
+                                                                  'del_ind': transactiontype_detail['del_ind']
+                                                              })
+
         if transactiontype_db_list:
             bulk_create_entry_db(TransactionTypes, transactiontype_db_list)
         return doc_type
@@ -401,6 +414,7 @@ class ApplicationSettingsSave:
         calendar_db_list = []
         for calendar_detail in calendar_data['data']:
             # if entry is not exists in db
+            delete_holiday_data(calendar_detail['calender_id'])
             if not django_query_instance.django_existence_check(CalenderHolidays,
                                                                 {'calender_holiday_guid': calendar_detail[
                                                                     'calender_holiday_guid']}):
@@ -1804,3 +1818,8 @@ def transaction_gv_data():
                                                               'sequence',
                                                               'active_inactive'))
     return upload_transactiontype
+
+
+def delete_holiday_data(calender_id):
+    django_query_instance.django_filter_delete_query(CalenderHolidays, {'calender_id': calender_id})
+    return True

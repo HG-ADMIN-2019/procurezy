@@ -74,24 +74,21 @@ function display_basic_db_data() {
     $('#display_basic_table').DataTable().destroy();
     $('#id_address_type_tbody').empty();
     var edit_basic_data = '';
-    var from_date, to_date;
+
     $.each(rendered_address_type_data, function (i, item) {
-        if(item.valid_from == ''){
-            from_date = '';
-            to_date = '';
-        } else {
-            from_date = new Date(item.valid_from).toLocaleDateString('en-CA', {day: '2-digit', month: '2-digit', year: 'numeric'});
-            to_date = new Date(item.valid_to).toLocaleDateString('en-CA', {day: '2-digit', month: '2-digit', year: 'numeric'});
-        }
+        var validFromDate = item.valid_from.split('T')[0].split('-').reverse().join('-');
+        var validToDate = item.valid_to.split('T')[0].split('-').reverse().join('-');
+
         edit_basic_data += '<tr><td class="class_select_checkbox"><input class="checkbox_check" onclick="valueChanged()" type="checkbox" required></td>' +
         '<td>'+ item.company_id +'</td>'+
         '<td>' + item.address_type + '</td>' +
         '<td>' + item.address_number + '</td>' +
-        '<td>'+ from_date +'</td>'+
-        '<td>'+ to_date +'</td>'+
+        '<td>'+ validFromDate +'</td>'+
+        '<td>'+ validToDate +'</td>'+
         '<td hidden> <input type="checkbox"></td>' +
         '<td hidden>' + item.address_guid + '</td></tr>';
     });
+
     $('#id_address_type_tbody').append(edit_basic_data);
     $("#hg_select_checkbox").prop("hidden", true);
     $(".class_select_checkbox").prop("hidden", true);
@@ -106,6 +103,8 @@ function display_basic_db_data() {
     $('#id_check_all').hide();
     table_sort_filter('display_basic_table');
 }
+
+
 
 
 // Functtion to hide and display save related popups
@@ -129,29 +128,17 @@ function read_popup_data() {
         addresstype.address_number = row.find("TD").eq(3).find('select').val();
         addresstype.address_type = row.find("TD").eq(2).find('select').val();
         addresstype.company_id = row.find("TD").eq(1).find('select').val();
-        addresstype.valid_from = row.find("TD").eq(4).find('input[type="date"]').val();
-        addresstype.valid_to = row.find("TD").eq(5).find('input[type="date"]').val();
-        if ((addresstype.valid_from == undefined) || (addresstype.valid_from == '')) {
-        addresstype.valid_from = '';
-        } else {
-        var from_date = new Date(addresstype.valid_from).toISOString().slice(0, 10);
-        addresstype.valid_from = from_date;
-        }
-        addresstype.valid_to = row.find("TD").eq(5).find('input[type="date"]').val();
-        if ((addresstype.valid_to == undefined) || (addresstype.valid_to == '')) {
-        addresstype.valid_to = '';
-        } else {
-        var to_date = new Date(addresstype.valid_to).toISOString().slice(0, 10);
-        addresstype.valid_to = to_date;
-        }
-        var addresstype_compare = addresstype.address_number + '-' + addresstype.address_type + '-' + addresstype.company_id
+        addresstype.valid_from = row.find("TD").eq(4).find('input[type="text"]').val();
+        addresstype.valid_to = row.find("TD").eq(5).find('input[type="text"]').val();
+//        addresstype.valid_to = row.find("TD").eq(5).find('input[type="date"]').val();
+        var addresstype_compare = addresstype.address_number + '-' + addresstype.address_type + '-' + addresstype.company_id;
         if (addresstype == undefined) {
-        addresstype.address_number = row.find("TD").eq(2).find('input').val();
+            addresstype.address_number = row.find("TD").eq(2).find('input').val();
         }
         if (addresstype.address_guid == undefined) {
-        addresstype.address_guid = ''
+            addresstype.address_guid = '';
         }
-        check_dates.push([addresstype.valid_from, addresstype.valid_to])
+        check_dates.push([addresstype.valid_from, addresstype.valid_to]);
         validate_add_attributes.push(addresstype_compare);
         addresstype_data.push(addresstype);
     });
@@ -165,12 +152,12 @@ function new_row_data() {
         '<td><select class="form-control">'+company_dropdwn+'</select></td>' +
         '<td><select class="form-control">'+address_type_dropdown+'</select></td>' +
         '<td><select class="form-control">'+address_number_dropdwn+'</select></td>' +
-        '<td><input  type="date" name = "valid_from" class="form-control from_to_date"></td>' +
-        '<td><input type="date" name = "valid_to"  class="form-control from_to_date"></td>' +
+        '<td><input  type="text" name = "valid_from" class="form-control formatDate"></td>' +
+        '<td><input type="text" name = "valid_to"  class="form-control formatDate"></td>' +
         '<td class="class_del_checkbox" hidden><input type="checkbox" required></td>' +
         '<td hidden><input  type="text" class="form-control"  name="guid"></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
-//    DateFormat();
+    DatePicker();
     table_sort_filter('id_popup_table');
 }
 
@@ -211,19 +198,37 @@ function check_date(addresstype_data) {
     var validDate = 'Y';
     var error_message = ''
     $.each(addresstype_data, function (i, item) {
-        if ((Date.parse(item.valid_to) < Date.parse(item.valid_from)) == true) {
-            error_message = 'From Date Is Greater Than To Date'; // set the error message
+var validFromParts = item.valid_from.split('-');
+        var validToParts = item.valid_to.split('-');
+        var validFrom = new Date(validFromParts[2], validFromParts[1] - 1, validFromParts[0]);
+        var validTo = new Date(validToParts[2], validToParts[1] - 1, validToParts[0]);
+        var formattedValidFrom = validFrom.toLocaleDateString('en-GB');
+        var formattedValidTo = validTo.toLocaleDateString('en-GB');
+
+        if (validFrom > validTo) {
+            $("#id_error_msg").prop("hidden", false);
+            var msg = "JMSG017";
+            var msg_type = message_config_details(msg);
+            $("#error_msg_id").prop("hidden", false);
+
+            if (msg_type.message_type == "ERROR") {
+                display_message("error_msg_id", msg_type.messages_id_desc);
+            } else if (msg_type.message_type == "WARNING") {
+                display_message("id_warning_msg_id", msg_type.messages_id_desc);
+            } else if (msg_type.message_type == "INFORMATION") {
+                display_message("id_info_msg_id", msg_type.messages_id_desc);
+            }
+
+            var display = msg_type.messages_id_desc;
+            $('#id_save_confirm_popup').modal('hide');
+//            onclick_copy_update_button(item.account_assign_value);
+            $('#Adrs_Type_Modal').modal('show');
             validDate = 'N';
-            return false; // exit the loop as soon as an invalid date range is found
         }
     });
-    if (validDate == 'N') {
-        display_error_message(error_message); // display the error message
-    } else {
-        $('#error_msg_id').css('display', 'none'); // hide the error message if no invalid date ranges were found
-    }
     return [validDate, error_message];
 }
+
 
 //*******************************************
 function check_date_error(check_dates) {

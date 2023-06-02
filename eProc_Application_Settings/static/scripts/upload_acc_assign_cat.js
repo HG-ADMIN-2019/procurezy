@@ -115,18 +115,15 @@ function GetSelectedTextValue(acct_assignment_category) {
         // open popup here
         return;
     }
-
     var selectedText = acct_assignment_category.options[acct_assignment_category.selectedIndex].innerHTML;
     var selectedValue = acct_assignment_category.value;
     var selectedId = (acct_assignment_category.id).split('-')[1];
-
     $.each(rendered_aac_values, function(i, item){
         if(selectedValue == item.field_type_id){
             $('#description-'+selectedId).val(item.field_type_desc);
         }
     });
 }
-
 
 // Function to get the selected row data
 function get_selected_row_data(){
@@ -152,5 +149,5 @@ function get_main_table_data() {
         main_attribute.account_assign_cat = row.find("TD").eq(1).html();
         main_table_low_value.push(main_attribute.account_assign_cat);
     });
-    table_sort_filter_page('display_basic_table');
+    table_sort_filter('display_basic_table');
 }

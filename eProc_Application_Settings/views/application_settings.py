@@ -268,6 +268,7 @@ def number_range_favourite_cart(request):
 
 
 def number_range_purchase_order(request):
+    update_user_info(request)
     client = getClients(request)
     upload_numberrange = get_configuration_data(NumberRanges,
                                                 {'client': client, 'document_type': CONST_DOC_TYPE_PO,

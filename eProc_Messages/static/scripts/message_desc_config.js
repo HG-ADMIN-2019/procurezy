@@ -33,16 +33,12 @@ function onclick_update_button() {
     document.getElementById("id_del_add_button").style.display = "none";
 }
 
-
-
-//************************
 //onclick of cancel empty the popup table body and error messages
 $(".remove_upload_data").click(() => {
     $("#id_error_msg_id").html("");
     $("#id_popup_tbody").empty();
     $("#id_error_msg_id").empty();
     $('#msg_desc_Modal').modal('hide');
-    $("#id_error_msg_id").prop("hidden", true);
     $("#id_error_msg_id").prop("hidden", true);
     $("#id_error_msg_length").prop("hidden", true);
     $("#id_check_error_messages").prop("hidden", true);
@@ -116,8 +112,12 @@ function display_basic_db_data() {
 }
 
 function display_error_message(error_message){
+    $("#error_msg_id").css("display", "none")
     $('#error_message').text(error_message);
-    document.getElementById("error_message").style.color = "Red";
+    var errorMessage = document.getElementById("error_message");
+    if (errorMessage) {
+        errorMessage.style.color = "red";
+    }
     $("#error_msg_id").css("display", "block")
     $('#id_save_confirm_popup').modal('hide');
     $('#msg_desc_Modal').modal('show');
@@ -138,11 +138,11 @@ function read_popup_data() {
     $("#id_popup_table TBODY TR").each(function () {
         var row = $(this);
         message_id_desc={};
+        message_id_desc.del_ind = row.find("TD").eq(5).find('input[type="checkbox"]').is(':checked');
         message_id_desc.messages_id = row.find("TD").eq(1).find('select[type="text"]').val();
         message_id_desc.messages_id_desc = row.find("TD").eq(2).find('input[type="text"]').val();
         message_id_desc.language_id = row.find("TD").eq(3).find('select[type="text"]').val();
-        message_id_desc.del_ind = row.find("TD").eq(4).find('input[type="checkbox"]').is(':checked');
-        message_id_desc.msg_id_desc_guid = row.find("TD").eq(5).find('input[type="text"]').val();
+        message_id_desc.msg_id_desc_guid = row.find("TD").eq(4).find('input[type="text"]').val();
         if (message_id_desc == undefined){
             message_id_desc.messages_id = row.find("TD").eq(1).find('select[type="text"]').val();
         }
@@ -154,7 +154,7 @@ function read_popup_data() {
             if (message_id_desc.language_id == render_language_data[i].language_id)
                 desc = render_language_data[i].description;
         }
-        validate_add_attributes.push(message_id_desc.messages_id);
+        validate_add_attributes.push( message_id_desc.messages_id);
         message_id_desc_data.push(message_id_desc);
     });
     table_sort_filter('id_popup_table');
@@ -167,7 +167,7 @@ function new_row_data() {
     '<td><select id="messages_id" name="messages_id" title="Select.." class="form-control"  type="text">'+ message_id_dropdown +'</select></td>' +
     '<td><input class="input form-control check_special_char" type="text" id="messages_desc" name="messages_desc"  required></td>'+
     '<td><select id="language" name="language_id" title="Select..." class="form-control"  type="text">' + language_dropdown +'</select></td>' +
-    '<td hidden></td>'+
+    '<td hidden><input  type="text" class="form-control"  name="guid"></td>'+
     '<td class="class_del_checkbox" hidden><input type="checkbox" required></td>'+
     '</tr>';
     $('#id_popup_tbody').append(basic_add_new_html);

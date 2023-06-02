@@ -341,6 +341,7 @@ def data_upload(request):
     # upload_csv.header_data = fin_upload_data
     upload_csv.app_name = request.POST.get('appname')
     upload_csv.table_name = request.POST.get('Tablename')
+    Table_name = upload_csv.table_name
     upload_csv.request = request
     fin_data_upload_header = io.StringIO(data_set_val)
     upload_csv.header_data = fin_data_upload_header
@@ -348,14 +349,20 @@ def data_upload(request):
     # print(basic_save)
     # if not basic_save:
     try:
-
-        result['error_message'], result['data'] = upload_csv.csv_preview_data(header_detail, data_set_val)
-        convertion_list = convert_to_dictionary(result['data'])
-        valid_data_list, message = check_unspsc_category_data(convertion_list, 'UPLOAD')
-        context = {'valid_data_list': valid_data_list}
-        # retrieving correct ordered data from csv_data_arrangement() - basic_settings_specific.py
-        # correct_order_list = csv_data_arrangement(db_header, data_set_val)
-        return JsonResponse(context, safe=False)
+        if Table_name == 'UnspscCategoriesCust':
+            result['error_message'], result['data'] = upload_csv.csv_preview_data(header_detail, data_set_val)
+            convertion_list = convert_UNSPSC_to_dictionary(result['data'])
+            valid_data_list, message = check_unspsc_category_data(convertion_list, 'UPLOAD')
+            context = {'valid_data_list': valid_data_list}
+            # retrieving correct ordered data from csv_data_arrangement() - basic_settings_specific.py
+            # correct_order_list = csv_data_arrangement(db_header, data_set_val)
+            return JsonResponse(context, safe=False)
+        if Table_name == 'UnspscCategoriesCustDesc':
+            result['error_message'], result['data'] = upload_csv.csv_preview_data(header_detail, data_set_val)
+            convertion_list = convert_UNSPSCDESC_to_dictionary(result['data'])
+            valid_data_list, message = check_unspsc_category_desc_data(convertion_list, 'UPLOAD')
+            context = {'valid_data_list': valid_data_list}
+            return JsonResponse(context, safe=False)
 
 
 
@@ -374,10 +381,18 @@ def data_upload(request):
     return JsonResponse(basic_save, safe=False)
 
 
-def convert_to_dictionary(arr):
+def convert_UNSPSC_to_dictionary(arr):
     convertion_list = []
     for row in arr:
         dictionary = {'del_ind': row[0], 'prod_cat_id': row[1]}
+        convertion_list.append(dictionary)
+    return convertion_list
+
+
+def convert_UNSPSCDESC_to_dictionary(arr):
+    convertion_list = []
+    for row in arr:
+        dictionary = {'description': row[0], 'del_ind': row[1], 'language_id':row[2], 'prod_cat_id': row[3]}
         convertion_list.append(dictionary)
     return convertion_list
 

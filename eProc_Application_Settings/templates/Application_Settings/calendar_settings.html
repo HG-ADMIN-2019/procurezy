@@ -79,7 +79,7 @@
     </div>
     <!--modal popup for Add,copy,update and upload-->
     <div class="modal fade" id="Calendar_Modal" style="overflow:auto;">
-        <div class="modal-dialog modal-dialog-centered modal-xl" >
+        <div class="modal-dialog modal-dialog-centered modal-xl">
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title"> Maintain Calendar</h5>
@@ -211,8 +211,8 @@
                 '<td><input class="form-control" type="text"  pattern="[A-Z]" maxlength="10"  name="calender_id" style="text-transform:uppercase;" required></td>'+
                 '<td><select id="country" class="input form-control" type="text" name="country"> {% for country in country_list %} <option value="{{country.country_code}}">{{country.country_name}}</option> {% endfor %} </select> </td>'+
                 '<td> <input class="form-control check_special_char" type="text" name="description"> </td>'+
-                '<td> <input class="form-control yearPicker" type="text" maxlength="4"  name="year"> </td>'+
-                '<td style="max-width: 100px;"> <select type="text" class="form-control multiple_select working_days" type="text" name="working_days"  multiple  title="Select.." >'+
+                '<td> <input class="form-control yearPicker" type="text" maxlength="4"  name="year" style="width:150px"> </td>'+
+                '<td> <select type="text" class="input form-control multiple_select" type="text" name="working_days" title="Select.." multiple style="max-height: 50px;overflow-y: auto; z-index:1 " data-selected-text-format="count" data-actions-box="true">'+
                 '<option value="1">Sunday</option><option value="2">Monday</option><option value="3">Tuesday</option><option value="4">Wednesday</option><option value="5">Thursday</option><option value="6">Friday</option><option value="7">Saturday</option></select>'+
                 '</td>'+
                 '<td class="class_del_checkbox" hidden> <input type="checkbox"> </td>'+
@@ -333,7 +333,8 @@
                     success: function (Response) {
                         rendered_calendar_data = Response[0];
                         display_basic_db_data();
-                        $('#Calendar_Modal').modal('hide');
+                        $("#Calendar_Modal").modal("hide");
+                        $("#Calendar_Modal").prop("hidden", true);
                         success_response(Response);
                         DatePicker();
                         MultipleSelect();
@@ -361,8 +362,8 @@
         '<td><input class="form-control" type="text"  pattern="[A-Z]" maxlength="10"  name="calender_id" style="text-transform:uppercase;" required></td>'+
         '<td><select id="country" class="input form-control" type="text" name="country">' + country_dropdwn + '</select></td>'+
         '<td> <input class="form-control check_special_char" type="text" name="description"> </td>'+
-        '<td> <input class="form-control yearPicker" type="text" maxlength="4"  name="year"> </td>'+
-        '<td style="max-width: 100px;"> <select type="text" class="form-control multiple_select working_days" type="text" name="working_days"  multiple  title="Select.." >'+
+        '<td> <input class="form-control yearPicker" type="text" maxlength="4"  name="year" style="width:150px"> </td>'+
+        '<td> <select type="text" class="input form-control multiple_select" type="text" name="working_days" title="Select.." multiple style="position:relative; " data-selected-text-format="count" data-actions-box="true">'+
         '<option value="1">Sunday</option><option value="2">Monday</option><option value="3">Tuesday</option><option value="4">Wednesday</option><option value="5">Thursday</option><option value="6">Friday</option><option value="7">Saturday</option></select>'+
         '</td>'+
         '<td class="class_del_checkbox" hidden> <input type="checkbox"> </td>'+
@@ -417,6 +418,10 @@
         $('.working_days').selectpicker();
         $('.multiple_select').selectpicker();
     }
+<!--   $('#id_wdays').attr({-->
+<!--    "max-height": 280px;-->
+<!--    'overflow-y': auto;-->
+<!--});-->
 
     function get_days(workingday){
         var day;

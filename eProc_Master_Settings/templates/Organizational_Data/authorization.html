@@ -140,15 +140,16 @@
     var edit_basic_data = '';
     var GLOBAL_ACTION = '';
     var no_duplicate_entries = 'Y'
-    var roles_dropdown;
+    var rendered_roles_type_values
     var Tablename = uiConstants["CONST_TABLENAME_AUTH"]
     var appname = uiConstants["CONST_APPNAME02"]
     var db_header_data = uiConstants["CONST_HEADER_DATA_AUTH"]
 
     //**************************
+    var roles_dropdown = '';
     function dropdown_value(){
         roles_dropdown = '';
-        $.each(rendered_roles_data, function(i, item){
+        $.each(rendered_roles_type_values, function(i, item){
             roles_dropdown += '<option value="' + item.field_type_id + '">' + item.field_type_id +'</option>';
         });
     }
@@ -158,7 +159,7 @@
         var selectedText = roles.options[roles.selectedIndex].innerHTML;
         var selectedValue = roles.value;
         var selectedId = (roles.id).split('-')[1];
-        $.each (rendered_roles_data,function(i, item) {
+        $.each (rendered_roles_type_values,function(i, item) {
             if(selectedValue == item.field_type_id) {
                 $('#auth_obj_grp-'+selectedId).val(item.field_type_desc);
             }
@@ -209,7 +210,7 @@
                     dataType: "json",
                     success: function(Response) {
                         rendered_auth_data = Response[0];
-                        rendered_roles_data = Response[2];
+                        rendered_roles_type_values = Response[2];
                         display_basic_db_data();
                         dropdown_value()
                         $('#auth_Modal').modal('hide');
@@ -259,31 +260,31 @@
         var common = [];
         var add_attr_unique_list = [];
         var no_duplicate_value = 'Y'
-        $.each(validate_add_attributes, function (index, value) {
-            if ($.inArray(value, add_attr_unique_list) == -1) {
-                add_attr_unique_list.push(value);
-            } else {
-                if ($.inArray(value, common) == -1) {
-                    common.push(value);
-                }
+        $.each(auth, function (i, item) {
+            if ((item.role == null) || (item.auth_obj_grp.length == 0)) {
+                $('#auth_Modal').modal('show');
+                error_message = ui_messeges("JMSG002")// Get message details
+                no_duplicate_value = 'N'
+                return [no_duplicate_value,error_message]
             }
         });
-        if (common.length != 0) {
-            $('#auth_Modal').modal('show');
-            display_duplicate_entry(common);  //Function to highlight the rows in popup
-            error_message = ui_messeges("JMSG001")// Get message details
-            no_duplicate_value = 'N'
-            return [no_duplicate_value,error_message]
-        }
-        else {
-            $.each(auth, function (i, item) {
-                if ((item.role == null) || (item.auth_obj_grp.length == 0)) {
-                    $('#auth_Modal').modal('show');
-                    error_message = ui_messeges("JMSG002")// Get message details
-                    no_duplicate_value = 'N'
-                    return [no_duplicate_value,error_message]
+        if (no_duplicate_value == 'Y') {
+            $.each(validate_add_attributes, function (index, value) {
+                if ($.inArray(value, add_attr_unique_list) == -1) {
+                    add_attr_unique_list.push(value);
+                } else {
+                    if ($.inArray(value, common) == -1) {
+                        common.push(value);
+                    }
                 }
             });
+            if (common.length != 0) {
+                $('#auth_Modal').modal('show');
+                display_duplicate_entry(common);  //Function to highlight the rows in popup
+                error_message = ui_messeges("JMSG001")// Get message details
+                no_duplicate_value = 'N'
+                return [no_duplicate_value,error_message]
+            }
         }
         return [no_duplicate_value,error_message]
     }
@@ -297,7 +298,7 @@
             url: "{% url 'eProc_Configuration:get_dropdown_data' %}",
             data: JSON.stringify(data),
             success: function(response) {
-                rendered_roles_data = response.dropdown_db_values
+                rendered_roles_type_values = response.dropdown_db_values
                 dropdown_value();
                 $("#error_msg_id").css("display", "none")
                 $("#header_select").prop( "hidden", false );

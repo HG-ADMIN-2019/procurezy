@@ -158,7 +158,7 @@
     var rendered_transaction_types_data = JSON.parse(document.getElementById('transaction_type').textContent);
     var rendered_document_type
     var rendered_active_inactive
-    var rendered_sequence = {{upload_numberrange|safe}}
+    var rendered_sequence_num = {{upload_numberrange|safe}}
     var transaction_types_data_array = {}
     var transaction_types = '';
     var edit_basic_data = '';
@@ -198,6 +198,8 @@
             success: function(response) {
                 rendered_active_inactive = response.rendered_active_inactive;
                 rendered_document_type = response.document_type_render;
+                rendered_sequence_num = response.rendered_sequence;
+                eliminate_used_sequence();
                 dropdown_value();
                 $("#error_msg_id").css("display", "none")
                 $( "#header_select").prop( "hidden", false );
@@ -227,7 +229,8 @@
             success: function(response) {
                 rendered_active_inactive = response.rendered_active_inactive
                 rendered_document_type = response.document_type_render
-                rendered_sequence = response.rendered_sequence
+                rendered_sequence_num = response.rendered_sequence
+                eliminate_used_sequence();
                 dropdown_value();
                 $("#error_msg_id").css("display", "none")
                 $('#id_popup_table').DataTable().destroy();
@@ -403,32 +406,32 @@
         var error_message = ''
         var common = [];
         var add_attr_unique_list = [];
-        var no_duplicate_value = 'Y'
-        $.each(validate_add_attributes, function (index, value) {
-            if ($.inArray(value, add_attr_unique_list) == -1) {
-                add_attr_unique_list.push(value);
-            } else {
-                if ($.inArray(value, common) == -1) {
-                    common.push(value);
-                }
-            }
-        });
-        if (common.length != 0) {
-            $('#myModal').modal('show');
-            display_duplicate_entry(common);  //Function to highlight the rows in popup
-            error_message = ui_messeges("JMSG001")// Get message details
-            no_duplicate_value = 'N'
-            return [no_duplicate_value,error_message]
-        }
-        else {
-            $.each(transaction_types, function (i, item) {
-                if ((item.transaction_type.length == 0) || (item.description.length == 0)) {
+        var no_duplicate_value = 'Y';
+        $.each(transaction_types, function (i, item) {
+                if ((item.transaction_type.length == 0) || (item.description.length == 0) || (item.sequence == null)) {
                     $('#myModal').modal('show');
                     error_message = ui_messeges("JMSG002")// Get message details
                     no_duplicate_value = 'N'
                     return [no_duplicate_value,error_message]
                 }
+        });
+        if(no_duplicate_value == 'Y'){
+            $.each(validate_add_attributes, function (index, value) {
+                if ($.inArray(value, add_attr_unique_list) == -1) {
+                    add_attr_unique_list.push(value);
+                } else {
+                    if ($.inArray(value, common) == -1) {
+                        common.push(value);
+                    }
+                }
             });
+            if (common.length != 0) {
+                $('#myModal').modal('show');
+                display_duplicate_entry(common);  //Function to highlight the rows in popup
+                error_message = ui_messeges("JMSG001")// Get message details
+                no_duplicate_value = 'N'
+                return [no_duplicate_value,error_message]
+            }
         }
         return [no_duplicate_value,error_message]
     }

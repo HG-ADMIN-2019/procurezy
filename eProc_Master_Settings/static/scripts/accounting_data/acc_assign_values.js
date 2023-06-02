@@ -50,7 +50,6 @@ function add_popup_row() {
 function display_basic_db_data() {
     $('#display_basic_table').DataTable().destroy();
     $('#id_aav_tbody').empty();
-    console.log(format("16-02-2022"));
     var edit_basic_data = '';
     $.each(rendered_account_assignment_value, function(index, value) {
         edit_basic_data += '<tr><td class="class_select_checkbox"><input class="checkbox_check" onclick="valueChanged()" type="checkbox" required></td><td>' + value.company_id + '</td><td>' + value.account_assign_cat + '</td><td>' + value.account_assign_value + '</td><td>' + format(value.valid_from) + '</td><td>' + format(value.valid_to)+ '</td><td hidden>' + value.account_assign_guid + '</td> <td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
@@ -71,23 +70,23 @@ function display_basic_db_data() {
 }
 
 //*******************************************
-function check_date_error(check_dates) {
-    date_error = "N"
-    $.each(check_dates, function(index, value){
-        var d1=new Date(value[0]); //yyyy-mm-dd
-        var d2=new Date(value[1]); //yyyy-mm-dd
-        if (d2< d1) {
-            get_message_details("JMSG017"); // Get message details
-            var display = msg_type.messages_id_desc;
-            document.getElementById("id_error_msg").innerHTML = display;
-            document.getElementById("id_error_msg").style.color = "Red";
-            $('#id_save_confirm_popup').modal('hide');
-            $('#aav_Modal').modal('show');
-            date_error = 'Y'
-        }
-    })
-    return date_error
-}
+//function check_date_error(check_dates) {
+//    date_error = "N"
+//    $.each(check_dates, function(index, value){
+//        var d1=new Date(value[0]); //yyyy-mm-dd
+//        var d2=new Date(value[1]); //yyyy-mm-dd
+//        if (d2< d1) {
+//            get_message_details("JMSG017"); // Get message details
+//            var display = msg_type.messages_id_desc;
+//            document.getElementById("id_error_msg").innerHTML = display;
+//            document.getElementById("id_error_msg").style.color = "Red";
+//            $('#id_save_confirm_popup').modal('hide');
+//            $('#aav_Modal').modal('show');
+//            date_error = 'Y'
+//        }
+//    })
+//    return date_error
+//}
 
 //onclick of cancel empty the popup table body and error messages
 $(".remove_upload_data").click(() => {
@@ -194,23 +193,41 @@ function display_error_message(error_message){
 }
 
 //*****************************
-function check_date(aav_data) {
+function check_date(aav) {
     var validDate = 'Y';
-    var error_message = ''
-    $.each(aav_data, function (i, item) {
-        if ((Date.parse(item.valid_to) < Date.parse(item.valid_from)) == true) {
-            error_message = 'From Date Is Greater Than To Date'; // set the error message
+    var error_message = '';
+    $.each(aav, function (i, item) {
+        var validFromParts = item.valid_from.split('-');
+        var validToParts = item.valid_to.split('-');
+        var validFrom = new Date(validFromParts[2], validFromParts[1] - 1, validFromParts[0]);
+        var validTo = new Date(validToParts[2], validToParts[1] - 1, validToParts[0]);
+        var formattedValidFrom = validFrom.toLocaleDateString('en-GB');
+        var formattedValidTo = validTo.toLocaleDateString('en-GB');
+
+        if (validFrom > validTo) {
+            $("#id_error_msg").prop("hidden", false);
+            var msg = "JMSG017";
+            var msg_type = message_config_details(msg);
+            $("#error_msg_id").prop("hidden", false);
+
+            if (msg_type.message_type == "ERROR") {
+                display_message("error_msg_id", msg_type.messages_id_desc);
+            } else if (msg_type.message_type == "WARNING") {
+                display_message("id_warning_msg_id", msg_type.messages_id_desc);
+            } else if (msg_type.message_type == "INFORMATION") {
+                display_message("id_info_msg_id", msg_type.messages_id_desc);
+            }
+
+            var display = msg_type.messages_id_desc;
+            $('#id_save_confirm_popup').modal('hide');
+//            onclick_copy_update_button(item.account_assign_value);
+            $('#aav_Modal').modal('show');
             validDate = 'N';
-            return false; // exit the loop as soon as an invalid date range is found
         }
     });
-    if (validDate == 'N') {
-        display_error_message(error_message); // display the error message
-    } else {
-        $('#error_msg_id').css('display', 'none'); // hide the error message if no invalid date ranges were found
-    }
     return [validDate, error_message];
 }
+
 
 // Function to get main table data
 function get_main_table_data() {
