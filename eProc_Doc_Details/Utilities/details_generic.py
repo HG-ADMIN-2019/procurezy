@@ -336,9 +336,19 @@ def update_approval_status(scheader_guid):
     :param scheader_guid:
     :return:
     """
+    app_id = ''
     sc_approval = ScApproval.objects.filter(header_guid=scheader_guid).order_by('-step_num').first()
     received_time, proc_time = get_received_proc_time(sc_approval)
     proc_lvl_sts, app_sts = get_proc_appr_level_status(sc_approval)
+    if django_query_instance.django_existence_check(ScPotentialApproval,
+                                                    {'sc_header_guid': scheader_guid,
+                                                                   'client':global_variables.GLOBAL_CLIENT,
+                                                                   'del_ind':False}):
+        app_id = django_query_instance.django_filter_value_list_query(ScPotentialApproval,
+                                                                      {'sc_header_guid': scheader_guid,
+                                                                       'client':global_variables.GLOBAL_CLIENT,
+                                                                       'del_ind':False},
+                                                                      'app_id')[0]
     django_query_instance.django_update_query(ScApproval,
                                               {'header_guid': scheader_guid,
                                                'client': global_variables.GLOBAL_CLIENT,
@@ -347,6 +357,7 @@ def update_approval_status(scheader_guid):
                                                'proc_time': proc_time,
                                                'proc_lvl_sts': proc_lvl_sts,
                                                'app_sts': app_sts})
+    return app_id
 
     # sc_approval.received_time = received_time
     # sc_approval.proc_time = proc_time

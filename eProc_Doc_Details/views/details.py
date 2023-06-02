@@ -858,12 +858,18 @@ def update_sc(request):
                 if doc_type == 'order':
                     # not with purchaser work list
                     if purch_worklist_flag == '0':
-                        update_approval_status(sc_header_guid)
-                        ScHeader.objects.update_or_create(guid=sc_header_guid,
-                                                          defaults={
-                                                              'status': CONST_SC_HEADER_AWAITING_APPROVAL,
-                                                              'ordered_at': datetime.now()
-                                                          })
+                        app_id = update_approval_status(sc_header_guid)
+                        if app_id == CONST_AUTO:
+                            django_query_instance.django_update_query(ScHeader,
+                                                                      {'guid':sc_header_guid},
+                                                                      {'status': CONST_SC_HEADER_APPROVED,
+                                                                       'ordered_at': datetime.now()})
+                        else:
+                            ScHeader.objects.update_or_create(guid=sc_header_guid,
+                                                              defaults={
+                                                                  'status': CONST_SC_HEADER_AWAITING_APPROVAL,
+                                                                  'ordered_at': datetime.now()
+                                                              })
 
                     else:
                         ScHeader.objects.update_or_create(guid=sc_header_guid,
@@ -1113,9 +1119,10 @@ def update_delivery_date(request):
                     updated_date[item_guid] = item_del_date
             count += 1
         total_item_value = django_query_instance.django_filter_value_list_query(ScItem,
-                                                                                {'client': global_variables.GLOBAL_CLIENT,
-                                                                                 'del_ind':False,
-                                                                                 'header_guid':header_guid},
+                                                                                {
+                                                                                    'client': global_variables.GLOBAL_CLIENT,
+                                                                                    'del_ind': False,
+                                                                                    'header_guid': header_guid},
                                                                                 'value')
         total_value_sc = round(sum(total_item_value), 2)
         return JsonResponse({'updated_date': updated_date,
@@ -1263,7 +1270,7 @@ def update_saved_item(request):
         })
 
 
-def proceed_checkout(request,encrypt_sc_header_guid):
+def proceed_checkout(request, encrypt_sc_header_guid):
     """
 
     """
@@ -1275,12 +1282,12 @@ def proceed_checkout(request,encrypt_sc_header_guid):
                                                       'client': global_variables.GLOBAL_CLIENT})
     if django_query_instance.django_existence_check(ScHeader,
                                                     {'guid': sc_guid,
-                                                                 'client': global_variables.GLOBAL_CLIENT,
-                                                                 'del_ind': False}):
+                                                     'client': global_variables.GLOBAL_CLIENT,
+                                                     'del_ind': False}):
         sc_item_details = django_query_instance.django_filter_query(ScItem,
                                                                     {'header_guid': sc_guid,
-                                                                     'client':global_variables.GLOBAL_CLIENT,
-                                                                     'del_ind':False},
+                                                                     'client': global_variables.GLOBAL_CLIENT,
+                                                                     'del_ind': False},
                                                                     None,
                                                                     None)
         cart_list = []
