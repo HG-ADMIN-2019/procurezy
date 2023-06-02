@@ -165,6 +165,7 @@
 
     //onclick of data Upload copy data to modal pop-up
     function onclick_display_csv_data() {
+        $("#valid_upload").modal('hide');
         $("#id_delete_duplicate").hide()
         $("#id_check_success_messages").empty();
         $("#id_check_error_messages").empty();
@@ -201,21 +202,21 @@
                             $('#id_data_upload').modal('show');
                         }
                         else{
-                            country_data_array = response.data;
+                            country_data_array = response.valid_data_list;
                             var edit_basic_data = '';
                             var del_ind = '';
                             $("#id_popup_tbody").empty();
-                            $.each(response.data, function (i, value) {
+                            $.each(response.valid_data_list, function (i, value) {
                                 del_ind = '<td>' + value[2] + '</td>'
                                 if (value[2] == 1) {
-                                    del_ind=' <input type="checkbox" value="' + value[2] + '" checked>'
+                                    del_ind=' <input type="checkbox" value="' + value.del_ind + '" checked>'
                                 }
                                 else {
-                                    del_ind= '<input type="checkbox" value="' + value[2] + '" required>'
+                                    del_ind= '<input type="checkbox" value="' + value.del_ind+ '" required>'
                                 }
                                 edit_basic_data += '<tr><td class="class_select_checkbox"><input type="checkbox" required></td>'+
-                                '<td><input class="form-control" type="text" value="' + value[0] + '" maxlength="2" onkeypress="return /[a-z]/i.test(event.key)" required></td>'+
-                                '<td><input class="form-control" type="text" value="' + value[1] + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td>'+
+                                '<td><input class="form-control" type="text" value="' + value.country_code + '" maxlength="2" onkeypress="return /[a-z]/i.test(event.key)" required></td>'+
+                                '<td><input class="form-control" type="text" value="' + value.country_name + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td>'+
                                 '<td>'+ del_ind +'</td></tr>';
                             });
                             $('#id_popup_tbody').append(edit_basic_data);
