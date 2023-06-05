@@ -366,7 +366,6 @@
         var no_duplicate_value = 'Y'
         $.each(po_spl_crit, function (i, item) {
             if ((item.po_split_type == null) || (item.company_code_id == null) || (item.activate == null)) {
-                $('#po_criteria_Modal').modal('show');
                 error_message = ui_messeges("JMSG002")// Get message details
                 no_duplicate_value = 'N'
                 return [no_duplicate_value,error_message]
@@ -383,7 +382,6 @@
                 }
             });
             if (common.length != 0) {
-                $('#po_criteria_Modal').modal('show');
                 display_duplicate_entry(common);  //Function to highlight the rows in popup
                 error_message = ui_messeges("JMSG001")// Get message details
                 no_duplicate_value = 'N'
