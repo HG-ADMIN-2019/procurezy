@@ -498,7 +498,7 @@
                         $("#id_popup_tbody").empty();
                         $.each(response.data, function(i, value) {
                             var language_type_value = value[4]
-                            var paymentdesc_type_value = value[0]  
+                            var paymentdesc_type_value = value[0]
                             dropdown_values.push([paymentdesc_type_value,language_type_value])
                             del_ind = '<td>' + value[4] + '</td>'
                             if (value[4] == 1) {
@@ -514,7 +514,7 @@
                                     payment = '<option value="' + item.payment_term_key + '">' + item.payment_term_key + '</option>';
                                 }else{
                                     payment_list += '<option value="' + item.payment_term_key + '">' + item.payment_term_key + '</option>';
-                                }   
+                                }
                                 payment_id_list = payment + payment_list
                             });
 
@@ -684,6 +684,7 @@
                 }
             });
             if (common.length != 0) {
+                $('#Paytrm_desc_Modal').modal('show');
                 display_duplicate_entry(common);  //Function to highlight the rows in popup
                 error_message = ui_messeges("JMSG001")// Get message details
                 no_duplicate_value = 'N'
