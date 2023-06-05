@@ -470,7 +470,6 @@
         var add_attr_unique_list = [];
         var no_duplicate_value = 'Y'
         $.each(org_attr, function (i, item) {
-            $('#org_attr_Modal').modal('show');
             if((item.attribute_id == null) || (item.attribute_name.length == 0) || (item.maximum_length.length == 0)){
                 error_message = ui_messeges("JMSG002")// Get message details
                 no_duplicate_value = 'N'
@@ -488,7 +487,6 @@
                 }
             });
             if (common.length != 0) {
-                $('#org_attr_Modal').modal('show');
                 display_duplicate_entry(common);  //Function to highlight the rows in popup
                 error_message = ui_messeges("JMSG001")// Get message details
                 no_duplicate_value = 'N'

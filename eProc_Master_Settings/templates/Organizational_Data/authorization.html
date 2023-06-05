@@ -265,7 +265,6 @@
         var no_duplicate_value = 'Y'
         $.each(auth, function (i, item) {
             if ((item.role == null) || (item.auth_obj_grp.length == 0)) {
-                $('#auth_Modal').modal('show');
                 error_message = ui_messeges("JMSG002")// Get message details
                 no_duplicate_value = 'N'
                 return [no_duplicate_value,error_message]
@@ -282,7 +281,6 @@
                 }
             });
             if (common.length != 0) {
-                $('#auth_Modal').modal('show');
                 display_duplicate_entry(common);  //Function to highlight the rows in popup
                 error_message = ui_messeges("JMSG001")// Get message details
                 no_duplicate_value = 'N'
