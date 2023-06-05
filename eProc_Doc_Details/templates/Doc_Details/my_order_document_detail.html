@@ -13,33 +13,35 @@
     <div id="button" class="mo-doc-button-container">
         <h3>Shopping Cart #{{hdr_det.doc_number}}</h3>
         <div class="d-flex">
-            {% if hdr_det.status == 'SAVED' %}
-            <div class="mo-doc-button-group__saved">
-                <button type="button" class="btn btn-outline-primary" onclick="window.close()"><i class="fas fa-times"></i> Close</button>
-                <button class="btn btn-primary" id="add_approver_note_btn" data-toggle="modal" data-target="#add_approver_note"><i class="fa fa-plus" aria-hidden="true"></i> approver note</button>
+            <div id="on_page_load">
+                {% if hdr_det.status == 'SAVED' %}
+                <div class="mo-doc-button-group__saved">
+                    <button type="button" class="btn btn-outline-primary" onclick="window.close()"><i class="fas fa-times"></i> Close</button>
+                    <button class="btn btn-primary" id="add_approver_note_btn" data-toggle="modal" data-target="#add_approver_note"><i class="fa fa-plus" aria-hidden="true"></i> approver note</button>
 
-                <button class="btn btn-primary" data-toggle="modal" data-target="#proceed_to_checkout"><i
-                        class="fa fa-trash" aria-hidden="true"></i> proceed to checkout
-                </button>
-                {% if sc_appr and sc_completion %}
-                <button id="id_order_sc" class="btn btn-primary editable_mode"><i class="fas fa-sign-in-alt" aria-hidden="true"></i> send to purchasing team</button>
-                {% endif %}
+                    <button class="btn btn-primary" data-toggle="modal" data-target="#proceed_to_checkout"><i
+                            class="fa fa-trash" aria-hidden="true"></i> proceed to checkout
+                    </button>
+                    {% if sc_appr and sc_completion %}
+                    <button id="id_order_sc" class="btn btn-primary editable_mode"><i class="fas fa-sign-in-alt" aria-hidden="true"></i> send to purchasing team</button>
+                    {% endif %}
 
-                {% if sc_appr.0.app_id != 'Auto' and not sc_completion %}
-                <button id="id_order_sc" class="btn btn-primary editable_mode"><i class="fas fa-sign-in-alt" aria-hidden="true"></i> submit for approval</button>
-                {% endif %}
+                    {% if sc_appr.0.app_id != 'Auto' and not sc_completion %}
+                    <button id="id_order_sc" class="btn btn-primary editable_mode"><i class="fas fa-sign-in-alt" aria-hidden="true"></i> submit for approval</button>
+                    {% endif %}
 
-                {% if sc_appr.0.app_id == 'Auto' and not sc_completion %}
-                <button id="id_order_sc" class="btn btn-primary editable_mode"><i class="fas fa-sign-in-alt" aria-hidden="true"></i> place order</button>
+                    {% if sc_appr.0.app_id == 'Auto' and not sc_completion %}
+                    <button id="id_order_sc" class="btn btn-primary editable_mode"><i class="fas fa-sign-in-alt" aria-hidden="true"></i> place order</button>
+                    {% endif %}
+                </div>
+                {% else %}
+                <div class="mo-doc-button-group__saved" >
+                    <button type="button" class="btn btn-outline-primary" onclick="window.close()"><i class="fas fa-times"></i> Close</button>
+                    <button class="btn btn-primary"  data-toggle="modal" data-target="#add_approver_note"><i class="fa fa-plus" aria-hidden="true"></i> approver note</button>
+                </div>
                 {% endif %}
             </div>
-            {% else %}
-            <div class="mo-doc-button-group__saved" >
-                <button type="button" class="btn btn-outline-primary" onclick="window.close()"><i class="fas fa-times"></i> Close</button>
-                <button class="btn btn-primary"  data-toggle="modal" data-target="#add_approver_note"><i class="fa fa-plus" aria-hidden="true"></i> approver note</button>
-            </div>
-            {% endif %}
-            <div class="mo-doc-button-group__saved" id="approve_button_display" hidden>
+            <div class="mo-doc-button-group__saved" id="approve_button_display" style="display:none">
                 <button type="button" class="btn btn-outline-primary" onclick="window.close()"><i class="fas fa-times"></i> Close</button>
                 <button class="btn btn-primary"  data-toggle="modal" data-target="#add_approver_note"><i class="fa fa-plus" aria-hidden="true"></i> approver note</button>
             </div>
@@ -840,31 +842,34 @@ function save_my_order_doc_detail(type) {
     }
 
 function update_ui(response){
-    status = response.status
+    status = response.document_detail.status
     var status_html = '';
     if(status == 'APPROVED' ){
-        status_html = '<span class="badge badge-pill badge_status_approved status-pill">APPROVED</span>';
+        status_html = '<span class="po-header-label">Status</span><br><span class="badge badge-pill badge_status_approved status-pill">APPROVED</span>';
     }
     else if (status == 'SAVED' ){
-        status_html = '<span class="badge badge-pill badge_status_save status-pill">SAVED</span>';
+        status_html = '<span class="po-header-label">Status</span><br><span class="badge badge-pill badge_status_save status-pill">SAVED</span>';
     }
     else if (status == 'REJECTED' ){
-        status_html = '<span class="badge badge-pill badge_status_rejected status-pill">REJECTED</span>';
+        status_html = '<span class="po-header-label">Status</span><br><span class="badge badge-pill badge_status_rejected status-pill">REJECTED</span>';
     }
     else if (status == 'PURCHASER_WORKLIST' ){
-        status_html = '<span class="badge badge-pill badge_status_purch_wrkl status-pill">IN PURCHASER's WORK LIST</span>';
+        status_html = '<span class="po-header-label">Status</span><br><span class="badge badge-pill badge_status_purch_wrkl status-pill">IN PURCHASER WORK LIST</span>';
     }
     else if (status == 'AWAITING_APPROVAL' ){
-        status_html = '<span class="badge badge-pill badge_status_await_approval status-pill">WAITING FOR APPROVAL</span>';
+        status_html = '<span class="po-header-label">Status</span><br><span class="badge badge-pill badge_status_await_approval status-pill">WAITING FOR APPROVAL</span>';
     }
     $("#status_button").empty();
     $("#status_button").append(status_html);
 
     if (status == 'SAVED' ){
         document.getElementById("approve_button_display").style.display = "none";
+        document.getElementById("on_page_load").style.display = "block";
+
     }
     else{
         document.getElementById("approve_button_display").style.display = "block";
+        document.getElementById("on_page_load").style.display = "none";
     }
 }
 

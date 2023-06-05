@@ -918,6 +918,7 @@ def update_sc(request):
 
     document_detail = {}
     if sc_header_instance:
+        sc_header_instance = django_query_instance.django_get_query(ScHeader, {'guid': sc_header_guid})
         document_detail = {'document_number': sc_header_instance.doc_number,
                            'sc_name': sc_header_instance.description,
                            'status': sc_header_instance.status}
