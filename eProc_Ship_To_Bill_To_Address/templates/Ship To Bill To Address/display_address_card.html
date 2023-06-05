@@ -89,10 +89,12 @@
                 <span class="h6">Receiver: </span> <span id="ScHeader-requester-{{ sc_header_data.guid }}">{{ requester_full_name.first_name }} {{ requester_full_name.last_name }}</span>
                 {% endif %}
             </div>
+            {% if button_status %}
             <div>
                 <button type="button" class="hg_button_edit editable_mode" data-toggle="modal"
                         onclick="ChangeGoodsReciever();" data-target="#ChangeGoodsReceiver"> change receiver</button>
             </div>
+            {% endif %}
         </div>
         {% endif %}
     </div>
