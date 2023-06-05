@@ -292,24 +292,6 @@
         });
     }
 
-
-    // function GetSelectedTextValue(attribute) {
-    //     var selectedText = '';
-    //     var selectedValue = documenttype.value;
-    //     var selectedId = (documenttype.id).split('-')[1];
-    //     // Check if selectedValue is empty, if yes, display popup
-    //     if (selectedValue == '') {
-    //         // Add your code to display the popup here
-    //         return;
-    //     }
-    //     $.each(rendered_dropdown_values, function(i, item){
-    //         if(selectedValue == item.field_type_id){
-    //             selectedText = item.field_type_desc;
-    //             $('#attribute_name-'+selectedId).val(selectedText);
-    //         }
-    //     });
-    // }
-
     // validating the  popup table for duplicate entries
     function compare_table_for_duplicate_entries(validate_add_attributes, doctype) {
         add_attr_duplicates = false;
@@ -319,7 +301,6 @@
         var error_message = ''
         $.each(doctype, function (i, item) {
             if ((item.document_type == null) || (item.document_type_desc.length == 0)) {
-                $('#doc_Modal').modal('show');
                 error_message = ui_messeges("JMSG002")// Get message details
                 no_duplicate_value = 'N'
                 return [no_duplicate_value,error_message]
@@ -336,7 +317,6 @@
                 }
             });
             if (common.length != 0) {
-                $('#doc_Modal').modal('show');
                 display_duplicate_entry(common);  //Function to highlight the rows in popup
                 error_message = ui_messeges("JMSG001")// Get message details
                 no_duplicate_value = 'N'

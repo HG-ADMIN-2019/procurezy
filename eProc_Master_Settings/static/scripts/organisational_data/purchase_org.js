@@ -122,9 +122,9 @@ function add_popup_row() {
         '<td hidden><input value=""></td>'+
         '<td class="class_del_checkbox"><input type="checkbox" required></td></tr>';
         $('#id_popup_tbody').append(basic_add_new_html);
-        table_sort_filter('id_popup_table');
         $(".class_del_checkbox").prop("hidden", false);
         $("#id_del_ind_checkbox").prop("hidden", false);
+        table_sort_filter('id_popup_table');
     }
     else{
        basic_add_new_html = '<tr><td><input type="checkbox" required></td>'+
@@ -205,6 +205,13 @@ function delete_duplicate() {
     table_sort_filter_popup_pagination('id_popup_table')
     check_data()
 }
+
+// onclick of valid popup
+function valid_popup(){
+  $('#id_data_upload').modal('hide');
+  $("#valid_upload").modal('show');
+}
+
 
 // Function to hide and display save related popups
 $('#save_id').click(function () {

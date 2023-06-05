@@ -388,7 +388,7 @@
                 for (var i = 0; i < $chkbox_all.length; i++) {
                 if ($chkbox_all[i].checked) {
                     var row = $chkbox_all[i].parentNode.parentNode;
-<!--                    var lang_val = row.cells[1].innerHTML;-->
+                    var lang_val = row.cells[1].innerHTML;
                     if (GLOBAL_ACTION == "UPDATE") {
                         lang_id = get_language(render_language_data, lang_val);
                         unique_input = '<select id="payterm_key" name="payterm_key"  class="form-control"  type="text" disabled><option>' + row.cells[2].innerHTML + '</option> </select>';
@@ -684,7 +684,6 @@
                 }
             });
             if (common.length != 0) {
-                $('#Paytrm_desc_Modal').modal('show');
                 display_duplicate_entry(common);  //Function to highlight the rows in popup
                 error_message = ui_messeges("JMSG001")// Get message details
                 no_duplicate_value = 'N'

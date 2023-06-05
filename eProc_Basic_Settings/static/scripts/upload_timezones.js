@@ -232,6 +232,13 @@ function get_main_table_data(){
     table_sort_filter('display_basic_table');
 }
 
+
+// onclick of valid popup
+function valid_popup(){
+  $('#id_data_upload').modal('hide');
+  $("#valid_upload").modal('show');
+}
+
 // Function to get main table data
 function get_main_table_data_upload() {
     main_table_low_value = [];

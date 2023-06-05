@@ -34,6 +34,12 @@ function onclick_copy_button() {
     document.getElementById("id_del_add_button").style.display = "block";
 }
 
+ // onclick of valid popup
+function valid_popup(){
+  $('#id_data_upload').modal('hide');
+  $("#valid_upload").modal('show');
+}
+
 // on click update icon display the selected checkbox data to update
 function onclick_update_button() {
     GLOBAL_ACTION = "UPDATE"

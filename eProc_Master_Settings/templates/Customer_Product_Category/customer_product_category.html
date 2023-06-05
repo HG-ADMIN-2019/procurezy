@@ -734,6 +734,7 @@
     //onclick of upload button display id_data_upload popup and set GLOBAL_ACTION button value
     function onclick_upload_button() {
         GLOBAL_ACTION = "cusprodcat_upload"
+        $("#id_error_msg_upload").prop("hidden",true)
         $("#id_popup_tbody").empty();
         $('#id_data_upload').modal('show');
         document.getElementById('id_file_data_upload').value = "";
@@ -784,6 +785,7 @@
     //onclick of data Upload copy data to modal pop-up
     function onclick_display_csv_data() {
         $("#valid_upload").modal('hide');
+        $("#id_delete_duplicate").hide()
         $("#error_msg_id").css("display", "none")
         formdata = new FormData();
         attached_file = $('#id_file_data_upload').prop('files')[0]
@@ -1086,32 +1088,31 @@
         var common = [];
         var add_attr_unique_list = [];
         var no_duplicate_value = 'Y'
-        $.each(validate_add_attributes, function (index, value) {
-            if ($.inArray(value, add_attr_unique_list) == -1) {
-                add_attr_unique_list.push(value);
-            }
-            else {
-                if ($.inArray(value, common) == -1) {
-                    common.push(value);
-                }
+        $.each(cusprodcat, function (i, item) {
+            if (item.prod_cat_id == null){
+                $('#cusprodcat_Modal').modal('show');
+                error_message = ui_messeges("JMSG002")// Get message details
+                no_duplicate_value = 'N'
+                return [no_duplicate_value,error_message]
             }
         });
-        if (common.length != 0) {
-            $('#cusprodcat_Modal').modal('show');
-            display_duplicate_entry(common);  //Function to highlight the rows in popup
-            error_message = ui_messeges("JMSG001")// Get message details
-            no_duplicate_value = 'N'
-            return [no_duplicate_value,error_message]
-        }
-        else {
-            $.each(cusprodcat, function (i, item) {
-                if (item.prod_cat_id == null){
-                    $('#cusprodcat_Modal').modal('show');
-                    error_message = ui_messeges("JMSG002")// Get message details
-                    no_duplicate_value = 'N'
-                    return [no_duplicate_value,error_message]
+        if(no_duplicate_value == 'Y'){
+            $.each(validate_add_attributes, function (index, value) {
+                if ($.inArray(value, add_attr_unique_list) == -1) {
+                    add_attr_unique_list.push(value);
+                }
+                else {
+                    if ($.inArray(value, common) == -1) {
+                        common.push(value);
+                    }
                 }
             });
+            if (common.length != 0) {
+                display_duplicate_entry(common);  //Function to highlight the rows in popup
+                error_message = ui_messeges("JMSG001")// Get message details
+                no_duplicate_value = 'N'
+                return [no_duplicate_value,error_message]
+            }
         }
         return [no_duplicate_value,error_message]
     }
