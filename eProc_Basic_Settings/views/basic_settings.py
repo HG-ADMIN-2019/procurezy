@@ -366,7 +366,7 @@ def convert_TimeZone_to_dictionary(arr):
 def convert_UnitOfMeasures_to_dictionary(arr):
     convertion_list = []
     for row in arr:
-        dictionary = {'uom_id': row[0], 'description': row[1], 'iso_code_id': row[2],
+        dictionary = {'uom_id': row[0], 'uom_description': row[1], 'iso_code_id': row[2],
                       'del_ind': row[3]}
         convertion_list.append(dictionary)
     return convertion_list
@@ -375,7 +375,7 @@ def convert_UnitOfMeasures_to_dictionary(arr):
 def convert_OrgPGroup_to_dictionary(arr):
     convertion_list = []
     for row in arr:
-        dictionary = {'del_ind': row[0], 'prod_cat_id': row[1]}
+        dictionary = {'pgroup_id': row[0],'description': row[1],'del_ind': row[2]}
         convertion_list.append(dictionary)
     return convertion_list
 
@@ -383,7 +383,7 @@ def convert_OrgPGroup_to_dictionary(arr):
 def convert_OrgPorg_to_dictionary(arr):
     convertion_list = []
     for row in arr:
-        dictionary = {'del_ind': row[0], 'prod_cat_id': row[1]}
+        dictionary = {'porg_id': row[0], 'description': row[1],'del_ind': row[2]}
         convertion_list.append(dictionary)
     return convertion_list
 
@@ -391,7 +391,7 @@ def convert_OrgPorg_to_dictionary(arr):
 def convert_OrgCompanies_to_dictionary(arr):
     convertion_list = []
     for row in arr:
-        dictionary = {'del_ind': row[0], 'prod_cat_id': row[1]}
+        dictionary = {'name1': row[0], 'name2': row[1],'company_id': row[2],'del_ind': row[3]}
         convertion_list.append(dictionary)
     return convertion_list
 

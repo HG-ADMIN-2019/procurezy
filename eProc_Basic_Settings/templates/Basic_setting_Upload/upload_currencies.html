@@ -187,11 +187,11 @@
                             document.getElementById("id_error_msg_upload").style.color = "Red";
                             $('#id_data_upload').modal('show')
                         } else {
-                            currency_data_array = response.data;
+                            currency_data_array = response.valid_data_list;
                             var edit_basic_data = '';
                             var del_ind = '';
                             $("#id_popup_tbody").empty();
-                            $.each(response.data, function(i, value) {
+                            $.each(response.valid_data_list, function(i, value) {
                                 del_ind = '<td>' + value[2] + '</td>'
                                 if (value[2] == 1) {
                                     del_ind = '<input type="checkbox" value="' + value.del_ind + '" checked>'
