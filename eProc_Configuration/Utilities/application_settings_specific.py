@@ -1426,7 +1426,7 @@ def user_roles_data():
 
 
 def authorization_dropdown():
-    upload_dropdown_db_values = get_field_unused_list_values('authorization')
+    upload_dropdown_db_values = get_field_unused_list_values('roles')
     data = {
         'dropdown_db_values': upload_dropdown_db_values
     }

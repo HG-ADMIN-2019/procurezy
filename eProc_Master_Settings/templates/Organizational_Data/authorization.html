@@ -76,7 +76,7 @@
                 <!-- Modal body -->
                 <div class="modal-body">
                     <div class="popup-vertical-scroll">
-                        <div id="id_del_add_button">
+                        <div id="id_del_add_button" class="mb-4">
                             <button class="btn btn-primary" title="Add New Row" type="button" onclick="add_popup_row()"><i class="fa fa-plus"></i> add new row </button>
                             <button class="btn btn-outline-danger" title="Delete" onclick="application_settings_delete_Row('id_popup_table')"><i class="fa fa-trash" aria-hidden="true" title="Delete Line"></i> delete</button>
                         </div>
@@ -156,9 +156,12 @@
 
     //*********************
     function GetSelectedTextValue(roles) {
-        var selectedText = roles.options[roles.selectedIndex].innerHTML;
+        // var selectedText = roles.options[roles.selectedIndex].innerHTML;
         var selectedValue = roles.value;
         var selectedId = (roles.id).split('-')[1];
+        if (GLOBAL_ACTION == "roles_upload") {
+            $(".class_del_checkbox").prop("hidden", false);
+        }
         $.each (rendered_roles_type_values,function(i, item) {
             if(selectedValue == item.field_type_id) {
                 $('#auth_obj_grp-'+selectedId).val(item.field_type_desc);
