@@ -330,6 +330,72 @@ def upload_timezone(request):
                    'inc_nav': True})
 
 
+def convert_Country_to_dictionary(arr):
+    convertion_list = []
+    for row in arr:
+        dictionary = {'country_code': row[0], 'country_name': row[1],'del_ind': row[2]}
+        convertion_list.append(dictionary)
+    return convertion_list
+
+
+def convert_Currency_to_dictionary(arr):
+    convertion_list = []
+    for row in arr:
+        dictionary = {'currency_id': row[0], 'description': row[1],'del_ind': row[2]}
+        convertion_list.append(dictionary)
+    return convertion_list
+
+
+def convert_Languages_to_dictionary(arr):
+    convertion_list = []
+    for row in arr:
+        dictionary = {'language_id': row[0], 'description': row[1],'del_ind': row[2]}
+        convertion_list.append(dictionary)
+    return convertion_list
+
+
+def convert_TimeZone_to_dictionary(arr):
+    convertion_list = []
+    for row in arr:
+        dictionary = {'time_zone': row[0], 'description': row[1],'utc_difference': row[2],'daylight_save_rule': row[3],
+                      'del_ind': row[4]}
+        convertion_list.append(dictionary)
+    return convertion_list
+
+
+def convert_UnitOfMeasures_to_dictionary(arr):
+    convertion_list = []
+    for row in arr:
+        dictionary = {'uom_id': row[0], 'uom_description': row[1], 'iso_code_id': row[2],
+                      'del_ind': row[3]}
+        convertion_list.append(dictionary)
+    return convertion_list
+
+
+def convert_OrgPGroup_to_dictionary(arr):
+    convertion_list = []
+    for row in arr:
+        dictionary = {'pgroup_id': row[0],'description': row[1],'del_ind': row[2]}
+        convertion_list.append(dictionary)
+    return convertion_list
+
+
+def convert_OrgPorg_to_dictionary(arr):
+    convertion_list = []
+    for row in arr:
+        dictionary = {'porg_id': row[0], 'description': row[1],'del_ind': row[2]}
+        convertion_list.append(dictionary)
+    return convertion_list
+
+
+def convert_OrgCompanies_to_dictionary(arr):
+    convertion_list = []
+    for row in arr:
+        dictionary = {'name1': row[0], 'name2': row[1],'company_id': row[2],'del_ind': row[3]}
+        convertion_list.append(dictionary)
+    return convertion_list
+
+
 def data_upload(request):
     db_header = request.POST.get('db_header_data')
     csv_file = request.FILES['file_attach']
@@ -349,6 +415,54 @@ def data_upload(request):
     # print(basic_save)
     # if not basic_save:
     try:
+        if Table_name == 'Country':
+            result['error_message'], result['data'] = upload_csv.csv_preview_data(header_detail, data_set_val)
+            convertion_list = convert_Country_to_dictionary(result['data'])
+            valid_data_list, message = get_valid_country_data(convertion_list, 'UPLOAD')
+            context = {'valid_data_list': valid_data_list}
+            return JsonResponse(context, safe=False)
+        if Table_name == 'Currency':
+            result['error_message'], result['data'] = upload_csv.csv_preview_data(header_detail, data_set_val)
+            convertion_list = convert_Currency_to_dictionary(result['data'])
+            valid_data_list, message = get_valid_currency_data(convertion_list, 'UPLOAD')
+            context = {'valid_data_list': valid_data_list}
+            return JsonResponse(context, safe=False)
+        if Table_name == 'Languages':
+            result['error_message'], result['data'] = upload_csv.csv_preview_data(header_detail, data_set_val)
+            convertion_list = convert_Languages_to_dictionary(result['data'])
+            valid_data_list, message = get_valid_language_data(convertion_list, 'UPLOAD')
+            context = {'valid_data_list': valid_data_list}
+            return JsonResponse(context, safe=False)
+        if Table_name == 'TimeZone':
+            result['error_message'], result['data'] = upload_csv.csv_preview_data(header_detail, data_set_val)
+            convertion_list = convert_TimeZone_to_dictionary(result['data'])
+            valid_data_list, message = get_valid_timezone_data(convertion_list, 'UPLOAD')
+            context = {'valid_data_list': valid_data_list}
+            return JsonResponse(context, safe=False)
+        if Table_name == 'UnitOfMeasures':
+            result['error_message'], result['data'] = upload_csv.csv_preview_data(header_detail, data_set_val)
+            convertion_list = convert_UnitOfMeasures_to_dictionary(result['data'])
+            valid_data_list, message = get_valid_uom_data(convertion_list, 'UPLOAD')
+            context = {'valid_data_list': valid_data_list}
+            return JsonResponse(context, safe=False)
+        if Table_name == 'OrgPGroup':
+            result['error_message'], result['data'] = upload_csv.csv_preview_data(header_detail, data_set_val)
+            convertion_list = convert_OrgPGroup_to_dictionary(result['data'])
+            valid_data_list, message = check_purchasegrp_data(convertion_list, 'UPLOAD')
+            context = {'valid_data_list': valid_data_list}
+            return JsonResponse(context, safe=False)
+        if Table_name == 'OrgPorg':
+            result['error_message'], result['data'] = upload_csv.csv_preview_data(header_detail, data_set_val)
+            convertion_list = convert_OrgPorg_to_dictionary(result['data'])
+            valid_data_list, message = check_purchaseorg_data(convertion_list, 'UPLOAD')
+            context = {'valid_data_list': valid_data_list}
+            return JsonResponse(context, safe=False)
+        if Table_name == 'OrgCompanies':
+            result['error_message'], result['data'] = upload_csv.csv_preview_data(header_detail, data_set_val)
+            convertion_list = convert_OrgCompanies_to_dictionary(result['data'])
+            valid_data_list, message = check_company_data(convertion_list, 'UPLOAD')
+            context = {'valid_data_list': valid_data_list}
+            return JsonResponse(context, safe=False)
         if Table_name == 'UnspscCategoriesCust':
             result['error_message'], result['data'] = upload_csv.csv_preview_data(header_detail, data_set_val)
             convertion_list = convert_UNSPSC_to_dictionary(result['data'])

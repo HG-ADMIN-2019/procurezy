@@ -591,8 +591,8 @@
     
                     <hr>
                     <div id="total_value" class="cart-value-section">
-                        <span class="cart-value-label">Total value for <span id="total_items">{{ itm_det|length }}</span> items </span>
-                        <span  class="cart-value-desc" ><span id="ScHeader-total_value-{{sc_header_data.guid}}">{{sc_header_data.total_value}}</span> <span id="total_cart_currency"> {{request.user.currency_id}}</span></span>
+                        <span class="cart-value-label">Total value for <span id="total_items">{{ item_dictionary_list|length }}</span> items </span>
+                        <span  class="cart-value-desc" ><span id="ScHeader-total_value-{{hdr_det.guid}}">{{hdr_det.total_value}}</span> <span id="total_cart_currency"> {{request.user.currency_id}}</span></span>
                     </div>
                 </div>
             </div>

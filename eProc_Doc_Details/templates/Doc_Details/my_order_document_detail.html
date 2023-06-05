@@ -213,9 +213,42 @@
 <script>
 
 var rendered_acc_guid = []
+var rendered_item_guid = [];
+var rendered_item_total_value = []
+var rendered_item_total = []
+var rendered_item_call_off = []
+var rendered_addr_guid = []
+var rendered_address_guid_details = []
+var rendered_supp_note = []
+var rendered_int_note = []
+var internal_supplier_error_itemNumber = []
+var GLOBAL_HEADER_GUID = "{{hdr_det.guid}}";
+// Purchase worklist flag
+var purch_worklist_flag = {{ sc_completion | length | safe }};
+var final_attachment_array = new Array()
 {% for sc_acc in acc_det %}
     rendered_acc_guid.push('{{sc_acc.guid|safe}}')
 {% endfor %}
+{% for items in item_dictionary_list %}
+    rendered_item_total_value.push('{{items.value|safe}}')
+    rendered_item_guid.push('{{items.guid|safe}}')
+    rendered_item_total.push('{{items.value|safe}}')
+    rendered_item_call_off.push('{{items.call_off|safe}}')
+{% endfor %}
+
+{% for sc_addr in addr_det %}
+    rendered_addr_guid.push('{{sc_addr.guid|safe}}')
+{% endfor %}
+
+{% for supp_note in supp_notes %}
+    rendered_supp_note.push('{{supp_note.guid|safe}}');
+{% endfor %}
+
+// create dictionary containing notes
+{% for int_note in int_notes %}
+    rendered_int_note.push('{{int_note.guid|safe}}');
+{% endfor %}
+
 
 // store rendered highest item guid in global variable
 var GLOBAL_HIGHEST_ITEM_GUID = '{{highest_item_guid|safe}}';
@@ -284,6 +317,91 @@ $("#id_order_sc").on("click", function () {
 
 });
 
+// Function to get my order data for check
+function get_data_for_check() {
+    var data_for_check = new Array()
+    var supplier_id = '';
+    supplier = $("[id^=supp-]")
+    adr_num = $("[id^=address_number_]")
+    for (i = 0; i < supplier.length; i++) {
+        data = {}
+        incremented_i = i + 1
+        var supp_id = supplier[i].id;
+        var address_info = 'ScAddresses-address_number-' + rendered_addr_guid[i];
+        var acc_info = 'ScAccounting-acc_cat-' + rendered_acc_guid[i];
+        var acc_acc_cat = (document.getElementById(acc_info).innerHTML).split(' - ')[0].trim();
+        data.acc_acc_cat = acc_acc_cat.replace(/\s/g, '')
+        var gl_num_info = 'ScAccounting-gl_acc_num-' + rendered_acc_guid[i];
+        var prod_cat_info = 'prod_cat_id-' + rendered_item_guid[incremented_i - 1];
+        supplier_info = document.getElementById(supp_id).textContent;
+        var internal_note = document.getElementById("Notes-note_text-"+rendered_int_note[i] + '-I').value
+        var supplier_note = document.getElementById("Notes-note_text-" + rendered_supp_note[i] + "-S").value
+        remove_special_characters(internal_note, supplier_note, incremented_i)
+        data.item_num = incremented_i
+        data.supplier_name = document.getElementById(supp_id).textContent;
+        data.address_number = document.getElementById(address_info).innerHTML
+        data.acc_acc_cat = (document.getElementById(acc_info).innerHTML).split(' - ')[0].trim()
+        data.acc_acc_val = (document.getElementById('ScAccounting-acc_val-' + rendered_acc_guid[i]).innerHTML).split(' - ')[0].trim()
+        data.gl_acc_num = (document.getElementById(gl_num_info).innerHTML).split(' - ')[0]
+        delivery_date = document.getElementById('del_date-' + rendered_item_guid[i]).innerHTML
+        if(delivery_date.includes('limit-')){
+            delivery_date = (document.getElementById('del_date-limit-' + rendered_item_guid[i]).innerHTML).split('limit-')[1]
+        }
+        data.delivery_date = delivery_date
+        data.item_guid = rendered_item_guid[i]
+
+        data.prod_cat = (document.getElementById(prod_cat_info).innerHTML)
+        create_id = 'product_id-' + incremented_i + '-'
+        get_product_ids = $('[id^="' + create_id + '"]')
+        if(get_product_ids.length > 0){
+            split_array = get_product_ids[0].id.split('-')
+            data.product_id = split_array[2]
+            data.lead_time  = split_array[3]
+            data.item_price = document.getElementById("ScIem-price-"+rendered_item_guid[i]).innerHTML
+            data.quantity = document.getElementById("item_quantity-"+rendered_item_guid[i]).innerHTML
+        }
+        data_for_check.push(data)
+    }
+    return data_for_check
+}
+
+function get_sc_header_data(){
+    data = {}
+    var address_number_element = document.getElementById("address_number")
+    var street_element = document.getElementById("street_output")
+    var area_element = document.getElementById("area_output")
+    var landmark_element = document.getElementById("landmark_output")
+    var city_element = document.getElementById("city_output")
+    var pcode_element = document.getElementById("pcode_output")
+    var region_element = document.getElementById("region_output")
+    var account_assignment_category = $('#change_acc_type').html().trim()
+    var account_assignment_value = $('#change_acc_value').html().trim()
+    var acc_asg_cat = account_assignment_category.split(' - ')[0]
+    var acc_asg_cat_value = account_assignment_value.split(' - ')[0]
+    adr_num   = address_number_element ? address_number_element.innerHTML : 'None'
+    street    = street_element ? street_element.innerHTML : 'None'
+    area      = area_element ? area_element.innerHTML : 'None'
+    landmark  = landmark_element ? landmark_element.innerHTML : 'None'
+    city      = city_element ? city_element.innerHTML : 'None'
+    pcode     = pcode_element ? pcode_element.innerHTML : 'None'
+    region    = region_element ? region_element.innerHTML : 'None'
+
+    var header_level_addr = {'adr_num':adr_num,
+                             'street':street,
+                             'area': area,
+                             'landmark':landmark,
+                             'city': city,
+                              'pcode': pcode,
+                              'region' : region}
+    var header_level_acc = {'acc_asg_cat':acc_asg_cat,
+                            'acc_asg_cat_value':acc_asg_cat_value,
+                            'acc_desc_list':acc_desc_list}
+    var header_level_data = {'header_level_addr':header_level_addr,
+                                'header_level_acc':header_level_acc}
+    return header_level_data
+
+}
+
 // on click of check button
     function check_shopping_cart(type, sc_data, acc_default, acc_default_val) {
         OpenLoaderPopup();
@@ -294,18 +412,17 @@ $("#id_order_sc").on("click", function () {
         var check_sc_data = '';
         if (type != 'approval_workflow') {
             check_sc_data = get_data_for_check()
-            header_level_data = get_sc_header_data()
         }
         var total_val = $('#ScHeader-total_value-' + GLOBAL_HEADER_GUID).text();
         data = {
-            'acc_default': highest_item_acc_asgn_cat,
-            'acc_default_val': highest_item_change_acc_value,
+            'acc_default': acc_default.split(' - ')[0],
+            'acc_default_val': acc_default_val.split(' - ')[0],
             'total_val': total_val,
             'check_sc_data': check_sc_data,
             'type': type,
             'requester': $('#shopping_cart_requester').val(),
             'sc_header_guid': GLOBAL_HEADER_GUID,
-            'header_level_data':header_level_data
+            'check_type':'sc_completion'
         }
 
         $.ajax({
@@ -401,6 +518,285 @@ $("#id_order_sc").on("click", function () {
             }
         });
 
+    }
+// Start of  SC UI checks
+const check_ui_errors_warnings = (error_messages) => {
+    var warning_messages = ''
+    var error_messages = ''
+    check_address_number = document.getElementsByClassName('check_address_number')
+    address_number_array = new Array();
+    for(i = 0; i < check_address_number.length; i++) {
+        address_number_array.push(check_address_number[i].innerHTML)
+    }
+    is_multiple_delivery_addresses = address_number_array.every( (val, i, arr) => val === arr[0] )
+    if(!is_multiple_delivery_addresses){
+
+                    var msg = "JMSG026";
+                    var msg_type ;
+                  msg_type = message_config_details(msg);
+                  $("#error_msg_id").prop("hidden", false)
+
+                  if(msg_type.message_type == "ERROR"){
+                        display_message("error_msg_id", msg_type.messages_id_desc)
+                  }
+                  else if(msg_type.message_type == "WARNING"){
+                     display_message("id_warning_msg_id", msg_type.messages_id_desc)
+                  }
+                  else if(msg_type.message_type == "INFORMATION"){
+                     display_message("id_info_msg_id", msg_type.messages_id_desc)
+                  }
+                  var display = msg_type.messages_id_desc;
+                  warning_messages += display ;
+
+        $('#sc_warning_messages').html(warning_messages)
+        $('#sc_warning_messages').show()
+    } else $('sc_warning_messages').hide()
+
+    check_account_assignment_type = document.getElementsByClassName('change_account_type')
+    change_acc_type_array = new Array();
+    for(i = 0; i < check_account_assignment_type.length; i++) {
+        change_acc_type_array.push(check_account_assignment_type[i].innerHTML)
+    }
+    is_multiple_account_assignment = change_acc_type_array.every( (val, i, arr) => val === arr[0] )
+    if(!is_multiple_account_assignment){
+
+                    var msg = "JMSG047";
+                    var msg_type ;
+                  msg_type = message_config_details(msg);
+                  $("#error_msg_id").prop("hidden", false)
+
+                  if(msg_type.message_type == "ERROR"){
+                        display_message("error_msg_id", msg_type.messages_id_desc)
+                  }
+                  else if(msg_type.message_type == "WARNING"){
+                     display_message("id_warning_msg_id", msg_type.messages_id_desc)
+                  }
+                  else if(msg_type.message_type == "INFORMATION"){
+                     display_message("id_info_msg_id", msg_type.messages_id_desc)
+                  }
+                  var display = msg_type.messages_id_desc;
+                  warning_messages += display;
+
+        $('#sc_warning_messages').html(warning_messages)
+        $('#sc_warning_messages').show()
+    } else $('sc_warning_messages').hide()
+    if(is_multiple_account_assignment){
+        check_account_assignment_value = document.getElementsByClassName('check_account_assignment_values')
+        change_acc_value_array = new Array();
+        for(i = 0; i < check_account_assignment_value.length; i++) {
+            change_acc_value_array.push(check_account_assignment_value[i].innerHTML)
+        }
+        is_multiple_account_assignment_value = change_acc_value_array.every( (val, i, arr) => val === arr[0] )
+        if(!is_multiple_account_assignment_value){
+
+                    var msg = "JMSG048";
+                    var msg_type ;
+                  msg_type = message_config_details(msg);
+                  $("#error_msg_id").prop("hidden", false)
+
+                  if(msg_type.message_type == "ERROR"){
+                        display_message("error_msg_id", msg_type.messages_id_desc)
+                  }
+                  else if(msg_type.message_type == "WARNING"){
+                     display_message("id_warning_msg_id", msg_type.messages_id_desc)
+                  }
+                  else if(msg_type.message_type == "INFORMATION"){
+                     display_message("id_info_msg_id", msg_type.messages_id_desc)
+                  }
+                  var display = msg_type.messages_id_desc;
+                 warning_messages += display;
+
+            $('#sc_warning_messages').html(warning_messages)
+            $('#sc_warning_messages').show()
+        } else $('sc_warning_messages').hide()
+    }
+
+    for(j = 0; j < internal_supplier_error_itemNumber.length; j++ ) {
+           var url_new = "{% url 'eProc_Basic:get_message_description' %}";
+            var msg = "JMSG003";
+            var msg_type ;
+          msg_type = message_config_details(msg);
+          $("#error_msg_id").prop("hidden", false)
+
+          if(msg_type.message_type == "ERROR"){
+                display_message("error_msg_id", msg_type.messages_id_desc)
+          }
+          else if(msg_type.message_type == "WARNING"){
+             display_message("id_warning_msg_id", msg_type.messages_id_desc)
+          }
+          else if(msg_type.message_type == "INFORMATION"){
+             display_message("id_info_msg_id", msg_type.messages_id_desc)
+          }
+          var display4 = msg_type.messages_id_desc;
+          error_messages += 'Error at item ' + internal_supplier_error_itemNumber[j] + ': ' +  display4 + "Internal or supplier note" + '<br>'
+
+    }
+
+    return error_messages
+}
+// End of sc UI checks
+function save_my_order_doc_detail(type) {
+        var sc_item_dictionary = {};
+        array_index = 0;
+        data = new FormData();
+        var item_number;
+
+        for (i = 1; i < (total_items + 1); i++) {
+            last_index_attachments = parseInt(sessionStorage.getItem('last_added_file_number_doc_detail-' + i))
+            // for(j=0;j<final_attachment_array.length; j++){
+            var j = 1;
+            while (j <= last_index_attachments) {
+                if (j > last_index_attachments) {
+                    break;
+                }
+                check_for_file = "attachment_data" + i + '_' + j;
+                if (indexed_db_keys.includes(check_for_file)) {
+                    attachment_object = final_attachment_array[array_index]
+                    if (typeof attachment_object != 'undefined') {
+                        file_base64 = attachment_object.dataUrl
+                        if (typeof file_base64 != 'undefined') {
+                            file_number = j
+                            atta_name = attachment_object.attachment_name
+                            data.append('attachment' + i + '_' + file_number, dataURLtoFile(file_base64, attachment_object.file_name))
+                            data.append("file_extension" + i + '_' + j, attachment_object.file_extension_id)
+                            data.append("attachment_type" + i, attachment_object.type)
+                            data.append("attachment_name" + i, attachment_object.attachment_name)
+                            data.append('no_attachments' + i, attachment_object.no_attachments)
+                            data.append('item_guid' + i, attachment_object.item_guid)
+                        }
+                    }
+                }
+                else {
+                    array_index--
+                }
+                array_index++
+                j++
+            }
+            data.append('last_index_attachments' + i, last_index_attachments)
+        }
+        data.append('doc_number', $('#document_number').html())
+        data.append('header_guid', GLOBAL_HEADER_GUID)
+        data.append('total_items', total_items)
+
+        var nochange_flag = false
+        is_attachments = false
+        if (final_attachment_array.length > 0) {
+            is_attachments = true;
+            data.append('is_attachments', 'True')
+        }
+
+
+        var nochange_flag = false
+        $(".sc_field_change").each(function () {
+            nochange_flag = true;
+            var sc_id = $(this).attr("id");
+            var field_value = $(this).html();
+
+            try {
+                dbname = sc_id.split('-')
+            } catch (e) {
+                dbname = 'Invalid'
+            }
+            // for text area tag val to get the content
+            if (dbname[0] === 'Notes') {
+                field_value = $(this).val();
+            }
+            if (dbname[0] === 'ScAccounting') {
+                if (dbname[1] === 'acc_cat') {
+                    acc_val = field_value.split(' - ')[0]
+                    switch (acc_val) {
+                        case "CC":
+                            acc_value = "ScAccounting-cost_center-" + dbname[2];
+                            break;
+                        case "WBS":
+                            acc_value = "ScAccounting-wbs_ele-" + dbname[2];
+                            break;
+                        case "OR":
+                            acc_value = "ScAccounting-internal_order-" + dbname[2];
+                            break;
+                        case "AS":
+                            acc_value = "ScAccounting-asset_number-" + dbname[2];
+                            break;
+                        default:
+                    }
+                    if (sc_item_dictionary[acc_value] === undefined) {
+                        acc_val_desc = $("#ScAccounting-acc_val-" +dbname[2]).html();
+                        acc_val = acc_val_desc.split(' - ');
+                        sc_item_dictionary[acc_value] = acc_val[0];
+                    }
+                }
+                field_split_value = field_value.split(' - ');
+                field_value = field_split_value[0];
+            }
+                if (sc_id != undefined) {
+                    if (sc_id !== 'ship_address') {
+                    sc_item_dictionary[sc_id] = field_value;
+                }
+            }
+
+            data.append('update', JSON.stringify(sc_item_dictionary))
+            data.append('sc_total_value', $('#ScHeader-total_value-' + GLOBAL_HEADER_GUID).html())
+        });
+        data.append('sc_total_value', $('#ScHeader-total_value-' + GLOBAL_HEADER_GUID).html())
+        if(type == 'order'){
+            nochange_flag = true;
+        }
+        data.append('type', type)
+        data.append('purch_worklist_flag', purch_worklist_flag)
+        data.append('manger_detail' , JSON.stringify(GLOBAL_MANAGER_DETAIL))
+        if (!jQuery.isEmptyObject(update_item_details)){
+            nochange_flag = true
+            data.append('update_item_details', JSON.stringify(update_item_details))
+        };
+        if (!jQuery.isEmptyObject(update_eform_details)){
+            nochange_flag = true
+            data.append('update_eform_details', JSON.stringify(update_eform_details))
+        };
+        if (nochange_flag || is_attachments) {
+            console.log(GLOBAL_MANAGER_DETAIL)
+            OpenLoaderPopup();
+            data.append('requester', $('#shopping_cart_requester').val())
+            $.ajax({
+                url: "{% url 'eProc_Doc_Details:update_sc' %}",
+                type: "post",
+                data: data,
+                contentType: "application/json; charset=utf-8",
+                success: function (response) {
+                    if(!jQuery.isEmptyObject(response.document_detail)){
+                        if(type == 'save'){
+                            message_type = 'saved'
+                        } else {
+                            message_type = 'ordered'
+                        }
+                        success_message = 'Shopping cart ' + response.document_detail.sc_name + ' with number ' + response.document_detail.document_number + ' ' + message_type +' successfully'
+                        $('#sc_success_messages').html(success_message);
+                        $('#sc_success_messages').show();
+                        $("#status_bar").attr("src", "{% static 'images/Status-bar3.png'%}");
+                        scroll_top();
+                    }
+                    db.close();
+                    var req = indexedDB.deleteDatabase('store_attachments_document_details');
+                    req.onsuccess = function () {
+                        sessionStorage.clear();
+                        url = location.href.split('/')
+                        url.pop()
+                        url.push('display')
+                        url = url.join('/')
+                        location.href = url
+                    };
+                    req.onerror = function () {
+                        console.log("Couldn't delete database");
+                    };
+                    req.onblocked = function () {
+                        db.close();
+                    };
+                    CloseLoaderPopup();
+                },
+                cache: false,
+                processData: false,
+                contentType: false,
+            });
+        }
     }
 
 </script>

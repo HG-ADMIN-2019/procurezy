@@ -18,6 +18,12 @@ function onclick_add_button(button) {
     $("#save_id").prop("hidden", false);
 }
 
+ // onclick of valid popup
+function valid_popup(){
+  $('#id_data_upload').modal('hide');
+  $("#valid_upload").modal('show');
+}
+
 //onclick of upload button display id_data_upload popup and set GLOBAL_ACTION button value
 function onclick_upload_button() {
     GLOBAL_ACTION = "currency_upload"

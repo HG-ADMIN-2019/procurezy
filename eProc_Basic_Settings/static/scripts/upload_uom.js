@@ -12,6 +12,12 @@ function onclick_upload_button() {
     document.getElementById('id_file_data_upload').value = "";
 }
 
+   // onclick of valid popup
+function valid_popup(){
+  $('#id_data_upload').modal('hide');
+  $("#valid_upload").modal('show');
+}
+
 // on click copy icon display the selected checkbox data
 function onclick_copy_button() {
     GLOBAL_ACTION = "COPY"

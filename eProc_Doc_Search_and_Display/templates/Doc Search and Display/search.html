@@ -139,7 +139,6 @@
 
                                         <div class="col">    
                                         <i class="fas fa-plus plus-symbol"></i>
-
                                             {% for doc_approver_detail in doc_approver_details %}
                                             {% if doc_approver_detail.header_guid_id in sc_head.guid and doc_approver_detail.step_num == '1'  %}
 
@@ -169,7 +168,8 @@
 
                                             {% elif sc_head.status == 'SAVED' %}
                                             <span class="badge badge-pill badge_status_save">SAVED</span>
-
+                                            {% elif sc_head.status == 'AWAITING_APPROVAL' %}
+                                            <span class="badge badge-pill badge_status_await_approval">WAITING FOR APPROVAL</span>
                                             {% else %}
                                             <span class="badge badge-pill badge_status_approved">APPROVED</span>
                                             

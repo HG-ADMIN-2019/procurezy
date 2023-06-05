@@ -26,6 +26,13 @@ function onclick_update_button() {
     document.getElementById("id_del_add_button").style.display = "none";
 }
 
+
+ // onclick of valid popup
+function valid_popup(){
+  $('#id_data_upload').modal('hide');
+  $("#valid_upload").modal('show');
+}
+
 //**********************************************************
 function onclick_copy_update_button(data) {
     $("#error_msg_id").css("display", "none")
