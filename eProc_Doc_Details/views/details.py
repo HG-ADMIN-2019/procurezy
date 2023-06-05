@@ -918,7 +918,9 @@ def update_sc(request):
 
     document_detail = {}
     if sc_header_instance:
-        document_detail = {'document_number': sc_header_instance.doc_number, 'sc_name': sc_header_instance.description}
+        document_detail = {'document_number': sc_header_instance.doc_number,
+                           'sc_name': sc_header_instance.description,
+                           'status': sc_header_instance.status}
 
     return JsonResponse({'sc_details': True, 'document_detail': document_detail})
 
