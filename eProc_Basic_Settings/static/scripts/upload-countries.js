@@ -134,7 +134,7 @@ function add_popup_row() {
     $('#delete_data').hide()
 }
 
-   // onclick of valid popup
+// onclick of valid popup
 function valid_popup(){
   $('#id_data_upload').modal('hide');
   $("#valid_upload").modal('show');
