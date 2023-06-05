@@ -13,24 +13,33 @@
     <div id="button" class="mo-doc-button-container">
         <h3>Shopping Cart #{{hdr_det.doc_number}}</h3>
         <div class="d-flex">
+            {% if hdr_det.status == 'SAVED' %}
             <div class="mo-doc-button-group__saved">
                 <button type="button" class="btn btn-outline-primary" onclick="window.close()"><i class="fas fa-times"></i> Close</button>
+                <button class="btn btn-primary" id="add_approver_note_btn" data-toggle="modal" data-target="#add_approver_note"><i class="fa fa-plus" aria-hidden="true"></i> approver note</button>
 
                 <button class="btn btn-primary" data-toggle="modal" data-target="#proceed_to_checkout"><i
                         class="fa fa-trash" aria-hidden="true"></i> proceed to checkout
                 </button>
+                {% if sc_appr and sc_completion %}
+                <button id="id_order_sc" class="btn btn-primary editable_mode"><i class="fas fa-sign-in-alt" aria-hidden="true"></i> send to purchasing team</button>
+                {% endif %}
+
+                {% if sc_appr.0.app_id != 'Auto' and not sc_completion %}
+                <button id="id_order_sc" class="btn btn-primary editable_mode"><i class="fas fa-sign-in-alt" aria-hidden="true"></i> submit for approval</button>
+                {% endif %}
+
+                {% if sc_appr.0.app_id == 'Auto' and not sc_completion %}
+                <button id="id_order_sc" class="btn btn-primary editable_mode"><i class="fas fa-sign-in-alt" aria-hidden="true"></i> place order</button>
+                {% endif %}
             </div>
-            {% if sc_appr and sc_completion %}
-            <button id="id_order_sc" class="btn btn-primary editable_mode"><i class="fas fa-sign-in-alt" aria-hidden="true"></i> send to purchasing team</button>
+            {% else %}
+            <div class="mo-doc-button-group__saved">
+                <button type="button" class="btn btn-outline-primary" onclick="window.close()"><i class="fas fa-times"></i> Close</button>
+                <button class="btn btn-primary" id="add_approver_note_btn" data-toggle="modal" data-target="#add_approver_note"><i class="fa fa-plus" aria-hidden="true"></i> approver note</button>
+            </div>
             {% endif %}
 
-            {% if sc_appr.0.app_id != 'Auto' and not sc_completion %}
-            <button id="id_order_sc" class="btn btn-primary editable_mode"><i class="fas fa-sign-in-alt" aria-hidden="true"></i> submit for approval</button>
-            {% endif %}
-
-            {% if sc_appr.0.app_id == 'Auto' and not sc_completion %}
-            <button id="id_order_sc" class="btn btn-primary editable_mode"><i class="fas fa-sign-in-alt" aria-hidden="true"></i> place order</button>
-            {% endif %}
             {% if is_approval_preview %}
             {% if eligible_approver_flag %}
 
@@ -194,6 +203,32 @@
         </div>
     </div>
 </div>
+<!--start of Add approver note pop-up -->
+<div class="modal fade" id="add_approver_note">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">Approver Note</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <!-- Modal body -->
+            <div class="modal-body">
+                <textarea class="form-control hg_is_disabled" id="approver_text" rows="4" disabled>{{appr_notes.note_text}}</textarea>
+            </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary editable_mode" id="save_approver_note" data-dismiss="modal"><i class="fa fa-check" aria-hidden="true"></i> save</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
 <!-- Start of Change Account assignment category pop up-->
 {% include 'Account Assignment/change_account_assignment_modal.html' %}
 <!-- End of Change Account assignment category pop up-->
@@ -791,6 +826,7 @@ function save_my_order_doc_detail(type) {
                         db.close();
                     };
                     CloseLoaderPopup();
+                    location.reload();
                 },
                 cache: false,
                 processData: false,
