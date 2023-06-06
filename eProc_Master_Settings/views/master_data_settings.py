@@ -852,6 +852,7 @@ def extract_glaccount_template(request):
 
 
 def extract_pgrp_data(request):
+    client = getClients(request)
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="Maintain Purchasing Group.CSV"'
 
@@ -860,7 +861,7 @@ def extract_pgrp_data(request):
     writer.writerow(['PGROUP_ID', 'DESCRIPTION', 'del_ind'])
 
     purgrp = django_query_instance.django_filter_query(OrgPGroup,
-                                                       {'del_ind': False}, None,
+                                                       {'client': client,'del_ind': False}, None,
                                                        ['pgroup_id', 'description', 'del_ind'])
 
     purgrp_data = query_update_del_ind(purgrp)
