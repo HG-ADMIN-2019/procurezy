@@ -599,7 +599,7 @@ def get_sc_detail(header_guid):
                             'appr_notes': appr_notes,
                             'edit_address_flag': '0',
                             'acct_assignment_category': '0',
-                            'button_status': True,
+                            'button_status': False,
                             'requester_full_name': requester_full_name,
                             'total_value': format(total_item_value, '.2f'),
                             'actual_price': format(actual_price, '.2f'),

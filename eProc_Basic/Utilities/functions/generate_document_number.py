@@ -23,7 +23,8 @@ def generate_document_number(attr_id, client, object_id_list, edit_flag, doc_typ
     try:
         get_sequence = django_query_instance.django_get_query(TransactionTypes, {'transaction_type': user_attr_value,
                                                                                  'client': client, 'del_ind': False,
-                                                                                 'document_type': doc_type})
+                                                                                 'document_type': doc_type,
+                                                                                 'active_inactive':True})
 
         if get_sequence is None:
             return False, 'Transaction types or Number Ranges has not been configured.Please contact your admin',user_attr_value
