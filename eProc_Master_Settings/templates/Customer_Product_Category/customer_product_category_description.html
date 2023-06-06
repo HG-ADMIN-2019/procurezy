@@ -195,6 +195,15 @@
     var main_table_low_value = [];
     var prod_val_list ;
 
+        prod_cat_id_dropdown = '';
+        $.each(rendered_UNSPC_data, function(i, item){
+            prod_cat_id_dropdown += '<option value="' + item.prod_cat_id + '">' + item.prod_cat_id + '</option>';
+        })
+        language_id_dropdown = ' ';
+        $.each(render_language_data, function(i, item){
+            language_id_dropdown += '<option value="' + item.language_id + '">' + item.description + '</option>';
+        })
+
     //Dropdown function
     function unspcdesc_dropdown(){
         prod_cat_id_dropdown = '';
