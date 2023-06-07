@@ -395,6 +395,7 @@
     //onclick of upload button display id_data_upload popup and set GLOBAL_ACTION button value
     function onclick_upload_button() {
         GLOBAL_ACTION = "workflowsch_upload"
+        $("#id_error_msg_upload").prop("hidden",true)
         $("#id_popup_tbody").empty();
         $('#id_data_upload').modal('show');
         document.getElementById('id_file_data_upload').value = "";
@@ -687,6 +688,7 @@
 
     //check function restricting special char and display the data count of csv file
     function check_data() {
+        $("#id_delete_duplicate").hide()
         $('#id_popup_table').DataTable().destroy();
         $("#id_check_success_messages").empty()
         $("#id_check_error_messages").empty()
@@ -801,5 +803,19 @@
 
         });
     }
+
+// onclick of valid popup
+function valid_popup(){
+  $('#id_data_upload').modal('hide');
+  $("#valid_upload").modal('show');
+}
+
+//Get message for check data function
+function get_msg_desc_check_data(msg){
+    var msg_type ;
+    msg_type = message_config_details(msg);
+    $("#error_msg_id").prop("hidden", false);
+    return msg_type.messages_id_desc;
+}
 </script>
 {% endblock %}

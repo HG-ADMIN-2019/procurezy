@@ -417,6 +417,7 @@
 
     //check function restricting special char and diaplay the data count of csv file
     function check_data() {
+        $("#id_delete_duplicate").hide()
         $('#id_popup_table').DataTable().destroy();
         $("#id_check_success_messages").empty()
         $("#id_check_error_messages").empty()
@@ -430,6 +431,7 @@
         var app_type_array = new Array
         var DB_array = new Array
         var app_type_list = new Array
+        var app_type_code_check = new Array
         del_ind = ''
         var currency_id_check = new Array
         $("#id_popup_table TBODY TR").each(function() {
@@ -446,34 +448,68 @@
             }
             app_type_list.push(app_type_dic)
         });
-        if(currency_id_check.includes(app_type_dic.app_types)){
-            $(row).css("border", "#f8d7da");
+         get_main_table_data(); //Read data from main table
+         if(app_type_code_check.includes(app_type_dic.app_types)){
+             $(row).css("border", "#f8d7da");
+             row_color_highlight(row);
+             $("#id_check_error_messages").prop("hidden",false);
+             var display7 = ui_messeges("JMSG001");
+             document.getElementById("id_check_error_messages").innerHTML = display7;
+             $("#save_id").prop("hidden", true);
+             $("#id_delete_duplicate").show()
+             $("#id_check_data").prop("hidden", false);
+             count = count +1;
         }
-        else {
-            //$(row).css("border", "");
+        else if(main_table_low_value.includes(app_type_dic.app_types)){
+             $(row).css("border", "#f8d7da");
+             row_color_highlight(row);
+             $("#id_check_error_messages").prop("hidden",false);
+             var display7 = ui_messeges("JMSG001");
+             document.getElementById("id_check_error_messages").innerHTML = display7;
+             $("#save_id").prop("hidden", true);
+             $("#id_delete_duplicate").show()
+             $("#id_check_data").prop("hidden", false);
+             count = count +1;
         }
-        currency_id_check.push(app_type_dic.app_types);
-
-        //*************** shows save button if there are no errors(special characters and max length) ***************
-        if (count == 0) {
-            $("#id_check_special_character_messages").prop("hidden", true)
+        else{
+            $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "none");
+            row_color_no_highlight(row);
+            $(row).css("border", "");
+            $("#id_delete_duplicate").hide()
+        }
+        app_type_code_check.push(app_type_dic.app_types)
+        main_table_low_value.push(app_type_dic.app_types)
+        table_sort_filter_popup_pagination('id_popup_table');
+    });
+            $("#id_check_special_character_messages").prop("hidden",false);
+    //*************** shows save button if there are no errors(special characters and max length) ***************
+        if(count == 0){
+            $('#id_popup_table').DataTable().destroy();
+            $("#id_popup_table").find("input,button,textarea,select").attr("disabled", "disabled");
+            document.getElementById("id_del_add_button").style.display = "none";
             $("#save_id").prop("hidden", false);
-        }
-        popup_data_dict = {
-            'data_list': app_type_list,
-        }
-        OpenLoaderPopup();
-        $.ajax({
-            type: 'POST',
-            url: "{% url 'eProc_Configuration_Check:check_approvaltype' %}",
-            data: JSON.stringify(popup_data_dict),
-            success: function(response) {
-                table_sort_filter_popup_pagination('id_popup_table')
-                var message = ''
-                update_check_message(response.messages[1])
-                CloseLoaderPopup();
+            $("#id_check_data").prop("hidden", true);
+            if (app_type_list == 0) {
+                $("#save_id").prop("hidden", true);
             }
-        });
+            popup_data_dict ={'data_list' : app_type_list}
+            OpenLoaderPopup();
+            $.ajax({
+                    type: 'POST',
+                    url: "{% url 'eProc_Configuration_Check:check_approvaltype' %}",
+                    data: JSON.stringify(popup_data_dict),
+                    success: function(response) {
+                     table_sort_filter_popup_pagination('id_popup_table')
+                     $("#id_check_special_character_messages").prop("hidden", false);
+                     if (count == 0) {
+                        $("#id_check_special_character_messages").prop("hidden", true);
+                     }
+                    var message = ''
+                    update_check_message(response.messages[1])
+                    CloseLoaderPopup();
+                    }
+            });
+        }
     }
         
     // validating the  popup table for duplicate entries
