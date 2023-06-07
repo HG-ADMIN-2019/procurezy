@@ -196,15 +196,16 @@ function save_basic_form_validation(){
         var temp = document.getElementsByClassName('mandatory_fields');
         for (var i = 0; i<temp.length; i++) {
             if(temp[i].nodeName == "SELECT"){
-                if((temp[i].value == '') || ((temp[i].value == null))){
+                if((temp[i].value == "") || ((temp[i].value == null))){
                     err_text1 = temp[i].parentNode.children[0].innerHTML;
-                    $('#temp[i].nextElementSibling.id').prop('hidden', false);
+                    var display_id = temp[i].nextElementSibling.id;
+                    $('#'+display_id).prop('hidden', false);
                     $('#temp[i].nextElementSibling.id').html("required");
                     document.getElementById(temp[i].nextElementSibling.id).innerHTML = err_text1 + " required";
                     is_valid = false;
                 }
                 else{ $('#temp[i].nextElementSibling.id').prop('hidden', true);
-                    $(".error_message").prop("hidden", true);
+//                    $(".error_message").prop("hidden", true);
                 }
             }
             else{
@@ -213,15 +214,14 @@ function save_basic_form_validation(){
                     $(".error_message").prop("hidden", false);
                     temp[i].nextElementSibling.innerHTML = err_text + " required";
                    is_valid = false;
-                   break;
                 }
-                else if(temp[i].value.length <= 3){
+                else if(temp[i].value.length < 3){
                     var err_text = temp[i].parentNode.children[0].innerHTML;
-                    $(".error_message").prop("hidden", false);
-                    $('#temp[i].nextElementSibling.id').prop('hidden', false);
-                    temp[i].nextElementSibling.innerHTML = "Please enter min 4 chars for "+ err_text;
+//                    $(".error_message").prop("hidden", false);
+                    var display_id = temp[i].nextElementSibling.id;
+                    $('#'+display_id).prop('hidden', false);
+                    temp[i].nextElementSibling.innerHTML = "Please enter min 3 chars for "+ err_text;
                    is_valid = false;
-                   break;
                 }
             }
         }
@@ -241,7 +241,9 @@ function data_validation(formdata){
              var display1 = msg_type.messages_id_desc;
             save_form_errors += display1 + " for Email Id";
             document.getElementById("save_error_div").innerHTML = save_form_errors;
-
+             setTimeout(function() {
+                   CloseLoaderPopup();
+             }, 500);
         }
     return valid_data;
 }
