@@ -190,6 +190,8 @@
 
     //onclick of data Upload copy data to modal pop-up
     function onclick_display_csv_data() {
+        $("#valid_upload").modal('hide');
+        $("#id_delete_duplicate").hide()
         $("#error_msg_id").css("display", "none")
         $('#id_popup_table').DataTable().destroy();
         formdata = new FormData();
@@ -216,21 +218,21 @@
                         $('#id_data_upload').modal('show');
                     }
                     else {
-                          var pgroup_data_array = response.data;
+                          var pgroup_data_array = response.valid_data_list;
                             var edit_basic_data = '';
                             var del_ind = '';
                             var dropdown_values = [];
                             $("#id_popup_tbody").empty();
-                        $.each(response.data, function (i, value) {
+                        $.each(response.valid_data_list, function (i, value) {
                             del_ind = '<td>' + value[4] + '</td>'
                             if (value[5] == 1) {
-                                del_ind=' <input type="checkbox" value="' + value[5] + '" checked>'
+                                del_ind=' <input type="checkbox" value="' + value.del_ind + '" checked>'
                             }
                             else {
-                                del_ind= '<input type="checkbox" value="' + value[5] + '" required>'
+                                del_ind= '<input type="checkbox" value="' + value.del_ind + '" required>'
                             }
 
-                            edit_basic_data += '<tr ><td class="class_select_checkbox"><input type="checkbox" required></td><td><input type="text" class="form-control" value="' + value[0] + '" maxlength="8" onkeypress="return /[a-z]/i.test(event.key)" required></td><td><input type="text" class="form-control" value="' + value[1] + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td><td hidden><input type="text" value=""></td><td hidden><input type="text" value=""></td><td>' + del_ind + '</td></tr>';
+                            edit_basic_data += '<tr ><td class="class_select_checkbox"><input type="checkbox" required></td><td><input type="text" class="form-control" value="' + value.pgroup_id + '" maxlength="8" onkeypress="return /[a-z]/i.test(event.key)" required></td><td><input type="text" class="form-control" value="' + value.description + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td><td hidden><input type="text" value=""></td><td hidden><input type="text" value=""></td><td>' + del_ind + '</td></tr>';
                         });
                         $('#id_popup_tbody').append(edit_basic_data);
                         $( "#id_del_ind_checkbox").prop( "hidden", false );
@@ -356,7 +358,6 @@
                 }
             });
             if (common.length != 0) {
-                $('#pgroupModal').modal('show');
                 display_duplicate_entry(common);  //Function to highlight the rows in popup
                 error_message = ui_messeges("JMSG001")// Get message details
                 no_duplicate_value = 'N'
@@ -408,7 +409,7 @@
                 $("#id_error_msg_purgrp_length").prop("hidden",false);
                 error_message = ui_messeges("JMSG002")// Get message details
                 var display8 = error_message;
-                document.getElementById("#id_error_msg_purgrp_id").innerHTML = display8+ "purchasegrp Code";
+                document.getElementById("#id_error_msg_purgrp_length").innerHTML = display8+ "purchasegrp Code";
                 count = count +1;
             }
             //*************** checking for minimum length for purchasegrp code (max length = 2) ***************
@@ -513,7 +514,7 @@
                         $("#id_check_special_character_messages").prop("hidden", true);
                     }
                     var message = ''
-                    update_check_message(response.messages)
+                    update_check_message(response.messages[1])
                     CloseLoaderPopup();
                 }
             });

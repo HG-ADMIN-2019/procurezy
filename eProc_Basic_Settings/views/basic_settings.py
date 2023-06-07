@@ -333,7 +333,7 @@ def upload_timezone(request):
 def convert_Country_to_dictionary(arr):
     convertion_list = []
     for row in arr:
-        dictionary = {'country_code': row[0], 'country_name': row[1],'del_ind': row[2]}
+        dictionary = {'country_code': row[0], 'country_name': row[1], 'del_ind': row[2]}
         convertion_list.append(dictionary)
     return convertion_list
 
@@ -341,7 +341,7 @@ def convert_Country_to_dictionary(arr):
 def convert_Currency_to_dictionary(arr):
     convertion_list = []
     for row in arr:
-        dictionary = {'currency_id': row[0], 'description': row[1],'del_ind': row[2]}
+        dictionary = {'currency_id': row[0], 'description': row[1], 'del_ind': row[2]}
         convertion_list.append(dictionary)
     return convertion_list
 
@@ -349,7 +349,7 @@ def convert_Currency_to_dictionary(arr):
 def convert_Languages_to_dictionary(arr):
     convertion_list = []
     for row in arr:
-        dictionary = {'language_id': row[0], 'description': row[1],'del_ind': row[2]}
+        dictionary = {'language_id': row[0], 'description': row[1], 'del_ind': row[2]}
         convertion_list.append(dictionary)
     return convertion_list
 
@@ -357,7 +357,8 @@ def convert_Languages_to_dictionary(arr):
 def convert_TimeZone_to_dictionary(arr):
     convertion_list = []
     for row in arr:
-        dictionary = {'time_zone': row[0], 'description': row[1],'utc_difference': row[2],'daylight_save_rule': row[3],
+        dictionary = {'time_zone': row[0], 'description': row[1], 'utc_difference': row[2],
+                      'daylight_save_rule': row[3],
                       'del_ind': row[4]}
         convertion_list.append(dictionary)
     return convertion_list
@@ -366,7 +367,7 @@ def convert_TimeZone_to_dictionary(arr):
 def convert_UnitOfMeasures_to_dictionary(arr):
     convertion_list = []
     for row in arr:
-        dictionary = {'uom_id': row[0], 'description': row[1], 'iso_code_id': row[2],
+        dictionary = {'uom_id': row[0], 'uom_description': row[1], 'iso_code_id': row[2],
                       'del_ind': row[3]}
         convertion_list.append(dictionary)
     return convertion_list
@@ -375,7 +376,7 @@ def convert_UnitOfMeasures_to_dictionary(arr):
 def convert_OrgPGroup_to_dictionary(arr):
     convertion_list = []
     for row in arr:
-        dictionary = {'del_ind': row[0], 'prod_cat_id': row[1]}
+        dictionary = {'pgroup_id': row[0], 'description': row[1], 'del_ind': row[2]}
         convertion_list.append(dictionary)
     return convertion_list
 
@@ -383,7 +384,7 @@ def convert_OrgPGroup_to_dictionary(arr):
 def convert_OrgPorg_to_dictionary(arr):
     convertion_list = []
     for row in arr:
-        dictionary = {'del_ind': row[0], 'prod_cat_id': row[1]}
+        dictionary = {'porg_id': row[0], 'description': row[1], 'del_ind': row[2]}
         convertion_list.append(dictionary)
     return convertion_list
 
@@ -391,7 +392,40 @@ def convert_OrgPorg_to_dictionary(arr):
 def convert_OrgCompanies_to_dictionary(arr):
     convertion_list = []
     for row in arr:
-        dictionary = {'del_ind': row[0], 'prod_cat_id': row[1]}
+        dictionary = {'name1': row[0], 'name2': row[1], 'company_id': row[2], 'del_ind': row[3]}
+        convertion_list.append(dictionary)
+    return convertion_list
+
+
+def convert_Workflowschema_to_dictionary(arr):
+    convertion_list = []
+    for row in arr:
+        dictionary = {'workflow_schema': row[0], 'company_id': row[1], 'app_types': row[2], 'del_ind': row[3]}
+        convertion_list.append(dictionary)
+    return convertion_list
+
+
+def convert_ApproverType_to_dictionary(arr):
+    convertion_list = []
+    for row in arr:
+        dictionary = {'app_types': row[0], 'appr_type_desc': row[1], 'del_ind': row[2]}
+        convertion_list.append(dictionary)
+    return convertion_list
+
+
+def convert_Payterms_desc_to_dictionary(arr):
+    convertion_list = []
+    for row in arr:
+        dictionary = {'language_id':row[0],'payment_term_key': row[1], 'description': row[2],'day_limit':row[3],
+                      'del_ind': row[4]}
+        convertion_list.append(dictionary)
+    return convertion_list
+
+
+def convert_Incoterms_to_dictionary(arr):
+    convertion_list = []
+    for row in arr:
+        dictionary = {'incoterm_key': row[0], 'description': row[1], 'del_ind': row[2]}
         convertion_list.append(dictionary)
     return convertion_list
 
@@ -463,6 +497,30 @@ def data_upload(request):
             valid_data_list, message = check_company_data(convertion_list, 'UPLOAD')
             context = {'valid_data_list': valid_data_list}
             return JsonResponse(context, safe=False)
+        if Table_name == 'WorkflowSchema':
+            result['error_message'], result['data'] = upload_csv.csv_preview_data(header_detail, data_set_val)
+            convertion_list = convert_Workflowschema_to_dictionary(result['data'])
+            valid_data_list, message = check_workflowschema_data(convertion_list, 'UPLOAD')
+            context = {'valid_data_list': valid_data_list}
+            return JsonResponse(context, safe=False)
+        if Table_name == 'ApproverType':
+            result['error_message'], result['data'] = upload_csv.csv_preview_data(header_detail, data_set_val)
+            convertion_list = convert_ApproverType_to_dictionary(result['data'])
+            valid_data_list, message = check_approvaltype_data(convertion_list, 'UPLOAD')
+            context = {'valid_data_list': valid_data_list}
+            return JsonResponse(context, safe=False)
+        if Table_name == 'Payterms_desc':
+            result['error_message'], result['data'] = upload_csv.csv_preview_data(header_detail, data_set_val)
+            convertion_list = convert_Payterms_desc_to_dictionary(result['data'])
+            valid_data_list, message = check_paymentterm_desc_data(convertion_list, 'UPLOAD')
+            context = {'valid_data_list': valid_data_list}
+            return JsonResponse(context, safe=False)
+        if Table_name == 'Incoterms':
+            result['error_message'], result['data'] = upload_csv.csv_preview_data(header_detail, data_set_val)
+            convertion_list = convert_Incoterms_to_dictionary(result['data'])
+            valid_data_list, message = check_inco_terms_data(convertion_list, 'UPLOAD')
+            context = {'valid_data_list': valid_data_list}
+            return JsonResponse(context, safe=False)
         if Table_name == 'UnspscCategoriesCust':
             result['error_message'], result['data'] = upload_csv.csv_preview_data(header_detail, data_set_val)
             convertion_list = convert_UNSPSC_to_dictionary(result['data'])
@@ -506,7 +564,7 @@ def convert_UNSPSC_to_dictionary(arr):
 def convert_UNSPSCDESC_to_dictionary(arr):
     convertion_list = []
     for row in arr:
-        dictionary = {'description': row[0], 'del_ind': row[1], 'language_id':row[2], 'prod_cat_id': row[3]}
+        dictionary = {'description': row[0], 'del_ind': row[1], 'language_id': row[2], 'prod_cat_id': row[3]}
         convertion_list.append(dictionary)
     return convertion_list
 

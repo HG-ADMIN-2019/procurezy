@@ -227,7 +227,6 @@
 
     // *****************************************
     function GetSelectedTextValue(roles) {
-<!--        var selectedText = roles.options[roles.selectedIndex].innerHTML;-->
         var selectedValue = roles.value;
         var selectedId = (roles.id).split('-')[1];
         if (rendered_roles_type_values.length === 0) {
@@ -250,7 +249,6 @@
         var no_duplicate_value = 'Y'
         $.each(roles, function (i, item) {
             if ((item.role == null) || (item.role_desc.length == 0)){
-                $('#Roles_Modal').modal('show');
                 error_message = ui_messeges("JMSG002")// Get message details
                 no_duplicate_value = 'N'
                 return [no_duplicate_value,error_message]
@@ -267,7 +265,6 @@
                 }
             }); 
             if (common.length != 0) {
-                $('#Roles_Modal').modal('show');
                 display_duplicate_entry(common);  //Function to highlight the rows in popup
                 error_message = ui_messeges("JMSG001")// Get message details
                 no_duplicate_value = 'N'

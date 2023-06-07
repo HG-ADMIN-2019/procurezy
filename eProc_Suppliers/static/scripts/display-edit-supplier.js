@@ -196,7 +196,7 @@ function save_basic_form_validation(){
         var temp = document.getElementsByClassName('mandatory_fields');
         for (var i = 0; i<temp.length; i++) {
             if(temp[i].nodeName == "SELECT"){
-                if(temp[i].value == ''){
+                if((temp[i].value == '') || ((temp[i].value == null))){
                     err_text1 = temp[i].parentNode.children[0].innerHTML;
                     $('#temp[i].nextElementSibling.id').prop('hidden', false);
                     $('#temp[i].nextElementSibling.id').html("required");
@@ -213,13 +213,15 @@ function save_basic_form_validation(){
                     $(".error_message").prop("hidden", false);
                     temp[i].nextElementSibling.innerHTML = err_text + " required";
                    is_valid = false;
+                   break;
                 }
-                else if(temp[i].value.length <= 4){
+                else if(temp[i].value.length <= 3){
                     var err_text = temp[i].parentNode.children[0].innerHTML;
                     $(".error_message").prop("hidden", false);
                     $('#temp[i].nextElementSibling.id').prop('hidden', false);
                     temp[i].nextElementSibling.innerHTML = "Please enter min 4 chars for "+ err_text;
                    is_valid = false;
+                   break;
                 }
             }
         }
@@ -228,6 +230,7 @@ function save_basic_form_validation(){
 
 function data_validation(formdata){
     var save_form_errors = ''
+    var valid_data = true;
     var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
      if (!(formdata.get("email_id")).match(mailformat)) {
             valid_data = false

@@ -13,24 +13,39 @@
     <div id="button" class="mo-doc-button-container">
         <h3>Shopping Cart #{{hdr_det.doc_number}}</h3>
         <div class="d-flex">
-            <div class="mo-doc-button-group__saved">
-                <button type="button" class="btn btn-outline-primary" onclick="window.close()"><i class="fas fa-times"></i> Close</button>
+            <div id="on_page_load">
+                {% if hdr_det.status == 'SAVED' %}
+                <div class="mo-doc-button-group__saved">
+                    <button type="button" class="btn btn-outline-primary" onclick="window.close()"><i class="fas fa-times"></i> Close</button>
+                    <button class="btn btn-primary" id="add_approver_note_btn" data-toggle="modal" data-target="#add_approver_note"><i class="fa fa-plus" aria-hidden="true"></i> approver note</button>
 
-                <button class="btn btn-primary" data-toggle="modal" data-target="#proceed_to_checkout"><i
-                        class="fa fa-trash" aria-hidden="true"></i> proceed to checkout
-                </button>
+                    <button class="btn btn-primary" data-toggle="modal" data-target="#proceed_to_checkout"><i
+                            class="fa fa-trash" aria-hidden="true"></i> proceed to checkout
+                    </button>
+                    {% if sc_appr and sc_completion %}
+                    <button id="id_order_sc" class="btn btn-primary editable_mode"><i class="fas fa-sign-in-alt" aria-hidden="true"></i> send to purchasing team</button>
+                    {% endif %}
+
+                    {% if sc_appr.0.app_id != 'Auto' and not sc_completion %}
+                    <button id="id_order_sc" class="btn btn-primary editable_mode"><i class="fas fa-sign-in-alt" aria-hidden="true"></i> submit for approval</button>
+                    {% endif %}
+
+                    {% if sc_appr.0.app_id == 'Auto' and not sc_completion %}
+                    <button id="id_order_sc" class="btn btn-primary editable_mode"><i class="fas fa-sign-in-alt" aria-hidden="true"></i> place order</button>
+                    {% endif %}
+                </div>
+                {% else %}
+                <div class="mo-doc-button-group__saved" >
+                    <button type="button" class="btn btn-outline-primary" onclick="window.close()"><i class="fas fa-times"></i> Close</button>
+                    <button class="btn btn-primary"  data-toggle="modal" data-target="#add_approver_note"><i class="fa fa-plus" aria-hidden="true"></i> approver note</button>
+                </div>
+                {% endif %}
             </div>
-            {% if sc_appr and sc_completion %}
-            <button id="id_order_sc" class="btn btn-primary editable_mode"><i class="fas fa-sign-in-alt" aria-hidden="true"></i> send to purchasing team</button>
-            {% endif %}
+            <div class="mo-doc-button-group__saved" id="approve_button_display" style="display:none">
+                <button type="button" class="btn btn-outline-primary" onclick="window.close()"><i class="fas fa-times"></i> Close</button>
+                <button class="btn btn-primary"  data-toggle="modal" data-target="#add_approver_note"><i class="fa fa-plus" aria-hidden="true"></i> approver note</button>
+            </div>
 
-            {% if sc_appr.0.app_id != 'Auto' and not sc_completion %}
-            <button id="id_order_sc" class="btn btn-primary editable_mode"><i class="fas fa-sign-in-alt" aria-hidden="true"></i> submit for approval</button>
-            {% endif %}
-
-            {% if sc_appr.0.app_id == 'Auto' and not sc_completion %}
-            <button id="id_order_sc" class="btn btn-primary editable_mode"><i class="fas fa-sign-in-alt" aria-hidden="true"></i> place order</button>
-            {% endif %}
             {% if is_approval_preview %}
             {% if eligible_approver_flag %}
 
@@ -70,7 +85,7 @@
                             <span class="po-header-label">Created By</span><br>
                             <span class="po-header-desc">{{ requester_first_name }}</span>
                         </div>
-                        <div class="col-md">
+                        <div class="col-md" id="status_button">
                             <span class="po-header-label">Status</span><br>
                             {% if hdr_det.status == 'APPROVED' %}
                             <span class="badge badge-pill badge_status_approved status-pill">APPROVED</span>
@@ -194,6 +209,32 @@
         </div>
     </div>
 </div>
+<!--start of Add approver note pop-up -->
+<div class="modal fade" id="add_approver_note">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">Approver Note</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <!-- Modal body -->
+            <div class="modal-body">
+                <textarea class="form-control hg_is_disabled" id="approver_text" rows="4" disabled>{{appr_notes.note_text}}</textarea>
+            </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-primary editable_mode" id="save_approver_note" data-dismiss="modal"><i class="fa fa-check" aria-hidden="true"></i> save</button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+
 <!-- Start of Change Account assignment category pop up-->
 {% include 'Account Assignment/change_account_assignment_modal.html' %}
 <!-- End of Change Account assignment category pop up-->
@@ -774,6 +815,7 @@ function save_my_order_doc_detail(type) {
                         $("#status_bar").attr("src", "{% static 'images/Status-bar3.png'%}");
                         scroll_top();
                     }
+                    update_ui(response)
                     db.close();
                     var req = indexedDB.deleteDatabase('store_attachments_document_details');
                     req.onsuccess = function () {
@@ -798,6 +840,38 @@ function save_my_order_doc_detail(type) {
             });
         }
     }
+
+function update_ui(response){
+    status = response.document_detail.status
+    var status_html = '';
+    if(status == 'APPROVED' ){
+        status_html = '<span class="po-header-label">Status</span><br><span class="badge badge-pill badge_status_approved status-pill">APPROVED</span>';
+    }
+    else if (status == 'SAVED' ){
+        status_html = '<span class="po-header-label">Status</span><br><span class="badge badge-pill badge_status_save status-pill">SAVED</span>';
+    }
+    else if (status == 'REJECTED' ){
+        status_html = '<span class="po-header-label">Status</span><br><span class="badge badge-pill badge_status_rejected status-pill">REJECTED</span>';
+    }
+    else if (status == 'PURCHASER_WORKLIST' ){
+        status_html = '<span class="po-header-label">Status</span><br><span class="badge badge-pill badge_status_purch_wrkl status-pill">IN PURCHASER WORK LIST</span>';
+    }
+    else if (status == 'AWAITING_APPROVAL' ){
+        status_html = '<span class="po-header-label">Status</span><br><span class="badge badge-pill badge_status_await_approval status-pill">WAITING FOR APPROVAL</span>';
+    }
+    $("#status_button").empty();
+    $("#status_button").append(status_html);
+
+    if (status == 'SAVED' ){
+        document.getElementById("approve_button_display").style.display = "none";
+        document.getElementById("on_page_load").style.display = "block";
+
+    }
+    else{
+        document.getElementById("approve_button_display").style.display = "block";
+        document.getElementById("on_page_load").style.display = "none";
+    }
+}
 
 </script>
 {% endblock %}

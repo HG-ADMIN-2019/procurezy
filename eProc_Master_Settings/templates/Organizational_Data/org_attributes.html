@@ -344,7 +344,7 @@
                 $("#id_popup_tbody").empty();
                 //Reference the Table.
                 var res = get_all_checkboxes(); // Function to get all the checkboxes
-                var $chkbox_all = $('td input[type="checkbox_check"]', res);
+                var $chkbox_all = $('td input[class="checkbox_check"]', res);
                 //Reference the CheckBoxes in Table.
                 var edit_basic_data = "";
                 var dropdown_values = [];
@@ -461,39 +461,39 @@
         });
     }
 
- function compare_table_for_duplicate_entries(validate_add_attributes, org_attr) {
+ // validating the  popup table for duplicate entries
+    function compare_table_for_duplicate_entries(validate_add_attributes, org_attr) {
         add_attr_duplicates = false;
         var error_message = ''
         var common = [];
         var add_attr_unique_list = [];
         var no_duplicate_value = 'Y'
-        $.each(validate_add_attributes, function (index, value) {
-            if ($.inArray(value, add_attr_unique_list) == -1) {
-                add_attr_unique_list.push(value);
-            } else {
-                if ($.inArray(value, common) == -1) {
-                    common.push(value);
-                }
-            }
-        });
         $.each(org_attr, function (i, item) {
             if((item.attribute_id == null) || (item.attribute_name.length == 0) || (item.maximum_length.length == 0)){
                 error_message = ui_messeges("JMSG002")// Get message details
                 no_duplicate_value = 'N'
                 return [no_duplicate_value,error_message]
             }
-            else{
-                if (common.length != 0) {
-                    display_duplicate_entry(common);  //Function to highlight the rows in popup
-                    error_message = ui_messeges("JMSG001")// Get message details
-                    no_duplicate_value = 'N'
-                    return [no_duplicate_value,error_message]
-                }
-            }
         });
+        if (no_duplicate_value == 'Y') {
+            $.each(validate_add_attributes, function (index, value) {
+                if ($.inArray(value, add_attr_unique_list) == -1) {
+                    add_attr_unique_list.push(value);
+                } else {
+                    if ($.inArray(value, common) == -1) {
+                        common.push(value);
+                    }
+                }
+            });
+            if (common.length != 0) {
+                display_duplicate_entry(common);  //Function to highlight the rows in popup
+                error_message = ui_messeges("JMSG001")// Get message details
+                no_duplicate_value = 'N'
+                return [no_duplicate_value,error_message]
+            }
+        }
         return [no_duplicate_value,error_message]
     }
-
 
 
     //Function to highlight duplicate records

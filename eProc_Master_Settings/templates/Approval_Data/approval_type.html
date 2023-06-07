@@ -155,6 +155,11 @@
     var approval_type_dropdown= '';
     var approval_type_dropdown_onload = '';
 
+     approval_type_dropdown = '';
+        $.each(rendered_approval_type_values, function(i, item) {
+             approval_type_dropdown += '<option value="' + item.field_type_id + '">' + item.field_type_id + '</option>';
+        });
+
     approval_type_dropdown_onload = '';
     function dropdown_value() {
         approval_type_dropdown = '';
@@ -259,11 +264,27 @@
         $(".modal").on("hidden.bs.modal", function() {
             $("#id_error_msg").html("");
         });
-        new_row_data(inc_index);   // Add a new row in popup
         if (GLOBAL_ACTION == "approval_type_upload") {
+            basic_add_new_html = '<tr><td><input type="checkbox" required></td>'+
+            '<td><select type="text" class="input form-control approvaltype" id="approvaltype-'+inc_index+'"  name="approvaltype" onchange="GetSelectedTextValue(this)">'+ approval_type_dropdown +'</select></td>'+
+            '<td><input class="form-control description" type="text"  name="description"  id="description-'+inc_index+'" disabled></td>'+
+            '<td class="class_del_checkbox"><input type="checkbox" required></td></tr>';
+            $('#id_popup_tbody').append(basic_add_new_html);
             $(".class_del_checkbox").prop("hidden", false);
+            $("#id_del_ind_checkbox").prop("hidden", false);
+            table_sort_filter('id_popup_table');
+            var approvaltypeSelect = $("#approvaltype-" + inc_index);
+            GetSelectedTextValue(approvaltypeSelect[0]);
         }
+        else {
+              new_row_data(inc_index);   // Add a new row in popup
+              table_sort_filter('id_popup_table');
+               var CustprodSelect = $("#prodid-" + inc_index);
+               GetSelectedTextValue(CustprodSelect[0]);
+        }
+         $('#delete_data').hide()
     }
+
 
     //delete the selected row in db................
     var main_table_approval_type_checked = [];
@@ -308,6 +329,13 @@
 
     //onclick of data Upload copy data to modal pop-up
     function onclick_display_csv_data() {
+        $("#valid_upload").modal('hide');
+        $("#id_delete_duplicate").hide()
+        $("#id_check_success_messages").empty();
+        $("#id_check_error_messages").empty();
+        $("#id_check_success_messages").prop("hidden", true);
+        $("#id_check_error_messages").prop("hidden", true);
+        $("#id_check_special_character_messages").prop("hidden", true);
         $("#error_msg_id").css("display", "none")
         $('#id_popup_table').DataTable().destroy();
         formdata = new FormData();
@@ -333,24 +361,33 @@
                         document.getElementById("id_error_msg_upload").style.color = "Red";
                         $('#id_data_upload').modal('show')
                     } else {
-                        currency_data_array = response.data;
+                        currency_data_array = response.valid_data_list;
                         var edit_basic_data = '';
                         var del_ind = '';
                         var dropdown_values = [];
                         var inc_index=0;
                         $("#id_popup_tbody").empty();
-                        $.each(response.data, function(i, value) {
+                        $.each(response.valid_data_list, function(i, value) {
+                             var app_type_values = value.app_types
+                             dropdown_values.push([app_type_values])
                             del_ind = '<td>' + value[2] + '</td>'
                             if (value[1] == 1) {
-                                del_ind = '<input type="checkbox" value="' + value[2] + '" checked>'
+                                del_ind = '<input type="checkbox" value="' + value.del_ind + '" checked>'
                             } else {
-                                del_ind = '<input type="checkbox" value="' + value[2] + '" required>'
+                                del_ind = '<input type="checkbox" value="' + value.del_ind + '" required>'
                             }
                             edit_basic_data += '<tr><td class="class_select_checkbox"><input type="checkbox" required></td>'+
-                            '<td><input class="form-control approvaltype" id="approvaltype-'+inc_index+'" type="text" value="' + value[0] + '" maxlength="3" onkeypress="return /[a-z]/i.test(event.key)" required></td><td><input class="form-control" type="text" value="' + value[1] + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td><td>' + del_ind + '</td></tr>';
+                            '<td><select type="text" class="input form-control approvaltype" id="approvaltype-'+inc_index+'"  name="approvaltype" onchange="GetSelectedTextValue(this)">'+ approval_type_dropdown +'</select></td><td><input class="form-control" type="text" id="description-1" value="' + value.appr_type_desc + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td><td>' + del_ind + '</td></tr>';
                             inc_index += 1;
                         });
                         $('#id_popup_tbody').append(edit_basic_data);
+                         var i =0;
+                        $("#id_popup_table TBODY TR").each(function() {
+                            var row = $(this);
+                            var app_typ_id_list = dropdown_values[i][0]
+                            $(row.find("TD").eq(1).find("select option[value="+app_typ_id_list+"]")).attr('selected','selected');
+                            i++;
+                        });
                         $("#id_del_ind_checkbox").prop("hidden", false);
                         $( "#header_select").prop( "hidden", false );
                         $(".class_del_checkbox").prop("hidden", false);
@@ -467,7 +504,6 @@
                 }
             });
             if (common.length != 0) {
-                $('#App_Type_Modal').modal('show');
                 display_duplicate_entry(common);  //Function to highlight the rows in popup
                 error_message = ui_messeges("JMSG001")// Get message details
                 no_duplicate_value = 'N'

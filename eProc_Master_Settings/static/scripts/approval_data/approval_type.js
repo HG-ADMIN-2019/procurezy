@@ -5,6 +5,7 @@ var validate_add_attributes = [];
 //onclick of upload button display id_data_upload popup and set GLOBAL_ACTION button value
 function onclick_upload_button() {
     GLOBAL_ACTION = "approval_type_upload"
+    $("#id_error_msg_upload").prop("hidden",true)
     $("#id_popup_tbody").empty();
     $('#id_data_upload').modal('show');
     //document.getElementById('id_file_data_upload').value = "";
@@ -46,6 +47,12 @@ function new_row_data(inc_index) {
     table_sort_filter('id_popup_table');
     var approvaltypeSelect = $("#approvaltype-" + inc_index);
     GetSelectedTextValue(approvaltypeSelect[0]);
+}
+
+// onclick of valid popup
+function valid_popup(){
+  $('#id_data_upload').modal('hide');
+  $("#valid_upload").modal('show');
 }
 
 
@@ -145,4 +152,12 @@ function get_selected_row_data() {
         main_table_approval_type_checked.push(approval_type_arr_obj);
         }
     });
+}
+
+//Get message for check data function
+function get_msg_desc_check_data(msg){
+    var msg_type ;
+    msg_type = message_config_details(msg);
+    $("#error_msg_id").prop("hidden", false);
+    return msg_type.messages_id_desc;
 }

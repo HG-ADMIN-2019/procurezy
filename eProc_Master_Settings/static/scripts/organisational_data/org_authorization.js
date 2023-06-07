@@ -26,7 +26,7 @@ function add_popup_row() {
     dropdown_value();
     basic_add_new_html = '';
     $("#error_msg_id").css("display", "none")
-     var getid = $(".roles:last").attr("id");
+    var getid = $(".roles:last").attr("id");
     var getindex = getid.split("-")[1]
     var inc_index = Number(getindex)+1
     $('#id_popup_table').DataTable().destroy();

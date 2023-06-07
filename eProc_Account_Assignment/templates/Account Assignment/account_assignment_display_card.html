@@ -36,7 +36,7 @@
 
             </div>
             <div>
-            {% if not button_status %}
+            {% if acct_assignment_category == '1' %}
                 <button type="button" class="hg_button_edit editable_mode" data-toggle="modal" id="change_accounting_data-header-{{header_acc.guid}}" onclick="changeAccCat(this.id);">change account assignment</button>
             {% endif %}
             </div>
