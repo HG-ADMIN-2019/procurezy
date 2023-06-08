@@ -177,6 +177,19 @@
     var unique_work_flow = [];
     var unique_appr_type = [];
 
+     approvar_types_dropdown = '';
+        $.each(rendered_approvartype_data, function(i, item){
+            approvar_types_dropdown += '<option value="' + item.app_types + '">' + item.app_types + '</option>';
+        })
+        company_id_dropdown = '';
+        $.each(rendered_company_data, function(i, item){
+            company_id_dropdown += '<option value="' + item.company_id + '">' + item.company_id + '</option>';
+        })
+        wrksch_types_dropdown_onload = '';
+        $.each(dropdown_db_values, function(i, item){
+        wrksch_types_dropdown_onload+= '<option value="' + item.field_type_id + '">' + item.field_type_desc + '</option>';
+        })
+
     //*******************************
     function workflow_dropdown() {
         approvar_types_dropdown = '';
@@ -342,6 +355,24 @@
         table_sort_filter('display_basic_table');
     }
 
+// Function to get main table data
+    function get_main_table_data_upload()  {
+        main_table_low_value = [];
+        $('#display_basic_table').DataTable().destroy();
+        $("#display_basic_table TBODY TR").each(function() {
+            var row = $(this);
+            var main_attribute = {};
+            main_attribute.workflow_schema = row.find("TD").eq(2).html();
+            main_attribute.company_id = row.find("TD").eq(1).html();
+            main_attribute.app_types = row.find("TD").eq(3).html();
+            main_attribute.workflow_schema_guid = row.find("TD").eq(4).html();
+            var wfschm_compare_maintable = main_attribute.workflow_schema +'-'+ main_attribute.company_id
+            main_table_low_value.push(wfschm_compare_maintable);
+        });
+        table_sort_filter('display_basic_table');
+        return main_table_low_value
+    }
+
     // Function for add a new row data
     function new_row_data() {
         basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select class=" input form-control">'+company_id_dropdown+'</select></td><td><select id="workflow_schema" name="workflow_schema"  type="text" class="input form-control">'+wrksch_types_dropdown_onload+'</select></td><td><select class=" input form-control">'+approvar_types_dropdown+'</select></td><td hidden></td><td hidden> del_ind</td></tr>';
@@ -493,6 +524,11 @@
                 $(row).remove();
             }
             workflowsch_code_check.push(workflowsch_code);
+             main_table_low_value = get_main_table_data_upload(); //Read data from main table
+            if (main_table_low_value.includes(workflowsch_code)) {
+                $(row).remove();
+            }
+            main_table_low_value.push(workflowsch_code);
         })
         table_sort_filter_popup_pagination('id_popup_table')
         check_data()
@@ -580,109 +616,121 @@
 
     //onclick of data Upload copy data to modal pop-up
     function onclick_display_csv_data() {
+         $("#valid_upload").modal('hide');
+        $("#id_delete_duplicate").hide()
+        $("#id_check_success_messages").empty();
+        $("#id_check_error_messages").empty();
+        $("#id_check_success_messages").prop("hidden", true);
+        $("#id_check_error_messages").prop("hidden", true);
+        $("#id_check_special_character_messages").prop("hidden", true);
         $("#error_msg_id").css("display", "none")
         $('#id_popup_table').DataTable().destroy();
         formdata = new FormData();
         attached_file = $('#id_file_data_upload').prop('files')[0]
-        file_extension = (attached_file.name).split(".")[1]
-        file_extension = file_extension.toUpperCase();
-        if(file_extension == 'CSV'){
-            formdata.append("file_attach", attached_file);
-            formdata.append("Tablename",Tablename);
-            formdata.append("appname",appname);
-            $('#id_data_upload').modal('hide');
-            $('#id_popup_tbody').empty();
-            OpenLoaderPopup();
-            $.ajax({
-                type: 'POST',
-                url: "{% url 'eProc_Basic_Settings:data_upload' %}",
-                data: formdata,
-                contentType: "application/json; charset=utf-8",
-                success: function(response) {
-                    if(response.error_message){
-                        $("#id_error_msg_upload").prop("hidden",false)
-                        document.getElementById("id_error_msg_upload").innerHTML = response.error_message;
-                        document.getElementById("id_error_msg_upload").style.color = "Red";
-                        $('#id_data_upload').modal('show');
-                    } else {
-                        var workflowschema_data_array = response.data;
-                        var edit_basic_data = '';
-                        var del_ind = '';
-                        var dropdown_values = [];
-                        var inc_index=0;
-                        $("#id_popup_tbody").empty();
-                        $.each(response.data, function (i, value) {
-                            var app_type_value = value[3]
-                            var company_id_value = value[0]
-                            dropdown_values.push([app_type_value, company_id_value])
-                            del_ind = '<td>' + value[3] + '</td>'
-                            if (value[1] == 1) {
-                                del_ind=' <input type="checkbox" value="' + value[3] + '" checked>'
-                            }
-                            else {
-                                del_ind= '<input type="checkbox" value="' + value[3] + '" required>'
-                            }
-                            var apptype = '';
-                            var apptype_list = '';
-                            var apptype_id_list = '';
-                            $.each(rendered_approvartype_data, function(i, item){
-                                if( value[3].apptyp_value == item){
-                                    apptype = '<option value="' + item.app_types + '">' + item.app_types + '</option>';
-                                }else{
-                                    apptype_list += '<option value="' + item.app_types + '">' + item.app_types + '</option>';
-                                }
-                                apptype_id_list = apptype + apptype_list
-                            });
-
-                            var company = '';
-                            var company_list = '';
-                            var company_id_list = '';
-                            $.each(rendered_company_data, function(i, item) {
-                                if( value[0].company_type_value == item){
-                                    company = '<option value="' + item.company_id + '">' + item.company_id + '</option>';
-                                }else{
-                                    company_list += '<option value="' + item.company_id + '">' + item.company_id + '</option>';
-                                }
-                                company_id_list = company + company_list
-                            });
-                            edit_basic_data += '<tr><td class="class_select_checkbox"><input type="checkbox" required></td>'+
-                            '<td><select id="workflow_schema" name="workflow_schema" type="text" class="input form-control">'+wrksch_types_dropdown_onload+'</select></td><td><select class="form-control" type="text">' + company_id_list + '</select></td><td><select class="form-control" type="text">' + apptype_id_list + '</select></td><td hidden><input type="text" value=""></td><td hidden> del_ind</td></tr>';
-                        });
-                        $('#id_popup_tbody').append(edit_basic_data);
-                        var i =0;
-                        $("#id_popup_table TBODY TR").each(function() {
-                            var row = $(this);
-                            var company_id_list = dropdown_values[i][0]
-                            var apptype_id_list = dropdown_values[i][1]
-                            $(row.find("TD").eq(1).find("select option[value="+company_id_list+"]")).attr('selected','selected');
-                            $(row.find("TD").eq(2).find("select option[value="+apptype_id_list+"]")).attr('selected','selected');
-                            i++;
-                        });
-                        $( "#id_del_ind_checkbox").prop( "hidden", false );
-                        $( "#header_select").prop( "hidden", false );
-                        $( ".class_del_checkbox").prop( "hidden", false );
-                        $('#Wfschema_Modal').modal('show');
-                        $('#id_data_upload').modal('hide');
-                        document.getElementById("id_del_add_button").style.display = "block";
-                        $('#id_check_data').show();
-                        $("#id_check_data").prop("hidden", false);
-                        $("#save_id").prop("hidden", true);
-                        table_sort_filter('id_popup_table')
-                    }
-                    CloseLoaderPopup();
-                },
-                cache: false,
-                processData: false,
-                contentType: false,
-            });
+        if(attached_file == undefined){
+           display_file_select_error(); // Display error message if no file is selected
         }
-        else{
-            $("#id_error_msg_upload").prop("hidden",false)
-            get_message_details("JMSG110"); // Get message details
-            var display = msg_type.messages_id_desc;
-            document.getElementById("id_error_msg_upload").innerHTML = display;
-            document.getElementById("id_error_msg_upload").style.color = "Red";
-            $('#id_data_upload').modal('show');
+        else {
+            file_extension = (attached_file.name).split(".")[1]
+            file_extension = file_extension.toUpperCase();
+            if(file_extension == 'CSV'){
+                formdata.append("file_attach", attached_file);
+                formdata.append("Tablename",Tablename);
+                formdata.append("appname",appname);
+                $('#id_data_upload').modal('hide');
+                $('#id_popup_tbody').empty();
+                OpenLoaderPopup();
+                $.ajax({
+                    type: 'POST',
+                    url: "{% url 'eProc_Basic_Settings:data_upload' %}",
+                    data: formdata,
+                    contentType: "application/json; charset=utf-8",
+                    success: function(response) {
+                        if(response.error_message){
+                            $("#id_error_msg_upload").prop("hidden",false)
+                            document.getElementById("id_error_msg_upload").innerHTML = response.error_message;
+                            document.getElementById("id_error_msg_upload").style.color = "Red";
+                            $('#id_data_upload').modal('show');
+                        } else {
+                            var workflowschema_data_array = response.valid_data_list;
+                            var edit_basic_data = '';
+                            var del_ind = '';
+                            var dropdown_values = [];
+                            var inc_index=0;
+                            $("#id_popup_tbody").empty();
+                            $.each(response.valid_data_list, function (i, value) {
+                                var app_type_value = value.app_types
+                                var company_id_value = value.company_id
+                                dropdown_values.push([app_type_value,company_id_value])
+                                del_ind = '<td>' + value.del_ind + '</td>'
+                                if (value[2] == 1) {
+                                    del_ind=' <input type="checkbox" value="' + value.del_ind + '" checked>'
+                                }
+                                else {
+                                    del_ind= '<input type="checkbox" value="' + value.del_ind + '" required>'
+                                }
+                                var apptype = '';
+                                var apptype_list = '';
+                                var apptype_id_list = '';
+                                $.each(rendered_approvartype_data, function(i, item){
+                                    if( value[3] == item){
+                                        apptype = '<option value="' + item.app_types + '">' + item.app_types + '</option>';
+                                    }else{
+                                        apptype_list += '<option value="' + item.app_types + '">' + item.app_types + '</option>';
+                                    }
+                                    apptype_id_list = apptype + apptype_list
+                                });
+
+                                var company = '';
+                                var company_list = '';
+                                var company_id_list = '';
+                                $.each(rendered_company_data, function(i, item) {
+                                    if( value[0] == item){
+                                        company = '<option value="' + item.company_id + '">' + item.company_id + '</option>';
+                                    }else{
+                                        company_list += '<option value="' + item.company_id + '">' + item.company_id + '</option>';
+                                    }
+                                    company_id_list = company + company_list
+                                });
+                                edit_basic_data += '<tr><td class="class_select_checkbox"><input type="checkbox" required></td>'+
+                                '<td><select class="form-control" type="text">' + company_id_list + '</select></td><td><select id="workflow_schema" name="workflow_schema" type="text" class="input form-control">'+wrksch_types_dropdown_onload+'</select></td><td><select class="form-control" type="text">' + apptype_id_list + '</select></td><td hidden><input type="text" value=""></td><td>'+ del_ind +'</td></tr>';
+                            });
+                            $('#id_popup_tbody').append(edit_basic_data);
+                            var i =0;
+                            $("#id_popup_table TBODY TR").each(function() {
+                                var row = $(this);
+                                var company_id_list = dropdown_values[i][0]
+                                var apptype_id_list = dropdown_values[i][2]
+                                $(row.find("TD").eq(1).find("select option[value="+company_id_list+"]")).attr('selected','selected');
+                                $(row.find("TD").eq(2).find("select option[value="+apptype_id_list+"]")).attr('selected','selected');
+                            i++;
+                            });
+                            $( "#id_del_ind_checkbox").prop( "hidden", false );
+                            $( "#header_select").prop( "hidden", false );
+                            $( ".class_del_checkbox").prop( "hidden", false );
+                            $('#Wfschema_Modal').modal('show');
+                            $('#id_data_upload').modal('hide');
+                            document.getElementById("id_del_add_button").style.display = "block";
+                            $('#id_check_data').show();
+                            $("#id_check_data").prop("hidden", false);
+                            $("#save_id").prop("hidden", true);
+                            table_sort_filter('id_popup_table')
+                        }
+                        CloseLoaderPopup();
+                    },
+                    cache: false,
+                    processData: false,
+                    contentType: false,
+                });
+            }
+            else{
+                $("#id_error_msg_upload").prop("hidden",false)
+                get_message_details("JMSG110"); // Get message details
+                var display = msg_type.messages_id_desc;
+                document.getElementById("id_error_msg_upload").innerHTML = display;
+                document.getElementById("id_error_msg_upload").style.color = "Red";
+                $('#id_data_upload').modal('show');
+            }
         }
     }
 
@@ -707,7 +755,7 @@
         del_ind = ''
         $("#id_popup_table TBODY TR").each(function() {
             var row = $(this);
-                workflw_schm_dic = {}
+            workflw_schm_dic = {}
             //*************** reading data from the pop-up ***************
             workflw_schm_dic.workflow_schema = row.find("TD").eq(2).find('select[type="text"]').val();
             workflw_schm_dic.company_id = row.find("TD").eq(1).find('select[type="text"]').val();
@@ -720,58 +768,68 @@
                 workflw_schm_dic.del_ind = '0'
             }
             wfsch_list.push(workflw_schm_dic)
+             get_main_table_data(); //Read data from main table
 
-            var format = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
-
-            //*************** checking for max length for prod_cat_id (max length = 6) ***************
-            //*************** checking for max length for prod_cat_id (max length = 6) ***************
-            if(workflw_schm_dic.workflow_schema.length > 40) {
-                error_message = ui_messeges("JMSG004")// Get message details
-                var display8 = msg_type.messages_id_desc;
-                document.getElementById("id_error_msg_workflow_schema_length").innerHTML = display8 + "Work flow schema";
-                $(row.find("TD").eq(2).find('input')).css("border", "1px solid #FF0000");
-                count = count +1;
+            if(wfsch_check.includes(workflw_schm_dic.workflow_schema)){
+                 $(row).css("border", "#f8d7da");
+                 row_color_highlight(row);
+                 $("#id_check_error_messages").prop("hidden",false);
+                 var display7 = ui_messeges("JMSG001");
+                 document.getElementById("id_check_error_messages").innerHTML = display7;
+                 $("#save_id").prop("hidden", true);
+                 $("#id_delete_duplicate").show()
+                 $("#id_check_data").prop("hidden", false);
+                 count = count +1;
             }
-
-            //*************** checking for special characters for prodcat code ***************
-            if (format.test(workflw_schm_dic.workflow_schema)) {
-                error_message = ui_messeges("JMSG003")// Get message details
-                var display = msg_type.messages_id_desc;
-                document.getElementById("id_error_msg_workflow_schema").innerHTML = display + "Work flow schema";
-                $(row.find("TD").eq(2).find('input')).css("border", "1px solid #FF0000");
-                count = count + 1;
-            } else {
-                    $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "none");
+            else if(main_table_low_value.includes(workflw_schm_dic.workflow_schema)){
+                 $(row).css("border", "#f8d7da");
+                 row_color_highlight(row);
+                 $("#id_check_error_messages").prop("hidden",false);
+                 var display7 = ui_messeges("JMSG001");
+                 document.getElementById("id_check_error_messages").innerHTML = display7;
+                 $("#save_id").prop("hidden", true);
+                 $("#id_delete_duplicate").show()
+                 $("#id_check_data").prop("hidden", false);
+                 count = count +1;
             }
+            else{
+                $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "none");
+                row_color_no_highlight(row);
+                $(row).css("border", "");
+                $("#id_delete_duplicate").hide()
+            }
+            wfsch_check.push(workflw_schm_dic.workflow_schema)
+            main_table_low_value.push(workflw_schm_dic.workflow_schema)
+            table_sort_filter_popup_pagination('id_popup_table');
         });
-        if (wfsch_check.includes(workflw_schm_dic.workflow_schema)) {
-            $(row).css("border", "#f8d7da");
-        }
-        else {
-            //$(row).css("background-color", "");
-        }
-        wfsch_check.push(workflw_schm_dic.workflow_schema)
-
-        //*************** shows save button if there are no errors(special characters and max length) ***************
-        if (count == 0) {
-            $("#id_check_special_character_messages").prop("hidden", true)
+    //*************** shows save button if there are no errors(special characters and max length) ***************
+        if(count == 0){
+            $('#id_popup_table').DataTable().destroy();
+            $("#id_popup_table").find("input,button,textarea,select").attr("disabled", "disabled");
+            document.getElementById("id_del_add_button").style.display = "none";
             $("#save_id").prop("hidden", false);
-        }
-        popup_data_dict = {
-            'data_list': wfsch_list,
-        }
-        OpenLoaderPopup();
-        $.ajax({
-            type: 'POST',
-            url: "{% url 'eProc_Configuration_Check:check_workflowschema' %}",
-            data: JSON.stringify(popup_data_dict),
-            success: function(response) {
-                table_sort_filter_popup_pagination('id_popup_table')
-                var message = ''
-                update_check_message(response.messages)
-                CloseLoaderPopup();
+            $("#id_check_data").prop("hidden", true);
+            if (wfsch_list == 0) {
+                $("#save_id").prop("hidden", true);
             }
-        });
+            popup_data_dict ={'data_list' : wfsch_list}
+            OpenLoaderPopup();
+            $.ajax({
+                    type: 'POST',
+                    url: "{% url 'eProc_Configuration_Check:check_workflowschema' %}",
+                    data: JSON.stringify(popup_data_dict),
+                    success: function(response) {
+                     table_sort_filter_popup_pagination('id_popup_table')
+                     $("#id_check_special_character_messages").prop("hidden", false);
+                     if (count == 0) {
+                        $("#id_check_special_character_messages").prop("hidden", true);
+                     }
+                    var message = ''
+                    update_check_message(response.messages[1])
+                    CloseLoaderPopup();
+                    }
+            });
+        }
     }
 
      //***********************************************

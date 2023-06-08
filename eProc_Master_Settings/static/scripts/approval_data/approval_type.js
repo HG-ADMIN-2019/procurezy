@@ -86,8 +86,8 @@ function delete_duplicate() {
     $("#id_popup_table TBODY TR").each(function() {
         var row = $(this);
         //*************** reading data from the pop-up ***************
-        appr_type_desc = row.find("TD").eq(2).find('input[type="text"]').val().toUpperCase();
-        app_types = row.find("TD").eq(1).find('input[type="text"]').val().toUpperCase();
+        appr_type_desc = row.find("TD").eq(2).find('input[type="text"]').val();
+        app_types = row.find("TD").eq(1).find('input[type="text"]').val();
         checked_box = row.find("TD").eq(3).find('input[type="checkbox"]').is(':checked')
         if (approval_type_code_check.includes(app_types)) {
             $(row).remove();
