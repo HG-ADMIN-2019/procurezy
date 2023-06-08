@@ -3,7 +3,7 @@ var main_table_data = new Array();
 var main_table_low_value = [];
 var validate_add_attributes = [];
 var nextval = max_sequence ;
-var number_range={};
+var number_range_value={};
 
 //onclick of add button display poorder_Modal popup and set GLOBAL_ACTION button value
 function onclick_add_button(button) {
@@ -31,26 +31,27 @@ function onclick_update_button() {
 
 // on click copy icon display the selected checkbox data
 function onclick_copy_update_button() {
+    $('#id_popup_table').DataTable().destroy();
     $("#id_popup_tbody").empty();
-    $('#display_basic_table').DataTable().destroy();
-    //Reference the Table.
-    var grid = document.getElementById("display_basic_table");
-    //Reference the CheckBoxes in Table.
-    var checkBoxes = grid.getElementsByTagName("INPUT");
+    $("#error_msg_id").css("display", "none");
+//    $('#display_basic_table').DataTable().destroy();
+   //Reference the Table.
+    var res = get_all_checkboxes(); // Function to get all the checkboxes
+    var $chkbox_all = $('td input[type="checkbox"]', res);
     var edit_basic_data = "";
     //Loop through the CheckBoxes.
-    for (var i = 1; i < checkBoxes.length; i++) {
-        if (checkBoxes[i].checked) {
-            var row = checkBoxes[i].parentNode.parentNode;
+    for (var i = 0; i < $chkbox_all.length; i++) {
+        if ($chkbox_all[i].checked) {
+            var row =  $chkbox_all[i].parentNode.parentNode;
             if (GLOBAL_ACTION == "UPDATE") {
                 guid = row.cells[5].innerHTML;
-                edit_basic_data += '<tr ><td><input type="checkbox" required></td><td><input type="number" class="form-control" value="' + row.cells[1].innerHTML + '" name="sequence"  maxlength="2"  disabled></td><td><input class="form-control" value="' + row.cells[2].innerHTML + '" type="number"  name="starting"  maxlength="100000000"  required></td><td><input value="' + row.cells[3].innerHTML + '" type="number" class="form-control"  name="ending"  maxlength="100000000"  required></td><td><input value="' + row.cells[4].innerHTML + '" type="number" class="form-control"  name="current"  maxlength="100000000"  required></td><td hidden><input  type="text" class="form-control" value="' + guid + '"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+                edit_basic_data += '<tr><td><input type="checkbox" required></td><td><input type="number" class="form-control" value="'+row.cells[1].innerHTML+'" name="sequence"  maxlength="2"  disabled></td><td><input class="form-control" value="'+row.cells[2].innerHTML+'" type="number"  name="starting"  maxlength="100000000"  required></td><td><input value="'+row.cells[3].innerHTML+'" type="number" class="form-control"  name="ending"  maxlength="100000000"  required></td><td><input value="'+row.cells[4].innerHTML+'" type="number" class="form-control"  name="current"  maxlength="100000000"  required></td><td hidden><input  type="text" class="form-control" value="'+guid+'"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
             }
         }
     }
     $('#id_popup_table').append(edit_basic_data);
     $("#id_del_ind_checkbox").prop("hidden", true);
-    table_sort_filter('display_basic_table');
+//    table_sort_filter('display_basic_table');
     table_sort_filter('id_popup_table');
     $('#poorder_Modal').modal('show');
 }
@@ -181,7 +182,7 @@ function display_basic_db_data() {
     $('#id_number_range_tbody').empty();
     var edit_basic_data = '';
     $.each(rendered_number_range_data, function (i, item) {
-        edit_basic_data += '<tr ><td class="class_select_checkbox"><input class="checkbox_check" onclick="valueChanged()" type="checkbox" required></td><td>' + item.sequence + '</td><td>' + item.starting + '</td><td>' + item.ending + '</td><td>' + item.current + '</td><td hidden>' + item.guid + '</td></tr>';
+        edit_basic_data += '<tr><td class="class_select_checkbox"><input class="checkbox_check" onclick="valueChanged()" type="checkbox" required></td><td>'+item.sequence+'</td><td>' + item.starting + '</td><td>' + item.ending + '</td><td>' + item.current + '</td><td hidden>' + item.guid + '</td></tr>';
     });
     $('#id_number_range_tbody').append(edit_basic_data);
     $("#hg_select_checkbox").prop("hidden", true);
@@ -200,7 +201,7 @@ function display_basic_db_data() {
 
 //****************************
 $('#save_id').click(function () {
-    $('#poorder_Modal').modal('hide');
+//    $('#poorder_Modal').modal('hide');
     numberranges_data = read_popup_data();
     $('#id_save_confirm_popup').modal('show');
 });
@@ -210,25 +211,24 @@ function read_popup_data() {
     $('#id_popup_table').DataTable().destroy();
     numberranges_data = new Array();
     validate_add_attributes = [];
-    $('#id_popup_table').DataTable().destroy();
     $("#id_popup_table TBODY TR").each(function () {
         var row = $(this);
-        number_range={};
-        number_range.del_ind = row.find("TD").eq(6).find('input[type="checkbox"]').is(':checked');
-        number_range.sequence = row.find("TD").eq(1).find('input[type="number"]').val();
-        number_range.starting = parseInt(row.find("TD").eq(2).find('input[type="number"]').val());
-        number_range.ending = parseInt(row.find("TD").eq(3).find('input[type="number"]').val());
-        number_range.current= parseInt(row.find("TD").eq(4).find('input[type="number"]').val());
-        number_range.document_type = "DOC02"
-        number_range.guid = row.find("TD").eq(5).find('input[type="text"]').val();
-        if (number_range == undefined){
-            number_range.sequence = row.find("TD").eq(1).find('input[type="number"]').val();
+        number_range_value = {};
+        number_range_value.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
+        number_range_value.sequence = row.find("TD").eq(1).find('input[type="number"]').val();
+        number_range_value.starting = parseInt(row.find("TD").eq(2).find('input[type="number"]').val());
+        number_range_value.ending = parseInt(row.find("TD").eq(3).find('input[type="number"]').val());
+        number_range_value.current= parseInt(row.find("TD").eq(4).find('input[type="number"]').val());
+        number_range_value.document_type = "DOC02"
+        number_range_value.guid = row.find("TD").eq(5).find('input[type="text"]').val();
+        if (number_range_value == undefined){
+            number_range_value.sequence = row.find("TD").eq(1).find('input[type="number"]').val();
         }
-        if(number_range.guid == undefined) {
-            number_range.guid = ''
+        if(number_range_value.guid == undefined) {
+            number_range_value.guid = ''
         }
-        validate_add_attributes.push(number_range.sequence);
-        numberranges_data.push(number_range);
+        validate_add_attributes.push(number_range_value.sequence);
+        numberranges_data.push(number_range_value);
     });
     table_sort_filter('id_popup_table');
     return numberranges_data;
@@ -238,7 +238,7 @@ function read_popup_data() {
 function display_error_message(error_message){
     $('#error_message').text(error_message);
     document.getElementById("error_message").style.color = "Red";
-    $("#error_msg_id").css("display", "block")
+    $("#error_msg_id").css("display", "block");
     $('#id_save_confirm_popup').modal('hide');
     $('#poorder_Modal').modal('show');
 }

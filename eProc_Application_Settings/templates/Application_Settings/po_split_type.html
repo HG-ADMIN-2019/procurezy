@@ -143,8 +143,14 @@
 
     //*************************
     var aac_dropdown='';
+    var desc_aac = '';
     function dropdown_value(){
         aac_dropdown = '';
+        if(rendered_aac_values.length != 0){
+        desc_aac = rendered_aac_values[0].field_type_desc; }
+        else {
+            desc_aac = "";
+        }
         $.each(rendered_aac_values, function(i, item)  {
             aac_dropdown += '<option value="' + item.field_type_id + '">' + item.field_type_id + '</option>';
         });
@@ -255,30 +261,23 @@
 
     // on click add icon display the row in to add the new entries
     function add_popup_row() {
-        dropdown_value();
-        $("#error_msg_id").css("display", "none")
-        basic_add_new_html = '';
-        var display_db_data = '';
-        var getid = $(".aaccode:last").attr("id");
-        var getindex = getid.split("-")[1]
-        var inc_index = Number(getindex)+1
-        var table = document.getElementById("id_popup_table");
-        var lastRowIndex = table.rows.length-1;
-<!--        var inc_index = lastRowIndex+1;-->
-        $('#id_popup_table').DataTable().destroy();
-        $(".modal").on("hidden.bs.modal", function () {
-            $("#id_error_msg").html(" ");
-        });
-        basic_add_new_html = '<tr><td><input type="checkbox" required></td>'+
-            '<td><select type="text" class="input form-control aaccode" id="aaccode-'+inc_index+'" name="aaccode" onchange="GetSelectedTextValue1(this)">'+ aac_dropdown +'</select></td>'+
-            '<td><input class="form-control description" type="text" id="description-'+inc_index+'" name="description" disabled></td>'+
-            '<td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
-        $('#id_popup_tbody').append(basic_add_new_html);
-        if (GLOBAL_ACTION == "aac_upload") {
-            $(".class_del_checkbox").prop("hidden", false);
-        }
-        GetSelectedTextValue1($("#aaccode-" + inc_index)[0]);
-        table_sort_filter('id_popup_table');
+                    dropdown_value();
+                    $("#error_msg_id").css("display", "none")
+                    basic_add_new_html = '';
+                    var display_db_data = '';
+                    $('#id_popup_table').DataTable().destroy();
+                    $(".modal").on("hidden.bs.modal", function () {
+                        $("#id_error_msg").html(" ");
+                    });
+                    basic_add_new_html = '<tr><td><input type="checkbox" required></td>'+
+                        '<td><select type="text" class="input form-control aaccode"  name="aaccode" onchange="GetSelectedTextValue1(this)">'+ aac_dropdown +'</select></td>'+
+                        '<td><input class="form-control description" type="text"  name="description" value="'+desc_aac+'" disabled></td>'+
+                        '<td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+                    $('#id_popup_tbody').append(basic_add_new_html);
+                    if (GLOBAL_ACTION == "aac_upload") {
+                        $(".class_del_checkbox").prop("hidden", false);
+                    }
+                    table_sort_filter('id_popup_table');
     }
 
     // validating the  popup table for duplicate entries
@@ -330,22 +329,13 @@
       });
     }
 
-    function GetSelectedTextValue1(aaccode){
+    function GetSelectedTextValue1(rowid){
+    var row = $(rowid);
          var selectedText = "";
-      var selectedValue = aaccode.value;
-      var selectedId = (aaccode.id).split('-')[1];
-      if (aaccode.length > 0) {
-        selectedText = aaccode.options[aaccode.selectedIndex].innerHTML;
-      }
-      var temp = document.getElementsByClassName('description');
-      $.each (rendered_aac_values, function(i, item){
+      var selectedValue = row[0].value;
+         $.each (rendered_aac_values, function(i, item){
         if(selectedValue == item.field_type_id){
-<!--          $('#description-'+selectedId).val(item.field_type_desc);-->
-           document.getElementById(temp.description.id).innerHTML = "test";
-           $('aaccode.nextElementSibling').val(
-            console.log(aaccode.nextElementSibling);
-                $('#temp.description.nextSibling.id').value = item.field_type_desc;
-                document.getElementById(temp[i].nextElementSibling.id).value = " test";
+          row[0].parentNode.nextElementSibling.children.description.value = item.field_type_desc;
         }
       });
     }
