@@ -112,7 +112,7 @@
                 {% for items in sc_header_list %}
                 <tr>
                     <td ><input class="reprocess" type="checkbox" id="{{items.doc_number}}"></td>
-                    <td scope="row"><a href="{% url 'eProc_Doc_Details:my_order_doc_details' sc_completion_flag 'SC' items.encrypted_header_guid 'display' 'my_order' %}" target="_blank">{{ items.doc_number }}</a></td>
+                    <td scope="row"><a href="{% url 'eProc_Doc_Details:my_order_document_detail' items.encrypted_header_guid %}" target="_blank">{{ items.doc_number }}</a></td>
                     <td scope="row">{{ items.description }}</td>
                     <td scope="row">{{ items.status }}</td>
                     <td scope="row">{{ items.total_value }}</td>
@@ -247,7 +247,7 @@ $('#reprocess_check').click(function () {
  }
 
 $(document).on('click', '.dummy_doc_class', function () {
-    var url = "{% url 'eProc_Doc_Details:my_order_doc_details' 'False' 'SC' 123 'display' 'my_order' %}";
+    var url = "{% url 'eProc_Doc_Details:my_order_document_detail' 123 %}";
     var id = $(this).attr('id');
     var href_link = url.replace('123', id)
     window.open(href_link,'_blank');
