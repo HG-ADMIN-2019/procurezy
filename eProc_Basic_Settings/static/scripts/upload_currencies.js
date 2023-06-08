@@ -38,6 +38,7 @@ function onclick_copy_button() {
     GLOBAL_ACTION = "COPY"
     onclick_copy_update_button("copy")
     document.getElementById("id_del_add_button").style.display = "block";
+    $("#save_id").prop("hidden", false);
 }
 
 // on click update icon display the selected checkbox data to update
@@ -45,6 +46,7 @@ function onclick_update_button() {
     GLOBAL_ACTION = "UPDATE"
     onclick_copy_update_button("update")
     document.getElementById("id_del_add_button").style.display = "none";
+    $("#save_id").prop("hidden", false);
 }
 
 //**********************************************************

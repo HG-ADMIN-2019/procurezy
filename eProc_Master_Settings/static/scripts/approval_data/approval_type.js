@@ -5,6 +5,7 @@ var validate_add_attributes = [];
 //onclick of upload button display id_data_upload popup and set GLOBAL_ACTION button value
 function onclick_upload_button() {
     GLOBAL_ACTION = "approval_type_upload"
+    $("#id_error_msg_upload").prop("hidden",true)
     $("#id_popup_tbody").empty();
     $('#id_data_upload').modal('show');
     //document.getElementById('id_file_data_upload').value = "";
@@ -48,6 +49,12 @@ function new_row_data(inc_index) {
     GetSelectedTextValue(approvaltypeSelect[0]);
 }
 
+// onclick of valid popup
+function valid_popup(){
+  $('#id_data_upload').modal('hide');
+  $("#valid_upload").modal('show');
+}
+
 
 //onclick of cancel display the table in display mode............
 function display_basic_db_data() {
@@ -79,13 +86,18 @@ function delete_duplicate() {
     $("#id_popup_table TBODY TR").each(function() {
         var row = $(this);
         //*************** reading data from the pop-up ***************
-        appr_type_desc = row.find("TD").eq(2).find('input[type="text"]').val().toUpperCase();
-        app_types = row.find("TD").eq(1).find('input[type="text"]').val().toUpperCase();
+        appr_type_desc = row.find("TD").eq(2).find('input[type="text"]').val();
+        app_types = row.find("TD").eq(1).find('input[type="text"]').val();
         checked_box = row.find("TD").eq(3).find('input[type="checkbox"]').is(':checked')
         if (approval_type_code_check.includes(app_types)) {
             $(row).remove();
         }
         approval_type_code_check.push(app_types);
+        main_table_low_value = get_main_table_data_upload(); //Read data from main table
+        if (main_table_low_value.includes(app_types)) {
+            $(row).remove();
+        }
+        main_table_low_value.push(app_types);
     })
     table_sort_filter_popup('id_popup_table')
     check_data()
@@ -133,6 +145,20 @@ function get_main_table_data() {
     table_sort_filter('display_basic_table');
 }
 
+// Function to get main table data
+function get_main_table_data_upload() {
+    main_table_low_value = [];
+    $('#display_basic_table').DataTable().destroy();
+    $("#display_basic_table TBODY TR").each(function() {
+        var row = $(this);
+        var main_attribute = {};
+        main_attribute.app_types = row.find("TD").eq(1).html();
+        main_table_low_value.push(main_attribute.app_types);
+    });
+    table_sort_filter('display_basic_table');
+    return main_table_low_value
+}
+
 // Function to get the selected row data
 function get_selected_row_data() {
     $("#display_basic_table TBODY TR").each(function() {
@@ -145,4 +171,12 @@ function get_selected_row_data() {
         main_table_approval_type_checked.push(approval_type_arr_obj);
         }
     });
+}
+
+//Get message for check data function
+function get_msg_desc_check_data(msg){
+    var msg_type ;
+    msg_type = message_config_details(msg);
+    $("#error_msg_id").prop("hidden", false);
+    return msg_type.messages_id_desc;
 }

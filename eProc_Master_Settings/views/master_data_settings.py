@@ -137,7 +137,7 @@ def extract_aav_data(request):
 
     writer = csv.writer(response)
 
-    writer.writerow(['ACC_ASSIGN_VALUE', 'ACCOUNT_ASSIGN_CAT', 'COMPANY_ID', 'VAILD_FROM', 'VAILD_TO', 'del_ind'])
+    writer.writerow(['COMPANY_ID', 'ACCOUNT_ASSIGN_CAT', 'ACC_ASSIGN_VALUE', 'VAILD_FROM', 'VAILD_TO', 'del_ind'])
 
     accounting = django_query_instance.django_filter_query(AccountingData,
                                                            {'del_ind': False}, None,
@@ -147,9 +147,9 @@ def extract_aav_data(request):
     accounting_data = query_update_del_ind(accounting)
 
     for accountingData in accounting_data:
-        accountingData_info = [accountingData['account_assign_value'], accountingData['account_assign_cat'],
-                               accountingData['company_id'], accountingData['valid_from'],
-                               accountingData['valid_to'], accountingData['del_ind']]
+        accountingData_info = [ accountingData['company_id'],accountingData['account_assign_cat'],
+                                accountingData['account_assign_value'],accountingData['valid_from'],
+                                accountingData['valid_to'], accountingData['del_ind']]
         writer.writerow(accountingData_info)
 
     return response
@@ -162,7 +162,7 @@ def extract_accdesc_data(request):
     writer = csv.writer(response)
 
     writer.writerow(
-        ['ACCOUNT_ASSIGN_VALUE', 'DESCRIPTION', 'ACCOUNT_ASSIGN_CAT', 'COMPANY_ID', 'LANGUAGE_ID', 'del_ind'])
+        ['COMPANY_ID', 'ACCOUNT_ASSIGN_CAT', 'ACCOUNT_ASSIGN_VALUE', 'DESCRIPTION', 'LANGUAGE_ID', 'del_ind'])
 
     accountingdesc = django_query_instance.django_filter_query(AccountingDataDesc,
                                                                {'del_ind': False}, None,
@@ -171,9 +171,10 @@ def extract_accdesc_data(request):
     accountingdesc_data = query_update_del_ind(accountingdesc)
 
     for accountingdescData in accountingdesc_data:
-        accountingdescData_info = [accountingdescData['account_assign_value'], accountingdescData['description'],
-                                   accountingdescData['company_id'], accountingdescData['language_id'],
-                                   accountingdescData['account_assign_cat'], accountingdescData['del_ind']]
+        accountingdescData_info = [accountingdescData['company_id'], accountingdescData['account_assign_cat'],
+                                   accountingdescData['account_assign_value'], accountingdescData['description'],
+                                   accountingdescData['language_id'],
+                                   accountingdescData['del_ind']]
         writer.writerow(accountingdescData_info)
 
     return response
@@ -219,7 +220,7 @@ def extract_cusprodcatdesc_data(request):
 
     writer = csv.writer(response)
 
-    writer.writerow(['PROD_CAT_ID' , 'LANGUAGE_ID', 'CATEGORY_DESC', 'del_ind'])
+    writer.writerow(['PROD_CAT_ID', 'LANGUAGE_ID', 'CATEGORY_DESC', 'del_ind'])
     # get only active record
 
     customerproddesc = django_query_instance.django_filter_query(UnspscCategoriesCustDesc,
@@ -257,18 +258,18 @@ def extract_workflowschema_data(request):
 
     writer = csv.writer(response)
 
-    writer.writerow(['WORKFLOW_SCHEMA', 'COMPANY_ID', 'APP_TYPES', 'del_ind'])
+    writer.writerow(['COMPANY_ID', 'WORKFLOW_SCHEMA', 'APP_TYPES', 'del_ind'])
 
     workflowschema = django_query_instance.django_filter_query(WorkflowSchema,
                                                                {'del_ind': False}, None,
-                                                               ['workflow_schema', 'company_id', 'app_types',
+                                                               ['company_id', 'workflow_schema', 'app_types',
                                                                 'del_ind'])
 
     workflowschema_data = query_update_del_ind(workflowschema)
 
     for workflowschemaData in workflowschema_data:
-        workflowschema_info = [workflowschemaData['workflow_schema'],
-                               workflowschemaData['company_id'],
+        workflowschema_info = [workflowschemaData['company_id'],
+                               workflowschemaData['workflow_schema'],
                                workflowschemaData['app_types'],
                                workflowschemaData['del_ind']]
         writer.writerow(workflowschema_info)
@@ -711,7 +712,7 @@ def extract_spendlimitval_data(request):
 
     writer = csv.writer(response)
 
-    writer.writerow(['COMPANY_ID', 'SPEND_CODE_ID', 'UPPER_LIMIT_VALUE', 'CURRENCY_ID',  'del_ind'])
+    writer.writerow(['COMPANY_ID', 'SPEND_CODE_ID', 'UPPER_LIMIT_VALUE', 'CURRENCY_ID', 'del_ind'])
 
     spendlimitvalues = django_query_instance.django_filter_query(SpendLimitValue, {'del_ind': False}, None,
                                                                  ['company_id', 'spend_code_id',
@@ -733,7 +734,7 @@ def extract_spendlimit_template(request):
 
     writer = csv.writer(response)
 
-    writer.writerow(['COMPANY_ID', 'SPENDER_USERNAME',  'SPEND_CODE_ID', 'del_ind'])
+    writer.writerow(['COMPANY_ID', 'SPENDER_USERNAME', 'SPEND_CODE_ID', 'del_ind'])
 
     return response
 
@@ -815,8 +816,8 @@ def extract_glaccount_data(request):
 
     writer = csv.writer(response)
 
-    writer.writerow(['PROD_CAT_ID', 'GL_ACC_NUM', 'GL_ACC_DEFAULT', 'ACCOUNT_ASSIGN_CAT',
-                     'COMPANY_ID', 'ITEM_FROM_VALUE', 'ITEM_TO_VALUE', 'CURRENCY_ID', 'del_ind'])
+    writer.writerow(['PROD_CAT_ID', 'COMPANY_ID','ACCOUNT_ASSIGN_CAT','GL_ACC_NUM', 'GL_ACC_DEFAULT',
+                     'ITEM_FROM_VALUE', 'ITEM_TO_VALUE', 'CURRENCY_ID', 'del_ind'])
 
     glaccount = django_query_instance.django_filter_query(DetermineGLAccount,
                                                           {'del_ind': False}, None,
@@ -828,11 +829,12 @@ def extract_glaccount_data(request):
     glaccount_data = query_update_del_ind(glaccount)
 
     for glaccountdata in glaccount_data:
-        glaccount_info = [glaccountdata['prod_cat_id'],
-                          glaccountdata['gl_acc_num'], glaccountdata['gl_acc_default'],
-                          glaccountdata['account_assign_cat'],
-                          glaccountdata['company_id'], glaccountdata['item_from_value'],
-                          glaccountdata['item_to_value'], glaccountdata['currency_id'], glaccountdata['del_ind']]
+        glaccount_info = [glaccountdata['prod_cat_id'], glaccountdata['company_id'],
+                          glaccountdata['account_assign_cat'], glaccountdata['gl_acc_num'],
+                          glaccountdata['gl_acc_default'],
+                          glaccountdata['item_from_value'],
+                          glaccountdata['item_to_value'], glaccountdata['currency_id'],
+                          glaccountdata['del_ind']]
 
         writer.writerow(glaccount_info)
 
@@ -861,13 +863,13 @@ def extract_pgrp_data(request):
     writer.writerow(['PGROUP_ID', 'DESCRIPTION', 'del_ind'])
 
     purgrp = django_query_instance.django_filter_query(OrgPGroup,
-                                                       {'client': client,'del_ind': False}, None,
+                                                       {'client': client, 'del_ind': False}, None,
                                                        ['pgroup_id', 'description', 'del_ind'])
 
     purgrp_data = query_update_del_ind(purgrp)
 
     for purgrpdata in purgrp_data:
-        purgrp_info = [purgrpdata['pgroup_id'],purgrpdata['description'],
+        purgrp_info = [purgrpdata['pgroup_id'], purgrpdata['description'],
                        purgrpdata['del_ind']]
 
         writer.writerow(purgrp_info)
@@ -936,7 +938,7 @@ def upload_prod_cat_images(request):
     prod_cat = request.POST.get('prod_cat_id')
     save_prod_cat_image_to_db(prod_cat, file_name, attached_file)
     status = get_unspsc_cat_cust_data()
-    return JsonResponse(status,safe=False)
+    return JsonResponse(status, safe=False)
 
 
 def extract_orgcompany_data(request):
@@ -1411,7 +1413,7 @@ def extract_spendlimitval_data_template(request):
 
     writer = csv.writer(response)
 
-    writer.writerow(['COMPANY_ID', 'SPEND_CODE_ID', 'UPPER_LIMIT_VALUE', 'CURRENCY_ID',  'del_ind'])
+    writer.writerow(['COMPANY_ID', 'SPEND_CODE_ID', 'UPPER_LIMIT_VALUE', 'CURRENCY_ID', 'del_ind'])
     return response
 
 

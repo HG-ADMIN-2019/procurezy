@@ -247,78 +247,87 @@
 
     //onclick of data Upload copy data to modal pop-up
     function onclick_display_csv_data() {
+        $("#valid_upload").modal('hide');
+        $("#id_delete_duplicate").hide()
         $("#error_msg_id").css("display", "none")
         $('#id_popup_table').DataTable().destroy();
         formdata = new FormData();
         attached_file = $('#id_file_data_upload').prop('files')[0]
-        file_extension = (attached_file.name).split(".")[1]
-        file_extension = file_extension.toUpperCase();
-        if(file_extension == 'CSV') {
-            formdata.append("file_attach", attached_file);
-            formdata.append("Tablename", Tablename);
-            formdata.append("appname", appname);
-            $('#id_data_upload').modal('hide');
-            $('#id_popup_tbody').empty();
-            OpenLoaderPopup();
-            $.ajax({
-                type: 'POST',
-                url: "{% url 'eProc_Basic_Settings:data_upload' %}",
-                data: formdata,
-                contentType: "application/json; charset=utf-8",
-                success: function(response) {
-                    if (response.error_message) {
-                        $("#id_error_msg_upload").prop("hidden", false)
-                        document.getElementById("id_error_msg_upload").innerHTML = response.error_message;
-                        document.getElementById("id_error_msg_upload").style.color = "Red";
-                        $('#id_data_upload').modal('show')
-                    } else {
-                        currency_data_array = response.data;
-                        var edit_basic_data = '';
-                        var del_ind = '';
-                        var inc_index=0;
-                        $("#id_popup_tbody").empty();
-                        $.each(response.data, function(i, value) {
-                            del_ind = '<td>' + value[2] + '</td>'
-                            if (value[2] == 1) {
-                                del_ind = '<input type="checkbox" value="' + value[2] + '" checked>'
-                            } else {
-                                del_ind = '<input type="checkbox" value="' + value[2] + '" required>'
-                            }
-                            edit_basic_data += '<tr><td class="class_select_checkbox"><input type="checkbox" required></td>'+
-                            '<td><input class="form-control" type="text" value="' + value[0] + '" maxlength="3" onkeypress="return /[a-z]/i.test(event.key)" required></td><td><input class="form-control" type="text" value="' + value[1] + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td><td>' + del_ind + '</td></tr>';
-                            inc_index += 1;
-                        });
-                        $('#id_popup_tbody').append(edit_basic_data);
-                        $("#id_del_ind_checkbox").prop("hidden", false);
-                        $( "#header_select").prop( "hidden", false );
-                        $(".class_del_checkbox").prop("hidden", false);
-                        $('#Incoterms_Modal').modal('show');
-                        $('#id_data_upload').modal('hide');
-                        document.getElementById("id_del_add_button").style.display = "block";
-                        $('#id_check_data').modal('show');
-                        $("#id_check_data").prop("hidden", false);
-                        $("#save_id").prop("hidden", true);
-                        table_sort_filter('id_popup_table')
-                    }
-                    CloseLoaderPopup();
-                },
-                cache: false,
-                processData: false,
-                contentType: false,
-
-            });
-        } else {
-            $("#id_error_msg_upload").prop("hidden",false)
-            get_message_details("JMSG110"); // Get message details
-            var display = msg_type.messages_id_desc;
-            document.getElementById("id_error_msg_upload").innerHTML = display;
-            document.getElementById("id_error_msg_upload").style.color = "Red";
-            $('#id_data_upload').modal('show');
+        if(attached_file == undefined){
+           display_file_select_error(); // Display error message if no file is selected
         }
-    }   
+        else {
+            file_extension = (attached_file.name).split(".")[1]
+            file_extension = file_extension.toUpperCase();
+            if(file_extension == 'CSV') {
+                formdata.append("file_attach", attached_file);
+                formdata.append("Tablename", Tablename);
+                formdata.append("appname", appname);
+                $('#id_data_upload').modal('hide');
+                $('#id_popup_tbody').empty();
+                OpenLoaderPopup();
+                $.ajax({
+                    type: 'POST',
+                    url: "{% url 'eProc_Basic_Settings:data_upload' %}",
+                    data: formdata,
+                    contentType: "application/json; charset=utf-8",
+                    success: function(response) {
+                        if (response.error_message) {
+                            $("#id_error_msg_upload").prop("hidden", false)
+                            document.getElementById("id_error_msg_upload").innerHTML = response.error_message;
+                            document.getElementById("id_error_msg_upload").style.color = "Red";
+                            $('#id_data_upload').modal('show')
+                        } else {
+                            incoterm_data_array = response.data;
+                            var edit_basic_data = '';
+                            var del_ind = '';
+<!--                            var inc_index=0;-->
+                            $("#id_popup_tbody").empty();
+                            $.each(response.data, function(i, value) {
+                                del_ind = '<td>' + value[2] + '</td>'
+                                if (value[2] == 1) {
+                                    del_ind = '<input type="checkbox" value="' + value[2] + '" checked>'
+                                } else {
+                                    del_ind = '<input type="checkbox" value="' + value[2] + '" required>'
+                                }
+                                edit_basic_data += '<tr><td class="class_select_checkbox"><input type="checkbox" required></td>'+
+                                '<td><input class="form-control" type="text" value="' + value.incoterm_key + '" maxlength="3" onkeypress="return /[a-z]/i.test(event.key)" required></td><td><input class="form-control" type="text" value="' + value.description + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td><td>' + del_ind + '</td></tr>';
+                                inc_index += 1;
+                            });
+                            $('#id_popup_tbody').append(edit_basic_data);
+                            $("#id_del_ind_checkbox").prop("hidden", false);
+                            $( "#header_select").prop( "hidden", false );
+                            $(".class_del_checkbox").prop("hidden", false);
+                            $('#Incoterms_Modal').modal('show');
+                            $('#id_data_upload').modal('hide');
+                            document.getElementById("id_del_add_button").style.display = "block";
+                            $('#id_check_data').show();
+                            $("#id_check_data").prop("hidden", false);
+                            $("#save_id").prop("hidden", true);
+                            table_sort_filter('id_popup_table')
+                        }
+                        CloseLoaderPopup();
+                    },
+                    cache: false,
+                    processData: false,
+                    contentType: false,
+
+                });
+            } else {
+                $("#id_error_msg_upload").prop("hidden",false)
+                get_message_details("JMSG110"); // Get message details
+                var display = msg_type.messages_id_desc;
+                document.getElementById("id_error_msg_upload").innerHTML = display;
+                document.getElementById("id_error_msg_upload").style.color = "Red";
+                $('#id_data_upload').modal('show');
+                display_file_select_error(); // Display error message for file selection except .csv
+            }
+        }
+    }
 
    //check function restricting special char and diaplay the data count of csv file
     function check_data() {
+        $("#id_delete_duplicate").hide()
         $('#id_popup_table').DataTable().destroy();
         $("#id_check_success_messages").empty()
         $("#id_check_error_messages").empty()
@@ -334,6 +343,7 @@
         del_ind = ''
         var incotem_key_check = new Array
         $("#id_popup_table TBODY TR").each(function() {
+            $('#id_popup_table').DataTable().destroy();
             var row = $(this);
             inco_terms_dic = {}
             //*************** reading data from the pop-up ***************
@@ -346,54 +356,118 @@
                 inco_terms_dic.del_ind = '0'
             }
             incoterm_list.push(inco_terms_dic)
+            get_main_table_data(); //Read data from main table
             var format = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
 
-            //*************** checking for max length for country code (max length = 2) ***************
+            //*************** checking for max length for Incoterm (max length = 2) ***************
             if(inco_terms_dic.incoterm_key.length >5) {
+                $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
+                row_color_highlight_empty(row);
+                $("#id_error_msg_incoterm_key").prop("hidden",false);
                 error_message = ui_messeges("JMSG004")// Get message details
-                var display8 = msg_type.messages_id_desc;
-                document.getElementById("id_error_msg_description_length").innerHTML = display8  + "Incoterm Key";
-                $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
+                var display8 = error_message;
+                document.getElementById("id_error_msg_description_length").innerHTML = display8  + "Incoterm";
                 count = count +1;
             }
-
-            //*************** checking for special characters for country code ***************
+            //*************** checking for minimum length for Incoterm (max length = 2) ***************
+            else if(inco_terms_dic.incoterm_key.length === 0){
+                    $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
+                    row_color_highlight_minlength(row);
+                    $("#id_error_msg_incoterm_key").prop("hidden",false);
+                    error_message = ui_messeges("JMSG113")// Get message details
+                    var display8 = error_message;
+                    document.getElementById("id_error_msg_incoterm_key").innerHTML = display8+ "Incoterm";
+                    count = count +1;
+            }
+            //*************** checking for special characters for Incoterm Key ***************
             else if(format.test(inco_terms_dic.incoterm_key)) {
-                error_message = ui_messeges("JMSG003")// Get message details
-                var display = msg_type.messages_id_desc;
-                document.getElementById("id_error_msg_incoterm_key").innerHTML = display + "Incoterm Key";
                 $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
-                count = count +1;
-            }
-            else{
-                $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "none");
-            }
-
-            //*************** checking for special characters for Description ***************
-            if(format.test(inco_terms_dic.description)){
+                row_color_highlight_special(row);
+                $("#id_error_msg_incoterm_key").prop("hidden",false);
                 error_message = ui_messeges("JMSG003")// Get message details
-                var display1 = msg_type.messages_id_desc;
-                document.getElementById("id_error_msg_description").innerHTML = display1+ "Description";
-                $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "1px solid #FF0000");
+                var display4 = error_message;
+                document.getElementById("id_error_msg_incoterm_key").innerHTML = display4 + "Incoterm";
+                $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
                 count = count +1;
             }
             else{
                 $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "none");
+                row_color_no_highlight(row);
+                $(row).css("border", "");
+                $("#id_delete_duplicate").hide()
             }
-            if(incotem_key_check.includes(inco_terms_dic.incoterm_key)){
-                $(row).css("border", "#f8d7da");
+            //*************** checking for empty records for Description (max length = 2) ***************
+            if(inco_terms_dic.description.length == 0){
+                $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
+                row_color_highlight_empty(row);
+                $("#id_error_msg_description").prop("hidden",false);
+                error_message = ui_messeges("JMSG002")// Get message details
+                var display8 = error_message;
+                document.getElementById("id_error_msg_description").innerHTML = display8+ "Description";
+                count = count +1;
+            }
+            //*************** checking for special characters for Description ***************
+            else if(format.test(inco_terms_dic.description)){
+                $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "1px solid #FF0000");
+                row_color_highlight_empty(row);
+                $("#id_error_msg_description").prop("hidden",false);
+                error_message = ui_messeges("JMSG003")// Get message details
+                var display3 = error_message;
+                document.getElementById("id_error_msg_description").innerHTML = display1+ "Description";
+                count = count +1;
+            }
+<!--            else if(incotem_key_check.includes(inco_terms_dic.incoterm_key)){-->
+<!--                    $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "1px solid #FF0000");-->
+<!--                    row_color_highlight_special(row);-->
+<!--                    $("#id_error_msg_description").prop("hidden",false);-->
+<!--                    error_message = ui_messeges("JMSG003")// Get message details-->
+<!--                    var display3 = error_message;-->
+<!--                    document.getElementById("id_error_msg_description").innerHTML = display3+ "Description";-->
+<!--                    count = count +1;-->
+<!--            }-->
+            else if(incotem_key_check.includes(inco_terms_dic.incoterm_key)){
+                 $(row).css("border", "#f8d7da");
+                 row_color_highlight(row);
+                 $("#id_check_error_messages").prop("hidden",false);
+                 var display7 = ui_messeges("JMSG001");
+                 document.getElementById("id_check_error_messages").innerHTML = display7;
+                 $("#save_id").prop("hidden", true);
+                 $("#id_delete_duplicate").show()
+                 $("#id_check_data").prop("hidden", false);
+                 count = count +1;
+            }
+            else if(main_table_low_value.includes(inco_terms_dic.incoterm_key)){
+                 $(row).css("border", "#f8d7da");
+                 row_color_highlight(row);
+                 $("#id_check_error_messages").prop("hidden",false);
+                 var display7 = ui_messeges("JMSG001");
+                 document.getElementById("id_check_error_messages").innerHTML = display7;
+                 $("#save_id").prop("hidden", true);
+                 $("#id_delete_duplicate").show()
+                 $("#id_check_data").prop("hidden", false);
+                 count = count +1;
             }
             else{
-                //$(row).css("border", "");
+                $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "none");
+                row_color_no_highlight(row);
+                $(row).css("border", "");
+                $("#id_delete_duplicate").hide()
             }
             incotem_key_check.push(inco_terms_dic.incoterm_key);
+            main_table_low_value.push(inco_terms_dic.incoterm_key)
+            table_sort_filter_popup_pagination('id_popup_table');
         });
-
+        $("#id_check_special_character_messages").prop("hidden",false)
         //*************** shows save button if there are no errors(special characters and max length) ***************
         if (count == 0) {
-            $("#id_check_special_character_messages").prop("hidden", true)
+            $('#id_popup_table').DataTable().destroy();
+            $("#id_popup_table").find("input,button,textarea,select").attr("disabled", "disabled");
+            document.getElementById("id_del_add_button").style.display = "none";
             $("#save_id").prop("hidden", false);
-        }
+            $("#id_check_data").prop("hidden", true);
+            if (incoterm_list == 0) {
+                $("#save_id").prop("hidden", true);
+         }
         popup_data_dict = {
             'data_list': incoterm_list
         }
@@ -405,13 +479,18 @@
             success: function(response) {
                 table_sort_filter_popup_pagination('id_popup_table')
                 //table_sort_filter('id_popup_table');
+                $("#id_check_special_character_messages").prop("hidden", false)
+                if (count == 0) {
+                    $("#id_check_special_character_messages").prop("hidden", true)
+                }
                 var message = ''
                 update_check_message(response.messages[1])
                 CloseLoaderPopup();
             }
         });
     }
-       
+}
+
     // validating the  popup table for duplicate entries
     function compare_table_for_duplicate_entries(validate_add_attributes, incoterm) {
         add_attr_duplicates = false;
