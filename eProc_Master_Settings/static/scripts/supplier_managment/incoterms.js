@@ -18,11 +18,11 @@ function onclick_update_button() {
 }
 
 //onclick of upload button display id_data_upload popup and set GLOBAL_ACTION button value
-function onclick_upload_button() {
-    GLOBAL_ACTION = "incoterm_upload"
-    $("#id_popup_tbody").empty();
-    $('#id_data_upload').modal('show');
-}
+//function onclick_upload_button() {
+//    GLOBAL_ACTION = "incoterm_upload"
+//    $("#id_popup_tbody").empty();
+//    $('#id_data_upload').modal('show');
+//}
 
 //**********************************************************
 function onclick_copy_update_button(data) {
@@ -203,4 +203,57 @@ function get_selected_row_data() {
             main_table_incoterm_checked.push(incoterm_arr_obj);
         }
     });
+}
+
+// onclick of valid popup
+function valid_popup(){
+  $('#id_data_upload').modal('hide');
+  $("#valid_upload").modal('show');
+}
+
+//onclick of upload button display id_data_upload popup and set GLOBAL_ACTION button value
+function onclick_upload_button() {
+    GLOBAL_ACTION = "incoterm_upload"
+    $("#id_error_msg_upload").prop("hidden",true)
+    $("#id_popup_tbody").empty();
+    $('#id_data_upload').modal('show');
+    document.getElementById('id_file_data_upload').value = "";
+}
+
+// Function to get main table data
+function get_main_table_data_upload() {
+    main_table_low_value = [];
+    $('#display_basic_table').DataTable().destroy();
+    $("#display_basic_table TBODY TR").each(function() {
+        var row = $(this);
+        var main_attribute = {};
+        main_attribute.incoterm_key = row.find("TD").eq(1).html();
+        main_table_low_value.push(main_attribute.incoterm_key);
+    });
+    table_sort_filter('display_basic_table');
+    return main_table_low_value
+}
+
+function delete_duplicate() {
+    $('#id_popup_table').DataTable().destroy();
+    var incoterm_code_check = new Array
+    var main_table_low_value = new Array
+    $("#id_popup_table TBODY TR").each(function () {
+        var row = $(this);
+        del_ind = row.find("TD").eq(3).find('input[type="checkbox"]').is(':checked');
+        description = row.find("TD").eq(2).find('input[type="text"]').val();
+        incoterm_key = row.find("TD").eq(1).find('input[type="text"]').val().toUpperCase();
+        if (incoterm_code_check.includes(incoterm_key)) {
+            $(row).remove();
+        }
+//        validate_add_attributes.push(incoterm.incoterm_key);
+        incoterm_code_check.push(incoterm_key);
+        main_table_low_value = get_main_table_data_upload(); //Read data from main table
+        if (main_table_low_value.includes(incoterm_key)) {
+            $(row).remove();
+        }
+        main_table_low_value.push(incoterm_key);
+    });
+    table_sort_filter_popup_pagination('id_popup_table')
+    check_data()
 }
