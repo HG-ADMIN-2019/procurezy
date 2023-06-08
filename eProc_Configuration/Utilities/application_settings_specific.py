@@ -993,7 +993,7 @@ class ApplicationSettingsSave:
 
         upload_fieldtypedesc = fieldtypedesc_instance.get_field_type_desc_values(FieldTypeDescription,
                                                                                  {'del_ind': False, 'used_flag': False,
-                                                                                  'field_name': 'roles',
+                                                                                  'field_name': 'authorization',
                                                                                   'client': self.client},
                                                                                  ['field_type_id', 'field_type_desc'])
         return upload_response, message, upload_fieldtypedesc
@@ -1042,7 +1042,7 @@ class ApplicationSettingsSave:
             else:
                 used_flag_set.append(auth_detail['role'])
         bulk_create_entry_db(Authorization, auth_db_list)
-        set_reset_field(used_flag_reset, used_flag_set, 'roles')
+        set_reset_field(used_flag_reset, used_flag_set, 'authorization')
 
     def save_orgattributes_level_data(self, orgattlevel_data):
         orgattlevel_db_list = []
