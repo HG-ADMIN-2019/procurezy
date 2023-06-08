@@ -10,7 +10,7 @@ from eProc_Attributes.Utilities.attributes_generic import OrgAttributeValues
 from eProc_Basic.Utilities.constants.constants import CONST_SC_HEADER_APPROVED, CONST_COMPLETED, CONST_SC_APPR_APPROVED, \
     CONST_SC_HEADER_AWAITING_APPROVAL, CONST_ACTIVE, CONST_AUTO, CONST_INITIATED, CONST_SC_APPR_OPEN, CONST_PR_CALLOFF, \
     CONST_CALENDAR_ID, CONST_CATALOG_CALLOFF, CONST_SUPPLIER_NOTE, CONST_INTERNAL_NOTE, CONST_APPROVER_NOTE, \
-    CONST_DEFAULT_LANGUAGE, CONST_GLACC
+    CONST_DEFAULT_LANGUAGE, CONST_GLACC, CONST_SC_HEADER_DELETED
 from eProc_Basic.Utilities.functions.dict_check_key import checkKey
 from eProc_Basic.Utilities.functions.dictionary_key_to_list import dictionary_key_to_list
 from eProc_Basic.Utilities.functions.django_query_set import DjangoQueries
@@ -342,12 +342,12 @@ def update_approval_status(scheader_guid):
     proc_lvl_sts, app_sts = get_proc_appr_level_status(sc_approval)
     if django_query_instance.django_existence_check(ScPotentialApproval,
                                                     {'sc_header_guid': scheader_guid,
-                                                                   'client':global_variables.GLOBAL_CLIENT,
-                                                                   'del_ind':False}):
+                                                     'client': global_variables.GLOBAL_CLIENT,
+                                                     'del_ind': False}):
         app_id = django_query_instance.django_filter_value_list_query(ScPotentialApproval,
                                                                       {'sc_header_guid': scheader_guid,
-                                                                       'client':global_variables.GLOBAL_CLIENT,
-                                                                       'del_ind':False},
+                                                                       'client': global_variables.GLOBAL_CLIENT,
+                                                                       'del_ind': False},
                                                                       'app_id')[0]
     django_query_instance.django_update_query(ScApproval,
                                               {'header_guid': scheader_guid,
@@ -502,6 +502,7 @@ def get_sc_detail(header_guid):
     actual_price = []
     discount_value = []
     tax_value = []
+    sc_attachments = []
     highest_item_guid = ''
     if django_query_instance.django_existence_check(ScHeader,
                                                     {'guid': header_guid,
@@ -517,7 +518,7 @@ def get_sc_detail(header_guid):
         sc_item_details = django_query_instance.django_filter_query(ScItem,
                                                                     {'header_guid': header_guid,
                                                                      'client': global_variables.GLOBAL_CLIENT,
-                                                                     'del_ind': False},
+                                                                     },
                                                                     ['item_num'],
                                                                     None)
         highest_item_guid = get_highest_item_guid_detail(sc_item_details)
@@ -529,15 +530,14 @@ def get_sc_detail(header_guid):
         sc_item_guid_list = dictionary_key_to_list(sc_item_details, 'guid')
         filter_queue = Q(header_guid=header_guid) | Q(item_guid__in=sc_item_guid_list)
         sc_accounting_details = django_query_instance.django_queue_query(ScAccounting,
-                                                                         {'client': global_variables.GLOBAL_CLIENT,
-                                                                          'del_ind': False},
+                                                                         {'client': global_variables.GLOBAL_CLIENT},
                                                                          filter_queue,
                                                                          ['acc_item_num'],
                                                                          None)
         sc_address_details = django_query_instance.django_queue_query(ScAddresses,
                                                                       {'address_type': 'D',
                                                                        'client': global_variables.GLOBAL_CLIENT,
-                                                                       'del_ind': False},
+                                                                      },
                                                                       filter_queue,
                                                                       ['item_num'],
                                                                       None)
@@ -562,13 +562,13 @@ def get_sc_detail(header_guid):
         sc_approval_details = django_query_instance.django_filter_query(ScApproval,
                                                                         {'header_guid': header_guid,
                                                                          'client': global_variables.GLOBAL_CLIENT,
-                                                                         'del_ind': False},
+                                                                         },
                                                                         ['step_num'],
                                                                         None)
         sc_potential_approval_details = django_query_instance.django_filter_query(ScPotentialApproval,
                                                                                   {'sc_header_guid': header_guid,
                                                                                    'client': global_variables.GLOBAL_CLIENT,
-                                                                                   'del_ind': False},
+                                                                                   },
                                                                                   ['step_num'],
                                                                                   None)
         supp_notes, int_notes, appr_notes = get_sc_supplier_internal_approver_note(header_guid, sc_item_guid_list)
@@ -578,6 +578,8 @@ def get_sc_detail(header_guid):
                 'sc_header_details': sc_header_details}
 
         sc_header, sc_appr, sc_completion, requester_first_name = get_shopping_cart_approval(data)
+        GetAttachments.po_attachments = []
+        sc_attachments = GetAttachments.get_sc_attachments(header_guid)
 
     requester_full_name = django_query_instance.django_get_query(UserData,
                                                                  {'username': sc_header_detail['requester'],
@@ -605,7 +607,8 @@ def get_sc_detail(header_guid):
                             'actual_price': format(actual_price, '.2f'),
                             'discount_value': format(discount_value, '.2f'),
                             'tax_value': format(tax_value, '.2f'),
-                            'highest_item_guid':highest_item_guid
+                            'highest_item_guid': highest_item_guid,
+                            'sc_attachements':sc_attachments
                             }
     return shopping_cart_detail
 
@@ -756,3 +759,54 @@ def get_highest_item_guid_detail(item_details):
             max_item_price_index = price_array.index(max_item_price)
             max_item_guid = item_guid[max_item_price_index]
     return max_item_guid
+
+
+def update_sc_delete_status(sc_guid):
+    """
+
+    """
+    django_query_instance.django_update_query(ScHeader,
+                                              {'guid': sc_guid,
+                                               'client': global_variables.GLOBAL_CLIENT},
+                                              {'status': CONST_SC_HEADER_DELETED})
+    django_query_instance.django_update_query(ScItem,
+                                              {'header_guid': sc_guid,
+                                               'client': global_variables.GLOBAL_CLIENT},
+                                              {'del_ind': True})
+    sc_item_list = django_query_instance.django_filter_value_list_query(ScItem,
+                                                                        {'header_guid': sc_guid,
+                                                                         'client': global_variables.GLOBAL_CLIENT},
+                                                                        'guid')
+    django_query_instance.django_update_query(ScAccounting,
+                                              {'item_guid__in': sc_item_list,
+                                               'client': global_variables.GLOBAL_CLIENT},
+                                              {'del_ind': True})
+    django_query_instance.django_update_query(ScAccounting,
+                                              {'header_guid': sc_guid,
+                                               'client': global_variables.GLOBAL_CLIENT},
+                                              {'del_ind': True})
+    django_query_instance.django_update_query(ScAddresses,
+                                              {'item_guid__in': sc_item_list,
+                                               'client': global_variables.GLOBAL_CLIENT},
+                                              {'del_ind': True})
+    django_query_instance.django_update_query(ScAddresses,
+                                              {'header_guid': sc_guid,
+                                               'client': global_variables.GLOBAL_CLIENT},
+                                              {'del_ind': True})
+    django_query_instance.django_update_query(Notes,
+                                              {'header_guid': sc_guid,
+                                               'client': global_variables.GLOBAL_CLIENT},
+                                              {'del_ind': True})
+    django_query_instance.django_update_query(Notes,
+                                              {'item_guid__in': sc_item_list,
+                                               'client': global_variables.GLOBAL_CLIENT},
+                                              {'del_ind': True})
+    django_query_instance.django_update_query(ScApproval,
+                                              {'header_guid': sc_guid,
+                                               'client': global_variables.GLOBAL_CLIENT},
+                                              {'del_ind': True})
+    django_query_instance.django_update_query(ScPotentialApproval,
+                                              {'sc_header_guid':sc_guid,
+                                               'client':global_variables.GLOBAL_CLIENT},
+                                              {'del_ind': True})
+

@@ -97,6 +97,8 @@
                             <span class="badge badge-pill badge_status_purch_wrkl status-pill">IN PURCHASER's WORK LIST</span>
                             {% elif hdr_det.status == 'AWAITING_APPROVAL' %}
                             <span class="badge badge-pill badge_status_await_approval status-pill">WAITING FOR APPROVAL</span>
+                            {% elif hdr_det.status == 'DELETED' %}
+                            <span class="badge badge-pill badge_status_await_approval status-pill">DELETED</span>
                             {% endif %}
                             <span class="badge badge-pill badge_status_approved" style="display: none;" id="badge_status_approved">APPROVED</span>
                             <span class="badge badge-pill badge_status_rejected" style="display: none;" id="badge_status_rejected">REJECTED</span>
@@ -251,8 +253,31 @@
 
 <!--  start of manager detail pop up-->
 {% include 'Workflow/manager_detail_modal.html' %}
-<script>
 
+<script>
+var db;
+var request = window.indexedDB.open("store_attachments_document_details", 1);
+
+request.onerror = function (event) {
+    console.log("error: ");
+};
+
+request.onsuccess = function (event) {
+    db = request.result;
+    var transaction = db.transaction(['attachments'], 'readonly');
+    var objectStore = transaction.objectStore('attachments');
+
+    var countRequest = objectStore.count();
+    countRequest.onsuccess = function () {
+        indexedDB_count = countRequest.result;
+    }
+};
+
+request.onupgradeneeded = function (event) {
+    var db = event.target.result;
+    var objectStore = db.createObjectStore("attachments", { keyPath: "attachment_data" });
+
+}
 var rendered_acc_guid = []
 var rendered_item_guid = [];
 var rendered_item_total_value = []
@@ -858,6 +883,9 @@ function update_ui(response){
     }
     else if (status == 'AWAITING_APPROVAL' ){
         status_html = '<span class="po-header-label">Status</span><br><span class="badge badge-pill badge_status_await_approval status-pill">WAITING FOR APPROVAL</span>';
+    }
+    else if (status == 'DELETED' ){
+        status_html = '<span class="po-header-label">Status</span><br><span class="badge badge-pill badge_status_await_approval status-pill">DELETED</span>';
     }
     $("#status_button").empty();
     $("#status_button").append(status_html);

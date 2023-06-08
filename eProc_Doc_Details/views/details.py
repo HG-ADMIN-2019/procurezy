@@ -41,7 +41,7 @@ from django.shortcuts import render
 from eProc_Basic.Utilities.functions.type_casting import type_cast_array_float_to_str, get_date_value
 from eProc_Doc_Details.Utilities.details_generic import GetAttachments, update_approval_status, update_sc_data, \
     get_doc_details, update_eform_scitem, get_shopping_cart_details, get_sc_supplier_internal_approver_note, \
-    get_sc_detail
+    get_sc_detail, update_sc_delete_status
 from eProc_Doc_Details.Utilities.details_specific import *
 from eProc_Notes_Attachments.Utilities.notes_attachments_generic import download
 from eProc_Price_Calculator.Utilities.price_calculator_generic import calculate_item_total_value, calculate_item_price, \
@@ -1353,11 +1353,12 @@ def proceed_checkout(request, encrypt_sc_header_guid):
                 django_query_instance.django_update_query(EformFieldData,
                                                           {'eform_id': items_details[
                                                               'eform_id'],
-                                                           'favourite_cart_guid': items_details[
-                                                               'favourite_cart_guid'],
+                                                           'item_guid': items_details[
+                                                               'guid'],
                                                            'client': global_variables.GLOBAL_CLIENT},
                                                           {'cart_guid': guid}
                                                           )
         bulk_create_entry_db(CartItemDetails, cart_list)
+        update_sc_delete_status(sc_guid)
 
     return HttpResponseRedirect('/shop/create_shopping_cart/')
