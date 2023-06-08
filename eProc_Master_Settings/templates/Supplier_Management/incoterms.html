@@ -291,7 +291,7 @@
                                     del_ind = '<input type="checkbox" value="' + value[2] + '" required>'
                                 }
                                 edit_basic_data += '<tr><td class="class_select_checkbox"><input type="checkbox" required></td>'+
-                                '<td><input class="form-control" type="text" value="' + value[0] + '" maxlength="3" onkeypress="return /[a-z]/i.test(event.key)" required></td><td><input class="form-control" type="text" value="' + value[1] + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td><td>' + del_ind + '</td></tr>';
+                                '<td><input class="form-control" type="text" value="' + value.incoterm_key + '" maxlength="3" onkeypress="return /[a-z]/i.test(event.key)" required></td><td><input class="form-control" type="text" value="' + value.description + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td><td>' + del_ind + '</td></tr>';
                                 inc_index += 1;
                             });
                             $('#id_popup_tbody').append(edit_basic_data);
