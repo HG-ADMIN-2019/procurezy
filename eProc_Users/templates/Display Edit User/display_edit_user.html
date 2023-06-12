@@ -34,12 +34,14 @@
                         <div class="alert alert-success display-none" id="user_basic_update_success" role="alert"></div>
 
                         <div class="d-flex justify-content-end">
-                            <div id="save_cancel_user_info_btn" class="display-none" >
+                            <div id="save_user_info_btn">
                                 <button type="button" class="btn btn-primary" onclick="save_user_basic_info()"><i class="fas fa-save"></i> save</button>
+                            </div>
+                            <div id="cancel_button" hidden style="padding-left: 5px;">
                                 <button type="button" class="btn btn-primary" onclick="cancel_user_basic_info()"><i class="fas fa-times"></i> cancel</button>
                             </div>
                             
-                            <div id="edit_user_info_btn">
+                            <div id="edit_user_info_btn" hidden>
                                 <button type="button" class="btn btn-primary" onclick="edit_user_basic_info()"><i class="fas fa-pencil-alt"></i> edit</button>
                             </div>
                         </div>
@@ -62,7 +64,11 @@
                                     
                                     <div class="form-group col-md">
                                         <label>User Type</label><span class="hg_required"></span><br>
-                                        <input type="text" class="form-control mandatory_fields" id="user_type" value="{{user_info.user_type}}" disabled>
+                                        <select type="text" class="form-control mandatory_fields" id="user_type" name="user_type" disabled>
+                                            {% for usertype in dropdown_usertype_values %}
+                                                <option value="{{usertype}}">{{usertype}}</option>
+                                            {% endfor %}
+                                        </select>
                                         <span id="err_user_type" class="error_message" hidden></span>
                                     </div>
 
@@ -83,22 +89,31 @@
                                 <div class="row">
                                     <div class="form-group col-md">
                                         <label> Currency</label><span class="hg_required"></span><br>
-                                        <select name="" id="id_currency_id" class="form-control hg_edit_display_mode mandatory_fields" disabled>
-                                            <option value="{{user_info.currency_id}}">{{user_info.currency_id}}</option>
+                                         <select name="" id="id_currency_id" class="form-control hg_edit_display_mode mandatory_fields">
+                                             <option value="" selected>Select</option>
+                                                {% for items in currency_id %}
+                                                    <option value="{{items.currency_id}}">{{items.currency_id}} - {{items.description}}</option>
+                                                {% endfor %}
                                         </select>
                                         <span id="err_currency_id" class="error_message" hidden></span>
                                     </div>
                                     <div class="form-group col-md">
                                         <label>Language</label><span class="hg_required"></span><br>
-                                        <select name="" id="id_language_id" class="form-control hg_edit_display_mode mandatory_fields" disabled>
-                                            <option value="{{user_info.language_id}}">{{user_info.language_id}}</option>
+                                        <select name="" id="id_language_id" class="form-control hg_edit_display_mode mandatory_fields"  >
+                                            <option value="" selected>Select</option>
+                                            {% for items in language_list %}
+                                                <option value="{{items.language_id}}">{{items.language_id}} - {{items.description}}</option>
+                                            {% endfor %}
                                         </select>
                                         <span id="err_language_id" class="error_message" hidden></span>
                                     </div>
                                     <div class="form-group col-md">
                                         <label> Time Zone</label><span class="hg_required"></span><br>
                                         <select name="time_zone" id="id_time_zone" class="form-control hg_edit_display_mode mandatory_fields" disabled>
-                                            <option value="{{user_info.time_zone}}">{{user_info.time_zone}}</option>
+                                            <option value="" selected>Select</option>
+                                            {% for items in time_zones %}
+                                                <option value="{{items.time_zone}}">{{items.time_zone}} - {{items.description}}</option>
+                                            {% endfor %}
                                         </select>
                                         <span id="err_time_zone" class="error_message" hidden></span>
                                     </div>
@@ -134,7 +149,7 @@
                                     <div class="form-group col-md-2">
                                         <label>Date Format</label><span class="hg_required"></span><br>
                                         <select name="" id="date_format" class="form-control hg_edit_display_mode mandatory_fields" disabled>
-                                            <option value="{{user_info.date_format}}">{{user_info.date_format}}</option>
+                                          <option value="" selected>Select</option>
                                         </select>
                                         <span id="err_date_format" class="error_message" hidden></span>
                                     </div>
@@ -142,7 +157,7 @@
                                     <div class="form-group col-md-2">
                                         <label>Decimal Notation</label><span class="hg_required"></span><br>
                                         <select name="" id="decimal_notation" class="form-control hg_edit_display_mode mandatory_fields" disabled>
-                                            <option value="{{user_info.decimal_notation}}">{{user_info.decimal_notation}}
+                                           <option value="" selected>Select</option>
                                             </option>
                                         </select>
                                         <span id="err_decimal_notation" class="error_message" hidden></span>
@@ -231,6 +246,36 @@
 <div class="hg_spacer2"> &nbsp; </div>
 
 <script>
+var is_valid = true;
+var decimal_notation = "{{user_info.decimal_notation}}";
+var date_format = "{{user_info.date_format}}";
+    $(document).ready(function(){
+        GLOBAL_ACTION = '{{user_action}}';
+        if(GLOBAL_ACTION == 'CREATE'){
+            $(".hg_edit_display_mode").prop("disabled", false);
+            $('#username').prop("disabled", false);
+            $('#employee_id').prop("disabled", false);
+            $('#user_type').prop("disabled", false);
+            $('#email').prop("disabled", false);
+            $('#login_attempts').prop("disabled", false);
+             $("#decimal_notation").append(decimal_opt)
+            $("#date_format").append(date_format_opt)
+        }
+        else{
+            $("#edit_user_info_btn").prop("hidden", false);
+            $("#save_user_info_btn").prop("hidden", true);
+            $("#decimal_notation").val(decimal_notation).attr('selected', 'selected');
+            $("#date_format").val(date_format).attr('selected', 'selected');
+        }
+        $("#supplier_form_reset").click(function(){
+            $('#configform')[0].reset();
+            $('#myModal').modal('hide');
+        });
+    //    set_value();
+        get_values();
+        $('#nav_menu_items').remove();
+        $("body").css("padding-top", "4rem");
+    });
 
     // Global variables - master data
     var currency_list = {{ currency_id| safe}}
@@ -238,25 +283,21 @@
     $.each(currency_list, function (i, value) {
         currency_opt += '<option> ' + currency_list[i] + ' </option>'
     });
-
     var language_list = {{ language_list| safe}}
     var language_opt = ''
     $.each(language_list, function (i, value) {
         language_opt += '<option> ' + language_list[i] + ' </option>'
     });
-
     var timezone_list = {{ time_zones| safe}}
     var timezone_opt = ''
     $.each(timezone_list, function (i, value) {
         timezone_opt += '<option> ' + timezone_list[i] + ' </option>'
     });
-
     decimal_list = {{ decimal_list | safe }}
     decimal_opt = ''
     $.each(decimal_list, function (i, value) {
         decimal_opt += '<option> ' + decimal_list[i] + ' </option>'
     });
-
     date_format_list = {{ date_format_list | safe }}
     date_format_opt = ''
     $.each(date_format_list, function (i, value) {
@@ -268,6 +309,102 @@
         AjaxCallAPIBasic(urlLink, data)
     }
 
+    $("body").on("keypress keyup change", ".mandatory_fields", function (event) {
+        if(event.currentTarget.value == "") {
+            $('#event.currentTarget.nextElementSibling.id').prop('hidden', true);
+            document.getElementById(event.currentTarget.nextElementSibling.id).style.display = "block";
+        }
+        else if(event.currentTarget.value.length >= 2 ){
+        document.getElementById(event.currentTarget.nextElementSibling.id).style.display = "none";
+        }
+        else{
+            $(".error_message").prop("hidden", false);
+            document.getElementById(event.currentTarget.nextElementSibling.id).style.display = "block";
+        }
+    });
+
+    $('#email').on('blur',function (event) {
+    var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+         if (!(event.currentTarget.value).match(mailformat)) {
+                 var msg = "JMSG002";
+                 var msg_type ;
+                 msg_type = message_config_details(msg);
+                 var display1 = msg_type.messages_id_desc;
+                 $(".error_message").prop("hidden", false);
+                var display_id = event.currentTarget.nextElementSibling.id;
+                $('#'+display_id).prop('hidden', false);
+                document.getElementById(display_id).style.display = "block";
+                event.currentTarget.nextElementSibling.innerHTML = display1 + " for Email Id";
+               is_valid = false;
+         }
+    });
+
+    $('form').on('submit',function (e) {
+        OpenLoaderPopup();
+        var valid = save_user_form_validation();
+        if(!valid){
+            localStorage.setItem("error_flag", 1);
+            set_value();
+            get_values();
+             setTimeout(function() {
+                       CloseLoaderPopup();
+         }, 500);
+            e.preventDefault();
+        }
+        else{
+            save_user_basic_info();
+            setTimeout(function() {
+                       CloseLoaderPopup();
+         }, 20000);
+        }
+    });
+
+     // Funtion to save basic detail data
+    function save_user_basic_info() {
+        var name1_val= $('#first_name').val();
+        var phone_num_val = $('#phone_num').val();
+        var email_val = $('#email').val();
+        var err_flag;
+        set_value();
+        OpenLoaderPopup();
+        is_save_form_valid = save_user_form_validation()
+        if (is_save_form_valid) {
+            var user_data_dict = {}
+            user_data_dict.username = $('#username').val();
+            user_data_dict.first_name = $('#first_name').val();
+            user_data_dict.last_name= $('#last_name').val();
+            user_data_dict.employee_id= $('#employee_id').val();
+            user_data_dict.user_type= $('#user_type').val();
+            user_data_dict.language_id= $('#id_language_id').val();
+            user_data_dict.currency_id=$('#id_currency_id').val();
+            user_data_dict.time_zone= $('#id_time_zone').val();
+            user_data_dict.email= $('#email').val();
+            user_data_dict.phone_num= $('#phone_num').val();
+            user_data_dict.date_format= $('#date_format').val();
+            user_data_dict.decimal_notation= $('#decimal_notation').val();
+            user_data_dict.login_attempts= $('#login_attempts').val();
+            user_data_dict.super_user= $('#super_user').prop('checked');
+            user_data_dict.user_locke= $('#user_locked').prop('checked');
+            user_data_dict.pwd_locked= $('#pwd_locked').prop('checked');
+
+            ajax_update_user_basic_data(user_data_dict)
+            document.getElementById('user_basic_update_success').innerHTML = "Saved Successfully";
+            $('#save_error_div').hide()
+            $('#user_basic_update_success').show();
+            $('html, body').animate({ scrollTop: 0 }, 'slow');
+            cancel_user_basic_info();
+            setTimeout(function() {
+                       CloseLoaderPopup();
+                 }, 500);
+        }
+        else{
+            $('#language_id').val(localStorage.getItem("language_id"));
+            setTimeout(function() {
+                       CloseLoaderPopup();
+            }, 500);
+            get_values();
+        }
+    }
 </script>
 
 <script src="{% static 'scripts/display-edit-users.js'%}"></script>
