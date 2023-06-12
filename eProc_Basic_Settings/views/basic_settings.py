@@ -6,7 +6,7 @@ from datetime import datetime
 import time
 import os
 
-import PyPDF2.pdf
+# import PyPDF2.pdf
 from apscheduler.schedulers.background import BackgroundScheduler
 from django.db.models.query_utils import Q
 from django.http import JsonResponse, HttpResponse
