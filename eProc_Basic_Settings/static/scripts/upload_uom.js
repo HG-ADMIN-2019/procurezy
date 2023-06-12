@@ -264,6 +264,7 @@ function get_msg_desc_check_data(msg){
      $("#error_msg_id").prop("hidden", false);
      return msg_type.messages_id_desc;
 }
+
 // Function for add a new row data
 function new_row_data() {
     basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><input class="form-control check_special_char" type="text"  title="Minimum length is 1" minlength="1" maxlength="3"  name="uomcode" style="text-transform:uppercase;" required></td><td><input class="form-control check_special_char" type="text" maxlength="100"  name="uomdescription" required></td><td><input class="form-control check_special_char" type="text" title="Minimum length is 1"  minlength="1" maxlength="3"  name="isocodeid"  style="text-transform:uppercase;" required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
