@@ -46,9 +46,8 @@
                 <button class="btn btn-primary"  data-toggle="modal" data-target="#add_approver_note"><i class="fa fa-plus" aria-hidden="true"></i> approver note</button>
             </div>
 
-            {% if is_approval_preview %}
-            {% if eligible_approver_flag %}
-
+            {% if access_type == 'MY_APPROVALS' %}
+            {% if hdr_det.status == 'AWAITING_APPROVAL' %}
             <div class="mo-doc-button-group__approval" id="approval_buttons_group">
                 <button type="button" class="btn btn-secondary d-inline-flex"><span class="material-icons-outlined">info</span> Inquire</button>
                 <button class="btn btn-danger reject-btn" onclick="ApprovalResponseButton(this);" id="APPROVER_REJECTED-{{hdr_det.guid}}-{{hdr_det.doc_number}}"><i class="fas fa-times"></i> Reject</button>
@@ -235,7 +234,27 @@
         </div>
     </div>
 </div>
+<!--start of approve reject popup window -->
+<div class="modal fade" id="approve_reject_popup_window">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
 
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">Response to approval request</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-success popup_window_approve" id="APPROVER_APPROVED-{{hdr_det.guid}}-{{hdr_det.doc_number}}" data-dismiss="modal" style="display: none;" onclick="approve_status(this)"><i class="fa fa-check" aria-hidden="true"></i> Approve</button>
+                <button type="button" class="btn btn-danger popup_window_reject" id="APPROVER_REJECTED-{{hdr_det.guid}}-{{hdr_det.doc_number}}" data-dismiss="modal" style="display: none;" onclick="approve_status(this)"><i class="fa fa-times" aria-hidden="true"></i> Reject</button>
+                <button type="button" class="btn btn-outline-primary" id="" data-dismiss="modal"> Cancel</button>
+            </div>
+
+        </div>
+    </div>
+</div>
 
 <!-- Start of Change Account assignment category pop up-->
 {% include 'Account Assignment/change_account_assignment_modal.html' %}
@@ -840,7 +859,7 @@ function save_my_order_doc_detail(type) {
                         $("#status_bar").attr("src", "{% static 'images/Status-bar3.png'%}");
                         scroll_top();
                     }
-                    update_ui(response)
+                    update_ui(response.document_detail.status)
                     db.close();
                     var req = indexedDB.deleteDatabase('store_attachments_document_details');
                     req.onsuccess = function () {
@@ -866,8 +885,7 @@ function save_my_order_doc_detail(type) {
         }
     }
 
-function update_ui(response){
-    status = response.document_detail.status
+function update_ui(status){
     var status_html = '';
     if(status == 'APPROVED' ){
         status_html = '<span class="po-header-label">Status</span><br><span class="badge badge-pill badge_status_approved status-pill">APPROVED</span>';
@@ -900,6 +918,39 @@ function update_ui(response){
         document.getElementById("on_page_load").style.display = "none";
     }
 }
+function ApprovalResponseButton(decision) {
+        var button_id = decision.id.split('-');
+        var approval_response = button_id[0];
 
+        if(approval_response == 'APPROVER_APPROVED'){
+            $('.popup_window_approve').show();
+            $('.popup_window_reject').hide();
+        } else if(approval_response == 'APPROVER_REJECTED'){
+            $('.popup_window_approve').hide();
+            $('.popup_window_reject').show();
+        }
+
+        $('#approve_reject_popup_window').modal('show');
+    }
+
+// Function to approve/ reject sc's
+    function approve_status(value){
+        OpenLoaderPopup();
+        var manage_multi_status = {}
+        manage_multi_status['status'] = value.id;
+
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'eProc_Workflow:save_appr_status' %}",
+            data: JSON.stringify(manage_multi_status),
+            success: function (response) {
+                    $('#approve_reject_popup_window').modal('hide');
+                    location.reload();
+            },
+            error: function(response) {
+                console.log(response);
+            }
+        });
+}
 </script>
 {% endblock %}

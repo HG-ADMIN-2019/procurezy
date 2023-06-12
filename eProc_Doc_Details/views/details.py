@@ -449,7 +449,7 @@ def my_order_doc_details_new(req, flag, type, guid, mode, access_type):
 
 
 @login_required
-def my_order_document_detail(request, encrypt_sc_header_guid):
+def my_order_document_detail(request, encrypt_sc_header_guid,access_type):
     """
 
     """
@@ -458,6 +458,7 @@ def my_order_document_detail(request, encrypt_sc_header_guid):
     shopping_cart_detail = get_sc_detail(header_guid)
     context = shopping_cart_detail
     context['encrypt_sc_header_guid'] = encrypt_sc_header_guid
+    context['access_type'] = access_type
     return render(request, 'Doc_Details/my_order_document_detail.html', context)
 
 

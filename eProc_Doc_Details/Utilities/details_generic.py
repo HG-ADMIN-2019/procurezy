@@ -10,11 +10,11 @@ from eProc_Attributes.Utilities.attributes_generic import OrgAttributeValues
 from eProc_Basic.Utilities.constants.constants import CONST_SC_HEADER_APPROVED, CONST_COMPLETED, CONST_SC_APPR_APPROVED, \
     CONST_SC_HEADER_AWAITING_APPROVAL, CONST_ACTIVE, CONST_AUTO, CONST_INITIATED, CONST_SC_APPR_OPEN, CONST_PR_CALLOFF, \
     CONST_CALENDAR_ID, CONST_CATALOG_CALLOFF, CONST_SUPPLIER_NOTE, CONST_INTERNAL_NOTE, CONST_APPROVER_NOTE, \
-    CONST_DEFAULT_LANGUAGE, CONST_GLACC, CONST_SC_HEADER_DELETED
+    CONST_DEFAULT_LANGUAGE, CONST_GLACC, CONST_SC_HEADER_DELETED, CONST_DOC_TYPE_SC
 from eProc_Basic.Utilities.functions.dict_check_key import checkKey
 from eProc_Basic.Utilities.functions.dictionary_key_to_list import dictionary_key_to_list
 from eProc_Basic.Utilities.functions.django_query_set import DjangoQueries
-from eProc_Basic.Utilities.functions.get_db_query import getClients, get_object_id_from_username
+from eProc_Basic.Utilities.functions.get_db_query import getClients, get_object_id_from_username, update_requester_info
 from eProc_Basic.Utilities.functions.type_casting import type_cast_array_str_to_decimal
 from eProc_Basic.Utilities.global_defination import global_variables
 from eProc_Calendar_Settings.Utilities.calender_settings_generic import calculate_delivery_date
@@ -31,6 +31,7 @@ from eProc_Purchase_Order.models.purchase_order import *
 
 # Importing  the models from m_database app
 from eProc_Registration.models.registration_model import UserData
+from eProc_Related_Documents.Utilities.related_documents_generic import get_item_level_related_documents
 from eProc_Shopping_Cart.Utilities.shopping_cart_generic import update_eform_details_scitem, get_image_url, \
     get_currency_converted_price_data
 from eProc_Shopping_Cart.Utilities.shopping_cart_specific import get_login_user_spend_limit, update_supplier_desc
@@ -504,6 +505,10 @@ def get_sc_detail(header_guid):
     tax_value = []
     sc_attachments = []
     highest_item_guid = ''
+    org_attr_value_instance = OrgAttributeValues()
+    object_id_list = get_object_id_list_user(global_variables.GLOBAL_CLIENT, global_variables.GLOBAL_LOGIN_USER_OBJ_ID)
+    default_calendar_id = org_attr_value_instance.get_user_default_attr_value_list_by_attr_id(object_id_list,
+                                                                                              CONST_CALENDAR_ID)[1]
     if django_query_instance.django_existence_check(ScHeader,
                                                     {'guid': header_guid,
                                                      'client': global_variables.GLOBAL_CLIENT,
@@ -515,6 +520,7 @@ def get_sc_detail(header_guid):
                                                                       None,
                                                                       None)
         sc_header_detail = sc_header_details[0]
+        update_requester_info(sc_header_detail['requester'])
         sc_item_details = django_query_instance.django_filter_query(ScItem,
                                                                     {'header_guid': header_guid,
                                                                      'client': global_variables.GLOBAL_CLIENT,
@@ -523,7 +529,14 @@ def get_sc_detail(header_guid):
                                                                     None)
         highest_item_guid = get_highest_item_guid_detail(sc_item_details)
         for sc_item_detail in sc_item_details:
+            sc_item_detail['related_documents'] = get_item_level_related_documents(sc_item_detail,
+                                                                                   CONST_DOC_TYPE_SC,
+                                                                                   sc_item_detail['po_doc_num'])
             sc_item_detail['unit_desc'] = get_unit_description(sc_item_detail['unit'])
+            sc_item_detail ['item_del_date'] = calculate_delivery_date(sc_item_detail['guid'],
+                                                                       int(sc_item_detail['lead_time']), sc_item_detail['supplier_id'],
+                                                    default_calendar_id, global_variables.GLOBAL_CLIENT,
+                                                    ScItem)
             update_supplier_desc(sc_item_detail)
         actual_price, discount_value, tax_value, total_item_value, sc_item_details = get_currency_converted_price_data(
             sc_item_details)

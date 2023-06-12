@@ -114,7 +114,7 @@
                                         <div class="col">
                                             {% if inp_doc_type == 'DOC01' %}
 <!--                                            <a href="{% url 'eProc_Doc_Details:my_order_doc_details' sc_completion_flag 'SC' encrypted_guid 'display' 'my_order' %}" class="link-blue" target="_blank">{{ sc_head.doc_number }}</a>-->
-                                            <a href="{% url 'eProc_Doc_Details:my_order_document_detail' encrypted_guid %}" class="link-blue" target="_blank">{{ sc_head.doc_number }}</a>
+                                            <a href="{% url 'eProc_Doc_Details:my_order_document_detail' encrypted_guid 'my_order' %}" class="link-blue" target="_blank">{{ sc_head.doc_number }}</a>
                                             {% else %}
                                             <a href="{% url 'eProc_Purchase_Order:po_doc_details' encrypted_guid %}" class="link-blue" target="_blank">{{ sc_head.doc_number }}</a>
                                             {% endif %}
@@ -122,7 +122,7 @@
 
                                         <div class="col">
                                             {% if inp_doc_type == 'DOC01' %}
-                                            <a href="{% url 'eProc_Doc_Details:my_order_document_detail' encrypted_guid %}" class="link-blue" target="_blank">{{ sc_head.description }}</a>
+                                            <a href="{% url 'eProc_Doc_Details:my_order_document_detail' encrypted_guid 'my_order' %}" class="link-blue" target="_blank">{{ sc_head.description }}</a>
                                             {% else %}
                                             <a href="{% url 'eProc_Purchase_Order:po_doc_details' encrypted_guid %}" class="link-blue" target="_blank">{{ sc_head.description }}</a>
                                             {% endif %}
@@ -218,7 +218,7 @@
                                                         {% if sc_head.document_details %}
                                                         <span class="hg_subtext_color">Shopping Cart Number</span><br>
                                                         {% for document_detail in sc_head.document_details %}
-                                                        <a href="{% url 'eProc_Doc_Details:my_order_document_detail' document_detail.encrypt_document_number %}" class="link-blue" target="_blank">{{ document_detail.document_number }}</a><br>
+                                                        <a href="{% url 'eProc_Doc_Details:my_order_document_detail' document_detail.encrypt_document_number 'my_order' %}" class="link-blue" target="_blank">{{ document_detail.document_number }}</a><br>
                                                         {% endfor %}
                                                         {% endif %}
                                                         {% endif %}

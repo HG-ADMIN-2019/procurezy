@@ -92,4 +92,5 @@ def save_appr_status(request):
     error_msg = get_message_desc(msgid)[1]
     data['message'] = error_msg
     data['approver_status'] = header_status
+    data['status'] = header_status
     return JsonResponse(data)
