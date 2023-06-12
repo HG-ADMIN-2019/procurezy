@@ -77,13 +77,11 @@
 
                                 <div class="row">
                                     <input value="{{supplier_info.supp_guid}}" id="supplier_guid" hidden>
-
                                     <div class="form-group col-md">
                                         <label> Supplier Number</label><span class="hg_required"></span><br>
-                                        <input type="text" class="form-control hg_edit_display_mode mandatory_fields" name="supplier_id" id="supplier_id" value="{{supplier_info.supplier_id}}">
+                                        <input type="text" class="form-control hg_edit_display_mode mandatory_fields check_special_char" name="supplier_id" id="supplier_id" value="{{supplier_info.supplier_id}}">
                                         <span id="err_supp_id" class="error_message" hidden></span>
                                     </div>
-                                    {{supplier_info.supp_type}}
                                     <div class="form-group col-md">
                                         <label> Supplier Type</label><span class="hg_required"></span><br>
                                         <select name="supplier_type" id="supplier_type" class="form-control hg_edit_display_mode mandatory_fields">
@@ -101,7 +99,7 @@
 
                                     <div class="form-group col-md">
                                         <label> Registration Number</label><span class="hg_required"></span><br>
-                                        <input type="text" class="form-control hg_edit_display_mode mandatory_fields" id="supplier_regnum" value="{{supplier_info.registration_number}}">
+                                        <input type="text" class="form-control hg_edit_display_mode mandatory_fields check_special_char" id="supplier_regnum" value="{{supplier_info.registration_number}}">
                                         <span id="err_reg_num" class="error_message" hidden></span>
                                     </div>
                                 </div>
@@ -109,13 +107,13 @@
                                 <div class="row">
                                     <div class="form-group col-md">
                                         <label> First Name</label><span class="hg_required"></span><br>
-                                        <input type="text" class="form-control hg_edit_display_mode mandatory_fields" id="name1" name="name1" value="{{supplier_info.name1}}" >
+                                        <input type="text" class="form-control hg_edit_display_mode mandatory_fields check_special_char" id="name1" name="name1" value="{{supplier_info.name1}}" >
                                         <span id="err_supp_name1" class="error_message" hidden></span>
                                     </div>
 
                                     <div class="form-group col-md">
                                         <label> Last Name</label><span class="hg_required"></span><br>
-                                        <input type="text" class="form-control hg_edit_display_mode mandatory_fields" id="name2" value="{{supplier_info.name2}}" >
+                                        <input type="text" class="form-control hg_edit_display_mode mandatory_fields check_special_char" id="name2" value="{{supplier_info.name2}}" >
                                         <span id="err_supp_name2" class="error_message" hidden></span>
                                     </div>
                                 </div>
@@ -123,7 +121,7 @@
                                 <div class="row">
                                     <div class="form-group col-md">
                                         <label> Currency</label><span class="hg_required"></span><br>
-                                        <select name="" id="currency_id" class="form-control hg_edit_display_mode mandatory_fields"  >
+                                        <select name="" id="currency_id" class="form-control hg_edit_display_mode mandatory_fields">
                                          <option value="" selected>Select</option>
                                             {% for items in currency_id %}
                                                 <option value="{{items.currency_id}}">{{items.currency_id}} - {{items.description}}</option>
@@ -158,7 +156,7 @@
                                 <div class="row">
                                     <div class="form-group col-md">
                                         <label> City</label><span class="hg_required"></span><br>
-                                        <input type="text" class="form-control hg_edit_display_mode mandatory_fields" id="city_id" name="city_id" value="{{supplier_info.city}}">
+                                        <input type="text" class="form-control hg_edit_display_mode mandatory_fields check_special_char" id="city_id" name="city_id" value="{{supplier_info.city}}">
                                         <span id="err_city" class="error_message" hidden></span>
                                     </div>
 
@@ -183,6 +181,7 @@
                                                 <label> Upload Supplier Image</label><br>
                                                 <input type="file" class="hg_edit_display_mode" name="supplier_image" id="supplier_image_id" onchange="loadFile3(event)">
                                                 <small class="form-text text-muted"> Supported images types - jpg, jpeg, png, bmp, tif, tiff or gif </small>
+                                                <small class="form-text text-muted"> Supported Image size - less than 200KB  </small>
                                             </div>
                                             
                                            <div>
@@ -204,18 +203,18 @@
                                 <div class="row">
                                     <div class="form-group col-md">
                                         <label> E-mail</label><span class="hg_required"></span><br>
-                                        <input type="text" class="form-control hg_edit_display_mode mandatory_fields" id="email_id" name="email_id" value="{{supplier_info.email}}">
+                                        <input type="text" class="form-control hg_edit_display_mode mandatory_fields" id="email_id" name="email_id" value="{{supplier_info.email}}" onblur="validate_email(event);">
                                         <span id="err_email" class="error_message" hidden></span>
                                     </div>
 
                                     <div class="form-group col-md">
                                         <label> Phone</label><br>
-                                        <input type="text" class="form-control hg_edit_display_mode" id="landline_id" value="{{supplier_info.landline}}">
+                                        <input type="text" class="form-control hg_edit_display_mode check_phone_number" id="landline_id" value="{{supplier_info.landline}}">
                                     </div>
 
                                     <div class="form-group col-md">
                                         <label> Mobile</label><span class="hg_required"></span><br>
-                                        <input type="text" class="form-control hg_edit_display_mode mandatory_fields" id="mobile_num_id" value="{{supplier_info.mobile_num}}">
+                                        <input type="text" class="form-control hg_edit_display_mode mandatory_fields check_phone_number" id="mobile_num_id" value="{{supplier_info.mobile_num}}">
                                         <span id="err_mobile" class="error_message" hidden></span>
                                     </div>
 
@@ -235,13 +234,13 @@
                                 <div class="row">
                                     <div class="form-group col-md">
                                         <label> Search Term 1</label><span class="hg_required"></span><br>
-                                        <input type="text" class="form-control hg_edit_display_mode mandatory_fields" id="search_term1_id" value="{{supplier_info.search_term1}}">
+                                        <input type="text" class="form-control hg_edit_display_mode mandatory_fields check_special_char" id="search_term1_id" value="{{supplier_info.search_term1}}">
                                         <span id="err_search_term1" class="error_message" hidden></span>
                                     </div>
 
                                     <div class="form-group col-md">
                                         <label> Search Term 2</label><span class="hg_required"></span><br>
-                                        <input type="text" class="form-control hg_edit_display_mode mandatory_fields" id="search_term2_id" value="{{supplier_info.search_term2}}">
+                                        <input type="text" class="form-control hg_edit_display_mode mandatory_fields check_special_char" id="search_term2_id" value="{{supplier_info.search_term2}}">
                                         <span id="err_search_term2" class="error_message" hidden></span>
                                     </div>
                                 </div>
@@ -250,14 +249,16 @@
                                         <label> Working Days</label><span class="hg_required"></span><br>
 <!--                                        <input type="text" class="form-control hg_edit_display_mode" id="working_days" value="{{supplier_info.delivery_days}}">-->
                                          <div  id="display_mode" >
-                                        <select type="text" class="multiple_select form-control "  id="working_days" name="working_days" multiple data-selected-text-format="count" data-actions-box="true" title='Select...' >
-                                            <option value="1">Sunday</option> <option value="2">Monday</option> <option value="3">Tuesday</option> <option value="4">Wednesday</option> <option value="5">Thursday</option> <option value="6">Friday</option> <option value="7">Saturday</option>
-                                        </select></div>
-                                        <div  id="edit_mode" hidden>
-                                        <select type="text" class="multiple_select form-control "  id="working_days_id" name="working_days" multiple data-selected-text-format="count" data-actions-box="true" title='Select...' >
+                                        <select type="text" class="multiple_select form-control dropdown_required"  id="working_days" name="working_days" multiple data-selected-text-format="count" data-actions-box="true" title='Select...' >
                                             <option value="1">Sunday</option> <option value="2">Monday</option> <option value="3">Tuesday</option> <option value="4">Wednesday</option> <option value="5">Thursday</option> <option value="6">Friday</option> <option value="7">Saturday</option>
                                         </select>
-                                        <span id="err_working_days" class="error_message" hidden></span>
+                                         <span id="err_working_days_disp" class="wday_err_msg" hidden></span>
+                                         </div>
+                                        <div  id="edit_mode" hidden>
+                                        <select type="text" class="multiple_select form-control dropdown_required"  id="working_days_id" name="working_days" multiple data-selected-text-format="count" data-actions-box="true" title='Select...' >
+                                            <option value="1">Sunday</option> <option value="2">Monday</option> <option value="3">Tuesday</option> <option value="4">Wednesday</option> <option value="5">Thursday</option> <option value="6">Friday</option> <option value="7">Saturday</option>
+                                        </select>
+                                        <span id="err_working_days" class="wday_err_msg" hidden></span>
                                         </div>
                                     </div>
 
@@ -498,6 +499,7 @@ var lang_id = '{{supplier_info.language_id | safe}}';
 <!--var w_days = '{{supplier_info.delivery_days | safe}}';-->
 var img_url = '{{img_url.url | safe}}';
 var error_flag;
+var is_valid = true;
 
 $(document).ready(function(){
     $('#nav_menu_items').remove();
@@ -517,7 +519,7 @@ $(document).ready(function(){
      MultipleSelect();
      var flag = localStorage.getItem("error_flag");
      if(flag == 1){
-<!--        get_values_onerror();-->
+        get_values_onerror();
         return false;
         }
     }
@@ -529,9 +531,7 @@ $(document).ready(function(){
         $("#country_code_id").val(country_id).attr('selected', 'selected');
         $("#language_id").val(lang_id).attr('selected', 'selected');
         $("#currency_id").val(curr_id).attr('selected', 'selected');
-        $("#working_days_id").prop("hidden", false);
         $("#working_days").prop("hidden", true);
-
         var wday_array = [];
         wday_array = w_days.split(",");
         var num = w_days.match(/\d/g);
@@ -541,21 +541,62 @@ $(document).ready(function(){
         {
               working_days_values[j] = get_days(num[j]);
         }
+        $("#working_days_id").prop("hidden", false);
         $("#working_days_id").val(working_days_values);
     }
     MultipleSelect();
 });
 
- $("body").on("keypress keyup change", ".mandatory_fields", function (event) {
-    if(event.currentTarget.value == "") {
-        $('#event.currentTarget.nextElementSibling.id').prop('hidden', true);
+ $("body").on("keypress keyup change blur", ".mandatory_fields", function (event) {
+    if((event.currentTarget.value == "") || (event.currentTarget.value == null)) {
         document.getElementById(event.currentTarget.nextElementSibling.id).style.display = "block";
     }
-    else if(event.currentTarget.value.length >=4 ){
+    else if(event.currentTarget.value.length >= 2 ){
         document.getElementById(event.currentTarget.nextElementSibling.id).style.display = "none";
     }
-
+    else{
+        $(".error_message").prop("hidden", false);
+        document.getElementById(event.currentTarget.nextElementSibling.id).style.display = "block";
+    }
  });
+
+$('#email_id').on('blur',function (event) {
+    var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+         if (!(event.currentTarget.value).match(mailformat)) {
+                 var msg = "JMSG002";
+                 var msg_type ;
+                 msg_type = message_config_details(msg);
+                 var display1 = msg_type.messages_id_desc;
+                 $(".error_message").prop("hidden", false);
+                var display_id = event.currentTarget.nextElementSibling.id;
+                $('#'+display_id).prop('hidden', false);
+                document.getElementById(display_id).style.display = "block";
+                event.currentTarget.nextElementSibling.innerHTML = display1 + " for Email Id";
+               is_valid = false;
+         }
+});
+
+$('#mobile_num_id').on('blur',function (event) {
+         if (event.currentTarget.value.length != 10 ) {
+                 var msg = "JMSG002";
+                 var msg_type ;
+                 msg_type = message_config_details(msg);
+                 var display1 = msg_type.messages_id_desc;
+                 $(".error_message").prop("hidden", false);
+                var display_id = event.currentTarget.nextElementSibling.id;
+                $('#'+display_id).prop('hidden', false);
+                document.getElementById(display_id).style.display = "block";
+                event.currentTarget.nextElementSibling.innerHTML ="Please check Mobile Number";
+               is_valid = false;
+         }
+});
+
+<!--$('#working_days').on('click',function (event) {-->
+<!--    if((event.currentTarget.value == "") || (event.currentTarget.value == null)){-->
+<!--        $('.wday_err_msg').prop("hidden", false);-->
+<!--    }-->
+<!--});-->
+
  $('form').on('submit',function (e) {
     OpenLoaderPopup();
     var valid = save_basic_form_validation();
@@ -675,32 +716,40 @@ function save_basic_details() {
     { working_days = $('#working_days_id').val(); }
 
     formdata.append("working_days_id",working_days);
-    console.log(formdata);
      setTimeout(function() {
                    OpenLoaderPopup();
      }, 500);
-     var valid_data = data_validation(formdata);
-     if(valid_data){
+     if(is_valid){
         response = ajax_update_supplier_basic_details(formdata)
         encrypted_supplier = response.encrypted_supplier
         message = response.message
         msg_type = response.msg_type
         if(msg_type.type=='success'){
             document.getElementById('supplier_basic_update_success').innerHTML = message;
-            CloseLoaderPopup();
+             setTimeout(function() {
+                   CloseLoaderPopup();
+             }, 500);
             $('#supplier_basic_update_success').show();
             $('#save_error_div').hide();
+            setTimeout(function() {
+                    $('#supplier_basic_update_success').hide();
+            }, msg_display_interval*1500);
             localStorage.setItem("error_flag", 0);
         }
         if(msg_type.type=='error'){
             document.getElementById('save_error_div').innerHTML = message;
-            CloseLoaderPopup();
+            setTimeout(function() {
+                   CloseLoaderPopup();
+             }, 500);
             $('#save_error_div').show();
             $('#supplier_basic_update_success').hide();
             localStorage.setItem("error_flag", 1);
             values_reload();
+            setTimeout(function() {
+                   $('#save_error_div').hide();
+            }, msg_display_interval*2500);
+            get_values_onerror();
             return false;
-             get_values_onerror();
         }
      }
     else{

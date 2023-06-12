@@ -110,11 +110,11 @@ function get_selected_row_data(){
 // Function for add a new row data
 function new_row_data(){
     basic_add_new_html = '<tr><td><input type="checkbox" required></td>'+
-        '<td><select type="text" class="input form-control aaccode" id="aaccode-1"  name="aaccode" onchange="GetSelectedTextValue(this)">' +aac_dropdown +'</select></td>'+
-        '<td><input class="form-control description" type="text"  name="description"  id="description-1" disabled></td>'+
+        '<td><select type="text" class="input form-control aaccode"  name="aaccode" onchange="GetSelectedTextValue1(this)">' +aac_dropdown +'</select></td>'+
+        '<td><input class="form-control description" type="text"  name="description" value="'+desc_aac+'"  disabled></td>'+
         '<td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
         $('#id_popup_tbody').append(basic_add_new_html);
         table_sort_filter('id_popup_table');
         var aaccodeSelect = $("#aaccode-1");
-        GetSelectedTextValue(aaccodeSelect[0]);
+//        GetSelectedTextValue(aaccodeSelect[0]);
     }

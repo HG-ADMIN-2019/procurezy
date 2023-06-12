@@ -25,6 +25,7 @@ function onclick_upload_button() {
     $("#id_popup_tbody").empty();
     $('#id_data_upload').modal('show');
     document.getElementById('id_file_data_upload').value = "";
+    $("#save_id").prop("hidden", false);
 }
 
 // on click copy icon display the selected checkbox data
@@ -32,6 +33,7 @@ function onclick_copy_button() {
     GLOBAL_ACTION = "COPY"
     onclick_copy_update_button("copy")
     document.getElementById("id_del_add_button").style.display = "block";
+    $("#save_id").prop("hidden", false);
 }
 
  // onclick of valid popup

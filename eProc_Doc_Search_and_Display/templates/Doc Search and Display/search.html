@@ -46,6 +46,7 @@
                                 <option value="REJECTED">Rejected</option>
                                 <option value="PURCHASER_WORKLIST">Purchaser Worklist</option>
                                 <option value="AWAITING_APPROVAL">Awaiting Approval</option>
+                                <option value="DELETED">Deleted</option>
                             </select>
 
                         </div>
@@ -112,8 +113,8 @@
                                     <div class="row h5 mt-2" >
                                         <div class="col">
                                             {% if inp_doc_type == 'DOC01' %}
-                                            <a href="{% url 'eProc_Doc_Details:my_order_doc_details' sc_completion_flag 'SC' encrypted_guid 'display' 'my_order' %}" class="link-blue" target="_blank">{{ sc_head.doc_number }}</a>
-<!--                                            <a href="{% url 'eProc_Doc_Details:my_order_document_detail' encrypted_guid %}" class="link-blue" target="_blank">{{ sc_head.doc_number }}</a>-->
+<!--                                            <a href="{% url 'eProc_Doc_Details:my_order_doc_details' sc_completion_flag 'SC' encrypted_guid 'display' 'my_order' %}" class="link-blue" target="_blank">{{ sc_head.doc_number }}</a>-->
+                                            <a href="{% url 'eProc_Doc_Details:my_order_document_detail' encrypted_guid %}" class="link-blue" target="_blank">{{ sc_head.doc_number }}</a>
                                             {% else %}
                                             <a href="{% url 'eProc_Purchase_Order:po_doc_details' encrypted_guid %}" class="link-blue" target="_blank">{{ sc_head.doc_number }}</a>
                                             {% endif %}
@@ -121,7 +122,7 @@
 
                                         <div class="col">
                                             {% if inp_doc_type == 'DOC01' %}
-                                            <a href="{% url 'eProc_Doc_Details:my_order_doc_details' sc_completion_flag 'SC' encrypted_guid 'display' 'my_order' %}" class="link-blue" target="_blank">{{ sc_head.description }}</a>
+                                            <a href="{% url 'eProc_Doc_Details:my_order_document_detail' encrypted_guid %}" class="link-blue" target="_blank">{{ sc_head.description }}</a>
                                             {% else %}
                                             <a href="{% url 'eProc_Purchase_Order:po_doc_details' encrypted_guid %}" class="link-blue" target="_blank">{{ sc_head.description }}</a>
                                             {% endif %}
@@ -156,7 +157,8 @@
                                             <span class="badge badge-pill badge_status_approved">ORDERED</span>
                                             {% elif sc_head.status == 'PURCHASER_WORKLIST' %}
                                             <span class="badge badge-pill badge_status_purch_wrkl">IN PURCHASER's WORK LIST</span> 
-                                            
+                                            {% elif sc_head.status == 'DELETED' %}
+                                            <span class="badge badge-pill badge_status_rejected">DELETED</span>
                                             {% elif sc_head.status == 'REJECTED' %}
                                             <span class="badge badge-pill badge_status_rejected">REJECTED</span> 
                                             
@@ -170,6 +172,8 @@
                                             <span class="badge badge-pill badge_status_save">SAVED</span>
                                             {% elif sc_head.status == 'AWAITING_APPROVAL' %}
                                             <span class="badge badge-pill badge_status_await_approval">WAITING FOR APPROVAL</span>
+                                            {% elif sc_head.status == 'DELETED' %}
+                                            <span class="badge badge-pill badge_status_rejected">DELETED</span>
                                             {% else %}
                                             <span class="badge badge-pill badge_status_approved">APPROVED</span>
                                             
@@ -214,7 +218,7 @@
                                                         {% if sc_head.document_details %}
                                                         <span class="hg_subtext_color">Shopping Cart Number</span><br>
                                                         {% for document_detail in sc_head.document_details %}
-                                                        <a href="{% url 'eProc_Doc_Details:my_order_doc_details' sc_completion_flag 'SC' document_detail.encrypt_document_number 'display' 'my_order' %}" class="link-blue" target="_blank">{{ document_detail.document_number }}</a><br>
+                                                        <a href="{% url 'eProc_Doc_Details:my_order_document_detail' document_detail.encrypt_document_number %}" class="link-blue" target="_blank">{{ document_detail.document_number }}</a><br>
                                                         {% endfor %}
                                                         {% endif %}
                                                         {% endif %}

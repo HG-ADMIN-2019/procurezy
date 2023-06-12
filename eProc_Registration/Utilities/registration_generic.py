@@ -58,6 +58,7 @@ def save_supplier_data(request):
     supplier_details = {}
     status = request.POST.get('status')
     supplier_details['supplier_id'] = request.POST.get('supplier_id')
+    supplier_details['supp_type'] = request.POST.get('supplier_type')
     supplier_details['registration_number'] = request.POST.get('registration_number')
     supplier_details['name1'] = request.POST.get('name1')
     supplier_details['name2'] = request.POST.get('name2')

@@ -609,7 +609,13 @@
 {% include 'ProductDetailPopup/basic_product_detail_popup.html' %}
 <script>
 var GLOBAL_SELECT_ITEM_NUM = 0
-
+// Close action sections i item details table
+function closeAttachSection(obj, data) {
+    item_number = data.substr(-1)
+    var x = data;
+    document.getElementById(x).style.display = "none"
+    document.getElementById('item_info_tr-'+item_number).hidden = true;
+}
 // Function to hide and show hidden table row contents
 function showSection(obj, data) {
     item_number = data.split('-')[1]
