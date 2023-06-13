@@ -46,7 +46,7 @@ function add_popup_row() {
             '<td><input type="checkbox" name="gl_acc_default" required></td>'+
             '<td><input class="form-control" type="number"  min="1" name="From_value"  required></td>'+
             '<td><input class="form-control" type="number"  min="1" name="To_value"  required></td>'+
-            '<td><select class="form-control">' + currency_dropdown + '</select></td><td hidden><input type="text" class="form-control"  value="GUID"</td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+            '<td><select class="form-control">' + currency_dropdown + '</select></td><td hidden><input type="text" class="form-control"  value="GUID"</td><td class="class_del_checkbox"><input type="checkbox" required></td></tr>';
             $('#id_popup_tbody').append(basic_add_new_html);
             table_sort_filter('id_popup_table');  // Add a new row in popup
             $(".class_del_checkbox").prop("hidden", false);
