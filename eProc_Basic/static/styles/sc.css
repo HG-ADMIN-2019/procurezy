@@ -330,6 +330,11 @@
     font-size: 14px;
 }
 
+.wday_err_msg {
+    color: red;
+    font-size: 14px;
+}
+
 .hg_pb5 {
     padding-bottom:5px;
 }

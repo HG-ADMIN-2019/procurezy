@@ -205,10 +205,9 @@ function save_basic_form_validation(){
                     is_valid = false;
                 }
                 else{ $('#temp[i].nextElementSibling.id').prop('hidden', true);
-//                    $(".error_message").prop("hidden", true);
                 }
             }
-            else{
+            else if(temp[i].nodeName == "INPUT"){
                 if(temp[i].value == ''){
                     var err_text = temp[i].parentNode.children[0].innerHTML;
                     $(".error_message").prop("hidden", false);
@@ -224,8 +223,42 @@ function save_basic_form_validation(){
                     temp[i].nextElementSibling.innerHTML = "Please enter min 3 chars for "+ err_text;
                    is_valid = false;
                 }
+                else if(temp[i].id == 'email_id'){
+                    var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+                     if (!(temp[i].value).match(mailformat)) {
+                            valid_data = false
+                             var msg = "JMSG002";
+                             var msg_type ;
+                             msg_type = message_config_details(msg);
+                             var display1 = msg_type.messages_id_desc;
+                             $(".error_message").prop("hidden", false);
+                            var display_id = temp[i].nextElementSibling.id;
+                            $('#'+display_id).prop('hidden', false);
+                            document.getElementById(display_id).style.display = "block";
+                            temp[i].nextElementSibling.innerHTML = display1 + " for Email Id";
+                           is_valid = false;
+                     }
+                }
             }
-        }
+            }
+//            var dropdown_reference = document.getElementsByClassName('dropdown_required');
+//            for (var j = 0; j<dropdown_reference.length; j++) {
+//                if(dropdown_reference[j].id == 'working_days'){
+//                    if((dropdown_reference[j].value == "") || (dropdown_reference[j].value == null)){
+//                        $('#err_working_days_disp').prop('hidden', false);
+//                        $('#err_working_days_disp').html("Please select Working Days");
+//                        is_valid = false;
+//                    }
+//                }
+//                if(dropdown_reference[j].id == 'working_days_id'){
+//                    if((dropdown_reference[j].value == "") || (dropdown_reference[j].value == null)){
+//                        $('#err_working_days').prop('hidden', false);
+//                        $('#err_working_days').html("Please select Working Days");
+//                        is_valid = false;
+//                    }
+//                }
+//            }
+
         return is_valid
     }
 
