@@ -186,7 +186,6 @@ function cancel_supp_org_data(){
 var supplierid = global_supplier_id;
 
    // Validation function
-
 function save_basic_form_validation(){
         var is_valid = true;
         var save_form_errors = ''

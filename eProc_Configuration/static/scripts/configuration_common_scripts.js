@@ -83,9 +83,9 @@ $('#display_basic_table tbody').on('click', 'input[class="checkbox_check"]', fun
       e.stopPropagation();
    });
    // Handle click on table cells with checkboxes
-   $('#display_basic_table').on('click', 'tbody td, thead th:first-child', function(e){
-      $(this).parent().find('input[class="checkbox_check"]').trigger('click');
-   });
+//   $('#display_basic_table').on('click', 'tbody td, thead th:first-child', function(e){
+//      $(this).parent().find('input[class="checkbox_check"]').trigger('click');
+//   });
    // Handle click on "Select all" control
    $('thead input[id="selectAll"]', table.table().container()).on('click', function(e){
       if(this.checked){

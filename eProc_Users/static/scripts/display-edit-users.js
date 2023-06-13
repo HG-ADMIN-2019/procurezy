@@ -55,7 +55,6 @@ function save_user_form_validation(){
                     is_valid = false;
                 }
                 else{ $('#temp[i].nextElementSibling.id').prop('hidden', true);
-                    $(".error_message").prop("hidden", true);
                 }
             }
             else{
@@ -65,13 +64,14 @@ function save_user_form_validation(){
                     temp[i].nextElementSibling.innerHTML = err_text + " required";
                    is_valid = false;
                 }
-                 else if(temp[i].value.length <= 2){
+                 else if(temp[i].value.length < 3){
                     var err_text = temp[i].parentNode.children[0].innerHTML;
                     $(".error_message").prop("hidden", false);
                     var display_id = temp[i].nextElementSibling.id;
                     $('#'+display_id).prop('hidden', false);
                     document.getElementById(display_id).style.display = "block";
                     temp[i].nextElementSibling.innerHTML = "Please enter min 3 chars for "+ err_text;
+                    $('#'+temp[i].id).prop("disabled", false);
                    is_valid = false;
                 }
                 else if(temp[i].id == 'email_id'){
