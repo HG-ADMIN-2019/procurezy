@@ -1,37 +1,30 @@
 {% extends 'root/base.html' %}
 {% load static %}
-
 {% block title %} Product and service Config {% endblock %}
 {% block maincontent %}
-
 {% include 'root/loader.html' %}
-
 
 <div class="container-fluid">
     <div class="mep-form_wrapper">
-
         <div class="d-flex justify-content-between">
             <h3>Product And Service Configuration</h3>
             <div>
-                <button class="btn btn-outline-primary"  title="Extract" data-toggle="modal" data-target="#download_popup" onclick="" type="button">
+                <button class="btn btn-outline-primary" title="Template" data-toggle="modal" data-target="#download_popup" onclick="" type="button">
                     <i class="fas fa-download"></i> download template
                 </button>
-                <button class="btn btn-outline-primary"  title="Extract" data-toggle="modal" data-target="#extrct_popup" onclick="" type="button">
+                <button class="btn btn-outline-primary" title="Extract" data-toggle="modal" data-target="#extrct_popup" onclick="" type="button">
                     <i class="fas fa-download"></i> extract
                 </button>
-                <button class="btn btn-outline-primary" id="basic_save_upld_redirect" data-toggle="modal" data-target="#upload_product_detail_popup" type="button">
+                <button class="btn btn-outline-primary" title="Upload" id="basic_save_upld_redirect" data-toggle="modal" data-target="#upload_product_detail_popup" type="button">
                     <i class="fas fa-cloud-upload-alt"></i> data upload
                 </button>
-                <button class="btn btn-primary" onclick="window.open(href = '{% url 'eProc_Manage_Content:get_product_details' None %}')">
+                <button class="btn btn-primary" title="Add New Product" onclick="window.open(href = '{% url 'eProc_Manage_Content:get_product_details' None %}')">
                     <i class="fa fa-plus"></i> add new product
                 </button>
-
                 <button onclick="SaveToDisk('myfilename.txt')" hidden>Create file</button>
             </div>
         </div>
-
         <hr>
-
         <div class="card card-shadow-1">
             <div class="card-body">
                 <form method="POST">
@@ -59,15 +52,12 @@
                                 <input name="search_count" type = "number" value="10" id="search_count"  class="form-control check_number">
                             </div>
                         </div>
-
                         <hr>
-
                         <div class="elements-space-between" data-toggle="collapse" data-target="#product_detail_adv_search">
                             <span class="h5">Advanced Search</span>
                             <i class="fas fa-chevron-down"></i>
                         </div>
                     </div>
-
                     <div id="product_detail_adv_search" class="advanced-search-collapse collapse">
                         <div class="row">
                             <div class="col-md">
@@ -84,17 +74,14 @@
                             </div>
                         </div>
                     </div>
-
                     <br>
-
                     <div class="elements-space-between">
                         <div>
                             <input type="reset" value="Clear filters" class="ip-form-clear-filters btn btn-link">
                             <button class="btn btn-primary" type="button"
-                                    title="Please click to get the search details!" id="submit_product_detail"><i class="fas fa-search"></i> search
+                                    title="Please click to get the search details!" title="Search" id="submit_product_detail"><i class="fas fa-search"></i> search
                             </button>
                         </div>
-
                         <div>
                             <span class="badge help-text-badge help-text-star-search"></span>
                         </div>
@@ -102,7 +89,6 @@
                 </form>
             </div>
         </div>
-
         {% if product_details_query.count > 0 %}
         <div class="search_result_count_card card">
             <div class="card-body">
@@ -111,84 +97,76 @@
             </div>
         </div>
         {% elif product_details_query.count == 0  %}
-        <div class="search_result_count_card card">
-            <div class="card-body">
-                <h6 class="card-title">No Results Found</h6>
-            </div>
-        </div>
-        {% endif %}
-
-
-        <div id="error_msg_div" class="alert alert-success" hidden><span id="success_msg_id"></span></div>
-
-        {% if product_details_query %}
-        <div class="card mt-5">
-
-            <div>
-                <button class="btn btn-primary btn-sm mt-2 ml-2"  title="Delete" id="id_delete_product" value="product_delete" data-toggle="modal" data-target="#id_delete_confirm_popup" style="display:none;">
-                    <i class="fa fa-trash"></i> Delete
-                </button>
-
-                <div>
-                    <table id="product_detail_tab" class="table">
-                        <thead class="thead-light">
-                        <tr>
-                            <th > <input type="checkbox" onclick="checkAll(this)"></th>
-                            <th style="width: 30%;" >Product Description</th>
-                            <th >Product Id</th>
-                            <th >Supplier Id</th>
-                            <th >Lead Time</th>
-                            <th >Unit</th>
-                            <th >Price</th>
-                            <th >Currency</th>
-                            <th >Product Category</th>
-                            <th>action</th>
-                        </tr>
-                        </thead>
-
-                        <tbody id="product_detail_tbody" >
-                        {% for product_detail in product_details_query %}
-                        <tr id="{{product_detail.product_id}}">
-                            <td><input type="checkbox" class="product_checkbox"  onclick="valueChanged();"{% if product_detail.product_transaction %} disabled  {% endif %} > </td>
-
-                            <td>
-                                <div class="d-flex flex-row">
-                                    <div>
-                                        <a href="{% url 'eProc_Manage_Content:get_product_details' product_detail.encrypted_product_id %}" target="_blank">
-                                            <img src="/media/{{product_detail.image_url}}" onerror='this.src="/static/images/no-image-cropped.png"' class="mr-3 catalog_img product-config-img" >
-                                        </a>
-                                    </div>
-                                    <div  class="d-flex flex-column">
-                                        <a href="{% url 'eProc_Manage_Content:get_product_details' product_detail.encrypted_product_id %}" target="_blank">{{product_detail.short_desc}}</a>
-                                        <div class="desc-section-bottom">
-                                            {% if product_detail.mapped_in_catlog %}
-                                            <button type="button" class="hg_button_round notes badge_status_await_approval" id="Mapped_in_Catalog-{{forloop.counter}}" title="Mapped in Catalog" > <i class="material-icons-outlined">link</i></button>
-                                            {% endif %}
-                                            {% if product_detail.exist_in_transaction_table %}
-                                            <button type="button" class="hg_button_round attachment badge_status_purch_wrkl" id="Shopping_Cart_Created-{{forloop.counter}}" title="Shopping Cart Created" > <i class="material-icons-outlined">shopping_cart_checkout</i></button>
-                                            {% endif %}
-                                        </div>
-                                    </div>
-                                </div>
-                            </td>
-                            <td>{{product_detail.product_id}}</td>
-                            <td>{{product_detail.supplier_id}}</td>
-                            <td>{{product_detail.lead_time}}</td>
-                            <td>{{product_detail.unit}}</td>
-                            <td>{{product_detail.price}}</td>
-                            <td>{{product_detail.currency}}</td>
-                            <td >{{product_detail.prod_cat_id}}</td>
-                            <td><i class="material-icons hg-icon-blue-primary  {% if product_detail.product_transaction %} hg-delete-icon-disabled  {% endif %}" title="Delete Form" id="{{product_detail.product_id}}-{{product_detail.product_transaction}}"
-                                   onclick="get_form_id_to_delete(this.id)" >delete_outline</i>
-                            </td>
-                        </tr>
-                        {% endfor %}
-                        </tbody>
-
-                    </table>
+            <div class="search_result_count_card card">
+                <div class="card-body">
+                    <h6 class="card-title">No Results Found</h6>
                 </div>
             </div>
-        </div>
+        {% endif %}
+        <div id="error_msg_div" class="alert alert-success" hidden><span id="success_msg_id"></span></div>
+        {% if product_details_query %}
+            <div class="card mt-5">
+                <div>
+                    <button class="btn btn-primary btn-sm mt-2 ml-2"  title="Delete" id="id_delete_product" value="product_delete" data-toggle="modal" data-target="#id_delete_confirm_popup" style="display:none;">
+                        <i class="fa fa-trash"></i> Delete
+                    </button>
+                    <div>
+                        <table id="product_detail_tab" class="table">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th > <input type="checkbox" onclick="checkAll(this)"></th>
+                                    <th style="width: 30%;" >Product Description</th>
+                                    <th >Product Id</th>
+                                    <th >Supplier Id</th>
+                                    <th >Lead Time</th>
+                                    <th >Unit</th>
+                                    <th >Price</th>
+                                    <th >Currency</th>
+                                    <th >Product Category</th>
+                                    <th>action</th>
+                                </tr>
+                            </thead>
+                            <tbody id="product_detail_tbody" >
+                                {% for product_detail in product_details_query %}
+                                    <tr id="{{product_detail.product_id}}">
+                                        <td><input type="checkbox" class="product_checkbox"  onclick="valueChanged();"{% if product_detail.product_transaction %} disabled  {% endif %} > </td>
+                                        <td>
+                                            <div class="d-flex flex-row">
+                                                <div>
+                                                    <a href="{% url 'eProc_Manage_Content:get_product_details' product_detail.encrypted_product_id %}" target="_blank">
+                                                        <img src="/media/{{product_detail.image_url}}" onerror='this.src="/static/images/no-image-cropped.png"' class="mr-3 catalog_img product-config-img" >
+                                                    </a>
+                                                </div>
+                                                <div  class="d-flex flex-column">
+                                                    <a href="{% url 'eProc_Manage_Content:get_product_details' product_detail.encrypted_product_id %}" target="_blank">{{product_detail.short_desc}}</a>
+                                                    <div class="desc-section-bottom">
+                                                        {% if product_detail.mapped_in_catlog %}
+                                                        <button type="button" class="hg_button_round notes badge_status_await_approval" id="Mapped_in_Catalog-{{forloop.counter}}" title="Mapped in Catalog" > <i class="material-icons-outlined">link</i></button>
+                                                        {% endif %}
+                                                        {% if product_detail.exist_in_transaction_table %}
+                                                        <button type="button" class="hg_button_round attachment badge_status_purch_wrkl" id="Shopping_Cart_Created-{{forloop.counter}}" title="Shopping Cart Created" > <i class="material-icons-outlined">shopping_cart_checkout</i></button>
+                                                        {% endif %}
+                                                    </div>
+                                                </div>
+                                            </div>
+                                        </td>
+                                        <td>{{product_detail.product_id}}</td>
+                                        <td>{{product_detail.supplier_id}}</td>
+                                        <td>{{product_detail.lead_time}}</td>
+                                        <td>{{product_detail.unit}}</td>
+                                        <td>{{product_detail.price}}</td>
+                                        <td>{{product_detail.currency}}</td>
+                                        <td >{{product_detail.prod_cat_id}}</td>
+                                        <td><i class="material-icons hg-icon-blue-primary  {% if product_detail.product_transaction %} hg-delete-icon-disabled  {% endif %}" title="Delete Form" id="{{product_detail.product_id}}-{{product_detail.product_transaction}}"
+                                               onclick="get_form_id_to_delete(this.id)" >delete_outline</i>
+                                        </td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
         {% endif %}
     </div>
 </div>
@@ -236,7 +214,6 @@
             <div class="modal-footer">
                 <button type="button" data-dismiss="modal" class="hg_button">OK</button>
             </div>
-
         </div>
     </div>
 </div>
@@ -247,13 +224,11 @@
     <div class="modal" id="upload_product_detail_popup">
         <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
             <div class="modal-content">
-
                 <!-- Modal Header -->
                 <div class="modal-header">
                     <h5 class="modal-title">Data Upload</h5>
                     <button type="button" class="close" data-dismiss="modal" onclick="document.getElementById('id_data_upload').style.display='none'">&times;</button>
                 </div>
-
                 <!-- Modal body -->
                 <div class="modal-body">
                     <div>
@@ -262,14 +237,12 @@
                     <div><label> Upload a file</label></div>
                     <input type="file" id="id_file_data_upload" name="file">
                 </div>
-
                 <!-- Modal footer -->
                 <div class="modal-footer">
                     <!--                    <button id="id_delete_duplicate" class="btn btn-primary" style="display:none;" type="button" onclick="delete_duplicate()"><i class="fas fa-check"></i> Delete Duplicates</button>-->
                     <!--                    <button id="id_check_data" style="display:none;" class="btn btn-primary " type="button" onclick="check_data()"><i class="fas fa-check"></i> Check</button>-->
                     <button type="button" class="btn btn-primary" data-dismiss="modal" onclick="document.getElementById('id_data_upload').style.display='none'"><i class="fas fa-times"></i> Cancel</button>
                     <button id="popup_save" class="btn btn-primary" onclick="onclick_display_csv_data()"><i class="fas fa-save"></i> save</button>
-
                 </div>
             </div>
         </div>
@@ -293,7 +266,6 @@
                 <div id="id_del_add_button" class="mb-2">
                     <button class="btn btn-outline-primary" onclick="application_settings_delete_Row('id_popup_table')"><i class="fa fa-trash"></i> delete</button>
                 </div>
-
                 <div id="id_check_success_messages" class="alert alert-success check_success_message" hidden></div>
                 <div id="id_check_error_messages" class="alert alert-danger check_error_messages" hidden></div>
                 <div id="id_check_special_character_messages" class="alert alert-danger check_special_character_messages" hidden>
@@ -301,67 +273,65 @@
                     <p id="id_error_msg_country_name" ></p>
                     <p id="id_error_msg_country_length" ></p>
                 </div>
-
                 <div id="id_error_msg" class="alert alert-danger display-none" role="alert"></div>
                 <div id="id_error_msg_data" class="alert alert-danger display-none" role="alert"></div>
                 <div id="id_warning_msg_id" class="alert alert-warning display-none" role="alert"></div>
                 <div id="id_info_msg_id" class="alert alert-primary display-none" role="alert"></div>
-
                 <div style="overflow:auto;">
                     <table class="class_popup_table table table-bordered mt-2" id="id_popup_table" >
                         <thead>
-                        <tr>
-                            <th id="header_select">Select</th>
-                            <th>View</th>
-                            <th>PRODUCT_ID</th>
-                            <th>SHORT_DESC</th>
-                            <th>LONG_DESC</th>
-                            <th>BUNDLE_FLAG</th>
-                            <th>SUPP_PRODUCT_ID</th>
-                            <th>SUPPLIER_ID</th>
-                            <th>SEARCH_TERM1</th>
-                            <th>SEARCH_TERM2</th>
-                            <th>MANUFACTURER</th>
-                            <th>BRAND</th>
-                            <th>OFFER_KEY</th>
-                            <th>PRICE_ON_REQUEST</th>
-                            <th>MANU_PART_NUM</th>
-                            <th>MANU_CODE_NUM</th>
-                            <th>PROD_TYPE</th>
-                            <th>LEAD_TIME</th>
-                            <th>QUANTITY_AVAIL</th>
-                            <th>GROSS_PRICE</th>
-                            <th>PRICE_UNIT</th>
-                            <th>CUST_PROD_CAT_ID</th>
-                            <th>QUANTITY_MIN</th>
-                            <th>VALUE_MIN</th>
-                            <th>QUANTITY_MAX</th>
-                            <th>TIERED_FLAG</th>
-                            <th>CTR_NUM</th>
-                            <th>CTR_ITEM_NUM</th>
-                            <th>CTR_NAME</th>
-                            <th>PRODUCT_STATUS</th>
-                            <th>SGST</th>
-                            <th>CGST</th>
-                            <th>VAT</th>
-                            <th>PRICE_1</th>
-                            <th>QUANTITY_1</th>
-                            <th>PRICE_2</th>
-                            <th>QUANTITY_2</th>
-                            <th>PRICE_3</th>
-                            <th>QUANTITY_3</th>
-                            <th>EXTERNAL_LINK</th>
-                            <th>SUPPLIER_PRODUCT_INFO</th>
-                            <th>EFORM_ID</th>
-                            <th>PRODUCT_INFO_ID</th>
-                            <th>COUNTRY_OF_ORIGIN</th>
-                            <th>CURRENCY</th>
-                            <th>LANGUAGE</th>
-                            <th>PROD_CAT_ID</th>
-                            <th>UNIT_OF_MEASURE</th>
-                            <th>del_ind</th>
-                            <th>PRODUCT_IMAGE_PATH</th>
-                        </tr>
+                            <tr>
+                                <th id="header_select">Select</th>
+                                <th>View</th>
+                                <th>PRODUCT_ID</th>
+                                <th>SHORT_DESC</th>
+                                <th>LONG_DESC</th>
+                                <th>BUNDLE_FLAG</th>
+                                <th>SUPP_PRODUCT_ID</th>
+                                <th>SUPPLIER_ID</th>
+                                <th>SEARCH_TERM1</th>
+                                <th>SEARCH_TERM2</th>
+                                <th>MANUFACTURER</th>
+                                <th>BRAND</th>
+                                <th>OFFER_KEY</th>
+                                <th>PRICE_ON_REQUEST</th>
+                                <th>MANU_PART_NUM</th>
+                                <th>MANU_CODE_NUM</th>
+                                <th>PROD_TYPE</th>
+                                <th>LEAD_TIME</th>
+                                <th>QUANTITY_AVAIL</th>
+                                <th>GROSS_PRICE</th>
+                                <th>PRICE_UNIT</th>
+                                <th>CUST_PROD_CAT_ID</th>
+                                <th>QUANTITY_MIN</th>
+                                <th>VALUE_MIN</th>
+                                <th>QUANTITY_MAX</th>
+                                <th>TIERED_FLAG</th>
+                                <th>CTR_NUM</th>
+                                <th>CTR_ITEM_NUM</th>
+                                <th>CTR_NAME</th>
+                                <th>PRODUCT_STATUS</th>
+                                <th>SGST</th>
+                                <th>CGST</th>
+                                <th>VAT</th>
+                                <th>PRICE_1</th>
+                                <th>QUANTITY_1</th>
+                                <th>PRICE_2</th>
+                                <th>QUANTITY_2</th>
+                                <th>PRICE_3</th>
+                                <th>QUANTITY_3</th>
+                                <th>EXTERNAL_LINK</th>
+                                <th>SUPPLIER_PRODUCT_INFO</th>
+                                <th>EFORM_ID</th>
+                                <th>PRODUCT_INFO_ID</th>
+                                <th>COUNTRY_OF_ORIGIN</th>
+                                <th>CURRENCY</th>
+                                <th>LANGUAGE</th>
+                                <th>PROD_CAT_ID</th>
+                                <th>UNIT_OF_MEASURE</th>
+                                <th>del_ind</th>
+                                <th>PRODUCT_IMAGE_PATH</th>
+                            </tr>
                         </thead>
                         <tbody id=id_popup_tbody>
 
@@ -369,14 +339,12 @@
                     </table>
                 </div>
             </div>
-
             <!-- Modal footer -->
             <div class="modal-footer">
                 <button id="id_delete_duplicate" class="btn btn-primary" style="display:none;" type="button" onclick="delete_duplicate()"><i class="fas fa-check"></i> Delete Duplicates</button>
                 <button id="id_check_data" style="display:none;" class="btn btn-primary " type="button" onclick="check_data()"><i class="fas fa-check"></i> Check</button>
                 <button type="button" class="btn btn-outline-primary remove_upload_data" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
                 <button class="btn btn-primary" style="display:none;" id="save_product_details"><i class="fas fa-save"></i> save</button>
-
             </div>
         </div>
     </div>
@@ -389,7 +357,6 @@
     <div class="modal" id="extrct_popup">
         <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
             <div class="modal-content">
-
                 <!-- Modal Header -->
                 <div class="modal-header">
                     <h5 class="modal-title">Products & Images</h5>
@@ -451,7 +418,6 @@
     </div>
 </div>
 
-
 <!-- end modal popup to upload the csv file -->
 <div class="modal fade" id="confirm_delete_pop_up" tabindex="-1" role="dialog"
      aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
@@ -504,7 +470,6 @@
                 <button type="button" class="btn btn-primary" onclick="save_specification()">Save</button>
                 <button type="button" class="btn btn-primary" onclick="display_upload_popup()">cancel</button>
             </div>
-
         </div>
     </div>
 </div>
@@ -513,19 +478,20 @@
         nav_bar_content_management();
         table_sort_filter('product_detail_tab');
     })
-var GLOBAL_PRODUCT_SPECIFICATION = '';
-var GLOBAL_PRODUCT_ID = '';
-var render_country_data = {{ country_list| safe}};
-var render_supp_data = {{ supp_data| safe}};
-var render_get_units = {{ get_units| safe}};
-var render_currency_list = {{ currency_list| safe}};
-var render_language_list = {{ language_list| safe}};
-var render_catalogs_list = {{ catalogs_list| safe}};
-var render_unspsc_list = {{ unspsc_list| safe}};
 
- var Tablename = uiConstants["CONST_TABLENAME_PRODUCTS_DETAIL"]
+    var GLOBAL_PRODUCT_SPECIFICATION = '';
+    var GLOBAL_PRODUCT_ID = '';
+    var render_country_data = {{ country_list| safe}};
+    var render_supp_data = {{ supp_data| safe}};
+    var render_get_units = {{ get_units| safe}};
+    var render_currency_list = {{ currency_list| safe}};
+    var render_language_list = {{ language_list| safe}};
+    var render_catalogs_list = {{ catalogs_list| safe}};
+    var render_unspsc_list = {{ unspsc_list| safe}};
+    var Tablename = uiConstants["CONST_TABLENAME_PRODUCTS_DETAIL"]
     var appname = uiConstants["CONST_APPNAME01"]
     var db_header_data = uiConstants["CONST_HEADER_DATA_PRODUCTS_DETAIL"]
+
 //#################################### START ON CLICK OF VIEW IMAGE #####################################################
 function get_image_detail(product_id){
     $.ajax({
