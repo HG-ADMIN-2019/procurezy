@@ -12,6 +12,9 @@
         <div class="elements-space-between">
             <h4 class="card-title">Attribute Overview</h4>
         </div>
+        <div id="ext_resp_success_msg_div" style="display:none" class="elements-space-between">
+        <span id="ext_resp_success_msg" class="error"></span>
+    </div>
     </div>
 
     <ul class="sub-tabs">
@@ -38,11 +41,11 @@
 
             <div>
                 <div class="d-flex flex-row-reverse m-3">
-                    <button type="button" id="select_attr" class="btn btn-outline-primary" data-toggle="modal" data-target="#select_attribute_popup"><i class="fas fa-check-square"></i> 
+                    <button type="button" id="select_attr" class="btn btn-outline-primary" data-toggle="modal" data-target="#select_attribute_popup"><i class="fas fa-check-square"></i>
                         select attributes
                     </button>
                 </div>
-                
+
                 <div>
                     <table id="my_table" class="table">
                         <thead class="thead-light">
@@ -97,7 +100,7 @@
                             </tr>
                         </tbody>
                     </table>
-                    
+
                 </div>
             </div>
 
@@ -117,7 +120,7 @@
                         <h4> Product Responsibility </h4>
                         <button onclick="save_ext_resp_attr('RESP_PROD_CAT',true)" class="btn btn-primary" id="responsibility_save"><i class="fas fa-check"></i> save</button>
                     </div>
-                    
+
                     <table id="responsibility_table" class="table">
                         <thead class="thead-light">
                             <tr>
@@ -128,10 +131,10 @@
                             </tr>
                         </thead>
                         <tbody id="responsibility_body">
-                            
+
                         </tbody>
                     </table>
-                    
+
                 </div>
             </div>
 
@@ -152,7 +155,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            
+
             <!--Modal Body -->
             <div class="modal-body">
                 <div class="alert alert-warning" role="alert" id="select_err_msg" style="display: none;"></div>
@@ -163,7 +166,7 @@
                     {% endfor %}
                 </select>
             </div>
-            
+
 
             <!--Modal Footer -->
             <div class="modal-footer">
@@ -240,7 +243,7 @@
             <!--Modal Body -->
             <div class="modal-body">
                 <div class="container-fluid">
-                    
+
                         <div>
                             <span id="add_att_error_msg" class="error"></span>
                         </div>
@@ -390,29 +393,28 @@ function save_ext_resp_attr(ext_resp_attr_id,flag) {
         save_ext_attributes.push(save_ext_attribute);
     }
     OpenLoaderPopup();
-    $.ajax({
-        type: "POST",
-        url: "{% url 'eProc_Attributes:save_ext_attr' %}",
-        data: JSON.stringify(save_ext_attributes),
-        contentType: "application/json; charset=utf-8",
-        dataType: "json",
-        success: function (response) {
+     $.ajax({
+            type: 'POST',
+            url:"{% url 'eProc_Attributes:save_ext_attr' %}",
+            data:JSON.stringify(save_ext_attributes),
+            success: function(response) {
             $("#ext_attr_errmsg").empty();
             $("#resp_msg").empty();
             document.getElementById("ext_attr_errmsg").style.color = "green";
-            document.getElementById("success_msg").style.color = "green";
+            document.getElementById("ext_resp_success_msg").style.color = "green";
 
-            document.getElementById("success_msg").innerHTML = OrgMessageConstants["JMSG039"];
+            document.getElementById("ext_resp_success_msg").innerHTML = 'Data Saved Successfully'
 
-            document.getElementById('success_msg_div').style.display='block';
+            document.getElementById('ext_resp_success_msg_div').style.display='block';
             setTimeout(function(){
             document.getElementById("ext_attr_errmsg").innerHTML = "";
-            document.getElementById("success_msg").innerHTML = "";
+            document.getElementById("ext_resp_success_msg").innerHTML = "";
              }, 5000);
-            create_main_table(response)
+            //create_main_table(response)
             CloseLoaderPopup();
-        }
-    });
+            }
+        });
+
 }
 
 function responsibility_tab() {
