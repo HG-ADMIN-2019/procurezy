@@ -207,8 +207,8 @@
                             var del_ind = '';
                             $("#id_popup_tbody").empty();
                             $.each(response.valid_data_list, function (i, value) {
-                                del_ind = '<td>' + value[2] + '</td>'
-                                if (value[2] == 1) {
+                                del_ind = '<td>' + value.del_ind + '</td>'
+                                if (value.del_ind == 1) {
                                     del_ind=' <input type="checkbox" value="' + value.del_ind + '" checked>'
                                 }
                                 else {
@@ -527,7 +527,8 @@
             var row = $(this);
             country_dic = {}
             country_dic.country_code = row.find("TD").eq(1).find('input[type="text"]').val().toUpperCase();
-            var compare = country_dic.country_code
+            country_dic.del_ind = row.find("TD").eq(3).find('input[type="checkbox"]').is(':checked');
+            var compare = country_dic.country_code +'-' + country_dic.del_ind
             country_check.push(compare);
             jQuery.grep(country_check, function(el) {
                 if (jQuery.inArray(el, common) != -1) {

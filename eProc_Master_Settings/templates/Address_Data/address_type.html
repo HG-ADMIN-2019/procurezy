@@ -78,8 +78,8 @@
                             <td>{{ data.company_id}}</td>
                             <td>{{ data.address_type}}</td>
                             <td>{{ data.address_number}}</td>
-                            <td>{{ data.valid_from|date:"d-m-Y" }}</td>
-                            <td>{{ data.valid_to|date:"d-m-Y" }}</td>
+                            <td>{{ data.valid_from|date:'d-m-Y' }}</td>
+                            <td>{{ data.valid_to|date:'d-m-Y' }}</td>
                             <td hidden>{{ data.del_ind}}</td>
                             <td hidden>{{ data.address_guid}}</td>
                         </tr>

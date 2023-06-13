@@ -271,6 +271,7 @@
                 $("#error_msg_id").css("display", "none")
                 $("#header_select").prop( "hidden", false );
                 GLOBAL_ACTION = button.value
+                $('#id_popup_table').DataTable().destroy();
                 $("#id_popup_tbody").empty();
                 $('#applimit_value_Modal').modal('show');
                 new_row_data();   // Add a new row in popup
