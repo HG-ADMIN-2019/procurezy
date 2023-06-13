@@ -1,3 +1,5 @@
+from django.http.response import JsonResponse
+
 from eProc_Attributes.Utilities.attributes_specific import get_attr_value_list, get_extended_att_list, \
     save_extended_responsibility
 from eProc_Basic.Utilities.constants.constants import CONST_PROD_CAT
@@ -33,4 +35,5 @@ def save_ext_attr(request):
     # save extend attributes to OrgAttributesLevel db table
     save_extended_responsibility(save_ext_data)
     attr_value_list = get_attr_value_list(client, attr_object_id)
-    return JsonParser_obj.get_json_from_obj(attr_value_list)
+    # return JsonParser_obj.get_json_from_obj(attr_value_list)
+    return JsonResponse(attr_value_list, safe=False)

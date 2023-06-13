@@ -699,6 +699,8 @@ function get_cocode_drop_down(org_comp_dropdown_list, centralize_purch_level_fla
         cocode_values = '<select class="form-control">' + cocode_drop_down + '</select>'
     }
     else {
+        console.log("org_comp_dropdown_list")
+        console.log(org_comp_dropdown_list)
         cocode_values = '<input type="text" value=' + org_comp_dropdown_list[0] + ' disabled>';
     }
     return cocode_values
