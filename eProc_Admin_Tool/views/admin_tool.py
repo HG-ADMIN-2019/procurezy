@@ -184,7 +184,11 @@ def user_details(request, email):
     :param email: Email id (login id)
     :return: User details page
     """
-    email = decrypt(email)
+    if email != 'None':
+        user_action = 'UPDATE'
+        email = decrypt(email)
+    else:
+        user_action = 'CREATE'
     update_user_info(request)
     date_format_array = CONST_DATE_FORMAT
     decimal_array = CONST_DECIMAL_NOTATION
@@ -197,11 +201,14 @@ def user_details(request, email):
         'inc_nav': True,
         'inc_footer': True,
         'user_info': user_info,
+        'user_action': user_action,
         'currency_id': django_query_instance.django_filter_query(Currency, {'del_ind': False}, None,
                                                                  ['currency_id', 'description']),
-        'time_zones': django_query_instance.django_filter_value_list_query(TimeZone, {'del_ind': False}, 'time_zone'),
-        'language_list': django_query_instance.django_filter_value_list_query(Languages, {'del_ind': False},
-                                                                              'language_id'),
+        'time_zones': django_query_instance.django_filter_query(TimeZone, {'del_ind': False}, None,
+                                                                ['time_zone', 'description']),
+        'language_list': django_query_instance.django_filter_query(Languages, {'del_ind': False}, None,
+                                                                   ['language_id', 'description']),
+        'dropdown_usertype_values': ['Buyer', 'Support'],
         'decimal_list': decimal_array,
         'date_format_list': date_format_array,
     }

@@ -373,12 +373,12 @@
                             var dropdown_array = [];
                             $("#id_popup_tbody").empty();
                             $.each(response.valid_data_list, function (i, value) {
-                                del_ind = '<td>' + value[8] + '</td>'
+                                del_ind = '<td>' + value[8]  + '</td>'
                                 if (value[8] == 1) {
-                                    del_ind = ' <input type="checkbox" value="' value.del_ind '" checked>'
+                                    del_ind = ' <input type="checkbox" value="' value[8] '" checked>'
                                 }
                                 else {
-                                    del_ind = '<input type="checkbox" value="' value.del_ind '" required>'
+                                    del_ind = '<input type="checkbox" value="' value[8] '" required>'
                                 }
                                 var prod_cat_id = value[0]
                                 var gl_acc = value[3]

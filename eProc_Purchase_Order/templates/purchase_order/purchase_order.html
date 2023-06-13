@@ -961,7 +961,7 @@
                                                 <tr>
                                                     <td>{{related_document.document}}</td>
                                                     <td>{{related_document.sc_name}}</td>
-                                                    <td><a href="{% url 'eProc_Doc_Details:my_order_document_detail' related_document.encrypt_header_guid %}" target="_blank">{{ related_document.document_number }}</a></td>
+                                                    <td><a href="{% url 'eProc_Doc_Details:my_order_document_detail' related_document.encrypt_header_guid 'my_order' %}" target="_blank">{{ related_document.document_number }}</a></td>
                                                     <td>{{related_document.status}}</td>
                                                     <td>{{related_document.created_at|date:'Y-m-d'}}</td>
                                                     <td>{{related_document.quantity}}</td>

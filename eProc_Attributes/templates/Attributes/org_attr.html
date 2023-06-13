@@ -755,7 +755,7 @@ $(function() {
     });
 
     $("#save_delete_rows").on("click", function() {
-        // OpenLoaderPopup()
+        OpenLoaderPopup()
         //$("#modify_popup").modal('hide')
         var save_delete_attributes = new Array();
         var attr_id_value = '';
@@ -801,8 +801,8 @@ $(function() {
             success: function (response) {
                 update_table_entry(response)
                 create_main_table(response)
-                //$("#modify_popup").modal('hide')
-                // CloseLoaderPopup();
+                $("#modify_popup").modal('hide')
+                CloseLoaderPopup();
             }
         });
     });

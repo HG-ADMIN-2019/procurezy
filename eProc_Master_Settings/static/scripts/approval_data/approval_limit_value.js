@@ -159,7 +159,7 @@ function new_row_data() {
 
 // Function to get the selected row data
 function get_selected_row_data() {
-    $("#id_popup_table TBODY TR").each(function() {
+    $("#display_basic_table TBODY TR").each(function() {
         var row = $(this);
         var alv_arr_obj = {};
         alv_arr_obj.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
