@@ -249,7 +249,9 @@ function get_main_table_data_upload() {
         var row = $(this);
         var main_attribute = {};
         main_attribute.time_zone = row.find("TD").eq(1).html();
-        main_table_low_value.push(main_attribute.time_zone);
+        main_attribute.del_ind = row.find("TD").eq(5).find('input[type="checkbox"]').is(':checked');
+        var compare = main_attribute.time_zone + '-'+ main_attribute.del_ind
+        main_table_low_value.push(compare);
     });
     table_sort_filter('display_basic_table');
     return main_table_low_value
