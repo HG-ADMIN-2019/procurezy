@@ -328,13 +328,9 @@ var lang_id = '{{user_info.language_id | safe}}';
     }
 
     function ajax_update_user_basic_data(data) {
-        if(GLOBAL_ACTION == 'CREATE'){
-            urlLink = "{% url 'eProc_Users:register_page' %}";
-        }
-        else{
         urlLink = "{% url 'eProc_Users:update_user_basic_details' %}";
-        }
-        AjaxCallAPIBasic(urlLink, data)
+        var response = AjaxCallAPIBasic(urlLink, data)
+        return response
     }
 
     $("body").on("keypress keyup blur change", ".mandatory_fields", function (event) {
@@ -401,6 +397,7 @@ var lang_id = '{{user_info.language_id | safe}}';
             setTimeout(function() {
                        CloseLoaderPopup();
          }, 20000);
+         $(".hg_edit_display_mode").prop("disabled", false);
         }
     });
 
@@ -428,24 +425,42 @@ var lang_id = '{{user_info.language_id | safe}}';
             user_data_dict.date_format= $('#date_format').val();
             user_data_dict.decimal_notation= $('#decimal_notation').val();
             user_data_dict.login_attempts= $('#login_attempts').val();
-            user_data_dict.super_user= $('#super_user').prop('checked');
-            user_data_dict.user_locked= $('#user_locked').prop('checked');
-            user_data_dict.pwd_locked= $('#pwd_locked').prop('checked');
-            user_data_dict.is_active= $('#user_status').prop('checked');
+            user_data_dict.super_user= $("#super_user").attr("checked") ? 'True' : 'False';
+            user_data_dict.user_locked= $('#user_locked').attr("checked") ? 'True' : 'False';
+            user_data_dict.pwd_locked= $('#pwd_locked').attr("checked") ? 'True' : 'False';
+            user_data_dict.is_active= $('#user_status').attr("checked") ? 'True' : 'False';
+            user_data_dict.status = GLOBAL_ACTION ;
 
-            ajax_update_user_basic_data(user_data_dict)
-            document.getElementById('user_basic_update_success').innerHTML = "Saved Successfully";
-            $('#save_error_div').hide();
-            $('#user_basic_update_success').show();
-            $('html, body').animate({ scrollTop: 0 }, 'slow');
-            cancel_user_basic_info();
-            $("#user_registration_form")[0].reset();
-            setTimeout(function() {
+            response = ajax_update_user_basic_data(user_data_dict)
+            message = response.message
+            msg_type = response.msg_type
+            if(msg_type.type=='success'){
+                document.getElementById('user_basic_update_success').innerHTML = message;
+                $('#save_error_div').hide();
+                $('#user_basic_update_success').show();
+                $('html, body').animate({ scrollTop: 0 }, 'slow');
+                cancel_user_basic_info();
+                $("#user_registration_form")[0].reset();
+                setTimeout(function() {
+                           CloseLoaderPopup();
+                }, 500);
+                setTimeout(function() {
+                           $('#user_basic_update_success').hide();
+                }, 3000);
+            }
+            if(msg_type.type=='error'){
+                document.getElementById('save_error_div').innerHTML = message;
+                setTimeout(function() {
                        CloseLoaderPopup();
-            }, 500);
-            setTimeout(function() {
-                       $('#user_basic_update_success').hide();
-            }, 3000);
+                 }, 500);
+                $('#save_error_div').show();
+                $('#user_basic_update_success').hide();
+                localStorage.setItem("error_flag", 1);
+                   setTimeout(function() {
+                   $('#save_error_div').hide();
+            }, msg_display_interval*2500);
+                return false;
+            }
         }
         else{
             $('#language_id').val(localStorage.getItem("language_id"));
