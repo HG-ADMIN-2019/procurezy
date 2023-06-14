@@ -273,6 +273,7 @@ var lang_id = '{{user_info.language_id | safe}}';
     $(document).ready(function(){
         GLOBAL_ACTION = '{{user_action}}';
         $(".error_message").prop("hidden", true);
+        dropdown_values();
         if(GLOBAL_ACTION == 'CREATE'){
             $(".hg_edit_display_mode").prop("disabled", false);
             $('#username').prop("disabled", false);
@@ -290,6 +291,7 @@ var lang_id = '{{user_info.language_id | safe}}';
             $("#id_time_zone").val(time_zone).attr('selected', 'selected');
             $("#decimal_notation").val(decimal_notation).attr('selected', 'selected');
             $("#date_format").val(date_format).attr('selected', 'selected');
+            dropdown_values();
         }
         $("#supplier_form_reset").click(function(){
             $('#configform')[0].reset();
@@ -434,6 +436,7 @@ var lang_id = '{{user_info.language_id | safe}}';
             response = ajax_update_user_basic_data(user_data_dict)
             message = response.message
             msg_type = response.msg_type
+            encrypted_user = response.encrypted_user
             if(msg_type.type=='success'){
                 document.getElementById('user_basic_update_success').innerHTML = message;
                 $('#save_error_div').hide();
@@ -447,6 +450,7 @@ var lang_id = '{{user_info.language_id | safe}}';
                 setTimeout(function() {
                            $('#user_basic_update_success').hide();
                 }, 3000);
+                localStorage.setItem("error_flag", 0);
             }
             if(msg_type.type=='error'){
                 document.getElementById('save_error_div').innerHTML = message;

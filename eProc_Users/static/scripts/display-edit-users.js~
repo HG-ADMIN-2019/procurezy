@@ -49,9 +49,7 @@ function save_user_form_validation(){
             if(temp[i].nodeName == "SELECT"){
                 if((temp[i].value == '') || (temp[i].value == null)){
                     err_text1 = temp[i].parentNode.children[0].innerHTML;
-//                    $('#temp[i].nextElementSibling.id').prop('hidden', false);
-                    var display_id = temp[i].nextElementSibling.id;
-                    $('#'+display_id).prop('hidden', false);
+                    $('#temp[i].nextElementSibling.id').prop('hidden', false);
                     $('#temp[i].nextElementSibling.id').html("required");
                     document.getElementById(temp[i].nextElementSibling.id).innerHTML = err_text1 + " required";
                     is_valid = false;
