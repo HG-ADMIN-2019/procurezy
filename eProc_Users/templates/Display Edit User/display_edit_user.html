@@ -443,7 +443,10 @@ var lang_id = '{{user_info.language_id | safe}}';
                 $('#user_basic_update_success').show();
                 $('html, body').animate({ scrollTop: 0 }, 'slow');
                 cancel_user_basic_info();
-                $("#user_registration_form")[0].reset();
+                if(GLOBAL_ACTION == 'CREATE'){
+                    $("#user_registration_form")[0].reset();
+                    $(".hg_edit_display_mode").prop("disabled", false);
+                }
                 setTimeout(function() {
                            CloseLoaderPopup();
                 }, 500);
