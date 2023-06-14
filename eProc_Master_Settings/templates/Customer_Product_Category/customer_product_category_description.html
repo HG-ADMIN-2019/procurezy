@@ -354,8 +354,8 @@
                 }
             }
             if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
-                var add_basic_data = '';
-                var cusprodcatdesc_data_array =  cusprodcatdesc_data;
+<!--                var add_basic_data = '';-->
+<!--                var cusprodcatdesc_data_array =  cusprodcatdesc_data;-->
                 $('#id_save_confirm_popup').modal('hide');
                 data = {'data':cusprodcatdesc_data,'table_name':'UnspscCategoriesCustDesc','action':GLOBAL_ACTION}
                 OpenLoaderPopup();
@@ -672,10 +672,10 @@ function get_main_table_data_upload() {
     //Read popup table data
     function read_popup_data() {
         $('#id_popup_table').DataTable().destroy();
+        var cusprodcatdesc_data = new Array();
         var desc='';
         validate_add_attributes = [];
         duplicate_entry = [];
-        var cusprodcatdesc_data = new Array();
         $("#id_popup_table TBODY TR").each(function() {
             var row = $(this);
             cusprodcatdesc = {};
@@ -958,6 +958,7 @@ function onclick_copy_update_button(data){
             render_language_data = response.upload_language
             unspcdesc_dropdown()
             $("#error_msg_id").css("display", "none")
+            $('#id_popup_table').DataTable().destroy();
             $("#id_popup_tbody").empty();
             //Reference the Table.
             var res = get_all_checkboxes(); // Function to get all the checkboxes

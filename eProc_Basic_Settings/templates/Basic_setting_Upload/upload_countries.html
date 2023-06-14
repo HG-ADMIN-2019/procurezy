@@ -207,8 +207,8 @@
                             var del_ind = '';
                             $("#id_popup_tbody").empty();
                             $.each(response.valid_data_list, function (i, value) {
-                                del_ind = '<td>' + value[2] + '</td>'
-                                if (value[2] == 1) {
+                                del_ind = '<td>' + value.del_ind + '</td>'
+                                if (value.del_ind == 1) {
                                     del_ind=' <input type="checkbox" value="' + value.del_ind + '" checked>'
                                 }
                                 else {
@@ -484,38 +484,38 @@
         var common = [];
         var add_attr_unique_list = [];
         var no_duplicate_value = 'Y'
-        $.each(validate_add_attributes, function (index, value) {
-            if ($.inArray(value, add_attr_unique_list) == -1) {
-                add_attr_unique_list.push(value);
+        $.each(country, function (i, item) {
+            if ((item.country_code.length == 0) || (item.country_name.length == 0))  {
+                $('#countriesModal').modal('show');
+                error_message = ui_messeges("JMSG002")// Get message details
+                no_duplicate_value = 'N'
+                return [no_duplicate_value,error_message]
             }
-            else {
-                if ($.inArray(value, common) == -1) {
-                    common.push(value);
-                }
+            if(item.country_code.length<2){
+                $('#countriesModal').modal('show');
+                error_message = ui_messeges("JMSG113")// Get message details
+                no_duplicate_value = 'N'
+                return [no_duplicate_value,error_message]
             }
         });
-        if (common.length != 0) {
-            $('#countriesModal').modal('show');
-            display_duplicate_entry(common);  //Function to highlight the rows in popup
-            error_message = ui_messeges("JMSG001")// Get message details
-            no_duplicate_value = 'N'
-            return [no_duplicate_value,error_message]
-        }                      
-        else {
-            $.each(country, function (i, item) {
-                if ((item.country_code.length == 0) || (item.country_name.length == 0))  {
-                    $('#countriesModal').modal('show');
-                    error_message = ui_messeges("JMSG002")// Get message details
-                    no_duplicate_value = 'N'
-                    return [no_duplicate_value,error_message]
+        if (no_duplicate_value == 'Y') {
+            $.each(validate_add_attributes, function (index, value) {
+                if ($.inArray(value, add_attr_unique_list) == -1) {
+                    add_attr_unique_list.push(value);
                 }
-                if(item.country_code.length<2){
-                    $('#countriesModal').modal('show');
-                    error_message = ui_messeges("JMSG113")// Get message details
-                    no_duplicate_value = 'N'
-                    return [no_duplicate_value,error_message]
+                else {
+                    if ($.inArray(value, common) == -1) {
+                        common.push(value);
+                    }
                 }
             });
+            if (common.length != 0) {
+                $('#countriesModal').modal('show');
+                display_duplicate_entry(common);  //Function to highlight the rows in popup
+                error_message = ui_messeges("JMSG001")// Get message details
+                no_duplicate_value = 'N'
+                return [no_duplicate_value,error_message]
+            }
         }
         return [no_duplicate_value,error_message]
     }
@@ -527,7 +527,8 @@
             var row = $(this);
             country_dic = {}
             country_dic.country_code = row.find("TD").eq(1).find('input[type="text"]').val().toUpperCase();
-            var compare = country_dic.country_code
+            country_dic.del_ind = row.find("TD").eq(3).find('input[type="checkbox"]').is(':checked');
+            var compare = country_dic.country_code +'-' + country_dic.del_ind
             country_check.push(compare);
             jQuery.grep(country_check, function(el) {
                 if (jQuery.inArray(el, common) != -1) {

@@ -249,6 +249,11 @@
     function onclick_display_csv_data() {
         $("#valid_upload").modal('hide');
         $("#id_delete_duplicate").hide()
+        $("#id_check_success_messages").empty();
+        $("#id_check_error_messages").empty();
+        $("#id_check_success_messages").prop("hidden", true);
+        $("#id_check_error_messages").prop("hidden", true);
+        $("#id_check_special_character_messages").prop("hidden", true);
         $("#error_msg_id").css("display", "none")
         $('#id_popup_table').DataTable().destroy();
         formdata = new FormData();
@@ -281,14 +286,14 @@
                             incoterm_data_array = response.data;
                             var edit_basic_data = '';
                             var del_ind = '';
-<!--                            var inc_index=0;-->
+                            var inc_index=0;
                             $("#id_popup_tbody").empty();
                             $.each(response.data, function(i, value) {
                                 del_ind = '<td>' + value[2] + '</td>'
                                 if (value[2] == 1) {
-                                    del_ind = '<input type="checkbox" value="' + value[2] + '" checked>'
+                                    del_ind = '<input type="checkbox" value="' + value.del_ind + '" checked>'
                                 } else {
-                                    del_ind = '<input type="checkbox" value="' + value[2] + '" required>'
+                                    del_ind = '<input type="checkbox" value="' + value.del_ind + '" required>'
                                 }
                                 edit_basic_data += '<tr><td class="class_select_checkbox"><input type="checkbox" required></td>'+
                                 '<td><input class="form-control" type="text" value="' + value.incoterm_key + '" maxlength="3" onkeypress="return /[a-z]/i.test(event.key)" required></td><td><input class="form-control" type="text" value="' + value.description + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td><td>' + del_ind + '</td></tr>';
@@ -457,7 +462,7 @@
             main_table_low_value.push(inco_terms_dic.incoterm_key)
             table_sort_filter_popup_pagination('id_popup_table');
         });
-        $("#id_check_special_character_messages").prop("hidden",false)
+<!--        $("#id_check_special_character_messages").prop("hidden",false)-->
         //*************** shows save button if there are no errors(special characters and max length) ***************
         if (count == 0) {
             $('#id_popup_table').DataTable().destroy();

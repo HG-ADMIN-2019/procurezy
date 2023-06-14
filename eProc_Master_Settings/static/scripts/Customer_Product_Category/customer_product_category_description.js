@@ -41,8 +41,9 @@ function onclick_update_button() {
 
 //**********************************************************
 function onclick_copy_update_button(){
-        $("#id_popup_tbody").empty();
+        $("#error_msg_id").css("display", "none")
         $('#display_basic_table').DataTable().destroy();
+        $("#id_popup_tbody").empty();
         //Reference the Table.
         var grid = document.getElementById("display_basic_table");
 

@@ -30,7 +30,7 @@ from eProc_Doc_Details.Utilities.update_saved_item import UpdateSavedItem
 from eProc_Doc_Search_and_Display.Utilities.search_display_specific import get_sc_header_app, get_shopping_cart_approval
 from eProc_Emails.Utilities.email_notif_generic import appr_notify, send_po_attachment_email
 from eProc_Form_Builder.models.form_builder import EformFieldData
-from eProc_Purchase_Order.Utilities.purchase_order_generic import CreatePurchaseOrder
+# from eProc_Purchase_Order.Utilities.purchase_order_generic import CreatePurchaseOrder
 from eProc_Related_Documents.Utilities.related_documents_generic import get_item_level_related_documents
 from eProc_Shopping_Cart.models.add_to_cart import CartItemDetails
 from eProc_Shopping_Cart.models.shopping_cart import *
@@ -449,7 +449,7 @@ def my_order_doc_details_new(req, flag, type, guid, mode, access_type):
 
 
 @login_required
-def my_order_document_detail(request, encrypt_sc_header_guid):
+def my_order_document_detail(request, encrypt_sc_header_guid,access_type):
     """
 
     """
@@ -458,6 +458,7 @@ def my_order_document_detail(request, encrypt_sc_header_guid):
     shopping_cart_detail = get_sc_detail(header_guid)
     context = shopping_cart_detail
     context['encrypt_sc_header_guid'] = encrypt_sc_header_guid
+    context['access_type'] = access_type
     return render(request, 'Doc_Details/my_order_document_detail.html', context)
 
 

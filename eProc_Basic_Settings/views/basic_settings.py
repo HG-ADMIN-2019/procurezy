@@ -6,7 +6,7 @@ from datetime import datetime
 import time
 import os
 
-import PyPDF2.pdf
+# import PyPDF2.pdf
 from apscheduler.schedulers.background import BackgroundScheduler
 from django.db.models.query_utils import Q
 from django.http import JsonResponse, HttpResponse
@@ -515,6 +515,19 @@ def convert_Incoterms_to_dictionary(arr):
     return convertion_list
 
 
+def remove_duplicates(arr):
+    # Convert each row to a tuple
+    tuple_array = [tuple(row) for row in arr]
+
+    # Create a set of tuples to eliminate duplicates
+    unique_tuples = set(tuple_array)
+
+    # Convert the set back to a list of lists
+    result = [list(row) for row in unique_tuples]
+
+    return result
+
+
 def data_upload(request):
     db_header = request.POST.get('db_header_data')
     csv_file = request.FILES['file_attach']
@@ -536,7 +549,8 @@ def data_upload(request):
     try:
         if Table_name == 'Country':
             result['error_message'], result['data'] = upload_csv.csv_preview_data(header_detail, data_set_val)
-            convertion_list = convert_Country_to_dictionary(result['data'])
+            result = remove_duplicates(result['data'])
+            convertion_list = convert_Country_to_dictionary(result)
             valid_data_list, message = get_valid_country_data(convertion_list, 'UPLOAD')
             context = {'valid_data_list': valid_data_list}
             return JsonResponse(context, safe=False)

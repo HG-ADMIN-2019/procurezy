@@ -9,7 +9,7 @@ app_name = 'eProc_Doc_Details'
 # Defining the mapping between URLs and views
 urlpatterns = [
     path('<str:flag>/<str:type>/<str:guid>/<mode>/<access_type>', views.docDetails, name='doc_details'),
-    path('my_order_document_detail/<str:encrypt_sc_header_guid>', views.my_order_document_detail, name='my_order_document_detail'),
+    path('my_order_document_detail/<str:encrypt_sc_header_guid>/<access_type>', views.my_order_document_detail, name='my_order_document_detail'),
     path('my_order_doc_details/<str:flag>/<str:type>/<str:guid>/<mode>/<access_type>', views.my_order_doc_details, name='my_order_doc_details'),
     path('detail/popdf/attachments/download', views.downloadattach,  name='attach_download'),
     path('manager_popup', views.get_manager_data,  name='manager_popup'),

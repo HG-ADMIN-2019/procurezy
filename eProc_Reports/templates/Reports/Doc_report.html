@@ -138,7 +138,7 @@
                     {% if items.status != 'SAVED' %}
                     {% if inp_doc_type == 'SC' %}
                 <tr>
-                    <td scope="row"><a href="{% url 'eProc_Doc_Details:my_order_document_detail' encrypted_header_guid %}" target="_blank">{{ items.doc_number }}</a></td>
+                    <td scope="row"><a href="{% url 'eProc_Doc_Details:my_order_document_detail' encrypted_header_guid 'my_order' %}" target="_blank">{{ items.doc_number }}</a></td>
                     <td scope="row">{{ items.description }}</td>
                     {% if items.status == 'AWAITING_APPROVAL'%}
                         <td scope="row"> <span >WAITING FOR APPROVAL</span></td>

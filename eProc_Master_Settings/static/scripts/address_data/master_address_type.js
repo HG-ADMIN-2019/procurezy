@@ -76,15 +76,15 @@ function display_basic_db_data() {
     var edit_basic_data = '';
 
     $.each(rendered_address_type_data, function (i, item) {
-        var validFromDate = item.valid_from.split('T')[0].split('-').reverse().join('-');
-        var validToDate = item.valid_to.split('T')[0].split('-').reverse().join('-');
+//        var validFromDate = item.valid_from.split('T')[0].split('-').reverse().join('-');
+//        var validToDate = item.valid_to.split('T')[0].split('-').reverse().join('-');
 
         edit_basic_data += '<tr><td class="class_select_checkbox"><input class="checkbox_check" onclick="valueChanged()" type="checkbox" required></td>' +
         '<td>'+ item.company_id +'</td>'+
         '<td>' + item.address_type + '</td>' +
         '<td>' + item.address_number + '</td>' +
-        '<td>'+ validFromDate +'</td>'+
-        '<td>'+ validToDate +'</td>'+
+        '<td>'+ item.valid_from +'</td>'+
+        '<td>'+ item.valid_to +'</td>'+
         '<td hidden> <input type="checkbox"></td>' +
         '<td hidden>' + item.address_guid + '</td></tr>';
     });
@@ -198,7 +198,7 @@ function check_date(addresstype_data) {
     var validDate = 'Y';
     var error_message = ''
     $.each(addresstype_data, function (i, item) {
-var validFromParts = item.valid_from.split('-');
+        var validFromParts = item.valid_from.split('-');
         var validToParts = item.valid_to.split('-');
         var validFrom = new Date(validFromParts[2], validFromParts[1] - 1, validFromParts[0]);
         var validTo = new Date(validToParts[2], validToParts[1] - 1, validToParts[0]);

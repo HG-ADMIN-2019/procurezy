@@ -147,7 +147,7 @@ function read_popup_data() {
         var row = $(this);
         aav={};
         aav.del_ind = row.find("TD").eq(7).find('input[type="checkbox"]').is(':checked');
-        aav.company_id = row.find("TD").eq(1).find('Select').val()
+        aav.company_id = row.find("TD").eq(1).find("select option:selected").val();
         aav.account_assign_cat = row.find("TD").eq(2).find('Select').val()
         aav.account_assign_value = row.find("TD").eq(3).find('input[type="number"]').val();
         aav.valid_from = row.find("TD").eq(4).find('input[type="text"]').val()
