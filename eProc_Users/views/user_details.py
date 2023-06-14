@@ -38,29 +38,13 @@ def update_user_basic_details(request):
     update_user_info(request)
     if request.method == 'POST':
         message, encrypted_user, msg_type = save_user_data(request)
-        # update_user_basic_data = django_query_instance.django_filter_only_query(UserData,
-        #                                                                         {'email': request.POST.get('email'),
-        #                                                                          'del_ind': False})
-        #
-        # update_user_basic_data.update(
-        #     first_name=request.POST.get('first_name'),
-        #     last_name=request.POST.get('last_name'),
-        #     phone_num=request.POST.get('phone_num'),
-        #     language_id=request.POST.get('language_id'),
-        #     time_zone=request.POST.get('time_zone'),
-        #     date_format=request.POST.get('date_format'),
-        #     employee_id=request.POST.get('employee_id'),
-        #     decimal_notation=request.POST.get('decimal_notation'),
-        #     currency_id=request.POST.get('currency_id'),
-        #     user_type=request.POST.get('user_type'),
-        #     user_locked=convert_to_boolean(request.POST.get('user_locked')),
-        #     pwd_locked=convert_to_boolean(request.POST.get('pwd_locked')),
-        #     is_superuser=convert_to_boolean(request.POST.get('super_user')),
-        # )
-        # msgid = 'MSG183'
-        # error_msg = get_message_desc(msgid)[1]
 
-        return JsonResponse({'message': message, 'msg_type': msg_type})
+        user_info = django_query_instance.django_get_query(UserData,
+                                                           {'email': request.POST.get('email'),
+                                                            'client': global_variables.GLOBAL_CLIENT,
+                                                            'del_ind': False})
+
+        return JsonResponse({'message': message, 'encrypted_user': encrypted_user, 'msg_type': msg_type})
 
 
 def save_user_data(request):
@@ -88,7 +72,7 @@ def save_user_data(request):
     user_details['user_locked'] = request.POST.get('user_locked')
     user_details['pwd_locked'] = request.POST.get('pwd_locked')
     user_details['is_active'] = request.POST.get('is_active')
-    encrypted_user = encrypt(user_details['email'])
+    encrypted_user = encrypt(user_details['employee_id'])
 
     if user_details['login_attempts'] == '':
         user_details['login_attempts'] = 0
@@ -103,10 +87,10 @@ def save_user_data(request):
                                                       {'email': user_details['email'],
                                                        'del_ind': False,
                                                        'client': global_variables.GLOBAL_CLIENT}, user_details)
-            msgid = 'MSG177'
+            msgid = 'MSG183'
             error_msg = get_message_desc(msgid)[1]
-
             message['type'] = 'success'
+
             return error_msg, encrypted_user, message
     else:
         if django_query_instance.django_existence_check(UserData,

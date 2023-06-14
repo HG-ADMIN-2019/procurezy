@@ -273,6 +273,7 @@ var lang_id = '{{user_info.language_id | safe}}';
     $(document).ready(function(){
         GLOBAL_ACTION = '{{user_action}}';
         $(".error_message").prop("hidden", true);
+        dropdown_values();
         if(GLOBAL_ACTION == 'CREATE'){
             $(".hg_edit_display_mode").prop("disabled", false);
             $('#username').prop("disabled", false);
@@ -290,6 +291,7 @@ var lang_id = '{{user_info.language_id | safe}}';
             $("#id_time_zone").val(time_zone).attr('selected', 'selected');
             $("#decimal_notation").val(decimal_notation).attr('selected', 'selected');
             $("#date_format").val(date_format).attr('selected', 'selected');
+            dropdown_values();
         }
         $("#supplier_form_reset").click(function(){
             $('#configform')[0].reset();
@@ -440,7 +442,7 @@ var lang_id = '{{user_info.language_id | safe}}';
                 $('#save_error_div').hide();
                 $('#user_basic_update_success').show();
                 $('html, body').animate({ scrollTop: 0 }, 'slow');
-<!--                cancel_user_basic_info();-->
+                cancel_user_basic_info();
                 $("#user_registration_form")[0].reset();
                 setTimeout(function() {
                            CloseLoaderPopup();
