@@ -147,7 +147,7 @@
     function dropdown_value(){
         aac_dropdown = '';
         if(rendered_aac_values.length != 0){
-        desc_aac = rendered_aac_values[0].field_type_desc; }
+            desc_aac = rendered_aac_values[0].field_type_desc; }
         else {
             desc_aac = "";
         }
@@ -270,7 +270,7 @@
                         $("#id_error_msg").html(" ");
                     });
                     basic_add_new_html = '<tr><td><input type="checkbox" required></td>'+
-                        '<td><select type="text" class="input form-control aaccode"  name="aaccode" onchange="GetSelectedTextValue1(this)">'+ aac_dropdown +'</select></td>'+
+                        '<td><select type="text" class="input form-control aaccode"  name="aaccode" onchange="GetSelectedTextValue(this)">'+ aac_dropdown +'</select></td>'+
                         '<td><input class="form-control description" type="text"  name="description" value="'+desc_aac+'" disabled></td>'+
                         '<td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
                     $('#id_popup_tbody').append(basic_add_new_html);
@@ -314,30 +314,15 @@
         return [no_duplicate_value,error_message]
     }
 
-    //***********************************
-   function GetSelectedTextValue(aaccode) {
-      var selectedText = "";
-      var selectedValue = aaccode.value;
-      var selectedId = (aaccode.id).split('-')[1];
-      if (aaccode.length > 0) {
-        selectedText = aaccode.options[aaccode.selectedIndex].innerHTML;
-      }
-      $.each (rendered_aac_values, function(i, item){
-        if(selectedValue == item.field_type_id){
-          $('#description-'+selectedId).val(item.field_type_desc);
-        }
-      });
-    }
-
-    function GetSelectedTextValue1(rowid){
-    var row = $(rowid);
-         var selectedText = "";
-      var selectedValue = row[0].value;
-         $.each (rendered_aac_values, function(i, item){
-        if(selectedValue == item.field_type_id){
-          row[0].parentNode.nextElementSibling.children.description.value = item.field_type_desc;
-        }
-      });
+    function GetSelectedTextValue(rowid){
+        var row = $(rowid);
+             var selectedText = "";
+          var selectedValue = row[0].value;
+             $.each (rendered_aac_values, function(i, item){
+            if(selectedValue == item.field_type_id){
+              row[0].parentNode.nextElementSibling.children.description.value = item.field_type_desc;
+            }
+          });
     }
 
     //Function to highlight duplicate records

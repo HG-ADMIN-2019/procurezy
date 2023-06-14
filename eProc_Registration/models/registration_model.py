@@ -11,7 +11,8 @@ class DBQueriesUser:
 
     @staticmethod
     def get_user_details_by_fields(client, obj, username_query, first_name_query, last_name_query, email_query,
-                                   user_type_query, employee_id_query, pwd_locked_query, user_locked_query, is_active_query):
+                                   user_type_query, employee_id_query, pwd_locked_query, user_locked_query,
+                                   is_active_query):
         return list(UserData.objects.filter(username_query, first_name_query, last_name_query, email_query,
                                             user_type_query, employee_id_query, pwd_locked_query,
                                             user_locked_query, is_active_query, client=client,
@@ -94,7 +95,7 @@ class UserData(AbstractUser, DBQueriesUser):
         return user_list
 
 
-class UserDataHistory(models.Model):
+class UserDataH(models.Model):
     email_key = models.AutoField(primary_key=True, db_column='EMAIL_KEY', null=False)
     email = models.EmailField(db_column='EMAIL', max_length=100, null=False)
     username = models.CharField(db_column='USERNAME', null=False, max_length=16)
@@ -129,16 +130,13 @@ class UserDataHistory(models.Model):
     valid_from = models.DateTimeField(db_column='VALID_FROM', blank=True, null=True)
     valid_to = models.DateTimeField(db_column='VALID_TO', blank=True, null=True)
     del_ind = models.BooleanField(default=False, null=False)
-    client = models.ForeignKey('eProc_Configuration.OrgClients', on_delete=models.PROTECT, null=True)
-    currency_id = models.ForeignKey('eProc_Configuration.Currency', models.DO_NOTHING, db_column='CURRENCY', null=True)
-    language_id = models.ForeignKey('eProc_Configuration.Languages', db_column='LANGUAGE_ID', max_length=5, null=True,
-                                    on_delete=models.PROTECT)
-    object_id = models.ForeignKey('eProc_Org_Model.OrgModel', db_column='OBJECT_ID', on_delete=models.PROTECT,
-                                  null=True)
-    time_zone = models.ForeignKey('eProc_Configuration.TimeZone', db_column='TIME_ZONE', on_delete=models.PROTECT,
-                                  null=True)
+    client = models.CharField(max_length=8, db_column='CLIENT', null=True)
+    currency_id = models.CharField(db_column='CURRENCY_ID', max_length=3, null=True)
+    language_id = models.CharField(db_column='LANGUAGE_ID', max_length=2, null=True)
+    object_id = models.PositiveBigIntegerField(db_column='OBJECT_ID',null=True)
+    time_zone = models.CharField(db_column='TIME_ZONE', max_length=6,null=True)
 
     # Defining the meta data for User table
     class Meta:
         managed = True
-        db_table = 'MTD_USER_INFO_HISTORY'
+        db_table = 'MTD_USER_INFO_H'

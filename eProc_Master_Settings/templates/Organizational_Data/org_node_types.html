@@ -150,11 +150,17 @@
     var orgnodetype_data_array = {}
     var no_duplicate_entries = 'Y'
     var node_type_dropdown = '';
+    var desc_nodetype = '';
     var messages_list = {{messages_list|safe}};
 
     //**************************
     function dropdown_value(){
         node_type_dropdown = '';
+        if(rendered_dropdown_values.length != 0){
+            desc_nodetype = rendered_dropdown_values[0].field_type_desc; }
+        else {
+            desc_nodetype = "";
+        }
         $.each(rendered_dropdown_values, function(i, item){
             node_type_dropdown += '<option value="' + item.field_type_id + '">' + item.field_type_id +'</option>';
         });
@@ -196,7 +202,6 @@
                         rendered_org_node_type_data = Response[0];
                         rendered_dropdown_values = Response[2];
                         display_basic_db_data();
-                        dropdown_value();
                         $('#org_node_Modal').modal('hide');
                         success_response(Response);  // Display Response data
                         CloseLoaderPopup();
@@ -342,18 +347,14 @@
 
     //*********************
     function GetSelectedTextValue(nodetype, index) {
-        var selectedValue = nodetype.value;
-        var selectedId = (nodetype.id).split('-')[1];
-        if (nodetype.options.length > 0) {
-            var selectedText = nodetype.options[nodetype.selectedIndex].innerHTML;
-            $.each(rendered_dropdown_values, function(i, item) {
-                if (selectedValue == item.field_type_id) {
-                    $('#description-' + index).val(item.field_type_desc);
-                }
-            });
-        } else {
-            $('#description-' + index).val('');
+        var row = $(rowid);
+         var selectedText = "";
+      var selectedValue = row[0].value;
+         $.each (rendered_dropdown_values, function(i, item){
+        if(selectedValue == item.field_type_id){
+          row[0].parentNode.nextElementSibling.children.description.value = item.field_type_desc;
         }
+      });
     }
 
 

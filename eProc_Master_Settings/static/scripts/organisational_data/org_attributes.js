@@ -285,11 +285,11 @@ function get_selected_row_data() {
 
 // Function for add a new row data
 function new_row_data() {
-    basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select type="text" class="input form-control attribute" id="attribute-1"  name="attribute">'+ attribute_id_dropdown +'</select></td><td><input class="form-control attribute_name" type="text" name="attribute_name" id="attribute_name-1" disabled></td><td><input type="checkbox" name="range_indicator" required></td><td><input type="checkbox" name="multiple_value" required></td><td><input type="checkbox" name="allow_defaults" required></td><td><input type="checkbox" name="inherit_values" required></td><td><input type="number" name="maxlength"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td><td class="id_del_ind_checkbox1" hidden><input type="checkbox" name = "del_ind_flag" required></td></tr>';
+    basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select type="text" class="input form-control attribute"  name="attribute" onchange="GetSelectedTextValue(this)">'+ attribute_id_dropdown +'</select></td><td><input class="form-control attribute_name" type="text" name="attribute_name" value="'+desc_attribute+'" disabled></td><td><input type="checkbox" name="range_indicator" required></td><td><input type="checkbox" name="multiple_value" required></td><td><input type="checkbox" name="allow_defaults" required></td><td><input type="checkbox" name="inherit_values" required></td><td><input type="number" name="maxlength"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td><td class="id_del_ind_checkbox1" hidden><input type="checkbox" name = "del_ind_flag" required></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
     table_sort_filter('id_popup_table');
     var attributeSelect = $("#attribute-1");
-    GetSelectedTextValue(attributeSelect[0]);
+//    GetSelectedTextValue(attributeSelect[0]);
 }
 
 
