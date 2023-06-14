@@ -110,6 +110,7 @@
                                     <div class="col-8">
                                         <input type="text" class="form-control hg_edit_display_mode"
                                             id="id_addresses_address_number" disabled>
+                                        <span id="err_address_number" class="error_message" hidden></span>
                                     </div>
                                 </div>
                                 <div class="form-group row">
@@ -122,6 +123,7 @@
                                     <label class="col-4 col-form-label">Name1:</label>
                                     <div class="col-8">
                                         <input type="text" class="form-control hg_edit_display_mode" id="id_addresses_name1" disabled>
+                                        <span id="err_Name1" class="error_message" hidden></span>
                                     </div>
                                 </div>
                                 <div class="form-group row">
@@ -135,12 +137,14 @@
                                     <div class="col-8">
                                         <input type="text" class="form-control hg_edit_display_mode"
                                             id="id_addresses_street" disabled>
+                                        <span id="err_Street" class="error_message" hidden></span>
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <label class="col-4 col-form-label">Area:</label>
                                     <div class="col-8">
                                         <input type="text" class="form-control hg_edit_display_mode" id="id_addresses_area" disabled>
+                                        <span id="err_Area" class="error_message" hidden></span>
                                     </div>
                                 </div>
                                 <div class="form-group row">
@@ -155,6 +159,7 @@
                                     <div class="col-8">
                                         <input type="text" class="form-control hg_edit_display_mode" id="id_addresses_city"
                                             disabled>
+                                        <span id="err_City" class="error_message" hidden></span>
                                     </div>
                                 </div>
                                 <div class="form-group row">
@@ -162,6 +167,7 @@
                                     <div class="col-8">
                                         <input type="text" class="form-control hg_edit_display_mode"
                                             id="id_addresses_partnertype" disabled>
+                                        <span id="err_Address_partner_type" class="error_message" hidden></span>
                                     </div>
                                 </div>
                                 <div class="form-group row">
@@ -178,6 +184,7 @@
                                     <div class="col-8">
                                         <input type="text" class="form-control hg_edit_display_mode check_postal_code"
                                             id="id_addresses_postalcode" disabled>
+                                        <span id="err_Postal_code" class="error_message" hidden></span>
                                     </div>
                                 </div>
                                 <div class="form-group row">
@@ -192,6 +199,7 @@
                                     <div class="col-8">
                                         <input type="text" class="form-control hg_edit_display_mode"
                                             id="id_addresses_mobile_number" disabled>
+                                        <span id="err_City" class="error_message" hidden></span>
                                     </div>
                                 </div>
                                 <div class="form-group row">
@@ -304,6 +312,7 @@
                                         <label class="col-4 col-form-label">Address Number:</label>
                                         <div class="col-8">
                                             <input type="text" class="form-control" id="id_add_addresses_address_number" disabled>
+                                            <span id="err_Address_number" class="error_message" hidden></span>
                                         </div>
                                     </div>
                                     <div class="form-group row">
@@ -316,6 +325,7 @@
                                         <label class="col-4 col-form-label">Name1:</label>
                                         <div class="col-8">
                                             <input type="text" class="form-control" id="id_add_addresses_name1">
+                                            <span id="err_name" class="error_message" hidden></span>
                                         </div>
                                     </div>
                                     <div class="form-group row">
@@ -328,12 +338,14 @@
                                         <label class="col-4 col-form-label">Street:</label>
                                         <div class="col-8">
                                             <input type="text" class="form-control" id="id_add_addresses_street">
+                                            <span id="err_stret" class="error_message" hidden></span>
                                         </div>
                                     </div>
                                     <div class="form-group row">
                                         <label class="col-4 col-form-label">Area:</label>
                                         <div class="col-8">
                                             <input type="text" class="form-control" id="id_add_addresses_area">
+                                            <span id="err_area1" class="error_message" hidden></span>
                                         </div>
                                     </div>
                                     <div class="form-group row">
@@ -346,6 +358,7 @@
                                         <label class="col-4 col-form-label">City:</label>
                                         <div class="col-8">
                                             <input type="text" class="form-control" id="id_add_addresses_city">
+                                            <span id="err_city_" class="error_message" hidden></span>
                                         </div>
                                     </div>
                                     <div class="form-group row">
@@ -355,6 +368,7 @@
                                                 id="id_add_addresses_partnertype">
                                                 {% for data in add_partner_type_data %}
                                                 <option value={{data.address_partner_type}}>{{data.address_partner_type_desc}}</option>
+                                                <span id="err_addresspartnertype" class="error_message" hidden></span>
                                                 {% endfor %}
                                             </select>
                                         </div>
@@ -371,6 +385,7 @@
                                         <label class="col-4 col-form-label">Postal Code:</label>
                                         <div class="col-8">
                                             <input type="text" class="form-control check_postal_code" id="id_add_addresses_postalcode">
+                                            <span id="err_postalcode" class="error_message" hidden></span>
                                         </div>
                                     </div>
                                     <div class="form-group row">
@@ -383,6 +398,7 @@
                                         <label class="col-4 col-form-label">Mobile Number:</label>
                                         <div class="col-8">
                                             <input type="text" class="form-control" id="id_add_addresses_mobile_number">
+                                            <span id="err_mobilenumber" class="error_message" hidden></span>
                                         </div>
                                     </div>
                                     <div class="form-group row">
@@ -401,6 +417,7 @@
                                         <label class="col-4 col-form-label">Email:</label>
                                         <div class="col-8">
                                             <input type="text" class="form-control" id="id_add_addresses_email">
+                                            <span id="err_email" class="error_message" hidden></span>
                                         </div>
                                     </div>
                                     <div class="form-group row">
@@ -676,7 +693,7 @@
         $('#myModalupload').modal('hide');
     }
 
-    //onclick on Address number 
+    //onclick on Address number
     function onclick_address_no(address_number) {
         $("#error_msg_id").css("display", "none")
         var address_data = rendered_address_data.find(data => data.address_number === address_number)
@@ -786,7 +803,7 @@
                     dataType: "json",
                     success: function (Response) {
                         rendered_address_data = Response[0];
-                        display_basic_db_data();                    
+                        display_basic_db_data();
                         success_response(Response); // Function call to display response data
                         CloseLoaderPopup();
                     }
@@ -1100,7 +1117,7 @@
         $('#address_add_details').modal('show');
         $("#id_add_addresses_address_number").prop("disabled", false);
     }
-    
+
     //*********************************
     var address_count = 0;
     function address_popup_row() {
@@ -1271,7 +1288,7 @@
                 </div>
             </div>
         </div>`
-        $("#upload_add_new_row").append(new_add_line);      
+        $("#upload_add_new_row").append(new_add_line);
     }
 
     //check function restricting special char and diaplay the data count of csv file
