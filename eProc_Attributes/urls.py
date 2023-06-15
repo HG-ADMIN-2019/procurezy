@@ -13,4 +13,6 @@ urlpatterns = [
     path('attr_id_list', views.attr_id_list, name='attr_id_list'),
     path('extended_attr', views.extended_attr, name='extended_attr'),
     path('save_ext_attr', views.save_ext_attr, name='save_ext_attr'),
+    path('save_porg_company_id', views.save_porg_company_id, name='save_porg_company_id'),
+
 ]

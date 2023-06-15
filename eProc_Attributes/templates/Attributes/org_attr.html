@@ -33,6 +33,11 @@
                 <i class="fas fa-clipboard-list"></i><span> Responsibility</span>
             </div>
         </li>
+        <li data-tab-target="#attribute_company_id_information" class="sub-tab">
+            <div class="sub-tab-link">
+                <i class="fas fa-clipboard-list"></i><span>Company ID</span>
+            </div>
+        </li>
     </ul>
 
     <div class="tab-content">
@@ -139,6 +144,40 @@
             </div>
 
         </div>
+
+        <!-- Attribute Responsibility_information tab -->
+        <div id="attribute_company_id_information" data-tab-content>
+            <div>
+                <div id="non_company_id" style="display:none">
+                    <span id="company_id_msg" class="error"></span>
+                </div>
+                <div id="company_id_success_msg_div" style="display:none">
+                    <span id="company_id_success_msg" class="error"></span>
+                </div>
+                <div id="company_id">
+                    <div class="d-flex justify-content-between m-3">
+                        <h4> Purchaser Company Code </h4>
+                        <button class="btn btn-primary" onclick="save_company_id()" id="company_id_save"><i class="fas fa-check"></i> save</button>
+                    </div>
+
+                    <table id="company_id_table" class="table">
+                        <thead class="thead-light">
+                            <tr>
+                                <th scope="col">Purchase Organization</th>
+                                <th scope="col">Company Code</th>
+                                <th scope="col">Action</th>
+                            </tr>
+                        </thead>
+                        <tbody id="company_id_body">
+
+                        </tbody>
+                    </table>
+
+                </div>
+            </div>
+        </div>
+
+
     </div>
 </div>
 
@@ -296,6 +335,10 @@
             var attr_table = document.getElementById('extend_attr_table');
             attr_table.deleteRow(oButton.parentNode.parentNode.rowIndex); // button -> td -> tr.
         }
+    function remove_company_Row(oButton) {
+            var attr_table = document.getElementById('company_id_table');
+            attr_table.deleteRow(oButton.parentNode.parentNode.rowIndex); // button -> td -> tr.
+        }
     function remove_resp_Row(oButton) {
             var attr_table = document.getElementById('responsibility_table');
             attr_table.deleteRow(oButton.parentNode.parentNode.rowIndex); // button -> td -> tr.
@@ -419,7 +462,7 @@ function save_ext_resp_attr(ext_resp_attr_id,flag) {
 
 function responsibility_tab() {
     if (GLOBAL_ON_DOUBLE_CLICK_NODE_TYPE != 'PGRP'){
-        document.getElementById("resp_msg").innerHTML = OrgMessageConstants["JMSG041"];
+        document.getElementById("resp_msg").innerHTML = 'Responsibility Not Applicable';
 
         document.getElementById('non_pgrp').style.display='block';
         document.getElementById('resp_pgrp').style.display='none';
@@ -829,5 +872,40 @@ function clone_resp_table_row() {
 
 function clone_ext_table_row() {
     $('#extend_attr_body').append(ext_add_new_line);
+}
+
+function clone_code_table_row() {
+    $('#company_id_body').append(company_add_new_line);
+}
+
+function save_company_id(){
+    var save_porg_mapping_attributes = new Array();
+    $("#company_id_table TBODY TR").each(function () {
+            var row = $(this);
+            var save_porg_mapping_attribute = {};
+            save_porg_mapping_attribute.porg_id = row.find("td:eq(0) input[type='text']").val();
+            save_porg_mapping_attribute.company_id = row.find("TD").eq(1).find("select option:selected").val();
+            save_porg_mapping_attributes.push(save_porg_mapping_attribute);
+    });
+    data = {'save_porg_mapping_attributes':save_porg_mapping_attributes,'object_id':GLOBAL_ONCLICK_UPDATE_OBJ_ID}
+    OpenLoaderPopup();
+     $.ajax({
+            type: 'POST',
+            url:"{% url 'eProc_Attributes:save_porg_company_id' %}",
+            data:JSON.stringify(data),
+            success: function(response) {
+            $("#company_id_success_msg").empty();
+            $("#resp_msg").empty();
+            document.getElementById("company_id_success_msg").style.color = "green";
+            document.getElementById("company_id_success_msg").innerHTML = 'Data Saved Successfully';
+            document.getElementById('company_id_success_msg_div').style.display='block';
+            setTimeout(function(){
+            document.getElementById("company_id_success_msg").innerHTML = "";
+            document.getElementById("company_id_success_msg_div").innerHTML = "";
+             }, 5000);
+            CloseLoaderPopup();
+            }
+     });
+
 }
 </script>

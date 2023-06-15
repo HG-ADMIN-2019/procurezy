@@ -499,6 +499,33 @@ class OrgPorgHistory(models.Model):
         managed = True
 
 
+class OrgPorgMapping(models.Model):
+    """
+    Contains purchase organization description
+    """
+    org_porg_mapping_guid = models.CharField(db_column='ORG_PORG_MAPPING_GUID', primary_key=True, max_length=32)
+    porg_id = models.CharField(db_column='PORG_ID', max_length=8)
+    company_id = models.CharField(db_column='COMPANY_ID', max_length=8, null=True)
+    org_porg_mapping_created_by = models.CharField(db_column='ORG_PORG_MAPPING_CREATED_BY', max_length=30, null=True)
+    org_porg_mapping_created_at = models.DateTimeField(db_column='ORG_PORG_MAPPING_CREATED_AT', max_length=50,
+                                                       null=True)
+    org_porg_mapping_changed_by = models.CharField(db_column='ORG_PORG_MAPPING_CHANGED_BY', max_length=30, null=True)
+    org_porg_mapping_changed_at = models.DateTimeField(db_column='ORG_PORG_MAPPING_CHANGED_AT', max_length=50,
+                                                       null=True)
+    org_porg_mapping_source_system = models.CharField(db_column='ORG_PORG_MAPPING_SOURCE_SYSTEM', max_length=20)
+    del_ind = models.BooleanField(default=False, null=False)
+    client = models.ForeignKey('eProc_Configuration.OrgClients', on_delete=models.PROTECT, null=False)
+    object_id = models.ForeignKey('eProc_Org_Model.OrgModel', db_column='OBJECT_ID', on_delete=models.PROTECT,
+                                  null=True, default=None)
+
+    class Meta:
+        db_table = "MMD_ORG_PORG_MAPPING"
+        managed = True
+
+    def __str__(self):
+        return self.porg_id
+
+
 class OrgPGroup(models.Model):
     """
     Contains purchase group description
@@ -506,7 +533,7 @@ class OrgPGroup(models.Model):
     pgroup_guid = models.CharField(db_column='PGROUP_GUID', primary_key=True, max_length=32)
     pgroup_id = models.CharField(db_column='PGROUP_ID', max_length=8, null=False)
     description = models.CharField(db_column='DESCRIPTION', max_length=100, null=False)
-    porg_id = models.CharField(db_column='PORG_ID', max_length=8,null=True)
+    porg_id = models.CharField(db_column='PORG_ID', max_length=8, null=True)
     org_pgroup_created_by = models.CharField(db_column='ORG_PGROUP_CREATED_BY', max_length=30, null=True)
     org_pgroup_created_at = models.DateTimeField(db_column='ORG_PGROUP_CREATED_AT', max_length=50, null=True)
     org_pgroup_changed_by = models.CharField(db_column='ORG_PGROUP_CHANGED_BY', max_length=30, null=True)
@@ -531,7 +558,7 @@ class OrgPGroupHistory(models.Model):
     pgroup_guid = models.CharField(db_column='PGROUP_GUID', max_length=32)
     pgroup_id = models.CharField(db_column='PGROUP_ID', max_length=8, null=False)
     description = models.CharField(db_column='DESCRIPTION', max_length=100, null=False)
-    porg_id = models.CharField(db_column='PORG_ID', max_length=8,null=True)
+    porg_id = models.CharField(db_column='PORG_ID', max_length=8, null=True)
     org_pgroup_created_by = models.CharField(db_column='ORG_PGROUP_CREATED_BY', max_length=30, null=True)
     org_pgroup_created_at = models.DateTimeField(db_column='ORG_PGROUP_CREATED_AT', max_length=50, null=True)
     org_pgroup_changed_by = models.CharField(db_column='ORG_PGROUP_CHANGED_BY', max_length=30, null=True)
