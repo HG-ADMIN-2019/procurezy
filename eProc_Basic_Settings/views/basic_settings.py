@@ -23,6 +23,7 @@ from eProc_Basic.Utilities.functions.json_parser import JsonParser
 from eProc_Basic.Utilities.functions.update_del_ind import update_del_ind, query_update_del_ind
 from eProc_Basic.Utilities.messages import messages
 from eProc_Basic.Utilities.messages.messages import MSG048
+from eProc_Basic.views import remove_duplicates
 from eProc_Basic_Settings.Utilities.basic_settings_specific import *
 from eProc_Catalog.Utilities.catalog_generic import CatalogGenericMethods
 from eProc_Catalog.Utilities.catalog_specific import CatalogManagement
@@ -515,19 +516,6 @@ def convert_Incoterms_to_dictionary(arr):
     return convertion_list
 
 
-def remove_duplicates(arr):
-    # Convert each row to a tuple
-    tuple_array = [tuple(row) for row in arr]
-
-    # Create a set of tuples to eliminate duplicates
-    unique_tuples = set(tuple_array)
-
-    # Convert the set back to a list of lists
-    result = [list(row) for row in unique_tuples]
-
-    return result
-
-
 def data_upload(request):
     db_header = request.POST.get('db_header_data')
     csv_file = request.FILES['file_attach']
@@ -556,42 +544,49 @@ def data_upload(request):
             return JsonResponse(context, safe=False)
         if Table_name == 'Currency':
             result['error_message'], result['data'] = upload_csv.csv_preview_data(header_detail, data_set_val)
+            result = remove_duplicates(result['data'])
             convertion_list = convert_Currency_to_dictionary(result['data'])
             valid_data_list, message = get_valid_currency_data(convertion_list, 'UPLOAD')
             context = {'valid_data_list': valid_data_list}
             return JsonResponse(context, safe=False)
         if Table_name == 'Languages':
             result['error_message'], result['data'] = upload_csv.csv_preview_data(header_detail, data_set_val)
+            result = remove_duplicates(result['data'])
             convertion_list = convert_Languages_to_dictionary(result['data'])
             valid_data_list, message = get_valid_language_data(convertion_list, 'UPLOAD')
             context = {'valid_data_list': valid_data_list}
             return JsonResponse(context, safe=False)
         if Table_name == 'TimeZone':
             result['error_message'], result['data'] = upload_csv.csv_preview_data(header_detail, data_set_val)
+            result = remove_duplicates(result['data'])
             convertion_list = convert_TimeZone_to_dictionary(result['data'])
             valid_data_list, message = get_valid_timezone_data(convertion_list, 'UPLOAD')
             context = {'valid_data_list': valid_data_list}
             return JsonResponse(context, safe=False)
         if Table_name == 'UnitOfMeasures':
             result['error_message'], result['data'] = upload_csv.csv_preview_data(header_detail, data_set_val)
+            result = remove_duplicates(result['data'])
             convertion_list = convert_UnitOfMeasures_to_dictionary(result['data'])
             valid_data_list, message = get_valid_uom_data(convertion_list, 'UPLOAD')
             context = {'valid_data_list': valid_data_list}
             return JsonResponse(context, safe=False)
         if Table_name == 'OrgPGroup':
             result['error_message'], result['data'] = upload_csv.csv_preview_data(header_detail, data_set_val)
+            result = remove_duplicates(result['data'])
             convertion_list = convert_OrgPGroup_to_dictionary(result['data'])
             valid_data_list, message = check_purchasegrp_data(convertion_list, 'UPLOAD')
             context = {'valid_data_list': valid_data_list}
             return JsonResponse(context, safe=False)
         if Table_name == 'OrgPorg':
             result['error_message'], result['data'] = upload_csv.csv_preview_data(header_detail, data_set_val)
+            result = remove_duplicates(result['data'])
             convertion_list = convert_OrgPorg_to_dictionary(result['data'])
             valid_data_list, message = check_purchaseorg_data(convertion_list, 'UPLOAD')
             context = {'valid_data_list': valid_data_list}
             return JsonResponse(context, safe=False)
         if Table_name == 'OrgCompanies':
             result['error_message'], result['data'] = upload_csv.csv_preview_data(header_detail, data_set_val)
+            result = remove_duplicates(result['data'])
             convertion_list = convert_OrgCompanies_to_dictionary(result['data'])
             valid_data_list, message = check_company_data(convertion_list, 'UPLOAD')
             context = {'valid_data_list': valid_data_list}
