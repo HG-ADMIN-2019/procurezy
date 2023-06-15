@@ -39,11 +39,6 @@ def update_user_basic_details(request):
     if request.method == 'POST':
         message, encrypted_user, msg_type = save_user_data(request)
 
-        user_info = django_query_instance.django_get_query(UserData,
-                                                           {'email': request.POST.get('email'),
-                                                            'client': global_variables.GLOBAL_CLIENT,
-                                                            'del_ind': False})
-
         return JsonResponse({'message': message, 'encrypted_user': encrypted_user, 'msg_type': msg_type})
 
 
@@ -52,7 +47,6 @@ def save_user_data(request):
 
     """
     message = {}
-    update_supplier_guid = ''
     user_details = {}
     status = request.POST.get('status')
     user_details['username'] = request.POST.get('username')
@@ -77,7 +71,6 @@ def save_user_data(request):
     if user_details['login_attempts'] == '':
         user_details['login_attempts'] = 0
 
-    # encrypted_supp = encrypt(supplier_details['supplier_id'])
     if status in ['UPDATE', 'update']:
         if django_query_instance.django_existence_check(UserData,
                                                         {'email': user_details['email'],
@@ -107,9 +100,9 @@ def save_user_data(request):
                                                            'employee_id': user_details[
                                                                'employee_id'],
                                                            'del_ind': False}):
-            # msgid = 'MSG300'
-            # error_msg = get_message_desc(msgid)[1]
-            error_msg = "Username exists"
+            msgid = 'MSG205'
+            error_msg = get_message_desc(msgid)[1]
+            # error_msg = "Username exists"
             message['type'] = 'error'
             return error_msg, encrypted_user, message
         elif django_query_instance.django_existence_check(UserData,
@@ -117,10 +110,8 @@ def save_user_data(request):
                                                            'email': user_details[
                                                                'email'],
                                                            'del_ind': False}):
-            msgid = 'MSG0121'
-            error_msg = get_msg_desc(msgid)
-            # msg = error_msg['message_desc'][0]
-            error_msg = ' Email Already Exists'
+            msgid = 'MSG083'
+            error_msg = get_message_desc(msgid)[1]
             message['type'] = 'error'
             return error_msg, encrypted_user, message
         else:
@@ -133,6 +124,7 @@ def save_user_data(request):
                 'language_id': user_details['language_id']})
             password = random_alpha_numeric(8)
             user_details['password'] = make_password(password)
+
             django_query_instance.django_create_query(UserData,
                                                       user_details)
             variant_name = CONST_USER_REG
