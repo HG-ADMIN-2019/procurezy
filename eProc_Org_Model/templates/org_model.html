@@ -292,6 +292,7 @@
             <!--Modal Body -->
             <div class="modal-body">
                 <div class="alert" role="alert" id="addNodeAlertMsg" hidden></div>
+                <div id="error_msg_id" class="alert alert-danger display-none" role="alert"><span id="error_message"></span></div>
                 <div class="form-group">
                     <label for="AddNodeName">Node Name</label>
                     <input type="text" class="form-control text-uppercase" id="AddNodeName" maxlength="20" required>
@@ -574,124 +575,126 @@ $(document).on("contextmenu", function(event) {
     }
     node_name = event.target.id;
     node_node_type = get_name_to_node_type(delete_element_value);
-    if(GLOBAL_DIV_ID == 'root-node'){
-        delete_element_value = get_org_name_object_id(orgs, node_name)
-        node_node_type= 'RNODE'
-    }
-    if (node_node_type){
-        GLOBAL_NODE_TYPE_DROP_DOWN = '';
-        switch (node_node_type) {
-            case "RNODE":
-                $.each(nodeTypes, function(i, item) {
-                    if (GLOBAL_RNODE_ADD_NODE_LIST.includes(item.fields.node_type)) {
-                        GLOBAL_NODE_TYPE_DROP_DOWN +='<option value="' + item.fields.node_type + '">' + item.fields.node_type +'</option>';
-                    }
-                });
-                break;
-            case "CCODE":
-                $.each(nodeTypes, function(i, item) {
-                    if (GLOBAL_CCODE_ADD_NODE_LIST.includes(item.fields.node_type)) {
-                        GLOBAL_NODE_TYPE_DROP_DOWN +='<option value="' + item.fields.node_type + '">' + item.fields.node_type +'</option>';
-                    }
-                });
-                break;
-            case "PORG":
-                $.each(nodeTypes, function(i, item) {
-                    if (GLOBAL_PORG_ADD_NODE_LIST.includes(item.fields.node_type)) {
-                        GLOBAL_NODE_TYPE_DROP_DOWN +='<option value="' + item.fields.node_type + '">' + item.fields.node_type +'</option>';
-                    }
-                });
-                break;
-            case "PGRP":
-                $.each(nodeTypes, function(i, item) {
-                    if (GLOBAL_PGRP_ADD_NODE_LIST.includes(item.fields.node_type)) {
-                        GLOBAL_NODE_TYPE_DROP_DOWN +='<option value="' + item.fields.node_type + '">' + item.fields.node_type +'</option>';
-                    }
-                });
-                break;
-            case "NODE":
-                $.each(nodeTypes, function(i, item) {
-                    if (GLOBAL_NODE_ADD_NODE_LIST.includes(item.fields.node_type)) {
-                        GLOBAL_NODE_TYPE_DROP_DOWN +='<option value="' + item.fields.node_type + '">' + item.fields.node_type +'</option>';
-                    }
-                });
-                break;
-            case "PLANT":
-                $.each(nodeTypes, function(i, item) {
-                    if (GLOBAL_PLANT_ADD_NODE_LIST.includes(item.fields.node_type)) {
-                        GLOBAL_NODE_TYPE_DROP_DOWN +='<option value="' + item.fields.node_type + '">' + item.fields.node_type +'</option>';
-                    }
-                });
-                break;
+    if(node_node_type != 'USER'){
+        if(GLOBAL_DIV_ID == 'root-node'){
+            delete_element_value = get_org_name_object_id(orgs, node_name)
+            node_node_type= 'RNODE'
         }
+        if (node_node_type){
+            GLOBAL_NODE_TYPE_DROP_DOWN = '';
+            switch (node_node_type) {
+                case "RNODE":
+                    $.each(nodeTypes, function(i, item) {
+                        if (GLOBAL_RNODE_ADD_NODE_LIST.includes(item.fields.node_type)) {
+                            GLOBAL_NODE_TYPE_DROP_DOWN +='<option value="' + item.fields.node_type + '">' + item.fields.node_type +'</option>';
+                        }
+                    });
+                    break;
+                case "CCODE":
+                    $.each(nodeTypes, function(i, item) {
+                        if (GLOBAL_CCODE_ADD_NODE_LIST.includes(item.fields.node_type)) {
+                            GLOBAL_NODE_TYPE_DROP_DOWN +='<option value="' + item.fields.node_type + '">' + item.fields.node_type +'</option>';
+                        }
+                    });
+                    break;
+                case "PORG":
+                    $.each(nodeTypes, function(i, item) {
+                        if (GLOBAL_PORG_ADD_NODE_LIST.includes(item.fields.node_type)) {
+                            GLOBAL_NODE_TYPE_DROP_DOWN +='<option value="' + item.fields.node_type + '">' + item.fields.node_type +'</option>';
+                        }
+                    });
+                    break;
+                case "PGRP":
+                    $.each(nodeTypes, function(i, item) {
+                        if (GLOBAL_PGRP_ADD_NODE_LIST.includes(item.fields.node_type)) {
+                            GLOBAL_NODE_TYPE_DROP_DOWN +='<option value="' + item.fields.node_type + '">' + item.fields.node_type +'</option>';
+                        }
+                    });
+                    break;
+                case "NODE":
+                    $.each(nodeTypes, function(i, item) {
+                        if (GLOBAL_NODE_ADD_NODE_LIST.includes(item.fields.node_type)) {
+                            GLOBAL_NODE_TYPE_DROP_DOWN +='<option value="' + item.fields.node_type + '">' + item.fields.node_type +'</option>';
+                        }
+                    });
+                    break;
+                case "PLANT":
+                    $.each(nodeTypes, function(i, item) {
+                        if (GLOBAL_PLANT_ADD_NODE_LIST.includes(item.fields.node_type)) {
+                            GLOBAL_NODE_TYPE_DROP_DOWN +='<option value="' + item.fields.node_type + '">' + item.fields.node_type +'</option>';
+                        }
+                    });
+                    break;
+            }
 
-    }
-    if (node_node_type != "NODE"){
-        $("#assign_user_id").addClass('disabled');
-        $("#unassign_user_id").addClass('disabled');
-    }
-    else{
-        $("#assign_user_id").removeClass('disabled');
-        $("#unassign_user_id").removeClass('disabled');
-    }
-    if(getmapid.id == "root-node")
-    {
-        if( getmapid.children[0].children.length >= 1)
-        {
-            new_node_arrow_class = getmapid.children[0].firstChild.className;
         }
-        let children_length = $(event.target)[0].parentElement.parentNode.children.length
-        if(children_length > 1)
+        if (node_node_type != "NODE"){
+            $("#assign_user_id").addClass('disabled');
+            $("#unassign_user_id").addClass('disabled');
+        }
+        else{
+            $("#assign_user_id").removeClass('disabled');
+            $("#unassign_user_id").removeClass('disabled');
+        }
+        if(getmapid.id == "root-node")
         {
-        //  <!--When children already there under the root node-->
-            new_node_append_ul = $(event.target)[0].parentNode.nextElementSibling.id
+            if( getmapid.children[0].children.length >= 1)
+            {
+                new_node_arrow_class = getmapid.children[0].firstChild.className;
+            }
+            let children_length = $(event.target)[0].parentElement.parentNode.children.length
+            if(children_length > 1)
+            {
+            //  <!--When children already there under the root node-->
+                new_node_append_ul = $(event.target)[0].parentNode.nextElementSibling.id
+            }
+            else
+            {
+            //  <!--When children are not there under the root node-->
+                if(new_node_arrow_class == "material-icons-outlined remove_circle")
+                {
+                    new_node_append_ul = " "
+                    new_node_create_ul = $(event.target)[0].parentNode.id;
+                }
+            }
         }
         else
         {
-        //  <!--When children are not there under the root node-->
-            if(new_node_arrow_class == "material-icons-outlined remove_circle")
+            a_un_arrow = getmapid.children[1].className
+            if( getmapid.children.length >= 1)
             {
+                new_node_arrow_class = getmapid.children[1].className;
+            }
+            let children_length = $(event.target)[0].parentElement.children.length
+            if(children_length > 4)
+            {
+            // <!--When children already there under the selected node-->
+                if(new_node_arrow_class == "material-icons-outlined remove_circle")
+                {
+                        new_node_append_ul = $(event.target)[0].parentNode.children[4].id;
+                }
+            }
+            else if(new_node_arrow_class == "material-icons-outlined remove_circle")
+            {
+            // <!--When children are not there under the selected node-->
                 new_node_append_ul = " "
                 new_node_create_ul = $(event.target)[0].parentNode.id;
+
             }
         }
-    }
-    else
-    {
-        a_un_arrow = getmapid.children[1].className
-        if( getmapid.children.length >= 1)
-        {
-            new_node_arrow_class = getmapid.children[1].className;
-        }
-        let children_length = $(event.target)[0].parentElement.children.length
-        if(children_length > 4)
-        {
-        // <!--When children already there under the selected node-->
-            if(new_node_arrow_class == "material-icons-outlined remove_circle")
-            {
-                    new_node_append_ul = $(event.target)[0].parentNode.children[4].id;
-            }
-        }
-        else if(new_node_arrow_class == "material-icons-outlined remove_circle")
-        {
-        // <!--When children are not there under the selected node-->
-            new_node_append_ul = " "
-            new_node_create_ul = $(event.target)[0].parentNode.id;
 
+        new_node_parent_mapId = getmapid.firstElementChild.id;
+        new_node_pId = getmapid.id;
+        // Avoid the real one if this is the link
+        if ($(event.target).hasClass("tree-node-name")) {
+            event.preventDefault();
+            // Show contextmenu
+            $(".custom-menu").show(100).
+            css({
+                top: event.pageY + "px",
+                left: event.pageX + "px"
+            });
         }
-    }
-
-    new_node_parent_mapId = getmapid.firstElementChild.id;
-    new_node_pId = getmapid.id;
-    // Avoid the real one if this is the link
-    if ($(event.target).hasClass("tree-node-name")) {
-        event.preventDefault();
-        // Show contextmenu
-        $(".custom-menu").show(100).
-        css({
-            top: event.pageY + "px",
-            left: event.pageX + "px"
-        });
     }
 });
 
@@ -734,15 +737,11 @@ $(".custom-menu li").click(function() {
         GLOBAL_USER_ID_LIST = []
         GLOBAL_USER_STATUS = "ASSIGN"
         get_assigned_unassign_users(GLOBAL_USER_STATUS)
-        $("#modal_users").modal("toggle");
-        $(".custom-menu").hide(100);
         break;
     case "fourth":
         GLOBAL_USER_ID_LIST = []
         GLOBAL_USER_STATUS = "UNASSIGN"
         get_assigned_unassign_users(GLOBAL_USER_STATUS)
-        $("#modal_users").modal("toggle");
-        $(".custom-menu").hide(100);
         break;
     }
 });
@@ -1138,6 +1137,7 @@ function org_model_node_details_ajax_call(input_data){
 function ajaxcallAPI(urlLink,data) {
     console.log(urlLink)
     data = JSON.stringify(data);
+    var response = ''
     jQuery.ajax({
         async : false,
         type: 'POST',
@@ -1145,7 +1145,8 @@ function ajaxcallAPI(urlLink,data) {
         dataType :'json',
         data: data,
         success: function(result){
-            response = result;
+            response = result
+             return result;
             },
         error: function(xhr, resp, text) {
             },
@@ -1293,7 +1294,7 @@ function get_node_details(object_id){
             clear_basic_details_fields()
             GLOBAL_ONCLICK_UPDATE_OBJ_ID = response.basic_node.object_id;
             //create org attributes table
-            create_main_table(response.attr_detail)
+
             // update basic detail fields
             $("#BDNodeType").text(response.basic_node.node_type_desc)
             $("#object-id-val").text(response.basic_node.object_id)
@@ -1399,9 +1400,11 @@ function get_node_details(object_id){
                  default:
                  break;
             }
+            create_main_table(response.attr_detail)
             //hide buttons for only user node and display edit button for all the other node
             initial_display_hide_button(node_type)
             document.getElementById("BasicData").style.display = "block"
+
             CloseLoaderPopup();
         }
     });
@@ -1465,6 +1468,54 @@ function create_org_tree_structure(root_node_name,root_node_object_id,requested_
 function tableSortFilter(tableID){
     $('#' + tableID).DataTable();
 }
+//get Assign and unassign user
+function get_assigned_unassign_users(node_action) {
+    OpenLoaderPopup()
+    $('#a_un_users_table').DataTable().destroy();
+    $("#a_un_users_table_tbody").empty();
+    let get_users = document.getElementsByClassName("users_assign");
+    GLOBAL_ONCLICK_NODE_GUID = NodeGuidByMapId(jsonData, delete_element_value);
+
+    var data = {
+        "node_action": node_action,
+        "node_guid": GLOBAL_ONCLICK_NODE_GUID
+    }
+
+    //let api_url = "users/assigned_unassigned_users"
+    // let get_users_list = assign_unassign_ajax_call(data)
+    $.ajax({
+        type: 'POST',
+        url: assign_unassign_ajax_call_url,
+        data: JSON.stringify(data),
+        success: function(result){
+            let get_users_list = result;
+            for (let i = 0; i < get_users_list.length; i++) {
+                let user_id = get_users_list[i].fields.employee_id;
+                let user_fname = get_users_list[i].fields.username;
+                let user_check = get_users_list[i].fields.object_id;
+                let user_email = get_users_list[i].pk;
+                let user_td = "";
+                user_td = `<tr class="users_assign">
+                                <td ><input onclick= "assign_unassign(this);"  type="checkbox" id="${user_fname}" ></td>
+                                <td>${user_id}</td>
+                                <td>${user_fname}</td>
+                                <td>${user_email}</td>
+                            </tr>`
+                $("#a_un_users_table_tbody").append(user_td);
+            }
+            tableSortFilter('a_un_users_table');
+            $("#modal_users").modal("toggle");
+        $(".custom-menu").hide(100);
+            CloseLoaderPopup();
+        },
+        error: function(xhr, resp, text) {
+            console.log((xhr.responseText));
+        },
+    });
+
+}
+
+
 </script>
 
 

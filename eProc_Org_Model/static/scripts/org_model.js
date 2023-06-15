@@ -507,7 +507,7 @@ var GLOBAL_ONCLICK_UPDATE_OBJ_ID = " ";
 var GLOBAL_ON_DOUBLE_CLICK_NODE_TYPE = '';
 var GLOBAL_ROOT_NODE_NAME = '';
 var obj_id_node_type = " ";
-
+var porg_id = '';
 
 function create_main_table(attr_level_detail) {
 
@@ -595,21 +595,28 @@ function create_main_table(attr_level_detail) {
         $("#org_attribute_overview").removeClass("d-none")
         // if prod cat not present in attr level table
         if (GLOBAL_ON_DOUBLE_CLICK_NODE_TYPE != 'PORG') {
-            document.getElementById("ext_attr_errmsg").innerHTML = OrgMessageConstants["JMSG051"];
+            document.getElementById("ext_attr_errmsg").innerHTML = 'Extended  Product Category Not Applicable';
             document.getElementById('ext_error_div').style.display = 'block';
             document.getElementById('ext_porg_id').style.display = 'none';
         }
         else {
             if (!(ext_attr_html)) {
+                porg_id = $("#select_porg_id").val()
                 add_ext_attr = '<tr id="extend_attr_tr"><td><input type="number" class="form-control" name="from" required></td><td><input type="number" class="form-control" name="to" required></td><td> ' + cocode_values + ' </td><td><input disabled type="checkbox" name="inherit" value="inherit"></td><td><a onclick="clone_ext_table_row()" title="Add new row"><i class="fa fa-plus text-primary"></i></a> </td></tr>';
                 ext_add_new_line = '<tr id="extend_attr_tr"><td><input type="number" class="form-control" name="from" required></td><td><input type="number" class="form-control" name="to" required></td><td> ' + cocode_values + ' </td><td><input disabled type="checkbox" name="inherit" value="inherit"></td><td><a onclick="clone_ext_table_row()" title="Add new row"><i class="fa fa-plus text-primary"></i></a> <a onclick="remove_ext_Row(this)" id="ext_new" title="Delete row"><i class="fa fa-trash text-primary"></i></a></td></tr>';
+                add_company_code_attr = '<tr id="comp_attr_tr"><td><input type="text" class="form-control" value="' + porg_id + '" name="from" disabled></td><td> ' + cocode_values + ' </td><td><a onclick="clone_code_table_row()" title="Add new row"><i class="fa fa-plus text-primary"></i></a> </td></tr>';
+                company_add_new_line = '<tr id="comp_attr_tr"><td><input type="text" class="form-control" value="' + porg_id + '" name="from" disabled></td><td> ' + cocode_values + ' </td><td><a onclick="clone_code_table_row()" title="Add new row"><i class="fa fa-plus text-primary"></i></a> <a onclick="remove_company_Row(this)" id="ext_new" title="Delete row"><i class="fa fa-trash text-primary"></i></a></td></tr>';
                 $('#extend_attr_body').append(add_ext_attr);
+                $('#company_id_body').append(add_company_code_attr);
             }
             document.getElementById('ext_porg_id').style.display = 'block';
             document.getElementById('ext_error_div').style.display = 'none';
+            document.getElementById('company_id').style.display = 'block';
+            document.getElementById('non_company_id').style.display = 'none';
+
         }
         if (GLOBAL_ON_DOUBLE_CLICK_NODE_TYPE != 'PGRP') {
-            document.getElementById("resp_msg").innerHTML = OrgMessageConstants["JMSG040"];
+            document.getElementById("resp_msg").innerHTML = 'Responsibility Not Applicable';
             document.getElementById('non_pgrp').style.display = 'block';
             document.getElementById('resp_pgrp').style.display = 'none';
         }

@@ -117,6 +117,7 @@ class ApiHandler:
 
     @staticmethod
     def save_node(client, name, node_type, parent_node, root_node_object_id):
+        error_msg = None
         try:
             org_name_count = django_query_instance.django_filter_count_query(OrgModel,
                                                                              {'client':client,
@@ -124,7 +125,8 @@ class ApiHandler:
                                                                               'del_ind':False})
             # if OrgModel.objects.filter(client=client, name=name, del_ind = None).exists():
             if org_name_count > 0:
-                return ['{"error": "Node already exists"}']
+                error_msg = {'error':"Node already exists"}
+                return None,error_msg
             else:
                 new_node = Node(client, None)
                 new_node.update_node(name=name,
@@ -135,11 +137,11 @@ class ApiHandler:
                                      root_node_object_id=root_node_object_id)
                 res = new_node.save_node()
                 if res:
-                    return [new_node.base]
+                    return [new_node.base],error_msg
                 else:
-                    return [new_node.message]
+                    return [new_node.message],error_msg
         except KeyError:
-            return ['{"error": "No valid inputs found"}']
+            return None,['{"error": "No valid inputs found"}']
 
     @staticmethod
     def edit_node_basic_data(data, request):

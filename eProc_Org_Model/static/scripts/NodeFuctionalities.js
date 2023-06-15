@@ -41,80 +41,88 @@ function createNode() {
         "root_node_object_id": ROOT_NODE_OBJECT_ID
     };
     var AddNodeResult = node_create_ajax_call(addNodeInput);
-    var nodeResult = typeof (AddNodeResult);
-    if (!AddNodeResult.hasOwnProperty('error')) {
-        $("#ConfirmationPopUp").css("display", "none")
-        $("#createNodeBtn").hide()
-        $("#addNodeAlertMsg").css("display", "block").removeClass('alert-danger').addClass("alert-success").text(`Node type ${opt_selected.value} with Name ${new_node_name} created successfully.`);
-        $("#modalAddNode").modal('hide');
-        if (new_node_arrow_class == "material-icons-outlined remove_circle") {
-            //Displaying of the newly added node in tree structure
-            if (new_node_append_ul === undefined || new_node_append_ul === " ") {
-                var ul = document.createElement("ul");
-                ul.id = "subnode" + subInc;
-                subInc++;
-                new_node_append_ul = ul.id;
-                document.getElementById(new_node_create_ul).appendChild(ul);
-            }
-
-            var lis = document.createElement('li')
-            var liId = AddNodeResult[0].fields.name + "new";
-            lis.id = liId;
-            lis.setAttribute('value', AddNodeResult[0].pk) //map_id
-            lis.setAttribute('class', 'branch')
-            document.getElementById(new_node_append_ul).appendChild(lis);
-
-
-            var idiv = document.createElement('div');
-            idiv.id = AddNodeResult[0].pk; //map_id
-            document.getElementById(liId).appendChild(idiv);
-
-            var node_t = AddNodeResult[0].fields.node_type
-            if (node_t != 'USER') {
-                var iElement = document.createElement('i');
-                iElement.setAttribute('value', AddNodeResult[0].pk) //map_id
-                iElement.id = liId + "i";
-                iElement.className = "material-icons-outlined add_circle";
-                iElement.append('add_circle');
-                iElement.style.fontSize="18px";
-                document.getElementById(liId).appendChild(iElement);
-            }
-            var icon_container = document.createElement('span');
-            icon_container.className = "tree-icon-container";
-            var icon = document.createElement('i')
-            icon.className = setNodeType(node_t); //node_type
-            icon_container.appendChild(icon)
-
-            document.getElementById(liId).appendChild(icon_container);
-
-            var li = document.createElement("span");
-            li.setAttribute('id', "child" + "new");
-            // add tree option to support customize right click
-            if (node_t != "USER") {
-                li.setAttribute('class', 'treeOptions');
-            }
-            var liData = AddNodeResult[0].fields.name + " ";
-            li.innerHTML = liData;
-            li.classList.add('tree-node-name');
-            document.getElementById(liId).appendChild(li);
-
-
-            var json_child = { model: AddNodeResult[0].model, pk: AddNodeResult[0].pk, fields: AddNodeResult[0].fields };
-            if (jsonData.includes(json_child) === false) {
-                jsonData.push(json_child);
-            }
-        }
-        nodeDuplicateInd = " ";
-        new_node_pId = " ";
-        //            new_node_append_ul = " ";
-        //            new_node_arrow_class = " ";
-
+    if (AddNodeResult.error)
+    {
+        $('#error_message').text(AddNodeResult.error);
+        document.getElementById("error_message").style.color = "Red";
+        $("#error_msg_id").css("display", "block")
     }
-    else {
-        new_node_pId = " ";
-        new_node_append_ul = " ";
-        let result_msg = "Node type " + opt_selected.text + " " + new_node_name + " cannot be added under " + new_node_pId + " - " + AddNodeResult.error
-        $("#addNodeAlertMsg").css("display", "block").removeClass("alert-success").addClass("alert-danger").text(result_msg);
+    else{
+        var nodeResult = typeof (AddNodeResult);
+        if (!AddNodeResult.hasOwnProperty('error')) {
+            $("#ConfirmationPopUp").css("display", "none")
+            $("#createNodeBtn").hide()
+            $("#addNodeAlertMsg").css("display", "block").removeClass('alert-danger').addClass("alert-success").text(`Node type ${opt_selected.value} with Name ${new_node_name} created successfully.`);
+            $("#modalAddNode").modal('hide');
+            if (new_node_arrow_class == "material-icons-outlined remove_circle") {
+                //Displaying of the newly added node in tree structure
+                if (new_node_append_ul === undefined || new_node_append_ul === " ") {
+                    var ul = document.createElement("ul");
+                    ul.id = "subnode" + subInc;
+                    subInc++;
+                    new_node_append_ul = ul.id;
+                    document.getElementById(new_node_create_ul).appendChild(ul);
+                }
+
+                var lis = document.createElement('li')
+                var liId = AddNodeResult[0].fields.name + "new";
+                lis.id = liId;
+                lis.setAttribute('value', AddNodeResult[0].pk) //map_id
+                lis.setAttribute('class', 'branch')
+                document.getElementById(new_node_append_ul).appendChild(lis);
+
+
+                var idiv = document.createElement('div');
+                idiv.id = AddNodeResult[0].pk; //map_id
+                document.getElementById(liId).appendChild(idiv);
+
+                var node_t = AddNodeResult[0].fields.node_type
+                if (node_t != 'USER') {
+                    var iElement = document.createElement('i');
+                    iElement.setAttribute('value', AddNodeResult[0].pk) //map_id
+                    iElement.id = liId + "i";
+                    iElement.className = "material-icons-outlined add_circle";
+                    iElement.append('add_circle');
+                    iElement.style.fontSize="18px";
+                    document.getElementById(liId).appendChild(iElement);
+                }
+                var icon_container = document.createElement('span');
+                icon_container.className = "tree-icon-container";
+                var icon = document.createElement('i')
+                icon.className = setNodeType(node_t); //node_type
+                icon_container.appendChild(icon)
+
+                document.getElementById(liId).appendChild(icon_container);
+
+                var li = document.createElement("span");
+                li.setAttribute('id', "child" + "new");
+                // add tree option to support customize right click
+                if (node_t != "USER") {
+                    li.setAttribute('class', 'treeOptions');
+                }
+                var liData = AddNodeResult[0].fields.name + " ";
+                li.innerHTML = liData;
+                li.classList.add('tree-node-name');
+                document.getElementById(liId).appendChild(li);
+
+
+                var json_child = { model: AddNodeResult[0].model, pk: AddNodeResult[0].pk, fields: AddNodeResult[0].fields };
+                if (jsonData.includes(json_child) === false) {
+                    jsonData.push(json_child);
+                }
+            }
+            nodeDuplicateInd = " ";
+            new_node_pId = " ";
+            //            new_node_append_ul = " ";
+            //            new_node_arrow_class = " ";
+
+        }
+        else {
+            new_node_pId = " ";
+            new_node_append_ul = " ";
+            let result_msg = "Node type " + opt_selected.text + " " + new_node_name + " cannot be added under " + new_node_pId + " - " + AddNodeResult.error
+            $("#addNodeAlertMsg").css("display", "block").removeClass("alert-success").addClass("alert-danger").text(result_msg);
+        }
     }
 
 }
@@ -202,50 +210,6 @@ function on_click_delete_confirmation_popup() {
 }
 
 
-//get Assign and unassign user
-function get_assigned_unassign_users(node_action) {
-    OpenLoaderPopup()
-    $('#a_un_users_table').DataTable().destroy();
-    $("#a_un_users_table_tbody").empty();
-    let get_users = document.getElementsByClassName("users_assign");
-    GLOBAL_ONCLICK_NODE_GUID = NodeGuidByMapId(jsonData, delete_element_value);
-
-    var data = {
-        "node_action": node_action,
-        "node_guid": GLOBAL_ONCLICK_NODE_GUID
-    }
-
-    //let api_url = "users/assigned_unassigned_users"
-    // let get_users_list = assign_unassign_ajax_call(data)
-    $.ajax({
-        type: 'POST',
-        url: assign_unassign_ajax_call_url,
-        data: JSON.stringify(data),
-        success: function(result){
-            let get_users_list = result;
-            for (let i = 0; i < get_users_list.length; i++) {
-                let user_id = get_users_list[i].fields.employee_id;
-                let user_fname = get_users_list[i].fields.username;
-                let user_check = get_users_list[i].fields.object_id;
-                let user_email = get_users_list[i].pk;
-                let user_td = "";
-                user_td = `<tr class="users_assign">
-                                <td ><input onclick= "assign_unassign(this);"  type="checkbox" id="${user_fname}" ></td>
-                                <td>${user_id}</td>
-                                <td>${user_fname}</td>
-                                <td>${user_email}</td>
-                            </tr>`
-                $("#a_un_users_table_tbody").append(user_td);
-            }
-            tableSortFilter('a_un_users_table');
-            CloseLoaderPopup();
-        },
-        error: function(xhr, resp, text) {
-            console.log((xhr.responseText));
-        },
-    });
-    
-}
 
 // add user id to the list
 function assign_unassign(assign_id) {
