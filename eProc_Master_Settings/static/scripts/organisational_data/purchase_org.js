@@ -292,7 +292,7 @@ function get_main_table_data_upload() {
         var row = $(this);
         var main_attribute = {};
         main_attribute.porg_id = row.find("TD").eq(1).html();
-        main_attribute.del_ind = row.find("TD").eq(4).find('input[type="checkbox"]').is(':checked');
+        main_attribute.del_ind = row.find("TD").eq(6).find('input[type="checkbox"]').is(':checked');
         var compare = main_attribute.porg_id + '-'+ main_attribute.del_ind
         main_table_low_value.push(compare);
     });

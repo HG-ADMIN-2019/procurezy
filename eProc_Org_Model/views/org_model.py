@@ -79,7 +79,9 @@ class HandleNode(View, JsonParser):
         data = self.get_json_from_req(req)
         if action == "create":
             # Create new node
-            res = ApiHandler.create_node(data, req)
+            res,error_msg = ApiHandler.create_node(data, req)
+            if error_msg:
+                return JsonResponse(error_msg, safe=False)
             return self.get_json_from_obj(res)
         elif action == "edit":
             res = ApiHandler.edit_node(data)

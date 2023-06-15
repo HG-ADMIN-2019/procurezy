@@ -10,13 +10,13 @@
     <link rel="shortcut icon" type="image/jpg" href="{% static 'images/majjaka_shop_logo.png' %}">
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <link rel="stylesheet" href="{% static 'styles/css/main.css' %}">
+    <link rel="stylesheet" href="{% static 'styles/css/main.css' %}?v={{ cache_version }}">
     <!-- review -->
     <link rel="stylesheet" href="{% static 'styles/sc.css' %}" />
     <link rel="stylesheet" href="{% static 'styles/search.css' %}" />
     <link rel="stylesheet" href="{% static 'styles/toggle-button.css' %}" />
     <!-- review -->
-    <script src="{% static 'scripts/script.js' %}"></script>
+    <script src="{% static 'scripts/script.js' %}?v={{ cache_version }}"></script>
     <!-- Font awesome -->
     <script defer src="{% static 'font/js/all.js' %}"></script>
     <script src="{% static 'scripts/main.js' %}"></script>

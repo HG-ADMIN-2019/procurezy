@@ -395,12 +395,13 @@ def display_messages_desc(request):
             if msg['language_id'] == lang['language_id']:
                 msg['lang_description'] = lang['description']
         messages_list = get_ui_messages(CONST_COFIG_UI_MESSAGE_LIST)
+    cache_version = int(datetime.now().timestamp())
 
     return render(request, 'message_id_desc_config.html',
                   {'message_id_desc_data': message_id_desc_data, 'language_list': language_list,
                    'messages_id_list': messages_id_list,
                    'messages_list': messages_list,
-                   'inc_nav': True})
+                   'inc_nav': True, 'cache_version': cache_version})
 
 
 def upload_product_category(request):

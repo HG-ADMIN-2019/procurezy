@@ -1010,6 +1010,7 @@
             var row = $(this);
             spend_id_dic = {}
             spend_id_dic.company_id = row.find("TD").eq(1).find("select option:selected").val();
+            spend_id_dic.spender_username = row.find("TD").eq(2).find('input').val();
             spend_id_dic.spend_code_id = row.find("TD").eq(3).find('select').val();
             var compare = spend_id_dic.company_id + '-' + spend_id_dic.spender_username + '-' + spend_id_dic.spend_code_id
             spend_id_check.push(compare);

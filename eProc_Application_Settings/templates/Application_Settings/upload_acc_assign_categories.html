@@ -139,9 +139,15 @@
     var appname = uiConstants["CONST_APPNAME01"]
     var db_header_data = uiConstants["CONST_HEADER_DATA_ACC"]
     var aac_dropdown='';
+    var aact_desc='';
 
     //**************************
     function dropdown_value(){
+        if(rendered_aac_values.length != 0){
+            aact_desc = rendered_aac_values[0].field_type_desc; }
+        else {
+            aact_desc = "";
+        }
         aac_dropdown = '';
         $.each(rendered_aac_values, function(i, item){
         aac_dropdown += '<option value="' + item.field_type_id + '">' + item.field_type_id + '</option>';
@@ -257,21 +263,17 @@
         $("#error_msg_id").css("display", "none")
         basic_add_new_html = '';
         var display_db_data = '';
-        var getid = $(".acct_assignment_category:last").attr("id");
-        var getindex = getid.split("-")[1]
-        var inc_index = Number(getindex)+1
         $('#id_popup_table').DataTable().destroy();
         $(".modal").on("hidden.bs.modal", function () {
             $("#id_error_msg").html("");
         });
         basic_add_new_html = '<tr><td><input type="checkbox" required></td>'+
-        '<td><select type="text" class="input form-control acct_assignment_category" id="acct_assignment_category-'+inc_index+'" name="acct_assignment_category" onchange="GetSelectedTextValue(this)">'+ aac_dropdown +'</select></td>'+
-        '<td><input class="form-control description check_special_char" type="text"  name="description"  id="description-'+inc_index+'" disabled></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+        '<td><select type="text" class="input form-control acct_assignment_category"  name="acct_assignment_category" onchange="GetSelectedTextValue(this)">'+ aac_dropdown +'</select></td>'+
+        '<td><input class="form-control description check_special_char" type="text"  name="description"  value="'+aact_desc+'" disabled></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
         $('#id_popup_tbody').append(basic_add_new_html);
         if (GLOBAL_ACTION == "aac_upload") {
             $(".class_del_checkbox").prop("hidden", false);
         }
-        GetSelectedTextValue($("#acct_assignment_category-" + inc_index)[0]);
         table_sort_filter('id_popup_table');
     }
 

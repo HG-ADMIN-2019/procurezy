@@ -8,7 +8,7 @@ function onclick_add_button(button) {
     GLOBAL_ACTION = button.value
     $("#id_popup_tbody").empty();
     $('#myModal').modal('show');
-    basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select class="form-control">'+prod_cat_id_dropdown+'</select></td><td><input class="form-control check_special_char" type="text" maxlength="100"  name="description" style="text-transform:uppercase;" required></td><td><select class="form-control">'+language_id_dropdown+'</select></td><td hidden></td><td hidden> del_ind</td></tr>';
+    basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select class="form-control" onchange="GetSelectedTextValue(this)">'+prod_cat_id_dropdown+'</select></td><td><input class="form-control check_special_char" type="text" maxlength="100" value="'+desc_prod_cat+'"  name="description" style="text-transform:uppercase;" required></td><td><select class="form-control">'+language_id_dropdown+'</select></td><td hidden></td><td hidden> del_ind</td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
     $("#id_del_ind_checkbox").prop("hidden", true);
     document.getElementById("id_del_add_button").style.display = "block";
