@@ -1401,6 +1401,7 @@ function get_node_details(object_id){
                  break;
             }
             create_main_table(response.attr_detail)
+            update_porg_mapping(response.porg_mapping_details)
             //hide buttons for only user node and display edit button for all the other node
             initial_display_hide_button(node_type)
             document.getElementById("BasicData").style.display = "block"
@@ -1409,6 +1410,39 @@ function get_node_details(object_id){
         }
     });
 }
+var company_add_new_line = ''
+function update_porg_mapping(porg_mapping_details){
+    company_add_new_line = '<tr id="comp_attr_tr"><td><input type="text" class="form-control" value="' + porg_id + '" name="from" disabled></td><td> ' + cocode_values + ' </td><td><a onclick="clone_code_table_row()" title="Add new row"><i class="fa fa-plus text-primary"></i></a> <a onclick="remove_company_Row(this)" id="ext_new" title="Delete row"><i class="fa fa-trash text-primary"></i></a></td></tr>';
+    var cmp_modify = ''
+    var add_company_code_attr = ''
+    var add_company_code_attr
+    $('#company_id_body').empty();
+    if(GLOBAL_ON_DOUBLE_CLICK_NODE_TYPE == 'PORG'){
+        if (porg_mapping_details.length > 0){
+            $.each(porg_mapping_details, function (i, item) {
+                cocode_drop_down_val = '<option value="' + item.company_id + '" >' + item.company_id + '</option>';
+                porg_cocode_values = '<select class="form-control" disabled>' + cocode_drop_down_val + '</select>'
+                cmp_modify = '<a onclick="clone_code_table_row();" class="org-table-action-icon" title="Add new row"><i class="fa fa-plus text-primary"></i></a>  <a onclick="remove_company_Row(this)" class="org-table-action-icon" title="Delete Row"><i class="fa fa-trash text-primary"></i></a>';
+                add_company_code_attr += '<tr id="extend_attr_tr"><td><input type="text" class="form-control" onkeypress="return event.charCode >= 48" min="0" name="from" value="' + item.porg_id + '" required disabled></td><td>' + porg_cocode_values + '</td><td> ' + cmp_modify + ' </td></tr>';
+            });
+        }
+        else{
+            add_company_code_attr = '<tr id="comp_attr_tr"><td><input type="text" class="form-control" value="' + porg_id + '" name="from" disabled></td><td> ' + cocode_values + ' </td><td><a onclick="clone_code_table_row()" title="Add new row"><i class="fa fa-plus text-primary"></i></a> </td></tr>';
+
+        }
+        $('#company_id_body').append(add_company_code_attr);
+        document.getElementById("company_id_msg").innerHTML = '';
+        document.getElementById('non_company_id').style.display = 'none';
+        document.getElementById('company_id').style.display = 'block';
+    }
+    else{
+        document.getElementById("company_id_msg").innerHTML = 'Purchase Org Mapping Not Applicable';
+        document.getElementById('non_company_id').style.display = 'block';
+        document.getElementById('company_id').style.display = 'none';
+    }
+
+}
+
 // clear basic fields
 function clear_basic_details_fields(){
     //clear company code  fields
