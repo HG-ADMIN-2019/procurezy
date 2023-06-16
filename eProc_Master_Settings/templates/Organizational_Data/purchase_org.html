@@ -227,7 +227,6 @@
         $("#id_check_special_character_messages").prop("hidden", true);
         $("#error_msg_id").css("display", "none")
         $('#id_popup_table').DataTable().destroy();
-        get_main_table_data(); //Read data from main table
         formdata = new FormData();
         attached_file = $('#id_file_data_upload').prop('files')[0]
         if(attached_file == undefined){
@@ -269,12 +268,9 @@
                                 else {
                                     del_ind= '<input type="checkbox" value="' + value.del_ind + '" required>'
                                 }
-                                if(main_table_low_value =  value.porg_id){
-                                 edit_basic_data += '<tr ><td class="class_select_checkbox"><input type="checkbox" required></td><td><input type="text" class="form-control" value="' + value.porg_id + '" maxlength="8" onkeypress="return /[a-z]/i.test(event.key)" disabled></td><td><input type="text" class="form-control" value="' + value.description + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td><td hidden><input type="text" value=""></td><td>' + del_ind + '</td></tr>';
-                                }
-                                else{
+
                                  edit_basic_data += '<tr ><td class="class_select_checkbox"><input type="checkbox" required></td><td><input type="text" class="form-control" value="' + value.porg_id + '" maxlength="8" onkeypress="return /[a-z]/i.test(event.key)" required></td><td><input type="text" class="form-control" value="' + value.description + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td><td hidden><input type="text" value=""></td><td>' + del_ind + '</td></tr>';
-                                }
+
                             });
                             $('#id_popup_tbody').append(edit_basic_data);                           
                             $( "#id_del_ind_checkbox").prop( "hidden", false );
