@@ -1389,6 +1389,7 @@ function get_node_details(object_id){
             GLOBAL_ONCLICK_UPDATE_OBJ_ID = response.basic_node.object_id;
             //create org attributes table
             create_main_table(response.attr_detail)
+            update_porg_mapping(response.porg_mapping_details)
             // update basic detail fields
             $("#BDNodeType").text(response.basic_node.node_type_desc)
             $("#object-id-val").text(response.basic_node.object_id)
@@ -1501,6 +1502,8 @@ function get_node_details(object_id){
         }
     });
 }
+
+
 // clear basic fields
 function clear_basic_details_fields(){
     //clear company code  fields
