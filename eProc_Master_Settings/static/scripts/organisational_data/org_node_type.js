@@ -91,11 +91,12 @@ $(".remove_upload_data").click(() => {
 
 //*******************************************
 function display_error_message(error_message){
-$('#error_message').text(error_message);
-document.getElementById("error_message").style.color = "Red";
-$("#error_msg_id").css("display", "block")
-$('#id_save_confirm_popup').modal('hide');
-$('#org_node_Modal').modal('show');
+    $("#error_msg_id").css("display", "block");
+//    $('#error_message').text(error_message);
+    document.getElementById("error_msg_id").innerHTML = error_message;
+    document.getElementById("error_msg_id").style.color = "Red";
+    $('#id_save_confirm_popup').modal('hide');
+    $('#org_node_Modal').modal('show');
 }
 
 // Function to hide and display save related popups

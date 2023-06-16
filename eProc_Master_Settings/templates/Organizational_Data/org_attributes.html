@@ -292,6 +292,7 @@
                 dataType: "json",
                 success: function(Response) {
                     rendered_org_attr_data = Response[0];
+                    rendered_dropdown_values = Response[2];
                     display_basic_db_data();
                     $('#org_attr_Modal').modal('hide');
                     success_response(Response); // Function call to display response data

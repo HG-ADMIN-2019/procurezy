@@ -875,8 +875,13 @@ class ApplicationSettingsSave:
                                                   'range_indicator', 'multiple_value',
                                                   'allow_defaults', 'inherit_values',
                                                   'maximum_length'])
+        upload_dropdown_db_values = list(
+            FieldTypeDescription.objects.filter(field_name='attribute_id', used_flag=False, del_ind=False,
+                                                client=global_variables.GLOBAL_CLIENT).values('field_type_id',
+                                                                                              'field_type_desc'
+                                                                                              ))
 
-        return upload_response, message
+        return upload_response, message, upload_dropdown_db_values
 
     def save_attributes(self, attr_data):
         """
