@@ -101,29 +101,23 @@ function read_popup_data(){
 // Function for add a new row data
 function new_row_data() {
     basic_add_new_html = '<tr><td><input type="checkbox" required></td>'+
-    '<td><select type="text" class="input form-control acct_assignment_category" id="acct_assignment_category-1" name="acct_assignment_category" onchange="GetSelectedTextValue(this)">'+ aac_dropdown +'</select></td>'+
-    '<td><input class="form-control description check_special_char" type="text"  name="description"  id="description-1" disabled></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+    '<td><select type="text" class="input form-control acct_assignment_category"  name="acct_assignment_category" onchange="GetSelectedTextValue(this)">'+ aac_dropdown +'</select></td>'+
+    '<td><input class="form-control description check_special_char" type="text"  name="description" value="'+aact_desc+'" disabled></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
     table_sort_filter('id_popup_table');
-    var acct_assignment_categorySelect = $("#acct_assignment_category-1");
-    GetSelectedTextValue(acct_assignment_categorySelect[0]);
 }
 
 //********************************************
-function GetSelectedTextValue(acct_assignment_category) {
-    if (!acct_assignment_category || acct_assignment_category.options.length === 0) {
-        // open popup here
-        return;
+function GetSelectedTextValue(rowid){
+        var row = $(rowid);
+             var selectedText = "";
+          var selectedValue = row[0].value;
+             $.each (rendered_aac_values, function(i, item){
+            if(selectedValue == item.field_type_id){
+              row[0].parentNode.nextElementSibling.children.description.value = item.field_type_desc;
+            }
+          });
     }
-    var selectedText = acct_assignment_category.options[acct_assignment_category.selectedIndex].innerHTML;
-    var selectedValue = acct_assignment_category.value;
-    var selectedId = (acct_assignment_category.id).split('-')[1];
-    $.each(rendered_aac_values, function(i, item){
-        if(selectedValue == item.field_type_id){
-            $('#description-'+selectedId).val(item.field_type_desc);
-        }
-    });
-}
 
 // Function to get the selected row data
 function get_selected_row_data(){

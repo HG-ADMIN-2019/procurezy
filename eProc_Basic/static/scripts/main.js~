@@ -695,7 +695,6 @@ function message_display_time(){
     } else {
     $('.alert-success').prop("hidden", true);
     }
-    $('.check_success_message').prop("hidden", true);
 }
 function message_display_time_specific(){
       setTimeout(function() {

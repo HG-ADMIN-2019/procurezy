@@ -196,4 +196,5 @@ MSG0199 = 'Item cannot be added to cart successfully'
 MSG0120 = "Transaction types or Number Ranges has not been configured."
 MSG0121 = "Supplier Email Already Exists"
 MSG0122 = "Incorrect email id or password"
+MSG300 = 'Employee ID Already Exists'
 

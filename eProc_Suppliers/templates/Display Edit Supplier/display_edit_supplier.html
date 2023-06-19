@@ -491,12 +491,10 @@
 var GLOBAL_ACTION
 var rendered_supp_org_data = JSON.parse(document.getElementById('supplier_org_info').textContent);
 var w_days = JSON.parse(document.getElementById('w_days').textContent);
-<!--var rendered_supp_org_data = "{{supplier_org_info | safe}}";-->
 var rendered_porg_data;
 var country_id = '{{supplier_info.country_code | safe}}';
 var curr_id = '{{supplier_info.currency_id | safe}}';
 var lang_id = '{{supplier_info.language_id | safe}}';
-<!--var w_days = '{{supplier_info.delivery_days | safe}}';-->
 var img_url = '{{img_url.url | safe}}';
 var error_flag;
 var is_valid = true;
@@ -504,9 +502,7 @@ var is_valid = true;
 $(document).ready(function(){
     $('#nav_menu_items').remove();
     $("body").css("padding-top", "4rem");
-
     NavigateTabs(); // Custom function to switch tabs
-
     GLOBAL_ACTION = '{{supplier_action}}';
     if(GLOBAL_ACTION == 'CREATE'){
       $("#org_info_tab").hide();
@@ -676,7 +672,6 @@ function ajax_update_supplier_basic_details(data) {
 }
 
 const ajax_update_supplier_org_details_url = "{% url 'eProc_Suppliers:update_supplier_purch_details' %}";
-
 
 // Function to save edited supplier basic details data
 function save_basic_details() {

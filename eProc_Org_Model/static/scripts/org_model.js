@@ -507,7 +507,8 @@ var GLOBAL_ONCLICK_UPDATE_OBJ_ID = " ";
 var GLOBAL_ON_DOUBLE_CLICK_NODE_TYPE = '';
 var GLOBAL_ROOT_NODE_NAME = '';
 var obj_id_node_type = " ";
-
+var porg_id = '';
+var cocode_values = '';
 
 function create_main_table(attr_level_detail) {
 
@@ -522,7 +523,7 @@ function create_main_table(attr_level_detail) {
     var ext_inherit_value = '';
     var add_resp_attr = '';
     var cocode_drop_down = '';
-    var cocode_values = '';
+
     var company_detail = '';
     GLOBAL_ATTRIBUTE_ID_LIST = []
     $('#main_table_body').empty();
@@ -595,21 +596,25 @@ function create_main_table(attr_level_detail) {
         $("#org_attribute_overview").removeClass("d-none")
         // if prod cat not present in attr level table
         if (GLOBAL_ON_DOUBLE_CLICK_NODE_TYPE != 'PORG') {
-            document.getElementById("ext_attr_errmsg").innerHTML = OrgMessageConstants["JMSG051"];
+            document.getElementById("ext_attr_errmsg").innerHTML = 'Extended  Product Category Not Applicable';
             document.getElementById('ext_error_div').style.display = 'block';
             document.getElementById('ext_porg_id').style.display = 'none';
         }
         else {
             if (!(ext_attr_html)) {
+                porg_id = $("#select_porg_id").val()
                 add_ext_attr = '<tr id="extend_attr_tr"><td><input type="number" class="form-control" name="from" required></td><td><input type="number" class="form-control" name="to" required></td><td> ' + cocode_values + ' </td><td><input disabled type="checkbox" name="inherit" value="inherit"></td><td><a onclick="clone_ext_table_row()" title="Add new row"><i class="fa fa-plus text-primary"></i></a> </td></tr>';
                 ext_add_new_line = '<tr id="extend_attr_tr"><td><input type="number" class="form-control" name="from" required></td><td><input type="number" class="form-control" name="to" required></td><td> ' + cocode_values + ' </td><td><input disabled type="checkbox" name="inherit" value="inherit"></td><td><a onclick="clone_ext_table_row()" title="Add new row"><i class="fa fa-plus text-primary"></i></a> <a onclick="remove_ext_Row(this)" id="ext_new" title="Delete row"><i class="fa fa-trash text-primary"></i></a></td></tr>';
                 $('#extend_attr_body').append(add_ext_attr);
             }
             document.getElementById('ext_porg_id').style.display = 'block';
             document.getElementById('ext_error_div').style.display = 'none';
+            document.getElementById('company_id').style.display = 'block';
+            document.getElementById('non_company_id').style.display = 'none';
+
         }
         if (GLOBAL_ON_DOUBLE_CLICK_NODE_TYPE != 'PGRP') {
-            document.getElementById("resp_msg").innerHTML = OrgMessageConstants["JMSG040"];
+            document.getElementById("resp_msg").innerHTML = 'Responsibility Not Applicable';
             document.getElementById('non_pgrp').style.display = 'block';
             document.getElementById('resp_pgrp').style.display = 'none';
         }
@@ -699,6 +704,8 @@ function get_cocode_drop_down(org_comp_dropdown_list, centralize_purch_level_fla
         cocode_values = '<select class="form-control">' + cocode_drop_down + '</select>'
     }
     else {
+        console.log("org_comp_dropdown_list")
+        console.log(org_comp_dropdown_list)
         cocode_values = '<input type="text" value=' + org_comp_dropdown_list[0] + ' disabled>';
     }
     return cocode_values

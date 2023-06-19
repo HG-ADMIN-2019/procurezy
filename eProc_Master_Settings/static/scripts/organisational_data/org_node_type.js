@@ -91,11 +91,12 @@ $(".remove_upload_data").click(() => {
 
 //*******************************************
 function display_error_message(error_message){
-$('#error_message').text(error_message);
-document.getElementById("error_message").style.color = "Red";
-$("#error_msg_id").css("display", "block")
-$('#id_save_confirm_popup').modal('hide');
-$('#org_node_Modal').modal('show');
+    $("#error_msg_id").css("display", "block");
+//    $('#error_message').text(error_message);
+    document.getElementById("error_msg_id").innerHTML = error_message;
+    document.getElementById("error_msg_id").style.color = "Red";
+    $('#id_save_confirm_popup').modal('hide');
+    $('#org_node_Modal').modal('show');
 }
 
 // Function to hide and display save related popups
@@ -144,21 +145,12 @@ function get_main_table_data(){
     table_sort_filter('display_basic_table');
 }
 
-
-function setDropdownAndDescription(index) {
-    $('#nodetype-' + index).val($('#nodetype-' + index + ' option:first').val());
-    GetSelectedTextValue($('#nodetype-' + index)[0], index);
-}
-
 // Function for add a new row data
 function new_row_data() {
-    basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select type="text" class="input form-control nodetype" id="nodetype-' + ($(".nodetype").length + 1) + '"  name="nodetype" onchange="GetSelectedTextValue(this, ' + ($(".nodetype").length + 1) + ')">' + node_type_dropdown + '</select></td><td><input class="form-control description" type="text"  name="description"  id="description-' + ($(".nodetype").length + 1) + '" disabled></td><td hidden>guid</td><td class="class_del_checkbox" hidden><input type="checkbox" required></td><td class="id_del_ind_checkbox1" hidden><input type="checkbox" name="del_ind_flag" required></td></tr>';
+    basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select type="text" class="input form-control nodetype"   name="nodetype" onchange="GetSelectedTextValue(this)">' + node_type_dropdown + '</select></td><td><input class="form-control description" type="text"  name="description" value="'+desc_nodetype+'"  disabled></td><td hidden>guid</td><td class="class_del_checkbox" hidden><input type="checkbox" required></td><td class="id_del_ind_checkbox1" hidden><input type="checkbox" name="del_ind_flag" required></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
-    setDropdownAndDescription($(".nodetype").length);
     table_sort_filter('id_popup_table');
 }
-
-
 
 // Function to get the selected row data
 function get_selected_row_data() {

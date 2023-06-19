@@ -155,7 +155,7 @@
     var db_header_data = uiConstants["APP_TYPES", "APPROVAL_TYPE_DESC", "del_ind"]
     var approval_type_dropdown= '';
     var approval_type_dropdown_onload = '';
-
+    var desc_app_type = '';
      approval_type_dropdown = '';
         $.each(rendered_approval_type_values, function(i, item) {
              approval_type_dropdown += '<option value="' + item.field_type_id + '">' + item.field_type_id + '</option>';
@@ -163,6 +163,11 @@
 
     approval_type_dropdown_onload = '';
     function dropdown_value() {
+        if(rendered_approval_type_values.length != 0){
+            desc_app_type = rendered_approval_type_values[0].field_type_desc; }
+        else {
+            desc_app_type = "";
+        }
         approval_type_dropdown = '';
         $.each(rendered_approval_type_values, function(i, item) {
              approval_type_dropdown += '<option value="' + item.field_type_id + '">' + item.field_type_id + '</option>';
@@ -210,7 +215,6 @@
                         rendered_approval_type_data = Response[0];
                         rendered_approval_type_values = Response[2];
                         display_basic_db_data();
-                        dropdown_value();
                         $('#App_Type_Modal').modal('hide');
                         success_response(Response); // Function call to display response data
                         $("#id_check_data").prop("hidden", true);
@@ -243,14 +247,11 @@
                 $('#id_popup_table').DataTable().destroy();
                 $("#id_popup_tbody").empty();
                 $('#App_Type_Modal').modal('show');
-                new_row_data(inc_index);   // Add a new row in popup
+                new_row_data();   // Add a new row in popup
                 $("#id_del_ind_checkbox").prop("hidden", true);
                 document.getElementById("id_del_add_button").style.display = "block";
                 $("#save_id").prop("hidden", false);
                 CloseLoaderPopup();
-                $('.approvaltype').each(function() {
-                GetSelectedTextValue(this);
-                });
             }
         });
     }
@@ -259,27 +260,22 @@
     function add_popup_row() {
         basic_add_new_html = '';
         var display_db_data = '';
-        var getid = $(".approvaltype:last").attr("id");
-        var getindex = getid.split("-")[1]
-        var inc_index = Number(getindex)+1
         $('#id_popup_table').DataTable().destroy();
         $(".modal").on("hidden.bs.modal", function() {
             $("#id_error_msg").html("");
         });
         if (GLOBAL_ACTION == "approval_type_upload") {
             basic_add_new_html = '<tr><td><input type="checkbox" required></td>'+
-            '<td><select type="text" class="input form-control approvaltype" id="approvaltype-'+inc_index+'"  name="approvaltype" onchange="GetSelectedTextValue(this)">'+ approval_type_dropdown +'</select></td>'+
-            '<td><input class="form-control description" type="text"  name="description"  id="description-'+inc_index+'" disabled></td>'+
+            '<td><select type="text" class="input form-control approvaltype"  name="approvaltype" onchange="GetSelectedTextValue(this)">'+ approval_type_dropdown +'</select></td>'+
+            '<td><input class="form-control description" type="text"  name="description" value="'+desc_app_type+'"  disabled></td>'+
             '<td class="class_del_checkbox"><input type="checkbox" required></td></tr>';
             $('#id_popup_tbody').append(basic_add_new_html);
             $(".class_del_checkbox").prop("hidden", false);
             $("#id_del_ind_checkbox").prop("hidden", false);
             table_sort_filter('id_popup_table');
-            var approvaltypeSelect = $("#approvaltype-" + inc_index);
-            GetSelectedTextValue(approvaltypeSelect[0]);
         }
         else {
-              new_row_data(inc_index);   // Add a new row in popup
+              new_row_data();   // Add a new row in popup
         }
          $('#delete_data').hide()
     }
@@ -306,7 +302,6 @@
                 rendered_approval_type_data = Response[0];
                 rendered_approval_type_values = Response[2];
                 display_basic_db_data();
-                dropdown_value();
                 success_response(Response); // Function call to display response data
                 CloseLoaderPopup();
             }
@@ -314,16 +309,16 @@
     }
 
     //*********************************************
-     function GetSelectedTextValue(approvaltype) {
-<!--            var selectedText = approvaltype.options[approvaltype.selectedIndex].innerHTML;-->
-            var selectedValue = approvaltype.value;
-            var selectedId = (approvaltype.id).split('-')[1];
-            $.each(rendered_approval_type_values, function(i, item){
-                if(selectedValue == item.field_type_id){
-                    $('#description-'+selectedId).val(item.field_type_desc);
-                }
-            });
-        }
+     function GetSelectedTextValue(rowid) {
+        var row = $(rowid);
+        var selectedText = "";
+        var selectedValue = row[0].value;
+        $.each (rendered_approval_type_values, function(i, item){
+            if(selectedValue == item.field_type_id){
+                row[0].parentNode.nextElementSibling.children.description.value = item.field_type_desc;
+            }
+        });
+     }
 
 
     //onclick of data Upload copy data to modal pop-up
@@ -377,7 +372,7 @@
                                     del_ind = '<input type="checkbox" value="' + value.del_ind + '" required>'
                                 }
                                 edit_basic_data += '<tr><td class="class_select_checkbox"><input type="checkbox" required></td>'+
-                                '<td><input type="text" class="input form-control approvaltype" id="approvaltype-'+inc_index+'"  name="approvaltype" onchange="GetSelectedTextValue(this)"value="' + value.app_types + '"></td><td><input class="form-control" type="text" id="description-'+inc_index+'" value="' + value.appr_type_desc + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" disabled></td><td>' + del_ind + '</td></tr>';
+                                '<td><input type="text" class="input form-control approvaltype"   name="approvaltype" onchange="GetSelectedTextValue(this)"value="' + value.app_types + '"></td><td><input class="form-control" type="text"  value="' + value.appr_type_desc + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" disabled></td><td>' + del_ind + '</td></tr>';
                                 inc_index += 1;
                             });
                             $('#id_popup_tbody').append(edit_basic_data);

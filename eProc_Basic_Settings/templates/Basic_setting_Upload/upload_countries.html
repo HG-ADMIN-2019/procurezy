@@ -207,17 +207,17 @@
                             var del_ind = '';
                             $("#id_popup_tbody").empty();
                             $.each(response.valid_data_list, function (i, value) {
-                                del_ind = '<td>' + value[2] + '</td>'
-                                if (value[2] == 1) {
+                                del_ind = '<td>' + value.del_ind + '</td>'
+                                if (value.del_ind == 1) {
                                     del_ind=' <input type="checkbox" value="' + value.del_ind + '" checked>'
                                 }
                                 else {
                                     del_ind= '<input type="checkbox" value="' + value.del_ind+ '" required>'
                                 }
-                                edit_basic_data += '<tr><td class="class_select_checkbox"><input type="checkbox" required></td>'+
-                                '<td><input class="form-control" type="text" value="' + value.country_code + '" maxlength="2" onkeypress="return /[a-z]/i.test(event.key)" required></td>'+
-                                '<td><input class="form-control" type="text" value="' + value.country_name + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td>'+
-                                '<td>'+ del_ind +'</td></tr>';
+                                     edit_basic_data += '<tr><td class="class_select_checkbox"><input type="checkbox" required></td>'+
+                                    '<td><input class="form-control" type="text" value="' + value.country_code + '" maxlength="2" onkeypress="return /[a-z]/i.test(event.key)" required></td>'+
+                                    '<td><input class="form-control" type="text" value="' + value.country_name + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td>'+
+                                    '<td>'+ del_ind +'</td></tr>';
                             });
                             $('#id_popup_tbody').append(edit_basic_data);
                             $( ".class_del_checkbox").prop( "hidden", false );
@@ -415,7 +415,7 @@
                 $("#id_check_special_character_messages").prop("hidden",false);
                 count = count +1;
             }
-            else if(country_code_check.includes(country_dic.country_code)){
+            else if(country_code_check.includes((country_dic.country_code)&&(country_dic.del_ind))){
                  $(row).css("border", "#f8d7da");
                  row_color_highlight(row);
                  $("#id_check_error_messages").prop("hidden",false);
@@ -426,7 +426,7 @@
                  $("#id_check_data").prop("hidden", false);
                  count = count +1;
             }
-            else if(main_table_low_value.includes(country_dic.country_code)){
+            else if(main_table_low_value.includes((country_dic.country_code)&&(country_dic.del_ind))){
                  $(row).css("border", "#f8d7da");
                  row_color_highlight(row);
                  $("#id_check_error_messages").prop("hidden",false);
@@ -443,8 +443,8 @@
                 $(row).css("border", "");
                 $("#id_delete_duplicate").hide()
             }
-            country_code_check.push(country_dic.country_code)
-            main_table_low_value.push(country_dic.country_code)
+            country_code_check.push(country_dic)
+            main_table_low_value.push(country_dic)
             table_sort_filter_popup_pagination('id_popup_table');
         });
     //*************** shows save button if there are no errors(special characters and max length) ***************
