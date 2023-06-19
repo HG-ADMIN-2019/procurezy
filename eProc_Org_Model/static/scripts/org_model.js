@@ -791,6 +791,7 @@ async function on_click_save_basic_details() {
                 node_type_disable_fields_list = ['porg_id', 'POrg_desc', 'select_porg_id', 'BDname']
                 disable_fields(node_type_disable_fields_list)
                 on_edit_display_hide_button()
+                CloseLoaderPopup();
             }
 
             break;
@@ -808,6 +809,7 @@ async function on_click_save_basic_details() {
                 node_type_disable_fields_list = ['pgrp_id', 'Pgrp_desc', 'select_pgrp_id', 'BDname']
                 disable_fields(node_type_disable_fields_list)
                 on_edit_display_hide_button()
+                CloseLoaderPopup();
             }
 
             break;
@@ -819,6 +821,7 @@ async function on_click_save_basic_details() {
             node_type_disable_fields_list = ['BDname']
             disable_fields(node_type_disable_fields_list)
             on_edit_display_hide_button()
+            CloseLoaderPopup();
             break;
         default:
             break;
