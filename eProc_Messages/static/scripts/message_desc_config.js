@@ -112,11 +112,10 @@ function display_basic_db_data() {
 }
 
 function display_error_message(error_message){
-    $("#error_msg_id").css("display", "none")
-    $('#error_message').text(error_message);
-    var errorMessage = document.getElementById("error_message");
-    if (errorMessage) {
-        errorMessage.style.color = "red";
+    var errorElement = document.getElementById("error_message");
+    if (errorElement) {
+        errorElement.textContent = error_message;
+        errorElement.style.color = "Red";
     }
     $("#error_msg_id").css("display", "block")
     $('#id_save_confirm_popup').modal('hide');

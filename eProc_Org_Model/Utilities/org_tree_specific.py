@@ -7,6 +7,7 @@ from eProc_Basic.Utilities.global_defination import global_variables
 from eProc_Configuration.models import OrgPGroup, OrgPorg, OrgCompanies
 from eProc_Configuration.models.development_data import OrgNodeTypes
 from eProc_Configuration.models.master_data import OrgPorgMapping
+from eProc_Org_Model.Utilities.org_specific import get_porg_id_by_pgrp
 from eProc_Org_Model.models import OrgModel
 from eProc_Registration.models import UserData
 
@@ -86,7 +87,13 @@ def get_basic_node_details(node_type, object_id):
             sel['object_id__isnull'] = True
         node_det = list(obj.objects.filter(**sel).values('pgroup_id',
                                                          'description',
-                                                         'object_id'))
+                                                         'object_id',
+                                                         'porg_id'))
+        if node_det:
+            for node in node_det:
+                if not node['porg_id']:
+                    node['porg_id'] = get_porg_id_by_pgrp(node['object_id'])
+
         return node_det
     elif node_type == CONST_USER:
         obj = UserData

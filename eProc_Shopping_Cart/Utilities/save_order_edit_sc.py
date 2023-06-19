@@ -13,7 +13,7 @@ from eProc_Calendar_Settings.Utilities.calender_settings_generic import calculat
 from eProc_Chat.models import ChatContent
 from eProc_Configuration.models.development_data import *
 from eProc_Configuration.models.master_data import OrgAddress, AccountingDataDesc, DetermineGLAccount, AccountingData, \
-    OrgAddressMap
+    OrgAddressMap, OrgPorgMapping
 from eProc_Exchange_Rates.Utilities.exchange_rates_generic import convert_currency
 from eProc_Form_Builder.models.form_builder import EformData, EformFieldData
 from eProc_Notes_Attachments.models.notes_attachements_model import Attachments, Notes
@@ -1540,15 +1540,20 @@ class CheckForScErrors:
             'client': global_variables.GLOBAL_CLIENT, 'del_ind': False, 'node_type': CONST_PORG
         }, 'object_id')
 
-        orgattr_porg_object_id = django_query_instance.django_filter_value_list_query(OrgAttributesLevel, {
-            'attribute_id': CONST_CO_CODE, 'low': co_code, 'object_id__in': org_porg_object_id,
-            'client': global_variables.GLOBAL_CLIENT, 'del_ind': False
-        }, 'object_id')
-
-        purch_org_object_id_list = django_query_instance.django_filter_value_list_query(OrgPorg, {
-            'object_id__in': orgattr_porg_object_id, 'client': global_variables.GLOBAL_CLIENT,
-            'del_ind': False
-        }, 'object_id')
+        purch_org_object_id_list = django_query_instance.django_filter_value_list_query(OrgPorgMapping,
+                                                                                        {'company_id': co_code,
+                                                                                         'client': global_variables.GLOBAL_CLIENT,
+                                                                                         'del_ind': False},
+                                                                                        'object_id')
+        # orgattr_porg_object_id = django_query_instance.django_filter_value_list_query(OrgAttributesLevel, {
+        #     'attribute_id': CONST_CO_CODE, 'low': co_code, 'object_id__in': org_porg_object_id,
+        #     'client': global_variables.GLOBAL_CLIENT, 'del_ind': False
+        # }, 'object_id')
+        #
+        # purch_org_object_id_list = django_query_instance.django_filter_value_list_query(OrgPorg, {
+        #     'object_id__in': orgattr_porg_object_id, 'client': global_variables.GLOBAL_CLIENT,
+        #     'del_ind': False
+        # }, 'object_id')
 
         purch_org_det = django_query_instance.django_filter_only_query(OrgAttributesLevel, {
             'object_id__in': purch_org_object_id_list, 'extended_value__in': co_code_list,
@@ -1562,7 +1567,7 @@ class CheckForScErrors:
 
         if is_purchase_organisation:
             get_purchase_org_id = django_query_instance.django_filter_value_list_query(OrgPorg, {
-                'object_id__in': orgattr_porg_object_id, 'client': global_variables.GLOBAL_CLIENT,
+                'object_id__in': purch_org_object_id_list, 'client': global_variables.GLOBAL_CLIENT,
                 'del_ind': False
             }, 'porg_id')
 

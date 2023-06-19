@@ -570,6 +570,8 @@
 
     //onclick of add button display Acc_desc_Modal popup and set GLOBAL_ACTION button value
     function onclick_add_button(button) {
+        $('#id_popup_table').DataTable().destroy();
+        $("#id_popup_tbody").empty();
         OpenLoaderPopup();
         var data = {'table_name':'AccountingDataDesc'}
         $.ajax({
@@ -585,8 +587,6 @@
                 $("#error_msg_id").css("display", "none")
                 $("#header_select").prop( "hidden", false );
                 GLOBAL_ACTION = button.value
-                $('#id_popup_table').DataTable().destroy();
-                $("#id_popup_tbody").empty();
                 $('#Acc_desc_Modal').modal('show');
                 new_row_data();   // Add a new row in popup
                 var account_assign = '';

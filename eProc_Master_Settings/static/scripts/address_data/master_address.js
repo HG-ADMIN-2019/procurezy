@@ -117,5 +117,3 @@ function get_main_table_data() {
     });
     table_sort_filter('display_basic_table');
 }
-
-

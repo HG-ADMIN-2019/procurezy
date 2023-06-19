@@ -259,6 +259,7 @@ function get_selected_data(){
         }
     });
 }
+
 //Get message for check data function
 function get_msg_desc_check_data(msg){
      var msg_type ;
