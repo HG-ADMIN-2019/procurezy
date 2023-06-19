@@ -155,6 +155,10 @@
                                 <b>PGRP ID</b><br>
                                 <select id="select_pgrp_id"  onchange="onchange_node_id_dropdown(this)" class="toggle form-control"  disabled></select>
                             </div>
+                            <div class="form-group d-none" id="field_pgrp_porg_id">
+                                <b>PORG ID</b><br>
+                                <input type="text" class="toggle form-control" id="pgrp_porg_id" readonly />
+                            </div>
     
                         </div>
                     </div>
@@ -1275,7 +1279,7 @@ var CONST_PGROUP = 'PGRP'
 var CONST_NODE = 'NODE'
 var CONST_USER = 'USER'
 var CONST_PLANT = 'PLANT'
-var CONST_BASIC_DETAILS_ID_LIST = ['name_1', 'name_2', 'cc_id', 'porg_desc', 'porg_id', 'pgrp_desc', 'pgrp_id','first_name', 'last_name', 'email_id']
+var CONST_BASIC_DETAILS_ID_LIST = ['name_1', 'name_2', 'cc_id', 'porg_desc', 'porg_id', 'pgrp_desc', 'pgrp_id','first_name', 'last_name', 'email_id','pgrp_porg_id']
 var CONST_USER_DETAILS_ID = ['first_name', 'last_name', 'email_id']
 // Function to display Basic data and Attribute overview on right panel
 function get_node_details(object_id){
@@ -1357,6 +1361,7 @@ function get_node_details(object_id){
                     // update basic detail if pgrp details exists in OrgPGroup db table
                     if(response.basic_node_details.length != 0){
                         $("#Pgrp_desc").val(response.basic_node_details[0].description)
+                        $("#pgrp_porg_id").val(response.basic_node_details[0].porg_id)
                         GLOBAL_NODE_DETAIL = response.basic_node_details
                         $.each(response.basic_node_details, function (i, item) {
                             if (item.object_id){
@@ -1372,9 +1377,9 @@ function get_node_details(object_id){
                         }
                         $("#select_pgrp_id").append(empty_option+node_id_drop_down)
                     }
-                    node_type_disable_fields_list = ['pgrp_id','Pgrp_desc','select_pgrp_id','BDname']
+                    node_type_disable_fields_list = ['pgrp_id','Pgrp_desc','select_pgrp_id','BDname','pgrp_porg_id']
                     disable_fields(node_type_disable_fields_list)
-                    display_elements('field_', ['pgrp_desc', 'pgrp_id'])
+                    display_elements('field_', ['pgrp_desc', 'pgrp_id','pgrp_porg_id'])
                      break;
                  case "PLANT":
 

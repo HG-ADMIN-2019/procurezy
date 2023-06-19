@@ -429,7 +429,7 @@ class OrgCompanies(models.Model):
         return self.company_id
 
 
-class OrgCompaniesHistory(models.Model):
+class OrgCompaniesH(models.Model):
     company_key = models.AutoField(primary_key=True, db_column='COMPANY_KEY', null=False)
     company_guid = models.CharField(db_column='COMPANY_GUID', max_length=32)
     name1 = models.CharField(db_column='NAME1', max_length=100, null=False)
@@ -441,13 +441,11 @@ class OrgCompaniesHistory(models.Model):
     org_companies_changed_at = models.DateTimeField(db_column='ORG_COMPANIES_CHANGED_AT', max_length=50, null=True)
     org_companies_source_system = models.CharField(db_column='ORG_COMPANIES_SOURCE_SYSTEM', max_length=20)
     del_ind = models.BooleanField(default=False, null=False)
-    client = models.ForeignKey('eProc_Configuration.OrgClients', db_column='Client', on_delete=models.PROTECT,
-                               null=False)
-    object_id = models.ForeignKey('eProc_Org_Model.OrgModel', db_column='OBJECT_ID', on_delete=models.PROTECT,
-                                  null=True, default=None)
+    client = models.CharField(max_length=8, db_column='CLIENT', null=True)
+    object_id = models.PositiveBigIntegerField(db_column='OBJECT_ID', null=True)
 
     class Meta:
-        db_table = "MMD_ORG_COMPANIES_HISTORY"
+        db_table = "MMD_ORG_COMPANIES_H"
         managed = True
 
 
@@ -478,7 +476,7 @@ class OrgPorg(models.Model):
         return self.porg_id
 
 
-class OrgPorgHistory(models.Model):
+class OrgPorgH(models.Model):
     porg_key = models.AutoField(primary_key=True, db_column='PORG_KEY', null=False)
     porg_guid = models.CharField(db_column='PORG_GUID', max_length=32)
     porg_id = models.CharField(db_column='PORG_ID', max_length=8)
@@ -490,12 +488,11 @@ class OrgPorgHistory(models.Model):
     org_porg_changed_at = models.DateTimeField(db_column='ORG_PORG_CHANGED_AT', max_length=50, null=True)
     org_porg_source_system = models.CharField(db_column='ORG_PORG_SOURCE_SYSTEM', max_length=20)
     del_ind = models.BooleanField(default=False, null=False)
-    client = models.ForeignKey('eProc_Configuration.OrgClients', on_delete=models.PROTECT, null=False)
-    object_id = models.ForeignKey('eProc_Org_Model.OrgModel', db_column='OBJECT_ID', on_delete=models.PROTECT,
-                                  null=True, default=None)
+    client = models.CharField(max_length=8, db_column='CLIENT', null=True)
+    object_id = models.PositiveBigIntegerField(db_column='OBJECT_ID', null=True)
 
     class Meta:
-        db_table = "MMD_ORG_PORG_HISTORY"
+        db_table = "MMD_ORG_PORG_H"
         managed = True
 
 
@@ -553,7 +550,7 @@ class OrgPGroup(models.Model):
         return self.pgroup_id
 
 
-class OrgPGroupHistory(models.Model):
+class OrgPGroupH(models.Model):
     pgroup_key = models.AutoField(primary_key=True, db_column='PGROUP_KEY', null=False)
     pgroup_guid = models.CharField(db_column='PGROUP_GUID', max_length=32)
     pgroup_id = models.CharField(db_column='PGROUP_ID', max_length=8, null=False)
@@ -565,12 +562,11 @@ class OrgPGroupHistory(models.Model):
     org_pgroup_changed_at = models.DateTimeField(db_column='ORG_PGROUP_CHANGED_AT', max_length=50, null=True)
     org_pgroup_source_system = models.CharField(db_column='ORG_PGROUP_SOURCE_SYSTEM', max_length=20)
     del_ind = models.BooleanField(default=False, null=False)
-    client = models.ForeignKey('eProc_Configuration.OrgClients', on_delete=models.PROTECT, null=False)
-    object_id = models.ForeignKey('eProc_Org_Model.OrgModel', db_column='OBJECT_ID', on_delete=models.PROTECT,
-                                  null=True, default=None)
+    client = models.CharField(max_length=8, db_column='CLIENT', null=True)
+    object_id = models.PositiveBigIntegerField(db_column='OBJECT_ID', null=True)
 
     class Meta:
-        db_table = "MMD_ORG_PGROUP_HISTORY"
+        db_table = "MMD_ORG_PGROUP_H"
         managed = True
 
 
