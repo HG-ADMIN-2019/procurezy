@@ -186,7 +186,6 @@ function cancel_supp_org_data(){
 var supplierid = global_supplier_id;
 
    // Validation function
-
 function save_basic_form_validation(){
         var is_valid = true;
         var save_form_errors = ''
@@ -196,7 +195,7 @@ function save_basic_form_validation(){
         var temp = document.getElementsByClassName('mandatory_fields');
         for (var i = 0; i<temp.length; i++) {
             if(temp[i].nodeName == "SELECT"){
-                if((temp[i].value == "") || ((temp[i].value == null))){
+                if((temp[i].value == "") || (temp[i].value == null)){
                     err_text1 = temp[i].parentNode.children[0].innerHTML;
                     var display_id = temp[i].nextElementSibling.id;
                     $('#'+display_id).prop('hidden', false);

@@ -136,27 +136,23 @@ function get_selected_row_data() {
 // Function for add a new row data
 function new_row_data(){
     basic_add_new_html = '<tr><td><input type="checkbox" required></td>'+
-    '<td><select type="text" class="input form-control authobject" id="authobject-1"  name="authobject" onchange="GetSelectedTextValue(this)">'+ auth_obj_id_dropdown +'</select></td>'+
-    '<td><input class="form-control description" type="text"  name="description"  id="description-1" disabled></td>'+'<td><select id="authobject_type" name="authobject_type"  class="input form-control">'+auth_type_dropdown+'</select></td>'+
+    '<td><select type="text" class="input form-control authobject"   name="authobject" onchange="GetSelectedTextValue(this)">'+ auth_obj_id_dropdown +'</select></td>'+
+    '<td><input class="form-control description" type="text"  name="description" value="'+authobj_desc+'" disabled></td>'+'<td><select id="authobject_type" name="authobject_type"  class="input form-control">'+auth_type_dropdown+'</select></td>'+
     '<td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
     table_sort_filter('id_popup_table');
-    var authSelect = $("#authobject-1");
-    GetSelectedTextValue(authSelect[0]);
+//    var authSelect = $("#authobject-1");
+//    GetSelectedTextValue(authSelect[0]);
 }
 
 //************************************
-function GetSelectedTextValue(authobject) {
-    var selectedValue = authobject.value;
-    var selectedId = (authobject.id).split('-')[1];
-    if (!selectedValue) {
-        $('#description-'+selectedId).val('');
-        return;
-    }
-    var selectedText = authobject.options[authobject.selectedIndex].innerHTML;
-    $.each(rendered_auth_obj_id, function(i, item){
+function GetSelectedTextValue(rowid) {
+    var row = $(rowid);
+         var selectedText = "";
+      var selectedValue = row[0].value;
+         $.each (rendered_auth_obj_id, function(i, item){
         if(selectedValue == item.field_type_id){
-            $('#description-'+selectedId).val(item.field_type_desc);
+          row[0].parentNode.nextElementSibling.children.description.value = item.field_type_desc;
         }
-    });
+      });
 }

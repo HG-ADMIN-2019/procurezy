@@ -40,13 +40,11 @@ $(".remove_upload_data").click(() => {
 // Function for add a new row data
 function new_row_data(inc_index) {
     basic_add_new_html = '<tr><td><input type="checkbox" required></td>'+
-        '<td><select type="text" class="input form-control approvaltype" id="approvaltype-'+inc_index+'"  name="approvaltype" onchange="GetSelectedTextValue(this)">'+ approval_type_dropdown +'</select></td>'+
-        '<td><input class="form-control description" type="text"  name="description"  id="description-'+inc_index+'" disabled></td>'+
+        '<td><select type="text" class="input form-control approvaltype"  name="approvaltype" onchange="GetSelectedTextValue(this)">'+ approval_type_dropdown +'</select></td>'+
+        '<td><input class="form-control description" type="text"  name="description"  value="'+desc_app_type+'" disabled></td>'+
         '<td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
     table_sort_filter('id_popup_table');
-    var approvaltypeSelect = $("#approvaltype-" + inc_index);
-    GetSelectedTextValue(approvaltypeSelect[0]);
 }
 
 // onclick of valid popup

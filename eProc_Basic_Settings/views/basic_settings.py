@@ -6,7 +6,7 @@ from datetime import datetime
 import time
 import os
 
-import PyPDF2.pdf
+# import PyPDF2.pdf
 from apscheduler.schedulers.background import BackgroundScheduler
 from django.db.models.query_utils import Q
 from django.http import JsonResponse, HttpResponse
@@ -23,6 +23,7 @@ from eProc_Basic.Utilities.functions.json_parser import JsonParser
 from eProc_Basic.Utilities.functions.update_del_ind import update_del_ind, query_update_del_ind
 from eProc_Basic.Utilities.messages import messages
 from eProc_Basic.Utilities.messages.messages import MSG048
+from eProc_Basic.views import remove_duplicates
 from eProc_Basic_Settings.Utilities.basic_settings_specific import *
 from eProc_Catalog.Utilities.catalog_generic import CatalogGenericMethods
 from eProc_Catalog.Utilities.catalog_specific import CatalogManagement
@@ -536,49 +537,57 @@ def data_upload(request):
     try:
         if Table_name == 'Country':
             result['error_message'], result['data'] = upload_csv.csv_preview_data(header_detail, data_set_val)
-            convertion_list = convert_Country_to_dictionary(result['data'])
+            result = remove_duplicates(result['data'])
+            convertion_list = convert_Country_to_dictionary(result)
             valid_data_list, message = get_valid_country_data(convertion_list, 'UPLOAD')
             context = {'valid_data_list': valid_data_list}
             return JsonResponse(context, safe=False)
         if Table_name == 'Currency':
             result['error_message'], result['data'] = upload_csv.csv_preview_data(header_detail, data_set_val)
-            convertion_list = convert_Currency_to_dictionary(result['data'])
+            result = remove_duplicates(result['data'])
+            convertion_list = convert_Currency_to_dictionary(result)
             valid_data_list, message = get_valid_currency_data(convertion_list, 'UPLOAD')
             context = {'valid_data_list': valid_data_list}
             return JsonResponse(context, safe=False)
         if Table_name == 'Languages':
             result['error_message'], result['data'] = upload_csv.csv_preview_data(header_detail, data_set_val)
-            convertion_list = convert_Languages_to_dictionary(result['data'])
+            result = remove_duplicates(result['data'])
+            convertion_list = convert_Languages_to_dictionary(result)
             valid_data_list, message = get_valid_language_data(convertion_list, 'UPLOAD')
             context = {'valid_data_list': valid_data_list}
             return JsonResponse(context, safe=False)
         if Table_name == 'TimeZone':
             result['error_message'], result['data'] = upload_csv.csv_preview_data(header_detail, data_set_val)
-            convertion_list = convert_TimeZone_to_dictionary(result['data'])
+            result = remove_duplicates(result['data'])
+            convertion_list = convert_TimeZone_to_dictionary(result)
             valid_data_list, message = get_valid_timezone_data(convertion_list, 'UPLOAD')
             context = {'valid_data_list': valid_data_list}
             return JsonResponse(context, safe=False)
         if Table_name == 'UnitOfMeasures':
             result['error_message'], result['data'] = upload_csv.csv_preview_data(header_detail, data_set_val)
-            convertion_list = convert_UnitOfMeasures_to_dictionary(result['data'])
+            result = remove_duplicates(result['data'])
+            convertion_list = convert_UnitOfMeasures_to_dictionary(result)
             valid_data_list, message = get_valid_uom_data(convertion_list, 'UPLOAD')
             context = {'valid_data_list': valid_data_list}
             return JsonResponse(context, safe=False)
         if Table_name == 'OrgPGroup':
             result['error_message'], result['data'] = upload_csv.csv_preview_data(header_detail, data_set_val)
-            convertion_list = convert_OrgPGroup_to_dictionary(result['data'])
+            result = remove_duplicates(result['data'])
+            convertion_list = convert_OrgPGroup_to_dictionary(result)
             valid_data_list, message = check_purchasegrp_data(convertion_list, 'UPLOAD')
             context = {'valid_data_list': valid_data_list}
             return JsonResponse(context, safe=False)
         if Table_name == 'OrgPorg':
             result['error_message'], result['data'] = upload_csv.csv_preview_data(header_detail, data_set_val)
-            convertion_list = convert_OrgPorg_to_dictionary(result['data'])
+            result = remove_duplicates(result['data'])
+            convertion_list = convert_OrgPorg_to_dictionary(result)
             valid_data_list, message = check_purchaseorg_data(convertion_list, 'UPLOAD')
             context = {'valid_data_list': valid_data_list}
             return JsonResponse(context, safe=False)
         if Table_name == 'OrgCompanies':
             result['error_message'], result['data'] = upload_csv.csv_preview_data(header_detail, data_set_val)
-            convertion_list = convert_OrgCompanies_to_dictionary(result['data'])
+            result = remove_duplicates(result['data'])
+            convertion_list = convert_OrgCompanies_to_dictionary(result)
             valid_data_list, message = check_company_data(convertion_list, 'UPLOAD')
             context = {'valid_data_list': valid_data_list}
             return JsonResponse(context, safe=False)

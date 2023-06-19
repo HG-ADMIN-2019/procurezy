@@ -162,6 +162,11 @@
     function onclick_display_csv_data() {
         $("#valid_upload").modal('hide');
         $("#id_delete_duplicate").hide()
+        $("#id_check_success_messages").empty();
+        $("#id_check_error_messages").empty();
+        $("#id_check_success_messages").prop("hidden", true);
+        $("#id_check_error_messages").prop("hidden", true);
+        $("#id_check_special_character_messages").prop("hidden", true);
         $("#error_msg_id").css("display", "none")
         $('#id_popup_table').DataTable().destroy();
         formdata = new FormData();
@@ -197,13 +202,14 @@
                             var del_ind = '';
                             $("#id_popup_tbody").empty();
                             $.each(response.valid_data_list, function(i, value) {
-                                del_ind = '<td>' + value[2] + '</td>'
-                                if (value[2] == 1) {
+                                del_ind = '<td>' + value.del_ind + '</td>'
+                                if (value.del_ind == 1) {
                                     del_ind = ' <input type="checkbox" value="' + value.del_ind+ '" checked>'
                                 } else {
                                     del_ind = '<input type="checkbox" value="' + value.del_ind + '" required>'
                                 }
-                                edit_basic_data += '<tr ><td class="class_select_checkbox"><input type="checkbox" required></td><td><input class="form-control" type="text" value="' + value.language_id + '" maxlength="2" onkeypress="return /[a-z]/i.test(event.key)" required></td><td><input type="text" class="form-control" value="' + value.description + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td><td>' + del_ind + '</td></tr>';
+                               edit_basic_data += '<tr ><td class="class_select_checkbox"><input type="checkbox" required></td><td><input class="form-control" type="text" value="' + value.language_id + '" maxlength="2" onkeypress="return /[a-z]/i.test(event.key)" required></td><td><input type="text" class="form-control" value="' + value.description + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td><td>' + del_ind + '</td></tr>';
+
                             });
                             $('#id_popup_tbody').append(edit_basic_data);
                             $("#id_del_ind_checkbox").prop("hidden", false);
@@ -402,7 +408,7 @@
                 $("#id_check_special_character_messages").prop("hidden",false);
                 count = count +1;
             }
-            else if(main_table_low_value.includes(language_dic.language_id)){
+            else if(main_table_low_value.includes((language_dic.language_id)&&(language_dic.del_ind))){
                  $(row).css("border", "#f8d7da");
                  row_color_highlight(row);
                  $("#id_check_error_messages").prop("hidden",false);
@@ -413,7 +419,7 @@
                  $("#id_check_data").prop("hidden", false);
                  count = count +1;
             }
-            else if(language_id_check.includes(language_dic.language_id)){
+            else if(language_id_check.includes((language_dic.language_id)&&(language_dic.del_ind))){
                  $(row).css("border", "#f8d7da");
                  row_color_highlight(row);
                  $("#id_check_error_messages").prop("hidden",false);
@@ -471,37 +477,37 @@
         var common = [];
         var add_attr_unique_list = [];
         var no_duplicate_value = 'Y'
-        $.each(validate_add_attributes, function(index, value) {
-            if ($.inArray(value, add_attr_unique_list) == -1) {
-                add_attr_unique_list.push(value);
-            } else {
-                if ($.inArray(value, common) == -1) {
-                    common.push(value);
-                }
+        $.each(language, function (i, item) {
+            if ((item.language_id.length == 0) || (item.description.length == 0)) { 
+                $('#languageModal').modal('show');
+                error_message = ui_messeges("JMSG002")// Get message details
+                no_duplicate_value = 'N'
+                return [no_duplicate_value,error_message]
+            }
+            if(item.language_id.length<2){
+                $('#languageModal').modal('show');
+                error_message = ui_messeges("JMSG113")// Get message details
+                no_duplicate_value = 'N'
+                return [no_duplicate_value,error_message]
             }
         });
-        if (common.length != 0) {    
-            $('#languageModal').modal('show');
-            display_duplicate_entry(common);  //Function to highlight the rows in popup
-             error_message = ui_messeges("JMSG001")// Get message details
-            no_duplicate_value = 'N'
-            return [no_duplicate_value,error_message]
-        }
-        else{
-            $.each(language, function (i, item) {
-                if ((item.language_id.length == 0) || (item.description.length == 0)) { 
-                    $('#languageModal').modal('show');
-                    error_message = ui_messeges("JMSG002")// Get message details
-                    no_duplicate_value = 'N'
-                    return [no_duplicate_value,error_message]
-                }
-                if(item.language_id.length<2){
-                    $('#languageModal').modal('show');
-                    error_message = ui_messeges("JMSG113")// Get message details
-                    no_duplicate_value = 'N'
-                    return [no_duplicate_value,error_message]
+        if (no_duplicate_value == 'Y') {
+            $.each(validate_add_attributes, function(index, value) {
+                if ($.inArray(value, add_attr_unique_list) == -1) {
+                    add_attr_unique_list.push(value);
+                } else {
+                    if ($.inArray(value, common) == -1) {
+                        common.push(value);
+                    }
                 }
             });
+            if (common.length != 0) {    
+                $('#languageModal').modal('show');
+                display_duplicate_entry(common);  //Function to highlight the rows in popup
+                error_message = ui_messeges("JMSG001")// Get message details
+                no_duplicate_value = 'N'
+                return [no_duplicate_value,error_message]
+            }
         }
         return [no_duplicate_value,error_message]
     }

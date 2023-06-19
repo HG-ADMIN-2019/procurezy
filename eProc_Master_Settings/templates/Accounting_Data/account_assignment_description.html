@@ -585,6 +585,7 @@
                 $("#error_msg_id").css("display", "none")
                 $("#header_select").prop( "hidden", false );
                 GLOBAL_ACTION = button.value
+                $('#id_popup_table').DataTable().destroy();
                 $("#id_popup_tbody").empty();
                 $('#Acc_desc_Modal').modal('show');
                 new_row_data();   // Add a new row in popup
@@ -628,7 +629,7 @@
                 rendered_company_data = response.upload_data_company
                 acc_value_desc_dropdown();
                 $("#error_msg_id").css("display", "none")
-                $('#Acc_desc_Modal').modal('show');
+<!--                $('#Acc_desc_Modal').modal('show');-->
                 $('#id_popup_table').DataTable().destroy();
                 $("#id_popup_tbody").empty();
                 //Reference the Table.
@@ -711,11 +712,11 @@
                         row.find("TD").eq(2).find("select").append(comp_val.acc_ass_dropdwn)
                         row.find("TD").eq(3).find("select").append(comp_val.acc_ass_val_dropdwn)
                     })
-                    i = i + 1;
+                    i++;
                 })
                 $("#id_del_ind_checkbox").prop("hidden", true);
-                table_sort_filter('id_popup_table');
                 $('#Acc_desc_Modal').modal('show');
+                table_sort_filter('id_popup_table');
                 CloseLoaderPopup();
             }
         });

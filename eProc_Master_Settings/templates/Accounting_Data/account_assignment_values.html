@@ -223,7 +223,7 @@
                     }
                 }
                 if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')&& (dateValid == 'Y')   ) {
-                    var add_basic_data = '';
+<!--                    var add_basic_data = '';-->
                     $('#id_save_confirm_popup').modal('hide');
                     data = {'data':aav_data,'table_name':'AccountingData','action':GLOBAL_ACTION}
                     OpenLoaderPopup();
@@ -649,8 +649,8 @@
                 display_button();
                 DatePicker();
                 $("#id_del_ind_checkbox").prop("hidden", true);
-                $('#aav_Modal').modal('show');
                 table_sort_filter('id_popup_table');
+                $('#aav_Modal').modal('show');
                 CloseLoaderPopup();
             }
         });

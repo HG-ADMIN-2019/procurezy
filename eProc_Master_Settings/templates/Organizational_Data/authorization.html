@@ -144,10 +144,16 @@
     var Tablename = uiConstants["CONST_TABLENAME_AUTH"]
     var appname = uiConstants["CONST_APPNAME02"]
     var db_header_data = uiConstants["CONST_HEADER_DATA_AUTH"]
+    var auth_desc = '';
 
     //**************************
     var roles_dropdown = '';
     function dropdown_value(){
+        if(rendered_roles_type_values.length != 0){
+            auth_desc = rendered_roles_type_values[0].field_type_desc; }
+        else {
+            auth_desc = "";
+        }
         roles_dropdown = '';
         $.each(rendered_roles_type_values, function(i, item){
             roles_dropdown += '<option value="' + item.field_type_id + '">' + item.field_type_id +'</option>';
@@ -155,16 +161,13 @@
     }
 
     //*********************
-    function GetSelectedTextValue(roles) {
-        // var selectedText = roles.options[roles.selectedIndex].innerHTML;
-        var selectedValue = roles.value;
-        var selectedId = (roles.id).split('-')[1];
-        if (GLOBAL_ACTION == "roles_upload") {
-            $(".class_del_checkbox").prop("hidden", false);
-        }
-        $.each (rendered_roles_type_values,function(i, item) {
-            if(selectedValue == item.field_type_id) {
-                $('#auth_obj_grp-'+selectedId).val(item.field_type_desc);
+    function GetSelectedTextValue(rowid) {
+        var row = $(rowid);
+        var selectedText = "";
+        var selectedValue = row[0].value;
+        $.each (rendered_roles_type_values, function(i, item){
+            if(selectedValue == item.field_type_id){
+                row[0].parentNode.nextElementSibling.children.description.value = item.field_type_desc;
             }
         });
     }
@@ -215,7 +218,6 @@
                         rendered_auth_data = Response[0];
                         rendered_roles_type_values = Response[2];
                         display_basic_db_data();
-                        dropdown_value()
                         $('#auth_Modal').modal('hide');
                         success_response(Response);  // Display Response data
                         CloseLoaderPopup();

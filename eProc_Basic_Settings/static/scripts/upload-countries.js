@@ -174,7 +174,6 @@ function delete_duplicate() {
         //*************** reading data from the pop-up ***************
         country_name = row.find("TD").eq(2).find('input[type="text"]').val().toUpperCase();
         country_code = row.find("TD").eq(1).find('input[type="text"]').val().toUpperCase();
-        checked_box = row.find("TD").eq(3).find('input[type="checkbox"]').is(':checked')
         if (country_code_check.includes(country_code)) {
             $(row).remove();
         }
@@ -245,7 +244,9 @@ function get_main_table_data_upload() {
         var row = $(this);
         var main_attribute = {};
         main_attribute.country_code = row.find("TD").eq(1).html();
-        main_table_low_value.push(main_attribute.country_code);
+        main_attribute.del_ind = row.find("TD").eq(3).find('input[type="checkbox"]').is(':checked');
+        var compare = main_attribute.country_code + '-'+ main_attribute.del_ind
+        main_table_low_value.push(compare);
     });
     table_sort_filter('display_basic_table');
     return main_table_low_value

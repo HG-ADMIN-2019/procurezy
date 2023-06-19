@@ -127,7 +127,6 @@ function add_popup_row() {
     }
     else{
     new_row_data();  // Add a new row in popup
-    table_sort_filter('id_popup_table');
     }
     $('#delete_data').hide()
 }
@@ -145,7 +144,6 @@ function display_basic_db_data() {
     $('#display_basic_table').DataTable().destroy();
     $('#id_uom_tbody').empty();
     var edit_basic_data = '';
-    // get rendered data
     $.each(rendered_uom_data, function(i, item) {
         edit_basic_data += '<tr ><td class="class_select_checkbox"><input class="checkbox_check" onclick="valueChanged()" type="checkbox" required></td><td>' + item.uom_id + '</td><td>' + item.uom_description + '</td><td>' + item.iso_code_id + '</td></tr>';
     });
@@ -239,7 +237,9 @@ function get_main_table_data_upload() {
         var row = $(this);
         var main_attribute = {};
         main_attribute.uom_id = row.find("TD").eq(1).html();
-        main_table_low_value.push(main_attribute.uom_id);
+        main_attribute.del_ind = row.find("TD").eq(4).find('input[type="checkbox"]').is(':checked');
+        var compare = main_attribute.uom_id + '-'+ main_attribute.del_ind
+        main_table_low_value.push(compare);
     });
     table_sort_filter('display_basic_table');
     return main_table_low_value
@@ -266,8 +266,10 @@ function get_msg_desc_check_data(msg){
      $("#error_msg_id").prop("hidden", false);
      return msg_type.messages_id_desc;
 }
+
 // Function for add a new row data
 function new_row_data() {
     basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><input class="form-control check_special_char" type="text"  title="Minimum length is 1" minlength="1" maxlength="3"  name="uomcode" style="text-transform:uppercase;" required></td><td><input class="form-control check_special_char" type="text" maxlength="100"  name="uomdescription" required></td><td><input class="form-control check_special_char" type="text" title="Minimum length is 1"  minlength="1" maxlength="3"  name="isocodeid"  style="text-transform:uppercase;" required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
+    table_sort_filter('id_popup_table');
 }

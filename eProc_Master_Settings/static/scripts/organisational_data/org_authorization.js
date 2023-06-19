@@ -26,16 +26,13 @@ function add_popup_row() {
     dropdown_value();
     basic_add_new_html = '';
     $("#error_msg_id").css("display", "none")
-    var getid = $(".roles:last").attr("id");
-    var getindex = getid.split("-")[1]
-    var inc_index = Number(getindex)+1
     $('#id_popup_table').DataTable().destroy();
     $(".modal").on("hidden.bs.modal", function () {
         $("#id_error_msg").html("");
     });
     basic_add_new_html = '<tr><td><input type="checkbox" required></td>'+
-        '<td><select type="text" class="input form-control roles" id="roles-'+inc_index+'"  name="roles" onchange="GetSelectedTextValue(this)">'+ roles_dropdown +'</select></td>'+
-        '<td><input class="form-control auth_obj_grp" type="text"  name="auth_obj_grp"  id="auth_obj_grp-'+inc_index+'" disabled></td>'+
+        '<td><select type="text" class="input form-control roles"  name="roles" onchange="GetSelectedTextValue(this)">'+ roles_dropdown +'</select></td>'+
+        '<td><input class="form-control auth_obj_grp" type="text"  name="auth_obj_grp" value="'+auth_desc+'" disabled></td>'+
         '<td hidden>guid</td>'+
         '<td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
@@ -43,7 +40,6 @@ function add_popup_row() {
         $(".class_del_checkbox").prop("hidden", false);
         $("#id_del_ind_checkbox").prop("hidden", false);
     }
-    GetSelectedTextValue($("#roles-" + inc_index)[0]);
     table_sort_filter('id_popup_table');
 }
 
@@ -131,14 +127,12 @@ function read_popup_data() {
 
 function new_row_data(){
     basic_add_new_html = '<tr><td><input type="checkbox" required></td>'+
-    '<td><select type="text" class="input form-control roles" id="roles-1"  name="role" onchange="GetSelectedTextValue(this)">'+ roles_dropdown +'</select></td>'+
-    '<td><input class="form-control auth_obj_grp" type="text"  name="auth_obj_grp"  id="auth_obj_grp-1" disabled></td>'+
+    '<td><select type="text" class="input form-control roles"  name="role" onchange="GetSelectedTextValue(this)">'+ roles_dropdown +'</select></td>'+
+    '<td><input class="form-control auth_obj_grp" type="text"  name="auth_obj_grp" value="'+auth_desc+'"  disabled></td>'+
     '<td hidden>guid</td>'+
     '<td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
     table_sort_filter('id_popup_table');
-    var rolesSelect = $("#roles-1");
-    GetSelectedTextValue(rolesSelect[0]);
 }
 
 // Function to get main table data

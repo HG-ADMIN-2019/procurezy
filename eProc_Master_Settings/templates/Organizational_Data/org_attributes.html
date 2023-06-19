@@ -193,11 +193,17 @@
     var appname = uiConstants["CONST_APPNAME01"]
     var db_header_data = uiConstants["CONST_HEADER_DATA_ORG_ATTR"]
     var attribute_id_dropdown;
+     var desc_attribute = '';
     var attribute_id_dropdown_onload = '';
 
     //********************
     function dropdown_value(){
         attribute_id_dropdown = '';
+        if(rendered_dropdown_values.length != 0){
+            desc_attribute = rendered_dropdown_values[0].field_type_desc; }
+        else {
+            desc_attribute = "";
+        }
         $.each(rendered_dropdown_values, function(i, item){
             attribute_id_dropdown += '<option value="' + item.field_type_id + '">' + item.field_type_id +'</option>';
 
@@ -239,7 +245,6 @@
                     rendered_org_attr_data = Response[0];
                     rendered_dropdown_values = Response[2];
                     display_basic_db_data();
-                    dropdown_value();
                     success_response(Response);  // Display Response data
                     CloseLoaderPopup();
                     }
@@ -287,6 +292,7 @@
                 dataType: "json",
                 success: function(Response) {
                     rendered_org_attr_data = Response[0];
+                    rendered_dropdown_values = Response[2];
                     display_basic_db_data();
                     $('#org_attr_Modal').modal('hide');
                     success_response(Response); // Function call to display response data
@@ -428,37 +434,31 @@
         dropdown_value();
         var basic_add_new_html = '';
         var display_db_data = '';
-        var getid = $(".attribute:last").attr("id");
-        var getindex = getid.split("-")[1];
-        var inc_index = Number(getindex)+1;
+
         $('#id_popup_table').DataTable().destroy();
         $(".modal").on("hidden.bs.modal", function () {
             $("#id_error_msg").html("");
         });
-        basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select type="text" class="input form-control attribute" id="attribute-' + inc_index + '" name="attribute" onchange="GetSelectedTextValue(this)">'+ attribute_id_dropdown +'</select></td><td><input class="form-control attribute_name" type="text" name="attribute_name" id="attribute_name-' + inc_index + '"  disabled></td><td><input type="checkbox" name="range_indicator" required></td><td><input type="checkbox" name="multiple_value" required></td><td><input type="checkbox" name="allow_defaults" required></td><td><input type="checkbox" name="inherit_values" required></td><td><input type="number" name="maxlength"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td><td class="id_del_ind_checkbox1" hidden><input type="checkbox" name="del_ind_flag" required></td></tr>';
+        basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select type="text" class="input form-control attribute"  name="attribute" onchange="GetSelectedTextValue(this)">'+ attribute_id_dropdown +'</select></td><td><input class="form-control attribute_name" type="text" name="attribute_name" value="'+desc_attribute+'"  disabled></td><td><input type="checkbox" name="range_indicator" required></td><td><input type="checkbox" name="multiple_value" required></td><td><input type="checkbox" name="allow_defaults" required></td><td><input type="checkbox" name="inherit_values" required></td><td><input type="number" name="maxlength"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td><td class="id_del_ind_checkbox1" hidden><input type="checkbox" name="del_ind_flag" required></td></tr>';
         $('#id_popup_tbody').append(basic_add_new_html);
         if (GLOBAL_ACTION == "org_attr_upload") {
             $(".class_del_checkbox").prop("hidden", false);
         }
-        GetSelectedTextValue($("#attribute-" + inc_index)[0]);
+<!--        GetSelectedTextValue($("#attribute-" + inc_index)[0]);-->
         table_sort_filter_popup('id_popup_table');
     }
 
 
     //************************************
     function GetSelectedTextValue(attribute) {
-        var selectedText = '';
-        var selectedValue = attribute.value;
-        var selectedId = (attribute.id).split('-')[1];
-        if (selectedValue == '') {
-            return;
+        var row = $(rowid);
+         var selectedText = "";
+      var selectedValue = row[0].value;
+         $.each (rendered_dropdown_values, function(i, item){
+        if(selectedValue == item.field_type_id){
+          row[0].parentNode.nextElementSibling.children.description.value = item.field_type_desc;
         }
-        $.each(rendered_dropdown_values, function(i, item){
-            if(selectedValue == item.field_type_id){
-                selectedText = item.field_type_desc;
-                $('#attribute_name-'+selectedId).val(selectedText);
-            }
-        });
+      });
     }
 
  // validating the  popup table for duplicate entries

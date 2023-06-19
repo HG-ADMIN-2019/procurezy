@@ -1,32 +1,28 @@
-$(document).ready(function(){
-    $("#supplier_form_reset").click(function(){
-        $('#configform')[0].reset();
-        $('#myModal').modal('hide');
-    });
-//    set_value();
-    get_values();
-    $('#nav_menu_items').remove();
-    $("body").css("padding-top", "4rem");
-});
 
 // Function to make user basic data field editable
 function edit_user_basic_info() {
     $('#user_basic_update_success').hide();
     $(".hg_edit_display_mode").prop("disabled", false);
-    $("#id_language_id").append(language_opt)
-    $("#id_currency_id").append(currency_opt)
-    $("#id_time_zone").append(timezone_opt)
-    $("#decimal_notation").append(decimal_opt)
-    $("#date_format").append(date_format_opt)
-    document.getElementById("edit_user_info_btn").style.display = "none"
-    document.getElementById("save_cancel_user_info_btn").style.display = "block"
+    if(GLOBAL_ACTION != 'CREATE'){
+        $('#username').prop("disabled", true);
+        $('#employee_id').prop("disabled", true);
+        $('#user_type').prop("disabled", true);
+        $('#email').prop("disabled", true);
+        $('#login_attempts').prop("disabled", true);
+        $("#cancel_button").prop("hidden", false);
+        $("#save_user_info_btn").prop("hidden", false);
+    }
+    document.getElementById("edit_user_info_btn").style.display = "none";
+    document.getElementById("save_user_info_btn").style.display = "block";
+    document.getElementById("cancel_button").style.display = "block";
 }
 
 // Onlick cancel edit user-basic data 
 function cancel_user_basic_info() {
     $(".hg_edit_display_mode").prop("disabled", true);
     document.getElementById("edit_user_info_btn").style.display = "block"
-    document.getElementById("save_cancel_user_info_btn").style.display = "none"
+    document.getElementById("save_user_info_btn").style.display = "none";
+    document.getElementById("cancel_button").style.display = "none";
 }
 
 function set_value(){
@@ -40,50 +36,7 @@ function get_values(){
     $('#id_time_zone').val(localStorage.getItem("time_zone"));
 }
 
-    // Funtion to save basic detail data
-    function save_user_basic_info() {
-     var name1_val= $('#first_name').val();
-     var phone_num_val = $('#phone_num').val();
-     var email_val = $('#email').val();
-     var err_flag;
-     set_value();
-     OpenLoaderPopup();
-      is_save_form_valid = save_user_form_validation()
-        if (is_save_form_valid) {
-            var user_data_dict = {}
 
-        user_data_dict.username = $('#username').val();
-        user_data_dict.first_name = $('#first_name').val();
-        user_data_dict.last_name= $('#last_name').val();
-        user_data_dict.employee_id= $('#employee_id').val();
-        user_data_dict.user_type= $('#user_type').val();
-        user_data_dict.language_id= $('#id_language_id').val();
-        user_data_dict.currency_id=$('#id_currency_id').val();
-        user_data_dict.time_zone= $('#id_time_zone').val();
-        user_data_dict.email= $('#email').val();
-        user_data_dict.phone_num= $('#phone_num').val();
-        user_data_dict.date_format= $('#date_format').val();
-        user_data_dict.decimal_notation= $('#decimal_notation').val();
-        user_data_dict.login_attempts= $('#login_attempts').val();
-        user_data_dict.super_user= $('#super_user').prop('checked');
-        user_data_dict.user_locke= $('#user_locked').prop('checked');
-        user_data_dict.pwd_locked= $('#pwd_locked').prop('checked');
-
-        ajax_update_user_basic_data(user_data_dict)
-
-        document.getElementById('user_basic_update_success').innerHTML = "Saved Successfully";
-          $('#save_error_div').hide()
-        $('#user_basic_update_success').show();
-        $('html, body').animate({ scrollTop: 0 }, 'slow');
-        cancel_user_basic_info();
-        CloseLoaderPopup();
-        }
-        else{
-            $('#language_id').val(localStorage.getItem("language_id"));
-            get_values();
-        }
-
-    }
 // Validation function
 function save_user_form_validation(){
    var is_valid = true;
@@ -94,15 +47,15 @@ function save_user_form_validation(){
         var temp = document.getElementsByClassName('mandatory_fields');
         for (var i = 0; i<temp.length; i++) {
             if(temp[i].nodeName == "SELECT"){
-                if(temp[i].value == ''){
+                if((temp[i].value == '') || (temp[i].value == null)){
                     err_text1 = temp[i].parentNode.children[0].innerHTML;
-                    $('#temp[i].nextElementSibling.id').prop('hidden', false);
+                    var display_id = temp[i].nextElementSibling.id;
+                    $('#'+display_id).prop('hidden', false);
                     $('#temp[i].nextElementSibling.id').html("required");
                     document.getElementById(temp[i].nextElementSibling.id).innerHTML = err_text1 + " required";
                     is_valid = false;
                 }
                 else{ $('#temp[i].nextElementSibling.id').prop('hidden', true);
-                    $(".error_message").prop("hidden", true);
                 }
             }
             else{
@@ -111,6 +64,47 @@ function save_user_form_validation(){
                     $(".error_message").prop("hidden", false);
                     temp[i].nextElementSibling.innerHTML = err_text + " required";
                    is_valid = false;
+                }
+                 else if(temp[i].value.length < 3){
+                    var err_text = temp[i].parentNode.children[0].innerHTML;
+                    $(".error_message").prop("hidden", false);
+                    var display_id = temp[i].nextElementSibling.id;
+                    $('#'+display_id).prop('hidden', false);
+                    document.getElementById(display_id).style.display = "block";
+                    temp[i].nextElementSibling.innerHTML = "Please enter min 3 chars for "+ err_text;
+                    $('#'+temp[i].id).prop("disabled", false);
+                   is_valid = false;
+                }
+                if(temp[i].id == 'email_id'){
+                    var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+                     if (!(temp[i].value).match(mailformat)) {
+                            valid_data = false
+                             var msg = "JMSG002";
+                             var msg_type ;
+                             msg_type = message_config_details(msg);
+                             var display1 = msg_type.messages_id_desc;
+                             $(".error_message").prop("hidden", false);
+                            var display_id = temp[i].nextElementSibling.id;
+                            $('#'+display_id).prop('hidden', false);
+                            document.getElementById(display_id).style.display = "block";
+                            temp[i].nextElementSibling.innerHTML = display1 + " for Email Id";
+                           is_valid = false;
+                     }
+                }
+                if(temp[i].id == 'phone_num'){
+                     if (temp[i].value.length != 10) {
+                            valid_data = false
+                             var msg = "JMSG002";
+                             var msg_type ;
+                             msg_type = message_config_details(msg);
+                             var display1 = msg_type.messages_id_desc;
+                             $(".error_message").prop("hidden", false);
+                            var display_id = temp[i].nextElementSibling.id;
+                            $('#'+display_id).prop('hidden', false);
+                            document.getElementById(display_id).style.display = "block";
+                            temp[i].nextElementSibling.innerHTML = display1 + " for Mobile Number";
+                           is_valid = false;
+                     }
                 }
             }
         }

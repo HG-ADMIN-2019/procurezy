@@ -203,9 +203,14 @@
         $.each(render_language_data, function(i, item){
             language_id_dropdown += '<option value="' + item.language_id + '">' + item.description + '</option>';
         })
-
+    var desc_prod_cat = '';
     //Dropdown function
     function unspcdesc_dropdown(){
+        if(rendered_UNSPC_data.length != 0){
+            desc_prod_cat = rendered_UNSPC_data[0].prod_cat_desc; }
+        else {
+            desc_prod_cat = "";
+        }
         prod_cat_id_dropdown = '';
         $.each(rendered_UNSPC_data, function(i, item){
             prod_cat_id_dropdown += '<option value="' + item.prod_cat_id + '">' + item.prod_cat_id + '</option>';
@@ -289,7 +294,7 @@
                                     }
                                     language_id_list = language + language_list
                                 });
-                                edit_basic_data += '<tr ><td><input type="checkbox" required></td><td><select type="text" class="input form-control prodid" id="prodid-1"  name="prodid" onchange="GetSelectedTextValue(this)">value ="' + value.prod_cat_id + '"'+prod_cat_id_list+'</select></td><td><select class="form-control" type="text">value ="' + value.language_id + '"'+language_id_list+'</select></td><td><input class="form-control description" type="text"  name="description"  id="description-1" value ="' + value.description + '" maxlength="200" onkeypress="return /[a-z ]/i.test(event.key)" required></td><td hidden></td><td>'+ del_ind +'</td></tr>';
+                                edit_basic_data += '<tr ><td><input type="checkbox" required></td><td><select type="text" class="input form-control prodid"  name="prodid" onchange="GetSelectedTextValue(this)">value ="' + value.prod_cat_id + '"'+prod_cat_id_list+'</select></td><td><select class="form-control" type="text">value ="' + value.language_id + '"'+language_id_list+'</select></td><td><input class="form-control description" type="text"  name="description"   value ="' + value.description + '" maxlength="200" onkeypress="return /[a-z ]/i.test(event.key)" required></td><td hidden></td><td>'+ del_ind +'</td></tr>';
                             });
                             $('#id_popup_table').append(edit_basic_data);
                             var i =0;
@@ -354,8 +359,8 @@
                 }
             }
             if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
-                var add_basic_data = '';
-                var cusprodcatdesc_data_array =  cusprodcatdesc_data;
+<!--                var add_basic_data = '';-->
+<!--                var cusprodcatdesc_data_array =  cusprodcatdesc_data;-->
                 $('#id_save_confirm_popup').modal('hide');
                 data = {'data':cusprodcatdesc_data,'table_name':'UnspscCategoriesCustDesc','action':GLOBAL_ACTION}
                 OpenLoaderPopup();
@@ -401,12 +406,11 @@
                 $('#id_popup_table').DataTable().destroy();
                 $("#id_popup_tbody").empty();
                 $('#custproddescModal').modal('show');
-                new_row_data(inc_index);   // Add a new row in popup
+                new_row_data();   // Add a new row in popup
                 $("#id_del_ind_checkbox").prop("hidden", true);
                 document.getElementById('delete_data').style.visibility='hidden';
                 document.getElementById("id_del_add_button").style.display = "block";
                 CloseLoaderPopup();
-                GetSelectedTextValue($("#prodid-" + inc_index)[0]);
             }
         });
     }
@@ -567,24 +571,19 @@
         $("#error_msg_id").css("display", "none")
         basic_add_new_html = '';
         var display_db_data = '';
-         var getid = $(".prodid:last").attr("id");
-        var getindex = getid.split("-")[1]
-        var inc_index = Number(getindex)+1
         $('#id_popup_table').DataTable().destroy();
         $(".modal").on("hidden.bs.modal", function () {
             $("#id_error_msg").html(" ");
         });
         if (GLOBAL_ACTION == "cusprodcatdesc_upload") {
-            basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select type="text" class="input form-control prodid" id="prodid-'+inc_index+'"  name="prodid" onchange="GetSelectedTextValue(this)">'+prod_cat_id_dropdown+'</select></td><td><select class="form-control">'+language_id_dropdown+'</select></td><td><input class="form-control description" type="text"  name="description"  id="description-'+inc_index+'"></td><td hidden><guid></td><td class="class_del_checkbox"><input type="checkbox" required></td></tr>';
+            basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select type="text" class="input form-control prodid"  name="prodid" onchange="GetSelectedTextValue(this)">'+prod_cat_id_dropdown+'</select></td><td><select class="form-control">'+language_id_dropdown+'</select></td><td><input class="form-control description" type="text"  name="description" value="'+desc_prod_cat+'" ></td><td hidden><guid></td><td class="class_del_checkbox"><input type="checkbox" required></td></tr>';
             $('#id_popup_tbody').append(basic_add_new_html);
             $(".class_del_checkbox").prop("hidden", false);
             $("#id_del_ind_checkbox").prop("hidden", false);
             table_sort_filter('id_popup_table');
-            var CustprodSelect = $("#prodid-" + inc_index);
-            GetSelectedTextValue(CustprodSelect[0]);
         }
         else {
-              new_row_data(inc_index);   // Add a new row in popup
+              new_row_data();   // Add a new row in popup
               table_sort_filter('id_popup_table');
         }
          $('#delete_data').hide()
@@ -672,10 +671,10 @@ function get_main_table_data_upload() {
     //Read popup table data
     function read_popup_data() {
         $('#id_popup_table').DataTable().destroy();
+        var cusprodcatdesc_data = new Array();
         var desc='';
         validate_add_attributes = [];
         duplicate_entry = [];
-        var cusprodcatdesc_data = new Array();
         $("#id_popup_table TBODY TR").each(function() {
             var row = $(this);
             cusprodcatdesc = {};
@@ -958,6 +957,7 @@ function onclick_copy_update_button(data){
             render_language_data = response.upload_language
             unspcdesc_dropdown()
             $("#error_msg_id").css("display", "none")
+            $('#id_popup_table').DataTable().destroy();
             $("#id_popup_tbody").empty();
             //Reference the Table.
             var res = get_all_checkboxes(); // Function to get all the checkboxes
@@ -1060,24 +1060,23 @@ function onclick_copy_update_button(data){
         if (!prodid || prodid.options.length === 0) {
             return;
         }
-        var selectedText = prodid.options[prodid.selectedIndex].innerHTML;
-        var selectedValue = prodid.value;
-        var selectedId = (prodid.id).split('-')[1];
-        $.each(rendered_UNSPC_data, function(i, item){
-            if(selectedValue == item.prod_cat_id){
-                $('#description-'+selectedId).val(item.prod_cat_desc);
-            }
+        var row = $(prodid);
+        var selectedText = "";
+        var selectedValue = row[0].value;
+        $.each (rendered_UNSPC_data, function(i, item){
+        if(selectedValue == item.prod_cat_id){
+        row[0].parentNode.nextElementSibling.nextElementSibling.children.description.value = item.prod_cat_desc;
+        }
         });
     }
 
 
     // Function for add a new row data
-    function new_row_data(inc_index) {
-        basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select type="text" class="input form-control prodid" id="prodid-'+inc_index+'"  name="prodid" onchange="GetSelectedTextValue(this)">'+prod_cat_id_dropdown+'</select></td><td><select class="form-control">'+language_id_dropdown+'</select></td><td><input class="form-control description" type="text"  name="description"  id="description-'+inc_index+'"></td><td hidden><guid></td><td hidden>< del_ind></td></tr>';
+    function new_row_data() {
+        basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select type="text" class="input form-control prodid"   name="prodid" onchange="GetSelectedTextValue(this)">'+prod_cat_id_dropdown+'</select></td><td><select class="form-control">'+language_id_dropdown+'</select></td><td><input class="form-control description" type="text"  name="description" value="'+desc_prod_cat+'"></td><td hidden><guid></td><td hidden>< del_ind></td></tr>';
         $('#id_popup_tbody').append(basic_add_new_html);
         table_sort_filter('id_popup_table');
         var prodidSelect = $("#prodid-1");
-        GetSelectedTextValue(prodidSelect[0]);
     }
 
     // Function to get main table data
