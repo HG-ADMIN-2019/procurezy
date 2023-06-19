@@ -1416,12 +1416,22 @@ function update_porg_mapping(porg_mapping_details){
     var cmp_modify = ''
     var add_company_code_attr = ''
     var add_company_code_attr
+    var default_cocode_drop_down = ''
+    var cocode_drop_down = ''
     $('#company_id_body').empty();
     if(GLOBAL_ON_DOUBLE_CLICK_NODE_TYPE == 'PORG'){
         if (porg_mapping_details.length > 0){
             $.each(porg_mapping_details, function (i, item) {
-                cocode_drop_down_val = '<option value="' + item.company_id + '" >' + item.company_id + '</option>';
-                porg_cocode_values = '<select class="form-control" disabled>' + cocode_drop_down_val + '</select>'
+                $.each(org_comp_dropdown_list, function (i, org_comp) {
+                    if(org_comp == item.company_id){
+                        default_cocode_drop_down = '<option value="' + org_comp + '" >' + org_comp + '</option>';
+                    }
+                    else{
+                        cocode_drop_down += '<option value="' + org_comp + '" >' + org_comp + '</option>';
+                    }
+                })
+                cocode_drop_down = default_cocode_drop_down + cocode_drop_down
+                porg_cocode_values = '<select class="form-control">' + cocode_drop_down + '</select>'
                 cmp_modify = '<a onclick="clone_code_table_row();" class="org-table-action-icon" title="Add new row"><i class="fa fa-plus text-primary"></i></a>  <a onclick="remove_company_Row(this)" class="org-table-action-icon" title="Delete Row"><i class="fa fa-trash text-primary"></i></a>';
                 add_company_code_attr += '<tr id="extend_attr_tr"><td><input type="text" class="form-control" onkeypress="return event.charCode >= 48" min="0" name="from" value="' + item.porg_id + '" required disabled></td><td>' + porg_cocode_values + '</td><td> ' + cmp_modify + ' </td></tr>';
             });
