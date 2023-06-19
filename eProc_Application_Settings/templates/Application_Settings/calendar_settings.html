@@ -173,6 +173,16 @@
     var wday_array = [];
     var country_dropdwn = [];
 
+    $(document).ready(function() {
+    $('.table-responsive .dropdown').on('shown.bs.dropdown', function () {
+          console.log($('#table-responsive-cliente').height() + 500)
+          $("#table-responsive-cliente").css("height",$('#table-responsive-cliente').height() + 500 );
+    })
+
+    $('.table-responsive .dropdown').on('hide.bs.dropdown', function () {
+           $("#table-responsive-cliente").css("height","auto");
+    })
+})
     //******************************
     function calendar_drpdown(){
         $.each(rendered_calendar_data, function (i, item) {
@@ -234,7 +244,7 @@
         $("#id_popup_tbody").empty();
         //Reference the Table.
         var res = get_all_checkboxes(); // Function to get all the checkboxes
-        var $chkbox_all = $('td input[type="checkbox"]', res);
+        var $chkbox_all = $('td input[class="checkbox_check"]', res);
         //Reference the CheckBoxes in Table.
         var edit_basic_data = "";
         var guid = '';
@@ -252,15 +262,15 @@
                     unique_input = '<input class="form-control" type="text" value="' + row.cells[1].innerHTML + '" name="calender_id"  maxlength="10" style="text-transform:uppercase" disabled>'
                     cntry_name = row.cells[2].innerHTML;
                     Desc_inpt = '<input value="' + row.cells[3].innerHTML + '"  class="form-control check_special_char" type="text" name="description">'
-                    for (i = 0; i < render_country_data.length; i++) {
-                    if (cntry_name == render_country_data[i].country_name)
-                        country_code = render_country_data[i].country_code;
+                    for (var j = 0; j < render_country_data.length; j++) {
+                    if (cntry_name == render_country_data[j].country_name)
+                        country_code = render_country_data[j].country_code;
                     }
                     edit_basic_data += 
                     '<tr>'+
                         '<td hidden><input type="checkbox" required></td>'+
                         '<td><input class="form-control" type="text" value="' + row.cells[1].innerHTML + '" name="calender_id"  maxlength="10" style="text-transform:uppercase" disabled></td>'+
-                        '<td><select id="country"  class="input form-control" type="text" name="country" disabled>'+country_dropdwn+'</select></td>'+
+                        '<td><select id="country"  class="input datatable-scroll-wrap " type="text" name="country" disabled>'+country_dropdwn+'</select></td>'+
                         '<td><input value="' + row.cells[3].innerHTML + '"  class="form-control check_special_char" type="text" name="description"></td>'+
                         '<td><input value="'+row.cells[4].innerHTML+'" class="form-control yearPicker" type="text" maxlength="4"  name="year"></td>'+
                         '<td> <select id="working_days"  class="form-control multiple_select working_days" type="text" name="working_days"  multiple  title="Select.." >'+workingdays_dropdown+'</select> </td>'+
@@ -361,7 +371,7 @@
         '<td><select id="country" class="input form-control" type="text" name="country">' + country_dropdwn + '</select></td>'+
         '<td> <input class="form-control check_special_char" type="text" name="description"> </td>'+
         '<td> <input class="form-control yearPicker" type="text" maxlength="4"  name="year" style="width:150px"> </td>'+
-        '<td><div style="z-index:2;position:relative;"> <select type="text" class="input form-control multiple_select" type="text" name="working_days" title="Select.." multiple  data-selected-text-format="count" data-actions-box="true">'+
+        '<td><div class="table-responsive" id="table-responsive-cliente"> <select type="text" class="input table-striped table-hover multiple_select" type="text" name="working_days" title="Select.." multiple  data-selected-text-format="count" data-actions-box="true">'+
         '<option value="1">Sunday</option><option value="2">Monday</option><option value="3">Tuesday</option><option value="4">Wednesday</option><option value="5">Thursday</option><option value="6">Friday</option><option value="7">Saturday</option></select></div>'+
         '</td>'+
         '<td class="class_del_checkbox" hidden> <input type="checkbox"> </td>'+
