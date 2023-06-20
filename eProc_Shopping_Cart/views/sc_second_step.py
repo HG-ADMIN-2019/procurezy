@@ -28,6 +28,7 @@ from eProc_Doc_Search_and_Display.Utilities.search_display_specific import get_o
 from eProc_Emails.Utilities.email_notif_generic import appr_notify, send_po_attachment_email
 from eProc_Price_Calculator.Utilities.price_calculator_generic import calculate_item_total_value
 # from eProc_Purchase_Order.Utilities.purchase_order_generic import CreatePurchaseOrder
+from eProc_Purchase_Order.Utilities.purchase_order_generic import CreatePurchaseOrder
 from eProc_Ship_To_Bill_To_Address.Utilites.ship_to_bill_to_generic import ShipToBillToAddress, \
     get_shipping_address_detail
 from eProc_Shopping_Cart.Shopping_Cart_Forms.call_off_forms.limit_form import UpdateLimitItem

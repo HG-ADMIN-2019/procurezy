@@ -780,6 +780,55 @@ class SapConnector(models.Model):
         db_table = 'MAD_SAP_CONNECTOR'
 
 
+class SourcingRule(models.Model):
+    sourcing_rule_guid = models.CharField(db_column='SOURCING_RULE_GUID', primary_key=True, max_length=32,
+                                          null=False, default=None)
+    prod_cat_id_from = models.CharField(db_column='PROD_CAT_ID_FROM', max_length=20, null=False)
+    prod_cat_id_to = models.CharField(db_column='PROD_CAT_ID_TO', max_length=20, null=False)
+    sourcing_flag = models.BooleanField(default=False, null=False, db_column='SOURCING_FLAG')
+    call_off = models.CharField(db_column='CALL_OFF', max_length=15, null=True)
+    sourcing_rule_source_system = models.CharField(db_column='SOURCING_RULE_SOURCE_SYSTEM',
+                                                   max_length=20)
+    sourcing_rule_created_by = models.CharField(db_column='SOURCING_RULE_CREATED_BY',
+                                                max_length=30, null=True)
+    sourcing_rule_created_at = models.DateTimeField(db_column='SOURCING_RULE_CREATED_AT',
+                                                    max_length=50, null=True)
+    sourcing_rule_changed_by = models.CharField(db_column='SOURCING_RULE_CHANGED_BY',
+                                                max_length=30, null=True)
+    sourcing_rule_changed_at = models.DateTimeField(db_column='SOURCING_RULE_CHANGED_AT',
+                                                    max_length=50, null=True)
+    del_ind = models.BooleanField(default=False, null=False)
+    client = models.ForeignKey('eProc_Configuration.OrgClients', on_delete=models.PROTECT, null=False)
+
+    class Meta:
+        managed = True
+        db_table = 'MAD_SOURCING_RULE'
+
+
+class SourcingMapping(models.Model):
+    sourcing_mapping_guid = models.CharField(db_column='SOURCING_MAPPING_GUID', primary_key=True, max_length=32,
+                                             null=False, default=None)
+    prod_cat_id = models.CharField(db_column='PROD_CAT_ID', max_length=20, null=False)
+    product_id = models.CharField(db_column="PRODUCT_ID", max_length=16, null=True)
+    company_id = models.CharField(db_column='COMPANY_ID', max_length=8, null=False)
+    sourcing_mapping_source_system = models.CharField(db_column='SOURCING_MAPPING_SOURCE_SYSTEM',
+                                                      max_length=20)
+    sourcing_mapping_created_by = models.CharField(db_column='SOURCING_MAPPING_CREATED_BY',
+                                                   max_length=30, null=True)
+    sourcing_mapping_created_at = models.DateTimeField(db_column='SOURCING_MAPPING_CREATED_AT',
+                                                       max_length=50, null=True)
+    sourcing_mapping_changed_by = models.CharField(db_column='SOURCING_MAPPING_CHANGED_BY',
+                                                   max_length=30, null=True)
+    sourcing_mapping_changed_at = models.DateTimeField(db_column='SOURCING_MAPPING_CHANGED_AT',
+                                                       max_length=50, null=True)
+    del_ind = models.BooleanField(default=False, null=False)
+    client = models.ForeignKey('eProc_Configuration.OrgClients', on_delete=models.PROTECT, null=False)
+
+    class Meta:
+        managed = True
+        db_table = 'MAD_SOURCING_MAPPING'
+
+
 # Model for system settings new table
 class SystemSettingsConfig(models.Model):
     system_settings_config_guid = models.CharField(primary_key=True, db_column='SYSTEM_SETTINGS_CONFIG_GUID',
