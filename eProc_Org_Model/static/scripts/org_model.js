@@ -601,8 +601,9 @@ function create_main_table(attr_level_detail) {
             document.getElementById('ext_porg_id').style.display = 'none';
         }
         else {
+            porg_id = $("#select_porg_id").val()
             if (!(ext_attr_html)) {
-                porg_id = $("#select_porg_id").val()
+
                 add_ext_attr = '<tr id="extend_attr_tr"><td><input type="number" class="form-control" name="from" required></td><td><input type="number" class="form-control" name="to" required></td><td> ' + cocode_values + ' </td><td><input disabled type="checkbox" name="inherit" value="inherit"></td><td><a onclick="clone_ext_table_row()" title="Add new row"><i class="fa fa-plus text-primary"></i></a> </td></tr>';
                 ext_add_new_line = '<tr id="extend_attr_tr"><td><input type="number" class="form-control" name="from" required></td><td><input type="number" class="form-control" name="to" required></td><td> ' + cocode_values + ' </td><td><input disabled type="checkbox" name="inherit" value="inherit"></td><td><a onclick="clone_ext_table_row()" title="Add new row"><i class="fa fa-plus text-primary"></i></a> <a onclick="remove_ext_Row(this)" id="ext_new" title="Delete row"><i class="fa fa-trash text-primary"></i></a></td></tr>';
                 $('#extend_attr_body').append(add_ext_attr);

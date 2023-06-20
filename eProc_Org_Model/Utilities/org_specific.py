@@ -206,12 +206,12 @@ def update_node_details(json_data):
                                                         {'description': json_data['description']})
         else:
             if json_data['porg_id']:
-                DjangoQueries.django_update_or_create_query(OrgPorg,
-                                                            {'client': global_variables.GLOBAL_CLIENT,
-                                                             'porg_id': json_data['porg_id']},
-                                                            {'description': json_data['description'],
-                                                             'object_id': OrgModel.objects.get(
-                                                                 object_id=json_data['object_id'])})
+                DjangoQueries.django_update_query(OrgPorg,
+                                                  {'client': global_variables.GLOBAL_CLIENT,
+                                                   'porg_id': json_data['porg_id']},
+                                                  {'description': json_data['description'],
+                                                   'object_id': OrgModel.objects.get(
+                                                       object_id=json_data['object_id'])})
     if json_data['node_type'] == CONST_PGROUP:
         if DjangoQueries.django_existence_check(OrgPGroup, {'client': global_variables.GLOBAL_CLIENT,
                                                             'object_id': json_data['object_id']}):
@@ -228,14 +228,14 @@ def update_node_details(json_data):
                                                             {'description': json_data['description'],
                                                              'object_id': OrgModel.objects.get(
                                                                  object_id=json_data['object_id']),
-                                                             'porg_id':porg_id})
+                                                             'porg_id': porg_id})
 
 
 def get_porg_id_by_pgrp(pgrp_object_id):
     """
 
     """
-    porg_object_id =None
+    porg_object_id = None
     porg_id = None
     pgrp_parent_guid = None
     if django_query_instance.django_existence_check(OrgModel,
