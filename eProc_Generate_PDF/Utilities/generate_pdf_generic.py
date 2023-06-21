@@ -3,7 +3,7 @@ import uuid
 from datetime import date
 from io import BytesIO
 from django.template.loader import get_template
-import xhtml2pdf.pisa as pisa
+# import xhtml2pdf.pisa as pisa
 from django.conf import settings
 
 from eProc_Basic.Utilities.constants.constants import CONST_DOC_TYPE_PO
