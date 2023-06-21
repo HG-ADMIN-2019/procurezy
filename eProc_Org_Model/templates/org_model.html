@@ -1361,7 +1361,7 @@ function get_node_details(object_id){
                     // update basic detail if pgrp details exists in OrgPGroup db table
                     if(response.basic_node_details.length != 0){
                         $("#Pgrp_desc").val(response.basic_node_details[0].description)
-                        $("#pgrp_porg_id").val(response.basic_node_details[0].porg_id)
+                        $("#pgrp_porg_id").val(response.basic_node.porg_id)
                         GLOBAL_NODE_DETAIL = response.basic_node_details
                         $.each(response.basic_node_details, function (i, item) {
                             if (item.object_id){

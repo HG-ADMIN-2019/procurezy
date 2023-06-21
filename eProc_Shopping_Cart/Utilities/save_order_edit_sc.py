@@ -11,6 +11,7 @@ from eProc_Basic.Utilities.messages.messages import MSG161, MSG162, MSG163, MSG1
 from eProc_Calendar_Settings.Utilities.calender_settings_generic import calculate_delivery_date, \
     calculate_delivery_date_base_on_lead_time, get_list_of_holidays
 from eProc_Chat.models import ChatContent
+from eProc_Configuration.models.application_data import SourcingMapping, SourcingRule
 from eProc_Configuration.models.development_data import *
 from eProc_Configuration.models.master_data import OrgAddress, AccountingDataDesc, DetermineGLAccount, AccountingData, \
     OrgAddressMap, OrgPorgMapping
@@ -445,6 +446,7 @@ class SaveShoppingCart:
                                                                                       'item_id': int_prod_id,
                                                                                       'del_ind': False},
                                                                                   'catalog_id')[0]
+            # source_relevant_ind = get_sourcing_detail(self.company_code, unspsc, cart_item_details.call_off,int_prod_id)
             sc_item_save_data = {
                 'guid': guid,
                 'header_guid': django_query_instance.django_get_query(ScHeader,
@@ -510,6 +512,7 @@ class SaveShoppingCart:
                 'document_type': CONST_BUS_TYPE_SC,
                 'order_date': order_date,
                 'offcatalog': offcatalog,
+                # 'source_relevant_ind':source_relevant_ind,
                 # 'product_guid': product_guid,
                 'supplier_username': supplier_name,
                 'supp_type': supplier_type,
@@ -1853,3 +1856,24 @@ def check_sc_second_step_shopping_cart(sc_check_instance, object_id_list, defaul
 
     shopping_cart_errors = sc_check_instance.get_shopping_cart_errors()
     return cart_items, shopping_cart_errors
+
+
+def get_sourcing_detail(company_id, prod_cat_id, call_off, product_id):
+    """
+
+    """
+    if django_query_instance.django_existence_check(SourcingMapping,
+                                                    {'product_id': product_id,
+                                                     'prod_cat_id': prod_cat_id,
+                                                     'company_id': company_id,
+                                                     'client': global_variables.GLOBAL_CLIENT,
+                                                     'del_ind': False}):
+        return True
+    elif django_query_instance.django_existence_check(SourcingRule,
+                                                      {'call_off': call_off,
+                                                       'prod_cat_id_from__gte': prod_cat_id,
+                                                       'prod_cat_id_to__lte': prod_cat_id,
+                                                       'client': global_variables.GLOBAL_CLIENT,
+                                                       'del_ind': False}):
+        return True
+    return False

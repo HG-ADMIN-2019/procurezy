@@ -34,12 +34,14 @@ def get_org_model_attr_detail(object_id):
         node_type = basic_data.node_type
         object_id = basic_data.object_id
         basic_node_details = get_basic_node_details(node_type, object_id)
+        porg_id = get_porg_id_by_pgrp(object_id)
         attr_detail = get_attr_values_company_Code_list(global_variables.GLOBAL_CLIENT, object_id)
         porg_mapping_details = get_porg_mapping(object_id)
         basic_node = {'node_type': node_type,
                       'node_type_desc': node_type_desc,
                       'object_id': object_id,
-                      'node_desc': basic_data.name
+                      'node_desc': basic_data.name,
+                      'porg_id':porg_id
                       }
         basic_org_details = {'basic_node': basic_node,
                              'basic_node_details': basic_node_details,
@@ -53,7 +55,7 @@ def get_basic_node_details(node_type, object_id):
     """
 
     """
-    sel = {'client': global_variables.GLOBAL_CLIENT}
+    sel = {'client': global_variables.GLOBAL_CLIENT,'del_ind':False}
     obj = ''
     node_det = {}
     if node_type == CONST_RNODE or node_type == CONST_NODE:
@@ -89,11 +91,6 @@ def get_basic_node_details(node_type, object_id):
                                                          'description',
                                                          'object_id',
                                                          'porg_id'))
-        if node_det:
-            for node in node_det:
-                if not node['porg_id']:
-                    node['porg_id'] = get_porg_id_by_pgrp(node['object_id'])
-
         return node_det
     elif node_type == CONST_USER:
         obj = UserData
