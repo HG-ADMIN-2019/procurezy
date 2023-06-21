@@ -31,6 +31,7 @@ from eProc_Doc_Search_and_Display.Utilities.search_display_specific import get_s
 from eProc_Emails.Utilities.email_notif_generic import appr_notify, send_po_attachment_email
 from eProc_Form_Builder.models.form_builder import EformFieldData
 # from eProc_Purchase_Order.Utilities.purchase_order_generic import CreatePurchaseOrder
+from eProc_Purchase_Order.Utilities.purchase_order_generic import CreatePurchaseOrder
 from eProc_Related_Documents.Utilities.related_documents_generic import get_item_level_related_documents
 from eProc_Shopping_Cart.models.add_to_cart import CartItemDetails
 from eProc_Shopping_Cart.models.shopping_cart import *
