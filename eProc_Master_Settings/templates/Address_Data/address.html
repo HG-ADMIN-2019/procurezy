@@ -110,7 +110,6 @@
                                     <div class="col-8">
                                         <input type="text" class="form-control hg_edit_display_mode"
                                             id="id_addresses_address_number" disabled>
-                                        <span id="err_address_number" class="error_message" hidden></span>
                                     </div>
                                 </div>
                                 <div class="form-group row">
@@ -123,7 +122,6 @@
                                     <label class="col-4 col-form-label">Name1:</label>
                                     <div class="col-8">
                                         <input type="text" class="form-control hg_edit_display_mode" id="id_addresses_name1" disabled>
-                                        <span id="err_Name1" class="error_message" hidden></span>
                                     </div>
                                 </div>
                                 <div class="form-group row">
@@ -137,14 +135,12 @@
                                     <div class="col-8">
                                         <input type="text" class="form-control hg_edit_display_mode"
                                             id="id_addresses_street" disabled>
-                                        <span id="err_Street" class="error_message" hidden></span>
                                     </div>
                                 </div>
                                 <div class="form-group row">
                                     <label class="col-4 col-form-label">Area:</label>
                                     <div class="col-8">
                                         <input type="text" class="form-control hg_edit_display_mode" id="id_addresses_area" disabled>
-                                        <span id="err_Area" class="error_message" hidden></span>
                                     </div>
                                 </div>
                                 <div class="form-group row">
@@ -159,7 +155,6 @@
                                     <div class="col-8">
                                         <input type="text" class="form-control hg_edit_display_mode" id="id_addresses_city"
                                             disabled>
-                                        <span id="err_City" class="error_message" hidden></span>
                                     </div>
                                 </div>
                                 <div class="form-group row">
@@ -167,7 +162,6 @@
                                     <div class="col-8">
                                         <input type="text" class="form-control hg_edit_display_mode"
                                             id="id_addresses_partnertype" disabled>
-                                        <span id="err_Address_partner_type" class="error_message" hidden></span>
                                     </div>
                                 </div>
                                 <div class="form-group row">
@@ -184,7 +178,6 @@
                                     <div class="col-8">
                                         <input type="text" class="form-control hg_edit_display_mode check_postal_code"
                                             id="id_addresses_postalcode" disabled>
-                                        <span id="err_Postal_code" class="error_message" hidden></span>
                                     </div>
                                 </div>
                                 <div class="form-group row">
@@ -199,7 +192,6 @@
                                     <div class="col-8">
                                         <input type="text" class="form-control hg_edit_display_mode"
                                             id="id_addresses_mobile_number" disabled>
-                                        <span id="err_City" class="error_message" hidden></span>
                                     </div>
                                 </div>
                                 <div class="form-group row">
@@ -309,66 +301,60 @@
                             <div class="row">
                                 <div class="col m-3">
                                     <div class="form-group row ">
-                                        <label>Address Number:</label><span class="hg_required"></span>
+                                        <label class="col-4 col-form-label">Address Number:</label>
                                         <div class="col-8">
-                                            <input type="text" class="form-control mandatory_fields check_special_char" id="id_add_addresses_address_number" disabled>
-                                            <span id="err_Address_number" class="error_message" hidden></span>
+                                            <input type="text" class="form-control" id="id_add_addresses_address_number" disabled>
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label >Title:</label>
+                                        <label class="col-4 col-form-label">Title:</label>
                                         <div class="col-8">
                                             <input type="text" class="form-control" id="id_add_addresses_title">
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label>Name1:</label><span class="hg_required"></span>
+                                        <label class="col-4 col-form-label">Name1:</label>
                                         <div class="col-8">
-                                            <input type="text" class="form-control mandatory_fields check_special_char" id="id_add_addresses_name1">
-                                            <span id="err_name" class="error_message" hidden></span>
+                                            <input type="text" class="form-control" id="id_add_addresses_name1">
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label>Name2:</label>
+                                        <label class="col-4 col-form-label">Name2:</label>
                                         <div class="col-8">
                                             <input type="text" class="form-control" id="id_add_addresses_name2">
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label>Street:</label><span class="hg_required"></span>
+                                        <label class="col-4 col-form-label">Street:</label>
                                         <div class="col-8">
-                                            <input type="text" class="form-control mandatory_fields check_special_char" id="id_add_addresses_street">
-                                            <span id="err_stret" class="error_message" hidden></span>
+                                            <input type="text" class="form-control" id="id_add_addresses_street">
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label>Area:</label><span class="hg_required"></span>
+                                        <label class="col-4 col-form-label">Area:</label>
                                         <div class="col-8">
                                             <input type="text" class="form-control" id="id_add_addresses_area">
-                                            <span id="err_area1" class="error_message" hidden></span>
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label>Landmark:</label>
+                                        <label class="col-4 col-form-label">Landmark:</label>
                                         <div class="col-8">
                                             <input type="text" class="form-control" id="id_add_addresses_landmark">
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label>City:</label><span class="hg_required"></span>
+                                        <label class="col-4 col-form-label">City:</label>
                                         <div class="col-8">
-                                            <input type="text" class="form-control mandatory_fields check_special_char" id="id_add_addresses_city">
-                                            <span id="err_city_" class="error_message" hidden></span>
+                                            <input type="text" class="form-control" id="id_add_addresses_city">
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label>Address Partner Type:</label><span class="hg_required"></span>
+                                        <label class="col-4 col-form-label">Address Partner Type:</label>
                                         <div class="col-8">
-                                            <select class="form-control mandatory_fields check_special_char" type="text" name="address_partnertype"
+                                            <select class="form-control" type="text" name="address_partnertype"
                                                 id="id_add_addresses_partnertype">
                                                 {% for data in add_partner_type_data %}
                                                 <option value={{data.address_partner_type}}>{{data.address_partner_type_desc}}</option>
-                                                <span id="err_addresspartnertype" class="error_message" hidden></span>
                                                 {% endfor %}
                                             </select>
                                         </div>
@@ -382,76 +368,70 @@
                                 </div>
                                 <div class="col m-3">
                                     <div class="form-group row">
-                                        <label>Postal Code:</label><span class="hg_required"></span>
+                                        <label class="col-4 col-form-label">Postal Code:</label>
                                         <div class="col-8">
                                             <input type="text" class="form-control check_postal_code" id="id_add_addresses_postalcode">
-                                            <span id="err_postalcode" class="error_message" hidden></span>
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label>Region:</label>
+                                        <label class="col-4 col-form-label">Region:</label>
                                         <div class="col-8">
                                             <input type="text" class="form-control" id="id_add_addresses_region">
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label>Mobile Number:</label><span class="hg_required"></span>
+                                        <label class="col-4 col-form-label">Mobile Number:</label>
                                         <div class="col-8">
-                                            <input type="text" class="form-control mandatory_fields check_special_char" id="id_add_addresses_mobile_number">
-                                            <span id="err_mobilenumber" class="error_message" hidden></span>
+                                            <input type="text" class="form-control" id="id_add_addresses_mobile_number">
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label>Telephone Number:</label>
+                                        <label class="col-4 col-form-label">Telephone Number:</label>
                                         <div class="col-8">
                                             <input type="text" class="form-control" id="id_add_addresses_telephone_number">
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label>Fax Number:</label>
+                                        <label class="col-4 col-form-label">Fax Number:</label>
                                         <div class="col-8">
                                             <input type="text" class="form-control" id="id_add_addresses_fax_number">
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label>Email:</label><span class="hg_required"></span>
+                                        <label class="col-4 col-form-label">Email:</label>
                                         <div class="col-8">
-                                            <input type="text" class="form-control mandatory_fields check_special_char" id="id_add_addresses_email">
-                                            <span id="err_email" class="error_message" hidden></span>
+                                            <input type="text" class="form-control" id="id_add_addresses_email">
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label>Country Code:</label><span class="hg_required"></span>
+                                        <label class="col-4 col-form-label">Country Code:</label>
                                         <div class="col-8">
-                                            <select class="form-control mandatory_fields check_special_char" type="text" name="country_code"
+                                            <select class="form-control" type="text" name="country_code"
                                                 id="id_add_addresses_country_code">
                                                 {% for data in country_list %}
                                                 <option value={{data.country_code}}>{{data.country_name}}</option>
-                                                <span id="err_countrycode" class="error_message" hidden></span>
                                                 {% endfor %}
                                             </select>
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label>Language:</label><span class="hg_required"></span>
+                                        <label class="col-4 col-form-label">Language:</label>
                                         <div class="col-8">
-                                            <select class="form-control mandatory_fields check_special_char" type="text" name="language_id"
+                                            <select class="form-control" type="text" name="language_id"
                                                 id="id_add_addresses_language_id">
                                                 {% for data in language_list %}
                                                 <option value={{data.language_id}}>{{data.description}}</option>
-                                                <span id="err_language" class="error_message" hidden></span>
                                                 {% endfor %}
                                             </select>
                                         </div>
                                     </div>
                                     <div class="form-group row">
-                                        <label>TIME ZONE:</label><span class="hg_required"></span>
+                                        <label class="col-4 col-form-label">TIME ZONE:</label>
                                         <div class="col-8">
-                                            <select class="form-control mandatory_fields check_special_char" type="text" name="time_zone"
+                                            <select class="form-control" type="text" name="time_zone"
                                                 id="id_add_addresses_time_zone">
                                                 {% for data in time_zone_data %}
                                                 <option value={{data.time_zone}}>{{data.description}}</option>
-                                                <span id="err_timezone" class="error_message" hidden></span>
                                                 {% endfor %}
                                             </select>
                                         </div>
@@ -805,7 +785,6 @@
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
                     success: function (Response) {
-                        var valid = save_user_form_validation();
                         rendered_address_data = Response[0];
                         display_basic_db_data();
                         success_response(Response); // Function call to display response data
@@ -1025,6 +1004,7 @@
             }
         });
         if (common.length != 0) {
+            $('#address_details').modal('show');
             display_duplicate_entry(common);  //Function to highlight the rows in popup
             error_message = ui_messeges("JMSG001")// Get message details
             no_duplicate_value = 'N'
@@ -1422,140 +1402,6 @@
 
         });
     }
-
-        function ajax_update_user_basic_data(data) {
-        urlLink = "{% url 'eProc_Configuration_Check:check_address' %}";
-        var response = AjaxCallAPIBasic(urlLink, data)
-        return response
-    }
-
-    $("body").on("keypress keyup blur change", ".mandatory_fields", function (event) {
-        if(event.currentTarget.value == "") {
-            $('#event.currentTarget.nextElementSibling.id').prop('hidden', true);
-            document.getElementById(event.currentTarget.nextElementSibling.id).style.display = "block";
-             var display_id = event.currentTarget.nextElementSibling.id;
-             $('#'+display_id).prop('hidden', false);
-            event.currentTarget.nextElementSibling.innerHTML = "Please enter valid value";
-        }
-        else if(event.currentTarget.value.length >= 2 ){
-        document.getElementById(event.currentTarget.nextElementSibling.id).style.display = "none";
-        }
-        else{
-            $(".error_message").prop("hidden", false);
-            document.getElementById(event.currentTarget.nextElementSibling.id).style.display = "block";
-        }
-    });
-
-    $('#id_add_addresses_email').on('blur',function (event) {
-    var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-         if (!(event.currentTarget.value).match(mailformat)) {
-                 var msg = "JMSG002";
-                 var msg_type ;
-                 msg_type = message_config_details(msg);
-                 var display1 = msg_type.messages_id_desc;
-                 $(".error_message").prop("hidden", false);
-                var display_id = event.currentTarget.nextElementSibling.id;
-                $('#'+display_id).prop('hidden', false);
-                document.getElementById(display_id).style.display = "block";
-                event.currentTarget.nextElementSibling.innerHTML = display1 + " for Email Id";
-               is_valid = false;
-         }
-    });
-    $('#id_add_addresses_mobile_number').on('blur',function (event) {
-         if (event.currentTarget.value.length != 10 ) {
-                 var msg = "JMSG002";
-                 var msg_type ;
-                 msg_type = message_config_details(msg);
-                 var display1 = msg_type.messages_id_desc;
-                 $(".error_message").prop("hidden", false);
-                var display_id = event.currentTarget.nextElementSibling.id;
-                $('#'+display_id).prop('hidden', false);
-                document.getElementById(display_id).style.display = "block";
-                event.currentTarget.nextElementSibling.innerHTML ="Please check Mobile Number";
-               is_valid = false;
-         }
-    });
-
-    $('form').on('submit',function (e) {
-        OpenLoaderPopup();
-        var valid = save_user_form_validation();
-        if(!valid){
-            localStorage.setItem("error_flag", 1);
-            set_value();
-            get_values();
-             setTimeout(function() {
-                       CloseLoaderPopup();
-         }, 500);
-            e.preventDefault();
-        }
-        else{
-            popup_save_data();
-            setTimeout(function() {
-                       CloseLoaderPopup();
-         }, 20000);
-         $(".hg_edit_display_mode").prop("disabled", false);
-        }
-    });
-
-    // Validation function
-function save_user_form_validation(){
-   var is_valid = true;
-        var save_form_errors = ''
-        var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-
-        var err_text1 = '';
-        var temp = document.getElementsByClassName('mandatory_fields');
-        for (var i = 0; i<temp.length; i++) {
-            if(temp[i].nodeName == "SELECT"){
-                if((temp[i].value == '') || (temp[i].value == null)){
-                    err_text1 = temp[i].parentNode.children[0].innerHTML;
-                    $('#temp[i].nextElementSibling.id').prop('hidden', false);
-                    $('#temp[i].nextElementSibling.id').html("required");
-                    document.getElementById(temp[i].nextElementSibling.id).innerHTML = err_text1 + " required";
-                    is_valid = false;
-                }
-                else{ $('#temp[i].nextElementSibling.id').prop('hidden', true);
-                }
-            }
-            else{
-                if(temp[i].value == ''){
-                    var err_text = temp[i].parentNode.children[0].innerHTML;
-                    $(".error_message").prop("hidden", false);
-                    temp[i].nextElementSibling.innerHTML = err_text + " required";
-                   is_valid = false;
-                }
-                 else if(temp[i].value.length < 3){
-                    var err_text = temp[i].parentNode.children[0].innerHTML;
-                    $(".error_message").prop("hidden", false);
-                    var display_id = temp[i].nextElementSibling.id;
-                    $('#'+display_id).prop('hidden', false);
-                    document.getElementById(display_id).style.display = "block";
-                    temp[i].nextElementSibling.innerHTML = "Please enter min 3 chars for "+ err_text;
-                    $('#'+temp[i].id).prop("disabled", false);
-                   is_valid = false;
-                }
-                else if(temp[i].id == 'email_id'){
-                    var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-                     if (!(temp[i].value).match(mailformat)) {
-                            valid_data = false
-                             var msg = "JMSG002";
-                             var msg_type ;
-                             msg_type = message_config_details(msg);
-                             var display1 = msg_type.messages_id_desc;
-                             $(".error_message").prop("hidden", false);
-                            var display_id = temp[i].nextElementSibling.id;
-                            $('#'+display_id).prop('hidden', false);
-                            document.getElementById(display_id).style.display = "block";
-                            temp[i].nextElementSibling.innerHTML = display1 + " for Email Id";
-                           is_valid = false;
-                     }
-                }
-            }
-        }
-        return is_valid
-    }
-
-
 </script>
 <script src="{% static 'scripts/address_data/master_address.js' %}"></script>
 {% endblock %}

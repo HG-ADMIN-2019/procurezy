@@ -155,6 +155,10 @@
                                 <b>PGRP ID</b><br>
                                 <select id="select_pgrp_id"  onchange="onchange_node_id_dropdown(this)" class="toggle form-control"  disabled></select>
                             </div>
+                            <div class="form-group d-none" id="field_pgrp_porg_id">
+                                <b>PORG ID</b><br>
+                                <input type="text" class="toggle form-control" id="pgrp_porg_id" readonly />
+                            </div>
     
                         </div>
                     </div>
@@ -1275,7 +1279,7 @@ var CONST_PGROUP = 'PGRP'
 var CONST_NODE = 'NODE'
 var CONST_USER = 'USER'
 var CONST_PLANT = 'PLANT'
-var CONST_BASIC_DETAILS_ID_LIST = ['name_1', 'name_2', 'cc_id', 'porg_desc', 'porg_id', 'pgrp_desc', 'pgrp_id','first_name', 'last_name', 'email_id']
+var CONST_BASIC_DETAILS_ID_LIST = ['name_1', 'name_2', 'cc_id', 'porg_desc', 'porg_id', 'pgrp_desc', 'pgrp_id','first_name', 'last_name', 'email_id','pgrp_porg_id']
 var CONST_USER_DETAILS_ID = ['first_name', 'last_name', 'email_id']
 // Function to display Basic data and Attribute overview on right panel
 function get_node_details(object_id){
@@ -1357,6 +1361,7 @@ function get_node_details(object_id){
                     // update basic detail if pgrp details exists in OrgPGroup db table
                     if(response.basic_node_details.length != 0){
                         $("#Pgrp_desc").val(response.basic_node_details[0].description)
+                        $("#pgrp_porg_id").val(response.basic_node.porg_id)
                         GLOBAL_NODE_DETAIL = response.basic_node_details
                         $.each(response.basic_node_details, function (i, item) {
                             if (item.object_id){
@@ -1372,9 +1377,9 @@ function get_node_details(object_id){
                         }
                         $("#select_pgrp_id").append(empty_option+node_id_drop_down)
                     }
-                    node_type_disable_fields_list = ['pgrp_id','Pgrp_desc','select_pgrp_id','BDname']
+                    node_type_disable_fields_list = ['pgrp_id','Pgrp_desc','select_pgrp_id','BDname','pgrp_porg_id']
                     disable_fields(node_type_disable_fields_list)
-                    display_elements('field_', ['pgrp_desc', 'pgrp_id'])
+                    display_elements('field_', ['pgrp_desc', 'pgrp_id','pgrp_porg_id'])
                      break;
                  case "PLANT":
 
@@ -1401,6 +1406,7 @@ function get_node_details(object_id){
                  break;
             }
             create_main_table(response.attr_detail)
+            update_porg_mapping(response.porg_mapping_details)
             //hide buttons for only user node and display edit button for all the other node
             initial_display_hide_button(node_type)
             document.getElementById("BasicData").style.display = "block"
@@ -1409,6 +1415,49 @@ function get_node_details(object_id){
         }
     });
 }
+var company_add_new_line = ''
+function update_porg_mapping(porg_mapping_details){
+    company_add_new_line = '<tr id="comp_attr_tr"><td><input type="text" class="form-control" value="' + porg_id + '" name="from" disabled></td><td> ' + cocode_values + ' </td><td><a onclick="clone_code_table_row()" title="Add new row"><i class="fa fa-plus text-primary"></i></a> <a onclick="remove_company_Row(this)" id="ext_new" title="Delete row"><i class="fa fa-trash text-primary"></i></a></td></tr>';
+    var cmp_modify = ''
+    var add_company_code_attr = ''
+    var add_company_code_attr
+    var default_cocode_drop_down = ''
+    var cocode_drop_down = ''
+    $('#company_id_body').empty();
+    if(GLOBAL_ON_DOUBLE_CLICK_NODE_TYPE == 'PORG'){
+        if (porg_mapping_details.length > 0){
+            $.each(porg_mapping_details, function (i, item) {
+                $.each(org_comp_dropdown_list, function (i, org_comp) {
+                    if(org_comp == item.company_id){
+                        default_cocode_drop_down = '<option value="' + org_comp + '" >' + org_comp + '</option>';
+                    }
+                    else{
+                        cocode_drop_down += '<option value="' + org_comp + '" >' + org_comp + '</option>';
+                    }
+                })
+                cocode_drop_down = default_cocode_drop_down + cocode_drop_down
+                porg_cocode_values = '<select class="form-control">' + cocode_drop_down + '</select>'
+                cmp_modify = '<a onclick="clone_code_table_row();" class="org-table-action-icon" title="Add new row"><i class="fa fa-plus text-primary"></i></a>  <a onclick="remove_company_Row(this)" class="org-table-action-icon" title="Delete Row"><i class="fa fa-trash text-primary"></i></a>';
+                add_company_code_attr += '<tr id="extend_attr_tr"><td><input type="text" class="form-control" onkeypress="return event.charCode >= 48" min="0" name="from" value="' + item.porg_id + '" required disabled></td><td>' + porg_cocode_values + '</td><td> ' + cmp_modify + ' </td></tr>';
+            });
+        }
+        else{
+            add_company_code_attr = '<tr id="comp_attr_tr"><td><input type="text" class="form-control" value="' + porg_id + '" name="from" disabled></td><td> ' + cocode_values + ' </td><td><a onclick="clone_code_table_row()" title="Add new row"><i class="fa fa-plus text-primary"></i></a> </td></tr>';
+
+        }
+        $('#company_id_body').append(add_company_code_attr);
+        document.getElementById("company_id_msg").innerHTML = '';
+        document.getElementById('non_company_id').style.display = 'none';
+        document.getElementById('company_id').style.display = 'block';
+    }
+    else{
+        document.getElementById("company_id_msg").innerHTML = 'Purchase Org Mapping Not Applicable';
+        document.getElementById('non_company_id').style.display = 'block';
+        document.getElementById('company_id').style.display = 'none';
+    }
+
+}
+
 // clear basic fields
 function clear_basic_details_fields(){
     //clear company code  fields

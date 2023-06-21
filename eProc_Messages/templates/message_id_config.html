@@ -234,7 +234,13 @@
                     var row = $(this);
                     var messagetype_value = dropdown_values[i][0]
                     var messageid_value = dropdown_values[i][1]
-                    $(row.find("TD").eq(1).find("select option[value="+messageid_value+"]")).attr('selected','selected');
+                    if(GLOBAL_ACTION == "UPDATE"){
+                        var msg_val = '<option value="'+ messageid_value +'" selected>' + messageid_value + '</option>'
+                        $(row.find("TD").eq(1).find("select")).prepend(msg_val);
+                    }
+                    else{
+                        $(row.find("TD").eq(1).find("select option[value="+messageid_value+"]")).attr('selected','selected');
+                    }
                     $(row.find("TD").eq(2).find("select option[value="+messagetype_value+"]")).attr('selected','selected');
                     i++;
                 });

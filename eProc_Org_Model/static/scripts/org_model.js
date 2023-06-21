@@ -508,6 +508,7 @@ var GLOBAL_ON_DOUBLE_CLICK_NODE_TYPE = '';
 var GLOBAL_ROOT_NODE_NAME = '';
 var obj_id_node_type = " ";
 var porg_id = '';
+var cocode_values = '';
 
 function create_main_table(attr_level_detail) {
 
@@ -522,7 +523,7 @@ function create_main_table(attr_level_detail) {
     var ext_inherit_value = '';
     var add_resp_attr = '';
     var cocode_drop_down = '';
-    var cocode_values = '';
+
     var company_detail = '';
     GLOBAL_ATTRIBUTE_ID_LIST = []
     $('#main_table_body').empty();
@@ -600,14 +601,12 @@ function create_main_table(attr_level_detail) {
             document.getElementById('ext_porg_id').style.display = 'none';
         }
         else {
+            porg_id = $("#select_porg_id").val()
             if (!(ext_attr_html)) {
-                porg_id = $("#select_porg_id").val()
+
                 add_ext_attr = '<tr id="extend_attr_tr"><td><input type="number" class="form-control" name="from" required></td><td><input type="number" class="form-control" name="to" required></td><td> ' + cocode_values + ' </td><td><input disabled type="checkbox" name="inherit" value="inherit"></td><td><a onclick="clone_ext_table_row()" title="Add new row"><i class="fa fa-plus text-primary"></i></a> </td></tr>';
                 ext_add_new_line = '<tr id="extend_attr_tr"><td><input type="number" class="form-control" name="from" required></td><td><input type="number" class="form-control" name="to" required></td><td> ' + cocode_values + ' </td><td><input disabled type="checkbox" name="inherit" value="inherit"></td><td><a onclick="clone_ext_table_row()" title="Add new row"><i class="fa fa-plus text-primary"></i></a> <a onclick="remove_ext_Row(this)" id="ext_new" title="Delete row"><i class="fa fa-trash text-primary"></i></a></td></tr>';
-                add_company_code_attr = '<tr id="comp_attr_tr"><td><input type="text" class="form-control" value="' + porg_id + '" name="from" disabled></td><td> ' + cocode_values + ' </td><td><a onclick="clone_code_table_row()" title="Add new row"><i class="fa fa-plus text-primary"></i></a> </td></tr>';
-                company_add_new_line = '<tr id="comp_attr_tr"><td><input type="text" class="form-control" value="' + porg_id + '" name="from" disabled></td><td> ' + cocode_values + ' </td><td><a onclick="clone_code_table_row()" title="Add new row"><i class="fa fa-plus text-primary"></i></a> <a onclick="remove_company_Row(this)" id="ext_new" title="Delete row"><i class="fa fa-trash text-primary"></i></a></td></tr>';
                 $('#extend_attr_body').append(add_ext_attr);
-                $('#company_id_body').append(add_company_code_attr);
             }
             document.getElementById('ext_porg_id').style.display = 'block';
             document.getElementById('ext_error_div').style.display = 'none';
@@ -793,6 +792,7 @@ async function on_click_save_basic_details() {
                 node_type_disable_fields_list = ['porg_id', 'POrg_desc', 'select_porg_id', 'BDname']
                 disable_fields(node_type_disable_fields_list)
                 on_edit_display_hide_button()
+                CloseLoaderPopup();
             }
 
             break;
@@ -810,6 +810,7 @@ async function on_click_save_basic_details() {
                 node_type_disable_fields_list = ['pgrp_id', 'Pgrp_desc', 'select_pgrp_id', 'BDname']
                 disable_fields(node_type_disable_fields_list)
                 on_edit_display_hide_button()
+                CloseLoaderPopup();
             }
 
             break;
@@ -821,6 +822,7 @@ async function on_click_save_basic_details() {
             node_type_disable_fields_list = ['BDname']
             disable_fields(node_type_disable_fields_list)
             on_edit_display_hide_button()
+            CloseLoaderPopup();
             break;
         default:
             break;

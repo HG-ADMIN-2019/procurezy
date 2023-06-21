@@ -49,6 +49,7 @@ def save_porg_company_id(request):
     """
 
     """
+    update_user_info(request)
     porg_data = JsonParser_obj.get_json_from_req(request)
     porg_mapping_list = []
     object_id = None
@@ -67,10 +68,11 @@ def save_porg_company_id(request):
                                   'porg_id': save_porg['porg_id'],
                                   'company_id': save_porg['company_id'],
                                   'org_porg_mapping_changed_at': datetime.today(),
-                                  'org_porg_mapping_changed_by': global_variables.GLOBAL_CLIENT,
+                                  'org_porg_mapping_changed_by': global_variables.GLOBAL_LOGIN_USERNAME,
                                   'org_porg_mapping_created_at': datetime.today(),
-                                  'org_porg_mapping_created_by': global_variables.GLOBAL_CLIENT,
-                                  'object_id': object_id
+                                  'org_porg_mapping_created_by': global_variables.GLOBAL_LOGIN_USERNAME,
+                                  'object_id': object_id,
+                                  'client_id':global_variables.GLOBAL_CLIENT
                                   })
     bulk_create_entry_db(OrgPorgMapping,
                          porg_mapping_list)
