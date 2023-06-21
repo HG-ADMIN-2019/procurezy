@@ -254,6 +254,10 @@ def number_range_favourite_cart(request):
         else:
             squence_fd["del_ind_flag"] = True
 
+    upload_transactiontype = list(
+        TransactionTypes.objects.filter(client=client, document_type=CONST_DOC_TYPE_FC, del_ind=False).values(
+            'sequence'))
+
     sequence = NumberRanges.objects.filter(client=client, document_type=CONST_DOC_TYPE_FC, del_ind=False).aggregate(
         Max('sequence'))
     sequence_max = sequence['sequence__max']
@@ -261,6 +265,7 @@ def number_range_favourite_cart(request):
     messages_list = get_ui_messages(CONST_COFIG_UI_MESSAGE_LIST)
     return render(request, 'Shop_Number_Ranges/favourite_cart/favourite_cart_number_range.html',
                   {'upload_numberrange': upload_numberrange, 'application_settings': application_settings,
+                   'upload_transactiontype': upload_transactiontype,
                    'sequence': sequence_max,
                    'inc_nav': True,
                    'messages_list': messages_list,
