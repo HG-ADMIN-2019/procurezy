@@ -478,7 +478,7 @@ def org_attributes(request):
 def org_attributes_level(request):
     client = getClients(request)
     upload_orgattributes_level = django_query_instance.django_filter_query(
-        OrgModelNodetypeConfig, {'del_ind': False, 'org_model_types': 'ORG_ATTRIBUTES', 'client': client}, None,
+        OrgModelNodetypeConfig, {'del_ind': False, 'org_model_types': 'ORG_ATTRIBUTES'}, None,
         ['org_model_nodetype_config_guid',
          'node_values', 'node_type'])
     upload_attributesid_dropdown = django_query_instance.django_filter_query(

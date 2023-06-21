@@ -169,7 +169,7 @@
             display_error_message(error_message)
         }
         else{
-            if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD") || (GLOBAL_ACTION == "UPDATE")) {
+            if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
                 [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value,numberranges_data,main_table_data)
             }
             if (((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y'))) {
