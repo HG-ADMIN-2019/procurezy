@@ -240,7 +240,6 @@
             data: JSON.stringify(data),
             success: function(response) {
                 rendered_aac_values = response.dropdown_acct_assmt_values
-                rendered_aac_data = response.accasscat_data
                 dropdown_value();
                 $("#error_msg_id").css("display", "none")
                 $( "#header_select").prop( "hidden", false );

@@ -171,6 +171,7 @@ class ApplicationSettingsSave:
                                                                      'document_type':
                                                                          number_range_detail[
                                                                              'document_type'],
+                                                                        'del_ind': False
                                                                      }):
                         delete_flag = False
                 if delete_flag:

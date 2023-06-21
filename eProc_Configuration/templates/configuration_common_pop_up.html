@@ -81,7 +81,8 @@
         </div>
     </div>
     <!--end of delete confirmation popup-->
-<!--    don't delete popup -->
+
+    <!--    don't delete popup -->
     <div class="modal fade" id="delete_not_possible">
         <div class="modal-dialog modal-dialog-centered ">
             <div class="modal-content">
@@ -97,7 +98,7 @@
    <!-------------------------------------end of delete--------------------------->
 
 
-<!--      valid confirm popup-->
+    <!--      valid confirm popup-->
     <div class="modal fade" id="valid_upload">
         <div class="modal-dialog modal-dialog-centered ">
             <div class="modal-content">
@@ -111,7 +112,22 @@
             </div>
         </div>
     </div>
-<!--   end of valid confirm popup-->
+    <!--   end of valid confirm popup-->
+
+   <!--      delete confirm popup-->
+    <div class="modal fade" id="dependency_delete">
+        <div class="modal-dialog modal-dialog-centered ">
+            <div class="modal-content">
+                <div class="modal-body">
+                    <p>Sequence number used in transaction table.Can't delete this sequence number</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-primary" data-dismiss="modal"><i class="fas fa-times"></i> ok</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--   end of delete confirm popup-->
 
     <script src="{% static 'scripts/configuration_common_scripts.js' %}"></script>
 
