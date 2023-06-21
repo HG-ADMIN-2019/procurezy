@@ -787,6 +787,7 @@ class SourcingRule(models.Model):
     prod_cat_id_to = models.CharField(db_column='PROD_CAT_ID_TO', max_length=20, null=False)
     sourcing_flag = models.BooleanField(default=False, null=False, db_column='SOURCING_FLAG')
     call_off = models.CharField(db_column='CALL_OFF', max_length=15, null=True)
+    company_id = models.CharField(db_column='COMPANY_ID', max_length=8, null=True)
     sourcing_rule_source_system = models.CharField(db_column='SOURCING_RULE_SOURCE_SYSTEM',
                                                    max_length=20)
     sourcing_rule_created_by = models.CharField(db_column='SOURCING_RULE_CREATED_BY',
