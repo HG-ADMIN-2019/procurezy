@@ -178,28 +178,6 @@ function delete_popup_row(myTable) {
     }
 }
 
-function delete_dependency() {
-    $.each(rendered_number_range_data, function (i, item1) {
-        var commonValueFound = false;
-        $.each(rendered_trans_range_data, function (j, item2) {
-            if (item1 === item2) {
-                // Common value found
-                commonValueFound = true;
-                // Perform operations for common values
-                $('#id_delete_confirm_popup').modal('hide');
-                $("#dependency_delete").modal('show');
-            }
-        });
-        
-        if (!commonValueFound) {
-            // Perform operations for non-common values
-            $("#dependency_delete").modal('hide');
-            $('#id_delete_confirm_popup').modal('show');
-        }
-    });
-}
-
-
 //onclick of cancel display the table in display mode............
 function display_basic_db_data() {
     $('#display_basic_table').DataTable().destroy();

@@ -28,7 +28,7 @@
                        <button class="btn btn-secondary btn-sm" title="Edit" id="id_edit_data" onclick="onclick_edit_button()">
                         <i class="fas fa-edit"></i> edit
                     </button>
-                     <button class="btn btn-outline-danger btn-sm" title="Delete" id="id_delete_data" value="DELETE" style="display:none;" data-toggle="modal" onclick="delete_dependency()">
+                     <button class="btn btn-outline-danger btn-sm" title="Delete" id="id_delete_data" value="number_range_delete" style="display:none;" data-toggle="modal" data-target="#id_delete_confirm_popup">
                         <i class="fa fa-trash"></i> delete
                     </button>
                     <button class="btn btn-primary btn-sm" title="Update" id="id_update_data" style="display:none;" value="UPDATE" type="button" onclick="onclick_update_button()">
@@ -139,9 +139,8 @@
         </div>
 {{ upload_numberrange|json_script:"upload_numberrange" }}
 <script>
-    var messages_list = {{messages_list|safe}}; 
+    var messages_list = {{messages_list|safe}};
     var rendered_number_range_data = JSON.parse(document.getElementById('upload_numberrange').textContent);
-    var rendered_trans_range_data = {{upload_transactiontype|safe}};
     var number_range_data_array = {}
     var main_table_number_range_value = [];
     var number_range = '';
