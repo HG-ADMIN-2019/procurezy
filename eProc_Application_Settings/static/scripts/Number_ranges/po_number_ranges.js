@@ -200,7 +200,7 @@ function display_basic_db_data() {
 
 //****************************
 $('#save_id').click(function () {
-//    $('#poorder_Modal').modal('hide');
+    $('#poorder_Modal').modal('hide');
     numberranges_data = read_popup_data();
     $('#id_save_confirm_popup').modal('show');
 });

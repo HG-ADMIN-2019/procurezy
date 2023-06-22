@@ -28,7 +28,7 @@
                        <button class="btn btn-secondary btn-sm" title="Edit" id="id_edit_data" onclick="onclick_edit_button()">
                         <i class="fas fa-edit"></i> edit
                     </button>
-                     <button class="btn btn-outline-danger btn-sm" title="Delete" id="id_delete_data" value="number_range_delete" style="display:none;" data-toggle="modal" data-target="#id_delete_confirm_popup">
+                      <button class="btn btn-outline-danger btn-sm" title="Delete" id="id_delete_data" value="number_range_delete" style="display:none;" data-toggle="modal" data-target="#id_delete_confirm_popup">
                         <i class="fa fa-trash"></i> delete
                     </button>
                     <button class="btn btn-primary btn-sm" title="Update" id="id_update_data" style="display:none;" value="UPDATE" type="button" onclick="onclick_update_button()">
@@ -141,6 +141,7 @@
 <script>
     var messages_list = {{messages_list|safe}};
     var rendered_number_range_data = JSON.parse(document.getElementById('upload_numberrange').textContent);
+    var rendered_trans_range_data = {{upload_transactiontype|safe}};
     var number_range_data_array = {}
     var main_table_number_range_value = [];
     var number_range = '';
@@ -169,7 +170,7 @@
             display_error_message(error_message)
         }
         else{
-            if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD") || (GLOBAL_ACTION == "UPDATE")) {
+            if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
                 [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value,numberranges_data,main_table_data)
             }
             if (((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y'))) {
@@ -218,10 +219,15 @@
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             success: function (Response) {
-                rendered_number_range_data = Response[0].upload_response;
-                max_sequence = parseInt(Response[0].sequence_max) + 1;
-                display_basic_db_data();
-                success_response(Response); // Function call to display response data
+                // Check if the delete_flag is False
+                 if (Response[0].doc_type[1] === false) {
+                    $('#dependency_delete').modal('show'); // Show the dependency delete popup
+                } else {
+                    rendered_number_range_data = Response[0].upload_response;
+                    max_sequence = parseInt(Response[0].sequence_max) + 1;
+                    display_basic_db_data();
+                    success_response(Response); // Function call to display response data
+                }
                 CloseLoaderPopup();
             }
         });
