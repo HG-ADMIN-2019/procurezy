@@ -544,7 +544,7 @@ def send_po_attachment_email(output, po_document_number, email_supp_monitoring_g
             header = header.replace(data, username)
             footer = footer.replace(data, username)
         if data == CONST_SUPPLIER_USERNAME:
-            supp_name = po_details.supplier_username
+            supp_name = po_details.supplier_id
             body = body.replace(data, supp_name)
             header = header.replace(data, supp_name)
             footer = footer.replace(data, supp_name)
