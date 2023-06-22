@@ -344,7 +344,9 @@ def appr_notify(sc_header_instance, variant_name, client):
             }, 'email')[0])
     elif stp_no > 1:
         app_name_val = []
-        if len(mgr_details['app_id_detail']) > 1:
+        appr_len = mgr_details['app_id_detail']
+
+        if (len(sc_header_instance['manager_details'])) > 1:
             for app in mgr_details['app_id_detail']:
                 app_name_val = app
                 email_id = django_query_instance.django_filter_value_list_query(UserData, {
@@ -354,7 +356,7 @@ def appr_notify(sc_header_instance, variant_name, client):
         else:
             app_name_val = mgr_details['app_id_detail']
             email_id = django_query_instance.django_filter_value_list_query(UserData, {
-                'client': client, 'username': app_name_val[0]
+                'client': client, 'username': mgr_details['app_id_detail']
             }, 'email')[0]
             appr_email.append(email_id)
 
@@ -504,7 +506,6 @@ def send_po_attachment_email(output, po_document_number, email_supp_monitoring_g
     client_data = django_query_instance.django_get_query(OrgClients, {
         'client': client, 'del_ind': False
     })
-    print(po_details)
     emailDetail = list(django_query_instance.django_filter_only_query(EmailContents, {
         'object_type': 'PO_SUPPLIER', 'client': client,
     }).values())
@@ -542,7 +543,7 @@ def send_po_attachment_email(output, po_document_number, email_supp_monitoring_g
             header = header.replace(data, username)
             footer = footer.replace(data, username)
         if data == CONST_SUPPLIER_USERNAME:
-            supp_name = po_details.supplier_username
+            supp_name = po_details.supplier_id
             body = body.replace(data, supp_name)
             header = header.replace(data, supp_name)
             footer = footer.replace(data, supp_name)

@@ -170,8 +170,12 @@
             display_error_message(error_message)
         }
         else{
-            if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
+            if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD") || (GLOBAL_ACTION == "UPDATE")) {
+                [no_duplicate_value,error_message] = compare_table_for_duplicate_entries(validate_add_attributes, numberranges_data)
                 [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value,numberranges_data,main_table_data)
+                if (error_message){
+                    display_error_message(error_message)
+                }
             }
             if (((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y'))) {
                 var number_range_data_array = numberranges_data;

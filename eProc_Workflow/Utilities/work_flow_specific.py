@@ -138,10 +138,10 @@ def update_appr_status(appr_status):
                                                                                         'proc_lvl_sts': CONST_ACTIVE,
                                                                                         'app_sts': CONST_SC_APPR_OPEN
                                                                                         }, 'app_id')
-            # if len(next_level_approver) > 1:
-            mgr_details['app_id_detail'] = next_level_approver
-            # else:
-            #     mgr_details['app_id_detail'] = next_level_approver
+            if len(next_level_approver) > 1:
+                mgr_details['app_id_detail'] = next_level_approver
+            else:
+                mgr_details['app_id_detail'] = next_level_approver[0]
             # send mail to next level approver
             context = get_SC_details_email(approval_detail[1])
             context['manager_details'] = mgr_details

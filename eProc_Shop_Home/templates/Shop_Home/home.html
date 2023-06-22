@@ -42,10 +42,10 @@
                                             <span class="product-currency text-muted">{{product_data.currency_id}}</span> <span class="product-value">{{product_data.price}}</span>
                                         </div>
                                         <div>
-                                            {% if product_data.eform_id %}
-                                                <button type="button" onclick="add_catalog('{{product_data.encrypt_product_id}}','{{product_data.eform_id}}')" class="btn btn-primary btn-sm text-capitalize">Add to Cart</button>
+                                            {% if product_data.variant_id %}
+                                                <button type="button" onclick="add_catalog('{{product_data.encrypt_product_id}}','{{product_data.variant_id}}')" class="btn btn-primary btn-sm text-capitalize">Add to Cart</button>
                                             {% else %}
-                                            <button type="button" onclick="add_catalog('{{product_data.product_id}}','{{product_data.eform_id}}')" class="btn btn-primary btn-sm text-capitalize">Add to Cart</button>
+                                            <button type="button" onclick="add_catalog('{{product_data.product_id}}','{{product_data.variant_id}}')" class="btn btn-primary btn-sm text-capitalize">Add to Cart</button>
                                             {% endif %}
                                         </div>
                                     </div>
@@ -162,9 +162,9 @@
                                         </div>
                                         <div>
                                             {% if viewed_data.eform_id %}
-                                                <button type="button" class="btn btn-primary btn-sm text-capitalize" id="{{viewed_data.eform_id}}" onclick="add_catalog('{{ viewed_data.encrypt_product_id}}','{{viewed_data.eform_id}}')">Add to Cart</button>
+                                                <button type="button" class="btn btn-primary btn-sm text-capitalize" id="{{viewed_data.eform_id}}" onclick="add_catalog('{{ viewed_data.encrypt_product_id}}','{{viewed_data.variant_id}}')">Add to Cart</button>
                                             {% else %}
-                                                <button type="button" class="btn btn-primary btn-sm text-capitalize" onclick="add_catalog('{{ viewed_data.product_id}}','{{viewed_data.eform_id}}')">Add to Cart</button>
+                                                <button type="button" class="btn btn-primary btn-sm text-capitalize" onclick="add_catalog('{{ viewed_data.product_id}}','{{viewed_data.variant_id}}')">Add to Cart</button>
                                             {% endif %}
 
                                         </div>
