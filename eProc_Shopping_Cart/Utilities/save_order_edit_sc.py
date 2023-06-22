@@ -446,7 +446,8 @@ class SaveShoppingCart:
                                                                                       'item_id': int_prod_id,
                                                                                       'del_ind': False},
                                                                                   'catalog_id')[0]
-            # source_relevant_ind = get_sourcing_detail(self.company_code, unspsc, cart_item_details.call_off,int_prod_id)
+            print(unspsc,cart_item_details.call_off,int_prod_id)
+            source_relevant_ind = get_sourcing_detail(self.company_code, unspsc, cart_item_details.call_off,int_prod_id)
             sc_item_save_data = {
                 'guid': guid,
                 'header_guid': django_query_instance.django_get_query(ScHeader,
