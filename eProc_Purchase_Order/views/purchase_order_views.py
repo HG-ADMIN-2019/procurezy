@@ -3,7 +3,7 @@ from django.shortcuts import render
 
 from eProc_Basic.Utilities.functions.encryption_util import decrypt
 from eProc_Basic.Utilities.functions.get_db_query import getClients, django_query_instance
-from eProc_Generate_PDF.views import render_pdf_view
+from eProc_Generate_PDF.views.sc_details_pdf import render_pdf_view
 from eProc_Purchase_Order.Utilities.purchase_order_generic import get_po_details
 from eProc_Purchase_Order.models import PoHeader, PoAddresses
 from eProc_Shopping_Cart.context_processors import update_user_info

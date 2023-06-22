@@ -400,6 +400,10 @@ function get_data_for_check() {
                 break;
             default:
         }
+        var get_delivery_address_class = document.getElementsByClassName('address_number_check')
+        for(del_addr = 0; del_addr < get_delivery_address_class.length; del_addr++) {
+            data.address_number = get_delivery_address_class[del_addr].value;
+        }
         var acc_val_info = change_acc_value_id + rendered_acc_guid[i];
         var gl_num_info = 'ScAccounting-gl_acc_num-' + rendered_acc_guid[i];
         var prod_cat_info = 'prod_cat_id-' + rendered_item_guid[incremented_i - 1];
@@ -410,7 +414,7 @@ function get_data_for_check() {
         //     supplier_name = document.getElementById('ScItem-supplier_id-' + rendered_item_guid[incremented_i - 1] + '-drop').value
         // }
         data.supplier_name = supplier_name
-        data.address_number = '';
+        //data.address_number = '';
         acc_acc_cat = (document.getElementById(acc_info).value).split(' - ')[0]
         data.acc_acc_cat = acc_acc_cat.replace(/\s/g, '');
         acc_acc_val = (document.getElementById(acc_val_info).value).split(' - ')[0]
