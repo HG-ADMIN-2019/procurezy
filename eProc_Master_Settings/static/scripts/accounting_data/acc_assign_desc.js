@@ -105,7 +105,8 @@ function add_popup_row() {
         row.find("TD").eq(3).find("select").empty()
         company_num = row.find("TD").eq(1).find("select option:selected").val();
         var assign_val = account_assignment_value_find(company_num)
-        row.find("TD").eq(2).find("select").append(assign_val.acc_ass_dropdwn)
+//        row.find("TD").eq(2).find("select").append(assign_val.acc_ass_dropdwn)
+        row[0].nextElementSibling.children[2].children.acct_assmt_cat.append(assign_val.acc_ass_dropdwn)
         row.find("TD").eq(3).find("select").append(assign_val.acc_ass_val_dropdwn)
         $(row.find("TD").eq(1).find("select")).change(function () {
               company_dropdwn_change(row);
