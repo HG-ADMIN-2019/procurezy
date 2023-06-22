@@ -344,7 +344,9 @@ def appr_notify(sc_header_instance, variant_name, client):
             }, 'email')[0])
     elif stp_no > 1:
         app_name_val = []
-        if len(mgr_details['app_id_detail']) > 1:
+        appr_len = mgr_details['app_id_detail']
+
+        if (len(sc_header_instance['manager_details'])) > 1:
             for app in mgr_details['app_id_detail']:
                 app_name_val = app
                 email_id = django_query_instance.django_filter_value_list_query(UserData, {
@@ -354,7 +356,7 @@ def appr_notify(sc_header_instance, variant_name, client):
         else:
             app_name_val = mgr_details['app_id_detail']
             email_id = django_query_instance.django_filter_value_list_query(UserData, {
-                'client': client, 'username': app_name_val[0]
+                'client': client, 'username': mgr_details['app_id_detail']
             }, 'email')[0]
             appr_email.append(email_id)
 
