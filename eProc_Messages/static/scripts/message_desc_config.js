@@ -112,12 +112,11 @@ function display_basic_db_data() {
 }
 
 function display_error_message(error_message){
-    var errorElement = document.getElementById("error_message");
-    if (errorElement) {
-        errorElement.textContent = error_message;
-        errorElement.style.color = "Red";
-    }
-    $("#error_msg_id").css("display", "block")
+    $("#error_msg_id").css("display", "block");
+     $("#error_msg_id").prop("hidden", false)
+    $('#error_message').text(error_message);
+    document.getElementById("error_msg_id").style.color = "Red";
+    document.getElementById("error_msg_id").innerHTML = error_message;
     $('#id_save_confirm_popup').modal('hide');
     $('#msg_desc_Modal').modal('show');
 }
