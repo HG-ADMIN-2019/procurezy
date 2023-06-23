@@ -5,6 +5,14 @@ var validate_add_attributes = [];
 var number_range={};
 var seq_array= [];
 
+// on click Delete icon
+function onclick_delete_button() {
+    GLOBAL_ACTION = "DELETE";
+    $('#delete_data').show();
+    $('#save_id').hide();
+    onclick_copy_update_button("DELETE");
+}
+
 //onclick of add button display myModal popup and set GLOBAL_ACTION button value
 function onclick_add_button(button) {
     $("#error_msg_id").css("display", "none")
@@ -47,7 +55,28 @@ function onclick_copy_update_button() {
             var row = checkBoxes[i].parentNode.parentNode;
             if (GLOBAL_ACTION == "UPDATE") {
                 guid = row.cells[5].innerHTML;
-                edit_basic_data += '<tr ><td><input type="checkbox" required></td><td><input type="number" class="form-control" value="' + row.cells[1].innerHTML + '" name="sequence"  maxlength="5"  disabled></td><td><input class="form-control" value="' + row.cells[2].innerHTML + '" type="number"  name="starting"  maxlength="100000000"  required></td><td><input value="' + row.cells[3].innerHTML + '" type="number" class="form-control"  name="ending"  maxlength="10"  required></td><td><input value="' + row.cells[4].innerHTML + '" type="number" class="form-control"  name="current"  maxlength="10"  required></td><td hidden><input  type="text" class="form-control" value="' + guid + '"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+                edit_basic_data += '<tr ><td><input type="checkbox" required></td><td><input type="number" class="form-control" value="' + row.cells[1].innerHTML + '" name="sequence"  maxlength="5"  disabled></td><td><input class="form-control" value="' + row.cells[2].innerHTML + '" type="number"  name="starting"  maxlength="100000000"  disabled></td><td><input value="' + row.cells[3].innerHTML + '" type="number" class="form-control"  name="ending"  maxlength="10"  required></td><td><input value="' + row.cells[4].innerHTML + '" type="number" class="form-control"  name="current"  maxlength="10"  disabled></td><td hidden><input  type="text" class="form-control" value="' + guid + '"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+            }
+            else if (GLOBAL_ACTION == "DELETE") {
+                if ((row.cells[1].innerHTML=="False")){
+                    check = '<input type="checkbox" disabled>'
+                    $('#delete_data').prop('disabled', true);
+                }
+                else
+                {
+                    check = '<input type="checkbox">'
+                    $('#delete_data').prop('disabled', false);
+                }
+                edit_basic_data +=
+                '<tr >'+
+                    '<td><input type="checkbox" required></td>'+
+                    '<td><input type="number" class="form-control" value="' + row.cells[1].innerHTML + '" name="sequence"  maxlength="5"  disabled></td>'+
+                    '<td><input class="form-control" value="' + row.cells[2].innerHTML + '" type="number"  name="starting"  maxlength="100000000"  disabled></td>'+
+                    '<td><input value="' + row.cells[3].innerHTML + '" type="number" class="form-control"  name="ending"  maxlength="10"  disabled></td>'+
+                    '<td><input value="' + row.cells[4].innerHTML + '" type="number" class="form-control"  name="current"  maxlength="10"  disabled></td>'+
+                    '<td hidden><input  type="text" class="form-control" value="' + guid + '"></td>'+
+                    '<td class="class_del_checkbox" hidden><input type="checkbox" required></td>'+
+                '</tr>';
             }
         }
     }
