@@ -98,29 +98,18 @@ function add_popup_row() {
         $("#id_error_msg").html("");
     });
     new_row_data();   // Add a new row in popup
-    var company_num = '';
-    $("#id_popup_table TBODY TR").each(function () {
-        var row = $(this);
-        row.find("TD").eq(2).find("select").empty()
-        row.find("TD").eq(3).find("select").empty()
-        company_num = row.find("TD").eq(1).find("select option:selected").val();
-        var assign_val = account_assignment_value_find(company_num)
-//        row.find("TD").eq(2).find("select").append(assign_val.acc_ass_dropdwn)
-        row[0].nextElementSibling.children[2].children.acct_assmt_cat.append(assign_val.acc_ass_dropdwn)
-        row.find("TD").eq(3).find("select").append(assign_val.acc_ass_val_dropdwn)
-        $(row.find("TD").eq(1).find("select")).change(function () {
-              company_dropdwn_change(row);
-        })
-        $(row.find("TD").eq(2).find("select")).change(function () {
-            company_num = row.find("TD").eq(1).find("select option:selected").val();
-            acc_ass_cat_dropdwn(row,company_num);
-        })
-    })
     if (GLOBAL_ACTION == "aad_upload") {
         $(".class_del_checkbox").prop("hidden", false);
     }
 }
+function get_acct_assmt_cat(rowid){
+    var row = $(rowid);
+    var selectedValue = row[0].value;
+    var assign_val = account_assignment_value_find(selectedValue)
+    row[0].parentElement.parentNode.children[2].children.acct_assmt_cat.innerHTML = assign_val.acc_ass_dropdwn
+    row[0].parentElement.parentNode.children[3].children[0].innerHTML = assign_val.acc_ass_val_dropdwn
 
+}
 function company_dropdwn_change(row){
     row.find("TD").eq(2).find("select").empty()
     row.find("TD").eq(3).find("select").empty()
@@ -129,12 +118,13 @@ function company_dropdwn_change(row){
     row.find("TD").eq(2).find("select").append(comp_val.acc_ass_dropdwn)
     row.find("TD").eq(3).find("select").append(comp_val.acc_ass_val_dropdwn)
 }
-
-function acc_ass_cat_dropdwn(row,company_num){
-    acct_cat = row.find("TD").eq(2).find("select option:selected").val();
-    row.find("TD").eq(3).find("select").empty();
+function get_acct_assmt_val(rowid){
+    var row = $(rowid);
+    var acct_cat = row.find("TD").eq(2).find("select option:selected").val();
+    acct_cat = row[0].value;
+    row[0].parentNode.nextElementSibling.childNodes[0].innerHTML = '';
     var acct_cat_val = account_assignment_cat(acct_cat,company_num)
-    row.find("TD").eq(3).find("select").append(acct_cat_val.acc_ass_val_dropdwn)
+    row[0].parentNode.nextElementSibling.childNodes[0].innerHTML = acct_cat_val.acc_ass_val_dropdwn;
 }
 
 //onclick of cancel empty the popup table body and error messages
@@ -274,10 +264,11 @@ function read_popup_data() {
 
 // Function for add a new row data
 function new_row_data() {
+    acc_value_desc_dropdown();
     basic_add_new_html = '<tr> <td><input class="input" type="checkbox" required></td>'+
-    '<td><select id="comp_id" class="form-control">' + company_dropdwn + ' </select></td>'+
-    '<td><select id="acct_assmt_cat" class="form-control"></select></td>'+
-    '<td><select class="form-control"></select></td>'+
+    '<td><select id="comp_id" class="form-control" onchange="get_acct_assmt_cat(this)">' + company_dropdwn + ' </select></td>'+
+    '<td><select id="acct_assmt_cat" class="form-control" onchange="get_acct_assmt_val(this)">'+assign_val.acc_ass_dropdwn+'</select></td>'+
+    '<td><select class="form-control">'+assign_val.acc_ass_val_dropdwn+'</select></td>'+
     '<td><input class="form-control check_special_char" type="text"  maxlength="255" ></td>'+
     '<td><select class="form-control">' + language_dropdwn + '</select></td>'+
     '<td hidden><input value="GUID" hidden></td>'+

@@ -178,6 +178,7 @@
     var assmtCatDistinct = [];var assmtValDistinct = [];
     var unique_acct_cat = [];
     var unique_acct_assmt_val = [];
+    var assign_val;
 
     //************************************************
     function acc_value_desc_dropdown() {
@@ -194,6 +195,7 @@
             $('drop_down_attr1').empty()
             $('drop_down_attr1').append(company_dropdwn)
         });
+
         language_dropdwn = '';
         $.each(rendered_language_data, function (i, item) {
             language_dropdwn += '<option value="' + item.language_id + '">' + item.description + '</option>'
@@ -238,6 +240,8 @@
         $(arrDistinct).each(function (index, item) {
             company_dropdwn += '<option value="' + item + '">' + item + '</option>'
         });
+         var company_num = arrDistinct[0];
+         assign_val = account_assignment_value_find(company_num);
     }
 
     //onclick of data Upload copy data to modal pop-up
