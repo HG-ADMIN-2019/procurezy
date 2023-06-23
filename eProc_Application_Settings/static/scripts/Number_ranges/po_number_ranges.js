@@ -45,7 +45,7 @@ function onclick_copy_update_button() {
             if (GLOBAL_ACTION == "UPDATE") {
                 no_duplicate_entries = 'Y';
                 guid = row.cells[5].innerHTML;
-                edit_basic_data += '<tr><td><input type="checkbox" required></td><td><input type="number" class="form-control" value="'+row.cells[1].innerHTML+'" name="sequence"  maxlength="2"  disabled></td><td><input class="form-control" value="'+row.cells[2].innerHTML+'" type="number"  name="starting"  maxlength="100000000"  required></td><td><input value="'+row.cells[3].innerHTML+'" type="number" class="form-control"  name="ending"  maxlength="100000000"  required></td><td><input value="'+row.cells[4].innerHTML+'" type="number" class="form-control"  name="current"  maxlength="100000000"  required></td><td hidden><input  type="text" class="form-control" value="'+guid+'"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+                edit_basic_data += '<tr><td><input type="checkbox" required></td><td><input type="number" class="form-control" value="'+row.cells[1].innerHTML+'" name="sequence"  maxlength="2"  disabled></td><td><input class="form-control" value="'+row.cells[2].innerHTML+'" type="number"  name="starting"  maxlength="100000000"  disabled></td><td><input value="'+row.cells[3].innerHTML+'" type="number" class="form-control"  name="ending"  maxlength="100000000"  required></td><td><input value="'+row.cells[4].innerHTML+'" type="number" class="form-control"  name="current"  maxlength="100000000"  disabled></td><td hidden><input  type="text" class="form-control" value="'+guid+'"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
             }
         }
     }
