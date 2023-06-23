@@ -152,7 +152,8 @@ function read_popup_data() {
             if (message_id_desc.language_id == render_language_data[i].language_id)
                 desc = render_language_data[i].description;
         }
-        validate_add_attributes.push( message_id_desc.messages_id);
+         var compare = message_id_desc.messages_id+'-'+desc;
+        validate_add_attributes.push(compare);
         message_id_desc_data.push(message_id_desc);
     });
     table_sort_filter('id_popup_table');
@@ -182,7 +183,8 @@ function get_main_table_data() {
         main_attribute.messages_id = row.find("TD").eq(1).html();
         main_attribute.messages_desc = row.find("TD").eq(2).html();
         main_attribute.language_id = row.find("TD").eq(3).html();
-        main_table_low_value.push(main_attribute.messages_id);
+        var compare_maintable = main_attribute.messages_id+'-'+main_attribute.language_id;
+        main_table_low_value.push(compare_maintable);
     });
     table_sort_filter('display_basic_table');
 }
