@@ -177,18 +177,6 @@
     var unique_work_flow = [];
     var unique_appr_type = [];
 
-     approvar_types_dropdown = '';
-        $.each(rendered_approvartype_data, function(i, item){
-            approvar_types_dropdown += '<option value="' + item.app_types + '">' + item.app_types + '</option>';
-        })
-        company_id_dropdown = '';
-        $.each(rendered_company_data, function(i, item){
-            company_id_dropdown += '<option value="' + item.company_id + '">' + item.company_id + '</option>';
-        })
-        wrksch_types_dropdown_onload = '';
-        $.each(dropdown_db_values, function(i, item){
-        wrksch_types_dropdown_onload+= '<option value="' + item.field_type_id + '">' + item.field_type_desc + '</option>';
-        })
 
     //*******************************
     function workflow_dropdown() {
@@ -366,7 +354,8 @@
             main_attribute.company_id = row.find("TD").eq(1).html();
             main_attribute.app_types = row.find("TD").eq(3).html();
             main_attribute.workflow_schema_guid = row.find("TD").eq(4).html();
-            var wfschm_compare_maintable = main_attribute.workflow_schema +'-'+ main_attribute.company_id
+            main_attribute.del_ind = row.find("TD").eq(5).find('input[type="checkbox"]').is(':checked');
+            var wfschm_compare_maintable = main_attribute.workflow_schema +'-'+ main_attribute.company_id +'-'+ main_attribute.del_ind
             main_table_low_value.push(wfschm_compare_maintable);
         });
         table_sort_filter('display_basic_table');
@@ -410,17 +399,37 @@
 
     // on click add icon display the row in to add the new entries
     function add_popup_row() {
-        $("#error_msg_id").css("display", "none")
-        basic_add_new_html = '';
-        var display_db_data = '';
-        $('#id_popup_table').DataTable().destroy();
-        $(".modal").on("hidden.bs.modal", function () {
-            $("#id_error_msg").html(" ");
+         OpenLoaderPopup();
+        var data = {'table_name':'WorkflowSchema'}
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'eProc_Configuration:get_dropdown_data' %}",
+            data: JSON.stringify(data),
+            success: function(response) {
+                rendered_company_data = response.upload_data_company
+                rendered_approvartype_data = response.upload_data_apptypes
+                dropdown_db_values = response.dropdown_db_values
+                workflow_dropdown()
+                $("#error_msg_id").css("display", "none")
+                basic_add_new_html = '';
+                var display_db_data = '';
+                $('#id_popup_table').DataTable().destroy();
+                $(".modal").on("hidden.bs.modal", function () {
+                    $("#id_error_msg").html(" ");
+                });
+                if (GLOBAL_ACTION == "workflowsch_upload") {
+                    basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select class=" input form-control">'+company_id_dropdown+'</select></td><td><select id="workflow_schema" name="workflow_schema"  type="text" class="input form-control">'+wrksch_types_dropdown_onload+'</select></td><td><select class=" input form-control">'+approvar_types_dropdown+'</select></td><td hidden></td><td class="class_del_checkbox"><input type="checkbox" required></td></tr>';
+                    $('#id_popup_tbody').append(basic_add_new_html);
+                    $(".class_del_checkbox").prop("hidden", false);
+                    $("#id_del_ind_checkbox").prop("hidden", false);
+                    table_sort_filter('id_popup_table');
+                }
+                else{
+                     new_row_data();   // Add a new row in popup
+                }
+                CloseLoaderPopup();
+            }
         });
-        new_row_data();   // Add a new row in popup
-        if (GLOBAL_ACTION == "country_upload") {
-            $(".class_del_checkbox").prop("hidden", false);
-        }
     }
 
     //onclick of upload button display id_data_upload popup and set GLOBAL_ACTION button value
@@ -437,6 +446,7 @@
         GLOBAL_ACTION = "COPY"
         onclick_copy_update_button("copy")
         document.getElementById("id_del_add_button").style.display = "block";
+         $("#save_id").prop("hidden", false);
     }
 
     // on click update icon display the selected checkbox data to update
@@ -444,6 +454,7 @@
         GLOBAL_ACTION = "UPDATE"
         onclick_copy_update_button("update")
         document.getElementById("id_del_add_button").style.display = "none";
+         $("#save_id").prop("hidden", false);
     }
 
 
@@ -657,13 +668,14 @@
                             var del_ind = '';
                             var dropdown_values = [];
                             var inc_index=0;
+                            $('#id_popup_table').DataTable().destroy();
                             $("#id_popup_tbody").empty();
                             $.each(response.valid_data_list, function (i, value) {
                                 var app_type_value = value.app_types
                                 var company_id_value = value.company_id
                                 dropdown_values.push([app_type_value,company_id_value])
                                 del_ind = '<td>' + value.del_ind + '</td>'
-                                if (value[2] == 1) {
+                                if (value.del_ind == 1) {
                                     del_ind=' <input type="checkbox" value="' + value.del_ind + '" checked>'
                                 }
                                 else {
@@ -692,8 +704,12 @@
                                     }
                                     company_id_list = company + company_list
                                 });
+                                 wrksch_types_dropdown_onload = '';
+                                    $.each(dropdown_db_values, function(i, item){
+                                      wrksch_types_dropdown_onload+= '<option value="' + item.field_type_id + '">' + item.field_type_desc + '</option>';
+                                    })
                                 edit_basic_data += '<tr><td class="class_select_checkbox"><input type="checkbox" required></td>'+
-                                '<td><select class="form-control" type="text">' + company_id_list + '</select></td><td><select id="workflow_schema" name="workflow_schema" type="text" class="input form-control">'+wrksch_types_dropdown_onload+'</select></td><td><select class="form-control" type="text">' + apptype_id_list + '</select></td><td hidden><input type="text" value=""></td><td>'+ del_ind +'</td></tr>';
+                                '<td><select class="form-control" type="text">' + company_id_list + '</select></td><td><select id="workflow_schema" name="workflow_schema" type="text" class="input form-control">value ="' + value.workflow_schema + ''+wrksch_types_dropdown_onload+'"</select></td><td><select class="form-control" type="text">' + apptype_id_list + '</select></td><td hidden><input type="text" value=""></td><td>'+ del_ind +'</td></tr>';
                             });
                             $('#id_popup_tbody').append(edit_basic_data);
                             var i =0;
@@ -702,7 +718,7 @@
                                 var company_id_list = dropdown_values[i][0]
                                 var apptype_id_list = dropdown_values[i][2]
                                 $(row.find("TD").eq(1).find("select option[value="+company_id_list+"]")).attr('selected','selected');
-                                $(row.find("TD").eq(2).find("select option[value="+apptype_id_list+"]")).attr('selected','selected');
+                                $(row.find("TD").eq(3).find("select option[value="+apptype_id_list+"]")).attr('selected','selected');
                             i++;
                             });
                             $( "#id_del_ind_checkbox").prop( "hidden", false );
@@ -770,7 +786,7 @@
             wfsch_list.push(workflw_schm_dic)
              get_main_table_data(); //Read data from main table
 
-            if(wfsch_check.includes(workflw_schm_dic.workflow_schema)){
+            if(wfsch_check.includes((workflw_schm_dic.workflow_schema)&&(workflw_schm_dic.del_ind))){
                  $(row).css("border", "#f8d7da");
                  row_color_highlight(row);
                  $("#id_check_error_messages").prop("hidden",false);
@@ -781,7 +797,7 @@
                  $("#id_check_data").prop("hidden", false);
                  count = count +1;
             }
-            else if(main_table_low_value.includes(workflw_schm_dic.workflow_schema)){
+            else if(main_table_low_value.includes((workflw_schm_dic.workflow_schema)&&(workflw_schm_dic.del_ind))){
                  $(row).css("border", "#f8d7da");
                  row_color_highlight(row);
                  $("#id_check_error_messages").prop("hidden",false);

@@ -593,85 +593,99 @@ def data_upload(request):
             return JsonResponse(context, safe=False)
         if Table_name == 'SpendLimitValue':
             result['error_message'], result['data'] = upload_csv.csv_preview_data(header_detail, data_set_val)
-            convertion_list = convert_SpendLimitValue_to_dictionary(result['data'])
+            result = remove_duplicates(result['data'])
+            convertion_list = convert_SpendLimitValue_to_dictionary(result)
             valid_data_list, message = check_spendlimit_value_data(convertion_list, 'UPLOAD')
             context = {'valid_data_list': valid_data_list}
             return JsonResponse(context, safe=False)
         if Table_name == 'SpendLimitId':
             result['error_message'], result['data'] = upload_csv.csv_preview_data(header_detail, data_set_val)
-            convertion_list = convert_SpendLimitId_to_dictionary(result['data'])
+            result = remove_duplicates(result['data'])
+            convertion_list = convert_SpendLimitId_to_dictionary(result)
             valid_data_list, message = check_spending_limit_data(convertion_list, 'UPLOAD')
             context = {'valid_data_list': valid_data_list}
             return JsonResponse(context, safe=False)
         if Table_name == 'ApproverLimit':
             result['error_message'], result['data'] = upload_csv.csv_preview_data(header_detail, data_set_val)
-            convertion_list = convert_ApproverLimit_to_dictionary(result['data'])
+            result = remove_duplicates(result['data'])
+            convertion_list = convert_ApproverLimit_to_dictionary(result)
             valid_data_list, message = check_approv_limit_data(convertion_list, 'UPLOAD')
             context = {'valid_data_list': valid_data_list}
             return JsonResponse(context, safe=False)
         if Table_name == 'ApproverLimitValue':
             result['error_message'], result['data'] = upload_csv.csv_preview_data(header_detail, data_set_val)
-            convertion_list = convert_ApproverLimitValue_to_dictionary(result['data'])
+            result = remove_duplicates(result['data'])
+            convertion_list = convert_ApproverLimitValue_to_dictionary(result)
             valid_data_list, message = check_approv_limit_value_data(convertion_list, 'UPLOAD')
             context = {'valid_data_list': valid_data_list}
             return JsonResponse(context, safe=False)
         if Table_name == 'WorkflowACC':
             result['error_message'], result['data'] = upload_csv.csv_preview_data(header_detail, data_set_val)
-            convertion_list = convert_WorkflowACC_to_dictionary(result['data'])
+            result = remove_duplicates(result['data'])
+            convertion_list = convert_WorkflowACC_to_dictionary(result)
             valid_data_list, message = check_workflow_acc_data(convertion_list, 'UPLOAD')
             context = {'valid_data_list': valid_data_list}
             return JsonResponse(context, safe=False)
         if Table_name == 'DetermineGLAccount':
             result['error_message'], result['data'] = upload_csv.csv_preview_data(header_detail, data_set_val)
-            convertion_list = convert_DetermineGLAccount_to_dictionary(result['data'])
+            result = remove_duplicates(result['data'])
+            convertion_list = convert_DetermineGLAccount_to_dictionary(result)
             valid_data_list, message = check_determine_gl_acc_data(convertion_list, 'UPLOAD')
             context = {'valid_data_list': valid_data_list}
             return JsonResponse(context, safe=False)
         if Table_name == 'AccountingData':
             result['error_message'], result['data'] = upload_csv.csv_preview_data(header_detail, data_set_val)
-            convertion_list = convert_AccountingData_to_dictionary(result['data'])
+            result = remove_duplicates(result['data'])
+            convertion_list = convert_AccountingData_to_dictionary(result)
             valid_data_list, message = check_acc_assign_values_data(convertion_list, 'UPLOAD')
             context = {'valid_data_list': valid_data_list}
             return JsonResponse(context, safe=False)
         if Table_name == 'AccountingDataDesc':
             result['error_message'], result['data'] = upload_csv.csv_preview_data(header_detail, data_set_val)
-            convertion_list = convert_AccountingDataDesc_to_dictionary(result['data'])
+            result = remove_duplicates(result['data'])
+            convertion_list = convert_AccountingDataDesc_to_dictionary(result)
             valid_data_list, message = check_acc_assign_desc_data(convertion_list, 'UPLOAD')
             context = {'valid_data_list': valid_data_list}
             return JsonResponse(context, safe=False)
         if Table_name == 'WorkflowSchema':
             result['error_message'], result['data'] = upload_csv.csv_preview_data(header_detail, data_set_val)
-            convertion_list = convert_Workflowschema_to_dictionary(result['data'])
+            result = remove_duplicates(result['data'])
+            convertion_list = convert_Workflowschema_to_dictionary(result)
             valid_data_list, message = check_workflowschema_data(convertion_list, 'UPLOAD')
             context = {'valid_data_list': valid_data_list}
             return JsonResponse(context, safe=False)
         if Table_name == 'ApproverType':
             result['error_message'], result['data'] = upload_csv.csv_preview_data(header_detail, data_set_val)
-            convertion_list = convert_ApproverType_to_dictionary(result['data'])
+            result = remove_duplicates(result['data'])
+            convertion_list = convert_ApproverType_to_dictionary(result)
             valid_data_list, message = check_approvaltype_data(convertion_list, 'UPLOAD')
             context = {'valid_data_list': valid_data_list}
             return JsonResponse(context, safe=False)
         if Table_name == 'OrgAddressMap':
             result['error_message'], result['data'] = upload_csv.csv_preview_data(header_detail, data_set_val)
-            convertion_list = convert_OrgAddresstype_to_dictionary(result['data'])
+            result = remove_duplicates(result['data'])
+            convertion_list = convert_OrgAddresstype_to_dictionary(result)
             valid_data_list, message = check_address_types_data(convertion_list, 'UPLOAD')
             context = {'valid_data_list': valid_data_list}
             return JsonResponse(context, safe=False)
         if Table_name == 'Payterms_desc':
             result['error_message'], result['data'] = upload_csv.csv_preview_data(header_detail, data_set_val)
-            convertion_list = convert_Payterms_desc_to_dictionary(result['data'])
+            result = remove_duplicates(result['data'])
+            convertion_list = convert_Payterms_desc_to_dictionary(result)
             valid_data_list, message = check_paymentterm_desc_data(convertion_list, 'UPLOAD')
             context = {'valid_data_list': valid_data_list}
             return JsonResponse(context, safe=False)
         if Table_name == 'Incoterms':
             result['error_message'], result['data'] = upload_csv.csv_preview_data(header_detail, data_set_val)
-            convertion_list = convert_Incoterms_to_dictionary(result['data'])
+            result = remove_duplicates(result['data'])
+            convertion_list = convert_Incoterms_to_dictionary(result)
             valid_data_list, message = check_inco_terms_data(convertion_list, 'UPLOAD')
             context = {'valid_data_list': valid_data_list}
             return JsonResponse(context, safe=False)
         if Table_name == 'UnspscCategoriesCust':
             result['error_message'], result['data'] = upload_csv.csv_preview_data(header_detail, data_set_val)
-            convertion_list = convert_UNSPSC_to_dictionary(result['data'])
+            result = remove_duplicates(result['data'])
+            convertion_list = convert_UNSPSC_to_dictionary(result)
             valid_data_list, message = check_unspsc_category_data(convertion_list, 'UPLOAD')
             context = {'valid_data_list': valid_data_list}
             # retrieving correct ordered data from csv_data_arrangement() - basic_settings_specific.py
@@ -679,7 +693,8 @@ def data_upload(request):
             return JsonResponse(context, safe=False)
         if Table_name == 'UnspscCategoriesCustDesc':
             result['error_message'], result['data'] = upload_csv.csv_preview_data(header_detail, data_set_val)
-            convertion_list = convert_UNSPSCDESC_to_dictionary(result['data'])
+            result = remove_duplicates(result['data'])
+            convertion_list = convert_UNSPSCDESC_to_dictionary(result)
             valid_data_list, message = check_unspsc_category_desc_data(convertion_list, 'UPLOAD')
             context = {'valid_data_list': valid_data_list}
             return JsonResponse(context, safe=False)

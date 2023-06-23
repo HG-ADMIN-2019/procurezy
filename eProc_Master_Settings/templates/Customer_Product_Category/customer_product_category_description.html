@@ -837,7 +837,7 @@ function check_data() {
                 $("#id_check_special_character_messages").prop("hidden",false);
                 count = count +1;
             }
-            else if(prodcatdesc_code_check.includes((unspsc_desc_dic.prod_cat_id)&&(unspsc_dic.del_ind))){
+            else if(prodcatdesc_code_check.includes((unspsc_desc_dic.prod_cat_id)&&(unspsc_desc_dic.del_ind))){
                  $(row).css("border", "#f8d7da");
                  row_color_highlight(row);
                  $("#id_check_error_messages").prop("hidden",false);
@@ -848,7 +848,7 @@ function check_data() {
                  $("#id_check_data").prop("hidden", false);
                  count = count +1;
             }
-            else if(main_table_low_value.includes((unspsc_desc_dic.prod_cat_id)&&(unspsc_dic.del_ind))){
+            else if(main_table_low_value.includes((unspsc_desc_dic.prod_cat_id)&&(unspsc_desc_dic.del_ind))){
                  $(row).css("border", "#f8d7da");
                  row_color_highlight(row);
                  $("#id_check_error_messages").prop("hidden",false);

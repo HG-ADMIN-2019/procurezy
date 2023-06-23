@@ -198,7 +198,7 @@ class ApplicationSettingsSave:
         if number_range_db_list:
             bulk_create_entry_db(NumberRanges, number_range_db_list)
 
-        return doc_type
+        return doc_type, delete_flag
 
     def save_number_range_data_into_db(self, number_range_data):
         """
@@ -217,7 +217,8 @@ class ApplicationSettingsSave:
                                                del_ind=False).aggregate(
             Max('sequence'))
         sequence_max = sequence['sequence__max']
-        data = {'upload_response': upload_response, 'sequence_max': sequence_max}
+        data = {'upload_response': upload_response, 'sequence_max': sequence_max, 'doc_type': doc_type}
+
         return data, message
 
     def save_document_type_data(self, documenttype_data):

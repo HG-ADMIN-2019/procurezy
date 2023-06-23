@@ -128,7 +128,6 @@ function add_popup_row() {
     else{
     new_row_data();  // Add a new row in popup
     }
-    $('#delete_data').hide()
 }
 
 //**************************************
