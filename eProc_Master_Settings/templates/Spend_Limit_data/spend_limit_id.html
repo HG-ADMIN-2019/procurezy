@@ -227,7 +227,7 @@
             spend_limit.push(spend_limit_dict);
             spend_limit_array.push(item.spend_code_id);
         });
-        
+
         // Filter rendered_approval_limit_data based on spend_code_id and company_id in rendered_spndlimval_data
         var filtered_spend_limit_data = rendered_spndlimval_data.filter(function(item) {
             return spend_limit_array.includes(item.spend_code_id) &&
