@@ -8,7 +8,7 @@ function onclick_upload_button() {
     $("#id_error_msg_upload").prop("hidden",true)
     $("#id_popup_tbody").empty();
     $('#id_data_upload').modal('show');
-    //document.getElementById('id_file_data_upload').value = "";
+    document.getElementById('id_file_data_upload').value = "";
 }
 
 //******************************************** 
@@ -151,7 +151,9 @@ function get_main_table_data_upload() {
         var row = $(this);
         var main_attribute = {};
         main_attribute.app_types = row.find("TD").eq(1).html();
-        main_table_low_value.push(main_attribute.app_types);
+        main_attribute.del_ind = row.find("TD").eq(3).find('input[type="checkbox"]').is(':checked');
+        var compare = main_attribute.app_types + '-'+ main_attribute.del_ind
+        main_table_low_value.push(compare);
     });
     table_sort_filter('display_basic_table');
     return main_table_low_value

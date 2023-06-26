@@ -91,7 +91,7 @@
                 <div class="modal-body">
                     <div class="popup-vertical-scroll">
                         <div id="id_del_add_button" class="mb-4">
-                            <button type="button" class="btn btn-primary" title="Add New Row" onclick="add_trial()"><i class="fa fa-plus"></i> add new row</button>
+                            <button type="button" class="btn btn-primary" title="Add New Row" onclick="add_popup_row()"><i class="fa fa-plus"></i> add new row</button>
                             <button class="btn btn-outline-danger" title="Delete" onclick="application_settings_delete_Row('id_popup_table')" id="deleteBtn"><i class="fa fa-trash"></i>
                                 delete
                             </button>
@@ -173,16 +173,6 @@
     var wday_array = [];
     var country_dropdwn = [];
 
-    $(document).ready(function() {
-    $('.table-responsive .dropdown').on('shown.bs.dropdown', function () {
-          console.log($('#table-responsive-cliente').height() + 500)
-          $("#table-responsive-cliente").css("height",$('#table-responsive-cliente').height() + 500 );
-    })
-
-    $('.table-responsive .dropdown').on('hide.bs.dropdown', function () {
-           $("#table-responsive-cliente").css("height","auto");
-    })
-})
     //******************************
     function calendar_drpdown(){
         $.each(rendered_calendar_data, function (i, item) {
@@ -193,6 +183,7 @@
                 working_days_values[j] = get_days(wday_array[j]);
             }
         });
+        country_dropdwn = '';
         $.each(render_country_data, function (i, item) {
             country_dropdwn += '<option  value="' + item.country_code + '">' + item.country_name + '</option>'
         });
@@ -201,41 +192,32 @@
     //onclick of add button display Calendar_Modal popup and set GLOBAL_ACTION button value
     function onclick_add_button(button){
         OpenLoaderPopup();
-<!--        var data = {'table_name':'CalenderConfig'}-->
-<!--        $.ajax({-->
-<!--            type: 'POST',-->
-<!--            url: "{% url 'eProc_Configuration:get_dropdown_data' %}",-->
-<!--            data: JSON.stringify(data),-->
-<!--            success: function(response) {-->
-<!--                rendered_calendar_data = response.calender_data-->
-                calendar_drpdown();
-                $("#error_msg_id").css("display", "none")
-                $( "#header_select").prop( "hidden", false );
-                $("#calenderid").prop("hidden", true);
-                GLOBAL_ACTION=button.value
-                $('#id_popup_table').DataTable().destroy();
-                $("#id_popup_tbody").empty();
-                $('#Calendar_Modal').modal('show');
-                basic_add_new_html = '<tr> <td><input type="checkbox"> </td>'+
-                '<td><input class="form-control" type="text"  pattern="[A-Z]" maxlength="10"  name="calender_id" style="text-transform:uppercase;" required></td>'+
-                '<td><select id="country" class="input form-control" type="text" name="country"> {% for country in country_list %} <option value="{{country.country_code}}">{{country.country_name}}</option> {% endfor %} </select> </td>'+
-                '<td> <input class="form-control check_special_char" type="text" name="description"> </td>'+
-                '<td> <input class="form-control yearPicker" type="text" maxlength="4"  name="year" style="width:150px"> </td>'+
-                '<td> <select type="text" class="input form-control multiple_select" type="text" name="working_days" title="Select.." multiple >'+
-                '<option value="1">Sunday</option><option value="2">Monday</option><option value="3">Tuesday</option><option value="4">Wednesday</option><option value="5">Thursday</option><option value="6">Friday</option><option value="7">Saturday</option></select>'+
-                '</td>'+
-                '<td class="class_del_checkbox" hidden> <input type="checkbox"> </td>'+
-                '<td input type="text" id="calendar_config_guid" hidden></td></tr>';
-                $('#id_popup_tbody').append(basic_add_new_html);
-                DatePicker();
-                MultipleSelect();
-                $("#id_del_ind_checkbox").prop( "hidden", true );
-                document.getElementById("id_del_add_button").style.display = "block";
-                $("#save_id").prop("hidden", false);
-                CloseLoaderPopup();
-                table_sort_filter('id_popup_table');
-<!--            }-->
-<!--        });-->
+        calendar_drpdown();
+        $("#error_msg_id").css("display", "none")
+        $( "#header_select").prop( "hidden", false );
+        $("#calenderid").prop("hidden", true);
+        GLOBAL_ACTION=button.value
+        $('#id_popup_table').DataTable().destroy();
+        $("#id_popup_tbody").empty();
+        $('#Calendar_Modal').modal('show');
+        basic_add_new_html = '<tr> <td><input type="checkbox"> </td>'+
+        '<td><input class="form-control" type="text"  pattern="[A-Z]" maxlength="10"  name="calender_id" style="text-transform:uppercase;" required></td>'+
+        '<td><select id="country" class="input form-control" type="text" name="country"> {% for country in country_list %} <option value="{{country.country_code}}">{{country.country_name}}</option> {% endfor %} </select> </td>'+
+        '<td> <input class="form-control check_special_char" type="text" name="description"> </td>'+
+        '<td> <input class="form-control yearPicker" type="text" maxlength="4"  name="year" style="width:150px"> </td>'+
+        '<td> <select type="text" class="input form-control multiple_select" type="text" name="working_days" title="Select.." multiple data-selected-text-format="count" data-actions-box="true" >'+
+        '<option value="1">Sunday</option><option value="2">Monday</option><option value="3">Tuesday</option><option value="4">Wednesday</option><option value="5">Thursday</option><option value="6">Friday</option><option value="7">Saturday</option></select>'+
+        '</td>'+
+        '<td class="class_del_checkbox" hidden> <input type="checkbox"> </td>'+
+        '<td input type="text" id="calendar_config_guid" hidden></td></tr>';
+        $('#id_popup_tbody').append(basic_add_new_html);
+        DatePicker();
+        MultipleSelect();
+        $("#id_del_ind_checkbox").prop( "hidden", true );
+        document.getElementById("id_del_add_button").style.display = "block";
+        $("#save_id").prop("hidden", false);
+        CloseLoaderPopup();
+        table_sort_filter('id_popup_table');
     }
 
     function onclick_copy_update_button(data) {
@@ -270,7 +252,7 @@
                         '<td><select id="country"  class="input datatable-scroll-wrap " type="text" name="country" disabled>'+country_dropdwn+'</select></td>'+
                         '<td><input value="' + row.cells[3].innerHTML + '"  class="form-control check_special_char" type="text" name="description"></td>'+
                         '<td><input value="'+row.cells[4].innerHTML+'" class="form-control yearPicker" type="text" maxlength="4"  name="year"></td>'+
-                        '<td> <select id="working_days"  class="form-control multiple_select working_days" type="text" name="working_days"  multiple  title="Select.." >'+workingdays_dropdown+'</select> </td>'+
+                        '<td> <select id="working_days"  class="form-control multiple_select working_days" type="text" name="working_days"  multiple  title="Select.." data-selected-text-format="count" data-actions-box="true">'+workingdays_dropdown+'</select> </td>'+
                         '<td class="class_del_checkbox" hidden> <input type="checkbox" ></td>'+
                         '<td hidden><input type="text" id="calendar_config_guid" value="'+row.cells[6].innerHTML+'"></td>'+
                     '</tr> ';
@@ -359,7 +341,7 @@
     } 
 
     // on click add icon display the row in to add the new entries
-    function add_popup_row() {
+    function add_popup_row1() {
         var basic_add_new_html = '';
         var display_db_data = '';
         $('#id_popup_table').DataTable().destroy();

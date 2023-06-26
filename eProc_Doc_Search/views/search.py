@@ -14,6 +14,7 @@ from eProc_Basic.Utilities.functions.json_parser import JsonParser
 from eProc_Basic.Utilities.global_defination import global_variables
 from eProc_Configuration.models import OrgAddress
 # from eProc_Generate_PDF.views import render_pdf_view
+# from eProc_Generate_PDF.views.sc_details_pdf import render_pdf_view
 from eProc_Generate_PDF.views.sc_details_pdf import render_pdf_view
 from eProc_Registration.models import UserData
 from eProc_Shopping_Cart.context_processors import update_user_info

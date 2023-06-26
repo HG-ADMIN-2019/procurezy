@@ -130,7 +130,6 @@ function add_popup_row() {
     new_row_data();   // Add a new row in popup
     table_sort_filter('id_popup_table');
     }
-    $('#delete_data').hide()
 }
 
 //onclick of cancel display the table in display mode............

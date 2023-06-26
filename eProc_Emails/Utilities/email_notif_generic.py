@@ -506,7 +506,6 @@ def send_po_attachment_email(output, po_document_number, email_supp_monitoring_g
     client_data = django_query_instance.django_get_query(OrgClients, {
         'client': client, 'del_ind': False
     })
-    print(po_details)
     emailDetail = list(django_query_instance.django_filter_only_query(EmailContents, {
         'object_type': 'PO_SUPPLIER', 'client': client,
     }).values())

@@ -3,9 +3,9 @@ import uuid
 from datetime import date
 from io import BytesIO
 from django.template.loader import get_template
-import xhtml2pdf.pisa as pisa
 from django.conf import settings
 from xhtml2pdf import pisa
+
 from eProc_Basic.Utilities.constants.constants import CONST_DOC_TYPE_PO
 from eProc_Basic.Utilities.functions.django_query_set import DjangoQueries
 from eProc_Basic.Utilities.functions.guid_generator import guid_generator
