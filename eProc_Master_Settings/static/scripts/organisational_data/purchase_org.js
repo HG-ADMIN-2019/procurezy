@@ -138,7 +138,6 @@ function add_popup_row() {
         table_sort_filter('id_popup_table');
     }
 
-    $('#delete_data').hide()
 }
 
 //onclick of cancel display the table in display mode............
