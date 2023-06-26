@@ -15,7 +15,7 @@ from eProc_Basic.Utilities.global_defination import global_variables
 from eProc_Basic.Utilities.messages.messages import MSG184
 from eProc_Doc_Search.views import generate_sc_details_pdf
 from eProc_Emails.Utilities.email_notif_generic import appr_notify, email_notify, send_po_attachment_email
-# from eProc_Generate_PDF.Utilities.generate_pdf_generic import save_pdf
+from eProc_Generate_PDF.Utilities.generate_pdf_generic import save_pdf
 from eProc_Purchase_Order.Utilities.purchase_order_generic import CreatePurchaseOrder, create_po_pdf, \
     update_po_error_status
 from eProc_Registration.models import UserData
