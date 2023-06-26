@@ -123,7 +123,7 @@ class AuthorizationLevel:
         slide_menu = dict.fromkeys([CONST_WORK_OVERVIEW, CONST_USER_SETTINGS, CONST_APPL_SETTINGS, CONST_SHOPPING,
                                     CONST_SHOPPING_PLUS, CONST_GOODS_RECEIPTS, CONST_APPROVALS, CONST_PURCHASING,
                                     CONST_ADMIN_TOOL, CONST_SYSTEM_SETTINGS, CONST_CONTENT_MANAGEMENT,
-                                    CONST_TIME_SHEET], False)
+                                    CONST_TIME_SHEET, CONST_SOM,CONST_SHOPPER_ASSIST], False)
 
         auth_feature = self.get_auth_level_id(auth_level)
         for auth_feature_value in auth_feature:
@@ -138,7 +138,7 @@ class AuthorizationLevel:
              CONST_GROUP_CATEGORY, CONST_CHANGE_PO, CONST_PERSONAL_SETTINGS, CONST_PURCHASE_SETTINGS,
              CONST_FORM_BUILDER, CONST_ORG_MODEL, CONST_CONFIRMATION, CONST_CANCELLATION, CONST_RETURN_DELIVERY,
              CONST_WORK_FLOW_ITEMS, CONST_PRODUCT_AND_SERVICE_CONFIG, CONST_CATALOG_CONFIG, CONST_BASIC_SETTINGS,
-             CONST_CONFIG_HOME, CONST_APPLICATION_MONITOR, CONST_PROJECTS, CONST_EFFORTS], False)
+             CONST_CONFIG_HOME, CONST_APPLICATION_MONITOR, CONST_PROJECTS, CONST_EFFORTS, CONST_SUB_SOM,CONST_RFQ], False)
         auth_feature = self.get_auth_level_id(auth_level)
         for auth_feature_value in auth_feature:
             sub_menu[auth_feature_value] = True
@@ -571,10 +571,10 @@ def get_manger_detail(client, login_username, acc_default, total_value, default_
                             'company_id': default_cmp_code, 'account_assign_cat': acc_default,
                             'acc_value': acc_value, 'client': client, 'del_ind': False
                         }).values_list('app_username', 'sup_acc_value', 'sup_company_id', 'currency_id',
-                                       'sup_account_assign_cat', 'company_id','account_assign_cat','acc_value'))
+                                       'sup_account_assign_cat', 'company_id', 'account_assign_cat', 'acc_value'))
                         count = 1
                         if app_limit:
-                            for app_user, sup_acc_val, sup_company_id, currency_id, sup_account_assign_cat, company_id,account_assign_cat,acc_value in app_limit:
+                            for app_user, sup_acc_val, sup_company_id, currency_id, sup_account_assign_cat, company_id, account_assign_cat, acc_value in app_limit:
                                 app_username = []
                                 if not sup_acc_val:
                                     manger_list = []
@@ -640,7 +640,8 @@ def get_manger_detail(client, login_username, acc_default, total_value, default_
                                                 'acc_value': approver_detail[1], 'client': client, 'del_ind': False
                                             }).values_list('app_username', 'sup_acc_value', 'sup_company_id',
                                                            'currency_id',
-                                                           'sup_account_assign_cat', 'company_id','account_assign_cat','acc_value'))
+                                                           'sup_account_assign_cat', 'company_id', 'account_assign_cat',
+                                                           'acc_value'))
 
                                         if not workflow_approver_details:
                                             manger_list = []
@@ -664,7 +665,7 @@ def get_manger_detail(client, login_username, acc_default, total_value, default_
                                         msg_info = error_msg
                                         return manger_list, msg_info
                                     else:
-                                        for app_user, sup_acc_val, sup_company_id, currency_id, sup_account_assign_cat, company_id,account_assign_cat,acc_value  in app_limit:
+                                        for app_user, sup_acc_val, sup_company_id, currency_id, sup_account_assign_cat, company_id, account_assign_cat, acc_value in app_limit:
                                             if not django_query_instance.django_existence_check(UserData, {
                                                 'client': client, 'username': app_user
                                             }):
@@ -753,11 +754,11 @@ def check_approver_exists(acc_detail_list, app_details):
     for app_detail in app_details:
         app_detail = list(app_detail)
         for acc_detail in acc_detail_list:
-            if (acc_detail['acc_value'] == app_detail[7]) and (acc_detail['account_assign_cat'] == app_detail[6]) and (acc_detail['company_id'] == app_detail[5]):
+            if (acc_detail['acc_value'] == app_detail[7]) and (acc_detail['account_assign_cat'] == app_detail[6]) and (
+                    acc_detail['company_id'] == app_detail[5]):
                 approve_exists_flag = True
                 return approve_exists_flag
     return approve_exists_flag
-
 
 
 def get_approvers_id_and_limit_value(app_limit, default_cmp_code, user_currency, client, schema_step_type):
@@ -770,7 +771,7 @@ def get_approvers_id_and_limit_value(app_limit, default_cmp_code, user_currency,
     approver_detail = []
     max_app_limit_value = 0
     msg_info = None
-    for app_user, sup_acc_val, sup_company_id, currency_id, sup_account_assign_cat, company_id,account_assign_cat,acc_value  in app_limit:
+    for app_user, sup_acc_val, sup_company_id, currency_id, sup_account_assign_cat, company_id, account_assign_cat, acc_value in app_limit:
         app_limit_value = []
         manger_list, msg_info, approver_limit, currency = get_appr_limit(company_id,
                                                                          app_user,

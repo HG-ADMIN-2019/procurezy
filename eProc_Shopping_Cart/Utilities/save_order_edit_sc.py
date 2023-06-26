@@ -447,7 +447,7 @@ class SaveShoppingCart:
                                                                                       'del_ind': False},
                                                                                   'catalog_id')[0]
             print(unspsc,cart_item_details.call_off,int_prod_id)
-            source_relevant_ind = get_sourcing_detail(self.company_code, unspsc, cart_item_details.call_off,int_prod_id)
+            grouping_ind = get_grouping_detail(self.company_code, unspsc, cart_item_details.call_off,int_prod_id)
             sc_item_save_data = {
                 'guid': guid,
                 'header_guid': django_query_instance.django_get_query(ScHeader,
@@ -513,7 +513,7 @@ class SaveShoppingCart:
                 'document_type': CONST_BUS_TYPE_SC,
                 'order_date': order_date,
                 'offcatalog': offcatalog,
-                # 'source_relevant_ind':source_relevant_ind,
+                'grouping_ind':grouping_ind,
                 # 'product_guid': product_guid,
                 'supplier_username': supplier_name,
                 'supp_type': supplier_type,
@@ -1859,7 +1859,7 @@ def check_sc_second_step_shopping_cart(sc_check_instance, object_id_list, defaul
     return cart_items, shopping_cart_errors
 
 
-def get_sourcing_detail(company_id, prod_cat_id, call_off, product_id):
+def get_grouping_detail(company_id, prod_cat_id, call_off, product_id):
     """
 
     """
