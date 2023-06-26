@@ -404,14 +404,7 @@
             var row = $(this);
             message_id_desc_dic = {}
             message_id_desc_dic.messages_id = row.find("TD").eq(1).find('select[type="text"]').val();
-            message_id_desc.language_id = row.find("TD").eq(3).find('select[type="text"]').val();
-            var desc='';
-            for (i = 0; i < render_language_data.length; i++) {
-                if (message_id_desc.language_id == render_language_data[i].language_id)
-                    desc = render_language_data[i].description;
-            }
-            var compare = message_id_desc.messages_id+'-'+desc;
-            message_id_desc_check.push(compare);
+            message_id_desc_check.push(message_id_desc_dic.messages_id);
             jQuery.grep(message_id_desc_check, function(el) {
                 if (jQuery.inArray(el, common) != -1) {
                     row_color_highlight(row);
