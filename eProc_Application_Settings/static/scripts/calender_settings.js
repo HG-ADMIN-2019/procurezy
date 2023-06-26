@@ -172,7 +172,7 @@ function add_popup_row() {
             '<td><select id="country" class="input form-control" type="text" name="country">' + country_dropdwn + '</select></td>'+
             '<td><input value=""  class="form-control check_special_char" type="text" name="description"></td>'+
             '<td><input value="" class="form-control yearPicker" type="text" maxlength="4"  name="year"></td>'+
-            '<td> <select id="working_days"  class="form-control multiple_select working_days" type="text" name="working_days"  multiple  title="Select.." data-selected-text-format="count" data-actions-box="true" >'+workingdays_dropdown+'</select> </td>'+
+            '<td style="width: 230px;"> <select id="working_days"  class="form-control multiple_select working_days" type="text" name="working_days"  multiple  title="Select.." data-selected-text-format="count" data-actions-box="true" >'+workingdays_dropdown+'</select> </td>'+
             '<td class="class_del_checkbox" hidden> <input type="checkbox" ></td>'+
             '<td hidden><input type="text" id="calendar_config_guid" value=""></td>'+
         '</tr> ';
