@@ -5,7 +5,7 @@ from Majjaka_eProcure import settings
 from eProc_Basic.Utilities.functions.django_query_set import DjangoQueries
 from eProc_Basic.Utilities.global_defination import global_variables
 from eProc_Doc_Details.Utilities.details_generic import GetAttachments
-from eProc_Form_Builder.models import EformData, EformFieldData
+from eProc_Form_Builder.models import EformFieldData
 from eProc_Notes_Attachments.models import Attachments, Notes
 from eProc_Purchase_Order.models import PoHeader, PoItem, PoAccounting, PoAddresses, PoApproval, PoPotentialApproval
 from eProc_Shopping_Cart.models import ScItem, PurchasingData, ScAccounting, ScAddresses, ScApproval, ScHeader, \

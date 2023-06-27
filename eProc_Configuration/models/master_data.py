@@ -48,9 +48,9 @@ class AccountingDataHistory(models.Model):
     accounting_data_changed_at = models.DateTimeField(db_column='ACCOUNTING_DATA_CHANGED_AT', max_length=50, null=True)
     accounting_data_source_system = models.CharField(db_column='ACCOUNTING_DATA_SOURCE_SYSTEM', max_length=20)
     del_ind = models.BooleanField(default=False, null=False)
-    account_assign_cat = models.ForeignKey('eProc_Configuration.AccountAssignmentCategory', models.DO_NOTHING,
-                                           db_column='ACCOUNT_ASSIGN_CAT', null=False)
-    client = models.ForeignKey('eProc_Configuration.OrgClients', on_delete=models.PROTECT, null=False)
+    account_assign_cat = models.CharField(db_column='ACCOUNT_ASSIGN_CAT', max_length=10,
+                                          verbose_name='AccountAssignmentCat')
+    client = models.CharField(max_length=8, db_column='CLIENT', null=True)
 
     class Meta:
         db_table = "MMD_ACCOUNTING_DATA_HISTORY"
@@ -105,10 +105,10 @@ class AccountingDataDescHistory(models.Model):
     accounting_data_desc_source_system = models.CharField(db_column='ACCOUNTING_DATA_DESC_SOURCE_SYSTEM', max_length=20)
 
     del_ind = models.BooleanField(default=False, null=False)
-    account_assign_cat = models.ForeignKey('eProc_Configuration.AccountAssignmentCategory', models.DO_NOTHING,
-                                           db_column='ACCOUNT_ASSIGN_CAT', null=False)
-    client = models.ForeignKey('eProc_Configuration.OrgClients', on_delete=models.PROTECT, null=False)
-    language_id = models.ForeignKey('eProc_Configuration.Languages', models.DO_NOTHING, db_column='LANGUAGE_ID')
+    account_assign_cat = models.CharField(db_column='ACCOUNT_ASSIGN_CAT', max_length=10, null=True,
+                                          verbose_name='AccountAssignmentCat')
+    client = models.CharField(max_length=8, db_column='CLIENT', null=True)
+    language_id = models.CharField(db_column='LANGUAGE_ID', null=True, max_length=2)
 
     class Meta:
         db_table = "MMD_ACC_DATA_DESC_HISTORY"
@@ -175,17 +175,16 @@ class ApproverLimitValueHistory(models.Model):
                                                            null=True)
     approver_limit_value_source_system = models.CharField(db_column='APPROVER_LIMIT_VALUE_SOURCE_SYSTEM', max_length=20)
     del_ind = models.BooleanField(default=False, null=False)
-    app_types = models.ForeignKey('eProc_Configuration.ApproverType', models.DO_NOTHING, db_column='APP_TYPES')
-    client = models.ForeignKey('eProc_Configuration.OrgClients', on_delete=models.PROTECT, null=False)
-    currency_id = models.ForeignKey('eProc_Configuration.Currency', models.DO_NOTHING, db_column='CURRENCY_ID',
-                                    null=True)
+    app_types = models.CharField(db_column='APP_TYPES', null=True, max_length=30)
+    client = models.CharField(max_length=8, db_column='CLIENT', null=True)
+    currency_id = models.CharField(db_column='CURRENCY_ID', null=True, max_length=3)
 
     class Meta:
         db_table = "MMD_APPROVER_LIMIT_VALUE_HISTORY"
         managed = True
 
 
-class ApproverLimit_h(models.Model):
+class ApproverLimitHistory(models.Model):
     app_guid = models.CharField(primary_key=True, db_column='APP_GUID', max_length=32)
     approver_username = models.CharField(db_column='APPROVER_USERNAME', max_length=16, null=False)
     app_code_id = models.CharField(db_column='APP_CODE_ID', max_length=8, null=False)
@@ -196,26 +195,7 @@ class ApproverLimit_h(models.Model):
     approver_limit_changed_at = models.DateTimeField(db_column='APPROVER_LIMIT_CHANGED_AT', max_length=50, null=True)
     approver_limit_source_system = models.CharField(db_column='APPROVER_LIMIT_SOURCE_SYSTEM', max_length=20)
     del_ind = models.BooleanField(default=False, null=False)
-    client = models.ForeignKey('eProc_Configuration.OrgClients', on_delete=models.PROTECT, null=False)
-
-    class Meta:
-        db_table = "MMD_APPROVER_LIMIT_ID_H"
-        managed = True
-
-
-class ApproverLimitHistory(models.Model):
-    app_key = models.AutoField(primary_key=True, db_column='APP_KEY', null=False)
-    app_guid = models.CharField(db_column='APP_GUID', max_length=32)
-    approver_username = models.CharField(db_column='APPROVER_USERNAME', max_length=16, null=False)
-    app_code_id = models.CharField(db_column='APP_CODE_ID', max_length=8, null=False)
-    company_id = models.CharField(db_column='COMPANY_ID', max_length=8, null=False)
-    approver_limit_created_by = models.CharField(db_column='APPROVER_LIMIT_CREATED_BY', max_length=30, null=True)
-    approver_limit_created_at = models.DateTimeField(db_column='APPROVER_LIMIT_CREATED_AT', max_length=50, null=True)
-    approver_limit_changed_by = models.CharField(db_column='APPROVER_LIMIT_CHANGED_BY', max_length=30, null=True)
-    approver_limit_changed_at = models.DateTimeField(db_column='APPROVER_LIMIT_CHANGED_AT', max_length=50, null=True)
-    approver_limit_source_system = models.CharField(db_column='APPROVER_LIMIT_SOURCE_SYSTEM', max_length=20)
-    del_ind = models.BooleanField(default=False, null=False)
-    client = models.ForeignKey('eProc_Configuration.OrgClients', on_delete=models.PROTECT, null=False)
+    client = models.CharField( max_length=8, db_column='CLIENT',null = True)
 
     class Meta:
         db_table = "MMD_APPROVER_LIMIT_ID_HISTORY"
@@ -301,10 +281,10 @@ class DetermineGLAccountHistory(models.Model):
                                                            null=True)
     determine_gl_account_source_system = models.CharField(db_column='DETERMINE_GL_ACCOUNT_SOURCE_SYSTEM', max_length=20)
     del_ind = models.BooleanField(default=False, null=False)
-    account_assign_cat = models.ForeignKey('eProc_Configuration.AccountAssignmentCategory', models.DO_NOTHING,
-                                           db_column='ACCOUNT_ASSIGN_CAT')
-    client = models.ForeignKey('eProc_Configuration.OrgClients', on_delete=models.PROTECT, null=False)
-    currency_id = models.ForeignKey('eProc_Configuration.Currency', models.DO_NOTHING, db_column='CURRENCY_ID')
+    account_assign_cat = models.CharField(db_column='ACCOUNT_ASSIGN_CAT', max_length=10, null=True,
+                                          verbose_name='AccountAssignmentCat')
+    client = models.CharField(max_length=8, db_column='CLIENT', null=True)
+    currency_id = models.CharField(db_column='CURRENCY_ID', null=True, max_length=3)
 
     class Meta:
         db_table = "MMD_DET_GL_ACC_HISTORY"
@@ -429,7 +409,7 @@ class OrgCompanies(models.Model):
         return self.company_id
 
 
-class OrgCompaniesH(models.Model):
+class OrgCompaniesHistory(models.Model):
     company_key = models.AutoField(primary_key=True, db_column='COMPANY_KEY', null=False)
     company_guid = models.CharField(db_column='COMPANY_GUID', max_length=32)
     name1 = models.CharField(db_column='NAME1', max_length=100, null=False)
@@ -445,7 +425,7 @@ class OrgCompaniesH(models.Model):
     object_id = models.PositiveBigIntegerField(db_column='OBJECT_ID', null=True)
 
     class Meta:
-        db_table = "MMD_ORG_COMPANIES_H"
+        db_table = "MMD_ORG_COMPANIES_HISTORY"
         managed = True
 
 
@@ -476,7 +456,7 @@ class OrgPorg(models.Model):
         return self.porg_id
 
 
-class OrgPorgH(models.Model):
+class OrgPorgHistory(models.Model):
     porg_key = models.AutoField(primary_key=True, db_column='PORG_KEY', null=False)
     porg_guid = models.CharField(db_column='PORG_GUID', max_length=32)
     porg_id = models.CharField(db_column='PORG_ID', max_length=8)
@@ -492,7 +472,7 @@ class OrgPorgH(models.Model):
     object_id = models.PositiveBigIntegerField(db_column='OBJECT_ID', null=True)
 
     class Meta:
-        db_table = "MMD_ORG_PORG_H"
+        db_table = "MMD_ORG_PORG_HISTORY"
         managed = True
 
 
@@ -550,7 +530,7 @@ class OrgPGroup(models.Model):
         return self.pgroup_id
 
 
-class OrgPGroupH(models.Model):
+class OrgPGroupHistory(models.Model):
     pgroup_key = models.AutoField(primary_key=True, db_column='PGROUP_KEY', null=False)
     pgroup_guid = models.CharField(db_column='PGROUP_GUID', max_length=32)
     pgroup_id = models.CharField(db_column='PGROUP_ID', max_length=8, null=False)
@@ -566,7 +546,7 @@ class OrgPGroupH(models.Model):
     object_id = models.PositiveBigIntegerField(db_column='OBJECT_ID', null=True)
 
     class Meta:
-        db_table = "MMD_ORG_PGROUP_H"
+        db_table = "MMD_ORG_PGROUP_HISTORY"
         managed = True
 
 
@@ -767,7 +747,7 @@ class SpendLimitIdHistory(models.Model):
     spend_limit_id_changed_at = models.DateTimeField(db_column='spend_limit_id_changed_at', max_length=50, null=True)
     spend_limit_id_source_system = models.CharField(db_column='spend_limit_id_source_system', max_length=20)
     del_ind = models.BooleanField(default=False, null=False)
-    client = models.ForeignKey('eProc_Configuration.OrgClients', on_delete=models.PROTECT, null=False)
+    client = models.CharField(max_length=8, db_column='CLIENT', null=True)
 
     class Meta:
         db_table = "MMD_SPENDER_LIMIT_ID_HISTORY"
@@ -811,9 +791,8 @@ class SpendLimitValueHistory(models.Model):
                                                         null=True)
     spend_limit_value_source_system = models.CharField(db_column='SPEND_LIMIT_VALUE_SOURCE_SYSTEM', max_length=20)
     del_ind = models.BooleanField(default=False, null=False)
-    client = models.ForeignKey('eProc_Configuration.OrgClients', on_delete=models.PROTECT, null=False)
-    currency_id = models.ForeignKey('eProc_Configuration.Currency', models.DO_NOTHING, db_column='CURRENCY_ID',
-                                    null=True)
+    client = models.CharField(max_length=8, db_column='CLIENT', null=True)
+    currency_id = models.CharField(db_column='CURRENCY_ID', null=True, max_length=3)
 
     class Meta:
         db_table = "MMD_SPENDER_LIMIT_VALUE_HISTORY"
@@ -992,12 +971,10 @@ class SupplierMasterHistory(models.Model, DBQueriesSupplier):
     no_mult_addr = models.BooleanField(db_column='NO_MULT_ADDR', default=False, null=False,
                                        verbose_name='Flag indication for multiple ordering addresses not support')
     del_ind = models.BooleanField(default=False, null=False)
-    client = models.ForeignKey('eProc_Configuration.OrgClients', on_delete=models.PROTECT, null=False)
-    country_code = models.ForeignKey('eProc_Configuration.Country', db_column='COUNTRY_CODE', on_delete=models.PROTECT,
-                                     verbose_name='Country')
-    currency_id = models.ForeignKey('eProc_Configuration.Currency', models.DO_NOTHING, db_column='CURRENCY_ID')
-    language_id = models.ForeignKey('eProc_Configuration.Languages', db_column='LANGUAGE_ID', on_delete=models.PROTECT,
-                                    null=False, verbose_name='Language')
+    client = models.CharField(max_length=8, db_column='CLIENT', null=True)
+    country_code = models.CharField(db_column='COUNTRY_CODE', null=True, max_length=2)
+    currency_id = models.CharField(db_column='CURRENCY_ID', null=True, max_length=3)
+    language_id = models.CharField(db_column='LANGUAGE_ID', null=True, max_length=2)
 
     class Meta:
         managed = True
@@ -1044,10 +1021,8 @@ class UnspscCategoriesCustHistory(models.Model):
                                                             max_length=20)
 
     del_ind = models.BooleanField(default=False, null=False)
-    client = models.ForeignKey('eProc_Configuration.OrgClients', on_delete=models.PROTECT, null=False,
-                               db_column='CLIENT_ID')
-    prod_cat_id = models.ForeignKey('eProc_Configuration.UnspscCategories', db_column='PROD_CAT_ID',
-                                    on_delete=models.PROTECT, null=False)
+    client = models.CharField(max_length=8, db_column='CLIENT', null=True)
+    prod_cat_id = models.CharField(db_column='PROD_CAT_ID', null=True, max_length=20, verbose_name='Product Category')
 
     class Meta:
         managed = True
@@ -1128,12 +1103,9 @@ class UnspscCategoriesCustDescHistory(models.Model):
                                                                  max_length=20)
 
     del_ind = models.BooleanField(default=False, null=False)
-    client = models.ForeignKey('eProc_Configuration.OrgClients', on_delete=models.PROTECT, null=False,
-                               db_column='CLIENT_ID')
-    language_id = models.ForeignKey('eProc_Configuration.Languages', db_column='LANGUAGE_ID', on_delete=models.PROTECT,
-                                    null=False)
-    prod_cat_id = models.ForeignKey('eProc_Configuration.UnspscCategories', db_column='PROD_CAT_ID',
-                                    on_delete=models.PROTECT, null=False)
+    client = models.CharField(max_length=8, db_column='CLIENT', null=True)
+    language_id = models.CharField(db_column='LANGUAGE_ID', null=True, max_length=2)
+    prod_cat_id = models.CharField(db_column='PROD_CAT_ID', null=True, max_length=20, verbose_name='Product Category')
 
     class Meta:
         managed = True
@@ -1181,14 +1153,12 @@ class WorkflowACCHistory(models.Model):
     workflow_acc_changed_at = models.DateTimeField(db_column='WORKFLOW_ACC_CHANGED_AT', max_length=50, null=True)
     workflow_acc_source_system = models.CharField(db_column='WORKFLOW_ACC_SOURCE_SYSTEM', max_length=20)
     del_ind = models.BooleanField(default=False, null=False)
-    account_assign_cat = models.ForeignKey('eProc_Configuration.AccountAssignmentCategory', models.DO_NOTHING,
-                                           db_column='ACCOUNT_ASSIGN_CAT', related_name='acc_asgn_cat',
-                                           null=False)
-    client = models.ForeignKey('eProc_Configuration.OrgClients', on_delete=models.PROTECT, null=False)
-    currency_id = models.ForeignKey('eProc_Configuration.Currency', models.DO_NOTHING, db_column='CURRENCY_ID')
-    sup_acc_assign_cat = models.ForeignKey('eProc_Configuration.AccountAssignmentCategory', models.DO_NOTHING,
-                                           db_column='SUP_ACC_ASSIGN_CAT', related_name='sup_acc_asgn_cat',
-                                           null=False)
+    account_assign_cat = models.CharField(db_column='ACCOUNT_ASSIGN_CAT', max_length=10, null=True,
+                                          verbose_name='AccountAssignmentCat')
+    client = models.CharField(max_length=8, db_column='CLIENT', null=True)
+    currency_id = models.CharField(db_column='CURRENCY_ID', null=True, max_length=3)
+    sup_acc_assign_cat = models.CharField(db_column='SUP_ACC_ASSIGN_CAT', max_length=10, null=True,
+                                          verbose_name='AccountAssignmentCat')
 
     class Meta:
         managed = True

@@ -34,7 +34,6 @@ from eProc_Configuration.models.application_data import WorkflowSchema, FreeText
 from eProc_Configuration.models.development_data import AuthorizationObject, AccountAssignmentCategory, Authorization, \
     AuthorizationGroup
 from eProc_Configuration.models.master_data import WorkflowACC
-from eProc_Form_Builder.models.form_builder import EformData
 from eProc_Configuration.models import *
 from django.core.exceptions import ObjectDoesNotExist
 from eProc_Basic.Utilities.constants.constants import *
@@ -234,13 +233,13 @@ def get_free_text_content(guid):
     :return:
     """
     eform_data = {}
-    if django_query_instance.django_existence_check(EformData, {
-        'cart_guid': guid}) or django_query_instance.django_existence_check(EformData, {'item_guid': guid}):
+    if django_query_instance.django_existence_check(EformFieldData, {
+        'cart_guid': guid}) or django_query_instance.django_existence_check(EformFieldData, {'item_guid': guid}):
 
-        if django_query_instance.django_existence_check(EformData, {'cart_guid': guid}):
-            get_eform_fields = django_query_instance.django_get_query(EformData, {'cart_guid': guid})
+        if django_query_instance.django_existence_check(EformFieldData, {'cart_guid': guid}):
+            get_eform_fields = django_query_instance.django_get_query(EformFieldData, {'cart_guid': guid})
         else:
-            get_eform_fields = django_query_instance.django_get_query(EformData, {'item_guid': guid})
+            get_eform_fields = django_query_instance.django_get_query(EformFieldData, {'item_guid': guid})
 
         form_id = get_eform_fields.form_id
         get_fields = django_query_instance.django_get_query(FreeTextForm, {'form_id': form_id})
@@ -907,7 +906,7 @@ def empty_shopping_cart_data(username, client):
     item_details = django_query_instance.django_filter_only_query(CartItemDetails,
                                                                   {'username': username, 'client': client})
     for eform_guid in item_details:
-        django_query_instance.django_filter_delete_query(EformData, {'cart_guid': eform_guid.guid})
+        django_query_instance.django_filter_delete_query(EformFieldData, {'cart_guid': eform_guid.guid})
     item_details.delete()
 
 

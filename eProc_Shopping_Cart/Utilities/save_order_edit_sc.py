@@ -16,7 +16,7 @@ from eProc_Configuration.models.development_data import *
 from eProc_Configuration.models.master_data import OrgAddress, AccountingDataDesc, DetermineGLAccount, AccountingData, \
     OrgAddressMap, OrgPorgMapping
 from eProc_Exchange_Rates.Utilities.exchange_rates_generic import convert_currency
-from eProc_Form_Builder.models.form_builder import EformData, EformFieldData
+from eProc_Form_Builder.models.form_builder import EformFieldData
 from eProc_Notes_Attachments.models.notes_attachements_model import Attachments, Notes
 from eProc_Shopping_Cart.Utilities.shopping_cart_specific import convert_to_boolean, check_for_eform, get_manger_detail, \
     get_users_first_name, delete_approver_detail, get_highest_acc_detail
@@ -640,20 +640,6 @@ class SaveShoppingCart:
             if manager_detail[0] != '':
                 save_sc_approval(manager_detail, self.header_guid, button_status, sc_completion_flag)
 
-    # Method to link eform data in case of eform available to any supplier
-    def link_eform(self, eform):
-        """
-        :param eform: Data required to store eform data, it contains cart_guid and item_guid
-        :return:
-        """
-        for cart_guid, item_guid in eform:
-            get_eform_item = django_query_instance.django_filter_only_query(EformData, {'cart_guid': cart_guid,
-                                                                                        'client': self.client})
-
-            get_eform_item.update(item_guid=django_query_instance.django_get_query(ScItem, {'guid': item_guid,
-                                                                                            'client': self.client}))
-        return True
-
     # Method to save address at item level
     def save_address(self, item_guid, header_guid, item_num, address_number, street_output, area_output,
                      landmark_output, city_output, pcode_output, region_output, item_flag):
@@ -1035,7 +1021,7 @@ class EditShoppingCart(SaveShoppingCart):
                                     '')
 
         if eform:
-            update_eform = django_query_instance.django_filter_only_query(EformData, {'cart_guid': eform_guid})
+            update_eform = django_query_instance.django_filter_only_query(EformFieldData, {'cart_guid': eform_guid})
             update_eform.update(item_guid=django_query_instance.django_get_query(ScItem, {'guid': new_item_guid,
                                                                                           'item_num': item_num}))
         self.save_sc_data_to_db.save_address_to_db(guid=address_guid, save_address_data=address_data)
@@ -1204,7 +1190,7 @@ class EditShoppingCart(SaveShoppingCart):
                 'item_guid': data.guid, 'client': self.client
             }).update(del_ind=True)
 
-            django_query_instance.django_filter_only_query(EformData, {
+            django_query_instance.django_filter_only_query(EformFieldData, {
                 'item_guid': data.guid, 'client': self.client
             }).update(del_ind=True)
 
