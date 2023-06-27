@@ -346,7 +346,7 @@
     }
 
     //*********************
-    function GetSelectedTextValue(rowid) {
+    function GetSelectedTextValue(nodetype, index) {
         var row = $(rowid);
          var selectedText = "";
       var selectedValue = row[0].value;
