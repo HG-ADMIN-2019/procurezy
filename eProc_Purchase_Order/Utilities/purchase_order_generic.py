@@ -37,11 +37,8 @@ from eProc_Generate_PDF.Utilities.generate_pdf_generic import save_pdf
 # from eProc_Generate_PDF.Utilities.generate_pdf_generic import save_pdf
 # from eProc_Generate_PDF.Utilities.generate_pdf_generic import save_pdf
 # from eProc_Generate_PDF.Utilities.generate_pdf_generic import save_pdf
-<<<<<<< HEAD
 from eProc_Generate_PDF.Utilities.generate_pdf_generic import save_pdf
 from eProc_Generate_PDF.views import render_pdf_view
-=======
->>>>>>> deepikakodi
 from eProc_Notes_Attachments.models import Notes, Attachments
 from eProc_Price_Calculator.Utilities.price_calculator_generic import calculate_item_total_value
 from eProc_Purchase_Order.models import PoHeader, PoItem, PoAccounting, PoApproval, PoPotentialApproval, PoAddresses
