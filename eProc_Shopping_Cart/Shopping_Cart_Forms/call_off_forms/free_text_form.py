@@ -4,7 +4,7 @@ from django import forms
 
 from eProc_Basic.Utilities.functions.messages_config import get_msg_desc, get_message_desc
 from eProc_Basic.Utilities.messages.messages import *
-from eProc_Form_Builder.models import EformData
+from eProc_Form_Builder.models.form_builder import EformFieldData
 from eProc_Shopping_Cart.models import *
 
 
@@ -237,7 +237,7 @@ class UpdateEform(forms.ModelForm):
                         'border-radius:2px;'}))
 
     class Meta:
-        model = EformData
+        model = EformFieldData
         fields = ['form_field1', 'form_field2', 'form_field3', 'form_field4', 'form_field5', 'form_field6',
                   'form_field7', 'form_field8', 'form_field9', 'form_field10']
 

@@ -321,6 +321,8 @@ class ScItem(models.Model):
                                   verbose_name='Date type (day, week, month, interval)')
     source_relevant_ind = models.BooleanField(db_column='SOURCE_RELEVANT_IND', default=False, null=True,
                                               verbose_name='Indicator - If the Document is Sourcing-Relevant ')
+    grouping_ind = models.BooleanField(db_column='grouping_ind', default=False, null=True,
+                                              verbose_name='grouping_ind ')
     ext_demid = models.CharField(db_column='EXT_DEMID', blank=True, null=True, max_length=2,
                                  verbose_name='External Requirement Number')
     ext_dem_posid = models.CharField(db_column='EXT_DEM_POSID', blank=True, null=True, max_length=2,

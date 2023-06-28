@@ -136,8 +136,9 @@ $(".remove_upload_data").click(() => {
 
 //**************************************
 function display_error_message(error_message){
+    $('#error_msg_id').text("");
     $("#error_msg_id").css("display", "block");
-    $('#error_message').text(error_message);
+    $('#error_msg_id').text(error_message);
     document.getElementById("error_msg_id").style.color = "Red";
     $('#id_save_confirm_popup').modal('hide');
     $('#org_attr_Modal').modal('show');

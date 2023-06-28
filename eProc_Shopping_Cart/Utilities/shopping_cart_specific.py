@@ -34,7 +34,6 @@ from eProc_Configuration.models.application_data import WorkflowSchema, FreeText
 from eProc_Configuration.models.development_data import AuthorizationObject, AccountAssignmentCategory, Authorization, \
     AuthorizationGroup
 from eProc_Configuration.models.master_data import WorkflowACC
-from eProc_Form_Builder.models.form_builder import EformData
 from eProc_Configuration.models import *
 from django.core.exceptions import ObjectDoesNotExist
 from eProc_Basic.Utilities.constants.constants import *
@@ -123,7 +122,7 @@ class AuthorizationLevel:
         slide_menu = dict.fromkeys([CONST_WORK_OVERVIEW, CONST_USER_SETTINGS, CONST_APPL_SETTINGS, CONST_SHOPPING,
                                     CONST_SHOPPING_PLUS, CONST_GOODS_RECEIPTS, CONST_APPROVALS, CONST_PURCHASING,
                                     CONST_ADMIN_TOOL, CONST_SYSTEM_SETTINGS, CONST_CONTENT_MANAGEMENT,
-                                    CONST_TIME_SHEET], False)
+                                    CONST_TIME_SHEET, CONST_SOM,CONST_SHOPPER_ASSIST], False)
 
         auth_feature = self.get_auth_level_id(auth_level)
         for auth_feature_value in auth_feature:
@@ -138,7 +137,7 @@ class AuthorizationLevel:
              CONST_GROUP_CATEGORY, CONST_CHANGE_PO, CONST_PERSONAL_SETTINGS, CONST_PURCHASE_SETTINGS,
              CONST_FORM_BUILDER, CONST_ORG_MODEL, CONST_CONFIRMATION, CONST_CANCELLATION, CONST_RETURN_DELIVERY,
              CONST_WORK_FLOW_ITEMS, CONST_PRODUCT_AND_SERVICE_CONFIG, CONST_CATALOG_CONFIG, CONST_BASIC_SETTINGS,
-             CONST_CONFIG_HOME, CONST_APPLICATION_MONITOR, CONST_PROJECTS, CONST_EFFORTS], False)
+             CONST_CONFIG_HOME, CONST_APPLICATION_MONITOR, CONST_PROJECTS, CONST_EFFORTS, CONST_SUB_SOM,CONST_RFQ], False)
         auth_feature = self.get_auth_level_id(auth_level)
         for auth_feature_value in auth_feature:
             sub_menu[auth_feature_value] = True
@@ -234,13 +233,13 @@ def get_free_text_content(guid):
     :return:
     """
     eform_data = {}
-    if django_query_instance.django_existence_check(EformData, {
-        'cart_guid': guid}) or django_query_instance.django_existence_check(EformData, {'item_guid': guid}):
+    if django_query_instance.django_existence_check(EformFieldData, {
+        'cart_guid': guid}) or django_query_instance.django_existence_check(EformFieldData, {'item_guid': guid}):
 
-        if django_query_instance.django_existence_check(EformData, {'cart_guid': guid}):
-            get_eform_fields = django_query_instance.django_get_query(EformData, {'cart_guid': guid})
+        if django_query_instance.django_existence_check(EformFieldData, {'cart_guid': guid}):
+            get_eform_fields = django_query_instance.django_get_query(EformFieldData, {'cart_guid': guid})
         else:
-            get_eform_fields = django_query_instance.django_get_query(EformData, {'item_guid': guid})
+            get_eform_fields = django_query_instance.django_get_query(EformFieldData, {'item_guid': guid})
 
         form_id = get_eform_fields.form_id
         get_fields = django_query_instance.django_get_query(FreeTextForm, {'form_id': form_id})
@@ -907,7 +906,7 @@ def empty_shopping_cart_data(username, client):
     item_details = django_query_instance.django_filter_only_query(CartItemDetails,
                                                                   {'username': username, 'client': client})
     for eform_guid in item_details:
-        django_query_instance.django_filter_delete_query(EformData, {'cart_guid': eform_guid.guid})
+        django_query_instance.django_filter_delete_query(EformFieldData, {'cart_guid': eform_guid.guid})
     item_details.delete()
 
 

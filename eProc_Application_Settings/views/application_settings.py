@@ -162,6 +162,7 @@ def display_purchase_control(request):
 def display_calendar(request):
     country_list = get_country_data()
     val_dict = ''
+    messages_list = ''
     calender_data = django_query_instance.django_filter_query(CalenderConfig,
                                                               {'del_ind': False},
                                                               None,

@@ -36,12 +36,10 @@ class OrgSuppliers(models.Model):
 class OrgSuppliersHistory(models.Model):
     orgsupp_key = models.AutoField(primary_key=True, db_column='ORGSUPP_KEY', null=False)
     guid = models.CharField(db_column='GUID', max_length=32, default=None)
-    client = models.ForeignKey('eProc_Configuration.OrgClients', on_delete=models.PROTECT, null=False)
+    client = models.CharField( max_length=8, db_column='CLIENT',null=True)
     supplier_id = models.CharField(db_column='SUPPLIER_ID', max_length=10, verbose_name='Vendor Id', null=True)
     sup_address_number = models.PositiveIntegerField(db_column='SUP_ADDRESS_NUMBER', null=True)
-    porg_object_id = models.ForeignKey('eProc_Org_Model.OrgModel', db_column='OBJECT_ID', on_delete=models.PROTECT,
-                                       null=True,
-                                       default=None)
+    porg_object_id = models.PositiveBigIntegerField(db_column='OBJECT_ID', null=True)
     payment_term_key = models.CharField(db_column='PAYTERM_KEY', blank=True, null=True, max_length=4,
                                         verbose_name='Payment Term')
     incoterm_key = models.ForeignKey('eProc_Configuration.Incoterms', models.DO_NOTHING, db_column='INCOTERM_KEY',

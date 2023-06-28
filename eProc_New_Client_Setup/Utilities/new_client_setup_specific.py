@@ -13,7 +13,7 @@ from eProc_Org_Model.Utilities.apiHandler import ApiHandler
 django_query_instance = DjangoQueries()
 
 
-class InitialSetupClient(BasicSettingsSave):
+class InitialSetupClient(BasicSettingsSave,ApplicationSettingsSave,MasterSettingsSave):
     def __init__(self, client):
         super().__init__()
         self.client = django_query_instance.django_get_query(OrgClients,
@@ -117,7 +117,7 @@ class InitialSetupClient(BasicSettingsSave):
                 csv_to_db_data.append({'node_type': csv_data[0],
                                        'description': csv_data[1],
                                        'del_ind': csv_data[2]})
-            save_org_node_type(csv_to_db_data, self.username, self.client)
+            self.save_org_node_type(csv_to_db_data)
 
     def org_attribute_script(self, directory):
         file_path = os.path.join(directory, CONST_ORG_ATTRIBUTES_CSV)  # create path
@@ -131,7 +131,7 @@ class InitialSetupClient(BasicSettingsSave):
                                        'range_indicator': csv_data[2], 'multiple_value': csv_data[3],
                                        'allow_defaults': csv_data[4], 'inherit_values': csv_data[5],
                                        'maximum_length': csv_data[5], 'del_ind': csv_data[7]})
-            save_attributes(csv_to_db_data, self.username)
+            self.save_attributes(csv_to_db_data)
 
     def user_roles_script(self, directory):
         file_path = os.path.join(directory, CONST_USER_ROLES_CSV)  # create path
@@ -144,7 +144,7 @@ class InitialSetupClient(BasicSettingsSave):
                 csv_to_db_data.append({'role': csv_data[0],
                                        'role_desc': csv_data[1],
                                        'del_ind': csv_data[2]})
-            save_user_roles(csv_to_db_data, self.username)
+            self.save_user_roles(csv_to_db_data)
 
     def auth_obj_script(self, directory):
         file_path = os.path.join(directory, CONST_AUTHORIZATION_OBJECT)  # create path
@@ -159,7 +159,7 @@ class InitialSetupClient(BasicSettingsSave):
                                        'auth_level_ID': csv_data[2],
                                        'auth_level_desc': csv_data[3],
                                        'del_ind': csv_data[4]})
-            save_auth_obj(csv_to_db_data, self.username)
+            self.save_auth_obj(csv_to_db_data)
 
     def auth_script(self, directory):
         file_path = os.path.join(directory, CONST_AUTHORIZATION)  # create path
@@ -173,7 +173,7 @@ class InitialSetupClient(BasicSettingsSave):
                                        'auth_type': csv_data[1],
                                        'role': csv_data[2],
                                        'del_ind': csv_data[3]})
-            save_auth(csv_to_db_data, self.username, self.client)
+            self.save_auth(csv_to_db_data)
 
     def auth_grp_script(self, directory):
         """
@@ -191,7 +191,7 @@ class InitialSetupClient(BasicSettingsSave):
                                        'auth_level': csv_data[2],
                                        'auth_obj_id': csv_data[3],
                                        'del_ind': csv_data[4]})
-            save_auth_grp(csv_to_db_data, self.username)
+            self.save_auth_grp(csv_to_db_data)
 
     def field_desc_script(self, directory):
         file_path = os.path.join(directory, CONST_FIELD_DESC)  # create path
@@ -204,7 +204,7 @@ class InitialSetupClient(BasicSettingsSave):
                 csv_to_db_data.append({'field_name': csv_data[0],
                                        'field_desc': csv_data[1],
                                        'del_ind': csv_data[2]})
-            save_field_desc(csv_to_db_data, self.username)
+            self.save_field_desc(csv_to_db_data)
 
     def field_type_script(self, directory):
         file_path = os.path.join(directory, CONST_FIELD_TYPE_DESC)  # create path
@@ -219,7 +219,7 @@ class InitialSetupClient(BasicSettingsSave):
                                        'used_flag': csv_data[2],
                                        'del_ind': csv_data[3],
                                        'field_name': csv_data[4]})
-            save_field_type_desc(csv_to_db_data, self.username, self.client)
+            self.save_field_type_desc(csv_to_db_data)
 
     def message_id_script(self, directory):
         file_path = os.path.join(directory, CONST_MESSAGE_ID_CSV)  # create path
@@ -229,10 +229,10 @@ class InitialSetupClient(BasicSettingsSave):
             header = next(csvreader)  # skip header
             csv_to_db_data = []
             for csv_data in csvreader:
-                csv_to_db_data.append({'messages_id': csv_data[0],
-                                       'messages_type': csv_data[1],
+                csv_to_db_data.append({'message_id': csv_data[0],
+                                       'message_type': csv_data[1],
                                        'del_ind': csv_data[2]})
-            save_message_id(csv_to_db_data, self.username, self.client)
+            self.save_message_id(csv_to_db_data)
 
     def message_id_desc_script(self, directory):
         file_path = os.path.join(directory, CONST_MESSAGE_ID_DESC_CSV)  # create path
@@ -247,7 +247,7 @@ class InitialSetupClient(BasicSettingsSave):
                                        'messages_category': csv_data[2],
                                        'language_id': csv_data[3],
                                        'del_ind': csv_data[4]})
-            save_message_id_desc(csv_to_db_data, self.username, self.client)
+            self.save_message_id_desc(csv_to_db_data)
 
 
 def create_organization_structure(client_id):

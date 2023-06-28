@@ -1015,7 +1015,7 @@ class MasterSettingsSave:
 
         return upload_response, message
 
-    def save_field_desc(self, field_desc_data, username):
+    def save_field_desc(self, field_desc_data):
         """
 
         """
@@ -1027,9 +1027,9 @@ class MasterSettingsSave:
                 field_desc_dictionary = {'field_name': field_desc['field_name'],
                                          'field_desc': field_desc['field_desc'].upper(),
                                          'del_ind': False,
-                                         'field_desc_created_by': username,
+                                         'field_desc_created_by': self.username,
                                          'field_desc_created_at': self.current_date_time,
-                                         'field_desc_changed_by': username,
+                                         'field_desc_changed_by': self.username,
                                          'field_desc_changed_at': self.current_date_time,
                                          }
                 field_desc_list.append(field_desc_dictionary)
@@ -1041,12 +1041,12 @@ class MasterSettingsSave:
                                                           {'field_name': field_desc['field_name'],
                                                            'field_desc': convert_to_camel_case(
                                                                field_desc['field_desc']),
-                                                           'field_desc_changed_by': username,
+                                                           'field_desc_changed_by': self.username,
                                                            'field_desc_changed_at': self.current_date_time,
                                                            'del_ind': field_desc['del_ind']})
         bulk_create_entry_db(FieldDesc, field_desc_list)
 
-    def save_field_type_desc(self, field_desc_data, username, client):
+    def save_field_type_desc(self, field_desc_data):
         """
 
         """
@@ -1064,9 +1064,9 @@ class MasterSettingsSave:
                                          'used_flag': field_desc['used_flag'],
                                          'del_ind': False,
                                          'client': self.client,
-                                         'field_type_desc_created_by': username,
+                                         'field_type_desc_created_by': self.username,
                                          'field_type_desc_created_at': self.current_date_time,
-                                         'field_type_desc_changed_by': username,
+                                         'field_type_desc_changed_by': self.username,
                                          'field_type_desc_changed_at': self.current_date_time,
                                          }
                 field_desc_list.append(field_desc_dictionary)
@@ -1084,7 +1084,7 @@ class MasterSettingsSave:
                                                                field_name=field_desc['field_name']),
                                                            'used_flag': field_desc['used_flag'],
                                                            'field_type_desc_changed_at': self.current_date_time,
-                                                           'field_type_desc_changed_by': username,
+                                                           'field_type_desc_changed_by': self.username,
                                                            'del_ind': field_desc['del_ind'],
                                                            'client': self.client})
         bulk_create_entry_db(FieldTypeDescription, field_desc_list)
