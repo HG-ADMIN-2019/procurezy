@@ -24,6 +24,8 @@ from eProc_Basic.Utilities.functions.randam_generator import random_alpha_numeri
 from eProc_Basic.Utilities.messages.messages import MSG183
 from eProc_Configuration.models import *
 from eProc_Emails.Utilities.email_notif_generic import email_notify
+from eProc_Registration.Registration_Forms.user_registration_form import RegForm
+from eProc_Registration.Utilities.registration_specific import RegFncts
 from eProc_Registration.models import UserData
 from eProc_Shopping_Cart.Utilities.shopping_cart_specific import convert_to_boolean
 from eProc_Shopping_Cart.context_processors import update_user_info
@@ -123,24 +125,33 @@ def save_user_data(request):
             user_details['language_id'] = django_query_instance.django_get_query(Languages, {
                 'language_id': user_details['language_id']})
             password = random_alpha_numeric(8)
-            user_details['password'] = make_password(password)
+            user_details['password'] = password
 
-            django_query_instance.django_create_query(UserData,
-                                                      user_details)
-            variant_name = CONST_USER_REG
-            username = user_details['username']
-            email = user_details['email']
-            first_name = user_details['first_name']
-            email_data = {
-                'username': username,
-                'email': email,
-                'first_name': first_name,
-                'email_user_monitoring_guid': '',
-                'password': password
-            }
-            email_notify(email_data, variant_name, global_variables.GLOBAL_CLIENT)
-            msgid = 'MSG183'
-            error_msg = get_message_desc(msgid)[1]
-            message['type'] = 'success'
+            reg_form = RegForm(request.POST or None)
+            new_user = reg_form.save(commit=False)
+            password = random_alpha_numeric(8)
+            new_user.password = make_password(password)
+            new_user.password2 = make_password(password)
+
+            # django_query_instance.django_create_query(UserData,
+            #                                           user_details)
+            # variant_name = CONST_USER_REG
+            # username = user_details['username']
+            # email = user_details['email']
+            # first_name = user_details['first_name']
+            # email_data = {
+            #     'username': username,
+            #     'email': email,
+            #     'first_name': first_name,
+            #     'email_user_monitoring_guid': '',
+            #     'password': password
+            # }
+            # email_notify(email_data, variant_name, global_variables.GLOBAL_CLIENT)
+            # ----- create user and send email
+            is_created = RegFncts.create_user(request, new_user, global_variables.GLOBAL_CLIENT, password)
+            if is_created:
+                msgid = 'MSG183'
+                error_msg = get_message_desc(msgid)[1]
+                message['type'] = 'success'
 
     return error_msg, encrypted_user, message
