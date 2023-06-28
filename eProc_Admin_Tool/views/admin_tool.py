@@ -27,6 +27,7 @@ from eProc_Basic.Utilities.functions.get_db_query import get_country_id, getClie
 from eProc_Basic.Utilities.functions.json_parser import JsonParser
 from eProc_Basic.Utilities.functions.messages_config import get_message_desc
 from eProc_Basic.Utilities.functions.str_concatenate import concatenate_str
+from eProc_Basic.Utilities.global_defination import global_variables
 from eProc_Basic_Settings.views import JsonParser_obj
 from eProc_Configuration.models import *
 from eProc_Configuration.models.basic_data import Country
@@ -40,7 +41,7 @@ from eProc_Org_Support.models import OrgAnnouncements
 from eProc_Org_Support.views import org_announcement_search
 from eProc_Purchase_Order.Utilities.purchase_order_generic import CreatePurchaseOrder, retrigger_po, check_po
 from eProc_Registration.models import UserData
-from eProc_Registration.models.registration_model import UserDataH
+from eProc_Registration.models.registration_model import UserDataHistory
 from eProc_Reports.Report_Forms.SearchDoc_forms import DocumentSearchForm, ApplicationMonitoringForm, \
     EmailUserMonitoringForm
 from eProc_Reports.Report_Forms.user_report_form import UserReportForm
@@ -1017,7 +1018,7 @@ def delete_user(request):
 
 
 def create_emp_history_data(user):
-    django_query_instance.django_create_query(UserDataH, {
+    django_query_instance.django_create_query(UserDataHistory, {
         'client': global_variables.GLOBAL_CLIENT,
         'username': user['username'],
         'email': user['email'],

@@ -31,7 +31,7 @@ from eProc_Basic.Utilities.messages.messages import MSG156
 from eProc_Configuration.models import FreeTextForm
 from eProc_Exchange_Rates.Utilities.exchange_rates_generic import convert_currency
 from eProc_Form_Builder.Utilities.form_builder_generic import FormBuilder
-from eProc_Form_Builder.models import EformData, EformFieldData
+from eProc_Form_Builder.models import EformFieldData
 from eProc_Price_Calculator.Utilities.price_calculator_generic import calculate_item_total_value, calculate_total_value, \
     calculate_item_price, calculate_pricing
 from eProc_Shopping_Cart.Utilities.shopping_cart_generic import get_price_discount_tax, get_total_price_details
@@ -246,7 +246,7 @@ def delete_item(request):
     cart_length = display_cart_counter(global_variables.GLOBAL_LOGIN_USERNAME)
     # If call_off type is free text delete the eform data
     if item_details.call_off == CONST_FREETEXT_CALLOFF:
-        if django_query_instance.django_existence_check(EformData, {'cart_guid': guid}):
+        if django_query_instance.django_existence_check(EformFieldData, {'cart_guid': guid}):
             eform_data = django_query_instance.django_filter_delete_query(EformFieldData, {'cart_guid': guid})
     if item_details.call_off == CONST_CATALOG_CALLOFF:
         if django_query_instance.django_existence_check(EformFieldData, {'cart_guid': guid}):
@@ -272,7 +272,7 @@ def empty_shopping_cart(request):
         'username': getUsername(request), 'client': getClients(request)
     })
     for eform_guid in item_details:
-        django_query_instance.django_filter_delete_query(EformData, {'cart_guid': eform_guid.guid})
+        django_query_instance.django_filter_delete_query(EformFieldData, {'cart_guid': eform_guid.guid})
     item_details.delete()
     return HttpResponseRedirect('/shop/products_services/All/create')
 

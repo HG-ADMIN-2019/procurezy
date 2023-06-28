@@ -71,7 +71,7 @@ class UserData(AbstractUser, DBQueriesUser):
     class Meta:
         managed = True
         unique_together = ('client', 'username')
-        db_table = 'MTD_USER_INFO'
+        db_table = 'MMD_USER_INFO'
 
     # Get creator id and requester id by first name
     @staticmethod
@@ -95,7 +95,7 @@ class UserData(AbstractUser, DBQueriesUser):
         return user_list
 
 
-class UserDataH(models.Model):
+class UserDataHistory(models.Model):
     email_key = models.AutoField(primary_key=True, db_column='EMAIL_KEY', null=False)
     email = models.EmailField(db_column='EMAIL', max_length=100, null=False)
     username = models.CharField(db_column='USERNAME', null=False, max_length=16)
@@ -139,4 +139,4 @@ class UserDataH(models.Model):
     # Defining the meta data for User table
     class Meta:
         managed = True
-        db_table = 'MTD_USER_INFO_H'
+        db_table = 'MTD_USER_INFO_HISTORY'
