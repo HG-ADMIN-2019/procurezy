@@ -15,6 +15,7 @@ function display_button() {
   if (GLOBAL_ACTION == "DELETE") {
     $('#delete_data').show();
     $('#save_id').hide();
+    document.getElementById("id_del_add_button").style.display = "none";
   } else if (GLOBAL_ACTION == "Update") {
     $('#delete_data').hide();
     $('#id_update_data').show();
@@ -310,35 +311,17 @@ function get_main_table_data() {
 }
 
 // Function to get the selected row data
-function get_selected_row_data(){
-    $("#display_basic_table TBODY TR").each(function () {
-        var row = $(this);
-        var number_range_arr_obj = {};
-        number_range_arr_obj.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
-        if(number_range_arr_obj.del_ind){
-            number_range_arr_obj.sequence = row.find("TD").eq(1).html();
-            number_range_arr_obj.starting = row.find("TD").eq(2).html();
-            number_range_arr_obj.ending = row.find("TD").eq(3).html();
-            number_range_arr_obj.current = row.find("TD").eq(4).html();
-            number_range_arr_obj.guid = row.find("TD").eq(5).html();
-            number_range_arr_obj.document_type = "DOC01";
-            main_table_number_range_checked.push(number_range_arr_obj);
-        }
-    });
-}
-
-// Function to get the selected row data
-function get_popup_row_data() {
-  $("#id_popup_table TBODY TR").each(function () {
+function get_row_data(tableSelector) {
+  $(tableSelector + " TBODY TR").each(function () {
     var row = $(this);
     var number_range_arr_obj = {};
     number_range_arr_obj.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
     if (number_range_arr_obj.del_ind) {
-      number_range_arr_obj.sequence = row.find("TD").eq(1).find('input').val();
-      number_range_arr_obj.starting = row.find("TD").eq(2).find('input').val();
-      number_range_arr_obj.ending = row.find("TD").eq(3).find('input').val();
-      number_range_arr_obj.current = row.find("TD").eq(4).find('input').val();
-      number_range_arr_obj.guid = row.find("TD").eq(5).find('input').val();
+      number_range_arr_obj.sequence = row.find("TD").eq(1).find('input').val() || row.find("TD").eq(1).html();
+      number_range_arr_obj.starting = row.find("TD").eq(2).find('input').val() || row.find("TD").eq(2).html();
+      number_range_arr_obj.ending = row.find("TD").eq(3).find('input').val() || row.find("TD").eq(3).html();
+      number_range_arr_obj.current = row.find("TD").eq(4).find('input').val() || row.find("TD").eq(4).html();
+      number_range_arr_obj.guid = row.find("TD").eq(5).find('input').val() || row.find("TD").eq(5).html();
       number_range_arr_obj.document_type = "DOC01";
       main_table_number_range_checked.push(number_range_arr_obj);
     }
