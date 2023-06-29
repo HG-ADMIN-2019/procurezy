@@ -56,4 +56,4 @@ def sc_item_field_filter(request):
         'is_slide_menu': True
     }
 
-    return render(request, 'Purchaser_Cockpit/sc_item_field_filter.html', context)
+    return render(request, 'Purchaser_Cockpit/sourcing_cockpit.html', context)

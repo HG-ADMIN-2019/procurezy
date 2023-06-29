@@ -577,7 +577,7 @@ def send_po_attachment_email(output, po_document_number, email_supp_monitoring_g
     print("send email", output)
     mail.attach(str(po_document_number), attachment, "application/pdf")
     mail.mixed_subtype = 'related'
-    # mail.send()
+    mail.send()
 
     email_data = {}
     for details in emailDetail:

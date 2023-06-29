@@ -18,7 +18,7 @@ from eProc_Configuration.models import *
 from eProc_Configuration.models import ProductsDetail, FreeTextForm, Currency, UnitOfMeasures, ProductEformPricing
 from eProc_Configuration.models.development_data import *
 from eProc_Exchange_Rates.Utilities.exchange_rates_generic import convert_currency
-from eProc_Form_Builder.models import EformData, EformFieldData
+from eProc_Form_Builder.models import EformFieldData
 from eProc_Price_Calculator.Utilities.price_calculator_generic import calculate_item_total_value, validate_price, \
     calculate_item_price, check_discount_update_base_price
 from eProc_Shopping_Cart.Utilities.shopping_cart_generic import get_prod_by_id, get_price_discount_tax
@@ -91,21 +91,21 @@ def update_create_free_text(free_text_fields, request):
         field_value10 = free_text_fields[18]
         form_id = free_text_fields[19]
 
-        django_query_instance.django_update_or_create_query(EformData, {'cart_guid': guid}, {
-            'cart_guid': guid,
-            'form_field1': field_value1,
-            'form_field2': field_value2,
-            'form_field3': field_value3,
-            'form_field4': field_value4,
-            'form_field5': field_value5,
-            'form_field6': field_value6,
-            'form_field7': field_value7,
-            'form_field8': field_value8,
-            'form_field9': field_value9,
-            'form_field10': field_value10,
-            'form_id': form_id,
-            'client_id': client
-        })
+        # django_query_instance.django_update_or_create_query(EformData, {'cart_guid': guid}, {
+        #     'cart_guid': guid,
+        #     'form_field1': field_value1,
+        #     'form_field2': field_value2,
+        #     'form_field3': field_value3,
+        #     'form_field4': field_value4,
+        #     'form_field5': field_value5,
+        #     'form_field6': field_value6,
+        #     'form_field7': field_value7,
+        #     'form_field8': field_value8,
+        #     'form_field9': field_value9,
+        #     'form_field10': field_value10,
+        #     'form_id': form_id,
+        #     'client_id': client
+        # })
 
     if header_guid != '':
         del free_text_data['username']
@@ -512,7 +512,7 @@ class CartItem:
         eform_details['client_id'] = self.client
         eform_details['cart_guid'] = cart_guid
 
-        django_query_instance.django_update_or_create_query(EformData, {'cart_guid': cart_guid}, eform_details)
+        # django_query_instance.django_update_or_create_query(EformData, {'cart_guid': cart_guid}, eform_details)
 
     def add_catalog_item(self, product_id, edit_object, document_number, username, quantity, item_details):
         header_instance = ''

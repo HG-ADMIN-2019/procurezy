@@ -788,6 +788,7 @@ class SourcingRule(models.Model):
     sourcing_flag = models.BooleanField(default=False, null=False, db_column='SOURCING_FLAG')
     call_off = models.CharField(db_column='CALL_OFF', max_length=15, null=True)
     company_id = models.CharField(db_column='COMPANY_ID', max_length=8, null=True)
+    rule_type = models.CharField(db_column='RULE_TYPE', max_length=3, null=True)
     sourcing_rule_source_system = models.CharField(db_column='SOURCING_RULE_SOURCE_SYSTEM',
                                                    max_length=20)
     sourcing_rule_created_by = models.CharField(db_column='SOURCING_RULE_CREATED_BY',
@@ -812,6 +813,7 @@ class SourcingMapping(models.Model):
     prod_cat_id = models.CharField(db_column='PROD_CAT_ID', max_length=20, null=False)
     product_id = models.CharField(db_column="PRODUCT_ID", max_length=16, null=True)
     company_id = models.CharField(db_column='COMPANY_ID', max_length=8, null=False)
+    rule_type = models.CharField(db_column='RULE_TYPE', max_length=3, null=True)
     sourcing_mapping_source_system = models.CharField(db_column='SOURCING_MAPPING_SOURCE_SYSTEM',
                                                       max_length=20)
     sourcing_mapping_created_by = models.CharField(db_column='SOURCING_MAPPING_CREATED_BY',
