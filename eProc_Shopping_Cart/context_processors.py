@@ -22,7 +22,7 @@ def globalise_context(request):
     :param request:
     :return:
     """
-    msg_display_time_value = ''
+    msg_display_time_value = '1'
     attachment_size_val = ''
     encrypt_value = ''
     if request.user.is_authenticated:
@@ -53,6 +53,8 @@ def globalise_context(request):
         # encrypt_value = encrypt(global_variables.CATALOGS_ASSIGNED)
         sys_attributes_instance = sys_attributes(client)
         msg_display_time_value = sys_attributes_instance.get_msg_display_time()
+        if msg_display_time_value is None:
+            msg_display_time_value = "5"
     else:
         msg_display_time_value = "1"
     kwargs = {

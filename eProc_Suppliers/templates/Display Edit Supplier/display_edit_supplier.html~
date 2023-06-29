@@ -712,7 +712,7 @@ function save_basic_details() {
     formdata.append("working_days_id",working_days);
      setTimeout(function() {
                    OpenLoaderPopup();
-     }, 200);
+     }, 500);
      if(is_valid){
         response = ajax_update_supplier_basic_details(formdata)
         encrypted_supplier = response.encrypted_supplier
@@ -722,7 +722,7 @@ function save_basic_details() {
             document.getElementById('supplier_basic_update_success').innerHTML = message;
              setTimeout(function() {
                    CloseLoaderPopup();
-             }, 1000);
+             }, 500);
             $('#supplier_basic_update_success').show();
             $('#save_error_div').hide();
             setTimeout(function() {
