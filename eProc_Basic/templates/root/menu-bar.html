@@ -5,7 +5,7 @@
         <span class="navbar-toggler-icon"></span>
     </button>
     <div class="collapse navbar-collapse text-capitalize" id="navbarTogglerDemo01">
-        
+
         <div id="shop_shop_plus_submenu" style="display:none;">
             <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
 
@@ -34,8 +34,8 @@
 
         <div id="admin_sub_menu" style="display:none">
             <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
-                
-                
+
+
                 <li class="nav-item active" id="nav-item__user">
                     {% if sub_menu.EMPLOYEE_MANAGEMENT %}
                     <div class="nav-link" id="employee_managment_btn"><a href="{% url 'eProc_Admin_Tool:employee_search' %}">Employees</a></div>
@@ -72,21 +72,21 @@
 <!--                </li>-->
 
                 <li class="nav-item" id="nav-item__reports">
-                    {% if sub_menu.REPORTS %} 
+                    {% if sub_menu.REPORTS %}
                     <div class="dropdown">
                         <div class="nav-link dropbtn" id="reports_btn" >
                             <a>Admin Reports</a>
                             <i class="material-icons" style="vertical-align: bottom;">keyboard_arrow_down </i>
                         </div>
                         <div class="dropdown-menu dropdown-content">
-                            
+
                             <a class="dropdown-item" href="{% url 'eProc_Admin_Tool:user_report' %}">Users</a>
                             <a class="dropdown-item" href="{% url 'eProc_Admin_Tool:approval_report' %}">Approvals</a>
                             <a class="dropdown-item" href="{% url 'eProc_Admin_Tool:doc_search_report' %}">Documents</a>
                             <a class="dropdown-item" href="{% url 'eProc_Admin_Tool:accnt_report' %}">Account Assignments</a>
-                            
+
                         </div>
-                    </div> 
+                    </div>
                     {% endif %}
                 </li>
 
@@ -115,12 +115,12 @@
                     <div class="nav-link" id="sc_completion_btn"><a href="{{sc_completion_url}}" {% if request.path == sc_completion_url %} class="active"{% endif %} >Shopping assist</a></div>
                     {% endif %}
                 </li>
-                <li class="nav-item" id="nav-item__categroup">
-                    {% if sub_menu.GROUP_CATEGORY %}
-                    {% url 'eProc_Purchaser_Cockpit:sc_item_field_filter'  as group_cat_url %}
-                    <div class="nav-link" id="grp_cat_btn"><a href="{{group_cat_url}}" {% if request.path == group_cat_url %} class="active"{% endif %} >Category Grouping</a></div>
-                    {% endif %}
-                </li>
+<!--                <li class="nav-item" id="nav-item__categroup">-->
+<!--                    {% if sub_menu.GROUP_CATEGORY %}-->
+<!--                    {% url 'eProc_Purchaser_Cockpit:sc_item_field_filter'  as group_cat_url %}-->
+<!--                    <div class="nav-link" id="grp_cat_btn"><a href="{{group_cat_url}}" {% if request.path == group_cat_url %} class="active"{% endif %} >Category Grouping</a></div>-->
+<!--                    {% endif %}-->
+<!--                </li>-->
                 <li class="nav-item" id="nav-item__po">
                     {% if sub_menu.CHANGE_PO %}
                     <div class="nav-link" id="change_po_btn"><a href="#">Purchase orders</a></div>
@@ -128,7 +128,21 @@
                 </li>
             </ul>
         </div>
-
+        <div id="shop_assist_sub_menu" style="display:none" >
+            <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
+                <li class="nav-item" id="nav-item_grp_categroup">
+                    {% if sub_menu.SOURCING %}
+                    {% url 'eProc_Purchaser_Cockpit:sc_item_field_filter'  as group_cat_url %}
+                    <div class="nav-link" id="grp_cat_btn"><a href="{{group_cat_url}}" {% if request.path == group_cat_url %} class="active"{% endif %} >Shopping Cart Grouping</a></div>
+                    {% endif %}
+                </li>
+                <li class="nav-item" id="nav-item_rfq">
+                    {% if sub_menu.RFQ %}
+                    <div class="nav-link" id="change_rfq_btn"><a href="#">RFQ</a></div>
+                    {% endif %}
+                </li>
+            </ul>
+        </div>
         <div id="user_settings_sub_menu" style="display:none">
             <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
                 <li class="nav-item active" id="nav-item__usersetting">
@@ -213,7 +227,7 @@
                     </div>
                     {% endif %}
                 </li>
-                
+
             </ul>
         </div>
 

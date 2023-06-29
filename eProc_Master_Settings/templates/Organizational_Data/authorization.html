@@ -167,7 +167,7 @@
         var selectedValue = row[0].value;
         $.each (rendered_roles_type_values, function(i, item){
             if(selectedValue == item.field_type_id){
-                row[0].parentNode.nextElementSibling.children.description.value = item.field_type_desc;
+                row[0].parentNode.nextElementSibling.children.auth_obj_grp.value = item.field_type_desc;
             }
         });
     }

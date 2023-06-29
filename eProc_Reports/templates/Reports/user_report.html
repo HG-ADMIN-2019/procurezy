@@ -90,7 +90,6 @@
                 <table id="user_report_table" class="table table_sort_filter_export_excel">
                     <thead class="thead-light">
                         <tr>
-
                             <th> username </th>
                             <th> first name </th>
                             <th> last name </th>
@@ -103,7 +102,7 @@
                     <tbody>
                         {% for acc in final_list %}
                         <tr>
-                            <td scope="row"> {{ acc.2 }}</td>
+                            <td scope="row"> {{acc.2}}</td>
                             <td scope="row"> {{acc.4}} </td>
                             <td scope="row">{{ acc.3 }}</td>
                             <td scope="row"> {{acc.5}} </td>

@@ -942,7 +942,7 @@ class ApplicationSettingsSave:
 
         return upload_response, message
 
-    def save_auth_obj(self, authobj_data, username):
+    def save_auth_obj(self, authobj_data):
         authobj_data_db_list = []
         used_flag_set = []
         used_flag_reset = []
@@ -958,9 +958,9 @@ class ApplicationSettingsSave:
                                          'auth_level': (authobj_detail['auth_level']).upper(),
                                          'del_ind': False,
                                          'authorization_object_changed_at': self.current_date_time,
-                                         'authorization_object_changed_by': username,
+                                         'authorization_object_changed_by': self.username,
                                          'authorization_object_created_at': self.current_date_time,
-                                         'authorization_object_created_by': username,
+                                         'authorization_object_created_by': self.username,
                                          }
 
                 authobj_data_db_list.append(authobj_db_dictionary)
@@ -972,7 +972,7 @@ class ApplicationSettingsSave:
                                                            'auth_level_ID': authobj_detail['auth_level_ID'],
                                                            'auth_level': (authobj_detail['auth_level']).upper(),
                                                            'authorization_object_changed_at': self.current_date_time,
-                                                           'authorization_object_changed_by': username,
+                                                           'authorization_object_changed_by': self.username,
                                                            'del_ind': authobj_detail['del_ind']})
             if authobj_detail['del_ind']:
                 used_flag_reset.append(authobj_detail['auth_obj_id'])

@@ -28,7 +28,6 @@ JsonParser_obj = JsonParser()
 django_query_instance = DjangoQueries()
 
 
-
 def save_appr_status(request):
     """
     save approval status
@@ -37,14 +36,14 @@ def save_appr_status(request):
     """
     data = {}
     appr_status = JsonParser_obj.get_json_from_req(request)
-    client = getClients(request)
+    client = global_variables.GLOBAL_CLIENT
     email_data = ''
     variant_name = ''
     update_user_info(request)
     header_status, sc_header_instance = update_appr_status(appr_status)
     user_details = django_query_instance.django_get_query(UserData, {
         'username': sc_header_instance.requester,
-        'client':global_variables.GLOBAL_CLIENT
+        'client': global_variables.GLOBAL_CLIENT
     })
     email_data = {
         'username': user_details.username,
@@ -56,7 +55,7 @@ def save_appr_status(request):
     }
     if header_status == CONST_SC_HEADER_APPROVED:
         create_purchase_order = CreatePurchaseOrder(sc_header_instance)
-        status,error_message,data['output'],po_doc_list = create_purchase_order.create_po()
+        status, error_message, data['output'], po_doc_list = create_purchase_order.create_po()
 
         # Send purchase order email to supplier
         for po_document_number in po_doc_list:

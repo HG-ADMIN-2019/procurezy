@@ -444,19 +444,18 @@
         if (GLOBAL_ACTION == "org_attr_upload") {
             $(".class_del_checkbox").prop("hidden", false);
         }
-<!--        GetSelectedTextValue($("#attribute-" + inc_index)[0]);-->
         table_sort_filter_popup('id_popup_table');
     }
 
 
     //************************************
-    function GetSelectedTextValue(attribute) {
+    function GetSelectedTextValue(rowid) {
         var row = $(rowid);
          var selectedText = "";
       var selectedValue = row[0].value;
          $.each (rendered_dropdown_values, function(i, item){
         if(selectedValue == item.field_type_id){
-          row[0].parentNode.nextElementSibling.children.description.value = item.field_type_desc;
+          row[0].parentNode.nextElementSibling.children.attribute_name.value = item.field_type_desc;
         }
       });
     }

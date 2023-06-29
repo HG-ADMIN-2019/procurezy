@@ -75,7 +75,7 @@ $(".remove_upload_data").click(() => {
 
 // on click add icon display the row in to add the new entries
 function add_popup_row() {
-    $("#error_msg_id").css("display", "none")
+    $("#error_msg_id").css("display", "none");
     basic_add_new_html = '';
     var display_db_data = '';
     $('#id_popup_table').DataTable().destroy();
@@ -84,16 +84,19 @@ function add_popup_row() {
     });
     new_row_data();   // Add a new row in popup
     var company_num = '';
-    $("#id_popup_table TBODY TR").each(function () {
-        var row = $(this);
-        row.find("TD").eq(3).find("select").empty()
-        company_num = row.find("TD").eq(1).find("select option:selected").val();
-        var assign_val = approval_limit_find(company_num)
-        row.find("TD").eq(3).find("select").append(assign_val.app_code_id_dropdown)
-        $(row.find("TD").eq(1).find("select")).change(function () {
-              company_dropdwn_change(row);
-        })
-    })
+    $("#id_popup_table").on("change", "select[name='company_dropdown']", function() {
+        var row = $(this).closest("tr");
+        company_dropdwn_change(row);
+    });
+    $("#id_popup_table").on("draw.dt", function () {
+        $("#id_popup_table TBODY TR").each(function () {
+            var row = $(this);
+            row.find("TD").eq(3).find("select").empty();
+            company_num = row.find("TD").eq(1).find("select option:selected").val();
+            var assign_val = approval_limit_find(company_num);
+            row.find("TD").eq(3).find("select").append(assign_val.app_code_id_dropdown);
+        });
+    });
     if (GLOBAL_ACTION == "UPLOAD") {
         $(".class_del_checkbox").prop("hidden", false);
     }
@@ -188,8 +191,9 @@ function display_error_message(error_message){
 
 // Function for add a new row data
 function new_row_data() {
-    basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select class="form-control" type="text">'+company_id_dropdown+'</select></td><td><select class="form-control" type="text">'+user_name_dropdown+'</select></td><td><select class="form-control" type="text">'+app_code_id_dropdown+'</select></td><td hidden><input type="text" value=""></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
-    $('#id_popup_tbody').append(basic_add_new_html);
+    basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select class="form-control" name="company_dropdown" type="text">'+company_id_dropdown+'</select></td><td><select class="form-control" type="text">'+user_name_dropdown+'</select></td><td><select class="form-control" type="text">'+app_code_id_dropdown+'</select></td><td hidden><input type="text" value=""></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+    var table = $('#id_popup_table').DataTable();
+    table.row.add($(basic_add_new_html)).draw();
     table_sort_filter('id_popup_table');
 }
 
