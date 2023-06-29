@@ -23,13 +23,15 @@ class RegForm(ModelForm):
                                widget=forms.TextInput(attrs={'class': 'form-control check_special_char mandatory_fields'}),
                                )
     first_name = forms.CharField(label='First Name',
-                                 widget=forms.TextInput(attrs={'class': 'form-control check_special_char mandatory_fields'}),
+                                 widget=forms.TextInput(attrs={'class': 'form-control check_special_char '
+                                                                        'mandatory_fields'}),
                                  )
     last_name = forms.CharField(label='Last Name', widget=forms.TextInput(attrs={'class': 'form-control '
                                                                                           'check_special_char'}),
                                 required=False)
     phone_num = forms.CharField(label='Phone Number',
-                                widget=forms.TextInput(attrs={'class': 'form-control check_phone_number mandatory_fields'}),
+                                widget=forms.TextInput(attrs={'class': 'form-control check_phone_number '
+                                                                       'mandatory_fields'}),
                                 required=False)
     language_id = forms.ModelChoiceField(queryset=Languages.objects.all(), empty_label="None", widget=forms.Select(
         attrs={'class': 'form-control mandatory_fields'}), label='Language')
@@ -38,13 +40,21 @@ class RegForm(ModelForm):
     time_zone = forms.ModelChoiceField(queryset=TimeZone.objects.all(), empty_label="None", widget=forms.Select(
         attrs={'class': 'form-control mandatory_fields'}), label='TimeZone')
     email = forms.EmailField(label='E-mail', widget=forms.TextInput(attrs={'class': 'form-control mandatory_fields'}))
+    is_superuser = forms.BooleanField(
+        label='Super user',
+        required=False,
+        disabled=False,
+        widget=forms.widgets.CheckboxInput(
+            attrs={}),
+        help_text="Super user",
+    )
 
     # Meta data for UserData model
     class Meta:
         model = UserData
         fields = ['username', 'first_name', 'last_name', 'email', 'phone_num', 'employee_id', 'language_id',
                   'time_zone',
-                  'date_format', 'decimal_notation', 'currency_id', 'user_type']
+                  'date_format', 'decimal_notation', 'currency_id', 'user_type', 'is_superuser']
 
         DATE_FORMAT_CHOICES = (
             ('DD.MM.YYYY', 'DD.MM.YYYY'),
@@ -69,7 +79,6 @@ class RegForm(ModelForm):
                                              attrs={'class': 'form-control'}),
             'user_type': forms.Select(choices=USER_TYPE, attrs={'class': 'form-control'}),
             'employee_id': forms.TextInput(attrs={'class': 'form-control check_special_char mandatory_fields'}),
-
         }
 
 
