@@ -322,21 +322,20 @@
     var sc_completion_flag = '{{sc_completion_flag|safe}}';
     var GLOBAL_MANAGER_DETAIL = {{approver_id|safe}};
     var requester_user_name = '{{requester_user_name|safe}}';
-    var acct_assignment_cat = {{acct_assignment_category}}
-    var purchase_group = {{purchase_group}}
+    var acct_assignment_cat = '{{acct_assignment_category|safe}}';
+    var purchase_group = '{{purchase_group|safe}}';
     var multiple_purch_group = {{completion_work_flow|safe}}
     // start of get acc assignment values in pop up
     var acc_cat_type = "{{acc_cat_default_value}}";
     var acc_cat_values = "{{acc_value.0}}";
     var gl_account_values = "{{default_gl_account.0}}";
     var url_new = "{% url 'eProc_Basic:get_message_description' %}";
-    var msg_display_interval = {{msg_display_time_value|safe}};
+<!--    var msg_display_interval = {{msg_display_time_value|safe}};-->
     var cart_length = {{cart_items_count}};
     var acc_desc_list = {{acc_desc_append_list|safe}};
     //cart item guid
     var sc_item_guid = []
     {% for items in cart_items_guid_list %}
-
         sc_item_guid.push('{{items|safe}}')
     {% endfor %}
 for (let item_number = 0; i < cart_length; item_number++) {

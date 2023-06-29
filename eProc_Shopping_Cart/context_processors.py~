@@ -22,7 +22,7 @@ def globalise_context(request):
     :param request:
     :return:
     """
-    msg_display_time_value = '1'
+    msg_display_time_value = ''
     attachment_size_val = ''
     encrypt_value = ''
     if request.user.is_authenticated:

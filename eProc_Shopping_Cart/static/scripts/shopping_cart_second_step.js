@@ -4,7 +4,7 @@ $(document).ready(function () {
     $('body').css('padding-top', '7rem');
 
 });
-var CONST_MULTIPLE = ''
+var CONST_MULTIPLE = '';
 var manager_detail_initial = shopping_cart_errors.manager_detail.length
 var sc_errors_initial = shopping_cart_errors.sc_error
 var sc_info_messsages = shopping_cart_errors.sc_info
@@ -291,6 +291,7 @@ function get_sc_data(){
             j++
             }
         // }
+        console.log(sc_completion_flag);
         data.append('last_index_attachments'+i, last_index_attachments)
         data.append("internal_note" + i, document.getElementById("int_note_text-"+i).value)
         data.append("supplier_note" + i, document.getElementById("sup_note_text-"+i).value)
