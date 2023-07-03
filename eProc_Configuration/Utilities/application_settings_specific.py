@@ -116,26 +116,25 @@ class ApplicationSettingsSave:
         return upload_response, message
 
     def save_number_range_data(self, number_range_data):
+
         number_range_db_list = []
         range_check_flag = False
         doc_type = ''
-        delete_flags = []  # List to store delete_flag for each value
-
         for number_range_detail in number_range_data['data']:
             doc_type = number_range_detail['document_type']
             delete_flag = True
-            # if entry does not exist in the db
+            # if entry is not exists in db
             if not django_query_instance.django_existence_check(NumberRanges,
                                                                 {'sequence': number_range_detail['sequence'],
                                                                  'client': self.client,
                                                                  'document_type': number_range_detail[
-                                                                     'document_type']}):
+                                                                     'document_type'],
+                                                                 }):
                 number_ranges = django_query_instance.django_filter_query(NumberRanges,
                                                                           {'client': self.client,
                                                                            'del_ind': False,
                                                                            'document_type': number_range_detail[
-                                                                               'document_type']},
-                                                                          None, None)
+                                                                               'document_type']}, None, None)
                 for number_range in number_ranges:
                     range_check_flag = range_check(number_range_detail['starting'], number_range['starting'],
                                                    number_range['ending'])
@@ -155,12 +154,13 @@ class ApplicationSettingsSave:
                                                   'current': number_range_detail['current'],
                                                   'del_ind': False,
                                                   'client': self.client,
-                                                  'document_type': DocumentType.objects.get(
-                                                      document_type=number_range_detail['document_type']),
+                                                  'document_type': DocumentType.objects.get
+                                                  (document_type=number_range_detail[
+                                                      'document_type']),
                                                   'number_ranges_changed_at': self.current_date_time,
                                                   'number_ranges_changed_by': self.username,
                                                   'number_ranges_created_at': self.current_date_time,
-                                                  'number_ranges_created_by': self.username}
+                                                  'number_ranges_created_by': self.username, }
                     number_range_db_list.append(number_range_db_dictionary)
 
             else:
@@ -168,35 +168,39 @@ class ApplicationSettingsSave:
                     if django_query_instance.django_existence_check(TransactionTypes,
                                                                     {'sequence': number_range_detail['sequence'],
                                                                      'client': self.client,
-                                                                     'document_type': number_range_detail[
-                                                                         'document_type'],
-                                                                     'del_ind': False}):
+                                                                     'document_type':
+                                                                         number_range_detail[
+                                                                             'document_type'],
+                                                                     }):
                         delete_flag = False
                 if delete_flag:
                     django_query_instance.django_update_query(NumberRanges,
-                                                              {'sequence': number_range_detail['sequence'],
+                                                              {'sequence': number_range_detail
+                                                              ['sequence'],
                                                                'client': self.client,
-                                                               'document_type': number_range_detail['document_type']},
+                                                               'document_type': number_range_detail[
+                                                                   'document_type'],
+                                                               },
                                                               {'sequence': number_range_detail['sequence'],
                                                                'starting': number_range_detail['starting'],
                                                                'ending': number_range_detail['ending'],
                                                                'current': number_range_detail['current'],
                                                                'document_type': DocumentType.objects.get(
-                                                                   document_type=number_range_detail['document_type']),
+                                                                   document_type=number_range_detail[
+                                                                       'document_type']),
+
                                                                'number_ranges_changed_at': self.current_date_time,
                                                                'number_ranges_changed_by': self.username,
                                                                'client': self.client,
                                                                'del_ind': number_range_detail['del_ind']})
 
-            delete_flags.append(delete_flag)  # Store delete_flag value for each iteration
-
         if number_range_db_list:
             bulk_create_entry_db(NumberRanges, number_range_db_list)
 
-        return doc_type, delete_flags  # Return doc_type and delete_flags list
+        return doc_type
 
     def save_number_range_data_into_db(self, number_range_data):
-        doc_type, delete_flags = self.save_number_range_data(number_range_data)
+        doc_type = self.save_number_range_data(number_range_data)
 
         message = get_message_detail_based_on_action(number_range_data['action'])
 
@@ -212,10 +216,30 @@ class ApplicationSettingsSave:
             'upload_response': upload_response,
             'sequence_max': sequence_max,
             'doc_type': doc_type,
-            'delete_flags': delete_flags  # Include the delete_flags list in the response data
         }
 
         return data, message
+
+    def generate_delete_flags(self, number_range_data):
+        delete_flags = []  # List to store delete_flag for each value
+
+        for number_range_detail in number_range_data['data']:
+            delete_flag = True
+
+            # Check if value is present in the transaction table
+            if django_query_instance.django_existence_check(TransactionTypes,
+                                                            {'sequence': number_range_detail['sequence'],
+                                                             'client': self.client,
+                                                             'document_type': number_range_detail['document_type'],
+                                                             'del_ind': False}):
+                delete_flag = False
+
+            delete_flags.append(delete_flag)  # Store delete_flag value for each iteration
+            data = {
+                'delete_flags': delete_flags  # Include the delete_flags list in the response data
+            }
+
+        return data
 
     def save_document_type_data(self, documenttype_data):
         documenttype_db_list = []

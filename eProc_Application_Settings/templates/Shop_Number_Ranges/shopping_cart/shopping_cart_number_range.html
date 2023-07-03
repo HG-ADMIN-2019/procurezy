@@ -219,43 +219,41 @@
         main_table_number_range_checked = [];
         get_row_data("#display_basic_table"); // Function call to get the selected row data
         display_button(); // Call the display_button function to show/hide the buttons
-        data = {'data': main_table_number_range_checked, 'table_name': 'NumberRanges', 'action': GLOBAL_ACTION};
+        data = {'data':main_table_number_range_checked,'table_name':'NumberRanges','action':GLOBAL_ACTION}
         OpenLoaderPopup();
         $.ajax({
             type: 'POST',
-            url: "{% url 'eProc_Configuration:create_update_application_data' %}",
+            url: "{% url 'eProc_Configuration:create_update_delete_flags' %}",
             data: JSON.stringify(data),
             contentType: "application/json; charset=utf-8",
             dataType: "json",
-            success: function(Response) {
-                //Reference the Table.
+            success: function (Response) {
+                var docTypeArray = Response.delete_flags // Get the delete_flags array from the response
+                // Reference the Table.
                 var res = get_all_checkboxes(); // Function to get all the checkboxes
                 var $chkbox_all = $('td input[type="checkbox"]', res);
-
-                var docTypeArray = Response[0].delete_flags; // Get the delete_flags array from the response
-
                 for (var i = 0; i < $chkbox_all.length; i++) {
                     if ($chkbox_all[i].checked) {
-                    var row = $chkbox_all[i].parentNode.parentNode;
+                        var row = $chkbox_all[i].parentNode.parentNode;
                         if (docTypeArray[i] == false) {
-                            check = '<input type="checkbox" disabled>'
+                            check = '<input type="checkbox" disabled>';
                             $('#delete_data').prop('disabled', true);
                             document.getElementById('delete_data').style.visibility = 'visible';
                         } else {
-                            check = '<input type="checkbox">'
+                            check = '<input type="checkbox">';
                             $('#delete_data').prop('disabled', false);
                             document.getElementById('delete_data').style.visibility = 'visible';
                         }
                         edit_basic_data +=
-                        '<tr>' +
-                        '<td>'+check+'</td>'+
-                        '<td><input type="number" class="form-control" value="' + row.cells[1].innerHTML + '" name="sequence"  maxlength="5"  disabled></td>' +
-                        '<td><input class="form-control" value="' + row.cells[2].innerHTML + '" type="number"  name="starting"  maxlength="100000000"  disabled></td>' +
-                        '<td><input value="' + row.cells[3].innerHTML + '" type="number" class="form-control"  name="ending"  maxlength="10"  disabled></td>' +
-                        '<td><input value="' + row.cells[4].innerHTML + '" type="number" class="form-control"  name="current"  maxlength="10"  disabled></td>' +
-                        '<td hidden><input  type="text" class="form-control" value="' + guid + '"></td>' +
-                        '<td class="class_del_checkbox" hidden><input type="checkbox" required></td>' +
-                        '</tr>';
+                            '<tr>' +
+                            '<td>' + check + '</td>' +
+                            '<td><input type="number" class="form-control" value="' + row.cells[1].innerHTML + '" name="sequence"  maxlength="5"  disabled></td>' +
+                            '<td><input class="form-control" value="' + row.cells[2].innerHTML + '" type="number"  name="starting"  maxlength="100000000"  disabled></td>' +
+                            '<td><input value="' + row.cells[3].innerHTML + '" type="number" class="form-control"  name="ending"  maxlength="10"  disabled></td>' +
+                            '<td><input value="' + row.cells[4].innerHTML + '" type="number" class="form-control"  name="current"  maxlength="10"  disabled></td>' +
+                            '<td hidden><input  type="text" class="form-control" value="' + guid + '"></td>' +
+                            '<td class="class_del_checkbox" hidden><input type="checkbox" required></td>' +
+                            '</tr>';
                     }
                 }
                 CloseLoaderPopup();
@@ -266,6 +264,7 @@
             },
         });
     }
+
 
     //delete the selected row in db................
     var main_table_number_range_checked = [];

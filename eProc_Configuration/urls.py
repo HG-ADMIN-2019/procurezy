@@ -1,6 +1,6 @@
 from django.urls import path
 from . import views
-from .views import create_update_application_data
+from .views import create_update_application_data, create_update_delete_flags
 
 app_name = 'eProc_Configuration'
 
@@ -13,6 +13,7 @@ urlpatterns = [
     path('save_productservice_data/', views.save_productservice_data, name='save_productservice_data'),
     path('save_app_settings_data', views.save_app_settings_data, name='save_app_settings_data'),
     path('create_update_application_data', views.create_update_application_data, name='create_update_application_data'),
+    path('create_update_delete_flags/', create_update_delete_flags, name='create_update_delete_flags'),
     path('get_holiday_from_calenderid', views.get_holiday_from_calenderid, name='get_holiday_from_calenderid'),
     path('basic_settings', views.basic_settings, name='basic_settings'),
     path('application_settings', views.application_data_configuration, name='application_data_configuration'),
