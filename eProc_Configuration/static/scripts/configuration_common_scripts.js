@@ -5,6 +5,27 @@ $(document).ready(function () {
     table_sort_filter('display_basic_table');
 });
 
+//hide the myModal popup: Implemented Dependency delete purpose
+function hideModal() {
+    $('#myModal').modal('hide');
+}
+
+// Function to display button based on action
+function display_button() {
+    if (GLOBAL_ACTION == "DELETE") {
+        $('#delete_data').show();
+        $('#save_id').hide();
+        document.getElementById("id_del_add_button").style.display = "none";
+    } else if (GLOBAL_ACTION == "Update") {
+        $('#delete_data').hide();
+        $('#id_update_data').show();
+    }else {
+        $('#delete_data').hide();
+        $('#save_id').show();
+        document.getElementById('save_id').style.visibility = 'visible';
+    }
+}
+
 var currPageStartIdx, currPageEndIdx, page_num=0, checked_flag=0;
 // Function called on pagination
   $('#display_basic_table').on( 'page.dt', function () {
