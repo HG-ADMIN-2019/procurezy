@@ -8,7 +8,9 @@ Author:
 """
 from django.shortcuts import render
 from eProc_Basic.Utilities.functions.get_db_query import getClients
-from eProc_Purchaser_Cockpit.Utilities.purchaser_cockpit_specific import filter_based_on_sc_item_field
+from eProc_Doc_Search_and_Display.Utilities.search_display_generic import get_hdr_data
+from eProc_Purchaser_Cockpit.Utilities.purchaser_cockpit_specific import filter_based_on_sc_item_field, \
+    purchaser_cockpit_search
 
 
 def incomplete_form(request, guid=None):
@@ -32,8 +34,24 @@ def sc_item_field_filter(request):
     prod_cat = False
     client = getClients(request)
     order_list = []
-
+    search_fields = {}
     if request.method == 'POST':
+        inp_comp_code = request.POST.get('company_code')
+        inp_doc_type = 'SC'
+        inp_doc_num = request.POST.get('sc_number')
+        inp_from_date = request.POST.get('from_date')
+        inp_to_date = request.POST.get('to_date')
+        inp_supl = None
+        inp_created_by = None
+        inp_requester = None
+        # results
+        sc_header_item_details = get_hdr_data(inp_doc_type,
+                                              inp_doc_num,
+                                              inp_from_date,
+                                              inp_to_date,
+                                              inp_supl,
+                                              inp_created_by,
+                                              inp_requester, False)
         prod_cat = request.POST.get('prod_cat')
         supplier_id = request.POST.get('supplier_id')
         comp_code = request.POST.get('comp_code')

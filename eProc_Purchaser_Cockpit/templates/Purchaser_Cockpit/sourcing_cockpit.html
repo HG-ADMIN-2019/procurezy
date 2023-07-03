@@ -30,7 +30,7 @@
             </div>
               <div class="col-md">
               <label for="">to Date</label>
-              <input type="date" class="form-control check_for_search" id="to_date" name='from_date'>
+              <input type="date" class="form-control check_for_search" id="to_date" name='to_date'>
             </div>
               <div class="col-md">
               <label for="">Company Code</label>
@@ -74,13 +74,13 @@
 
         </div>
       </div>
-      {% if som_po_data|length > 0 %}
+      {% if sc_header_item_details|length > 0 %}
       <div class="search_result_count_card card">
         <div class="card-body">
           <h6 class="card-title">Total number of results found :{{som_po_data|length}}</h6>
         </div>
       </div>
-      {% elif som_po_data|length == 0  %}
+      {% elif sc_header_item_details|length == 0  %}
       <div class="search_result_count_card card">
         <div class="card-body">
           <h6 class="card-title">No Results Found</h6>
@@ -88,38 +88,69 @@
       </div>
       {% endif %}
 
-      {% if som_po_data %}
+      {% if sc_header_item_details %}
       <div class="card">
         <div style="margin-top: 17px;margin-left: 10px;">
-          <table id="som_po_table" class="table table_sort_filter_export_excel">
-            <thead class="thead-light">
-            <tr>
-              <th> PO Number  </th>
-              <th> Company Name </th>
-              <th> Buyer Name </th>
-              <th> Buyer Email </th>
-              <th> Buyer Phone No.</th>
-              <th> Received Date</th>
-              <th> Total Value</th>
-              <th>Action</th>
-            </tr>
-            </thead>
-            <tbody id="supplier_detail_tbody">
-            {% for results in som_po_data %}
-            <tr id="table-{{results.doc_number}}">
-              <td><a href="{% url 'eProc_Supplier_Order_Management:som_po_doc_details' results.encrypted_po_doc_num %}" id="{{results.doc_number}}" class="deletepop" target="_blank">{{results.doc_number}}</a></td>
-              <td>{{results.requester_company_name}}</td>
-              <td>{{results.requester}}</td>
-              <td>{{results.requester_email}}</td>
-              <td>{{results.requester_mobile_num}}</td>
-              <td>{{results.ordered_at}}</td>
-              <td>{{results.total_value}}</td>
-              <td><a href=\{{results.pdf_path}} type="application/pdf" target="_blank">View Po Pdf</a>
-              </td>
-            </tr>
-            {% endfor %}
-            </tbody>
-          </table>
+            <table id="sc_header_item" class="table table_sort_filter_export_excel">
+                <thead class="thead-light">
+                    <tr>
+                        <th scope="col">SC Number</th>
+                        <th scope="col">Description</th>
+                        <th scope="col">Supplier ID</th>
+                        <th scope="col">Company Code</th>
+                        <th scope="col">Delivery Date</th>
+                        <th scope="col">Unit</th>
+                        <th scope="col">Quantity</th>
+                        <th scope="col">Product Category</th>
+                        <th scope="col">Select</th>
+                    </tr>
+                </thead>
+
+                <tbody id="add_attr_body" >
+                    {% for header_item in sc_header_item_details %}
+                    <tr>
+                        <td scope="row">{{ header_item.0 }}</td>
+                        <td scope="row" class="hg-desc">{{ header_item.1 }}</td>
+                        <td scope="row">{{ header_item.2 }}</td>
+                        <td scope="row">{{ header_item.3 }}</td>
+                        <td scope="row">{{ header_item.4 }}</td>
+                        <td scope="row">{{ header_item.5 }}</td>
+                        <td scope="row">{{ header_item.6 }}</td>
+                        <td scope="row">{{ header_item.7 }}</td>
+                        <td scope="row"><input type="checkbox" name="select" value="select"></td>
+                    </tr>
+                    {% endfor %}
+                </tbody>
+            </table>
+<!--          <table id="som_po_table" class="table table_sort_filter_export_excel">-->
+<!--            <thead class="thead-light">-->
+<!--            <tr>-->
+<!--              <th> PO Number  </th>-->
+<!--              <th> Company Name </th>-->
+<!--              <th> Buyer Name </th>-->
+<!--              <th> Buyer Email </th>-->
+<!--              <th> Buyer Phone No.</th>-->
+<!--              <th> Received Date</th>-->
+<!--              <th> Total Value</th>-->
+<!--              <th>Action</th>-->
+<!--            </tr>-->
+<!--            </thead>-->
+<!--            <tbody id="supplier_detail_tbody">-->
+<!--            {% for results in som_po_data %}-->
+<!--            <tr id="table-{{results.doc_number}}">-->
+<!--              <td><a href="{% url 'eProc_Supplier_Order_Management:som_po_doc_details' results.encrypted_po_doc_num %}" id="{{results.doc_number}}" class="deletepop" target="_blank">{{results.doc_number}}</a></td>-->
+<!--              <td>{{results.requester_company_name}}</td>-->
+<!--              <td>{{results.requester}}</td>-->
+<!--              <td>{{results.requester_email}}</td>-->
+<!--              <td>{{results.requester_mobile_num}}</td>-->
+<!--              <td>{{results.ordered_at}}</td>-->
+<!--              <td>{{results.total_value}}</td>-->
+<!--              <td><a href=\{{results.pdf_path}} type="application/pdf" target="_blank">View Po Pdf</a>-->
+<!--              </td>-->
+<!--            </tr>-->
+<!--            {% endfor %}-->
+<!--            </tbody>-->
+<!--          </table>-->
         </div>
       </div>
       {% endif %}
