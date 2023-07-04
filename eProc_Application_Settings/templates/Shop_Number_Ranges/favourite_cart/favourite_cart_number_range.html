@@ -216,7 +216,7 @@
         main_table_number_range_checked = [];
         get_row_data("#display_basic_table"); // Function call to get the selected row data
         display_button(); // Call the display_button function to show/hide the buttons
-        data = {'data':main_table_number_range_checked,'table_name':'NumberRanges','action':GLOBAL_ACTION}
+        var data = {'data': main_table_number_range_checked, 'table_name': 'NumberRanges', 'action': GLOBAL_ACTION };
         OpenLoaderPopup();
         $.ajax({
             type: 'POST',
@@ -224,23 +224,24 @@
             data: JSON.stringify(data),
             contentType: "application/json; charset=utf-8",
             dataType: "json",
-            success: function (Response) {
-                var docTypeArray = Response.delete_flags // Get the delete_flags array from the response
-                // Reference the Table.
+            success: function(Response) {
+                var docTypeArray = Response.delete_flags; // Get the delete_flags array from the response
                 var res = get_all_checkboxes(); // Function to get all the checkboxes
                 var $chkbox_all = $('td input[type="checkbox"]', res);
+                var j = 0; // Index for docTypeArray
                 for (var i = 0; i < $chkbox_all.length; i++) {
                     if ($chkbox_all[i].checked) {
                         var row = $chkbox_all[i].parentNode.parentNode;
-                        if (docTypeArray[i] == false) {
+                        if (j < docTypeArray.length && docTypeArray[j] === false) {
                             check = '<input type="checkbox" disabled>';
                             $('#delete_data').prop('disabled', true);
                             document.getElementById('delete_data').style.visibility = 'visible';
                         } else {
                             check = '<input type="checkbox">';
-                            $('#delete_data').prop('disabled', false);
                             document.getElementById('delete_data').style.visibility = 'visible';
                         }
+                        j++; // Move to the next index in docTypeArray
+                        $('#delete_data').prop('disabled', false);
                         edit_basic_data +=
                             '<tr>' +
                             '<td>' + check + '</td>' +
@@ -308,15 +309,10 @@
                 contentType: "application/json; charset=utf-8",
                 dataType: "json",
                 success: function (Response) {
-                    // Check if the delete_flag is False
-                     if (Response[0].doc_type[1] === false) {
-                        $('#dependency_delete').modal('show'); // Show the dependency delete popup
-                    } else {
-                        rendered_number_range_data = Response[0].upload_response;
-                        max_sequence = parseInt(Response[0].sequence_max) + 1;
-                        display_basic_db_data();
-                        success_response(Response); // Function call to display response data
-                    }
+                    rendered_number_range_data = Response[0].upload_response;
+                    max_sequence = parseInt(Response[0].sequence_max) + 1;
+                    display_basic_db_data();
+                    success_response(Response); // Function call to display response data
                     CloseLoaderPopup();
                 }
             });

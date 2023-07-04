@@ -232,18 +232,20 @@
                 // Reference the Table.
                 var res = get_all_checkboxes(); // Function to get all the checkboxes
                 var $chkbox_all = $('td input[type="checkbox"]', res);
+                var j = 0; // Index for docTypeArray
                 for (var i = 0; i < $chkbox_all.length; i++) {
                     if ($chkbox_all[i].checked) {
                         var row = $chkbox_all[i].parentNode.parentNode;
-                        if (docTypeArray[i] == false) {
+                        if (j < docTypeArray.length && docTypeArray[j] === false) {
                             check = '<input type="checkbox" disabled>';
                             $('#delete_data').prop('disabled', true);
                             document.getElementById('delete_data').style.visibility = 'visible';
                         } else {
                             check = '<input type="checkbox">';
-                            $('#delete_data').prop('disabled', false);
                             document.getElementById('delete_data').style.visibility = 'visible';
                         }
+                        j++; // Move to the next index in docTypeArray
+                        $('#delete_data').prop('disabled', false);
                         edit_basic_data +=
                             '<tr>' +
                             '<td>' + check + '</td>' +

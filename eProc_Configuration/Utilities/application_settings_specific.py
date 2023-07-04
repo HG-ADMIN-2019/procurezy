@@ -165,18 +165,27 @@ class ApplicationSettingsSave:
 
             else:
                 if number_range_detail['del_ind']:
-                    if django_query_instance.django_existence_check(TransactionTypes,
-                                                                    {'sequence': number_range_detail['sequence'],
-                                                                     'client': self.client,
-                                                                     'document_type':
-                                                                         number_range_detail[
-                                                                             'document_type'],
-                                                                     }):
-                        delete_flag = False
+                    if django_query_instance.django_existence_check(TransactionTypes, {
+                        'sequence': number_range_detail['sequence'],
+                        'client': self.client,
+                        'document_type': number_range_detail['document_type'],
+                    }):
+                        transaction_types = django_query_instance.django_filter_query(TransactionTypes, {
+                            'sequence': number_range_detail['sequence'],
+                            'client': self.client,
+                            'document_type': number_range_detail['document_type'],
+                        }, None, None)
+
+                        if transaction_types:
+                            transaction_type = transaction_types[0]  # Retrieve the first item from the list
+
+                            if transaction_type.get('del_ind', False):
+                                delete_flag = True
+                            else:
+                                delete_flag = False
                 if delete_flag:
                     django_query_instance.django_update_query(NumberRanges,
-                                                              {'sequence': number_range_detail
-                                                              ['sequence'],
+                                                              {'sequence': number_range_detail['sequence'],
                                                                'client': self.client,
                                                                'document_type': number_range_detail[
                                                                    'document_type'],
