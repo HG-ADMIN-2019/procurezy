@@ -116,7 +116,7 @@ class ApplicationSettingsSave:
         return upload_response, message
 
     def save_number_range_data(self, number_range_data):
-
+        delete_flag = ''
         number_range_db_list = []
         range_check_flag = False
         doc_type = ''
