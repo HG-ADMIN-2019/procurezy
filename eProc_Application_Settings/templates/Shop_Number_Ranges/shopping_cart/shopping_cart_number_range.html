@@ -28,7 +28,7 @@
                 <div class="edit-button-section mb-4">
                     <button class="btn btn-secondary btn-sm" title="Edit" id="id_edit_data" onclick="onclick_edit_button()">
                         <i class="fas fa-edit"></i> edit</button>
-                    <button class="btn btn-outline-danger btn-sm" id="id_delete_data" title= "DELETE" value="org_node_type_delete" style="display:none;" onclick="onclick_delete_button()">
+                    <button class="btn btn-outline-danger btn-sm" id="id_delete_data" title= "DELETE" value="Delete" style="display:none;" onclick="onclick_delete_button()">
                         <i class="fa fa-trash"></i> delete
                     </button>
                     <button class="btn btn-primary btn-sm" title="Update" id="id_update_data" style="display:none;" value="UPDATE" type="button" onclick="onclick_update_button()">
@@ -122,7 +122,7 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-primary remove_upload_data" title="Cancel" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
                     <button class="btn btn-primary" title="Save" id="save_id"><i class="fas fa-save"></i> save</button>
-                    <button class="btn btn-primary btn-sm" title="Delete" id="delete_data" value="DELETE" data-toggle="modal" data-target="#id_delete_confirm_popup">
+                    <button class="btn btn-primary btn-sm" title="Delete" id="delete_data" value="DELETE" data-toggle="modal" data-target="#id_delete_confirm_popup" onclick="hideModal()">
                         <i class="fa fa-trash"></i> Delete
                     </button>
                 </div>
@@ -205,6 +205,66 @@
             }
         }
         table_sort_filter('id_popup_table');
+        table_sort_filter('display_basic_table');
+    }
+
+    // Onclick delete Button
+    function onclick_delete_button() {
+        $("#error_msg_id").css("display", "none");
+        $('#id_popup_table').DataTable().destroy();
+        $("#id_popup_tbody").empty();
+        GLOBAL_ACTION = "DELETE";
+        var edit_basic_data = "";
+        var guid = '';
+        main_table_number_range_checked = [];
+        get_row_data("#display_basic_table"); // Function call to get the selected row data
+        display_button(); // Call the display_button function to show/hide the buttons
+        data = {'data': main_table_number_range_checked, 'table_name': 'NumberRanges', 'action': GLOBAL_ACTION};
+        OpenLoaderPopup();
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'eProc_Configuration:create_update_application_data' %}",
+            data: JSON.stringify(data),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function(Response) {
+                //Reference the Table.
+                var res = get_all_checkboxes(); // Function to get all the checkboxes
+                var $chkbox_all = $('td input[type="checkbox"]', res);
+
+                var docTypeArray = Response[0].delete_flags; // Get the delete_flags array from the response
+
+                for (var i = 0; i < $chkbox_all.length; i++) {
+                    if ($chkbox_all[i].checked) {
+                    var row = $chkbox_all[i].parentNode.parentNode;
+                        if (docTypeArray[i] == false) {
+                            check = '<input type="checkbox" disabled>'
+                            $('#delete_data').prop('disabled', true);
+                            document.getElementById('delete_data').style.visibility = 'visible';
+                        } else {
+                            check = '<input type="checkbox">'
+                            $('#delete_data').prop('disabled', false);
+                            document.getElementById('delete_data').style.visibility = 'visible';
+                        }
+                        edit_basic_data +=
+                        '<tr>' +
+                        '<td>'+check+'</td>'+
+                        '<td><input type="number" class="form-control" value="' + row.cells[1].innerHTML + '" name="sequence"  maxlength="5"  disabled></td>' +
+                        '<td><input class="form-control" value="' + row.cells[2].innerHTML + '" type="number"  name="starting"  maxlength="100000000"  disabled></td>' +
+                        '<td><input value="' + row.cells[3].innerHTML + '" type="number" class="form-control"  name="ending"  maxlength="10"  disabled></td>' +
+                        '<td><input value="' + row.cells[4].innerHTML + '" type="number" class="form-control"  name="current"  maxlength="10"  disabled></td>' +
+                        '<td hidden><input  type="text" class="form-control" value="' + guid + '"></td>' +
+                        '<td class="class_del_checkbox" hidden><input type="checkbox" required></td>' +
+                        '</tr>';
+                    }
+                }
+                CloseLoaderPopup();
+                $('#id_popup_tbody').append(edit_basic_data);
+                $("#id_del_ind_checkbox").prop("hidden", true);
+                $('#myModal').modal('show');
+                table_sort_filter('id_popup_table');
+            },
+        });
     }
 
     //delete the selected row in db................
@@ -213,25 +273,54 @@
         $('#success_msg_id').empty()
         GLOBAL_ACTION = 'DELETE'
         main_table_number_range_checked = [];
+        var disable_check = '';
         $('#display_basic_table').DataTable().destroy();
-        get_selected_row_data(); // Function call to get the selected row data
+        get_row_data("#id_popup_table"); // Function call to get the selected row data
         $('#id_delete_confirm_popup').modal('hide');
-        data = {'data':main_table_number_range_checked,'table_name':'NumberRanges','action':GLOBAL_ACTION}
-        OpenLoaderPopup();
-        $.ajax({
-            type: 'POST',
-            url: "{% url 'eProc_Configuration:create_update_application_data' %}",
-            data: JSON.stringify(data),
-            contentType: "application/json; charset=utf-8",
-            dataType: "json",
-            success: function (Response) {
-                rendered_number_range_data = Response[0].upload_response;
-                max_sequence = parseInt(Response[0].sequence_max) + 1;
-                display_basic_db_data();
-                success_response(Response); // Function call to display response data
-                CloseLoaderPopup();
+        if(disable_check){
+            $('#delete_data').prop('disabled', true);
+            error_message = ui_messeges("JMSG112")// Get message details
+            var display4 = msg_type.messages_id_desc;
+            document.getElementById("id_error_msg_checkbox").innerHTML = display4+ "Checkbox";
+            $('#id_delete_confirm_popup').modal('hide');
+            $('#myModal').modal('show');
+        }
+        else if(main_table_number_range_checked.length == "0"){
+            var msg = "JMSG005";
+            var msg_type ;
+            msg_type = message_config_details(msg);
+            $("#error_msg_id").prop("hidden", false);
+            if(msg_type.message_type == "ERROR"){
+                display_message("error_msg_id", msg_type.messages_id_desc)
             }
-        });
+            else if(msg_type.message_type == "WARNING"){
+                display_message("id_warning_msg_id", msg_type.messages_id_desc)
+            }
+            else if(msg_type.message_type == "INFORMATION"){
+                display_message("id_info_msg_id", msg_type.messages_id_desc)
+            }
+            $('#id_delete_confirm_popup').modal('hide');
+            $('#myModal').modal('show')
+            table_sort_filter('display_basic_table');
+        }
+        else{
+            data = {'data':main_table_number_range_checked,'table_name':'NumberRanges','action':GLOBAL_ACTION}
+            OpenLoaderPopup();
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'eProc_Configuration:create_update_application_data' %}",
+                data: JSON.stringify(data),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (Response) {
+                    rendered_number_range_data = Response[0].upload_response;
+                    max_sequence = parseInt(Response[0].sequence_max) + 1;
+                    display_basic_db_data();
+                    success_response(Response); // Function call to display response data
+                    CloseLoaderPopup();
+                }
+            });
+        }
     }
 
     // validating the  popup table for duplicate entries

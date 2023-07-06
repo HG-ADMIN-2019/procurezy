@@ -411,8 +411,9 @@ def convert_DetermineGLAccount_to_dictionary(arr):
 def convert_AccountingData_to_dictionary(arr):
     convertion_list = []
     for row in arr:
-        dictionary = {'company_id': row[0], 'account_assign_cat': row[1], 'account_assign_value': row[2],
-                      'valid_from': row[3], 'valid_to': row[4], 'del_ind': row[5]}
+        dictionary = {'account_assign_value': row[0],'valid_from': row[1],'valid_to': row[2],
+                      'company_id': row[3], 'account_assign_cat': row[5],
+                      'del_ind': row[4]}
         convertion_list.append(dictionary)
     return convertion_list
 

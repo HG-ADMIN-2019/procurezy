@@ -229,11 +229,11 @@ function read_popup_data() {
     $("#id_popup_table TBODY TR").each(function () {
         var row = $(this);
         porg={};
-        porg.del_ind = row.find("TD").eq(6).find('input[type="checkbox"]').is(':checked');
+        porg.del_ind = row.find("TD").eq(4).find('input[type="checkbox"]').is(':checked');
         porg.porg_guid = row.find("TD").eq(5).find('input').val();
         porg.porg_id = row.find("TD").eq(1).find('input').val().toUpperCase();
         porg.description = row.find("TD").eq(2).find('input').val();
-        porg.object_id = row.find("TD").eq(4).find('select').val();
+        porg.object_id = row.find("TD").eq(3).find('select').val();
         if (porg == undefined){
                 porg.porg_id = row.find("TD").eq(1).find('input[type="text"]').val();
         }

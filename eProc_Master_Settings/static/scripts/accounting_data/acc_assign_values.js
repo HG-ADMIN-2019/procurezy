@@ -7,6 +7,7 @@ var aav={};
 //onclick of upload button display id_data_upload popup and set GLOBAL_ACTION button value
 function onclick_upload_button() {
     GLOBAL_ACTION = "aav_upload"
+    $("#id_error_msg_upload").prop("hidden",true)
     $("#id_popup_tbody").empty();
     $('#id_data_upload').modal('show');
     document.getElementById('id_file_data_upload').value = "";
@@ -25,26 +26,14 @@ function onclick_button_action(action) {
     onclick_copy_update_button(action);
     if(action == 'UPDATE'){
         document.getElementById("id_del_add_button").style.display = "none";
+        $("#save_id").prop("hidden", false);
     }
     else{
         document.getElementById("id_del_add_button").style.display = "block";
+         $("#save_id").prop("hidden", false);
     }
 }
 
-// on click add icon display the row in to add the new entries
-function add_popup_row() {
-    $("#error_msg_id").css("display", "none")
-    basic_add_new_html = '';
-    var display_db_data = '';
-    $('#id_popup_table').DataTable().destroy();
-    $(".modal").on("hidden.bs.modal", function() {
-        $("#id_error_msg").html("");
-    });
-    new_row_data();   // Add a new row in popup
-    if (GLOBAL_ACTION == "aav_upload") {
-        $(".class_del_checkbox").prop("hidden", false);
-    }
-}
 
 //onclick of cancel display the table in display mode............
 function display_basic_db_data() {
@@ -119,12 +108,16 @@ function delete_duplicate() {
         valid_to = row.find("TD").eq(5).find('input[type="text"]').val()
         account_assign_cat = row.find("TD").eq(2).find('Select').val()
         company_id = row.find("TD").eq(1).find('Select').val()
-
-        var compare = account_assign_value + '-' + account_assign_cat + '-' + company_id
-        if (aav_code_check.includes(compare)) {
+         var compare = account_assign_value + '-' + account_assign_cat + '-' + company_id
+         if (aav_code_check.includes(compare)) {
             $(row).remove();
         }
         aav_code_check.push(compare);
+        main_table_low_value = get_main_table_data_upload(); //Read data from main table
+        if (main_table_low_value.includes(compare)) {
+            $(row).remove();
+        }
+        main_table_low_value.push(compare);
     })
     table_sort_filter_popup_pagination('id_popup_table')
     check_data()
@@ -245,6 +238,23 @@ function get_main_table_data() {
     table_sort_filter('display_basic_table');
 }
 
+// Function to get main table data
+function get_main_table_data_upload() {
+    main_table_low_value = [];
+    $('#display_basic_table').DataTable().destroy();
+    $("#display_basic_table TBODY TR").each(function() {
+        var row = $(this);
+        var main_attribute = {};
+        main_attribute.company_id = row.find("TD").eq(1).html();
+        main_attribute.account_assign_cat = row.find("TD").eq(2).html();
+        main_attribute.account_assign_value = row.find("TD").eq(3).html();
+        main_attribute.del_ind = row.find("TD").eq(6).find('input[type="checkbox"]').is(':checked');
+        compare_maintable = main_attribute.company_id + '-' + main_attribute.account_assign_cat + '-' + main_attribute.account_assign_value+ '-'+ main_attribute.del_ind;
+        main_table_low_value.push(compare_maintable);
+    });
+    table_sort_filter('display_basic_table');
+}
+
 // Function to get the selected row data
 function get_selected_row_data() {
     $("#id_popup_table TBODY TR").each(function() {
@@ -279,3 +289,9 @@ function get_selected_row_data() {
     DatePicker();
     table_sort_filter("id_popup_table");
  }
+
+ // onclick of valid popup
+function valid_popup(){
+  $('#id_data_upload').modal('hide');
+  $("#valid_upload").modal('show');
+}
