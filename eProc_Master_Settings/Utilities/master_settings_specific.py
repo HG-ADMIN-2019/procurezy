@@ -542,7 +542,8 @@ class MasterSettingsSave:
                                              'address_number': addresstype_detail['address_number'],
                                              'address_type': (addresstype_detail['address_type']).upper(),
                                              'company_id': addresstype_detail['company_id'],
-                                             'valid_from': datetime.strptime(addresstype_detail['valid_from'], "%d-%m-%Y"),
+                                             'valid_from': datetime.strptime(addresstype_detail['valid_from'],
+                                                                             "%d-%m-%Y"),
                                              'valid_to': datetime.strptime(addresstype_detail['valid_to'], "%d-%m-%Y"),
                                              'org_address_map_created_at': self.current_date_time,
                                              'org_address_map_created_by': self.username,
@@ -563,8 +564,10 @@ class MasterSettingsSave:
                                                            'address_type': (
                                                                addresstype_detail['address_type']).upper(),
                                                            'company_id': addresstype_detail['company_id'],
-                                                           'valid_from': datetime.strptime(addresstype_detail['valid_from'], "%d-%m-%Y"),
-                                                           'valid_to': datetime.strptime(addresstype_detail['valid_to'], "%d-%m-%Y"),
+                                                           'valid_from': datetime.strptime(
+                                                               addresstype_detail['valid_from'], "%d-%m-%Y"),
+                                                           'valid_to': datetime.strptime(addresstype_detail['valid_to'],
+                                                                                         "%d-%m-%Y"),
                                                            'org_address_map_changed_at': self.current_date_time,
                                                            'org_address_map_changed_by': self.username,
                                                            'client': OrgClients.objects.get(client=self.client),
@@ -601,12 +604,12 @@ class MasterSettingsSave:
                                            'gl_acc_num': glaccount_detail['gl_acc_num'],
                                            'gl_acc_default': glaccount_detail['gl_acc_default'],
                                            'account_assign_cat': AccountAssignmentCategory.objects.
-                                               get(account_assign_cat=glaccount_detail['account_assign_cat']),
+                                           get(account_assign_cat=glaccount_detail['account_assign_cat']),
                                            'company_id': glaccount_detail['company_id'],
                                            'item_from_value': glaccount_detail['from_value'],
                                            'item_to_value': glaccount_detail['to_value'],
                                            'currency_id': Currency.objects.
-                                               get(currency_id=glaccount_detail['currency_id']),
+                                           get(currency_id=glaccount_detail['currency_id']),
                                            'determine_gl_account_created_at': self.current_date_time,
                                            'determine_gl_account_created_by': self.username,
                                            'determine_gl_account_changed_at': self.current_date_time,
@@ -679,8 +682,10 @@ class MasterSettingsSave:
                                                           {'account_assign_value': aav_detail[
                                                               'account_assign_value'],
                                                            'account_assign_cat': aav_detail['account_assign_cat'],
-                                                           'valid_from': datetime.strptime(aav_detail['valid_from'], "%d-%m-%Y"),
-                                                           'valid_to': datetime.strptime(aav_detail['valid_to'], "%d-%m-%Y"),
+                                                           'valid_from': datetime.strptime(aav_detail['valid_from'],
+                                                                                           "%d-%m-%Y"),
+                                                           'valid_to': datetime.strptime(aav_detail['valid_to'],
+                                                                                         "%d-%m-%Y"),
                                                            'company_id': aav_detail['company_id'],
                                                            'accounting_data_changed_at': self.current_date_time,
                                                            'accounting_data_changed_by': self.username,
@@ -807,40 +812,41 @@ class MasterSettingsSave:
 
     def save_spending_limit_value_data(self, spend_limit_value_data):
         spend_limit_value_db_list = []
+        delete_spend_code_ids = []
+
         for spend_limit_value_detail in spend_limit_value_data['data']:
-            # if entry is not exists in db
+            # Check if entry exists in SpendLimitValue table
             if not django_query_instance.django_existence_check(SpendLimitValue,
                                                                 {'spend_code_id': spend_limit_value_detail[
                                                                     'spend_code_id'],
-                                                                 'company_id': spend_limit_value_detail[
-                                                                     'company_id'],
+                                                                 'company_id': spend_limit_value_detail['company_id'],
                                                                  'client': self.client}):
+                # Entry does not exist, create a new entry
                 guid = guid_generator()
-                spend_limit_value_db_dictionary = {'spend_lim_value_guid': guid,
-                                                   'spend_code_id': spend_limit_value_detail[
-                                                       'spend_code_id'].upper(),
-                                                   'upper_limit_value': spend_limit_value_detail[
-                                                       'upper_limit_value'],
-                                                   'company_id': spend_limit_value_detail['company_id'],
-                                                   'currency_id': Currency.objects.get(
-                                                       currency_id=spend_limit_value_detail['currency_id']),
-                                                   'del_ind': False,
-                                                   'client': self.client,
-                                                   'spend_limit_value_created_at': self.current_date_time,
-                                                   'spend_limit_value_created_by': self.username,
-                                                   'spend_limit_value_changed_at': self.current_date_time,
-                                                   'spend_limit_value_changed_by': self.username
-                                                   }
+                spend_limit_value_db_dictionary = {
+                    'spend_lim_value_guid': guid,
+                    'spend_code_id': spend_limit_value_detail['spend_code_id'].upper(),
+                    'upper_limit_value': spend_limit_value_detail['upper_limit_value'],
+                    'company_id': spend_limit_value_detail['company_id'],
+                    'currency_id': Currency.objects.get(currency_id=spend_limit_value_detail['currency_id']),
+                    'del_ind': False,
+                    'client': self.client,
+                    'spend_limit_value_created_at': self.current_date_time,
+                    'spend_limit_value_created_by': self.username,
+                    'spend_limit_value_changed_at': self.current_date_time,
+                    'spend_limit_value_changed_by': self.username
+                }
                 spend_limit_value_db_list.append(spend_limit_value_db_dictionary)
             else:
+                # Entry exists, update the existing entry
+                if spend_limit_value_detail['del_ind']:
+                    delete_spend_code_ids.append(spend_limit_value_detail['spend_code_id'])
+
                 django_query_instance.django_update_query(SpendLimitValue,
-                                                          {'spend_code_id': spend_limit_value_detail[
-                                                              'spend_code_id'],
-                                                           'company_id': spend_limit_value_detail[
-                                                               'company_id'],
+                                                          {'spend_code_id': spend_limit_value_detail['spend_code_id'],
+                                                           'company_id': spend_limit_value_detail['company_id'],
                                                            'client': self.client},
-                                                          {'spend_code_id': spend_limit_value_detail[
-                                                              'spend_code_id'],
+                                                          {'spend_code_id': spend_limit_value_detail['spend_code_id'],
                                                            'upper_limit_value': spend_limit_value_detail[
                                                                'upper_limit_value'],
                                                            'company_id': spend_limit_value_detail['company_id'],
@@ -849,6 +855,15 @@ class MasterSettingsSave:
                                                            'spend_limit_value_changed_at': self.current_date_time,
                                                            'spend_limit_value_changed_by': self.username,
                                                            'del_ind': spend_limit_value_detail['del_ind']})
+
+        # Delete entries from SpendLimitValue and SpendLimitId tables
+        if delete_spend_code_ids:
+            # Delete corresponding records in SpendLimitId table
+            for spend_code_id in delete_spend_code_ids:
+                SpendLimitId.objects.filter(spend_code_id=spend_code_id).delete()
+
+            # Delete entries from SpendLimitValue table
+            SpendLimitValue.objects.filter(spend_code_id__in=delete_spend_code_ids).delete()
 
         if spend_limit_value_db_list:
             bulk_create_entry_db(SpendLimitValue, spend_limit_value_db_list)
