@@ -407,6 +407,18 @@ def update_po_criteria_dropdown(request):
     return JsonResponse(data, safe=False)
 
 
+def create_update_delete_flags(request):
+    """
+
+    """
+    update_user_info(request)
+    app_data = JsonParser_obj.get_json_from_req(request)
+    application_settings_save_instance = ApplicationSettingsSave()
+    if app_data['table_name'] == 'NumberRanges':
+        display_data = application_settings_save_instance.generate_delete_flags(app_data)
+        return JsonResponse(display_data, safe=False)
+
+
 def get_dropdown_data(request):
     update_user_info(request)
     master_data = JsonParser_obj.get_json_from_req(request)

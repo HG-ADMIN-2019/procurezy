@@ -35,7 +35,7 @@
                     <button class="btn btn-secondary btn-sm" title="Edit" id="id_edit_data" onclick="onclick_edit_button();">
                         <i class="far fa-edit"></i> edit
                     </button>
-                    <button class="btn btn-outline-danger  btn-sm"  title="Delete" id="id_delete_data" value="spendlimitval_delete" data-toggle="modal" data-target="#id_delete_confirm_popup" style="display:none;">
+                    <button class="btn btn-outline-danger  btn-sm"  title="Delete" id="id_delete_data" value="spendlimitval_delete" data-toggle="modal" data-target="#dependency_delete" style="display:none;">
                         <i class="fa fa-trash"></i> Delete
                     </button>
                     <button class="btn btn-primary  btn-sm" title="COPY" id="id_copy_data" value="spendlimitval_copy" onclick="onclick_copy_button()" style="display:none;" >
@@ -416,7 +416,7 @@
         main_table_spendlimitvalue_checked=[];
         $('#display_basic_table').DataTable().destroy();
         get_selected_row_data(); // Function call to get the selected row datamy
-        $('#id_delete_confirm_popup').modal('hide');
+        $('#dependency_delete').modal('hide');
         data = {'data':main_table_spendlimitvalue_checked,'table_name':'SpendLimitValue','action':GLOBAL_ACTION}
         OpenLoaderPopup();
         $.ajax({

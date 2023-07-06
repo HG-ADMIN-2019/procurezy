@@ -5,27 +5,6 @@ var validate_add_attributes = [];
 var number_range={};
 var seq_array= [];
 
-//hide the myModal popup:
-function hideModal() {
-    $('#myModal').modal('hide');
-}
-
-// on click Delete icon
-function display_button() {
-  if (GLOBAL_ACTION == "DELETE") {
-    $('#delete_data').show();
-    $('#save_id').hide();
-    document.getElementById("id_del_add_button").style.display = "none";
-  } else if (GLOBAL_ACTION == "Update") {
-    $('#delete_data').hide();
-    $('#id_update_data').show();
-  }else {
-    $('#delete_data').hide();
-    $('#save_id').show();
-    document.getElementById('save_id').style.visibility = 'visible';
-  }
-}
-
 //onclick of add button display myModal popup and set GLOBAL_ACTION button value
 function onclick_add_button(button) {
     $("#error_msg_id").css("display", "none")
@@ -243,11 +222,11 @@ function display_basic_db_data() {
     $('#id_update_data').hide();
     $('#id_save_confirm_popup').modal('hide');
     $('#id_delete_confirm_popup').modal('hide');
-    $('#id_check_all').hide(); 
+    $('#id_check_all').hide();
     table_sort_filter('display_basic_table');
 }
 
-// Functtion to hide and display save related popups
+// Function to hide and display save related popups
 $('#save_id').click(function () {
     $('#myModal').modal('hide');
     numberranges_data = read_popup_data();
