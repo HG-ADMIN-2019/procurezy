@@ -336,20 +336,20 @@
                             var del_ind = '';
                             $("#id_popup_tbody").empty();
                             $.each(response.valid_data_list, function(i, value) {
-                                del_ind = '<td>' + value[5] + '</td>'
+                                del_ind = '<td>' + value.del_ind + '</td>'
                                 if (value.del_ind == 1) {
                                     del_ind = ' <input type="checkbox" value="' + value.del_ind + '" checked>'
                                 } else {
                                     del_ind = '<input type="checkbox" value="' + value.del_ind + '" required>'
                                 }
-                                var company_type_value = value[3]
-                                var account_type_value = value[5]
+                                var company_type_value = value.company_id
+                                var account_type_value = value.account_assign_cat
                                 dropdown_select_array.push([account_type_value,company_type_value])
                                 var company = '';
                                 var company_list = '';
                                 var company_id_list = '';
                                 $.each(rendered_company_data, function(i, item) {
-                                    if( value[3].company_type_value == item) {
+                                    if( value.company_type_value == item) {
                                         company = '<option value="' + item.company_id + '">' + item.company_id + '</option>';
                                     } else {
                                         company_list += '<option value="' + item.company_id + '">' + item.company_id + '</option>';
@@ -360,14 +360,14 @@
                                 var aac_data_list = '';
                                 var aac_data_id_list = '';
                                 $.each(rendered_aac_data, function(i, item) {
-                                    if( value[5].approval_type_value == item) {
+                                    if( value.approval_type_value == item) {
                                             aac_data += '<option value="' + item.account_assign_cat + '">' + item.account_assign_cat + '</option>';
                                     }else {
                                         aac_data_list += '<option value="' + item.account_assign_cat + '">' + item.account_assign_cat + '</option>';
                                     }
                                     aac_data_id_list = aac_data + aac_data_list
                                 });
-                                edit_basic_data += '<tr><td><input type="checkbox" required></td><td ><select class="form-control">'+company_id_list+'</select></td><td><select class="form-control">' + aac_data_id_list + ' </select></td><td><input class="form-control" type="text" value="' + value.account_assign_value + '" maxlength="40" name="Account Assignment Value" required></td><td><input class="input" type="text" value="' + value.valid_from + '" name="Valid From Date" required></td><td><input class="input" type="text" value="' + value,valid_to + '" name="Valid To Date" required></td><td hidden><input value="" type="hidden"></td><td>' + del_ind + '</td></tr>';
+                                edit_basic_data += '<tr><td><input type="checkbox" required></td><td ><select class="form-control">value ="' + value.company_id + '"'+company_id_list+'</select></td><td><select class="form-control">value ="' + value.account_assign_cat + '"' + aac_data_id_list + ' </select></td><td><input class="form-control" type="text" value="' + value.account_assign_value + '" maxlength="40" name="Account Assignment Value" required></td><td><input class="input" type="text" value="' + value.valid_from + '" name="Valid From Date" required></td><td><input class="input" type="text" value="' + value.valid_to + '" name="Valid To Date" required></td><td hidden><input value="" type="hidden"></td><td>' + del_ind + '</td></tr>';
                             });
                             $('#id_popup_tbody').append(edit_basic_data);
                             var i =0;

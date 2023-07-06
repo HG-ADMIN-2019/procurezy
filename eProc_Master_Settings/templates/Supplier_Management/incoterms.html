@@ -95,9 +95,9 @@
                         <div id="id_check_success_messages" class="alert alert-success check_success_message" hidden></div>
                         <div id="id_check_error_messages" class="alert alert-danger check_error_messages" hidden></div>
                         <div id="id_check_special_character_messages" class="alert alert-danger check_special_character_messages" hidden>
-                            <p id="id_error_msg_incoterm_key" ></p>
-                            <p id="id_error_msg_description" ></p>
-                            <p id="id_error_msg_description_length" ></p>
+                            <p id="id_error_msg_incoterm_key"></p>
+                            <p id="id_error_msg_description"></p>
+                            <p id="id_error_msg_description_length"></p>
                         </div>
                         <div id="error_msg_id" class="alert alert-danger display-none" role="alert"><span id="error_message"></span></div>
                         <div id="id_warning_msg_id" class="alert alert-warning display-none" role="alert"></div>
@@ -364,31 +364,22 @@
             if(inco_terms_dic.incoterm_key.length >5) {
                 $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
                 row_color_highlight_empty(row);
-                $("#id_error_msg_description_length").prop("hidden",false);
-                error_message = ui_messeges("JMSG113")// Get message details
+                $("#id_error_msg_incoterm_key").prop("hidden",false);
+                error_message = ui_messeges("JMSG002")// Get message details
                 var display8 = error_message;
-                document.getElementById("id_error_msg_description_length").innerHTML = display8  + "Incoterm";
+                document.getElementById("id_error_msg_incoterm_key").innerHTML = display8+ "Country Code";
+                $("#id_check_special_character_messages").prop("hidden",false);
                 count = count +1;
             }
             //*************** checking for minimum length for Incoterm (max length = 2) ***************
             else if((inco_terms_dic.incoterm_key.length == 0)|| (inco_terms_dic.description.length == 0)){
-                    $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
-                    row_color_highlight_minlength(row);
-                    $("#id_error_msg_incoterm_key").prop("hidden",false);
-                    error_message = ui_messeges("JMSG002")// Get message details
-                    var display8 = error_message;
-                    document.getElementById("id_error_msg_incoterm_key").innerHTML = display8+ "Incoterm";
-                    count = count +1;
-            }
-            //*************** checking for special characters for Incoterm Key ***************
-            else if(format.test(inco_terms_dic.incoterm_key)) {
                 $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
-                row_color_highlight_special(row);
+                row_color_highlight_empty(row);
                 $("#id_error_msg_incoterm_key").prop("hidden",false);
-                error_message = ui_messeges("JMSG003")// Get message details
-                var display4 = error_message;
-                document.getElementById("id_error_msg_incoterm_key").innerHTML = display4 + "Incoterm";
-                $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
+                error_message = ui_messeges("JMSG002")// Get message details
+                var display8 = error_message;
+                document.getElementById("id_error_msg_incoterm_key").innerHTML = display8+ "Country Code";
+                $("#id_check_special_character_messages").prop("hidden",false);
                 count = count +1;
             }
             else{
@@ -403,8 +394,8 @@
                 row_color_highlight_empty(row);
                 $("#id_error_msg_description").prop("hidden",false);
                 error_message = ui_messeges("JMSG002")// Get message details
-                var display8 = error_message;
-                document.getElementById("id_error_msg_description").innerHTML = display8+ "Description";
+                var display = error_message;
+                document.getElementById("id_error_msg_description").innerHTML = display+ "Description";
                 count = count +1;
             }
             //*************** checking for special characters for Description ***************
@@ -418,7 +409,7 @@
                 count = count +1;
             }
             else if(incotem_key_check.includes((inco_terms_dic.incoterm_key)&&(inco_terms_dic.del_ind))){
-                 $(row).css("border", "#f8d7da");
+                $(row).css("border", "#f8d7da");
                  row_color_highlight(row);
                  $("#id_check_error_messages").prop("hidden",false);
                  var display7 = ui_messeges("JMSG001");
@@ -429,7 +420,7 @@
                  count = count +1;
             }
             else if(main_table_low_value.includes((inco_terms_dic.incoterm_key)&&(inco_terms_dic.del_ind))){
-                 $(row).css("border", "#f8d7da");
+                $(row).css("border", "#f8d7da");
                  row_color_highlight(row);
                  $("#id_check_error_messages").prop("hidden",false);
                  var display7 = ui_messeges("JMSG001");
