@@ -375,6 +375,34 @@ class ScItem(models.Model):
     def get_itms_by_guid(self, hdr_guid):
         return ScItem.objects.filter(header_guid=hdr_guid, del_ind=False).order_by('item_num')
 
+    @staticmethod
+    def get_prod_cat_id(prod_cat):
+        if '*' in prod_cat:
+            prd_cat = re.search(r'[a-zA-Z0-9]+', prod_cat)
+            if prod_cat[0] == '*' and prod_cat[-1] == '*':
+                queryset = ScItem.objects.values_list('prod_cat_id', flat=False).filter(
+                    prod_cat_id__icontains=prd_cat.group(0))
+            elif prod_cat[0] == '*':
+                queryset = ScItem.objects.values_list('prod_cat_id', flat=False).filter(
+                    prod_cat_id__iendswith=prd_cat.group(0))
+            else:
+                queryset = ScItem.objects.values_list('prod_cat_id', flat=False).filter(
+                    prod_cat_id__istartswith=prd_cat.group(0))
+
+        else:
+            queryset = ScItem.objects.values_list('prod_cat_id', flat=False).filter(prod_cat_id=prod_cat)
+        prod_cat_list = []
+        for field in queryset:
+            prod_cat_list.append(field[0])
+        return prod_cat_list
+
+    def get_item_data_by_objid(self, obj, objid, client):
+        return obj.objects.filter(doc_number=objid, client=client, del_ind=False).values().order_by('doc_number')
+
+    def get_item_data_by_fields(self, client, obj, prod_cat_id, creator_query, requester_query, **kwargs):
+        return obj.objects.filter(prod_cat_id, creator_query, requester_query, client=client, del_ind=False,
+                                  **kwargs).order_by('header_guid')
+
 
 # Definition of SC Accounting table structure
 class ScAccounting(models.Model):

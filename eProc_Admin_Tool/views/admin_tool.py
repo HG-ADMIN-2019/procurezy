@@ -589,8 +589,7 @@ def m_docsearch_meth(request):
         inp_requester = ''
 
         # result
-        result = get_hdr_data(request,
-                              inp_doc_type,
+        result = get_hdr_data(inp_doc_type,
                               inp_doc_num,
                               inp_from_date,
                               inp_to_date,
@@ -626,8 +625,7 @@ def m_docsearch_meth(request):
             inp_requester = request.POST.get('requester')
 
             # results
-            result = get_hdr_data(request,
-                                  inp_doc_type,
+            result = get_hdr_data(inp_doc_type,
                                   inp_doc_num,
                                   inp_from_date,
                                   inp_to_date,
