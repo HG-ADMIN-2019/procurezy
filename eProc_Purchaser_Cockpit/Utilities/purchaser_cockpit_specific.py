@@ -27,8 +27,7 @@ def filter_based_on_sc_item_field(client, order_list):
                                                                            'ordered_at': datetime.date.today()},
                                                                           'guid')
     sc_item_details = django_query_instance.django_filter_only_query(ScItem,
-                                                                     {'client': client, 'grouping_ind': True}).order_by(
-        *order_list)
+                                                                     {'client': client, 'grouping_ind': True}).order_by(*order_list)
     for sc_item in sc_item_details:
         guid = sc_item.header_guid_id
         scheader_details = django_query_instance.django_filter_only_query(ScHeader,

@@ -444,7 +444,7 @@ var lang_id = '{{user_info.language_id | safe}}';
             user_data_dict.is_active= is_active_val;
             user_data_dict.status = GLOBAL_ACTION ;
 
-            var response = ajax_update_user_basic_data(user_data_dict)
+            response = ajax_update_user_basic_data(user_data_dict)
             message = response.message
             msg_type = response.msg_type
             encrypted_user = response.encrypted_user
