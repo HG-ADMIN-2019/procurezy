@@ -63,46 +63,46 @@ function display_error_message(error_message){
 
 // Function to hide and display save related popups
 $('#save_id').click(function () {
+  var isValid = save_user_form_validation(); // Call the form validation function
+  if (isValid) {
     $('#address_add_details').modal('hide');
     $('#id_popup_table').DataTable().destroy();
     validate_add_attributes = [];
     address_data = new Array();
-    var user_data_dict = {}
+    var user_data_dict = {};
     user_data_dict.address_number = $('#id_add_addresses_address_number').val();
     user_data_dict.title = $('#id_add_addresses_title').val();
-    user_data_dict.name1= $('#id_add_addresses_name1').val();
-    user_data_dict.name2= $('#id_add_addresses_name2').val();
-    user_data_dict.street= $('#id_add_addresses_street').val();
-    user_data_dict.area= $('#id_add_addresses_area').val();
-    user_data_dict.landmark=$('#id_add_addresses_landmark').val();
-    user_data_dict.city= $('#id_add_addresses_city').val();
-    user_data_dict.address_partner_type= $('#id_add_addresses_partnertype').val();
-    user_data_dict.org_address_source_system= $('#id_add_addresses_source').val();
-    user_data_dict.postal_code= $('#id_add_addresses_postalcode').val();
-    user_data_dict.region= $('#id_add_addresses_region').val();
-    user_data_dict.mobile_number= $('#id_add_addresses_mobile_number').val();
-    user_data_dict.telephone_number= $('#id_add_addresses_telephone_number').val();
-    user_data_dict.fax_number= $('#id_add_addresses_fax_number').val();
-    user_data_dict.email= $('#id_add_addresses_email').val();
-    user_data_dict.country_code= $('#id_add_addresses_country_code').val();
-    user_data_dict.language_id= $('#id_add_addresses_language_id').val();
-    user_data_dict.time_zone= $('#id_add_addresses_time_zone').val();
-    user_data_dict.del_ind= $('#id_add_addresses_del_ind_flag').val();
-    var user_data_dict_compare =  user_data_dict.address_number
-    if(user_data_dict.del_ind = 'false'){
-        user_data_dict.del_ind = 'False'
+    user_data_dict.name1 = $('#id_add_addresses_name1').val();
+    user_data_dict.name2 = $('#id_add_addresses_name2').val();
+    user_data_dict.street = $('#id_add_addresses_street').val();
+    user_data_dict.area = $('#id_add_addresses_area').val();
+    user_data_dict.landmark = $('#id_add_addresses_landmark').val();
+    user_data_dict.city = $('#id_add_addresses_city').val();
+    user_data_dict.address_partner_type = $('#id_add_addresses_partnertype').val();
+    user_data_dict.org_address_source_system = $('#id_add_addresses_source').val();
+    user_data_dict.postal_code = $('#id_add_addresses_postalcode').val();
+    user_data_dict.region = $('#id_add_addresses_region').val();
+    user_data_dict.mobile_number = $('#id_add_addresses_mobile_number').val();
+    user_data_dict.telephone_number = $('#id_add_addresses_telephone_number').val();
+    user_data_dict.fax_number = $('#id_add_addresses_fax_number').val();
+    user_data_dict.email = $('#id_add_addresses_email').val();
+    user_data_dict.country_code = $('#id_add_addresses_country_code').val();
+    user_data_dict.language_id = $('#id_add_addresses_language_id').val();
+    user_data_dict.time_zone = $('#id_add_addresses_time_zone').val();
+    user_data_dict.del_ind = $('#id_add_addresses_del_ind_flag').val();
+    var user_data_dict_compare = user_data_dict.address_number;
+    if (user_data_dict.del_ind === 'false') {
+      user_data_dict.del_ind = 'False';
     }
-    user_data_dict.address_guid= $('#id_add_addresses_address_guid').val();
-    if (user_data_dict == undefined) {
-        user_data_dict.address_number = $('#id_addresses_address_number').val();
-    }
-    if(user_data_dict.address_guid== undefined) {
-        user_data_dict.address_guid= ''
+    user_data_dict.address_guid = $('#id_add_addresses_address_guid').val();
+    if (user_data_dict.address_guid === undefined) {
+      user_data_dict.address_guid = '';
     }
     validate_add_attributes.push(user_data_dict_compare);
     address_data.push(user_data_dict);
     $('#id_save_confirm_popup').modal('show');
     table_sort_filter('id_popup_table');
+  }
 });
 
 // Function to get main table data
@@ -119,75 +119,76 @@ function get_main_table_data() {
 }
 
 // Validation function
-function save_user_form_validation(){
-   var is_valid = true;
-        var save_form_errors = ''
-        var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+function save_user_form_validation() {
+    var is_valid = true;
+    var save_form_errors = '';
+    var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
 
-        var err_text1 = '';
-        var temp = document.getElementsByClassName('mandatory_fields');
-        for (var i = 0; i<temp.length; i++) {
-            if(temp[i].nodeName == "SELECT"){
-                if((temp[i].value == '') || (temp[i].value == null)){
-                    err_text1 = temp[i].parentNode.children[0].innerHTML;
+    var temp = document.getElementsByClassName('mandatory_fields');
+    for (var i = 0; i < temp.length; i++) {
+        if (temp[i].nodeName.toLowerCase() == "select") {
+            if (temp[i].value == '' || temp[i].value == null) {
+                var fieldLabel = temp[i].closest('.form-group').querySelector('label').innerHTML;
+                var display_id = temp[i].nextElementSibling.id;
+                $('#' + display_id).prop('hidden', false);
+                $('#' + display_id).html(fieldLabel + " is required");
+                is_valid = false;
+            } else {
+                $('#' + temp[i].nextElementSibling.id).prop('hidden', true);
+            }
+        } else {
+            if (temp[i].value == '') {
+                var fieldLabel = temp[i].closest('.form-group').querySelector('label').innerHTML;
+                $(".error_message").prop("hidden", false);
+                temp[i].nextElementSibling.innerHTML = fieldLabel + " is required";
+                is_valid = false;
+            } else if (temp[i].value.length < 3) {
+                var fieldLabel = temp[i].closest('.form-group').querySelector('label').innerHTML;
+                $(".error_message").prop("hidden", false);
+                var display_id = temp[i].nextElementSibling.id;
+                $('#' + display_id).prop('hidden', false);
+                $('#' + display_id).html("Please enter at least 3 characters for " + fieldLabel);
+                $('#' + temp[i].id).prop("disabled", false);
+                is_valid = false;
+            }
+            if (temp[i].id == 'id_add_addresses_email') {
+                var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
+                if (!(temp[i].value).match(mailformat)) {
+                    var msg = "JMSG002";
+                    var msg_type;
+                    msg_type = message_config_details(msg);
+                    var display1 = msg_type.messages_id_desc;
+                    $(".error_message").prop("hidden", false);
                     var display_id = temp[i].nextElementSibling.id;
-                    $('#'+display_id).prop('hidden', false);
-                    $('#temp[i].nextElementSibling.id').html("required");
-                    document.getElementById(temp[i].nextElementSibling.id).innerHTML = err_text1 + " required";
+                    $('#' + display_id).prop('hidden', false);
+                    $('#' + display_id).html(display1 + " for Email Id");
                     is_valid = false;
                 }
-                else{ $('#temp[i].nextElementSibling.id').prop('hidden', true);
-                }
             }
-            else{
-                if(temp[i].value == ''){
-                    var err_text = temp[i].parentNode.children[0].innerHTML;
-                    $(".error_message").prop("hidden", false);
-                    temp[i].nextElementSibling.innerHTML = err_text + " required";
-                   is_valid = false;
-                }
-                 else if(temp[i].value.length < 3){
-                    var err_text = temp[i].parentNode.children[0].innerHTML;
+            if (temp[i].id == 'id_add_addresses_mobile_number') {
+                if (temp[i].value.length != 10) {
+                    var msg = "JMSG002";
+                    var msg_type;
+                    msg_type = message_config_details(msg);
+                    var display1 = msg_type.messages_id_desc;
                     $(".error_message").prop("hidden", false);
                     var display_id = temp[i].nextElementSibling.id;
-                    $('#'+display_id).prop('hidden', false);
-                    document.getElementById(display_id).style.display = "block";
-                    temp[i].nextElementSibling.innerHTML = "Please enter min 3 chars for "+ err_text;
-                    $('#'+temp[i].id).prop("disabled", false);
-                   is_valid = false;
-                }
-                if(temp[i].id == 'email_id'){
-                    var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-                     if (!(temp[i].value).match(mailformat)) {
-                            valid_data = false
-                             var msg = "JMSG002";
-                             var msg_type ;
-                             msg_type = message_config_details(msg);
-                             var display1 = msg_type.messages_id_desc;
-                             $(".error_message").prop("hidden", false);
-                            var display_id = temp[i].nextElementSibling.id;
-                            $('#'+display_id).prop('hidden', false);
-                            document.getElementById(display_id).style.display = "block";
-                            temp[i].nextElementSibling.innerHTML = display1 + " for Email Id";
-                           is_valid = false;
-                     }
-                }
-                if(temp[i].id == 'phone_num'){
-                     if (temp[i].value.length != 10) {
-                            valid_data = false
-                             var msg = "JMSG002";
-                             var msg_type ;
-                             msg_type = message_config_details(msg);
-                             var display1 = msg_type.messages_id_desc;
-                             $(".error_message").prop("hidden", false);
-                            var display_id = temp[i].nextElementSibling.id;
-                            $('#'+display_id).prop('hidden', false);
-                            document.getElementById(display_id).style.display = "block";
-                            temp[i].nextElementSibling.innerHTML = display1 + " for Mobile Number";
-                           is_valid = false;
-                     }
+                    $('#' + display_id).prop('hidden', false);
+                    $('#' + display_id).html(display1 + " for Mobile Number");
+                    is_valid = false;
                 }
             }
         }
-        return is_valid
     }
+    return is_valid;
+}
+
+
+
+
+function set_value(){
+     localStorage.setItem("id_addresses_partnertype", document.getElementById("id_addresses_partnertype").value);
+}
+function get_values(){
+    $('#id_addresses_partnertype').val(localStorage.getItem("id_addresses_partnertype"));
+}
