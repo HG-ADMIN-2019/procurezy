@@ -42,9 +42,11 @@ class CompareTableHeader:
                 break
         # Gets the respective field names of the model for the csv headers
         err_msg = ''
-        exclude_list = ['CREATED_BY','CREATED_AT','CHANGED_BY','CHANGED_AT','created_by','created_at','changed_by','changed_at','GUID','SOURCE_SYSTEM','client_id','CLIENT_ID','source_system','CATALOG_ITEM']
+        exclude_list = ['CREATED_BY', 'CREATED_AT', 'CHANGED_BY', 'CHANGED_AT', 'created_by', 'created_at',
+                        'changed_by', 'changed_at', 'GUID', 'SOURCE_SYSTEM', 'client_id', 'CLIENT_ID', 'source_system',
+                        'CATALOG_ITEM']
         if self.table_name == 'OrgPorg':
-            porg_exclude = ['COMPANY_ID','OBJECT_ID']
+            porg_exclude = ['COMPANY_ID', 'OBJECT_ID']
             exclude_list.append('COMPANY_ID')
             exclude_list.append('OBJECT_ID')
         if self.table_name == 'OrgPGroup':
@@ -55,16 +57,16 @@ class CompareTableHeader:
         for field in self.model_name._meta.fields:
             tmp = field.get_attname_column()
             print(tmp[1])
-            exclude_flag = check_for_exclude(exclude_list,tmp[1])
+            exclude_flag = check_for_exclude(exclude_list, tmp[1])
             if not exclude_flag:
-                field_details.append({'field_name':field.column,'field_length':field.max_length})
+                field_details.append({'field_name': field.column, 'field_length': field.max_length})
                 self.field_name.append(field.column)
                 if tmp[1] not in self.csv_headers:
                     msgid = 'MSG114'
                     error_msg = get_message_desc(msgid)[1]
                     err_msg = error_msg
-                    return err_msg,field_details
-        return err_msg,field_details
+                    return err_msg, field_details
+        return err_msg, field_details
 
     def basic_header_condition_fk(self):
         self.csv_header = []
@@ -95,8 +97,7 @@ class CompareTableHeader:
             return err_msg
         return err_msg
 
-
-    def csv_preview_data(self,db_header, data_set_val):
+    def csv_preview_data(self, db_header, data_set_val):
         """
             rearranging the jumbled data from csv
             param: db_header, data_set_val
@@ -128,7 +129,7 @@ class CompareTableHeader:
                         error_message = error_msg
                         print(upload_csv_header_data[upload_csv_header])
                         print(self.field_name)
-                        return error_message,correct_order_list
+                        return error_message, correct_order_list
                 pair = []
                 if db_header['field_name'] == upload_csv_header_data[upload_csv_header]:
                     pair_list.append({'field_name': db_header['field_name'], 'field_length': db_header['field_length'],
@@ -153,7 +154,7 @@ class CompareTableHeader:
                     data_dict.append(field_data)
             correct_order_list.append(data_dict)
 
-        return error_message,correct_order_list
+        return error_message, correct_order_list
 
 
 class UploadBasicTables:
