@@ -541,7 +541,7 @@
                                 var payment_list = '';
                                 var payment_id_list = '';
                                 $.each(rendered_payment_key_list, function(i, item){
-                                    if( value[0].payment_type_value == item){
+                                    if( value.payment_term_key == item){
                                         payment = '<option value="' + item.payment_term_key + '">' + item.payment_term_key + '</option>';
                                     }else{
                                         payment_list += '<option value="' + item.payment_term_key + '">' + item.payment_term_key + '</option>';
@@ -553,14 +553,14 @@
                                 var language_list = '';
                                 var language_id_list = '';
                                 $.each(render_language_data, function(i, item){
-                                    if( value[4].payment_type_value == item){
+                                    if( value.language_id == item){
                                         language = '<option value="' + item.language_id + '">' + item.description + '</option>';
                                     }else{
                                         language_list += '<option value="' + item.language_id + '">' + item.description + '</option>';
                                     }
                                     language_id_list = language + language_list
                                 });
-                                edit_basic_data += '<tr><td><input type="checkbox" required></td><td><select class="form-control" type="text">'value ="' + value.language_id + '"+language_id_list+'</select></td><td><select class="form-control" type = "text">value ="' + value.payment_term_key + '"'+payment_id_list+'</select></td><td><input  type="text" value="'+value[2]+'"  maxlength="50"  name="description" class="form-control"></td><td><input  type="number" value="'+value[1]+'" maxlength="10"  name="day_limit" class="form-control"></td><td hidden><input type="text" value=""></td><td>' + del_ind + '</td></tr>';
+                            edit_basic_data += '<tr><td><input type="checkbox" required></td><td><select class="form-control" type="text" value="' + value.language_id + '">' + language_id_list + '</select></td><td><select class="form-control" type="text" value="' + value.payment_term_key + '">' + payment_id_list + '</select></td><td><input type="text" value="' + value.description + '" maxlength="50" name="description" class="form-control"></td><td><input type="number" value="' + value.day_limit + '" maxlength="10" name="day_limit" class="form-control"></td><td hidden><input type="text"></td><td>' + del_ind + '</td></tr>';
                             });
                             $('#id_popup_tbody').append(edit_basic_data);
                             var i =0;
