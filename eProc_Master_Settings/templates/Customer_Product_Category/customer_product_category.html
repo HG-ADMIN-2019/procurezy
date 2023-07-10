@@ -725,6 +725,7 @@
                 $("#header_select").prop( "hidden", false );
                 GLOBAL_ACTION = button.value
                 $("#id_popup_tbody").empty();
+                $("#desc_upload").prop("hidden", false);
                 $('#cusprodcat_Modal').modal('show');
                 basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select type="text" class="input form-control prodid"   name="prodid" onchange="GetSelectedTextValue(this)">'+prod_cat_id_dropdown+'</select></td><td><input class="form-control description" type="text"  name="description"  value="'+prod_catid_desc+'" disabled></td><td hidden><guid></td><td hidden>< del_ind></td></tr>';
                 $('#id_popup_tbody').append(basic_add_new_html);
