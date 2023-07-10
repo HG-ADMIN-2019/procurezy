@@ -23,12 +23,20 @@ class DBQueries():
                                   del_ind=False, **kwargs).order_by('doc_number')
 
     # End of MEP:19
-    def get_hdr_data_by_fields(self, client, obj, supp_query, creator_query, requester_query, doc_num_query, **kwargs):
-        return obj.objects.filter(supp_query, creator_query, requester_query, doc_num_query, client=client, del_ind=False,
-                                  **kwargs).order_by('doc_number')
+    def get_hdr_data_by_fields(self, obj, objid, client):
+        return obj.objects.filter(doc_number=objid, client=client,
+                                  del_ind=False).values().order_by('doc_number')
 
-    def get_hdr_data_by_fields_value(self, client, obj, supp_query, creator_query, requester_query, doc_num_query, **kwargs):
-        return obj.objects.filter(supp_query, creator_query, requester_query, doc_num_query, client=client, del_ind=False,
+    def get_hdr_data_for_docnum(self, client, obj, doc_num_query,
+                                **kwargs):
+        return obj.objects.filter(doc_num_query, client=client,
+                                  del_ind=False,
+                                  **kwargs).values().order_by('doc_number')
+
+    def get_hdr_data_by_fields_value(self, client, obj, supp_query, creator_query, requester_query, doc_num_query,
+                                     **kwargs):
+        return obj.objects.filter(supp_query, creator_query, requester_query, doc_num_query, client=client,
+                                  del_ind=False,
                                   **kwargs).values().order_by('doc_number')
 
 
@@ -322,7 +330,7 @@ class ScItem(models.Model):
     source_relevant_ind = models.BooleanField(db_column='SOURCE_RELEVANT_IND', default=False, null=True,
                                               verbose_name='Indicator - If the Document is Sourcing-Relevant ')
     grouping_ind = models.BooleanField(db_column='grouping_ind', default=False, null=True,
-                                              verbose_name='grouping_ind ')
+                                       verbose_name='grouping_ind ')
     ext_demid = models.CharField(db_column='EXT_DEMID', blank=True, null=True, max_length=2,
                                  verbose_name='External Requirement Number')
     ext_dem_posid = models.CharField(db_column='EXT_DEM_POSID', blank=True, null=True, max_length=2,
@@ -399,9 +407,10 @@ class ScItem(models.Model):
     def get_item_data_by_objid(self, obj, objid, client):
         return obj.objects.filter(doc_number=objid, client=client, del_ind=False).values().order_by('doc_number')
 
-    def get_item_data_by_fields(self, client, obj, prod_cat_id, creator_query, requester_query, **kwargs):
-        return obj.objects.filter(prod_cat_id, creator_query, requester_query, client=client, del_ind=False,
-                                  **kwargs).order_by('header_guid')
+    @staticmethod
+    def get_item_data_by_fields(client, obj, prod_cat_query, creator_query, requester_query):
+        return list(obj.objects.filter(prod_cat_query, creator_query, requester_query, grouping_ind=True, client=client, del_ind=False,
+                                       ).values().order_by())
 
 
 # Definition of SC Accounting table structure
