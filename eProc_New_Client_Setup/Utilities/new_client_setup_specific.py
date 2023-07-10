@@ -13,7 +13,7 @@ from eProc_Org_Model.Utilities.apiHandler import ApiHandler
 django_query_instance = DjangoQueries()
 
 
-class InitialSetupClient(BasicSettingsSave,ApplicationSettingsSave,MasterSettingsSave):
+class InitialSetupClient(BasicSettingsSave, ApplicationSettingsSave, MasterSettingsSave):
     def __init__(self, client):
         super().__init__()
         self.client = django_query_instance.django_get_query(OrgClients,
@@ -105,6 +105,8 @@ class InitialSetupClient(BasicSettingsSave,ApplicationSettingsSave,MasterSetting
         self.message_id_script(directory)
         # save messages desc
         self.message_id_desc_script(directory)
+        # save system settings
+        self.system_settings_script(directory)
 
     def org_node_type_script(self, directory):
         file_path = os.path.join(directory, CONST_ORG_NODE_TYPES_CSV)  # create path
@@ -248,6 +250,19 @@ class InitialSetupClient(BasicSettingsSave,ApplicationSettingsSave,MasterSetting
                                        'language_id': csv_data[3],
                                        'del_ind': csv_data[4]})
             self.save_message_id_desc(csv_to_db_data)
+
+    def system_settings_script(self, directory):
+        file_path = os.path.join(directory, CONST_SYSTEM_SETTINGS_CONFIG_CSV)  # create path
+        if os.path.exists(file_path):
+            csv_file = open(file_path, 'r')  # open .csv file
+            csvreader = csv.reader(csv_file)  # read file
+            header = next(csvreader)  # skip header
+            csv_to_db_data = []
+            for csv_data in csvreader:
+                csv_to_db_data.append({'SYS_ATTR_TYPE': csv_data[1],
+                                       'SYS_ATTR_VALUE': csv_data[2],
+                                       'del_ind': csv_data[3]})
+            self.system_settings_new(csv_to_db_data)
 
 
 def create_organization_structure(client_id):
@@ -403,13 +418,7 @@ def delete_application_setup_client(client_id):
     """
     
     """
-    django_query_instance.django_filter_delete_query(OrgNodeTypes,{'client':client_id})
+    django_query_instance.django_filter_delete_query(OrgNodeTypes, {'client': client_id})
     django_query_instance.django_filter_delete_query(Authorization, {'client': client_id})
     django_query_instance.django_filter_delete_query(FieldTypeDescription, {'client': client_id})
     django_query_instance.django_filter_delete_query(MessagesIdDesc, {'client': client_id})
-    
-
-
-    
-    
-    

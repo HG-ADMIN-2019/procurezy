@@ -140,7 +140,8 @@ def extract_aav_data(request):
     writer.writerow(['COMPANY_ID', 'ACCOUNT_ASSIGN_CAT', 'ACC_ASSIGN_VALUE', 'VAILD_FROM', 'VAILD_TO', 'del_ind'])
 
     accounting = django_query_instance.django_filter_query(AccountingData,
-                                                           {'del_ind': False}, None,
+                                                           {'del_ind': False,
+                                                            'client': global_variables.GLOBAL_CLIENT}, None,
                                                            ['account_assign_value',
                                                             'account_assign_cat', 'company_id', 'valid_from',
                                                             'valid_to', 'del_ind'])
@@ -165,7 +166,8 @@ def extract_accdesc_data(request):
         ['COMPANY_ID', 'ACCOUNT_ASSIGN_CAT', 'ACCOUNT_ASSIGN_VALUE', 'DESCRIPTION', 'LANGUAGE_ID', 'del_ind'])
 
     accountingdesc = django_query_instance.django_filter_query(AccountingDataDesc,
-                                                               {'del_ind': False}, None,
+                                                               {'del_ind': False,
+                                                                'client': global_variables.GLOBAL_CLIENT}, None,
                                                                ['account_assign_value', 'description', 'company_id',
                                                                 'language_id', 'account_assign_cat', 'del_ind'])
     accountingdesc_data = query_update_del_ind(accountingdesc)
@@ -189,7 +191,8 @@ def extract_cusprodcat_data(request):
     writer.writerow(['del_ind', 'PROD_CAT_ID'])
 
     customerprod = django_query_instance.django_filter_query(UnspscCategoriesCust,
-                                                             {'del_ind': False}, None,
+                                                             {'del_ind': False,
+                                                              'client': global_variables.GLOBAL_CLIENT}, None,
                                                              ['del_ind', 'prod_cat_id'])
 
     customerprod_data = query_update_del_ind(customerprod)
@@ -224,11 +227,12 @@ def extract_cusprodcatdesc_data(request):
     # get only active record
 
     customerproddesc = django_query_instance.django_filter_query(UnspscCategoriesCustDesc,
-                                                                 {'del_ind': False}, None,
+                                                                 {'del_ind': False,
+                                                                  'client': global_variables.GLOBAL_CLIENT}, None,
                                                                  ['prod_cat_id', 'language_id',
                                                                   'category_desc', 'del_ind',
-
                                                                   ])
+
     customerproddesc_data = query_update_del_ind(customerproddesc)
 
     for customerproddescData in customerproddesc_data:
@@ -261,7 +265,8 @@ def extract_workflowschema_data(request):
     writer.writerow(['COMPANY_ID', 'WORKFLOW_SCHEMA', 'APP_TYPES', 'del_ind'])
 
     workflowschema = django_query_instance.django_filter_query(WorkflowSchema,
-                                                               {'del_ind': False}, None,
+                                                               {'del_ind': False,
+                                                                'client': global_variables.GLOBAL_CLIENT}, None,
                                                                ['company_id', 'workflow_schema', 'app_types',
                                                                 'del_ind'])
 
@@ -300,7 +305,8 @@ def extract_workflowaccount_data(request):
 
     # get only active records
     workflow_acct = django_query_instance.django_filter_query(WorkflowACC,
-                                                              {'del_ind': False}, None,
+                                                              {'del_ind': False,
+                                                               'client': global_variables.GLOBAL_CLIENT}, None,
                                                               ['app_username', 'account_assign_cat',
                                                                'acc_value', 'company_id', 'sup_account_assign_cat',
                                                                'sup_acc_value', 'sup_company_id', 'currency_id',
@@ -647,7 +653,8 @@ def extract_approverlimit_data(request):
     writer.writerow(['APPROVER_USERNAME', 'APP_CODE_ID', 'COMPANY_ID', 'del_ind'])
 
     approverlimit = django_query_instance.django_filter_query(ApproverLimit,
-                                                              {'del_ind': False}, None,
+                                                              {'del_ind': False,
+                                                               'client': global_variables.GLOBAL_CLIENT}, None,
                                                               ['approver_username', 'app_code_id', 'company_id',
                                                                'del_ind'])
     approverlim_data = query_update_del_ind(approverlimit)
@@ -669,7 +676,8 @@ def extract_approverlimitval_data(request):
     writer.writerow(['APP_CODE_ID', 'COMPANY_ID', 'APP_TYPES', 'CURRENCY_ID', 'UPPER_LIMIT_VALUE', 'del_ind'])
 
     approverlimitval = django_query_instance.django_filter_query(ApproverLimitValue,
-                                                                 {'del_ind': False}, None,
+                                                                 {'del_ind': False,
+                                                                  'client': global_variables.GLOBAL_CLIENT}, None,
                                                                  ['app_code_id', 'company_id', 'app_types',
                                                                   'currency_id', 'upper_limit_value', 'del_ind'])
     approverlim_data = query_update_del_ind(approverlimitval)
@@ -693,7 +701,8 @@ def extract_spendlimit_data(request):
     # get only active record
 
     spendlimitvals = django_query_instance.django_filter_query(SpendLimitId,
-                                                               {'del_ind': False}, None,
+                                                               {'del_ind': False,
+                                                                'client': global_variables.GLOBAL_CLIENT}, None,
                                                                ['company_id', 'spender_username',
                                                                 'spend_code_id', 'del_ind'])
     spendlim_data = query_update_del_ind(spendlimitvals)
@@ -714,7 +723,8 @@ def extract_spendlimitval_data(request):
 
     writer.writerow(['COMPANY_ID', 'SPEND_CODE_ID', 'UPPER_LIMIT_VALUE', 'CURRENCY_ID', 'del_ind'])
 
-    spendlimitvalues = django_query_instance.django_filter_query(SpendLimitValue, {'del_ind': False}, None,
+    spendlimitvalues = django_query_instance.django_filter_query(SpendLimitValue, {'del_ind': False,
+                                                                                   'client': global_variables.GLOBAL_CLIENT}, None,
                                                                  ['company_id', 'spend_code_id',
                                                                   'upper_limit_value', 'currency_id', 'del_ind'])
     spendlim_data = query_update_del_ind(spendlimitvalues)
@@ -748,7 +758,8 @@ def extract_address_type_data(request):
     writer.writerow(['ADDRESS_TYPE', 'ADDRESS_NUMBER', 'COMPANY_ID', 'VALID_FROM', 'VALID_TO', 'del_ind'])
 
     address_type = django_query_instance.django_filter_query(OrgAddressMap,
-                                                             {'del_ind': False}, None,
+                                                             {'del_ind': False,
+                                                              'client': global_variables.GLOBAL_CLIENT}, None,
                                                              ['address_type', 'address_number', 'company_id',
                                                               'valid_from', 'valid_to',
                                                               'del_ind'])
@@ -797,7 +808,8 @@ def extract_approver_type_data(request):
     writer.writerow(['APP_TYPES', 'APPROVAL_TYPE_DESC', 'del_ind'])
 
     approver_type = django_query_instance.django_filter_query(ApproverType,
-                                                              {'del_ind': False}, None,
+                                                              {'del_ind': False,
+                                                               'client': global_variables.GLOBAL_CLIENT}, None,
                                                               ['app_types', 'appr_type_desc', 'del_ind'])
     approver_type_data = query_update_del_ind(approver_type)
 
@@ -820,7 +832,8 @@ def extract_glaccount_data(request):
                      'ITEM_FROM_VALUE', 'ITEM_TO_VALUE', 'CURRENCY_ID', 'del_ind'])
 
     glaccount = django_query_instance.django_filter_query(DetermineGLAccount,
-                                                          {'del_ind': False}, None,
+                                                          {'del_ind': False,
+                                                           'client': global_variables.GLOBAL_CLIENT}, None,
                                                           ['prod_cat_id', 'gl_acc_num',
                                                            'gl_acc_default', 'account_assign_cat', 'company_id',
                                                            'item_from_value', 'item_to_value', 'currency_id',
@@ -863,7 +876,7 @@ def extract_pgrp_data(request):
     writer.writerow(['PGROUP_ID', 'DESCRIPTION', 'del_ind'])
 
     purgrp = django_query_instance.django_filter_query(OrgPGroup,
-                                                       {'client': client, 'del_ind': False}, None,
+                                                       {'client': global_variables.GLOBAL_CLIENT, 'del_ind': False}, None,
                                                        ['pgroup_id', 'description', 'del_ind'])
 
     purgrp_data = query_update_del_ind(purgrp)
@@ -897,7 +910,8 @@ def extract_porg_data(request):
     writer.writerow(['PORG_ID', 'DESCRIPTION', 'del_ind'])
 
     purorg = django_query_instance.django_filter_query(OrgPorg,
-                                                       {'del_ind': False}, None,
+                                                       {'del_ind': False,
+                                                        'client': global_variables.GLOBAL_CLIENT}, None,
                                                        ['porg_id', 'description',
                                                         'del_ind'])
 
@@ -950,7 +964,8 @@ def extract_orgcompany_data(request):
     writer.writerow(['COMPANY_ID', 'NAME1', 'NAME2', 'del_ind'])
 
     orgcompany = django_query_instance.django_filter_query(OrgCompanies,
-                                                           {'del_ind': False}, None,
+                                                           {'del_ind': False,
+                                                            'client': global_variables.GLOBAL_CLIENT}, None,
                                                            ['company_id', 'name1', 'name2',
                                                             'del_ind'])
     orgcompany_data = query_update_del_ind(orgcompany)
@@ -979,7 +994,8 @@ def extract_address_data(request):
          'LANGUAGE_ID', 'TIME_ZONE', 'del_ind'])
 
     address = django_query_instance.django_filter_query(OrgAddress,
-                                                        {'del_ind': False}, None,
+                                                        {'del_ind': False,
+                                                         'client': global_variables.GLOBAL_CLIENT}, None,
                                                         ['address_number', 'title', 'name1',
                                                          'name2', 'street', 'area',
                                                          'landmark', 'city', 'address_partner_type',
@@ -1381,7 +1397,7 @@ def extract_payterms_data(request):
     writer.writerow(['LANGUAGE_ID', 'PAYMENT_TERM_KEY', 'DESCRIPTION', 'DAY_LIMIT', 'del_ind'])
 
     payment_term = django_query_instance.django_filter_query(Payterms_desc,
-                                                             {'del_ind': False}, None,
+                                                             {'del_ind': False,'client': global_variables.GLOBAL_CLIENT}, None,
                                                              ['language_id', 'payment_term_key', 'description',
                                                               'day_limit', 'del_ind'])
 

@@ -88,7 +88,9 @@ def extract_node_level_attributes_data(request):
     writer.writerow(['NODE_TYPES', 'NODE_VALUES', 'del_ind'])
 
     org_node_level_attributes_data = django_query_instance.django_filter_query(OrgModelNodetypeConfig,
-                                                                               {'del_ind': False}, None,
+                                                                               {'del_ind': False,
+                                                                                'client':global_variables.GLOBAL_CLIENT},
+                                                                               None,
                                                                                ['node_type',
                                                                                 'node_values',
                                                                                 'del_ind'])
