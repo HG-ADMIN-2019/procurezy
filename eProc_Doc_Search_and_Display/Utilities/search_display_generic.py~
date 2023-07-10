@@ -18,7 +18,6 @@ from eProc_Configuration.models import SupplierMaster, OrgCompanies
 from eProc_Purchase_Order.models.purchase_order import PoHeader
 from eProc_Shopping_Cart.models import *
 from eProc_Registration.models import UserData
-import re
 
 django_query_instance = DjangoQueries()
 
