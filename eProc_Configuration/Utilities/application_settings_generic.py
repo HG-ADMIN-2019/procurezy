@@ -131,9 +131,10 @@ def get_product_criteria():
     """
 
     """
+    client = global_variables.GLOBAL_CLIENT
     upload_account_assign_cat = get_configuration_data(PoSplitCriteria,
                                                        {'del_ind': False,
-                                                        'client': global_variables.GLOBAL_CLIENT},
+                                                        'client': client},
                                                        ['po_split_criteria_guid', 'company_code_id', 'activate',
                                                         'po_split_type'])
     data = get_po_split_creteria_dropdown(upload_account_assign_cat)

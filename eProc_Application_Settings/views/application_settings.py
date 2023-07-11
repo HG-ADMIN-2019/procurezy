@@ -84,7 +84,6 @@ def upload_acc_assign_categories(request):
 
 
 def upload_po_split_criteria(request):
-    client = getClients(request)
     update_user_info(request)
     response = get_product_criteria()
 
@@ -136,8 +135,10 @@ def upload_po_split_type(request):
 
 
 def display_purchase_control(request):
-    client = getClients(request)
-    upload_purchase_control = get_configuration_data(PurchaseControl, {'del_ind': False},
+    update_user_info(request)
+    client = global_variables.GLOBAL_CLIENT
+
+    upload_purchase_control = get_configuration_data(PurchaseControl, {'del_ind': False, 'client': client},
                                                      ['purchase_control_guid', 'company_code_id', 'call_off',
                                                       'purchase_ctrl_flag'])
 
@@ -160,11 +161,14 @@ def display_purchase_control(request):
 
 
 def display_calendar(request):
+    update_user_info(request)
+    client = global_variables.GLOBAL_CLIENT
+
     country_list = get_country_data()
     val_dict = ''
     messages_list = ''
     calender_data = django_query_instance.django_filter_query(CalenderConfig,
-                                                              {'del_ind': False},
+                                                              {'del_ind': False, 'client': client},
                                                               None,
                                                               ['calender_config_guid', 'calender_id', 'description',
                                                                'year', 'working_days', 'country_code'])
@@ -239,7 +243,9 @@ def number_range_shopping_cart(request):
 
 
 def number_range_favourite_cart(request):
-    client = getClients(request)
+    update_user_info(request)
+    client = global_variables.GLOBAL_CLIENT
+
     upload_numberrange = get_configuration_data(NumberRanges,
                                                 {'client': client, 'document_type': CONST_DOC_TYPE_FC,
                                                  'del_ind': False},
@@ -275,7 +281,8 @@ def number_range_favourite_cart(request):
 
 def number_range_purchase_order(request):
     update_user_info(request)
-    client = getClients(request)
+    client = global_variables.GLOBAL_CLIENT
+
     upload_numberrange = get_configuration_data(NumberRanges,
                                                 {'client': client, 'document_type': CONST_DOC_TYPE_PO,
                                                  'del_ind': False},
@@ -314,7 +321,9 @@ def number_range_purchase_order(request):
 
 
 def number_range_goods_verification(request):
-    client = getClients(request)
+    update_user_info(request)
+    client = global_variables.GLOBAL_CLIENT
+
     upload_numberrange_gv = list(
         NumberRanges.objects.filter(client=client, document_type=CONST_DOC_TYPE_CONF, del_ind=False).values('guid',
                                                                                                             'sequence',
@@ -345,13 +354,18 @@ def number_range_goods_verification(request):
 
 
 def display_holidays(request):
+    update_user_info(request)
+    client = global_variables.GLOBAL_CLIENT
+
     country_list = get_country_data()
     calender_data = list(
-        CalenderConfig.objects.filter(del_ind=False).values('calender_config_guid', 'calender_id', 'description',
-                                                            'year', 'working_days', 'country_code'))
-    holidays_data = list(CalenderHolidays.objects.filter(del_ind=False).values('calender_holiday_guid', 'calender_id',
-                                                                               'holiday_description', 'from_date',
-                                                                               'to_date'))
+        CalenderConfig.objects.filter(client=client, del_ind=False).values('calender_config_guid', 'calender_id',
+                                                                           'description',
+                                                                           'year', 'working_days', 'country_code'))
+    holidays_data = list(
+        CalenderHolidays.objects.filter(client=client, del_ind=False).values('calender_holiday_guid', 'calender_id',
+                                                                             'holiday_description', 'from_date',
+                                                                             'to_date'))
     messages_list = get_ui_messages(CONST_COFIG_UI_MESSAGE_LIST)
     return render(request, 'Application_Settings/holiday_calendar.html',
                   {'calendar_data': calender_data, 'country_list': country_list, 'holidays_data': holidays_data,
@@ -360,7 +374,9 @@ def display_holidays(request):
 
 
 def display_messages_id(request):
-    client = getClients(request)
+    update_user_info(request)
+    client = global_variables.GLOBAL_CLIENT
+
     # message_id_data = list(
     #     MessagesId.objects.filter(del_ind=False, client=client).values('msg_id_guid', 'messages_id', 'messages_type'))
     message_id_data = get_configuration_data(MessagesId, {'del_ind': False, 'client': client},
@@ -386,7 +402,9 @@ def display_messages_id(request):
 
 
 def display_messages_desc(request):
-    client = getClients(request)
+    update_user_info(request)
+    client = global_variables.GLOBAL_CLIENT
+
     # message_id_desc_data = list(
     #     MessagesIdDesc.objects.filter(del_ind=False, client=client).values('msg_id_desc_guid', 'messages_id',
     #                                                                        'messages_id_desc',
@@ -482,7 +500,9 @@ def org_attributes(request):
 
 
 def org_attributes_level(request):
-    client = getClients(request)
+    update_user_info(request)
+    client = global_variables.GLOBAL_CLIENT
+
     upload_orgattributes_level = django_query_instance.django_filter_query(
         OrgModelNodetypeConfig, {'del_ind': False, 'org_model_types': 'ORG_ATTRIBUTES', 'client': client}, None,
         ['org_model_nodetype_config_guid',
@@ -617,12 +637,14 @@ def auth(request):
 
 
 def transaction_type(request):
-    client = getClients(request)
+    update_user_info(request)
+    client = global_variables.GLOBAL_CLIENT
+
     number_range_sequence = []
     document_type_render = list(
         DocumentType.objects.filter(del_ind=False, document_type=CONST_DOC_TYPE_FC).values('document_type'))
     upload_numberrange = list(
-        NumberRanges.objects.filter(client=global_variables.GLOBAL_CLIENT, document_type=CONST_DOC_TYPE_FC,
+        NumberRanges.objects.filter(client=client, document_type=CONST_DOC_TYPE_FC,
                                     del_ind=False).values('sequence'))
     for number_range in upload_numberrange:
         if not django_query_instance.django_existence_check(TransactionTypes,
@@ -659,22 +681,25 @@ def transaction_type(request):
 
 
 def transaction_type_sc(request):
+    update_user_info(request)
+    client = global_variables.GLOBAL_CLIENT
+
     number_range_sequence = []
     document_type_render = list(
         DocumentType.objects.filter(del_ind=False, document_type=CONST_DOC_TYPE_SC).values('document_type'))
     upload_numberrange = list(
-        NumberRanges.objects.filter(client=global_variables.GLOBAL_CLIENT, document_type=CONST_DOC_TYPE_SC,
+        NumberRanges.objects.filter(client=client, document_type=CONST_DOC_TYPE_SC,
                                     del_ind=False).values('sequence'))
     for number_range in upload_numberrange:
         if not django_query_instance.django_existence_check(TransactionTypes,
-                                                            {'client': global_variables.GLOBAL_CLIENT,
+                                                            {'client': client,
                                                              'sequence': number_range['sequence'],
                                                              'document_type': CONST_DOC_TYPE_SC,
                                                              'del_ind': False}):
             number_range_sequence.append(number_range)
 
     upload_transactiontype = list(
-        TransactionTypes.objects.filter(client=global_variables.GLOBAL_CLIENT, document_type=CONST_DOC_TYPE_SC,
+        TransactionTypes.objects.filter(client=client, document_type=CONST_DOC_TYPE_SC,
                                         del_ind=False).values('guid',
                                                               'transaction_type',
                                                               'description',
@@ -683,8 +708,8 @@ def transaction_type_sc(request):
                                                               'active_inactive'))
     rendered_active_inactive = list(
         FieldTypeDescription.objects.filter(field_name='active_inactive', del_ind=False,
-                                            client=global_variables.GLOBAL_CLIENT).values('field_type_id',
-                                                                                          'field_type_desc'))
+                                            client=client).values('field_type_id',
+                                                                  'field_type_desc'))
     messages_list = get_ui_messages(CONST_COFIG_UI_MESSAGE_LIST)
     application_settings = 'application_settings'
     return render(request,
@@ -696,23 +721,26 @@ def transaction_type_sc(request):
 
 
 def transaction_type_po(request):
+    update_user_info(request)
+    client = global_variables.GLOBAL_CLIENT
+
     number_range_sequence = []
     document_type_render = list(
         DocumentType.objects.filter(del_ind=False, document_type=CONST_DOC_TYPE_PO).values('document_type'))
     upload_numberrange = list(
-        NumberRanges.objects.filter(client=global_variables.GLOBAL_CLIENT, document_type=CONST_DOC_TYPE_PO,
+        NumberRanges.objects.filter(client=client, document_type=CONST_DOC_TYPE_PO,
                                     del_ind=False).values('sequence'))
 
     for number_range in upload_numberrange:
         if not django_query_instance.django_existence_check(TransactionTypes,
-                                                            {'client': global_variables.GLOBAL_CLIENT,
+                                                            {'client': client,
                                                              'sequence': number_range['sequence'],
                                                              'document_type': CONST_DOC_TYPE_PO,
                                                              'del_ind': False}):
             number_range_sequence.append(number_range)
 
     upload_transactiontype = list(
-        TransactionTypes.objects.filter(client=global_variables.GLOBAL_CLIENT, document_type=CONST_DOC_TYPE_PO,
+        TransactionTypes.objects.filter(client=client, document_type=CONST_DOC_TYPE_PO,
                                         del_ind=False).values('guid',
                                                               'transaction_type',
                                                               'description',
@@ -734,22 +762,25 @@ def transaction_type_po(request):
 
 
 def transaction_type_gv(request):
+    update_user_info(request)
+    client = global_variables.GLOBAL_CLIENT
+
     number_range_sequence = []
     document_type_render = list(
         DocumentType.objects.filter(del_ind=False, document_type=CONST_DOC_TYPE_CONF).values('document_type'))
     upload_numberrange = list(
-        NumberRanges.objects.filter(client=global_variables.GLOBAL_CLIENT, document_type=CONST_DOC_TYPE_CONF,
+        NumberRanges.objects.filter(client=client, document_type=CONST_DOC_TYPE_CONF,
                                     del_ind=False).values('sequence'))
     for number_range in upload_numberrange:
         if not django_query_instance.django_existence_check(TransactionTypes,
-                                                            {'client': global_variables.GLOBAL_CLIENT,
+                                                            {'client': client,
                                                              'sequence': number_range['sequence'],
                                                              'document_type': CONST_DOC_TYPE_SC,
                                                              'del_ind': False}):
             number_range_sequence.append(number_range)
 
     upload_transactiontype = list(
-        TransactionTypes.objects.filter(client=global_variables.GLOBAL_CLIENT, document_type=CONST_DOC_TYPE_CONF,
+        TransactionTypes.objects.filter(client=client, document_type=CONST_DOC_TYPE_CONF,
                                         del_ind=False).values('guid',
                                                               'transaction_type',
                                                               'description',

@@ -343,15 +343,15 @@
                 error_message = ui_messeges("JMSG002")// Get message details
                 no_duplicate_value = 'N'
                 return [no_duplicate_value,error_message]
-            } else if (item.starting >= item.ending) {
+            } else if (item.starting > item.ending) {
                 error_message = ui_messeges("JMSG035")// Get message details
                 no_duplicate_value = 'N'
                 return [no_duplicate_value,error_message]
-            } else if (item.current <= item.starting) {
+            } else if (item.current < item.starting) {
                 error_message = ui_messeges("JMSG036")// Get message details
                 no_duplicate_value = 'N'
                 return [no_duplicate_value,error_message]
-            } else if (item.current >= item.ending) {
+            } else if (item.current > item.ending) {
                 error_message = ui_messeges("JMSG037")// Get message details
                 no_duplicate_value = 'N'
                 return [no_duplicate_value,error_message]
