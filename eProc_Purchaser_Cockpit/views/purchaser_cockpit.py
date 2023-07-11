@@ -73,11 +73,6 @@ def sc_item_field_filter(request):
         if comp_code:
             order_list.append(comp_code)
 
-        # result = filter_based_on_sc_item_field(client, order_list)
-        # for item in result:
-        #     if inp_doc_num == item[0]:
-        #         sc_header_item_details = [item]
-
     context = {
         'sc_header_item_details': sc_header_item_details,
         'prod_cat': prod_cat,
