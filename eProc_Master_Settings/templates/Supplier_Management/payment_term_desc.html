@@ -496,7 +496,7 @@
         $("#error_msg_id").css("display", "none")
         $('#id_popup_table').DataTable().destroy();
         formdata = new FormData();
-       attached_file = $('#id_file_data_upload').prop('files')[0]
+        attached_file = $('#id_file_data_upload').prop('files')[0]
         if(attached_file == undefined){
            display_file_select_error(); // Display error message if no file is selected
         }
@@ -516,7 +516,7 @@
                     data: formdata,
                     contentType: "application/json; charset=utf-8",
                     success: function(response) {
-                        if (response.data.error_message) {
+                        if (response.error_message) {
                             $("#id_error_msg_upload").prop("hidden", false)
                             document.getElementById("id_error_msg_upload").innerHTML = response.error_message;
                             document.getElementById("id_error_msg_upload").style.color = "Red";
@@ -591,12 +591,7 @@
                 });
             }
             else{
-                $("#id_error_msg_upload").prop("hidden",false)
-                get_message_details("JMSG110"); // Get message details
-                var display = msg_type.messages_id_desc;
-                document.getElementById("id_error_msg_upload").innerHTML = display;
-                document.getElementById("id_error_msg_upload").style.color = "Red";
-                $('#id_data_upload').modal('show');
+                display_file_select_error(); // Display error message for file selection except .csv
             }
         }
     }

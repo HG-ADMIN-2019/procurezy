@@ -143,6 +143,7 @@ def extract_favourite_cart_number_range_data(request):
 
     favourite_cart_number_range_data = django_query_instance.django_filter_query(NumberRanges,
                                                                                  {'del_ind': False,
+                                                                                  'client': global_variables.GLOBAL_CLIENT,
                                                                                   'document_type': CONST_DOC_TYPE_FC
                                                                                   }, None,
                                                                                  ['sequence', 'starting', 'ending',
@@ -172,6 +173,7 @@ def extract_shopping_cart_number_range_data(request):
 
     shopping_cart_number_range_data = django_query_instance.django_filter_query(NumberRanges,
                                                                                 {'del_ind': False,
+                                                                                 'client': global_variables.GLOBAL_CLIENT,
                                                                                  'document_type': CONST_DOC_TYPE_SC
                                                                                  }, None,
                                                                                 ['sequence', 'starting', 'ending',
@@ -201,6 +203,7 @@ def extract_purchase_order_number_range_data(request):
 
     purchase_order_number_range_data = django_query_instance.django_filter_query(NumberRanges,
                                                                                  {'del_ind': False,
+                                                                                  'client': global_variables.GLOBAL_CLIENT,
                                                                                   'document_type': CONST_DOC_TYPE_PO
                                                                                   }, None,
                                                                                  ['sequence', 'starting', 'ending',
@@ -230,6 +233,7 @@ def extract_goods_verification_number_range_data(request):
 
     goods_verification_number_range_data = django_query_instance.django_filter_query(NumberRanges,
                                                                                      {'del_ind': False,
+                                                                                      'client': global_variables.GLOBAL_CLIENT,
                                                                                       'document_type': CONST_DOC_TYPE_CONF
                                                                                       }, None,
                                                                                      ['sequence', 'starting', 'ending',
@@ -259,6 +263,7 @@ def extract_favourite_transaction_type_data(request):
 
     favourite_transaction_type_data = django_query_instance.django_filter_query(TransactionTypes,
                                                                                 {'del_ind': False,
+                                                                                 'client': global_variables.GLOBAL_CLIENT,
                                                                                  'document_type': "DOC04"
                                                                                  }, None,
                                                                                 ['transaction_type', 'description',
@@ -291,6 +296,7 @@ def extract_shopping_cart_transaction_type_data(request):
 
     shopping_cart_transaction_type_data = django_query_instance.django_filter_query(TransactionTypes,
                                                                                     {'del_ind': False,
+                                                                                     'client': global_variables.GLOBAL_CLIENT,
                                                                                      'document_type': "DOC01"
                                                                                      }, None,
                                                                                     ['transaction_type', 'description',
@@ -323,6 +329,7 @@ def extract_purchase_order_transaction_type_data(request):
 
     purchase_order_transaction_type_data = django_query_instance.django_filter_query(TransactionTypes,
                                                                                      {'del_ind': False,
+                                                                                      'client': global_variables.GLOBAL_CLIENT,
                                                                                       'document_type': "DOC02"
                                                                                       }, None,
                                                                                      ['transaction_type', 'description',
@@ -355,6 +362,7 @@ def extract_goods_verification_transaction_type_data(request):
 
     goods_verification_transaction_type_data = django_query_instance.django_filter_query(TransactionTypes,
                                                                                          {'del_ind': False,
+                                                                                          'client': global_variables.GLOBAL_CLIENT,
                                                                                           'document_type': "DOC03"
                                                                                           }, None,
                                                                                          ['transaction_type',
@@ -387,7 +395,7 @@ def extract_po_split_type_data(request):
     writer.writerow(['PO_SPLIT_TYPE', 'PO_SPLIT_TYPE_DESC', 'del_ind'])
 
     po_split_type_data = django_query_instance.django_filter_query(PoSplitType,
-                                                                   {'del_ind': False
+                                                                   {'del_ind': False,
                                                                     }, None,
                                                                    ['po_split_type', 'po_split_type_desc', 'del_ind'])
     po_split_type_data = query_update_del_ind(po_split_type_data)
@@ -412,7 +420,8 @@ def extract_po_split_criteria_data(request):
     writer.writerow(['PO_SPLIT_TYPE', 'COMPANY_CODE_ID', 'ACTIVATE', 'del_ind'])
 
     po_split_criteria_data = django_query_instance.django_filter_query(PoSplitCriteria,
-                                                                       {'del_ind': False
+                                                                       {'del_ind': False,
+                                                                        'client': global_variables.GLOBAL_CLIENT,
                                                                         }, None,
                                                                        ['po_split_type', 'company_code_id', 'activate',
                                                                         'del_ind'])
@@ -439,7 +448,8 @@ def extract_purchase_control_data(request):
     writer.writerow(['company_code_id', 'call_off', 'purchase_ctrl_flag', 'del_ind'])
 
     purchase_control_data = django_query_instance.django_filter_query(PurchaseControl,
-                                                                      {'del_ind': False
+                                                                      {'del_ind': False,
+                                                                       'client': global_variables.GLOBAL_CLIENT,
                                                                        }, None,
                                                                       ['company_code_id', 'call_off',
                                                                        'purchase_ctrl_flag',
