@@ -8,11 +8,13 @@ Author:
 """
 from django.shortcuts import render
 from eProc_Basic.Utilities.functions.get_db_query import getClients
+from eProc_Basic.Utilities.global_defination import global_variables
 from eProc_Doc_Search_and_Display.Utilities.search_display_generic import get_hdr_data
 from eProc_Purchaser_Cockpit.Utilities.purchaser_cockpit_specific import filter_based_on_sc_item_field, item_search
 
 
 # purchaser_cockpit_search
+from eProc_Shopping_Cart.context_processors import update_user_info
 from eProc_Shopping_Cart.models import ScItem
 
 
@@ -35,7 +37,8 @@ def sc_item_field_filter(request):
     supplier_id = False
     comp_code = False
     prod_cat = False
-    client = getClients(request)
+    update_user_info(request)
+    client = global_variables.GLOBAL_CLIENT
     order_list = []
     search_fields = {}
     sc_header_item_details = ''
@@ -56,15 +59,11 @@ def sc_item_field_filter(request):
         search_fields['from_date'] = request.POST.get('from_date')
         search_fields['to_date'] = request.POST.get('to_date')
         search_fields['prod_cat_id'] = request.POST.get('product_category')
+        search_fields['comp_code'] = request.POST.get('company_code')
         sc_item_inst = ScItem()
         temp = sc_item_inst.get_prod_cat_id(prod_cat)
 
         sc_header_item_details = item_search(**search_fields)
-
-        # sc_item_details = get_hdr_data(inp_from_date,
-        #                                inp_to_date,
-        #                                prod_cat,
-        #                                client, False)
         supplier_id = request.POST.get('supplier_id')
         comp_code = request.POST.get('comp_code')
         if prod_cat:
