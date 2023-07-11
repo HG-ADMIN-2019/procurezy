@@ -25,7 +25,7 @@ class DBQueries():
     # End of MEP:19
     def get_hdr_data_by_fields(self, obj, objid, client):
         return obj.objects.filter(doc_number=objid, client=client,
-                                  del_ind=False).values().order_by('doc_number')
+                                  del_ind=False).values('doc_number').order_by('doc_number')
 
     def get_hdr_data_for_docnum(self, client, obj, doc_num_query,
                                 **kwargs):
@@ -408,9 +408,9 @@ class ScItem(models.Model):
         return obj.objects.filter(doc_number=objid, client=client, del_ind=False).values().order_by('doc_number')
 
     @staticmethod
-    def get_item_data_by_fields(client, obj, prod_cat_query, creator_query, requester_query):
-        return list(obj.objects.filter(prod_cat_query, creator_query, requester_query, grouping_ind=True, client=client, del_ind=False,
-                                       ).values().order_by())
+    def get_item_data_by_fields(client, obj, prod_cat_query, creator_query, requester_query, company_query, **kwargs):
+        return list(obj.objects.filter(prod_cat_query, creator_query, requester_query, company_query, grouping_ind=True, client=client, del_ind=False,
+                                       **kwargs).values().order_by())
 
 
 # Definition of SC Accounting table structure
