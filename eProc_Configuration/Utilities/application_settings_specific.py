@@ -844,15 +844,15 @@ class ApplicationSettingsSave:
             # if entry is not exists in db
             if not django_query_instance.django_existence_check(SystemSettingsConfig,
                                                                 {'sys_attr_type': systemsettings_detail[
-                                                                    'SYS_ATTR_TYPE'],
+                                                                    'sys_attr_type'],
                                                                  'sys_attr_value': systemsettings_detail[
-                                                                     'SYS_ATTR_VALUE'],
+                                                                     'sys_attr_value'],
                                                                  'client': self.client
                                                                  }):
                 guid = guid_generator()
                 systemsettings_db_dictionary = {'system_settings_config_guid': guid,
-                                                'sys_attr_type': systemsettings_detail['SYS_ATTR_TYPE'],
-                                                'sys_attr_value': systemsettings_detail['SYS_ATTR_VALUE'],
+                                                'sys_attr_type': systemsettings_detail['sys_attr_type'],
+                                                'sys_attr_value': systemsettings_detail['sys_attr_value'],
                                                 'del_ind': False,
                                                 'client': self.client,
                                                 'system_settings_config_created_at': self.current_date_time,
@@ -864,13 +864,13 @@ class ApplicationSettingsSave:
             else:
                 django_query_instance.django_update_query(SystemSettingsConfig,
                                                           {'sys_attr_type': systemsettings_detail[
-                                                              'SYS_ATTR_TYPE'],
-                                                           'sys_attr_value': systemsettings_detail['SYS_ATTR_VALUE'],
+                                                              'sys_attr_type'],
+                                                           'sys_attr_value': systemsettings_detail['sys_attr_value'],
                                                            'client': self.client
                                                            },
                                                           {'system_settings_config_guid': guid,
-                                                           'sys_attr_type': systemsettings_detail['SYS_ATTR_TYPE'],
-                                                           'sys_attr_value': systemsettings_detail['SYS_ATTR_VALUE'],
+                                                           'sys_attr_type': systemsettings_detail['sys_attr_type'],
+                                                           'sys_attr_value': systemsettings_detail['sys_attr_value'],
                                                            'del_ind': False,
                                                            'client': self.client,
                                                            'system_settings_config_created_at': self.current_date_time,

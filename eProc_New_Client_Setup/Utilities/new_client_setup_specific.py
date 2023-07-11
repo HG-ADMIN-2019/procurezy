@@ -22,7 +22,7 @@ class InitialSetupClient(BasicSettingsSave, ApplicationSettingsSave, MasterSetti
 
     def initial_save_basic_data(self):
         """
-    
+
         """
         directory = os.path.join(str(settings.BASE_DIR), 'MajjakaScript', 'basic_data')
         for root, dirs, files in os.walk(directory):
@@ -82,7 +82,7 @@ class InitialSetupClient(BasicSettingsSave, ApplicationSettingsSave, MasterSetti
 
     def initial_save_application_data(self):
         """
-        
+
         """
         directory = os.path.join(str(settings.BASE_DIR), 'MajjakaScript', 'application_data')
         # Save  OrgNodeTypes data
@@ -259,10 +259,10 @@ class InitialSetupClient(BasicSettingsSave, ApplicationSettingsSave, MasterSetti
             header = next(csvreader)  # skip header
             csv_to_db_data = []
             for csv_data in csvreader:
-                csv_to_db_data.append({'SYS_ATTR_TYPE': csv_data[1],
-                                       'SYS_ATTR_VALUE': csv_data[2],
-                                       'del_ind': csv_data[3]})
-            self.system_settings_new(csv_to_db_data)
+                csv_to_db_data.append({'sys_attr_type': csv_data[0],
+                                       'sys_attr_value': csv_data[1],
+                                       'del_ind': csv_data[2]})
+            self.save_system_settings(csv_to_db_data)
 
 
 def create_organization_structure(client_id):
@@ -416,7 +416,7 @@ def delete_client_from_db(client_id):
 
 def delete_application_setup_client(client_id):
     """
-    
+
     """
     django_query_instance.django_filter_delete_query(OrgNodeTypes, {'client': client_id})
     django_query_instance.django_filter_delete_query(Authorization, {'client': client_id})
