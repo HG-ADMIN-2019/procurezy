@@ -503,8 +503,8 @@ def convert_ApproverType_to_dictionary(arr):
 def convert_Payterms_desc_to_dictionary(arr):
     convertion_list = []
     for row in arr:
-        dictionary = {'language_id': row[0], 'payment_term_key': row[1], 'description': row[2], 'day_limit': row[3],
-                      'del_ind': row[4]}
+        dictionary = {'language_id': row[4], 'payment_term_key': row[0], 'description': row[2], 'day_limit': row[1],
+                      'del_ind': row[3]}
         convertion_list.append(dictionary)
     return convertion_list
 
