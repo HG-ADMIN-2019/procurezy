@@ -129,7 +129,7 @@ function read_popup_data() {
         if (transaction_types.guid == undefined){
             transaction_types.guid = ''
         }
-        var compare = transaction_types.transaction_type + '-' + transaction_types.document_type + '-' + transaction_types.sequence
+        var compare = transaction_types.transaction_type + '-' + transaction_types.document_type
         validate_add_attributes.push(compare);
         transaction_types_data.push(transaction_types);
     });
@@ -155,7 +155,7 @@ function get_main_table_data(){
         main_attribute.document_type = row.find("TD").eq(2).html();
         main_attribute.sequence = row.find("TD").eq(3).html();
         main_attribute.description  = row.find("TD").eq(4).html();
-        var compare_maintable = main_attribute.transaction_type + '-' + main_attribute.document_type + '-' + main_attribute.sequence
+        var compare_maintable = main_attribute.transaction_type + '-' + main_attribute.document_type
         main_table_low_value.push(compare_maintable);
     });
     table_sort_filter('display_basic_table');

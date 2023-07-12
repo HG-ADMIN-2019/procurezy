@@ -151,17 +151,24 @@
     var db_header_data = uiConstants["CONST_HEADER_DATA_COUNTRY"]
     var msg_id_dropdown,msg_type_dropdown;
 
-    //********************
-    function drop_down(){
-        msg_type_dropdown='';
-        $.each(rendered_msgtype_values, function(i, item){
+    //*************************
+    function drop_down() {
+        get_main_table_data(); //Read data from main table
+        msg_type_dropdown = '';
+        $.each(rendered_msgtype_values, function(i, item) {
             msg_type_dropdown += '<option value="' + item.field_type_id + '">' + item.field_type_id + '</option>';
         });
-        msg_id_dropdown='';
-        $.each(rendered_msgid_values, function(i, item){
+
+        msg_id_dropdown = '';
+        var available_msg_id_values = rendered_msgid_values.filter(function(item) {
+            return !main_table_low_value.includes(item.field_type_id);
+        });
+
+        $.each(available_msg_id_values, function(i, item) {
             msg_id_dropdown += '<option value="' + item.field_type_id + '">' + item.field_type_id + '</option>';
         });
     }
+
 
     //onclick of add button display msg_id_Modal popup and set GLOBAL_ACTION button value
     function onclick_add_button(button){
