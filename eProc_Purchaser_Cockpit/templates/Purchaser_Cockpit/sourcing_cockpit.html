@@ -4,159 +4,123 @@
 {% block title %} Purchase Orders (SOM) {% endblock %}
 {% block maincontent %}
 <div class="container-fluid">
-  <div class="mep-form_wrapper">
-    <form method="POST">
-      {% csrf_token %}
-      <div class="d-flex justify-content-between">
-        <h3>Sourcing Cockpit</h3>
-      </div>
-
-      <hr>
-
-      <div class="card card-shadow-1">
+    <div class="mep-form_wrapper">
+        <div class="d-flex justify-content-between">
+            <h3>Sourcing Cockpit</h3>
+        </div>
+        <hr>
+        <div class="card card-shadow-1">
+            <div class="card-body">
+                 <form method="POST">
+                    {% csrf_token %}
+                 <div class="row">
+                    <div class="col-md">
+                        <label for="">SC Number</label>
+                        <input type="text" class="form-control check_for_search" id="sc_number" name="sc_number" >
+                    </div>
+                    <div class="col-md">
+                        <label for="">Product Category</label>
+                        <input type="text" class="form-control check_for_search" id="product_category" name="product_category">
+                    </div>
+                    <div class="col-md">
+                        <label for="">From Date</label>
+                        <input type="date" class="form-control check_for_search" id="from_date" name='from_date'>
+                    </div>
+                    <div class="col-md">
+                        <label for="">to Date</label>
+                        <input type="date" class="form-control check_for_search" id="to_date" name='to_date'>
+                    </div>
+                    <div class="col-md">
+                        <label for="">Company Code</label>
+                        <input type="text" class="form-control check_for_search" id="company_code" name="company_code">
+                    </div>
+                    <div class="col-auto my-1">
+                        <button class="button-search-users btn btn-primary" type="submit" name="sc_search"
+                            title="Please click to get the search details!" onclick="reload()"><i class="fas fa-search"></i> search
+                        </button>
+                    </div>
+                 </div>
+            </form>
+            <hr>
+        </div>
+    </div>
+    {% if sc_header_item_details|length > 0 %}
+        <div class="search_result_count_card card">
+            <div class="card-body">
+              <h6 class="card-title">Total number of results found :{{som_po_data|length}}</h6>
+            </div>
+        </div>
+    {% elif sc_header_item_details|length == 0  %}
+    <div class="search_result_count_card card">
         <div class="card-body">
-          <div class="row">
-            <div class="col-md">
-              <label for="">SC Number</label>
-              <input type="text" class="form-control check_for_search" id="sc_number" name="sc_number" >
-            </div>
-            <div class="col-md">
-              <label for="">Product Category</label>
-              <input type="text" class="form-control check_for_search" id="product_category" name="product_category">
-            </div>
-            <div class="col-md">
-              <label for="">From Date</label>
-              <input type="date" class="form-control check_for_search" id="from_date" name='from_date'>
-            </div>
-              <div class="col-md">
-              <label for="">to Date</label>
-              <input type="date" class="form-control check_for_search" id="to_date" name='to_date'>
-            </div>
-              <div class="col-md">
-              <label for="">Company Code</label>
-              <input type="text" class="form-control check_for_search" id="company_code" name="company_code">
-            </div>
-
-            <div class="col-auto my-1">
-              <button class="button-search-users btn btn-primary" type="submit" name="sc_search"
-                      title="Please click to get the search details!" onclick="reload()"><i class="fas fa-search"></i> search
-              </button>
-            </div>
-          </div>
-          <hr>
-<!--          <div class="elements-space-between" data-toggle="collapse" data-target="#supplier_adv_search">-->
-<!--            <span class="h5">Filter</span>-->
-<!--            <i class="fas fa-chevron-down"></i>-->
-<!--          </div>-->
-<!--          <div id="supplier_adv_search" class="advanced-search-collapse collapse">-->
-<!--            <div class="row">-->
-<!--              <div class="col-md">-->
-<!--                <label for="">Product category</label>-->
-<!--                <input type="checkbox" name="prod_cat_filter" value="prod_cat_filter">-->
-<!--              </div>-->
-<!--              <div class="col-md">-->
-<!--                <label for="">Supplier</label>-->
-<!--                <input type="checkbox" name="supplier_filter" value="supplier_filter">-->
-<!--              </div>-->
-<!--              <div class="col-md">-->
-<!--                <label for="">Product ID</label>-->
-<!--                <input type="checkbox" name="product_id_filter" value="product_id_filter">-->
-<!--              </div>-->
-<!--            </div>-->
-<!--          </div>-->
-<!--          <br>-->
-<!--          <div class="elements-space-between">-->
-<!--            <input type="reset" value="Clear filters" class="ip-form-clear-filters">-->
-<!--            <div>-->
-<!--              <span class="badge help-text-badge help-text-star-search"></span>-->
-<!--            </div>-->
-<!--          </div>-->
-
+            <h6 class="card-title">No Results Found</h6>
         </div>
-      </div>
-      {% if sc_header_item_details|length > 0 %}
-      <div class="search_result_count_card card">
-        <div class="card-body">
-          <h6 class="card-title">Total number of results found :{{som_po_data|length}}</h6>
+    </div>
+    {% endif %}
+    {% if sc_header_item_details %}
+        <div class="card">
+            <div>
+                 <button class="btn btn-primary  btn-sm mt-2 ml-2"  title="Generate PO" id="id_generate_po" value="generate_po" data-toggle="modal" data-target="#confirm_po_pop_up" style="display:none;" >
+                    <i></i> Generate PO
+                </button>
+            <div>
+            <div style="margin-top: 17px;margin-left: 10px;">
+                <table id="sc_header_item" class="table table_sort_filter_export_excel">
+                    <thead class="thead-light">
+                        <tr>
+                            <th scope="col">SC Number</th>
+                            <th scope="col">Description</th>
+                            <th scope="col">Supplier ID</th>
+                            <th scope="col">Company Code</th>
+                            <th scope="col">Delivery Date</th>
+                            <th scope="col">Unit</th>
+                            <th scope="col">Quantity</th>
+                            <th scope="col">Product Category</th>
+                            <th scope="col">Select</th>
+                        </tr>
+                    </thead>
+                    <tbody id="add_attr_body" >
+                        {% for header_item in sc_header_item_details %}
+                        <tr>
+                            <td scope="row">{{ header_item.0 }}</td>
+                            <td scope="row" class="hg-desc">{{ header_item.1 }}</td>
+                            <td scope="row">{{ header_item.2 }}</td>
+                            <td scope="row">{{ header_item.3 }}</td>
+                            <td scope="row">{{ header_item.4 }}</td>
+                            <td scope="row">{{ header_item.5 }}</td>
+                            <td scope="row">{{ header_item.6 }}</td>
+                            <td scope="row">{{ header_item.7 }}</td>
+                            <td scope="row"><input type="checkbox" name="select" value="select" onclick="po_generate()"></td>
+                        </tr>
+                        {% endfor %}
+                    </tbody>
+                </table>
+            </div>
         </div>
-      </div>
-      {% elif sc_header_item_details|length == 0  %}
-      <div class="search_result_count_card card">
-        <div class="card-body">
-          <h6 class="card-title">No Results Found</h6>
-        </div>
-      </div>
-      {% endif %}
-
-      {% if sc_header_item_details %}
-      <div class="card">
-        <div style="margin-top: 17px;margin-left: 10px;">
-            <table id="sc_header_item" class="table table_sort_filter_export_excel">
-                <thead class="thead-light">
-                    <tr>
-                        <th scope="col">SC Number</th>
-                        <th scope="col">Description</th>
-                        <th scope="col">Supplier ID</th>
-                        <th scope="col">Company Code</th>
-                        <th scope="col">Delivery Date</th>
-                        <th scope="col">Unit</th>
-                        <th scope="col">Quantity</th>
-                        <th scope="col">Product Category</th>
-                        <th scope="col">Select</th>
-                    </tr>
-                </thead>
-                <tbody id="add_attr_body" >
-                    {% for header_item in sc_header_item_details %}
-                    <tr>
-                        <td scope="row">{{ header_item.0 }}</td>
-                        <td scope="row" class="hg-desc">{{ header_item.1 }}</td>
-                        <td scope="row">{{ header_item.2 }}</td>
-                        <td scope="row">{{ header_item.3 }}</td>
-                        <td scope="row">{{ header_item.4 }}</td>
-                        <td scope="row">{{ header_item.5 }}</td>
-                        <td scope="row">{{ header_item.6 }}</td>
-                        <td scope="row">{{ header_item.7 }}</td>
-                        <td scope="row"><input type="checkbox" name="select" value="select"></td>
-                    </tr>
-                    {% endfor %}
-                </tbody>
-            </table>
-<!--          <table id="som_po_table" class="table table_sort_filter_export_excel">-->
-<!--            <thead class="thead-light">-->
-<!--            <tr>-->
-<!--              <th> PO Number  </th>-->
-<!--              <th> Company Name </th>-->
-<!--              <th> Buyer Name </th>-->
-<!--              <th> Buyer Email </th>-->
-<!--              <th> Buyer Phone No.</th>-->
-<!--              <th> Received Date</th>-->
-<!--              <th> Total Value</th>-->
-<!--              <th>Action</th>-->
-<!--            </tr>-->
-<!--            </thead>-->
-<!--            <tbody id="supplier_detail_tbody">-->
-<!--            {% for results in som_po_data %}-->
-<!--            <tr id="table-{{results.doc_number}}">-->
-<!--              <td><a href="{% url 'eProc_Supplier_Order_Management:som_po_doc_details' results.encrypted_po_doc_num %}" id="{{results.doc_number}}" class="deletepop" target="_blank">{{results.doc_number}}</a></td>-->
-<!--              <td>{{results.requester_company_name}}</td>-->
-<!--              <td>{{results.requester}}</td>-->
-<!--              <td>{{results.requester_email}}</td>-->
-<!--              <td>{{results.requester_mobile_num}}</td>-->
-<!--              <td>{{results.ordered_at}}</td>-->
-<!--              <td>{{results.total_value}}</td>-->
-<!--              <td><a href=\{{results.pdf_path}} type="application/pdf" target="_blank">View Po Pdf</a>-->
-<!--              </td>-->
-<!--            </tr>-->
-<!--            {% endfor %}-->
-<!--            </tbody>-->
-<!--          </table>-->
-        </div>
-      </div>
-      {% endif %}
-    </form>
-  </div>
+    {% endif %}
+    </div>
 </div>
-
+    </div>
+    <div class="modal fade" id="confirm_po_pop_up" tabindex="-1" role="dialog"
+        aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLongTitle">Please Confirm</h5>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    You Are About To Generate PO  "<span id="form_id_del"></span>". Are You Sure?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                    <button type="button" class="btn btn-primary" onclick="create_po()">Generate PO</button>
+                </div>
+            </div>
+        </div>
+    </div>
 <script>
 
 $(document).ready( function() {
@@ -179,31 +143,68 @@ function reload(){
       OpenLoaderPopup();
   }
 
-document.getElementById("folder").addEventListener("change", function(event) {
-  var output = document.querySelector("ul");
-    formdata = new FormData();
-  var attached_file = event.target.files;
-    for (var i=0; i<attached_file.length; i++) {
-    var item = document.createElement("li");
-    item.innerHTML = attached_file[i].webkitRelativePath;
-      formdata.append(i, $('input[type=file]')[0].files[i]);
-    output.appendChild(item);
-  };
-  $.ajax({
-    url: "{% url 'eProc_Supplier_Order_Management:upload_som' %}",
-    type: 'POST',
-    data: formdata,
-    contentType: false,
-    processData: false,
-    success: function(response) {
-      console.log(response);
-      location.reload();
-    },
-    error: function(xhr, status, error) {
-      console.log(xhr.responseText);
-    }
-});
+<!--document.getElementById("folder").addEventListener("change", function(event) {-->
+<!--  var output = document.querySelector("ul");-->
+<!--    formdata = new FormData();-->
+<!--  var attached_file = event.target.files;-->
+<!--    for (var i=0; i<attached_file.length; i++) {-->
+<!--    var item = document.createElement("li");-->
+<!--    item.innerHTML = attached_file[i].webkitRelativePath;-->
+<!--      formdata.append(i, $('input[type=file]')[0].files[i]);-->
+<!--    output.appendChild(item);-->
+<!--  };-->
+<!--  $.ajax({-->
+<!--    url: "{% url 'eProc_Supplier_Order_Management:upload_som' %}",-->
+<!--    type: 'POST',-->
+<!--    data: formdata,-->
+<!--    contentType: false,-->
+<!--    processData: false,-->
+<!--    success: function(response) {-->
+<!--      console.log(response);-->
+<!--      location.reload();-->
+<!--    },-->
+<!--    error: function(xhr, status, error) {-->
+<!--      console.log(xhr.responseText);-->
+<!--    }-->
+<!--});-->
 
-}, false);
+<!--}, false);-->
+
+function po_generate(){
+    $("#id_generate_po").prop("hidden", false);
+    $("#id_generate_po").show();
+}
+// Function to delete User
+function create_po() {
+        var user_info = [];
+        var selected_row_data = new Array
+        $('#confirm_po_pop_up').modal('hide');
+        $("#sc_header_item TBODY TR").each(function () {
+        var row = $(this);
+        po_data={};
+        var check_status = row.find("TD").eq(8).find('input[type="checkbox"]').is(':checked');
+        if(check_status){
+        po_data.doc_number = row.find("TD").eq(0).html();
+        selected_row_data.push(po_data);
+        }
+
+    });
+        data =  selected_row_data
+        OpenLoaderPopup();
+    $.ajax({
+        type: 'POST',
+        url: "{% url 'eProc_Purchaser_Cockpit:generate_po' %}",
+        data:JSON.stringify(data),
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: function (Response) {
+            display_emp_data(Response.employee_results);
+            $('#success_msg_id').text(Response.success_message)
+            $("#error_msg_div").prop("hidden",false)
+            message_display_time();
+            CloseLoaderPopup();
+        }
+    });
+}
 </script>
 {% endblock %}

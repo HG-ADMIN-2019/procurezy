@@ -11,6 +11,7 @@ from django.shortcuts import render
 from eProc_Basic.Utilities.functions.django_query_set import DjangoQueries
 from eProc_Basic.Utilities.functions.get_db_query import getClients
 from eProc_Basic.Utilities.global_defination import global_variables
+from eProc_Basic_Settings.views import JsonParser_obj
 from eProc_Doc_Search_and_Display.Utilities.search_display_generic import get_hdr_data
 from eProc_Purchaser_Cockpit.Utilities.purchaser_cockpit_specific import filter_based_on_sc_item_field, item_search
 
@@ -108,3 +109,24 @@ def sc_item_field_filter(request):
     }
 
     return render(request, 'Purchaser_Cockpit/sourcing_cockpit.html', context)
+
+
+def generate_po(request):
+    update_user_info(request)
+    client = global_variables.GLOBAL_CLIENT
+    sc_item_details = ''
+    sc_header_list = []
+    po_data = JsonParser_obj.get_json_from_req(request)
+    for doc in po_data:
+        sc_header_list.append(django_query_instance.django_filter_value_list_query(ScHeader,
+                                                                              {'client': global_variables.GLOBAL_CLIENT,
+                                                                               'doc_number': doc['doc_number']},
+                                                                              'guid'))
+    for sc_item in sc_header_list:
+        sc_item_details = django_query_instance.django_filter_query(ScItem,
+                                                                    {'client': client, 'grouping_ind': True,
+                                                                     'del_ind': False,
+                                                                     'header_guid_id': sc_item[0]
+                                                                     }, None, None)
+    print(sc_item_details)
+    return
