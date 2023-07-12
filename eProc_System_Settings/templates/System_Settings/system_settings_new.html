@@ -1,8 +1,6 @@
 {% extends 'root/base.html' %}
 {% load static %}
-
 {% block title %} System Settings {% endblock %}
-
 {% block maincontent %}
 
 <style>
@@ -11,13 +9,11 @@
         margin-bottom: 0px;
 
     }
-
     .custom-checkbox-label-subtext {
         font-size: 14px;
         color: grey;
         margin-left: 16px;
         display: inline-block;
-
     }
 </style>
 
@@ -28,30 +24,23 @@
             <div>
                 <button type="button" id="cancel_sys_settings" class="btn btn-outline-primary" data-toggle="modal"
                     data-target="#myModal" hidden><i class="fas fa-times"></i> Cancel</button>
-                <!-- <button class="btn btn-primary" type="reset">Reset</button> -->
                 <button class="btn btn-primary" id="edit_sys_settings" type="button" onclick="onclick_edit()"><i class="far fa-edit"></i>
                     Edit</button>
                 <button class="btn btn-primary" id="save_sys_settings" type="button" title="Save" hidden
                     onclick="save_system_settings_details()"><i class="fas fa-check"></i> Save</button>
             </div>
-
         </div>
-
         <hr>
-
         <div id="err_msg_app_settings_t" class="alert alert-success" hidden> <span class="msg_display" id="success_msg_id"></span></div>
         <form method="POST" id="SystemSettingform">
             {% csrf_token %}
-
             <!--    Account Data      -->
             <div class="card card-shadow-1 mt-3">
                 <div class="card-body">
                     <h5 class="card-title">User Password</h5>
                     <div class="row">
-
                         <div class="form-group col-md">
                             <label> Password Policy</label><span class="hg_required"></span><br>
-
                             <select class="toggle_field form-control" id="pwd_policy" name="pwd_policy" disabled>
                                 {% for pwd_policy in password_policy %}
                                 <option value="{{pwd_policy.sys_attr_value}}" {% if pwd_policy.sys_settings_default_flag %}selected{% endif %}>{{pwd_policy.sys_attr_value}}</option>
@@ -63,7 +52,6 @@
                         </div>
                         <div class="form-group col-md">
                             <label> Login Attempts</label><span class="hg_required"></span><br>
-
                             <select class="toggle_field form-control" id="login_attempts" name="login_attempts"
                                 disabled>
                                 {% for login_attempts in login_attempts %}
@@ -77,14 +65,12 @@
                     </div>
                 </div>
             </div>
-
             <div class="card card-shadow-1 mt-3">
                 <div class="card-body">
                     <h5 class="card-title">System Attributes</h5>
                     <div class="row">
                         <div class="form-group col-md">
                             <label> Session Timeout</label><span class="hg_required"></span><br>
-
                             <select class="toggle_field form-control" id="session_timeout" name="session_timeout"
                                 disabled>
                                 {% for session_timeout in session_timeout %}
@@ -95,11 +81,8 @@
                                 Help text here - Your password must be 8-20 characters long, contain letters and numbers
                             </small>
                         </div>
-
-
                         <div class="form-group col-md">
                             <label>Message Display</label><span class="hg_required"></span><br>
-
                             <select class="toggle_field form-control" id="msg_display" name="msg_display" disabled>
                                 {% for msg_display in msg_display %}
                                 <option value="{{msg_display.sys_attr_value}}" {% if msg_display.sys_settings_default_flag %}selected{% endif %}> {{msg_display.sys_attr_value}}</option>
@@ -121,10 +104,8 @@
                                 Help text here - Your password must be 8-20 characters long, contain letters and numbers
                             </small>
                         </div>
-
                         <div class="form-group col-md">
                             <label> Pagination Count</label><span class="hg_required"></span><br>
-
                             <select type="text" class="toggle_field form-control" id="pagination_count"
                                 name="pagination_count" disabled>
                                 {% for pagination_count in pagination_count %}
@@ -138,7 +119,6 @@
                     </div>
                 </div>
             </div>
-
             <div class="card card-shadow-1 mt-3">
                 <div class="card-body">
                     <h5 class="card-title">Attachment Data</h5>
@@ -155,7 +135,6 @@
                                 Help text here - Your password must be 8-20 characters long, contain letters and numbers
                             </small>
                         </div>
-
                         <div class="form-group col-md">
                             <label> Attachment Extension</label><span class="hg_required"></span><br>
                             <select type="text" class="toggle_field form-control" id="attachment_extension" name="attachment_extension" value="{{system_settings_instance.attachment_extension}}" disabled>
@@ -170,12 +149,10 @@
                     </div>
                 </div>
             </div>
-
             <div class="card card-shadow-1 mt-3">
                 <div class="card-body">
                     <h5 class="card-title">Application Data</h5>
                     <div class="row">
-
                         <div class="form-group col-md">
                             {% if acct_assignment_category.0 == '1' %}
                             <input type="checkbox" class="toggle_field" id="acct_assignment_category"
@@ -213,7 +190,6 @@
                             <span class="custom-checkbox-label-subtext"> Can Edit Current Shipping Address In Shopping
                                 Cart </span>
                         </div>
-
                         <div class="form-group col-md">
                             {% if recently_viewed_items.0 == '1' %}
                             <input type="checkbox" class="toggle_field" id="recently_viewed_items"
@@ -240,8 +216,6 @@
                             <span class="custom-checkbox-label-subtext"> Can view Frequently purchased items in Home
                                 page </span>
                         </div>
-
-
                         <div class="form-group col-md">
                             {% if change_shipping_address.0 == '1' %}
                             <input type="checkbox" class="toggle_field" id="change_shipping_address"
@@ -252,7 +226,6 @@
                             {% endif %}
                             <label class="custom-checkbox-label"> Enable Change Shipping Address</label>
                             <span class="custom-checkbox-label-subtext"> Add or update a new shipping address </span>
-
                         </div>
                         <div class="form-group col-md">
                             {% if limit_item.0 %}
@@ -265,7 +238,6 @@
                             <label class="custom-checkbox-label"> Enable Limit Order Item</label>
                             <span class="custom-checkbox-label-subtext"> Add a limit iem to shopping cart </span>
                         </div>
-
                         <div class="form-group col-md">
                             {% if add_favourites.0 == '1' %}
                             <input type="checkbox" class="toggle_field" id="add_favourites" name="add_favourites"
@@ -285,11 +257,9 @@
     </div>
     <div class="hg_spacer2"> &nbsp; </div>
 </div>
-
 <div class="modal fade" id="myModal">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-
             <!-- Modal Header -->
             <div class="d-flex justify-content-end">
                 <div>
@@ -300,20 +270,17 @@
             <div class="modal-body">
                 Are you sure you want to Cancel the changes?
             </div>
-
             <!-- Modal footer -->
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" data-dismiss="modal">No</button>
                 <button type="button" class="btn btn-primary" id="system_settings_form_reset"
                     onclick="cancel_mode()"><i class="fas fa-check"></i> Yes</button>
             </div>
-
         </div>
     </div>
 </div>
 <script src="{% static 'scripts/system_settings.js' %}"> </script>
 <script>
-
     function save_system_settings_details() {
         OpenLoaderPopup();
         var form_data = {};
@@ -350,8 +317,6 @@
                 CloseLoaderPopup();
             }
         });
-
     }
-
 </script>
 {% endblock %}
