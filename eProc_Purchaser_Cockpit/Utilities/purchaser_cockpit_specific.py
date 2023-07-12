@@ -47,8 +47,6 @@ def filter_based_on_sc_item_field(client, order_list):
 
 def item_search(**kwargs):
     client = global_variables.GLOBAL_CLIENT
-    from_date_query = Q()
-    to_date_query = Q()
     prod_cat_query = Q()
     company_query = Q()
     sc_obj = ScItem
@@ -59,6 +57,7 @@ def item_search(**kwargs):
     order_list = []
     doc_num_query = Q()
     sc_header_item_details = []
+    from_date_val = ''
     for key, value in kwargs.items():
         value_list = []
         if value:
@@ -96,29 +95,22 @@ def item_search(**kwargs):
                     if '*' not in value:
                         value_list = [value]
                     prod_cat_query = django_q_query(value, value_list, 'prod_cat_id')
-                if key == 'from_date':
-                    value_list = [value]
-                    from_date_query = django_q_query(value, value_list, 'order_date')
-                if key == 'to_date':
-                    value_list = [value]
-                    to_date_query = django_q_query(value, value_list, 'order_date')
                 if key == 'comp_code':
                     if '*' not in value:
                         value_list = [value]
                         company_query = django_q_query(value, value_list, 'comp_code')
                     if value == '*':
                         args_list['comp_code__in'] = django_query_instance.django_filter_value_list_query(OrgCompanies,
-                                                                                                        {
-                                                                                                            'client': global_variables.GLOBAL_CLIENT,
-                                                                                                            'del_ind': False}, 'company_id')
+                                                                                                          {
+                                                                                                              'client': global_variables.GLOBAL_CLIENT,
+                                                                                                              'del_ind': False},
+                                                                                                          'company_id')
                     else:
                         args_list['comp_code'] = value
 
                 sc_details_query = list(sc_item_inst.get_item_data_by_fields(client,
                                                                              sc_obj,
                                                                              prod_cat_query,
-                                                                             from_date_query,
-                                                                             to_date_query,
                                                                              company_query,
                                                                              **args_list
                                                                              ))

@@ -7,15 +7,18 @@ Author:
     Deepika K
 """
 from django.shortcuts import render
+
+from eProc_Basic.Utilities.functions.django_query_set import DjangoQueries
 from eProc_Basic.Utilities.functions.get_db_query import getClients
 from eProc_Basic.Utilities.global_defination import global_variables
 from eProc_Doc_Search_and_Display.Utilities.search_display_generic import get_hdr_data
 from eProc_Purchaser_Cockpit.Utilities.purchaser_cockpit_specific import filter_based_on_sc_item_field, item_search
 
-
 # purchaser_cockpit_search
 from eProc_Shopping_Cart.context_processors import update_user_info
-from eProc_Shopping_Cart.models import ScItem
+from eProc_Shopping_Cart.models import ScItem, ScHeader
+
+django_query_instance = DjangoQueries()
 
 
 def incomplete_form(request, guid=None):
@@ -41,7 +44,7 @@ def sc_item_field_filter(request):
     client = global_variables.GLOBAL_CLIENT
     order_list = []
     search_fields = {}
-    sc_header_item_details = ''
+    # sc_header_item_details = ''
     sc_header_item_details = filter_based_on_sc_item_field(client, order_list)
     if request.method == 'POST':
         search_fields = {}
@@ -56,14 +59,35 @@ def sc_item_field_filter(request):
         prod_cat = request.POST.get('product_category')
         # results
         search_fields['doc_number'] = request.POST.get('sc_number')
-        search_fields['from_date'] = request.POST.get('from_date')
-        search_fields['to_date'] = request.POST.get('to_date')
+        # search_fields['from_date'] = request.POST.get('from_date')
+        # search_fields['to_date'] = request.POST.get('to_date')
         search_fields['prod_cat_id'] = request.POST.get('product_category')
         search_fields['comp_code'] = request.POST.get('company_code')
         sc_item_inst = ScItem()
-        temp = sc_item_inst.get_prod_cat_id(prod_cat)
+        # temp = sc_item_inst.get_prod_cat_id(prod_cat)
+        if inp_from_date or inp_to_date:
+            sc_header_item = []
+            sc_details_query = list(ScItem.objects.filter(
+                order_date__lte=inp_to_date,
+                order_date__gte=inp_from_date
+            ).values())
+            for sc_item in sc_details_query:
+                guid = sc_item['header_guid_id']
+                scheader_details = django_query_instance.django_filter_only_query(ScHeader,
+                                                                                  {'guid': guid,
+                                                                                   'client': client}).values(
+                    'doc_number')
+                for scheader_detail in scheader_details:
+                    sc_header_item_detail = [scheader_detail['doc_number'], sc_item['prod_cat_desc'],
+                                             sc_item['supplier_id'],
+                                             sc_item['comp_code'], sc_item['item_del_date'], sc_item['unit'],
+                                             sc_item['quantity'],
+                                             sc_item['prod_cat_id']]
 
-        sc_header_item_details = item_search(**search_fields)
+                    sc_header_item.append(sc_header_item_detail)
+            sc_header_item_details = sc_header_item
+        else:
+            sc_header_item_details = item_search(**search_fields)
         supplier_id = request.POST.get('supplier_id')
         comp_code = request.POST.get('comp_code')
         if prod_cat:

@@ -44,33 +44,33 @@
             </div>
           </div>
           <hr>
-<!--          <div class="elements-space-between" data-toggle="collapse" data-target="#supplier_adv_search">-->
-<!--            <span class="h5">Filter</span>-->
-<!--            <i class="fas fa-chevron-down"></i>-->
-<!--          </div>-->
-<!--          <div id="supplier_adv_search" class="advanced-search-collapse collapse">-->
-<!--            <div class="row">-->
-<!--              <div class="col-md">-->
-<!--                <label for="">Product category</label>-->
-<!--                <input type="checkbox" name="prod_cat_filter" value="prod_cat_filter">-->
-<!--              </div>-->
-<!--              <div class="col-md">-->
-<!--                <label for="">Supplier</label>-->
-<!--                <input type="checkbox" name="supplier_filter" value="supplier_filter">-->
-<!--              </div>-->
-<!--              <div class="col-md">-->
-<!--                <label for="">Product ID</label>-->
-<!--                <input type="checkbox" name="product_id_filter" value="product_id_filter">-->
-<!--              </div>-->
-<!--            </div>-->
-<!--          </div>-->
-<!--          <br>-->
-<!--          <div class="elements-space-between">-->
-<!--            <input type="reset" value="Clear filters" class="ip-form-clear-filters">-->
-<!--            <div>-->
-<!--              <span class="badge help-text-badge help-text-star-search"></span>-->
-<!--            </div>-->
-<!--          </div>-->
+          <div class="elements-space-between" data-toggle="collapse" data-target="#supplier_adv_search">
+            <span class="h5">Filter</span>
+            <i class="fas fa-chevron-down"></i>
+          </div>
+          <div id="supplier_adv_search" class="advanced-search-collapse collapse">
+            <div class="row">
+              <div class="col-md">
+                <label for="">Product category</label>
+                <input type="checkbox" name="prod_cat_filter" value="prod_cat_filter">
+              </div>
+              <div class="col-md">
+                <label for="">Supplier</label>
+                <input type="checkbox" name="supplier_filter" value="supplier_filter">
+              </div>
+              <div class="col-md">
+                <label for="">Product ID</label>
+                <input type="checkbox" name="product_id_filter" value="product_id_filter">
+              </div>
+            </div>
+          </div>
+          <br>
+          <div class="elements-space-between">
+            <input type="reset" value="Clear filters" class="ip-form-clear-filters">
+            <div>
+              <span class="badge help-text-badge help-text-star-search"></span>
+            </div>
+          </div>
 
         </div>
       </div>
