@@ -142,6 +142,15 @@ function save_user_form_validation() {
                 $(".error_message").prop("hidden", false);
                 temp[i].nextElementSibling.innerHTML = fieldLabel + " is required";
                 is_valid = false;
+            } else if (temp[i].id == 'id_add_addresses_address_number') {
+                if (temp[i].value.length < 6) {
+                    var fieldLabel = temp[i].closest('.form-group').querySelector('label').innerHTML;
+                    $(".error_message").prop("hidden", false);
+                    var display_id = temp[i].nextElementSibling.id;
+                    $('#' + display_id).prop('hidden', false);
+                    $('#' + display_id).html("Please enter at least 6 characters for " + fieldLabel);
+                    is_valid = false;
+                }
             } else if (temp[i].value.length < 3) {
                 var fieldLabel = temp[i].closest('.form-group').querySelector('label').innerHTML;
                 $(".error_message").prop("hidden", false);
@@ -182,7 +191,6 @@ function save_user_form_validation() {
     }
     return is_valid;
 }
-
 
 
 
