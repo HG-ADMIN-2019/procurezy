@@ -3,7 +3,7 @@ import re
 
 from django.db.models import Q
 
-from eProc_Basic.Utilities.constants.constants import CONST_SC_HEADER_ORDERED
+from eProc_Basic.Utilities.constants.constants import CONST_SC_HEADER_ORDERED, CONST_SC_HEADER_APPROVED
 from eProc_Basic.Utilities.functions.django_q_query import django_q_query
 from eProc_Basic.Utilities.functions.django_query_set import DjangoQueries
 from eProc_Basic.Utilities.global_defination import global_variables
@@ -36,7 +36,7 @@ def filter_based_on_sc_item_field(client, order_list):
         scheader_details = django_query_instance.django_filter_only_query(ScHeader,
                                                                           {'guid': guid,
                                                                            'client': client,
-                                                                           'status': CONST_SC_HEADER_ORDERED,
+                                                                           'status': CONST_SC_HEADER_APPROVED,
                                                                            }).values('doc_number')
         for scheader_detail in scheader_details:
             sc_header_item_detail = [scheader_detail['doc_number'], sc_item.prod_cat_desc, sc_item.supplier_id,
