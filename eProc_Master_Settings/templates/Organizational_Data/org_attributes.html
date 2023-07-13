@@ -11,7 +11,7 @@
                 <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Application_Settings:extract_attributes_data' %}'"type="button">
                     <i class="fas fa-download"></i> extract data
                 </button>
-                <button class="btn btn-primary" title="Add New Org Attribute" type="button" id="id_add_data" value="ADD" data-toggle="modal" data-target="#org_attr_Modal" onclick="onclick_add_button(this)">
+                <button type="button" class="btn btn-primary" title="Add New Org Attribute" id="id_add_data" value="ADD" data-toggle="modal" data-target="#org_attr_Modal" onclick="onclick_add_button(this)">
                     <i class="fa fa-plus" ></i> Add New Org Attribute
                 </button>
                  <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close"  onclick="window_close();">
@@ -198,15 +198,21 @@
 
     //********************
     function dropdown_value(){
-        attribute_id_dropdown = '';
+        get_main_table_data(); //Read data from main table
+
         if(rendered_dropdown_values.length != 0){
             desc_attribute = rendered_dropdown_values[0].field_type_desc; }
         else {
             desc_attribute = "";
         }
-        $.each(rendered_dropdown_values, function(i, item){
-            attribute_id_dropdown += '<option value="' + item.field_type_id + '">' + item.field_type_id +'</option>';
 
+       attribute_id_dropdown = '';
+        var available_attribute_id_values = rendered_dropdown_values.filter(function(item) {
+            return !main_table_low_value.includes(item.field_type_id);
+        });
+
+        $.each(available_attribute_id_values, function(i, item){
+            attribute_id_dropdown += '<option value="' + item.field_type_id + '">' + item.field_type_id +'</option>';
         })
     }
 
@@ -304,30 +310,29 @@
 
     //onclick of add button display org_attr_Modal popup and set GLOBAL_ACTION button value
     function onclick_add_button(button) {
+        GLOBAL_ACTION = button.value
         OpenLoaderPopup();
-        GLOBAL_ACTION == "ADD"
-        $('#save_id').prop('hidden', false);
         var data = {'table_name':'OrgAttributes'}
         $.ajax({
-        type: 'POST',
-        url: "{% url 'eProc_Configuration:get_dropdown_data' %}",
-        data: JSON.stringify(data),
-        success: function(response) {
-            rendered_dropdown_values = response.upload_dropdown_db_values
-            rendered_dropdown_values_onload = response.upload_dropdown_db_values_onload
-            dropdown_value();
-            display_button();
-            $("#error_msg_id").css("display", "none")
-            $( "#header_select").prop( "hidden", false );
-            $('#org_attr_Modal').modal('show');
-            $('#id_popup_table').DataTable().destroy();
-            $("#id_popup_tbody").empty();
-            new_row_data();   // Add a new row in popup
-            $("#id_del_ind_checkbox").prop("hidden", true);
-            document.getElementById("id_del_add_button").style.display = "block";
-            $('#save_id').show();
-            $('#delete_data').hide();
-            CloseLoaderPopup();
+            type: 'POST',
+            url: "{% url 'eProc_Configuration:get_dropdown_data' %}",
+            data: JSON.stringify(data),
+            success: function(response) {
+                rendered_dropdown_values = response.upload_dropdown_db_values
+                rendered_dropdown_values_onload = response.upload_dropdown_db_values_onload
+                dropdown_value();
+                display_button();
+                $("#error_msg_id").css("display", "none")
+                $( "#header_select").prop( "hidden", false );
+                $('#org_attr_Modal').modal('show');
+                $('#id_popup_table').DataTable().destroy();
+                $("#id_popup_tbody").empty();
+                new_row_data();   // Add a new row in popup
+                $("#id_del_ind_checkbox").prop("hidden", true);
+                document.getElementById("id_del_add_button").style.display = "block";
+                $('#save_id').show();
+                $('#delete_data').hide();
+                CloseLoaderPopup();
             }
         });
     }
