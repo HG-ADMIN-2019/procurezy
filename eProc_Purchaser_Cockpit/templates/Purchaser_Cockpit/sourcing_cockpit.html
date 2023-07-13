@@ -57,6 +57,7 @@
         </div>
     </div>
     {% endif %}
+     <div style="margin-top:25px" id="error_msg_div" class="alert alert-success" hidden><span id="success_msg_id"></span></div>
     {% if sc_header_item_details %}
         <div class="card">
             <div>
@@ -198,10 +199,10 @@ function create_po() {
         contentType: "application/json; charset=utf-8",
         dataType: "json",
         success: function (Response) {
-            display_emp_data(Response.employee_results);
-            $('#success_msg_id').text(Response.success_message)
-            $("#error_msg_div").prop("hidden",false)
-            message_display_time();
+            console.log(Response);
+            $('#success_msg_id').text(Response)
+            $("#error_msg_div").prop("hidden",false);
+<!--            message_display_time();-->
             CloseLoaderPopup();
         }
     });

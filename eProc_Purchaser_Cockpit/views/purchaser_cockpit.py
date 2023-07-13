@@ -6,6 +6,7 @@ Usage:
 Author:
     Deepika K
 """
+from django.http import JsonResponse
 from django.shortcuts import render
 
 from eProc_Basic.Utilities.functions.django_query_set import DjangoQueries
@@ -13,6 +14,8 @@ from eProc_Basic.Utilities.functions.get_db_query import getClients
 from eProc_Basic.Utilities.global_defination import global_variables
 from eProc_Basic_Settings.views import JsonParser_obj
 from eProc_Doc_Search_and_Display.Utilities.search_display_generic import get_hdr_data
+from eProc_Emails.Utilities.email_notif_generic import send_po_attachment_email
+from eProc_Purchase_Order.Utilities.purchase_order_generic import CreatePurchaseOrder
 from eProc_Purchaser_Cockpit.Utilities.purchaser_cockpit_specific import filter_based_on_sc_item_field, item_search
 
 # purchaser_cockpit_search
@@ -114,19 +117,28 @@ def sc_item_field_filter(request):
 def generate_po(request):
     update_user_info(request)
     client = global_variables.GLOBAL_CLIENT
-    sc_item_details = ''
+    response = ''
     sc_header_list = []
     po_data = JsonParser_obj.get_json_from_req(request)
     for doc in po_data:
         sc_header_list.append(django_query_instance.django_filter_value_list_query(ScHeader,
-                                                                              {'client': global_variables.GLOBAL_CLIENT,
-                                                                               'doc_number': doc['doc_number']},
-                                                                              'guid'))
-    for sc_item in sc_header_list:
-        sc_item_details = django_query_instance.django_filter_query(ScItem,
-                                                                    {'client': client, 'grouping_ind': True,
-                                                                     'del_ind': False,
-                                                                     'header_guid_id': sc_item[0]
-                                                                     }, None, None)
-    print(sc_item_details)
-    return
+                                                                                   {
+                                                                                       'client': global_variables.GLOBAL_CLIENT,
+                                                                                       'doc_number': doc['doc_number']},
+                                                                                   'guid'))
+        sc_header_instance = django_query_instance.django_get_query(ScHeader,
+                                                                    {'client': global_variables.GLOBAL_CLIENT,
+                                                                     'doc_number': doc['doc_number']})
+        if sc_header_instance:
+            create_purchase_order = CreatePurchaseOrder(sc_header_instance)
+            status, error_message, output, po_doc_list = create_purchase_order.create_po()
+            for po_document_number in po_doc_list:
+                email_supp_monitoring_guid = ''
+                send_po_attachment_email(output, po_document_number, email_supp_monitoring_guid)
+
+            if error_message:
+                response = "error"
+            else:
+                response = "PO generated"
+
+    return JsonResponse(response, safe=False)
