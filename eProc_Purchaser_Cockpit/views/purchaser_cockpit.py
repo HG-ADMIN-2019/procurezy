@@ -6,16 +6,23 @@ Usage:
 Author:
     Deepika K
 """
+from django.http import JsonResponse
 from django.shortcuts import render
+
+from eProc_Basic.Utilities.functions.django_query_set import DjangoQueries
 from eProc_Basic.Utilities.functions.get_db_query import getClients
 from eProc_Basic.Utilities.global_defination import global_variables
+from eProc_Basic_Settings.views import JsonParser_obj
 from eProc_Doc_Search_and_Display.Utilities.search_display_generic import get_hdr_data
+from eProc_Emails.Utilities.email_notif_generic import send_po_attachment_email
+from eProc_Purchase_Order.Utilities.purchase_order_generic import CreatePurchaseOrder
 from eProc_Purchaser_Cockpit.Utilities.purchaser_cockpit_specific import filter_based_on_sc_item_field, item_search
-
 
 # purchaser_cockpit_search
 from eProc_Shopping_Cart.context_processors import update_user_info
-from eProc_Shopping_Cart.models import ScItem
+from eProc_Shopping_Cart.models import ScItem, ScHeader
+
+django_query_instance = DjangoQueries()
 
 
 def incomplete_form(request, guid=None):
@@ -41,7 +48,7 @@ def sc_item_field_filter(request):
     client = global_variables.GLOBAL_CLIENT
     order_list = []
     search_fields = {}
-    sc_header_item_details = ''
+    # sc_header_item_details = ''
     sc_header_item_details = filter_based_on_sc_item_field(client, order_list)
     if request.method == 'POST':
         search_fields = {}
@@ -56,14 +63,35 @@ def sc_item_field_filter(request):
         prod_cat = request.POST.get('product_category')
         # results
         search_fields['doc_number'] = request.POST.get('sc_number')
-        search_fields['from_date'] = request.POST.get('from_date')
-        search_fields['to_date'] = request.POST.get('to_date')
+        # search_fields['from_date'] = request.POST.get('from_date')
+        # search_fields['to_date'] = request.POST.get('to_date')
         search_fields['prod_cat_id'] = request.POST.get('product_category')
         search_fields['comp_code'] = request.POST.get('company_code')
         sc_item_inst = ScItem()
-        temp = sc_item_inst.get_prod_cat_id(prod_cat)
+        # temp = sc_item_inst.get_prod_cat_id(prod_cat)
+        if inp_from_date or inp_to_date:
+            sc_header_item = []
+            sc_details_query = list(ScItem.objects.filter(
+                order_date__lte=inp_to_date,
+                order_date__gte=inp_from_date
+            ).values())
+            for sc_item in sc_details_query:
+                guid = sc_item['header_guid_id']
+                scheader_details = django_query_instance.django_filter_only_query(ScHeader,
+                                                                                  {'guid': guid,
+                                                                                   'client': client}).values(
+                    'doc_number')
+                for scheader_detail in scheader_details:
+                    sc_header_item_detail = [scheader_detail['doc_number'], sc_item['prod_cat_desc'],
+                                             sc_item['supplier_id'],
+                                             sc_item['comp_code'], sc_item['item_del_date'], sc_item['unit'],
+                                             sc_item['quantity'],
+                                             sc_item['prod_cat_id']]
 
-        sc_header_item_details = item_search(**search_fields)
+                    sc_header_item.append(sc_header_item_detail)
+            sc_header_item_details = sc_header_item
+        else:
+            sc_header_item_details = item_search(**search_fields)
         supplier_id = request.POST.get('supplier_id')
         comp_code = request.POST.get('comp_code')
         if prod_cat:
@@ -72,11 +100,6 @@ def sc_item_field_filter(request):
         #     order_list.append(inp_doc_num)
         if comp_code:
             order_list.append(comp_code)
-
-        # result = filter_based_on_sc_item_field(client, order_list)
-        # for item in result:
-        #     if inp_doc_num == item[0]:
-        #         sc_header_item_details = [item]
 
     context = {
         'sc_header_item_details': sc_header_item_details,
@@ -89,3 +112,33 @@ def sc_item_field_filter(request):
     }
 
     return render(request, 'Purchaser_Cockpit/sourcing_cockpit.html', context)
+
+
+def generate_po(request):
+    update_user_info(request)
+    client = global_variables.GLOBAL_CLIENT
+    response = ''
+    sc_header_list = []
+    po_data = JsonParser_obj.get_json_from_req(request)
+    for doc in po_data:
+        sc_header_list.append(django_query_instance.django_filter_value_list_query(ScHeader,
+                                                                                   {
+                                                                                       'client': global_variables.GLOBAL_CLIENT,
+                                                                                       'doc_number': doc['doc_number']},
+                                                                                   'guid'))
+        sc_header_instance = django_query_instance.django_get_query(ScHeader,
+                                                                    {'client': global_variables.GLOBAL_CLIENT,
+                                                                     'doc_number': doc['doc_number']})
+        if sc_header_instance:
+            create_purchase_order = CreatePurchaseOrder(sc_header_instance)
+            status, error_message, output, po_doc_list = create_purchase_order.create_po()
+            for po_document_number in po_doc_list:
+                email_supp_monitoring_guid = ''
+                send_po_attachment_email(output, po_document_number, email_supp_monitoring_guid)
+
+            if error_message:
+                response = "error"
+            else:
+                response = "PO generated"
+
+    return JsonResponse(response, safe=False)
