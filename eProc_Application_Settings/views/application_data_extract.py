@@ -479,7 +479,7 @@ def extract_user_role_data(request):
     user_roles = django_query_instance.django_filter_query(UserRoles,
                                                            {'del_ind': False,
                                                             }, None,
-                                                           ['role', 'role_desc', 'del_ind'])
+                                                           ['role', 'role_desc','del_ind'])
     user_roles = query_update_del_ind(user_roles)
 
     for user_role in user_roles:
@@ -535,7 +535,7 @@ def extract_authorization_data(request):
     auth_objs = query_update_del_ind(auth_obj)
 
     for auth_obj in auth_objs:
-        auth_obj_info = auth_obj['role'], [auth_obj['auth_obj_grp'],
+        auth_obj_info = [auth_obj['role'],auth_obj['auth_obj_grp'],
                                            auth_obj['del_ind']]
         writer.writerow(auth_obj_info)
 
