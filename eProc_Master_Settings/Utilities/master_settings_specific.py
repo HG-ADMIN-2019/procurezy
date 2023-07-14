@@ -964,7 +964,7 @@ class MasterSettingsSave:
                                                                'org_address_changed_at': self.current_date_time,
                                                                'org_address_changed_by': self.username,
                                                                'client': self.client,
-                                                               'del_ind': address_detail['del_ind']})
+                                                               'del_ind': address_detail['del_ind'] == 'True',})
         if address_db_list:
             bulk_create_entry_db(OrgAddress, address_db_list)
 
