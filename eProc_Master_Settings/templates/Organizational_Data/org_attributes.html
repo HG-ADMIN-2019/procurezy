@@ -182,7 +182,7 @@
 <script>
     var messages_list = {{messages_list|safe}};
     var rendered_org_attr_data = JSON.parse(document.getElementById('org_attributes').textContent);
-    var rendered_dropdown_values = JSON.parse(document.getElementById('upload_dropdown_db_values').textContent);
+    var rendered_dropdown_values
     var org_attr_data_array = {}
     var main_table_org_attr_value = [];
     var org_attr = '';
@@ -192,14 +192,13 @@
     var Tablename = uiConstants["CONST_TABLENAME_ORG_ATTR"]
     var appname = uiConstants["CONST_APPNAME01"]
     var db_header_data = uiConstants["CONST_HEADER_DATA_ORG_ATTR"]
-    var attribute_id_dropdown;
-     var desc_attribute = '';
     var attribute_id_dropdown_onload = '';
 
     //********************
+    var attribute_id_dropdown;
+    var desc_attribute = '';
     function dropdown_value(){
         get_main_table_data(); //Read data from main table
-
         if(rendered_dropdown_values.length != 0){
             desc_attribute = rendered_dropdown_values[0].field_type_desc; }
         else {
@@ -319,7 +318,6 @@
             data: JSON.stringify(data),
             success: function(response) {
                 rendered_dropdown_values = response.upload_dropdown_db_values
-                rendered_dropdown_values_onload = response.upload_dropdown_db_values_onload
                 dropdown_value();
                 display_button();
                 $("#error_msg_id").css("display", "none")
