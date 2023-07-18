@@ -96,10 +96,24 @@ function get_selected_row_data() {
 }
 
 // Function for add a new row data
-function new_row_data(){
-    basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select class="form-control">'+nodetype_dropdown+'</select></td><td><select class="form-control">'+attributelevel_id_dropdown+'</select></td><td hidden>pgroup_guid</td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+function new_row_data() {
+    basic_add_new_html = '<tr><td><input type="checkbox" required></td>' +
+        '<td><select class="form-control" onchange="get_node_values(this)">' + nodetype_dropdown + '</select></td>' +
+        '<td><select class="form-control">' + attributelevel_id_dropdown + '</select></td>' +
+        '<td hidden>pgroup_guid</td>' +
+        '<td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
     table_sort_filter('id_popup_table');
+}
+
+function get_node_values(selectElement) {
+    var selectedNodeType = selectElement.value;
+    var attributeDropdown = $(selectElement).closest('tr').find('.form-control').eq(1);
+    var nodeValues = main_table_data[selectedNodeType];
+    attributeDropdown.empty();
+    $.each(nodeValues, function(index, value) {
+        attributeDropdown.append('<option value="' + value + '">' + value + '</option>');
+    });
 }
 
 // Function to get main table data
@@ -113,6 +127,24 @@ function get_main_table_data(){
         main_attribute.node_values = row.find("TD").eq(2).html();
         var compare_maintable = main_attribute.node_type + '-' + main_attribute.node_values
         main_table_low_value.push(compare_maintable);
+    });
+    table_sort_filter('display_basic_table');
+}
+
+function get_node_values_data() {
+    main_table_data = {}; // Object to store node values for each node type
+    $('#display_basic_table').DataTable().destroy();
+    $("#display_basic_table TBODY TR").each(function() {
+        var row = $(this);
+        var main_attribute = {};
+        main_attribute.node_type = row.find("TD").eq(1).html();
+        main_attribute.node_values = row.find("TD").eq(2).html();
+        var compare_maintable = main_attribute.node_type + '-' + main_attribute.node_values;
+
+        if (!main_table_data.hasOwnProperty(main_attribute.node_type)) {
+            main_table_data[main_attribute.node_type] = [];
+        }
+        main_table_data[main_attribute.node_type].push(main_attribute.node_values);
     });
     table_sort_filter('display_basic_table');
 }
