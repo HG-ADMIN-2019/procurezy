@@ -23,7 +23,7 @@ from eProc_Basic.Utilities.functions.json_parser import JsonParser
 from eProc_Basic.Utilities.functions.update_del_ind import update_del_ind, query_update_del_ind
 from eProc_Basic.Utilities.messages import messages
 from eProc_Basic.Utilities.messages.messages import MSG048
-from eProc_Basic.views import remove_duplicates
+from eProc_Basic.views import remove_duplicates, remove_duplicate_paytermdesc
 from eProc_Basic_Settings.Utilities.basic_settings_specific import *
 from eProc_Catalog.Utilities.catalog_generic import CatalogGenericMethods
 from eProc_Catalog.Utilities.catalog_specific import CatalogManagement
@@ -671,7 +671,7 @@ def data_upload(request):
             return JsonResponse(context, safe=False)
         if Table_name == 'Payterms_desc':
             result['error_message'], result['data'] = upload_csv.csv_preview_data(header_detail, data_set_val)
-            result = remove_duplicates(result['data'])
+            result = remove_duplicate_paytermdesc(result['data'])
             convertion_list = convert_Payterms_desc_to_dictionary(result)
             valid_data_list, message = check_paymentterm_desc_data(convertion_list, 'UPLOAD')
             context = {'valid_data_list': valid_data_list}

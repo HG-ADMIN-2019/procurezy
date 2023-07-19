@@ -236,7 +236,6 @@
     function main_table_delete() {
         $('#success_msg_id').empty()
         GLOBAL_ACTION = 'DELETE'
-        $('#display_basic_table').DataTable().destroy();
         main_table_org_attrlevel_checked = [];
         get_selected_row_data(); // Function call to get the selected row data
         $('#id_delete_confirm_popup').modal('hide');
@@ -305,6 +304,7 @@
                 rendered_attiddropdown_values = response.upload_attributesid_dropdown
                 rendered_nodetypedropdown_values = response.upload_orgnodetypes_dropdown
                 orgatt_level_drpdown()
+                get_node_values_data()
                 $("#error_msg_id").css("display", "none")
                 $( "#header_select").prop( "hidden", false );
                 GLOBAL_ACTION = button.value

@@ -71,7 +71,7 @@ function add_popup_row() {
     $(".modal").on("hidden.bs.modal", function() {
         $("#id_error_msg").html(" ");
     });
-    basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select class="form-control">'+nodetype_dropdown+'</select></td><td><select class="form-control">'+attributelevel_id_dropdown+'</select></td><td hidden>pgroup_guid</td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+    basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select class="form-control" onchange="get_node_values(this)">' + nodetype_dropdown + '</select></td><td><select class="form-control">'+attributelevel_id_dropdown+'</select></td><td hidden>pgroup_guid</td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
     if (GLOBAL_ACTION == "org_attr_upload") {
         $(".class_del_checkbox").prop("hidden", false);
@@ -96,11 +96,48 @@ function get_selected_row_data() {
 }
 
 // Function for add a new row data
-function new_row_data(){
-    basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select class="form-control">'+nodetype_dropdown+'</select></td><td><select class="form-control">'+attributelevel_id_dropdown+'</select></td><td hidden>pgroup_guid</td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+function new_row_data() {
+    basic_add_new_html = '<tr><td><input type="checkbox" required></td>' +
+        '<td><select class="form-control" onchange="get_node_values(this)">' + nodetype_dropdown + '</select></td>' +
+        '<td><select class="form-control">' + attributelevel_id_dropdown + '</select></td>' +
+        '<td hidden>pgroup_guid</td>' +
+        '<td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
     table_sort_filter('id_popup_table');
 }
+
+function get_node_values(selectElement) {
+    var selectedNodeType = selectElement.value;
+    var attributeDropdown = $(selectElement).closest('tr').find('.form-control').eq(1);
+    var nodeValues = main_table_data[selectedNodeType];
+    var usedNodeValues = {}; // Object to store the used node values for the selected node type
+
+    // Loop through the node values in the main_table_data and store the used ones for the selected node type
+    $.each(nodeValues, function(index, value) {
+        usedNodeValues[value] = true;
+    });
+
+    attributeDropdown.empty();
+    var hideNodeType = true; // Flag to track if the node type option should be hidden
+
+    // Now, populate the dropdown with only the unused node values
+    $.each(rendered_attiddropdown_values, function(i, item) {
+        var nodeValue = item.attribute_id;
+        if (!usedNodeValues.hasOwnProperty(nodeValue)) {
+            attributeDropdown.append('<option value="' + nodeValue + '">' + nodeValue + '</option>');
+            hideNodeType = false; // Set the flag to false if at least one unused node value is found
+        }
+    });
+
+    // Hide the node type option if all its node values are used
+    if (hideNodeType) {
+        $(selectElement).find('option[value="' + selectedNodeType + '"]').hide();
+    } else {
+        $(selectElement).find('option[value="' + selectedNodeType + '"]').show();
+    }
+}
+
+
 
 // Function to get main table data
 function get_main_table_data(){
@@ -113,6 +150,24 @@ function get_main_table_data(){
         main_attribute.node_values = row.find("TD").eq(2).html();
         var compare_maintable = main_attribute.node_type + '-' + main_attribute.node_values
         main_table_low_value.push(compare_maintable);
+    });
+    table_sort_filter('display_basic_table');
+}
+
+function get_node_values_data() {
+    main_table_data = {}; // Object to store node values for each node type
+    $('#display_basic_table').DataTable().destroy();
+    $("#display_basic_table TBODY TR").each(function() {
+        var row = $(this);
+        var main_attribute = {};
+        main_attribute.node_type = row.find("TD").eq(1).html();
+        main_attribute.node_values = row.find("TD").eq(2).html();
+        var compare_maintable = main_attribute.node_type + '-' + main_attribute.node_values;
+
+        if (!main_table_data.hasOwnProperty(main_attribute.node_type)) {
+            main_table_data[main_attribute.node_type] = [];
+        }
+        main_table_data[main_attribute.node_type].push(main_attribute.node_values);
     });
     table_sort_filter('display_basic_table');
 }

@@ -376,6 +376,27 @@ class PoSplitCriteria(models.Model):
         managed = True
 
 
+class PoGroupCriteria(models.Model):
+    po_group_criteria_guid = models.CharField(db_column='PO_GROUP_CRITERIA_GUID', max_length=32, primary_key=True)
+    company_code_id = models.CharField(db_column='COMPANY_CODE_ID', max_length=20, null=False)
+    activate = models.BooleanField(db_column='ACTIVATE', default=False, null=False)
+    del_ind = models.BooleanField(default=False, null=False)
+    po_group_criteria_created_by = models.CharField(db_column='PO_GROUP_CRITERIA_CREATED_BY', max_length=30,
+                                                    null=True)
+    po_group_criteria_created_at = models.DateTimeField(db_column='PO_GROUP_CRITERIA_CREATED_AT', max_length=50,
+                                                        null=True)
+    po_group_criteria_changed_by = models.CharField(db_column='PO_GROUP_CRITERIA_CHANGED_BY', max_length=30,
+                                                    null=True)
+    po_group_criteria_changed_at = models.DateTimeField(db_column='PO_GROUP_CRITERIA_CHANGED_AT', max_length=50,
+                                                        null=True)
+    client = models.ForeignKey('eProc_Configuration.OrgClients', on_delete=models.PROTECT, null=False)
+    po_split_type = models.ForeignKey('eProc_Configuration.PoSplitType', on_delete=models.PROTECT, null=False)
+
+    class Meta:
+        db_table = "MAD_PO_GROUP_CRITERIA"
+        managed = True
+
+
 class ProductInfo(models.Model):
     product_info_guid = models.CharField(db_column='PRODUCT_INFO_GUID', primary_key=True, max_length=40, blank=False,
                                          null=False)

@@ -67,6 +67,7 @@ $('#save_id').click(function () {
     $('#id_save_confirm_popup').modal('show');
 });
 
+
 //Read popup table data
 function read_popup_data() {
     $('#id_popup_table').DataTable().destroy();

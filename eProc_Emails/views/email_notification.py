@@ -37,7 +37,8 @@ def email_notification_form(req):
     :param req: request data from UI
     :return: renders emailnotif.html
     """
-    client = getClients(req)
+    update_user_info(request)
+    client = global_variables.GLOBAL_CLIENT
     variant_list = []
     keyword_list = []
 
