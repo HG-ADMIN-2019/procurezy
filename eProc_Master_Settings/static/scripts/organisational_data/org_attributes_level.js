@@ -71,7 +71,7 @@ function add_popup_row() {
     $(".modal").on("hidden.bs.modal", function() {
         $("#id_error_msg").html(" ");
     });
-    basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select class="form-control">'+nodetype_dropdown+'</select></td><td><select class="form-control">'+attributelevel_id_dropdown+'</select></td><td hidden>pgroup_guid</td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+    basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select class="form-control" onchange="get_node_values(this)">' + nodetype_dropdown + '</select></td><td><select class="form-control">'+attributelevel_id_dropdown+'</select></td><td hidden>pgroup_guid</td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
     if (GLOBAL_ACTION == "org_attr_upload") {
         $(".class_del_checkbox").prop("hidden", false);
@@ -110,11 +110,34 @@ function get_node_values(selectElement) {
     var selectedNodeType = selectElement.value;
     var attributeDropdown = $(selectElement).closest('tr').find('.form-control').eq(1);
     var nodeValues = main_table_data[selectedNodeType];
-    attributeDropdown.empty();
+    var usedNodeValues = {}; // Object to store the used node values for the selected node type
+
+    // Loop through the node values in the main_table_data and store the used ones for the selected node type
     $.each(nodeValues, function(index, value) {
-        attributeDropdown.append('<option value="' + value + '">' + value + '</option>');
+        usedNodeValues[value] = true;
     });
+
+    attributeDropdown.empty();
+    var hideNodeType = true; // Flag to track if the node type option should be hidden
+
+    // Now, populate the dropdown with only the unused node values
+    $.each(rendered_attiddropdown_values, function(i, item) {
+        var nodeValue = item.attribute_id;
+        if (!usedNodeValues.hasOwnProperty(nodeValue)) {
+            attributeDropdown.append('<option value="' + nodeValue + '">' + nodeValue + '</option>');
+            hideNodeType = false; // Set the flag to false if at least one unused node value is found
+        }
+    });
+
+    // Hide the node type option if all its node values are used
+    if (hideNodeType) {
+        $(selectElement).find('option[value="' + selectedNodeType + '"]').hide();
+    } else {
+        $(selectElement).find('option[value="' + selectedNodeType + '"]').show();
+    }
 }
+
+
 
 // Function to get main table data
 function get_main_table_data(){
