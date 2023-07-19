@@ -1,26 +1,18 @@
-# from aioredis.commands import transaction
 from django.contrib.auth.decorators import login_required
-from django.core import serializers
-from django.db.models import Q
-from django.http import JsonResponse, HttpResponse
+from django.db.models.query_utils import Q
+from django.http.response import JsonResponse
 from django.shortcuts import render
-
 from eProc_Basic.Utilities.functions.messages_config import get_msg_desc, get_message_desc
-from eProc_Basic.Utilities.global_defination import global_variables
-from eProc_Basic.Utilities.messages.messages import MSG155, MSG113, MSG156, MSG157
 from eProc_Chat.Utitlities.doc_chat_specific import create_chat_participant
-from eProc_Org_Support.models import OrgAnnouncements, OrgSupport, DBQueriesOrgannsmt
+from eProc_Org_Model.models.org_model import OrgModel
+from eProc_Org_Support.models.org_support_models import OrgSupport, OrgAnnouncements
+from eProc_Registration.models.registration_model import UserData
 from eProc_Shopping_Cart.context_processors import update_user_info
 from eProc_Basic.Utilities.functions.get_db_query import django_query_instance, get_login_obj_id
 from eProc_Configuration.models.development_data import *
 from eProc_Basic.Utilities.functions.json_parser import JsonParser
 from eProc_Basic.Utilities.functions.guid_generator import random_int, guid_generator
-from eProc_Basic.Utilities.functions.encryption_util import encrypt
-from eProc_Org_Model.models import OrgModel
-from eProc_Registration.models import UserData
-from django.db.models import Q
 from eProc_Basic.Utilities.functions.django_q_query import django_q_query
-from eProc_Basic.Utilities.functions.django_query_set import DjangoQueries
 from eProc_Basic.Utilities.global_defination import global_variables
 
 

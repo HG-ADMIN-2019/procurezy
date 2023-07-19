@@ -31,7 +31,7 @@
             <hr>
 
             <!--Register type drop down-->
-            <div id="save_error_div" class="alert alert-danger display-none" role="alert"></div>
+            <div id="id_error_msg" class="alert alert-danger display-none" role="alert"></div>
 
             <!-- Display the success message upon successful registration-->
             <div>
@@ -192,51 +192,61 @@
         return is_valid, save_form_errors
     }
 
-    function save_announcement_data() {
-        var sub_val = $('#announcement_subject').val();
-        var desc_val = $('#announcement_desc').val();
-        var from_date_val = $('#from_date').val();
-        var to_date_val = $('#to_date').val();
-        is_save_form_valid = save_announcement_form_validation(sub_val, desc_val, from_date_val, to_date_val)
-        if (is_save_form_valid != '') {
-            $('#save_error_div').html(is_save_form_valid)
-            $('#save_error_div').show()
-            scroll_top();
-            return
-        }
+function save_announcement_data() {
+  var sub_val = $('#announcement_subject').val();
+  var desc_val = $('#announcement_desc').val();
+  var from_date_val = $('#from_date').val();
+  var to_date_val = $('#to_date').val();
 
-        var form_data = {};
-        form_data = {
-            announcement_id: document.getElementById('announcement_id').value,
-            announcement_subject: document.getElementById('announcement_subject').value,
-            announcement_description: document.getElementById('announcement_desc').value,
-            status: document.getElementById('status').value,
-            priority: document.getElementById('priority').value,
-            announcement_from_date: document.getElementById('from_date').value,
-            announcement_to_date: document.getElementById('to_date').value,
-            announcement_guid: document.getElementById('announcement_guid').value,
-        }
-        OpenLoaderPopup();
+  is_save_form_valid = save_announcement_form_validation(sub_val, desc_val, from_date_val, to_date_val)
+  if (is_save_form_valid != '') {
+    $('#id_error_msg').html(is_save_form_valid)
+    $('#id_error_msg').show()
+    scroll_top();
+    return
+  }
 
-        $.ajax({
-            type: 'POST',
-            url: "{% url 'eProc_Org_Support:org_announcement_save' %}",
-            data: JSON.stringify(form_data),
-            success: function (response) {
-                document.getElementById('org_announcement_update_success').innerHTML = response.message;
-                //console.log(response.updated_guid)
-                $('#save_error_div').hide();
-                $('#org_announcement_update_success').show();
-                $('html, body').animate({ scrollTop: 0 }, 'slow');
-                document.getElementById('announcement_guid').value = response.updated_guid;
-                document.getElementById('org_save_button').style.display = 'none';
-                document.getElementById('org_edit_button').style.display = 'block';
-                $(".hg_edit_display_mode").prop("disabled", true);
-                CloseLoaderPopup();
-            }
-        });
+  var from_date = new Date(from_date_val);
+  var to_date = new Date(to_date_val);
 
+  if (from_date > to_date) {
+    $('#id_error_msg').html("From date cannot be greater than to date.")
+    $('#id_error_msg').show()
+    scroll_top();
+    return;
+  }
+
+  var form_data = {
+    announcement_id: document.getElementById('announcement_id').value,
+    announcement_subject: document.getElementById('announcement_subject').value,
+    announcement_description: document.getElementById('announcement_desc').value,
+    status: document.getElementById('status').value,
+    priority: document.getElementById('priority').value,
+    announcement_from_date: document.getElementById('from_date').value,
+    announcement_to_date: document.getElementById('to_date').value,
+    announcement_guid: document.getElementById('announcement_guid').value,
+  };
+
+  OpenLoaderPopup();
+
+  $.ajax({
+    type: 'POST',
+    url: "{% url 'eProc_Org_Support:org_announcement_save' %}",
+    data: JSON.stringify(form_data),
+    success: function (response) {
+      document.getElementById('org_announcement_update_success').innerHTML = response.message;
+      $('#id_error_msg').hide();
+      $('#org_announcement_update_success').show();
+      $('html, body').animate({ scrollTop: 0 }, 'slow');
+      document.getElementById('announcement_guid').value = response.updated_guid;
+      document.getElementById('org_save_button').style.display = 'none';
+      document.getElementById('org_edit_button').style.display = 'block';
+      $(".hg_edit_display_mode").prop("disabled", true);
+      CloseLoaderPopup();
     }
+  });
+}
+
 
     function update_saved_announcement() {
 
@@ -259,7 +269,7 @@
             data: JSON.stringify(form_data),
             success: function (response) {
                 document.getElementById('org_announcement_update_success').innerHTML = response.message;
-                $('#save_error_div').hide();
+                $('#id_error_msg').hide();
                 $('#org_announcement_update_success').show();
                 $('html, body').animate({ scrollTop: 0 }, 'slow');
                 cancel_announcement_details();
