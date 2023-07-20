@@ -117,8 +117,8 @@
                             <td>{{results.announcement_description}}</td>
                             <td>{{results.status}}</td>
                             <td>{{results.priority}}</td>
-                            <td>{{results.announcement_from_date|date:'d-m-Y'}}</td>
-                            <td>{{results.announcement_to_date|date:'d-m-Y'}}</td>
+                            <td>{{results.announcement_from_date|date:'Y-m-d'}}</td>
+                            <td>{{results.announcement_to_date|date:'Y-m-d'}}</td>
                             <td>
                                 <i class="fas fa-trash-alt hg-icon-blue-primary" title="Delete Announcement"
                                     id="{{results.announcement_id}}" onclick="get_annsmt_detail_to_delete(this.id)"></i>
