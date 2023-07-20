@@ -137,8 +137,6 @@ function get_node_values(selectElement) {
     }
 }
 
-
-
 // Function to get main table data
 function get_main_table_data(){
     main_table_low_value = [];
