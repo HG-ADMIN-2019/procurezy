@@ -36,8 +36,8 @@ from eProc_Doc_Search_and_Display.Utilities.search_display_generic import get_hd
 from eProc_Emails.models import EmailUserMonitoring, EmailDocumentMonitoring, EmailSupplierMonitoring
 from eProc_Org_Model.Utilities import client
 from eProc_Org_Model.models.org_model import OrgModel
-from eProc_Org_Support.models import OrgAnnouncements
 # from eProc_Org_Support.views import org_announcement_search
+from eProc_Org_Support.models.org_support_models import OrgAnnouncements
 from eProc_Org_Support.views import org_announcement_search
 from eProc_Purchase_Order.Utilities.purchase_order_generic import CreatePurchaseOrder, retrigger_po, check_po
 from eProc_Registration.models import UserData
