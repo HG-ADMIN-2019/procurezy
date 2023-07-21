@@ -1428,81 +1428,71 @@
     }
 
 $("body").on("keypress keyup blur change", ".mandatory_fields", function (event) {
-    var fieldLabel = event.currentTarget.closest('.form-group').querySelector('label').innerHTML;
-    var display_id = event.currentTarget.nextElementSibling.id;
-
     if (event.currentTarget.value == "") {
+        $('#' + event.currentTarget.nextElementSibling.id).prop('hidden', true);
+        $('#' + event.currentTarget.nextElementSibling.id).css('display', 'block');
+        var display_id = event.currentTarget.nextElementSibling.id;
         $('#' + display_id).prop('hidden', false);
-        $('#' + display_id).css('display', 'block');
-        $('#' + display_id).html("Please enter a valid value");
-    } else if (event.currentTarget.value.length < 2) {
-        $('#' + display_id).prop('hidden', false);
-        $('#' + display_id).css('display', 'block');
-        $('#' + display_id).html("Please enter at least 2 characters for " + fieldLabel);
+        event.currentTarget.nextElementSibling.innerHTML = "Please enter a valid value";
+    } else if (event.currentTarget.id === 'id_add_addresses_address_number') {
+        if (event.currentTarget.value.length < 6) {
+            var remainingChars = 6 - event.currentTarget.value.length;
+            $('#' + event.currentTarget.nextElementSibling.id).prop('hidden', false);
+            $('#' + event.currentTarget.nextElementSibling.id).css('display', 'block');
+            var display_id = event.currentTarget.nextElementSibling.id;
+            $('#' + display_id).prop('hidden', false);
+            event.currentTarget.nextElementSibling.innerHTML = "Please enter " + remainingChars + " more digits for Address Number";
+        } else {
+            $('#' + event.currentTarget.nextElementSibling.id).prop('hidden', true);
+            $('#' + event.currentTarget.nextElementSibling.id).css('display', 'none');
+        }
     } else {
-        $('#' + display_id).prop('hidden', true);
-        $('#' + display_id).css('display', 'none');
+        if (event.currentTarget.value.length < 2) {
+            var remainingChars = 2 - event.currentTarget.value.length;
+            $('#' + event.currentTarget.nextElementSibling.id).prop('hidden', false);
+            $('#' + event.currentTarget.nextElementSibling.id).css('display', 'block');
+            var display_id = event.currentTarget.nextElementSibling.id;
+            $('#' + display_id).prop('hidden', false);
+            event.currentTarget.nextElementSibling.innerHTML = "Please enter " + remainingChars + " more characters";
+        } else {
+            $('#' + event.currentTarget.nextElementSibling.id).prop('hidden', true);
+            $('#' + event.currentTarget.nextElementSibling.id).css('display', 'none');
+        }
     }
 });
 
 $('#id_add_addresses_email').on('blur', function (event) {
     var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
-    var display_id = event.currentTarget.nextElementSibling.id;
-
     if (!(event.currentTarget.value).match(mailformat)) {
         var msg = "JMSG002";
         var msg_type;
         msg_type = message_config_details(msg);
         var display1 = msg_type.messages_id_desc;
         $(".error_message").prop("hidden", false);
+        var display_id = event.currentTarget.nextElementSibling.id;
         $('#' + display_id).prop('hidden', false);
         $('#' + display_id).css('display', 'block');
-        $('#' + display_id).html(display1 + " for Email Id");
+        event.currentTarget.nextElementSibling.innerHTML = display1 + " for Email Id";
         is_valid = false;
     } else {
-        $('#' + display_id).prop('hidden', true);
-        $('#' + display_id).css('display', 'none');
+        $('#' + event.currentTarget.nextElementSibling.id).prop('hidden', true);
+        $('#' + event.currentTarget.nextElementSibling.id).css('display', 'none');
     }
 });
 
 $('#id_add_addresses_mobile_number').on('blur', function (event) {
-    var display_id = event.currentTarget.nextElementSibling.id;
-
-    if (event.currentTarget.value.length != 10) {
-        var msg = "JMSG002";
-        var msg_type;
-        msg_type = message_config_details(msg);
-        var display1 = msg_type.messages_id_desc;
-        $(".error_message").prop("hidden", false);
+    var mobileNumber = event.currentTarget.value;
+    if (mobileNumber.length != 10 || !(/^\d+$/.test(mobileNumber))) {
+        var display_id = event.currentTarget.nextElementSibling.id;
         $('#' + display_id).prop('hidden', false);
         $('#' + display_id).css('display', 'block');
-        $('#' + display_id).html("Please check Mobile Number");
+        event.currentTarget.nextElementSibling.innerHTML = "Please enter a 10-digit Mobile Number";
         is_valid = false;
     } else {
-        $('#' + display_id).prop('hidden', true);
-        $('#' + display_id).css('display', 'none');
+        $('#' + event.currentTarget.nextElementSibling.id).prop('hidden', true);
+        $('#' + event.currentTarget.nextElementSibling.id).css('display', 'none');
     }
 });
-
-// Loop through all mandatory fields
-var mandatoryFields = document.getElementsByClassName('mandatory_fields');
-for (var i = 0; i < mandatoryFields.length; i++) {
-    (function (field) {
-        var fieldLabel = field.closest('.form-group').querySelector('label').innerHTML;
-        var display_id = field.nextElementSibling.id;
-
-        field.addEventListener('blur', function () {
-            if (field.value.length < 2) {
-                $('#' + display_id).prop('hidden', false);
-                $('#' + display_id).css('display', 'block');
-                $('#' + display_id).html("Please enter at least 2 characters for " + fieldLabel);
-            } else {
-                $('#' + display_id).prop('hidden', true);
-                $('#' + display_id).css('display', 'none');
-            }
-        });
-    })(mandatoryFields[i]);
-}
 
 
 </script>

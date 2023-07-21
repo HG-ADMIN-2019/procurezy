@@ -6,7 +6,7 @@ functionality.
 from eProc_Basic.Utilities.constants.constants import *
 from eProc_Basic.Utilities.functions.django_query_set import DjangoQueries
 from eProc_Basic.Utilities.global_defination import global_variables
-from eProc_Configuration.models import SystemSettingsConfig
+from eProc_Configuration.models.application_data import SystemSettingsConfig
 
 django_query_instance = DjangoQueries()
 
