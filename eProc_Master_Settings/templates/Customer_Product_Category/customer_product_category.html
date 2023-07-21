@@ -232,10 +232,11 @@
 
       // Loop through the dropdown dictionary and check if each prod_cat_id is unused
       if(rendered_UNSPC_data.length != 0){
-            prod_catid_desc = rendered_UNSPC_data[0].category_desc; }
-        else {
-            prod_catid_desc = "";
-        }
+            prod_catid_desc = rendered_UNSPC_data[0].category_desc;
+      }
+     else {
+        prod_catid_desc = "";
+     }
       $.each(rendered_UNSPC_data, function(j, item1) {
         if (usedProdCatIds.indexOf(item1.prod_cat_id) === -1) {
           prod_cat_id_dropdown += '<option value="' + item1.prod_cat_id + '">' + item1.prod_cat_id + '</option>';
@@ -711,6 +712,8 @@
 
     //onclick of add button display cusprodcat_Modal popup and set GLOBAL_ACTION button value
     function onclick_add_button(button) {
+        $('#id_popup_table').DataTable().destroy();
+        $("#id_popup_tbody").empty();
         OpenLoaderPopup();
         var data = {'table_name':'UnspscCategoriesCust'}
         $.ajax({
@@ -801,7 +804,13 @@
     function onclick_display_csv_data() {
         $("#valid_upload").modal('hide');
         $("#id_delete_duplicate").hide()
+        $("#id_check_success_messages").empty();
+        $("#id_check_error_messages").empty();
+        $("#id_check_success_messages").prop("hidden", true);
+        $("#id_check_error_messages").prop("hidden", true);
+        $("#id_check_special_character_messages").prop("hidden", true);
         $("#error_msg_id").css("display", "none")
+        $('#id_popup_table').DataTable().destroy();
         formdata = new FormData();
         attached_file = $('#id_file_data_upload').prop('files')[0]
         if(attached_file == undefined){
@@ -831,6 +840,7 @@
                         }
                         else{
                             var cusprodcat_data_array = response.valid_data_list;
+                            display_basic_db_data();
                             var edit_basic_data = '';
                             var del_ind = '';
                             var dropdown_values = [];
