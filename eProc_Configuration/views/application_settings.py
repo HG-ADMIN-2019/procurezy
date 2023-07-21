@@ -415,7 +415,10 @@ def create_update_delete_flags(request):
     app_data = JsonParser_obj.get_json_from_req(request)
     application_settings_save_instance = ApplicationSettingsSave()
     if app_data['table_name'] == 'NumberRanges':
-        display_data = application_settings_save_instance.generate_delete_flags(app_data)
+        display_data = application_settings_save_instance.generate_number_range_delete_flags(app_data)
+        return JsonResponse(display_data, safe=False)
+    if app_data['table_name'] == 'CalenderConfig':
+        display_data = application_settings_save_instance.generate_calender_delete_flags(app_data)
         return JsonResponse(display_data, safe=False)
 
 
