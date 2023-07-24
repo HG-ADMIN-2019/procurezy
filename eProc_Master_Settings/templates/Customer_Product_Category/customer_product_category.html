@@ -840,7 +840,6 @@
                         }
                         else{
                             var cusprodcat_data_array = response.valid_data_list;
-                            display_basic_db_data();
                             var edit_basic_data = '';
                             var del_ind = '';
                             var dropdown_values = [];
@@ -1009,7 +1008,7 @@
                     dataType: "json",
                     success: function(Response) {
                         rendered_cust_prod_cat_data = Response[0][0];
-                        rendered_UNSPC_data = Response.upload_ProdCat
+                        rendered_UNSPC_data = Response[0][2]
                         display_basic_db_data();
                         success_response(Response); // Function call to display response data
                         CloseLoaderPopup();

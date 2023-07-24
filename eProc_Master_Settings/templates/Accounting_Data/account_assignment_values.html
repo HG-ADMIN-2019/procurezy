@@ -167,6 +167,8 @@
 <script>
     var rendered_account_assignment_value = JSON.parse(document.getElementById('upload_account_assignment_value').textContent);
     var messages_list = {{messages_list|safe}};
+    var rendered_company_data = {{upload_company_data|safe}};
+    var rendered_aac_data = {{upload_data_acccat|safe}};
     var aav_data_array = {}
     var main_table_aav_value = [];
     var aav = '';
@@ -175,8 +177,6 @@
     var no_duplicate_entries = 'Y'
     var Tablename = uiConstants["CONST_TABLENAME_AAV"]
     var appname = uiConstants["CONST_APPNAME01"]
-    var rendered_aac_data
-    var rendered_company_data
     var db_header_data = uiConstants["CONST_HEADER_DATA_AAV"]
     var drop_down_acccat = "";
     var acc_ass_dropdwn = "";
@@ -235,6 +235,8 @@
                         dataType: "json",
                         success: function(Response) {
                             rendered_account_assignment_value = Response[0];
+                            rendered_aac_data = Response[1]
+                            rendered_company_data = Response[0]
                             display_basic_db_data();
                             $('#aav_Modal').modal('hide');
                             success_response(Response); // Function call to display response data
@@ -345,12 +347,12 @@
                                 }
                                 var company_type_value = value.company_id
                                 var account_type_value = value.account_assign_cat
-                                dropdown_select_array.push([account_type_value,company_type_value])
+                                dropdown_select_array.push([company_type_value,account_type_value])
                                 var company = '';
                                 var company_list = '';
                                 var company_id_list = '';
                                 $.each(rendered_company_data, function(i, item) {
-                                    if( value.company_type_value == item) {
+                                    if( value.company_type_value == item.company_id) {
                                         company = '<option value="' + item.company_id + '">' + item.company_id + '</option>';
                                     } else {
                                         company_list += '<option value="' + item.company_id + '">' + item.company_id + '</option>';
@@ -360,25 +362,25 @@
                                 var aac_data = '';
                                 var aac_data_list = '';
                                 var aac_data_id_list = '';
-                                $.each(rendered_aac_data, function(i, item) {
-                                    if( value.approval_type_value == item) {
-                                            aac_data += '<option value="' + item.account_assign_cat + '">' + item.account_assign_cat + '</option>';
+                                $.each(rendered_aac_data, function(K, item1) {
+                                    if( value.approval_type_value == item1.account_assign_cat) {
+                                            aac_data += '<option value="' + item1.account_assign_cat + '">' + item1.account_assign_cat + '</option>';
                                     }else {
-                                        aac_data_list += '<option value="' + item.account_assign_cat + '">' + item.account_assign_cat + '</option>';
+                                        aac_data_list += '<option value="' + item1.account_assign_cat + '">' + item1.account_assign_cat + '</option>';
                                     }
                                     aac_data_id_list = aac_data + aac_data_list
                                 });
-                                edit_basic_data += '<tr><td><input type="checkbox" required></td><td ><select class="form-control">value ="' + value.company_id + '"'+company_id_list+'</select></td><td><select class="form-control">value ="' + value.account_assign_cat + '"' + aac_data_id_list + ' </select></td><td><input class="form-control" type="text" value="' + value.account_assign_value + '" maxlength="40" name="Account Assignment Value" required></td><td><input class="input" type="text" value="' + value.valid_from + '" name="Valid From Date" required></td><td><input class="input" type="text" value="' + value.valid_to + '" name="Valid To Date" required></td><td hidden><input value="" type="hidden"></td><td>' + del_ind + '</td></tr>';
+                                edit_basic_data += '<tr><td><input type="checkbox" required></td><td ><select class="form-control">value ="' + value.company_id + '"'+company_id_list+'</select></td><td><select class="form-control">value ="' + value.account_assign_cat + '"' + aac_data_id_list + ' </select></td><td><input class="form-control" type="number" value="' + value.account_assign_value + '" maxlength="40" name="Account Assignment Value" required></td><td><input class="input" type="text" value="' + value.valid_from + '" name="Valid From Date" required></td><td><input class="input" type="text" value="' + value.valid_to + '" name="Valid To Date" required></td><td hidden><input value="" type="hidden"></td><td>' + del_ind + '</td><td hidden><input value="" type="hidden"></td></tr>';
                             });
                             $('#id_popup_tbody').append(edit_basic_data);
-                            var i =0;
+                            var j =0;
                             $("#id_popup_table TBODY TR").each(function() {
                                 var row = $(this);
-                                var aac_data_id_list = dropdown_select_array[i][0]
-                                var company_id_list = dropdown_select_array[i][1]
+                                var company_id_list = dropdown_select_array[j][0]
+                                var aac_data_id_list = dropdown_select_array[j][1]
                                 $(row.find("TD").eq(2).find("select option[value="+aac_data_id_list+"]")).attr('selected','selected');
                                 $(row.find("TD").eq(1).find("select option[value="+company_id_list+"]")).attr('selected','selected');
-                                i++;
+                                j++;
                             });
                             $("#id_del_ind_checkbox").prop("hidden", false);
                             $(".class_del_checkbox").prop("hidden", false);
@@ -412,6 +414,7 @@
 
     //check function restricting special char and display the data count of csv file
     function check_data() {
+        document.getElementById('delete_data').style.visibility='hidden';
         $("#id_delete_duplicate").hide()
         $('#id_popup_table').DataTable().destroy();
         $("#id_check_success_messages").empty()
@@ -431,12 +434,13 @@
         del_ind = ''
         var Duplicate_count = 0;
         $("#id_popup_table TBODY TR").each(function() {
+            $('#id_popup_table').DataTable().destroy();
             var row = $(this);
             accval_dic = {}
             //*************** reading data from the pop-up ***************
             accval_dic.company_id = row.find("TD").eq(1).find("select option:selected").val();
             accval_dic.account_assign_cat = row.find("TD").eq(2).find("select option:selected").val();
-            accval_dic.account_assign_value = row.find("TD").eq(3).find('input[type="text"]').val();
+            accval_dic.account_assign_value = row.find("TD").eq(3).find('input[type="number"]').val();
             accval_dic.valid_from = row.find("TD").eq(4).find('input[type="text"]').val()
             accval_dic.valid_to = row.find("TD").eq(5).find('input[type="text"]').val()
             checked_box = row.find("TD").eq(7).find('input[type="checkbox"]').is(':checked')
@@ -468,7 +472,7 @@
                 $("#id_error_msg_country_length").prop("hidden",false);
                 error_message = ui_messeges("JMSG002")// Get message details
                 var display8 = error_message;
-                document.getElementById("id_error_msg_aav_length").innerHTML = display8+ "Country Code";
+                document.getElementById("id_error_msg_aav_length").innerHTML = display8+ "Account assignment value";
                 $("#id_check_special_character_messages").prop("hidden",false);
                 count = count +1;
             }
@@ -479,7 +483,7 @@
                 $("#id_error_msg_aav_code").prop("hidden",false);
                 error_message = ui_messeges("JMSG003")// Get message details
                 var display4 = error_message;
-                document.getElementById("id_error_msg_aav_name").innerHTML = display4+ "Country Code";
+                document.getElementById("id_error_msg_aav_name").innerHTML = display4+ "Account assignment value";
                 $("#id_check_special_character_messages").prop("hidden",false);
                 count = count +1;
             } else {
@@ -527,7 +531,7 @@
             document.getElementById("id_del_add_button").style.display = "none";
             $("#save_id").prop("hidden", false);
             $("#id_check_data").prop("hidden", true);
-            if (prodcat_list == 0) {
+            if (aav_list == 0) {
                 $("#save_id").prop("hidden", true);
             }
             popup_data_dict = {'data_list': aav_list}
@@ -596,6 +600,8 @@
 
     //onclick of add button display Wfschema_Modal popup and set GLOBAL_ACTION button value
     function onclick_add_button(button) {
+        $('#id_popup_table').DataTable().destroy();
+        $("#id_popup_tbody").empty();
         $('#save_id').show();
         OpenLoaderPopup();
         var data = {'table_name':'AccountingData'}
@@ -618,6 +624,7 @@
                 $("#id_del_ind_checkbox").prop("hidden", true);
                 document.getElementById("id_del_add_button").style.display = "block";
                 $("#delete_data").prop("hidden", true);
+                $("#save_id").prop("hidden", false);
                 CloseLoaderPopup();
             }
         });

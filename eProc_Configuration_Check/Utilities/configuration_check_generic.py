@@ -317,8 +317,13 @@ def check_acc_assign_values_data(ui_data, status):
                 else:
                     invalid_count = invalid_count + 1
         else:
-            from_val = datetime.strptime(acc_value['valid_from'], "%d-%m-%Y")
-            to_val = datetime.strptime(acc_value['valid_to'], "%d-%m-%Y")
+            if acc_value['valid_from'] == "%Y-%m-%d":
+                from_val = datetime.strptime(acc_value['valid_from'], "%Y-%m-%d")
+                to_val = datetime.strptime(acc_value['valid_to'], "%Y-%m-%d")
+            else:
+                from_val = datetime.strptime(acc_value['valid_from'], "%d-%m-%Y")
+                to_val = datetime.strptime(acc_value['valid_to'], "%d-%m-%Y")
+
             if django_query_instance.django_existence_check(AccountingData,
                                                             {'del_ind': False,
                                                              'client': global_variables.GLOBAL_CLIENT,
