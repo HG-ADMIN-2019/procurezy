@@ -150,48 +150,47 @@
     //*****************************
     function orgatt_level_drpdown() {
         nodetype_dropdown = '';
-        var hiddenNodeTypes = []; // Array to store node types with empty arrays
+        var hiddenNodeTypes = []; // Array to store node types with all their node values used in the main table
 
+        // Function to check if all node values of a specific node type are used in the main table
+        function areAllNodeValuesUsed(nodeType) {
+            var nodeValues = main_table_data[nodeType];
+            if (!nodeValues) {
+                return false;
+            }
+            return nodeValues.length === rendered_attiddropdown_values.length;
+        }
+
+        // Iterate through the rendered_nodetypedropdown_values to build the node type dropdown
         $.each(rendered_nodetypedropdown_values, function(i, item) {
             var nodeType = item.node_type;
-            var nodeTypeArray = main_table_data[nodeType];
-            if (Array.isArray(nodeTypeArray) && nodeTypeArray.length === 0) {
-                hiddenNodeTypes.push(nodeType);
-            } else {
+            if (!areAllNodeValuesUsed(nodeType)) {
                 nodetype_dropdown += '<option value="' + nodeType + '">' + nodeType + '</option>';
+            } else {
+                hiddenNodeTypes.push(nodeType);
             }
         });
-
-        // Now, hide the node types with empty arrays from the dropdown
         $.each(hiddenNodeTypes, function(i, hiddenNodeType) {
             nodetype_dropdown = nodetype_dropdown.replace(new RegExp('<option value="' + hiddenNodeType + '">.*<\/option>'), '');
         });
 
-        // Rest of the function code (as provided in the original question)
-        var firstNodeType = null; // Variable to store the first node type
-
-        $.each(rendered_nodetypedropdown_values, function(i, item) {
-            if (i === 0) {
-                firstNodeType = item.node_type; // Store the first node type
-            }
-        });
-
+        // Extract the first node type value from nodetype_dropdown using regular JavaScript
+        var firstNodeTypeMatch = nodetype_dropdown.match(/value="([^"]+)"/);
+        if (firstNodeTypeMatch && firstNodeTypeMatch[1]) {
+            firstNodeType = firstNodeTypeMatch[1];
+        }
         if (firstNodeType !== null) {
             var unusedNodeValuesForFirstType = [];
             var usedNodeValues = {};
-
             $.each(main_table_data[firstNodeType], function(index, value) {
                 usedNodeValues[value] = true;
             });
-
             $.each(rendered_attiddropdown_values, function(i, item) {
                 var nodeValue = item.attribute_id;
                 if (!usedNodeValues.hasOwnProperty(nodeValue)) {
                     unusedNodeValuesForFirstType.push(nodeValue);
                 }
             });
-
-            // Store the unused node values for the first node type directly in the attributelevel_id_dropdown variable
             attributelevel_id_dropdown = '';
             $.each(unusedNodeValuesForFirstType, function(i, nodeValue) {
                 attributelevel_id_dropdown += '<option value="' + nodeValue + '">' + nodeValue + '</option>';
@@ -199,7 +198,7 @@
         }
     }
 
-    //onclick of cancel display the table in display mode............
+   //onclick of cancel display the table in display mode............
     function display_basic_db_data() {
         $('#display_basic_table').DataTable().destroy();
         $('#id_org_attr_tbody').empty();

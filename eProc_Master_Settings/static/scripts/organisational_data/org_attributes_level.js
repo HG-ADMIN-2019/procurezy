@@ -118,23 +118,14 @@ function get_node_values(selectElement) {
     });
 
     attributeDropdown.empty();
-    var hideNodeType = true; // Flag to track if the node type option should be hidden
 
     // Now, populate the dropdown with only the unused node values
     $.each(rendered_attiddropdown_values, function(i, item) {
         var nodeValue = item.attribute_id;
         if (!usedNodeValues.hasOwnProperty(nodeValue)) {
             attributeDropdown.append('<option value="' + nodeValue + '">' + nodeValue + '</option>');
-            hideNodeType = false; // Set the flag to false if at least one unused node value is found
         }
     });
-
-    // Hide the node type option if all its node values are used
-    if (hideNodeType) {
-        $(selectElement).find('option[value="' + selectedNodeType + '"]').hide();
-    } else {
-        $(selectElement).find('option[value="' + selectedNodeType + '"]').show();
-    }
 }
 
 // Function to get main table data
