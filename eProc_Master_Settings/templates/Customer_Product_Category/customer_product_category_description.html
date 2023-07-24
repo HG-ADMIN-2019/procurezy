@@ -401,9 +401,11 @@
                 $("#id_popup_tbody").empty();
                 $('#custproddescModal').modal('show');
                 new_row_data();   // Add a new row in popup
+                table_sort_filter('id_popup_table');
                 $("#id_del_ind_checkbox").prop("hidden", true);
                 document.getElementById('delete_data').style.visibility='hidden';
                 document.getElementById("id_del_add_button").style.display = "block";
+                $("#save_id").prop("hidden", false);
                 CloseLoaderPopup();
             }
         });
