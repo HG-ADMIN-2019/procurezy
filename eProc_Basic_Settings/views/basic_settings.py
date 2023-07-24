@@ -421,9 +421,9 @@ def convert_AccountingData_to_dictionary(arr):
 def convert_AccountingDataDesc_to_dictionary(arr):
     convertion_list = []
     for row in arr:
-        dictionary = {'company_id': row[0], 'account_assign_cat': row[1],
-                      'account_assign_value': row[2], 'description': row[3],
-                      'language_id': row[4], 'del_ind': row[5]}
+        dictionary = {'company_id': row[2], 'account_assign_cat': row[4],
+                      'account_assign_value': row[0], 'description': row[1],
+                      'language_id': row[5], 'del_ind': row[3]}
         convertion_list.append(dictionary)
     return convertion_list
 
