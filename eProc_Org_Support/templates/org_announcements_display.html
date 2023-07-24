@@ -46,16 +46,17 @@
                             </select>
                         </div>
                         <div class="col-auto my-1">
-                            <button class="button-search-users btn btn-primary" type="submit"
-                                title="Please click to get the search details!" onclick="" id="search_announcements_button"><i class="fas fa-search"></i>
-                                search
-                            </button>
+<button class="button-search-users btn btn-primary" type="submit" title="Please click to get the search details!"
+    onclick="saveDataToLocalStorage();">
+    <i class="fas fa-search"></i> search
+</button>
+
                         </div>
                     </div>
 
                     <div class="row">
                         <div class="col">
-                            <input type="reset" value="Clear filters" class="ip-form-clear-filters btn btn-link">
+<input type="reset" value="Clear filters" class="ip-form-clear-filters btn btn-link" onclick="clearFilters()">
                         </div>
                     </div>
                 </form>
@@ -90,7 +91,7 @@
                 <table id="sup_tab" class="table qwsqwsqws">
                     <thead class="thead-light">
                         <tr>
-                            <th> <input type="checkbox" onclick="checkAll(this)"></th>
+                            <th id="hg_select_checkbox" scope="col"> <div id="id_check_all"> <input type="checkbox" id="selectAll" onclick="checkAll(this)"></div></th>
                             <th hidden> GUID </th>
                             <th> Announcement Number </th>
                             <th> Title </th>
@@ -106,28 +107,24 @@
 
                         {% for results in announcement_result1 %}
 
-                    <tr id="tr_{{results.announcement_subject}}">
-                        <td><input type="checkbox" class="annsmt_checkbox" onclick="valueChanged();"></td>
-                        <td hidden>{{results.unique_announcement_id}}</td>
-                        <td>
-                            <a style="color: #049ca2;" href="{% url 'eProc_Admin_Tool:org_announcement_details' results.unique_announcement_id %}"
-                                id="{{results.unique_announcement_id}}" class="org-table-action-icon" target="_blank">
-                                {{results.announcement_id}}
-                            </a>
-                        </td>
-                        <td>{{results.announcement_subject}}</td>
-                        <td>{{results.announcement_description}}</td>
-                        <td>{{results.status}}</td>
-                        <td>{{results.priority}}</td>
-                        <td>{{results.announcement_from_date|date:'Y-m-d'}}</td>
-                        <td>{{results.announcement_to_date|date:'Y-m-d'}}</td>
-                        <td>
-                            <span title="Delete Announcement" onclick="get_annsmt_detail_to_delete('{{results.announcement_id}}')">
-                                <i class="fas fa-trash-alt hg-icon-blue-primary" title="Delete Announcement"></i>
-                            </span>
-                        </td>
-                    </tr>
-
+                        <tr id="tr_{{results.announcement_subject}}">
+                            <td><input type="checkbox" class="annsmt_checkbox" onclick="valueChanged();"></td>
+                            <td hidden>{{results.unique_announcement_id}}</td>
+                            <td><a style="color: #049ca2;"
+                                    href="{% url 'eProc_Admin_Tool:org_announcement_details' results.unique_announcement_id %}"
+                                    id="{{results.unique_announcement_id}}" class="org-table-action-icon"
+                                    target="_blank">{{results.announcement_id}}</a> </td>
+                            <td>{{results.announcement_subject}} </td>
+                            <td>{{results.announcement_description}}</td>
+                            <td>{{results.status}}</td>
+                            <td>{{results.priority}}</td>
+                            <td>{{results.announcement_from_date|date:'d-m-Y'}}</td>
+                            <td>{{results.announcement_to_date|date:'d-m-Y'}}</td>
+                            <td>
+                                <i class="fas fa-trash-alt hg-icon-blue-primary" title="Delete Announcement"
+                                    id="{{results.announcement_id}}" onclick="get_annsmt_detail_to_delete(this.id)"></i>
+                            </td>
+                        </tr>
                         {% endfor %}
                     </tbody>
                 </table>
@@ -195,69 +192,76 @@
         table_sort_filter_basic("qwsqwsqws")
     });
 
+        // Function to store form data in localStorage
+    function saveDataToLocalStorage() {
+        localStorage.setItem("announcement_subject", document.getElementById("announcement_subject").value);
+        localStorage.setItem("announcement_status", document.getElementById("announcement_status").value);
+        localStorage.setItem("priority", document.getElementById("priority").value);
+    }
+
+    // Function to set input fields from localStorage
+    function setFieldsFromLocalStorage() {
+        document.getElementById("announcement_subject").value = localStorage.getItem("announcement_subject");
+        document.getElementById("announcement_status").value = localStorage.getItem("announcement_status");
+        document.getElementById("priority").value = localStorage.getItem("priority");
+    }
+
+    // Call the function to set input fields from localStorage when the page loads.
+    window.onload = function() {
+        setFieldsFromLocalStorage();
+    };
+
+    function reload() {
+        setFieldsFromLocalStorage();
+        OpenLoaderPopup();
+    }
+
+    // Function to clear filters and clear localStorage data
+    function clearFilters() {
+        document.getElementById("announcementForm").reset();
+        localStorage.removeItem("announcement_subject");
+        localStorage.removeItem("announcement_status");
+        localStorage.removeItem("priority");
+        reload();
+    }
+
 
     $('#search_announcements_button').click(function () {
         OpenLoaderPopup();
     })
 
 
-function get_annsmt_detail_to_delete(element) {
-    data_delete = element;
-    document.getElementById("form_id_del").innerHTML = data_delete;
-    $('#confirm_delete_pop_up').modal('show');
-    $(".annsmt_checkbox").prop("checked", false);
-}
-
-//onclick of select all checkbox
-function checkAll(ele) {
-    if (ele.checked) {
-        $('.annsmt_checkbox').each(function() {
-            var disable_check = this.disabled
-            if(disable_check == false){
-                this.checked = true;
-                $("#id_delete_emp").show();
-            }
-        });
+    function get_annsmt_detail_to_delete(element) {
+        data_delete = element;
+        document.getElementById("form_id_del").innerHTML = data_delete;
+        $('#confirm_delete_pop_up').modal('show')
     }
-    else{
-        $('.annsmt_checkbox').each(function() {
-            var disable_check = this.disabled
-            if(disable_check == false){
-                this.checked = false;
-                $("#id_delete_emp").hide();
-            }
-        });
-    }
-}
-
 
     // Function to delete announcement
-function delete_announcement() {
-    var annsmt_info = [];
-    annsmt_info.push(data_delete);
-    $('#confirm_delete_pop_up').modal('hide');
-    var data = { 'data': annsmt_info }; // Wrap annsmt_info in an object with the key 'data'
-    OpenLoaderPopup();
-    $.ajax({
-        type: 'POST',
-        url: "{% url 'eProc_Admin_Tool:delete_org_announcement' %}",
-        data: JSON.stringify(data),
-        contentType: "application/json; charset=utf-8",
-        dataType: "json",
-        success: function (Response) {
-            display_annsmt_data(Response.announcement_result1);
-            $("#error_msg_div").prop("hidden", false);
-            if (Response.success_message) {
-                $('#success_msg_id').text(Response.success_message);
-                $("#id_delete_annsmt").hide();
+    function delete_announcement() {
+        var annsmt_info = [];
+        annsmt_info.push(data_delete);
+        $('#confirm_delete_pop_up').modal('hide');
+        data = annsmt_info;
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'eProc_Admin_Tool:delete_org_announcement' %}",
+            data: JSON.stringify(data),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (Response) {
+                display_annsmt_data(Response.announcement_result1);
+                $("#error_msg_div").prop("hidden", false);
+                if(Response.success_message){
+                    $('#success_msg_id').text(Response.success_message);
+                    document.getElementById("success_msg_id").text = Response.success_message;
+                    $("#id_delete_annsmt").hide();
+                }
+<!--                setTimeout(function () { $("#error_msg_div").prop("hidden", true); }, 5000)-->
+                message_display_time();
             }
-            // Commented out since message_display_time() is not shown in the provided code
-            // message_display_time();
-            CloseLoaderPopup();
-        }
-    });
-}
-
+        });
+    }
 
 
 function display_annsmt_data(annsmt_data) {
@@ -266,31 +270,33 @@ function display_annsmt_data(annsmt_data) {
     $("#sup_tab_body").empty();
 
     $.each(annsmt_data, function (i, annsmt) {
-        var checkbox_input = '<input type="checkbox" class="annsmt_checkbox" onclick="valueChanged()" >';
+        if (annsmt.announcement_id) {
+            checkbox_input = '<input type="checkbox" class="annsmt_checkbox" onclick="valueChanged()"  >';
+        } else {
+            checkbox_input = '<input type="checkbox" class="annsmt_checkbox" onclick="valueChanged()" >';
+        }
+
         const date1 = new Date(annsmt.announcement_from_date);
         const date2 = new Date(annsmt.announcement_to_date);
-        // get the date as a string
-        const from_date = date1.toLocaleDateString();
-        // console.log(date1.format('dd-m-yy'));
-        const to_date = date2.toLocaleDateString();
+        // get the date as a string in the format dd-mm-yyyy
+        const from_date = ("0" + date1.getDate()).slice(-2) + "-" + ("0" + (date1.getMonth() + 1)).slice(-2) + "-" + date1.getFullYear();
+        const to_date = ("0" + date2.getDate()).slice(-2) + "-" + ("0" + (date2.getMonth() + 1)).slice(-2) + "-" + date2.getFullYear();
 
-        org_annsmt_html += '<tr id="' + annsmt.announcement_id + '">';
-        org_annsmt_html += '<td>' + checkbox_input + '</td>';
-        org_annsmt_html += '<td hidden>' + annsmt.unique_announcement_id + '</td>';
-        org_annsmt_html += '<td><a href="#" id="' + annsmt.announcement_id + '" class="org-table-action-icon" target="_blank">' + annsmt.announcement_id + '</a></td>';
-        org_annsmt_html += '<td>' + annsmt.announcement_subject + '</td>';
-        org_annsmt_html += '<td>' + annsmt.announcement_description + '</td>';
-        org_annsmt_html += '<td>' + annsmt.status + '</td>';
-        org_annsmt_html += '<td>' + annsmt.priority + '</td>';
-        org_annsmt_html += '<td>' + from_date + '</td>';
-        org_annsmt_html += '<td>' + to_date + '</td>';
-        org_annsmt_html += '<td><i class="fas fa-trash-alt hg-icon-blue-primary" title="Delete Announcement" id="' + annsmt.announcement_id + '" onclick="get_annsmt_detail_to_delete(this.id)"></i></td>';
-        org_annsmt_html += '</tr>';
+        org_annsmt_html += '<tr id="' + annsmt.announcement_id + '"><td>' + checkbox_input + '</td> ' +
+            '<td hidden>' + annsmt.unique_announcement_id + '</td>' +
+            '<td><a href="#" id="' + annsmt.announcement_id + '" class="org-table-action-icon" target="_blank">' + annsmt.announcement_id + '</a></td>' +
+            '<td>' + annsmt.announcement_subject + '</td>' +
+            '<td>' + annsmt.announcement_description + '</td>' +
+            '<td>' + annsmt.status + '</td>' +
+            '<td>' + annsmt.priority + '</td>' +
+            '<td>' + from_date + '</td>' +
+            '<td>' + to_date + '</td>' +
+            '<td><i class="fas fa-trash-alt hg-icon-blue-primary" title="Delete Announcement" id="' + annsmt.announcement_id + '" onclick="get_annsmt_detail_to_delete(this.id)"></i></td></tr>';
     });
-
     $("#sup_tab_body").append(org_annsmt_html);
     table_sort_filter('sup_tab');
 }
+
 
 
 
@@ -335,6 +341,28 @@ function display_annsmt_data(annsmt_data) {
             $("#id_delete_annsmt").show();
         } else {
             $("#id_delete_annsmt").hide();
+        }
+    }
+
+        //onclick of select all checkbox
+    function checkAll(ele) {
+        if (ele.checked) {
+            $('.annsmt_checkbox').each(function() {
+                var disable_check = this.disabled
+                if(disable_check == false){
+                    this.checked = true;
+                    $("#id_delete_annsmt").show();
+                }
+            });
+        }
+        else{
+            $('.annsmt_checkbox').each(function() {
+                var disable_check = this.disabled
+                if(disable_check == false){
+                    this.checked = false;
+                    $("#id_delete_annsmt").hide();
+                }
+            });
         }
     }
 
