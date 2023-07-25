@@ -229,6 +229,26 @@ class ApplicationSettingsSave:
 
         return data, message
 
+    def generate_DocumentType_delete_flags(self, document_type_data):
+        delete_flags = []  # List to store delete_flag for each value
+
+        for document_type_detail in document_type_data['data']:
+            delete_flag = True
+
+            # Check if value is present in the transaction table
+            if django_query_instance.django_existence_check(TransactionTypes,
+                                                            {'document_type': document_type_detail['document_type'],
+                                                             'client': self.client,
+                                                             'del_ind': False}):
+                delete_flag = False
+            delete_flags.append(delete_flag)  # Store delete_flag value for each iteration
+
+            data = {
+                'delete_flags': delete_flags
+            }
+
+        return data
+
     def generate_number_range_delete_flags(self, number_range_data):
         delete_flags = []  # List to store delete_flag for each value
 
