@@ -1178,7 +1178,9 @@ def delete_org_announcement(request):
     }, None, None)
     t_count = len(announcement_result1)
 
-    response = {'announcement_result1': announcement_result1, 'success_message': success_message, 't_count': t_count}
+    announcement_ids = [annsmt['unique_announcement_id'] for annsmt in announcement_result1]
+
+    response = {'announcement_ids': announcement_ids, 'success_message': success_message, 't_count': t_count}
     return JsonResponse(response, safe=False)
 
 

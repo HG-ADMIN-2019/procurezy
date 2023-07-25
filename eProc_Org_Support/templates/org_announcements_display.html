@@ -78,7 +78,7 @@
         </div>
         {% endif %} -->
 
-    <div id="error_msg_div" class="alert alert-success" hidden><span id="success_msg_id"></span></div>
+    <div style="margin-top:25px" id="error_msg_div" class="alert alert-success" hidden><span id="success_msg_id"></span></div>
 
     {% if announcement_result1 %}
     <div class="card mt-5">
@@ -108,7 +108,7 @@
                         {% for results in announcement_result1 %}
 
                         <tr id="tr_{{results.announcement_subject}}">
-                            <td><input type="checkbox" class="annsmt_checkbox" onclick="valueChanged();"></td>
+                            <td class="class_select_checkbox"><input type="checkbox" class="annsmt_checkbox" onclick="valueChanged();"></td>
                             <td hidden>{{results.unique_announcement_id}}</td>
                             <td><a style="color: #049ca2;"
                                     href="{% url 'eProc_Admin_Tool:org_announcement_details' results.unique_announcement_id %}"
@@ -120,9 +120,11 @@
                             <td>{{results.priority}}</td>
                             <td>{{results.announcement_from_date|date:'d-m-Y'}}</td>
                             <td>{{results.announcement_to_date|date:'d-m-Y'}}</td>
-                            <td>
-                                <i class="fas fa-trash-alt hg-icon-blue-primary" title="Delete Announcement"
-                                    id="{{results.announcement_id}}" onclick="get_annsmt_detail_to_delete(this.id)"></i>
+                            <td class="item-action-icon-section">
+                                <span title="Delete Announcement" onclick="get_annsmt_detail_to_delete(this.id)" id="{{results.unique_announcement_id}}">
+                                <i class="material-icons item-action-icons"
+                                     >delete_outline</i>
+                                </span>
                             </td>
                         </tr>
                         {% endfor %}
@@ -251,14 +253,9 @@
             dataType: "json",
             success: function (Response) {
                 display_annsmt_data(Response.announcement_result1);
+                $('#success_msg_id').text(Response.success_message);
                 $("#error_msg_div").prop("hidden", false);
-                if(Response.success_message){
-                    $('#success_msg_id').text(Response.success_message);
-                    document.getElementById("success_msg_id").text = Response.success_message;
-                    $("#id_delete_annsmt").hide();
-                }
-<!--                setTimeout(function () { $("#error_msg_div").prop("hidden", true); }, 5000)-->
-                message_display_time();
+                CloseLoaderPopup();
             }
         });
     }
@@ -282,7 +279,7 @@ function display_annsmt_data(annsmt_data) {
         const from_date = ("0" + date1.getDate()).slice(-2) + "-" + ("0" + (date1.getMonth() + 1)).slice(-2) + "-" + date1.getFullYear();
         const to_date = ("0" + date2.getDate()).slice(-2) + "-" + ("0" + (date2.getMonth() + 1)).slice(-2) + "-" + date2.getFullYear();
 
-        org_annsmt_html += '<tr id="' + annsmt.announcement_id + '"><td>' + checkbox_input + '</td> ' +
+        org_annsmt_html += '<tr id="' + annsmt.announcement_id + '"><td class="class_select_checkbox">' + checkbox_input + '</td> ' +
             '<td hidden>' + annsmt.unique_announcement_id + '</td>' +
             '<td><a href="#" id="' + annsmt.announcement_id + '" class="org-table-action-icon" target="_blank">' + annsmt.announcement_id + '</a></td>' +
             '<td>' + annsmt.announcement_subject + '</td>' +
@@ -291,7 +288,8 @@ function display_annsmt_data(annsmt_data) {
             '<td>' + annsmt.priority + '</td>' +
             '<td>' + from_date + '</td>' +
             '<td>' + to_date + '</td>' +
-            '<td><i class="fas fa-trash-alt hg-icon-blue-primary" title="Delete Announcement" id="' + annsmt.announcement_id + '" onclick="get_annsmt_detail_to_delete(this.id)"></i></td></tr>';
+            '<td class="item-action-icon-section"><span title="Delete Announcement" onclick="get_annsmt_detail_to_delete(this.id)" id="' + annsmt.announcement_id + '">' +
+    '<i class="material-icons item-action-icons">delete_outline</i></span></td></tr>';
     });
     $("#sup_tab_body").append(org_annsmt_html);
     table_sort_filter('sup_tab');
@@ -299,6 +297,14 @@ function display_annsmt_data(annsmt_data) {
 
 
 
+
+// Function to display success message and hide it after 5 seconds (optional)
+function message_display_time() {
+    $("#error_msg_div").prop("hidden", false);
+    setTimeout(function () {
+        $("#error_msg_div").prop("hidden", true);
+    }, 5000); // Hide after 5 seconds (adjust as needed)
+}
 
     function main_table_delete() {
         main_table_annsmt_checked = [];
@@ -334,6 +340,7 @@ function display_annsmt_data(annsmt_data) {
             }
         });
     }
+
 
 
     function valueChanged() {
