@@ -4,6 +4,11 @@ var validate_add_attributes = [];
 var main_table_low_value = [];
 var calendar={};
 
+//hide the myModal popup: Implemented Dependency delete purpose
+function hideModal() {
+    $('#Calendar_Modal').modal('hide');
+}
+
 // on click update icon display the selected checkbox data to update
 function onclick_update_button() {
     GLOBAL_ACTION = "UPDATE"
@@ -150,10 +155,10 @@ function get_row_data(tableSelector) {
                     cntry_code = render_country_data[i].country_code;
             }
             calendar_arr_obj.calender_id = (row.find("TD").eq(1).find('input[type="text"]').val()) || row.find("TD").eq(1).html();
-            calendar_arr_obj.country = (row.find("TD").eq(2).find('select[type="text"]').val()) || cntry_code;
+            calendar_arr_obj.country = (row.find("TD").eq(2).find('input[type="text"]').val()) || row.find("TD").eq(2).html();
             calendar_arr_obj.description = (row.find("TD").eq(3).find('input[type="text"]').val()) || row.find("TD").eq(3).html();
-            calendar_arr_obj.year = (row.find("TD").eq(4).find('input[type="text"]').val()) || row.find("TD").eq(4).html();
-            calendar_arr_obj.working_days = (row.find("TD").eq(5).find('select[type="text"]').val()) || row.find("TD").eq(5).find('span#id_wdays').text();
+            calendar_arr_obj.year = (row.find("TD").eq(4).find('input[type="text"]').val()) || row.find("TD").eq(4).innerHTML;
+            calendar_arr_obj.working_days = (row.find("TD").eq(5).find('select[type="text"]').val()) || row.find("TD").eq(5).html();
             calendar_arr_obj.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
             calendar_arr_obj.calendar_config_guid = row.find("TD").eq(7).find('input[type="text"]').val() || row.find("TD").eq(6).html();
             main_table_calendar_checked.push(calendar_arr_obj);
