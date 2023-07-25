@@ -3,6 +3,11 @@ var validate_add_attributes = [];
 var main_table_low_value = [];
 var doctype ={};
 
+//hide the myModal popup: Implemented Dependency delete purpose
+function hideModal() {
+    $('#doc_Modal').modal('hide');
+}
+
 //onclick of cancel empty the popup table body and error messages
 $(".remove_upload_data").click(() => {
     $("#id_error_msg").html("");
@@ -81,14 +86,14 @@ function read_popup_data() {
 }
 
 // Function to get the selected row data
-function get_selected_row_data(){
-$("#display_basic_table TBODY TR").each(function () {
+function get_row_data(tableSelector){
+    $(tableSelector + " TBODY TR").each(function () {
         var row = $(this);
         var doctype_arr_obj = {};
         doctype_arr_obj.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
         if(doctype_arr_obj.del_ind){
-            doctype_arr_obj.document_type = row.find("TD").eq(1).html();
-            doctype_arr_obj.document_type_desc = row.find("TD").eq(2).html();
+            doctype_arr_obj.document_type = row.find("TD").eq(1).find('input[type="text"]').val() || row.find("TD").eq(1).html();
+            doctype_arr_obj.document_type_desc = row.find("TD").eq(2).find('input[type="text"]').val() || row.find("TD").eq(2).html();
             main_table_doctype_checked.push(doctype_arr_obj);
         }
     });

@@ -807,7 +807,7 @@ function check_data() {
         unspsc_desc_dic = {}
         //*************** reading data from the pop-up ***************
         unspsc_desc_dic.prod_cat_id = row.find("TD").eq(1).find('select[type="text"]').val()
-        unspsc_desc_dic.language_id = row.find("TD").eq(2).find('select[type="text"]').val()
+        unspsc_desc_dic.language_id = row.find("TD").eq(2).find('select').val();
         unspsc_desc_dic.description = row.find("TD").eq(3).find('input[type="text"]').val()
         checked_box = row.find("TD").eq(5).find('input[type="checkbox"]').is(':checked')
         if (checked_box){
