@@ -244,6 +244,7 @@
                     unique_input = '<input class="form-control" type="text" value="' + row.cells[1].innerHTML + '" name="calender_id"  maxlength="10" style="text-transform:uppercase" disabled>'
                     cntry_name = row.cells[2].innerHTML;
                     Desc_inpt = '<input value="' + row.cells[3].innerHTML + '"  class="form-control check_special_char" type="text" name="description">'
+
                     edit_basic_data += 
                     '<tr>'+
                         '<td hidden><input type="checkbox" required></td>'+

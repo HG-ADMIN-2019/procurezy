@@ -122,6 +122,68 @@
             </div>
         </div>
     </div>
+     <!--modal popup for PO grouping-->
+    <div class="modal fade" id="poGroupModal">
+        <div class="modal-dialog modal-dialog-centered modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title"> Generate PO</h5>
+                    <button type="button" class="close remove_upload_data" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <!-- Modal body -->
+                <div class="modal-body">
+                    <div class="popup-vertical-scroll">
+                        <div id="id_del_add_button" class="mb-4">
+<!--                            <button class="btn btn-primary" title="Add New Row" type="button" onclick="add_popup_row()"><i class="fa fa-plus"></i> add new row</button>-->
+<!--                            <button class="btn btn-outline-danger" title="Delete" onclick="delete_popup_row('id_popup_table')"><i class="fa fa-trash"></i> delete</button>-->
+                        </div>
+                        <div id="id_check_success_messages" class="alert alert-success check_success_message" hidden></div>
+                        <div id="id_check_error_messages" class="alert alert-danger check_error_messages" hidden></div>
+                        <div id="id_check_special_character_messages"
+                            class="alert alert-danger check_special_character_messages" hidden>
+                            <p id="id_error_msg_sequence"></p>
+                            <p id="id_error_msg_starting"></p>
+                            <p id="id_error_msg_ending"></p>
+                            <p id="id_error_msg_current"></p>
+                            <p id="id_error_msg_range"></p>
+                        </div>
+                        <div id="error_msg_id" class="alert alert-danger display-none" role="alert"><span id="error_message"></span></div>
+                        <div id="id_warning_msg_id" class="alert alert-warning display-none" role="alert"></div>
+                        <div id="id_info_msg_id" class="alert alert-primary display-none" role="alert"></div>
+                        <table class="class_popup_table table table-bordered mt-2" id="id_popup_table">
+                            <thead>
+                                <tr>
+                                    <th>SC Number</th>
+                                    <th>Description</th>
+                                    <th>Supplier Id</th>
+                                    <th>Company Code</th>
+                                    <th>Delivery Date</th>
+                                    <th>Unit</th>
+                                    <th>Quantity</th>
+                                    <th>Product Category</th>
+                                    <th id="id_del_ind_checkbox" hidden>Del Indicator</th>
+                                </tr>
+                            </thead>
+                            <tbody id=id_popup_tbody>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-primary remove_upload_data" title="Cancel" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
+                    <button class="btn btn-primary" title="Save" id="save_id"><i class="fas fa-save"></i> Create PO</button>
+<!--                    <button class="btn btn-primary btn-sm" title="Delete" id="delete_data" value="DELETE" data-toggle="modal" data-target="#id_delete_confirm_popup" onclick="hideModal()">-->
+<!--                        <i class="fa fa-trash"></i> Delete-->
+<!--                    </button>-->
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--end of modal popup for Add,copy,update and upload-->
+</div>
 <script>
 
 $(document).ready( function() {
@@ -144,32 +206,6 @@ function reload(){
       OpenLoaderPopup();
   }
 
-<!--document.getElementById("folder").addEventListener("change", function(event) {-->
-<!--  var output = document.querySelector("ul");-->
-<!--    formdata = new FormData();-->
-<!--  var attached_file = event.target.files;-->
-<!--    for (var i=0; i<attached_file.length; i++) {-->
-<!--    var item = document.createElement("li");-->
-<!--    item.innerHTML = attached_file[i].webkitRelativePath;-->
-<!--      formdata.append(i, $('input[type=file]')[0].files[i]);-->
-<!--    output.appendChild(item);-->
-<!--  };-->
-<!--  $.ajax({-->
-<!--    url: "{% url 'eProc_Supplier_Order_Management:upload_som' %}",-->
-<!--    type: 'POST',-->
-<!--    data: formdata,-->
-<!--    contentType: false,-->
-<!--    processData: false,-->
-<!--    success: function(response) {-->
-<!--      console.log(response);-->
-<!--      location.reload();-->
-<!--    },-->
-<!--    error: function(xhr, status, error) {-->
-<!--      console.log(xhr.responseText);-->
-<!--    }-->
-<!--});-->
-
-<!--}, false);-->
 
 function po_generate(){
     $("#id_generate_po").prop("hidden", false);
@@ -178,23 +214,59 @@ function po_generate(){
 // Function to delete User
 function create_po() {
         var user_info = [];
+        var add_attr_unique_list = [];
         var selected_row_data = new Array
-        $('#confirm_po_pop_up').modal('hide');
+        var main_table_data = new Array
+        var edit_basic_data = "";
+        $('#id_popup_table').DataTable().destroy();
+        $("#id_popup_tbody").empty();
+<!--        $('#confirm_po_pop_up').modal('hide');-->
         $("#sc_header_item TBODY TR").each(function () {
-        var row = $(this);
-        po_data={};
-        var check_status = row.find("TD").eq(8).find('input[type="checkbox"]').is(':checked');
-        if(check_status){
-        po_data.doc_number = row.find("TD").eq(0).html();
-        selected_row_data.push(po_data);
+            var row = $(this);
+            po_data={};
+            var check_status = row.find("TD").eq(8).find('input[type="checkbox"]').is(':checked');
+            if(check_status){
+            po_data.doc_number = row.find("TD").eq(0).html();
+            po_data.supplier_d = row.find("TD").eq(2).html();
+            selected_row_data.push(po_data);
+            }
+        });
+        $.each(selected_row_data, function (i, item) {
+            if ($.inArray(item, add_attr_unique_list) == -1) {
+                add_attr_unique_list.push(item);
+            }
+        });
+        if (add_attr_unique_list.length == 0) {
+            alert("cannot generate PO");
         }
-
-    });
+        else{
+            var grid = document.getElementById("sc_header_item");
+            var checkBoxes = grid.getElementsByTagName("INPUT");
+            for (var i = 0; i < checkBoxes.length; i++) {
+                if (checkBoxes[i].checked) {
+                    var row = checkBoxes[i].parentNode.parentNode;
+                    edit_basic_data +=
+                                '<tr>'+
+                                '<td><input type="number" class="form-control" value="' + row.cells[0].innerHTML + '" name="sc_number" disabled></td>' +
+                                '<td><input class="form-control" value="' + row.cells[1].innerHTML + '" type="text"  name="description"  disabled></td>' +
+                                '<td><input value="' + row.cells[2].innerHTML + '" type="text" class="form-control"  name="supplier_id"   disabled></td>' +
+                                '<td><input value="' + row.cells[3].innerHTML + '" type="text" class="form-control"  name="company_code"  disabled></td>' +
+                                '<td><input  type="text" class="form-control" value="' + row.cells[4].innerHTML + '" name="delivery_date" disabled></td>' +
+                                '<td><input value="' + row.cells[5].innerHTML + '" type="text" class="form-control"  name="unit"  disabled></td>' +
+                                '<td><input value="' + row.cells[6].innerHTML + '" type="text" class="form-control"  name="quantity" disabled></td>' +
+                                '<td><input value="' + row.cells[7].innerHTML + '" type="text" class="form-control"  name="prod_cat"  disabled></td>' +
+                                '<td class="class_del_checkbox"><input type="checkbox" required></td>' +
+                                '</tr>';
+                        }
+                }
+            $('#id_popup_table').append(edit_basic_data);
+            table_sort_filter('id_popup_table');
+            $('#poGroupModal').modal('show');
         data =  selected_row_data
         OpenLoaderPopup();
     $.ajax({
         type: 'POST',
-        url: "{% url 'eProc_Purchaser_Cockpit:generate_po' %}",
+        url: "{% url 'eProc_Purchaser_Cockpit:PO_grouping' %}",
         data:JSON.stringify(data),
         contentType: "application/json; charset=utf-8",
         dataType: "json",
@@ -206,6 +278,7 @@ function create_po() {
             CloseLoaderPopup();
         }
     });
+    }
 }
 </script>
 {% endblock %}

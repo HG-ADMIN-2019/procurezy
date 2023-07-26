@@ -142,3 +142,13 @@ def generate_po(request):
                 response = "PO generated"
 
     return JsonResponse(response, safe=False)
+
+
+def PO_grouping(request):
+    update_user_info(request)
+    client = global_variables.GLOBAL_CLIENT
+    response = ''
+    sc_header_list = []
+    po_data = JsonParser_obj.get_json_from_req(request)
+
+    return JsonResponse(response, safe=False)

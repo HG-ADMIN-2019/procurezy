@@ -355,6 +355,26 @@ class PoSplitType(models.Model):
         managed = True
 
 
+class PoSplitGroupType_Temp(models.Model):
+    po_split_group_type = models.PositiveIntegerField(db_column='PO_SPLIT_GROUP_TYPE', primary_key=True)
+    # 01 - Supplier,02 - Currency,03 - Ship to address,04 - Purchasing Group, 05 - CallOff, 06 - Limit Order,
+    # 07 - Purchase Requision,08- Incoterm,09 - Payment Terms,10 - product type
+    po_split_group_type_desc = models.CharField(db_column='PO_SPLIT_GROUP_TYPE_DESC', max_length=30, null=False)
+    po_split_group_type_created_by = models.CharField(db_column='PO_SPLIT_GROUP_TYPE_CREATED_BY', max_length=30,
+                                                      null=True)
+    po_split_group_type_created_at = models.DateTimeField(db_column='PO_SPLIT_GROUP_TYPE_CREATED_AT', max_length=50,
+                                                          null=True)
+    po_split_group_type_changed_by = models.CharField(db_column='PO_SPLIT_GROUP_TYPE_CHANGED_BY', max_length=30,
+                                                      null=True)
+    po_split_group_type_changed_at = models.DateTimeField(db_column='PO_SPLIT_GROUP_TYPE_CHANGED_AT', max_length=50,
+                                                          null=True)
+    del_ind = models.BooleanField(default=False, null=False)
+
+    class Meta:
+        db_table = "MAD_SPLIT_GROUP_TYPE_TEMP"
+        managed = True
+
+
 class PoSplitCriteria(models.Model):
     po_split_criteria_guid = models.CharField(db_column='PO_SPLIT_CRITERIA_GUID', max_length=32, primary_key=True)
     company_code_id = models.CharField(db_column='COMPANY_CODE_ID', max_length=20, null=False)
@@ -394,6 +414,27 @@ class PoGroupCriteria(models.Model):
 
     class Meta:
         db_table = "MAD_PO_GROUP_CRITERIA"
+        managed = True
+
+
+class PoGroupCriteria_Temp(models.Model):
+    po_group_criteria_guid = models.CharField(db_column='PO_GROUP_CRITERIA_GUID', max_length=32, primary_key=True)
+    company_code_id = models.CharField(db_column='COMPANY_CODE_ID', max_length=20, null=False)
+    activate = models.BooleanField(db_column='ACTIVATE', default=False, null=False)
+    del_ind = models.BooleanField(default=False, null=False)
+    po_group_criteria_created_by = models.CharField(db_column='PO_GROUP_CRITERIA_CREATED_BY', max_length=30,
+                                                    null=True)
+    po_group_criteria_created_at = models.DateTimeField(db_column='PO_GROUP_CRITERIA_CREATED_AT', max_length=50,
+                                                        null=True)
+    po_group_criteria_changed_by = models.CharField(db_column='PO_GROUP_CRITERIA_CHANGED_BY', max_length=30,
+                                                    null=True)
+    po_group_criteria_changed_at = models.DateTimeField(db_column='PO_GROUP_CRITERIA_CHANGED_AT', max_length=50,
+                                                        null=True)
+    client = models.ForeignKey('eProc_Configuration.OrgClients', on_delete=models.PROTECT, null=False)
+    po_split_group_type = models.ForeignKey('eProc_Configuration.PoSplitGroupType_Temp', on_delete=models.PROTECT, null=False)
+
+    class Meta:
+        db_table = "MAD_PO_GROUP_CRITERIA_TEMP"
         managed = True
 
 
