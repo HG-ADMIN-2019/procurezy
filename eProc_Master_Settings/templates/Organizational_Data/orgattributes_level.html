@@ -148,18 +148,57 @@
     var nodetype_dropdown;
 
     //*****************************
-    function orgatt_level_drpdown(){
+    function orgatt_level_drpdown() {
         nodetype_dropdown = '';
-        $.each(rendered_nodetypedropdown_values, function(i, item){
-            nodetype_dropdown += '<option value="' + item.node_type + '">' + item.node_type + '</option>';
-        })
-        attributelevel_id_dropdown = '';
-        $.each(rendered_attiddropdown_values, function(i, item){
-            attributelevel_id_dropdown  += '<option value="' + item.attribute_id + '">' + item.attribute_id + '</option>';
-        })
+        var hiddenNodeTypes = []; // Array to store node types with all their node values used in the main table
+
+        // Function to check if all node values of a specific node type are used in the main table
+        function areAllNodeValuesUsed(nodeType) {
+            var nodeValues = main_table_data[nodeType];
+            if (!nodeValues) {
+                return false;
+            }
+            return nodeValues.length === rendered_attiddropdown_values.length;
+        }
+
+        // Iterate through the rendered_nodetypedropdown_values to build the node type dropdown
+        $.each(rendered_nodetypedropdown_values, function(i, item) {
+            var nodeType = item.node_type;
+            if (!areAllNodeValuesUsed(nodeType)) {
+                nodetype_dropdown += '<option value="' + nodeType + '">' + nodeType + '</option>';
+            } else {
+                hiddenNodeTypes.push(nodeType);
+            }
+        });
+        $.each(hiddenNodeTypes, function(i, hiddenNodeType) {
+            nodetype_dropdown = nodetype_dropdown.replace(new RegExp('<option value="' + hiddenNodeType + '">.*<\/option>'), '');
+        });
+
+        // Extract the first node type value from nodetype_dropdown using regular JavaScript
+        var firstNodeTypeMatch = nodetype_dropdown.match(/value="([^"]+)"/);
+        if (firstNodeTypeMatch && firstNodeTypeMatch[1]) {
+            firstNodeType = firstNodeTypeMatch[1];
+        }
+        if (firstNodeType !== null) {
+            var unusedNodeValuesForFirstType = [];
+            var usedNodeValues = {};
+            $.each(main_table_data[firstNodeType], function(index, value) {
+                usedNodeValues[value] = true;
+            });
+            $.each(rendered_attiddropdown_values, function(i, item) {
+                var nodeValue = item.attribute_id;
+                if (!usedNodeValues.hasOwnProperty(nodeValue)) {
+                    unusedNodeValuesForFirstType.push(nodeValue);
+                }
+            });
+            attributelevel_id_dropdown = '';
+            $.each(unusedNodeValuesForFirstType, function(i, nodeValue) {
+                attributelevel_id_dropdown += '<option value="' + nodeValue + '">' + nodeValue + '</option>';
+            });
+        }
     }
 
-    //onclick of cancel display the table in display mode............
+   //onclick of cancel display the table in display mode............
     function display_basic_db_data() {
         $('#display_basic_table').DataTable().destroy();
         $('#id_org_attr_tbody').empty();
@@ -303,8 +342,8 @@
             success: function(response) {
                 rendered_attiddropdown_values = response.upload_attributesid_dropdown
                 rendered_nodetypedropdown_values = response.upload_orgnodetypes_dropdown
-                orgatt_level_drpdown()
                 get_node_values_data()
+                orgatt_level_drpdown()
                 $("#error_msg_id").css("display", "none")
                 $( "#header_select").prop( "hidden", false );
                 GLOBAL_ACTION = button.value

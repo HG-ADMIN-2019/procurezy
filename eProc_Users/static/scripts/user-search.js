@@ -47,3 +47,21 @@ function onclick_upload_button() {
     $('#id_data_upload').modal('show');
     document.getElementById('id_file_data_upload').value = "";
 }
+
+// onclick of valid popup
+function valid_popup(){
+  $('#id_data_upload').modal('hide');
+  $("#valid_upload").modal('show');
+}
+
+function display_file_select_error(){
+    $("#id_error_msg_upload").prop("hidden",false);
+    var msg = "JMSG110";
+    var msg_type ;
+    msg_type = message_config_details(msg);
+    get_message_details(msg); // Get message details
+    var display = msg_type.messages_id_desc;
+    document.getElementById("id_error_msg_upload").innerHTML = display;
+    document.getElementById("id_error_msg_upload").style.color = "Red";
+    $('#id_data_upload').modal('show');
+}

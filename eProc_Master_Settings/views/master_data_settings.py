@@ -110,8 +110,16 @@ def account_ass_values(request):
     update_user_info(request)
 
     messages_list = get_ui_messages(CONST_COFIG_UI_MESSAGE_LIST)
+
+    upload_data_company = list(
+        OrgCompanies.objects.filter(del_ind=False).values('company_id'))
+
+    upload_data_acccat = list(
+        AccountAssignmentCategory.objects.filter(del_ind=False).values('account_assign_cat'))
     # get table data
     data = {'upload_account_assignment_value': get_account_assignment_value(),
+            'upload_company_data': upload_data_company,
+            'upload_data_acccat': upload_data_acccat,
             'messages_list': messages_list,
             'inc_nav': True}
 
@@ -1034,7 +1042,7 @@ def extract_address_data(request):
 def upload_cust_prod_cat(request):
     update_user_info(request)
     client = global_variables.GLOBAL_CLIENT
-    upload_cust_prod_catogories, product_cat_list = get_unspsc_cat_cust_data()
+    upload_cust_prod_catogories, product_cat_list,data = get_unspsc_cat_cust_data()
     dependent_dropdown = get_unspsc_drop_down()
     messages_list = get_ui_messages(CONST_COFIG_UI_MESSAGE_LIST)
     data = {'content_managment_settings': 'content_managment_settings',
@@ -1050,7 +1058,7 @@ def upload_cust_prod_cat(request):
 
 def upload_cust_prod_cat_desc(request):
     update_user_info(request)
-    upload_cust_prod_desc_catogories, product_cat_list = get_unspsc_cat_custdesc_data()
+    upload_cust_prod_desc_catogories, product_cat_list,data = get_unspsc_cat_custdesc_data()
     upload_language = list(Languages.objects.filter(del_ind=False).values('language_id', 'description'))
 
     upload_ProdCat = list(UnspscCategories.objects.filter(del_ind=False).values('prod_cat_id', 'prod_cat_desc'))

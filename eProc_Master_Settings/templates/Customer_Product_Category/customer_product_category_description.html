@@ -364,7 +364,7 @@
                     dataType: "json",
                     success: function(Response) {
                         rendered_cust_prod_cat_desc_data = Response[0];
-                        rendered_UNSPC_data = Response.upload_ProdCat
+                        rendered_UNSPC_data = Response[0]
                         display_basic_db_data();
                         $('#custproddescModal').modal('hide');
                         success_response(Response);  // Display Response data
@@ -381,6 +381,8 @@
 
     //onclick of add button display myModal popup and set GLOBAL_ACTION button value
     function onclick_add_button(button) {
+        $('#id_popup_table').DataTable().destroy();
+        $("#id_popup_tbody").empty();
         OpenLoaderPopup();
         var data = {'table_name':'UnspscCategoriesCustDesc'}
         $.ajax({
@@ -399,9 +401,11 @@
                 $("#id_popup_tbody").empty();
                 $('#custproddescModal').modal('show');
                 new_row_data();   // Add a new row in popup
+                table_sort_filter('id_popup_table');
                 $("#id_del_ind_checkbox").prop("hidden", true);
                 document.getElementById('delete_data').style.visibility='hidden';
                 document.getElementById("id_del_add_button").style.display = "block";
+                $("#save_id").prop("hidden", false);
                 CloseLoaderPopup();
             }
         });
@@ -560,7 +564,7 @@
 
     // onclick add icon display the row in to add the new entries
     function add_popup_row() {
-          OpenLoaderPopup();
+        OpenLoaderPopup();
         var data = {'table_name':'UnspscCategoriesCustDesc'}
         $.ajax({
             type: 'POST',
@@ -803,7 +807,7 @@ function check_data() {
         unspsc_desc_dic = {}
         //*************** reading data from the pop-up ***************
         unspsc_desc_dic.prod_cat_id = row.find("TD").eq(1).find('select[type="text"]').val()
-        unspsc_desc_dic.language_id = row.find("TD").eq(2).find('select[type="text"]').val()
+        unspsc_desc_dic.language_id = row.find("TD").eq(2).find('select').val();
         unspsc_desc_dic.description = row.find("TD").eq(3).find('input[type="text"]').val()
         checked_box = row.find("TD").eq(5).find('input[type="checkbox"]').is(':checked')
         if (checked_box){
