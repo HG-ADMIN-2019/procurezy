@@ -595,7 +595,7 @@ def m_docsearch_meth(request):
                               inp_to_date,
                               inp_supl,
                               inp_created_by,
-                              inp_requester, report_search)
+                              inp_requester, client, report_search)
 
         company_details = OrgCompanies.objects.filter(client=client, del_ind=False, company_guid=1000)
         for comp in company_details:
@@ -631,7 +631,7 @@ def m_docsearch_meth(request):
                                   inp_to_date,
                                   inp_supl,
                                   inp_created_by,
-                                  inp_requester, report_search)
+                                  inp_requester, client, report_search)
             company_details = OrgCompanies.objects.filter(client=client, del_ind=False, company_guid=inp_comp_code)
             for comp in company_details:
                 result = result.filter(co_code=comp.company_id)

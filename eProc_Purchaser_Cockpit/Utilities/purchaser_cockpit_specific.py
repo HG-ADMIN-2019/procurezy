@@ -110,12 +110,12 @@ def item_search(**kwargs):
                     else:
                         args_list['comp_code'] = value
 
-                sc_details_query = list(sc_item_inst.get_item_data_by_fields(client,
-                                                                             sc_obj,
-                                                                             prod_cat_query,
-                                                                             company_query,
-                                                                             **args_list
-                                                                             ))
+                sc_details_query = list(sc_item_inst.get_item_data_by_fields_source(client,
+                                                                                    sc_obj,
+                                                                                    prod_cat_query,
+                                                                                    company_query,
+                                                                                    **args_list
+                                                                                    ))
                 for sc_item in sc_details_query:
                     guid = sc_item['header_guid_id']
                     scheader_details = django_query_instance.django_filter_only_query(ScHeader,
@@ -133,4 +133,3 @@ def item_search(**kwargs):
                         sc_header_item_details.append(sc_header_item_detail)
 
     return sc_header_item_details
-
