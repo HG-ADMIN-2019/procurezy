@@ -146,7 +146,7 @@ function get_row_data(tableSelector) {
         var row = $(this);
         var calendar_arr_obj = {};
         calendar_arr_obj.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
-        if(calendar_arr_obj.del_ind){
+        if (calendar_arr_obj.del_ind) {
             var cntry_name;
             var cntry_code;
             cntry_name = row.find("TD").eq(2).html();
@@ -158,13 +158,17 @@ function get_row_data(tableSelector) {
             calendar_arr_obj.country = (row.find("TD").eq(2).find('input[type="text"]').val()) || row.find("TD").eq(2).html();
             calendar_arr_obj.description = (row.find("TD").eq(3).find('input[type="text"]').val()) || row.find("TD").eq(3).html();
             calendar_arr_obj.year = (row.find("TD").eq(4).find('input[type="text"]').val()) || row.find("TD").eq(4).html();
-            calendar_arr_obj.working_days = row.find("td").eq(5).find('select[id="working_days"]').val() || row.find("td").eq(5).html();
-            calendar_arr_obj.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
+            calendar_arr_obj.working_days = [];
+            // Get selected working days for the row
+            row.find('select.working_days option:selected').each(function () {
+                calendar_arr_obj.working_days.push($(this).val());
+            });
             calendar_arr_obj.calendar_config_guid = row.find("TD").eq(7).find('input[type="text"]').val() || row.find("TD").eq(6).html();
             main_table_calendar_checked.push(calendar_arr_obj);
         }
     });
 }
+
 
 function add_popup_row() {
         $('#id_popup_table').DataTable().destroy();
