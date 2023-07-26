@@ -156,10 +156,6 @@
     var approval_type_dropdown= '';
     var approval_type_dropdown_onload = '';
     var desc_app_type = '';
-     approval_type_dropdown = '';
-        $.each(rendered_approval_type_values, function(i, item) {
-             approval_type_dropdown += '<option value="' + item.field_type_id + '">' + item.field_type_id + '</option>';
-        });
 
     approval_type_dropdown_onload = '';
     function dropdown_value() {
@@ -231,6 +227,8 @@
 
     //onclick of add button display App_Type_Modal popup and set GLOBAL_ACTION button value
     function onclick_add_button(button) {
+        $('#id_popup_table').DataTable().destroy();
+        $("#id_popup_tbody").empty();
         OpenLoaderPopup();
         var data = {'table_name':'ApproverType'}
         $.ajax({
@@ -375,20 +373,41 @@
                             currency_data_array = response.valid_data_list;
                             var edit_basic_data = '';
                             var del_ind = '';
+                            var dropdown_values = [];
                             var inc_index=0;
                             $("#id_popup_tbody").empty();
                             $.each(response.valid_data_list, function(i, value) {
-                                del_ind = '<td>' +value.del_ind  + '</td>'
-                                if (value.del_ind  == 1) {
-                                    del_ind = '<input type="checkbox" value="' + value.del_ind + '" checked>'
-                                } else {
-                                    del_ind = '<input type="checkbox" value="' + value.del_ind + '" required>'
-                                }
-                                edit_basic_data += '<tr><td class="class_select_checkbox"><input type="checkbox" required></td>'+
-                                '<td><input type="text" class="input form-control approvaltype"   name="approvaltype" onchange="GetSelectedTextValue(this)"value="' + value.app_types + '"></td><td><input class="form-control" type="text"  value="' + value.appr_type_desc + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" disabled></td><td>' + del_ind + '</td></tr>';
-                                inc_index += 1;
+                                    var app_typ_value = value.app_types
+                                    dropdown_values.push(app_typ_value)
+                                    del_ind = '<td>' +value.del_ind  + '</td>'
+                                    if (value.del_ind  == 1) {
+                                        del_ind = '<input type="checkbox" value="' + value.del_ind + '" checked>'
+                                    } else {
+                                        del_ind = '<input type="checkbox" value="' + value.del_ind + '" required>'
+                                    }
+                                    var app_typ = '';
+                                    var app_typ_list = '';
+                                    var app_typ_id_list = '';
+                                    $.each(rendered_approval_type_values, function(i, item){
+                                        if( value.app_types == item.field_type_id){
+                                            app_typ = '<option value="' + item.field_type_id + '">' + item.field_type_id + '</option>';
+                                        }else{
+                                            app_typ_list += '<option value="' + item.field_type_id + '">' + item.field_type_id + '</option>';
+                                        }
+                                        app_typ_id_list = app_typ + app_typ_list
+                                    });
+                                    edit_basic_data += '<tr><td class="class_select_checkbox"><input type="checkbox" required></td>'+
+                                    '<td><select type="text" class="input form-control approvaltype"  name="approvaltype" onchange="GetSelectedTextValue(this)"> value="' + value.app_types + '"'+app_typ_id_list+'</select></td><td><input class="form-control" type="text"  value="' + value.appr_type_desc + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" disabled></td><td>' + del_ind + '</td></tr>';
+                                    inc_index += 1;
                             });
                             $('#id_popup_tbody').append(edit_basic_data);
+                            var i =0;
+                            $("#id_popup_table TBODY TR").each(function() {
+                                var row = $(this);
+                                var app_typ_id_list = dropdown_values[i][0]
+                                $(row.find("TD").eq(1).find("select option[value="+app_typ_id_list+"]")).attr('selected','selected');
+                                i++;
+                            });
                             $("#id_del_ind_checkbox").prop("hidden", false);
                             $( "#header_select").prop( "hidden", false );
                             $(".class_del_checkbox").prop("hidden", false);
@@ -406,7 +425,8 @@
                     processData: false,
                     contentType: false,
                 });
-            } else {
+            }
+            else {
                 $("#id_error_msg_upload").prop("hidden",false)
                 get_message_details("JMSG110"); // Get message details
                 var display = msg_type.messages_id_desc;
@@ -429,7 +449,6 @@
         document.getElementById("id_error_msg_approval_type_code").innerHTML = "";
         document.getElementById("id_error_msg_approval_type_desc").innerHTML = "";
         document.getElementById("id_error_msg_approval_type_length").innerHTML = "";
-
         count = 0;
         var app_type_array = new Array
         var DB_array = new Array
@@ -437,11 +456,12 @@
         var app_type_code_check = new Array
         del_ind = ''
         $("#id_popup_table TBODY TR").each(function() {
+            $('#id_popup_table').DataTable().destroy();
             var row = $(this);
             app_type_dic = {}
             //*************** reading data from the pop-up ***************
             app_type_dic.approval_type_desc = row.find("TD").eq(2).find('input[type="text"]').val();
-            app_type_dic.app_types = row.find("TD").eq(1).find('input[type="text"]').val();
+            app_type_dic.app_types = row.find("TD").eq(1).find('Select[type="text"]').val();
             checked_box = row.find("TD").eq(3).find('input[type="checkbox"]').is(':checked')
             if (checked_box) {
                 app_type_dic.del_ind = '1'

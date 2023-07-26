@@ -372,6 +372,8 @@
 
     //onclick of add button display Wfschema_Modal popup and set GLOBAL_ACTION button value
     function onclick_add_button(button) {
+        $('#id_popup_table').DataTable().destroy();
+        $("#id_popup_tbody").empty();
         OpenLoaderPopup();
         var data = {'table_name':'WorkflowSchema'}
         $.ajax({
@@ -628,7 +630,7 @@
 
     //onclick of data Upload copy data to modal pop-up
     function onclick_display_csv_data() {
-         $("#valid_upload").modal('hide');
+        $("#valid_upload").modal('hide');
         $("#id_delete_duplicate").hide()
         $("#id_check_success_messages").empty();
         $("#id_check_error_messages").empty();
@@ -686,7 +688,7 @@
                                 var apptype_list = '';
                                 var apptype_id_list = '';
                                 $.each(rendered_approvartype_data, function(i, item){
-                                    if( value[3] == item){
+                                    if( value.app_types == item.app_types){
                                         apptype = '<option value="' + item.app_types + '">' + item.app_types + '</option>';
                                     }else{
                                         apptype_list += '<option value="' + item.app_types + '">' + item.app_types + '</option>';
@@ -698,27 +700,36 @@
                                 var company_list = '';
                                 var company_id_list = '';
                                 $.each(rendered_company_data, function(i, item) {
-                                    if( value[0] == item){
+                                    if( value.company_id == item.company_id){
                                         company = '<option value="' + item.company_id + '">' + item.company_id + '</option>';
                                     }else{
                                         company_list += '<option value="' + item.company_id + '">' + item.company_id + '</option>';
                                     }
                                     company_id_list = company + company_list
                                 });
-                                 wrksch_types_dropdown_onload = '';
-                                    $.each(dropdown_db_values, function(i, item){
-                                      wrksch_types_dropdown_onload+= '<option value="' + item.field_type_id + '">' + item.field_type_desc + '</option>';
-                                    })
-                                edit_basic_data += '<tr><td class="class_select_checkbox"><input type="checkbox" required></td>'+
-                                '<td><select class="form-control" type="text">' + company_id_list + '</select></td><td><select id="workflow_schema" name="workflow_schema" type="text" class="input form-control">value ="' + value.workflow_schema + ''+wrksch_types_dropdown_onload+'"</select></td><td><select class="form-control" type="text">' + apptype_id_list + '</select></td><td hidden><input type="text" value=""></td><td>'+ del_ind +'</td></tr>';
+                                    var workschm = '';
+                                    var workschm_list = '';
+                                    var workschm_id_list = '';
+                                $.each(dropdown_db_values, function(i, item){
+                                    if( value.field_type_id == item.field_type_id){
+                                        workschm = '<option value="' + item.field_type_id + '">' + item.field_type_id + '</option>';
+                                    }else{
+                                        workschm_list += '<option value="' + item.field_type_id + '">' + item.field_type_id + '</option>';
+                                    }
+                                    workschm_id_list = workschm + workschm_list
+                                });
+                                 edit_basic_data += '<tr><td class="class_select_checkbox"><input type="checkbox" required></td>'+
+                                '<td><select class="form-control" type="text"> value ="' + value.company_id + '"+"'+company_id_list+'"</select></td><td><select id="workflow_schema" name="workflow_schema" type="text" class="input form-control"> value ="' + value.workflow_schema + '"'+workschm_id_list+'</select></td><td><select class="form-control" type="text"> value ="' + value.app_types + '"+"'+apptype_id_list+'"</select></td><td hidden><input type="text" value=""></td><td>'+ del_ind +'</td></tr>';
                             });
                             $('#id_popup_tbody').append(edit_basic_data);
                             var i =0;
                             $("#id_popup_table TBODY TR").each(function() {
                                 var row = $(this);
                                 var company_id_list = dropdown_values[i][0]
+                                var workschm_id_list = dropdown_values[i][1]
                                 var apptype_id_list = dropdown_values[i][2]
                                 $(row.find("TD").eq(1).find("select option[value="+company_id_list+"]")).attr('selected','selected');
+                                $(row.find("TD").eq(2).find("select option[value="+workschm_id_list+"]")).attr('selected','selected');
                                 $(row.find("TD").eq(3).find("select option[value="+apptype_id_list+"]")).attr('selected','selected');
                             i++;
                             });

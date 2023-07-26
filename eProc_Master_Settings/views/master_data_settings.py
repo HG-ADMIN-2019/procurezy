@@ -816,8 +816,7 @@ def extract_approver_type_data(request):
     writer.writerow(['APP_TYPES', 'APPROVAL_TYPE_DESC', 'del_ind'])
 
     approver_type = django_query_instance.django_filter_query(ApproverType,
-                                                              {'del_ind': False,
-                                                               'client': global_variables.GLOBAL_CLIENT}, None,
+                                                              {'del_ind': False}, None,
                                                               ['app_types', 'appr_type_desc', 'del_ind'])
     approver_type_data = query_update_del_ind(approver_type)
 
