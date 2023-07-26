@@ -321,6 +321,7 @@ function message_display_time() {
         $('#id_delete_confirm_popup').modal('hide');
         console.log(main_table_annsmt_checked);
         data = main_table_annsmt_checked
+        OpenLoaderPopup();
         $.ajax({
             type: 'POST',
             url: "{% url 'eProc_Admin_Tool:delete_org_announcement' %}",
@@ -329,14 +330,12 @@ function message_display_time() {
             dataType: "json",
             success: function (Response) {
                 display_annsmt_data(Response.announcement_result1);
-                if(Response.success_message){
                     $('#success_msg_id').text(Response.success_message)
-                }
-                //document.getElementById("success_msg_id").text = Response.success_message;
-                $("#id_delete_annsmt").hide();
+<!--                $("#id_delete_annsmt").hide();-->
                 $("#error_msg_div").prop("hidden", false)
 <!--                setTimeout(function () { $("#error_msg_div").prop("hidden", true); }, 5000)-->
                 message_display_time();
+                CloseLoaderPopup();
             }
         });
     }
@@ -372,6 +371,82 @@ function message_display_time() {
             });
         }
     }
+
+    <!--Check All -->
+<!-- ----------------------------------------------------   -->
+var table = $('#sup_tab').DataTable();
+ var rows_selected = [];
+ //onclick of select all checkbox
+$('#sup_tab tbody').on('click', 'input[class="annsmt_checkbox"]', function(e){
+      var $row = $(this).closest('tr');
+      // Get row data
+      var data = table.row($row).data();
+      // Get row ID
+      var rowId = data[0];
+      // Determine whether row ID is in the list of selected row IDs
+      var index = $.inArray(rowId, rows_selected);
+      // If checkbox is checked and row ID is not in list of selected row IDs
+      if(this.checked && index === -1){
+         rows_selected.push(rowId);
+      // Otherwise, if checkbox is not checked and row ID is in list of selected row IDs
+      } else if (!this.checked && index !== -1){
+         rows_selected.splice(index, 1);
+      }
+      if(this.checked){
+         $row.addClass('selected');
+      } else {
+         $row.removeClass('selected');
+      }
+      // Update state of "Select all" control
+//      updateDataTableSelectAllCtrl(table);
+      // Prevent click event from propagating to parent
+      e.stopPropagation();
+   });
+
+   // Handle click on "Select all" control
+   $('thead input[id="selectAll"]', table.table().container()).on('click', function(e){
+      if(this.checked){
+         $('#sup_tab tbody input[class="annsmt_checkbox"]:not(:checked)').trigger('click');
+         $(".annsmt_checkbox").prop("checked", true);
+      } else {
+         $('#sup_tab tbody input[class="annsmt_checkbox"]:checked').trigger('click');
+         $(".annsmt_checkbox").prop("checked", false);
+      }
+      // Prevent click event from propagating to parent
+      e.stopPropagation();
+   });
+   // Handle table draw event
+   table.on('draw', function(){
+      // Update state of "Select all" control
+      updateDataTableSelectAllCtrl(table);
+      valueChanged();
+//      e.stopPropagation();
+   });
+    function updateDataTableSelectAllCtrl(table){
+       var $table             = table.table().node();
+       var $chkbox_all        = $('tbody input[class="annsmt_checkbox"]', $table);
+       var $chkbox_checked    = $('tbody input[class="annsmt_checkbox"]:checked', $table);
+       var chkbox_select_all  = $('thead input[id="selectAll"]', $table).get(0);
+
+       // If none of the checkboxes are checked
+       if($chkbox_checked.length === 0){
+          chkbox_select_all.checked = false;
+          if('indeterminate' in chkbox_select_all){
+             chkbox_select_all.indeterminate = false;
+          }
+       // If all of the checkboxes are checked
+       } else if ($chkbox_checked.length === $chkbox_all.length){
+          chkbox_select_all.checked = true;
+          if('indeterminate' in chkbox_select_all){
+             chkbox_select_all.indeterminate = false;
+          }
+       } else {
+          chkbox_select_all.checked = true;
+          if('indeterminate' in chkbox_select_all){
+             chkbox_select_all.indeterminate = true;
+          }
+   }
+}
 
 </script>
 
