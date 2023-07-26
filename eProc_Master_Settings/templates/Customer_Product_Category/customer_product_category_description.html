@@ -217,6 +217,11 @@
     function onclick_display_csv_data() {
         $("#valid_upload").modal('hide');
         document.getElementById('delete_data').style.visibility='hidden';
+        $("#id_check_success_messages").empty();
+        $("#id_check_error_messages").empty();
+        $("#id_check_success_messages").prop("hidden", true);
+        $("#id_check_error_messages").prop("hidden", true);
+        $("#id_check_special_character_messages").prop("hidden", true);
         $("#error_msg_id").css("display", "none")
         $('#id_popup_table').DataTable().destroy();
         formdata = new FormData();
@@ -268,7 +273,7 @@
                                 var prod_cat_list = '';
                                 var prod_cat_id_list = '';
                                 $.each(rendered_UNSPC_data, function(i, item){
-                                    if( value[1] == item.prod_cat_id){
+                                    if( value.prod_cat_id == item.prod_cat_id){
                                         prod_cat = '<option value="' + item.prod_cat_id + '">' + item.prod_cat_id + '</option>';
                                     }else{
                                         prod_cat_list += '<option value="' + item.prod_cat_id + '">' + item.prod_cat_id + '</option>';
@@ -279,7 +284,7 @@
                                 var language_list = '';
                                 var language_id_list = '';
                                 $.each(render_language_data, function(i, item){
-                                    if( value[2] == item.language_id){
+                                    if( value.language_id == item.language_id){
                                         language = '<option value="' + item.language_id + '">' + item.description + '</option>';
                                     }else{
                                         language_list += '<option value="' + item.language_id + '">' + item.description + '</option>';

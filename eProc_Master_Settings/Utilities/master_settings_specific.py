@@ -1028,8 +1028,9 @@ class MasterSettingsSave:
         self.save_approval_data(approval_data)
         message = get_message_detail_based_on_action(approval_data['action'])
         upload_response = get_approver_type_data()
+        data = get_approver_type_drop_down()
 
-        return upload_response, message
+        return upload_response, message,data
 
     def save_field_desc(self, field_desc_data):
         """
