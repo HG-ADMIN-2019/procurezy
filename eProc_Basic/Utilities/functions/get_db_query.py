@@ -66,7 +66,7 @@ def get_user_currency(request):
     :param request:
     :return:
     """
-    return request.user.currency_id
+    return request.user.currency_id_id
 
 
 def get_user_language(request):
