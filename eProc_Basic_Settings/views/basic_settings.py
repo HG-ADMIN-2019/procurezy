@@ -411,7 +411,7 @@ def convert_DetermineGLAccount_to_dictionary(arr):
 def convert_AccountingData_to_dictionary(arr):
     convertion_list = []
     for row in arr:
-        dictionary = {'account_assign_value': row[0],'valid_from': row[1],'valid_to': row[2],
+        dictionary = {'account_assign_value': row[0], 'valid_from': row[1], 'valid_to': row[2],
                       'company_id': row[3], 'account_assign_cat': row[5],
                       'del_ind': row[4]}
         convertion_list.append(dictionary)
@@ -421,9 +421,9 @@ def convert_AccountingData_to_dictionary(arr):
 def convert_AccountingDataDesc_to_dictionary(arr):
     convertion_list = []
     for row in arr:
-        dictionary = {'company_id': row[0], 'account_assign_cat': row[1],
-                      'account_assign_value': row[2], 'description': row[3],
-                      'language_id': row[4],'del_ind': row[5]}
+        dictionary = {'company_id': row[2], 'account_assign_cat': row[4],
+                      'account_assign_value': row[0], 'description': row[1],
+                      'language_id': row[5], 'del_ind': row[3]}
         convertion_list.append(dictionary)
     return convertion_list
 
@@ -441,7 +441,7 @@ def convert_SpendLimitValue_to_dictionary(arr):
     convertion_list = []
     for row in arr:
         dictionary = {'company_id': row[0], 'spend_code_id': row[1], 'upper_limit_value': row[2],
-                      'currency_id': row[3],'del_ind': row[4]}
+                      'currency_id': row[3], 'del_ind': row[4]}
         convertion_list.append(dictionary)
     return convertion_list
 
@@ -460,7 +460,7 @@ def convert_ApproverLimitValue_to_dictionary(arr):
     for row in arr:
         dictionary = {'company_id': row[0], 'app_types': row[1],
                       'app_code_id': row[2], 'upper_limit_value': row[3],
-                      'currency_id': row[4],'del_ind': row[5]}
+                      'currency_id': row[4], 'del_ind': row[5]}
         convertion_list.append(dictionary)
     return convertion_list
 
@@ -470,7 +470,7 @@ def convert_WorkflowACC_to_dictionary(arr):
     for row in arr:
         dictionary = {'company_id': row[0], 'account_assign_cat': row[1], 'acc_value': row[2],
                       'app_username': row[3], 'sup_company_id': row[4], 'account_assign_cat': row[5],
-                      'sup_acc_value': row[6], 'currency_id': row[7],  'del_ind': row[8]}
+                      'sup_acc_value': row[6], 'currency_id': row[7], 'del_ind': row[8]}
         convertion_list.append(dictionary)
     return convertion_list
 
@@ -699,6 +699,13 @@ def data_upload(request):
             valid_data_list, message = check_unspsc_category_desc_data(convertion_list, 'UPLOAD')
             context = {'valid_data_list': valid_data_list}
             return JsonResponse(context, safe=False)
+        if Table_name == 'UserData':
+            result['error_message'], result['data'] = upload_csv.csv_preview_data(header_detail, data_set_val)
+            result = remove_duplicates(result['data'])
+            convertion_list = convert_UserData_to_dictionary(result)
+            valid_data_list, message = get_valid_employee_data(convertion_list, 'UPLOAD')
+            context = {'valid_data_list': valid_data_list}
+            return JsonResponse(context, safe=False)
 
 
 
@@ -729,6 +736,22 @@ def convert_UNSPSCDESC_to_dictionary(arr):
     convertion_list = []
     for row in arr:
         dictionary = {'description': row[0], 'del_ind': row[1], 'language_id': row[2], 'prod_cat_id': row[3]}
+        convertion_list.append(dictionary)
+    return convertion_list
+
+
+def convert_UserData_to_dictionary(arr):
+    convertion_list = []
+    for row in arr:
+        dictionary = {'email': row[0], 'username': row[1], 'person_no': row[2], 'form_of_address': row[3],
+                      'first_name': row[4], 'last_name': row[5], 'phone_num': row[6], 'password': row[7],
+                      'date_joined': row[8], 'first_login': row[9], 'last_login': row[10], 'is_active': row[11],
+                      'is_superuser': row[12], 'is_staff': row[13], 'date_format': row[14],
+                      'employee_id': row[15], 'decimal_notation': row[16], 'user_type': row[17],
+                      'login_attempts': row[18], 'user_locked': row[19], 'pwd_locked': row[20], 'sso_user': row[21],
+                      'valid_from': row[22], 'valid_to': row[23], 'del_ind': row[24], 'currency_id': row[25],
+                      'language_id': row[26],
+                      'object_id': row[27], 'time_zone': row[28]}
         convertion_list.append(dictionary)
     return convertion_list
 
@@ -861,7 +884,8 @@ def extract_calendar_data(request):
     writer.writerow(['CALENDER_ID', 'COUNTRY_CODE', 'DESCRIPTION', 'YEAR', 'WORKING_DAYS', 'del_ind'])
 
     calendar_details = django_query_instance.django_filter_query(CalenderConfig,
-                                                                 {'del_ind': False}, None,
+                                                                 {'del_ind': False,
+                                                                  'client': global_variables.GLOBAL_CLIENT}, None,
                                                                  ['calender_id', 'country_code', 'description', 'year',
                                                                   'working_days', 'del_ind'])
     calendar_details_data = query_update_del_ind(calendar_details)
@@ -884,7 +908,9 @@ def extract_calendar_holiday_data(request):
     writer.writerow(['CALENDER_ID', 'DESCRIPTION', 'COUNTRY_CODE', 'YEAR', 'del_ind'])
 
     calendar_holiday_details = django_query_instance.django_filter_query(CalenderConfig,
-                                                                         {'del_ind': False}, None,
+                                                                         {'del_ind': False,
+                                                                          'client': global_variables.GLOBAL_CLIENT
+                                                                          }, None,
                                                                          ['calender_id', 'description', 'country_code',
                                                                           'year',
                                                                           'del_ind'])
@@ -1446,7 +1472,9 @@ def extract_employee_data(request):
          'VALID_FROM', 'VALID_TO', 'del_ind', 'CURRENCY_ID', 'LANGUAGE_ID', 'OBJECT_ID', 'TIME_ZONE'])
     # get only active record
     emp = django_query_instance.django_filter_query(UserData,
-                                                    {'del_ind': False}, None,
+                                                    {'del_ind': False,
+                                                     'client': global_variables.GLOBAL_CLIENT
+                                                     }, None,
                                                     ['email', 'username', 'person_no', 'form_of_address',
                                                      'first_name', 'last_name', 'phone_num', 'password',
                                                      'date_joined', 'first_login', 'last_login', 'is_active',
@@ -1489,7 +1517,9 @@ def extract_supplier_data(request):
          'LANGUAGE_ID'])
     # get only active record
     supplier = django_query_instance.django_filter_query(SupplierMaster,
-                                                         {'del_ind': False}, None,
+                                                         {'del_ind': False,
+                                                          'client': global_variables.GLOBAL_CLIENT
+                                                          }, None,
                                                          ['supplier_id', 'supp_type', 'name1', 'name2',
                                                           'supplier_username', 'city', 'postal_code', 'street',
                                                           'landline', 'mobile_num', 'fax', 'email', 'email1', 'email2',

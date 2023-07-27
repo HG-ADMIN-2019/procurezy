@@ -7,6 +7,7 @@ from eProc_Configuration.models.application_data import *
 from eProc_Configuration.models.basic_data import *
 from eProc_Configuration.models.development_data import *
 from eProc_Configuration.models.master_data import *
+from eProc_Registration.models import UserData
 
 django_query_instance = DjangoQueries()
 
@@ -316,8 +317,13 @@ def check_acc_assign_values_data(ui_data, status):
                 else:
                     invalid_count = invalid_count + 1
         else:
-            from_val = datetime.strptime(acc_value['valid_from'], "%d-%m-%Y")
-            to_val = datetime.strptime(acc_value['valid_to'], "%d-%m-%Y")
+            if acc_value['valid_from'] == "%Y-%m-%d":
+                from_val = datetime.strptime(acc_value['valid_from'], "%Y-%m-%d")
+                to_val = datetime.strptime(acc_value['valid_to'], "%Y-%m-%d")
+            else:
+                from_val = datetime.strptime(acc_value['valid_from'], "%d-%m-%Y")
+                to_val = datetime.strptime(acc_value['valid_to'], "%d-%m-%Y")
+
             if django_query_instance.django_existence_check(AccountingData,
                                                             {'del_ind': False,
                                                              'client': global_variables.GLOBAL_CLIENT,
@@ -3008,6 +3014,120 @@ def get_valid_uom_data(ui_data, status):
             else:
                 insert_count = insert_count + 1
                 valid_data_list.append(unitofmeasure_dictionary)
+
+    # append message with count
+    message_count_dic = {'file_count': file_count, 'delete_count': delete_count, 'invalid_count': invalid_count,
+                         'duplicate_count': duplicate_count, 'update_count': update_count,
+                         'insert_count': insert_count,
+                         'dependent_count': dependent_count, 'db_count': db_count}
+    message = get_check_message(message_count_dic)
+    return valid_data_list, message
+
+
+def get_valid_employee_data(ui_data, status):
+    db_count = django_query_instance.django_filter_count_query(UserData,
+                                                               {'del_ind': False,
+                                                                })
+    message_type, message_desc = get_message_desc('MSG193')
+    db_count_message = message_desc + str(db_count)
+    file_count = len(ui_data)
+    duplicate_count = 0
+    message = {}
+    update_count = 0
+    insert_count = 0
+    delete_count = 0
+    invalid_count = 0
+    dependent_count = 0
+    valid_data_list = []
+    for employee_dictionary in ui_data:
+        if employee_dictionary['del_ind'] in ['1', True]:
+            if status == 'SAVE':
+                if django_query_instance.django_existence_check(UserData,
+                                                                {'email': employee_dictionary[
+                                                                    'email']}):
+                    delete_count = delete_count + 1
+                    valid_data_list.append(employee_dictionary)
+            else:
+                if django_query_instance.django_existence_check(UserData,
+                                                                {'del_ind': False,
+                                                                 'email': employee_dictionary[
+                                                                     'email']}):
+                    delete_count = delete_count + 1
+                    valid_data_list.append(employee_dictionary)
+                else:
+                    invalid_count = invalid_count + 1
+        else:
+            if django_query_instance.django_existence_check(UserData,
+                                                            {'del_ind': False,
+                                                             'email': employee_dictionary['email'],
+                                                             'username': employee_dictionary
+                                                             ['username'],
+                                                             'person_no': employee_dictionary
+                                                             ['person_no'],
+                                                             'form_of_address': employee_dictionary
+                                                             ['form_of_address'],
+                                                             'first_name': employee_dictionary
+                                                             ['first_name'],
+                                                             'last_name': employee_dictionary
+                                                             ['last_name'],
+                                                             'gender': employee_dictionary
+                                                             ['gender'],
+                                                             'phone_num': employee_dictionary
+                                                             ['phone_num'],
+                                                             'password': employee_dictionary
+                                                             ['password'],
+                                                             'date_joined': employee_dictionary
+                                                             ['date_joined'],
+                                                             'first_login': employee_dictionary
+                                                             ['first_login'],
+                                                             'last_login': employee_dictionary
+                                                             ['last_login'],
+                                                             'is_active': employee_dictionary
+                                                             ['is_active'],
+                                                             'is_superuser': employee_dictionary
+                                                             ['is_superuser'],
+                                                             'is_staff': employee_dictionary
+                                                             ['is_staff'],
+                                                             'date_format': employee_dictionary
+                                                             ['date_format'],
+                                                             'employee_id': employee_dictionary
+                                                             ['employee_id'],
+                                                             'decimal_notation': employee_dictionary
+                                                             ['decimal_notation'],
+                                                             'user_type': employee_dictionary
+                                                             ['user_type'],
+                                                             'login_attempts': employee_dictionary
+                                                             ['login_attempts'],
+                                                             'user_locked': employee_dictionary
+                                                             ['user_locked'],
+                                                             'pwd_locked': employee_dictionary
+                                                             ['pwd_locked'],
+                                                             'sso_user': employee_dictionary
+                                                             ['sso_user'],
+                                                             'valid_from': employee_dictionary
+                                                             ['valid_from'],
+                                                             'valid_to': employee_dictionary
+                                                             ['valid_to'],
+                                                             'del_ind': employee_dictionary
+                                                             ['del_ind'],
+                                                             'currency_id': employee_dictionary
+                                                             ['currency_id'],
+                                                             'language_id': employee_dictionary
+                                                             ['language_id'],
+                                                             'object_id': employee_dictionary
+                                                             ['object_id'],
+                                                             'time_zone': employee_dictionary
+                                                             ['time_zone']
+                                                             }):
+                duplicate_count = duplicate_count + 1
+            elif django_query_instance.django_existence_check(UserData,
+                                                              {'del_ind': False,
+                                                               'email': employee_dictionary['email']}):
+                update_count = update_count + 1
+                valid_data_list.append(employee_dictionary)
+            else:
+                insert_count = insert_count + 1
+                valid_data_list.append(employee_dictionary)
 
     # append message with count
     message_count_dic = {'file_count': file_count, 'delete_count': delete_count, 'invalid_count': invalid_count,

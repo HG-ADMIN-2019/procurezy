@@ -46,16 +46,17 @@
                             </select>
                         </div>
                         <div class="col-auto my-1">
-                            <button class="button-search-users btn btn-primary" type="submit"
-                                title="Please click to get the search details!" onclick="" id="search_announcements_button"><i class="fas fa-search"></i>
-                                search
-                            </button>
+<button class="button-search-users btn btn-primary" type="submit" title="Please click to get the search details!"
+    onclick="saveDataToLocalStorage();">
+    <i class="fas fa-search"></i> search
+</button>
+
                         </div>
                     </div>
 
                     <div class="row">
                         <div class="col">
-                            <input type="reset" value="Clear filters" class="ip-form-clear-filters btn btn-link">
+<input type="reset" value="Clear filters" class="ip-form-clear-filters btn btn-link" onclick="clearFilters()">
                         </div>
                     </div>
                 </form>
@@ -77,7 +78,7 @@
         </div>
         {% endif %} -->
 
-    <div id="error_msg_div" class="alert alert-success" hidden><span id="success_msg_id"></span></div>
+    <div style="margin-top:25px" id="error_msg_div" class="alert alert-success" hidden><span id="success_msg_id"></span></div>
 
     {% if announcement_result1 %}
     <div class="card mt-5">
@@ -90,7 +91,7 @@
                 <table id="sup_tab" class="table qwsqwsqws">
                     <thead class="thead-light">
                         <tr>
-                            <th> <input type="checkbox" onclick="checkAll(this)"></th>
+                            <th id="hg_select_checkbox" scope="col"> <div id="id_check_all"> <input type="checkbox" id="selectAll" onclick="checkAll(this)"></div></th>
                             <th hidden> GUID </th>
                             <th> Announcement Number </th>
                             <th> Title </th>
@@ -107,7 +108,7 @@
                         {% for results in announcement_result1 %}
 
                         <tr id="tr_{{results.announcement_subject}}">
-                            <td><input type="checkbox" class="annsmt_checkbox" onclick="valueChanged();"></td>
+                            <td class="class_select_checkbox"><input type="checkbox" class="annsmt_checkbox" onclick="valueChanged();"></td>
                             <td hidden>{{results.unique_announcement_id}}</td>
                             <td><a style="color: #049ca2;"
                                     href="{% url 'eProc_Admin_Tool:org_announcement_details' results.unique_announcement_id %}"
@@ -119,9 +120,11 @@
                             <td>{{results.priority}}</td>
                             <td>{{results.announcement_from_date|date:'d-m-Y'}}</td>
                             <td>{{results.announcement_to_date|date:'d-m-Y'}}</td>
-                            <td>
-                                <i class="fas fa-trash-alt hg-icon-blue-primary" title="Delete Announcement"
-                                    id="{{results.announcement_id}}" onclick="get_annsmt_detail_to_delete(this.id)"></i>
+                            <td class="item-action-icon-section">
+                                <span title="Delete Announcement" onclick="get_annsmt_detail_to_delete(this.id)" id="{{results.unique_announcement_id}}">
+                                <i class="material-icons item-action-icons"
+                                     >delete_outline</i>
+                                </span>
                             </td>
                         </tr>
                         {% endfor %}
@@ -191,6 +194,39 @@
         table_sort_filter_basic("qwsqwsqws")
     });
 
+        // Function to store form data in localStorage
+    function saveDataToLocalStorage() {
+        localStorage.setItem("announcement_subject", document.getElementById("announcement_subject").value);
+        localStorage.setItem("announcement_status", document.getElementById("announcement_status").value);
+        localStorage.setItem("priority", document.getElementById("priority").value);
+    }
+
+    // Function to set input fields from localStorage
+    function setFieldsFromLocalStorage() {
+        document.getElementById("announcement_subject").value = localStorage.getItem("announcement_subject");
+        document.getElementById("announcement_status").value = localStorage.getItem("announcement_status");
+        document.getElementById("priority").value = localStorage.getItem("priority");
+    }
+
+    // Call the function to set input fields from localStorage when the page loads.
+    window.onload = function() {
+        setFieldsFromLocalStorage();
+    };
+
+    function reload() {
+        setFieldsFromLocalStorage();
+        OpenLoaderPopup();
+    }
+
+    // Function to clear filters and clear localStorage data
+    function clearFilters() {
+        document.getElementById("announcementForm").reset();
+        localStorage.removeItem("announcement_subject");
+        localStorage.removeItem("announcement_status");
+        localStorage.removeItem("priority");
+        reload();
+    }
+
 
     $('#search_announcements_button').click(function () {
         OpenLoaderPopup();
@@ -217,38 +253,34 @@
             dataType: "json",
             success: function (Response) {
                 display_annsmt_data(Response.announcement_result1);
+                $('#success_msg_id').text(Response.success_message);
                 $("#error_msg_div").prop("hidden", false);
-                if(Response.success_message){
-                    $('#success_msg_id').text(Response.success_message);
-                    document.getElementById("success_msg_id").text = Response.success_message;
-                    $("#id_delete_annsmt").hide();
-                }
-<!--                setTimeout(function () { $("#error_msg_div").prop("hidden", true); }, 5000)-->
-                message_display_time();
+                CloseLoaderPopup();
             }
         });
     }
 
 
-    function display_annsmt_data(annsmt_data) {
-        var org_annsmt_html = '';
-        $('#sup_tab').DataTable().destroy();
-        $("#sup_tab_body").empty();
-        $.each(annsmt_data, function (i, annsmt) {
-            if (annsmt.announcement_id) {
-                checkbox_input = '<input type="checkbox" class="annsmt_checkbox" onclick="valueChanged()"  >'
-            }
-            else {
-                checkbox_input = '<input type="checkbox" class="annsmt_checkbox" onclick="valueChanged()" >'
-            }
-            const date1 = new Date(annsmt.announcement_from_date);
-            const date2 = new Date(annsmt.announcement_to_date);
-            // get the date as a string
-            const from_date = date1.toLocaleDateString();
-            // console.log(date1.format('dd-m-yy'));
-            const to_date = date2.toLocaleDateString();
-                org_annsmt_html += '<tr id="' + annsmt.announcement_id + '"><td>' + checkbox_input + '</td> ' +
-                    '<td hidden>' + {{ annsmt.unique_announcement_id }} '+</td>' +
+function display_annsmt_data(annsmt_data) {
+    var org_annsmt_html = '';
+    $('#sup_tab').DataTable().destroy();
+    $("#sup_tab_body").empty();
+
+    $.each(annsmt_data, function (i, annsmt) {
+        if (annsmt.announcement_id) {
+            checkbox_input = '<input type="checkbox" class="annsmt_checkbox" onclick="valueChanged()"  >';
+        } else {
+            checkbox_input = '<input type="checkbox" class="annsmt_checkbox" onclick="valueChanged()" >';
+        }
+
+        const date1 = new Date(annsmt.announcement_from_date);
+        const date2 = new Date(annsmt.announcement_to_date);
+        // get the date as a string in the format dd-mm-yyyy
+        const from_date = ("0" + date1.getDate()).slice(-2) + "-" + ("0" + (date1.getMonth() + 1)).slice(-2) + "-" + date1.getFullYear();
+        const to_date = ("0" + date2.getDate()).slice(-2) + "-" + ("0" + (date2.getMonth() + 1)).slice(-2) + "-" + date2.getFullYear();
+
+        org_annsmt_html += '<tr id="' + annsmt.announcement_id + '"><td class="class_select_checkbox">' + checkbox_input + '</td> ' +
+            '<td hidden>' + annsmt.unique_announcement_id + '</td>' +
             '<td><a href="#" id="' + annsmt.announcement_id + '" class="org-table-action-icon" target="_blank">' + annsmt.announcement_id + '</a></td>' +
             '<td>' + annsmt.announcement_subject + '</td>' +
             '<td>' + annsmt.announcement_description + '</td>' +
@@ -256,12 +288,23 @@
             '<td>' + annsmt.priority + '</td>' +
             '<td>' + from_date + '</td>' +
             '<td>' + to_date + '</td>' +
-            '<td><i class="fas fa-trash-alt hg-icon-blue-primary" title="Delete User" id="' + annsmt.announcement_id + '" onclick="get_annsmt_detail_to_delete(this.id)" ></i></td></tr>';
-        });
-        $("#sup_tab_body").append(org_annsmt_html);
-        table_sort_filter('sup_tab');
-    }
+            '<td class="item-action-icon-section"><span title="Delete Announcement" onclick="get_annsmt_detail_to_delete(this.id)" id="' + annsmt.announcement_id + '">' +
+    '<i class="material-icons item-action-icons">delete_outline</i></span></td></tr>';
+    });
+    $("#sup_tab_body").append(org_annsmt_html);
+    table_sort_filter('sup_tab');
+}
 
+
+
+
+// Function to display success message and hide it after 5 seconds (optional)
+function message_display_time() {
+    $("#error_msg_div").prop("hidden", false);
+    setTimeout(function () {
+        $("#error_msg_div").prop("hidden", true);
+    }, 5000); // Hide after 5 seconds (adjust as needed)
+}
 
     function main_table_delete() {
         main_table_annsmt_checked = [];
@@ -278,6 +321,7 @@
         $('#id_delete_confirm_popup').modal('hide');
         console.log(main_table_annsmt_checked);
         data = main_table_annsmt_checked
+        OpenLoaderPopup();
         $.ajax({
             type: 'POST',
             url: "{% url 'eProc_Admin_Tool:delete_org_announcement' %}",
@@ -286,17 +330,16 @@
             dataType: "json",
             success: function (Response) {
                 display_annsmt_data(Response.announcement_result1);
-                if(Response.success_message){
                     $('#success_msg_id').text(Response.success_message)
-                }
-                //document.getElementById("success_msg_id").text = Response.success_message;
-                $("#id_delete_annsmt").hide();
+<!--                $("#id_delete_annsmt").hide();-->
                 $("#error_msg_div").prop("hidden", false)
 <!--                setTimeout(function () { $("#error_msg_div").prop("hidden", true); }, 5000)-->
                 message_display_time();
+                CloseLoaderPopup();
             }
         });
     }
+
 
 
     function valueChanged() {
@@ -306,6 +349,104 @@
             $("#id_delete_annsmt").hide();
         }
     }
+
+        //onclick of select all checkbox
+    function checkAll(ele) {
+        if (ele.checked) {
+            $('.annsmt_checkbox').each(function() {
+                var disable_check = this.disabled
+                if(disable_check == false){
+                    this.checked = true;
+                    $("#id_delete_annsmt").show();
+                }
+            });
+        }
+        else{
+            $('.annsmt_checkbox').each(function() {
+                var disable_check = this.disabled
+                if(disable_check == false){
+                    this.checked = false;
+                    $("#id_delete_annsmt").hide();
+                }
+            });
+        }
+    }
+
+    <!--Check All -->
+<!-- ----------------------------------------------------   -->
+var table = $('#sup_tab').DataTable();
+ var rows_selected = [];
+ //onclick of select all checkbox
+$('#sup_tab tbody').on('click', 'input[class="annsmt_checkbox"]', function(e){
+      var $row = $(this).closest('tr');
+      // Get row data
+      var data = table.row($row).data();
+      // Get row ID
+      var rowId = data[0];
+      // Determine whether row ID is in the list of selected row IDs
+      var index = $.inArray(rowId, rows_selected);
+      // If checkbox is checked and row ID is not in list of selected row IDs
+      if(this.checked && index === -1){
+         rows_selected.push(rowId);
+      // Otherwise, if checkbox is not checked and row ID is in list of selected row IDs
+      } else if (!this.checked && index !== -1){
+         rows_selected.splice(index, 1);
+      }
+      if(this.checked){
+         $row.addClass('selected');
+      } else {
+         $row.removeClass('selected');
+      }
+      // Update state of "Select all" control
+//      updateDataTableSelectAllCtrl(table);
+      // Prevent click event from propagating to parent
+      e.stopPropagation();
+   });
+
+   // Handle click on "Select all" control
+   $('thead input[id="selectAll"]', table.table().container()).on('click', function(e){
+      if(this.checked){
+         $('#sup_tab tbody input[class="annsmt_checkbox"]:not(:checked)').trigger('click');
+         $(".annsmt_checkbox").prop("checked", true);
+      } else {
+         $('#sup_tab tbody input[class="annsmt_checkbox"]:checked').trigger('click');
+         $(".annsmt_checkbox").prop("checked", false);
+      }
+      // Prevent click event from propagating to parent
+      e.stopPropagation();
+   });
+   // Handle table draw event
+   table.on('draw', function(){
+      // Update state of "Select all" control
+      updateDataTableSelectAllCtrl(table);
+      valueChanged();
+//      e.stopPropagation();
+   });
+    function updateDataTableSelectAllCtrl(table){
+       var $table             = table.table().node();
+       var $chkbox_all        = $('tbody input[class="annsmt_checkbox"]', $table);
+       var $chkbox_checked    = $('tbody input[class="annsmt_checkbox"]:checked', $table);
+       var chkbox_select_all  = $('thead input[id="selectAll"]', $table).get(0);
+
+       // If none of the checkboxes are checked
+       if($chkbox_checked.length === 0){
+          chkbox_select_all.checked = false;
+          if('indeterminate' in chkbox_select_all){
+             chkbox_select_all.indeterminate = false;
+          }
+       // If all of the checkboxes are checked
+       } else if ($chkbox_checked.length === $chkbox_all.length){
+          chkbox_select_all.checked = true;
+          if('indeterminate' in chkbox_select_all){
+             chkbox_select_all.indeterminate = false;
+          }
+       } else {
+          chkbox_select_all.checked = true;
+          if('indeterminate' in chkbox_select_all){
+             chkbox_select_all.indeterminate = true;
+          }
+   }
+}
 
 </script>
 

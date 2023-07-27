@@ -229,7 +229,27 @@ class ApplicationSettingsSave:
 
         return data, message
 
-    def generate_delete_flags(self, number_range_data):
+    def generate_DocumentType_delete_flags(self, document_type_data):
+        delete_flags = []  # List to store delete_flag for each value
+
+        for document_type_detail in document_type_data['data']:
+            delete_flag = True
+
+            # Check if value is present in the transaction table
+            if django_query_instance.django_existence_check(TransactionTypes,
+                                                            {'document_type': document_type_detail['document_type'],
+                                                             'client': self.client,
+                                                             'del_ind': False}):
+                delete_flag = False
+            delete_flags.append(delete_flag)  # Store delete_flag value for each iteration
+
+            data = {
+                'delete_flags': delete_flags
+            }
+
+        return data
+
+    def generate_number_range_delete_flags(self, number_range_data):
         delete_flags = []  # List to store delete_flag for each value
 
         for number_range_detail in number_range_data['data']:
@@ -240,6 +260,50 @@ class ApplicationSettingsSave:
                                                             {'sequence': number_range_detail['sequence'],
                                                              'client': self.client,
                                                              'document_type': number_range_detail['document_type'],
+                                                             'del_ind': False}):
+                delete_flag = False
+
+            delete_flags.append(delete_flag)  # Store delete_flag value for each iteration
+            data = {
+                'delete_flags': delete_flags  # Include the delete_flags list in the response data
+            }
+
+        return data
+
+    def generate_aac_delete_flags(self, aac_data):
+        delete_flags = []  # List to store delete_flag for each value
+
+        for aac_detail in aac_data['data']:
+            delete_flag = True
+
+            # Tables to check for existence
+            tables_to_check = [AccountingData, AccountingDataDesc, DetermineGLAccount]
+
+            for table_name in tables_to_check:
+                if django_query_instance.django_existence_check(table_name,
+                                                                {'account_assign_cat': aac_detail['account_assign_cat'],
+                                                                 'client': self.client,
+                                                                 'del_ind': False}):
+                    delete_flag = False
+                    break
+
+            delete_flags.append(delete_flag)  # Store delete_flag value for each iteration
+        data = {
+            'delete_flags': delete_flags  # Include the delete_flags list in the response data
+        }
+
+        return data
+
+    def generate_calender_delete_flags(self, calender_data):
+        delete_flags = []  # List to store delete_flag for each value
+
+        for calender_detail in calender_data['data']:
+            delete_flag = True
+
+            # Check if value is present in the transaction table
+            if django_query_instance.django_existence_check(CalenderHolidays,
+                                                            {'calender_id': calender_detail['calender_id'],
+                                                             'client': self.client,
                                                              'del_ind': False}):
                 delete_flag = False
 

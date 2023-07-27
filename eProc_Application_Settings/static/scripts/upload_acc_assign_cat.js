@@ -3,6 +3,11 @@ var validate_add_attributes = [];
 var main_table_low_value = [];
 var aac={};
 
+//hide the myModal popup: Implemented Dependency delete purpose
+function hideModal() {
+    $('#accasscat_Modal').modal('hide');
+}
+
 //onclick of cancel empty the popup table body and error messages
 $(".remove_upload_data").click(() => {
     $("#id_error_msg").html("");
@@ -120,14 +125,14 @@ function GetSelectedTextValue(rowid){
     }
 
 // Function to get the selected row data
-function get_selected_row_data(){
-    $("#display_basic_table TBODY TR").each(function() {
+function get_row_data(tableSelector) {
+    $(tableSelector + " TBODY TR").each(function () {
         var row = $(this);
         var aac_arr_obj = {};
         aac_arr_obj.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
         if(aac_arr_obj.del_ind){
-            aac_arr_obj.account_assign_cat = row.find("TD").eq(1).html();
-            aac_arr_obj.description = row.find("TD").eq(2).html();
+            aac_arr_obj.account_assign_cat = row.find("TD").eq(1).find('input[type="text"]').val() || row.find("TD").eq(1).html();
+            aac_arr_obj.description = row.find("TD").eq(2).find('input[type="text"]').val() || row.find("TD").eq(2).html();
             main_table_aac_checked.push(aac_arr_obj);
         }
     });

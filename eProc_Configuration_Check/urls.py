@@ -28,5 +28,6 @@ urlpatterns = [
     path('check_language', views.check_language, name='check_language'),
     path('check_UOM', views.check_UOM, name='check_UOM'),
     path('check_Timezone', views.check_Timezone, name='check_Timezone'),
+    path('check_Employee', views.check_Employee, name='check_Employee')
 
 ]

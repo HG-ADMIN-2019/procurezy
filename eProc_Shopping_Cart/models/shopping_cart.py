@@ -404,11 +404,17 @@ class ScItem(models.Model):
             prod_cat_list.append(field[0])
         return prod_cat_list
 
+    @staticmethod
     def get_item_data_by_objid(self, obj, objid, client):
         return obj.objects.filter(doc_number=objid, client=client, del_ind=False).values().order_by('doc_number')
 
     @staticmethod
-    def get_item_data_by_fields_source(client, obj, prod_cat_query, company_query, **kwargs):
+    def get_item_data_by_fields(client, obj, prod_cat_query, **kwargs):
+        return list(obj.objects.filter(prod_cat_query, grouping_ind=True, client=client, del_ind=False,
+                                       **kwargs).values().order_by())
+
+    @staticmethod
+    def get_item_data_by_fields_src(client, obj, prod_cat_query, company_query, **kwargs):
         return list(obj.objects.filter(prod_cat_query, company_query, grouping_ind=True, client=client, del_ind=False,
                                        **kwargs).values().order_by())
 

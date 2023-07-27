@@ -701,7 +701,8 @@ class MasterSettingsSave:
         self.accounting_data(aav_data)
         message = get_message_detail_based_on_action(aav_data['action'])
         upload_response = get_account_assignment_value()
-        return upload_response, message
+        data = get_acc_value_dropdown()
+        return upload_response, message,data
 
     def app_limit_data(self, applim_data):
         applim_db_list = []
@@ -1027,8 +1028,9 @@ class MasterSettingsSave:
         self.save_approval_data(approval_data)
         message = get_message_detail_based_on_action(approval_data['action'])
         upload_response = get_approver_type_data()
+        data = get_approver_type_drop_down()
 
-        return upload_response, message
+        return upload_response, message,data
 
     def save_field_desc(self, field_desc_data):
         """
@@ -1163,7 +1165,8 @@ class MasterSettingsSave:
         self.save_aad_data(aad_data)
         message = get_message_detail_based_on_action(aad_data['action'])
         upload_response = get_acc_value_desc_data()
-        return upload_response, message
+        data = get_acc_value_desc_dropdown()
+        return upload_response, message, data
 
     def save_workflow_acc_data(self, wfacc_data):
         wfacc_db_list = []
@@ -1352,7 +1355,16 @@ def get_unspsc_cat_cust_data():
         else:
             prod['image_url'] = ""
 
-    return upload_cust_prod_catogories, product_cat_list
+    upload_ProdCat = django_query_instance.django_filter_query(UnspscCategoriesCustDesc,
+                                                               {'client': global_variables.GLOBAL_CLIENT,
+                                                                'del_ind': False,
+                                                                'language_id': CONST_DEFAULT_LANGUAGE,
+                                                                },
+                                                               ['prod_cat_id'], ['prod_cat_id', 'category_desc'])
+
+    data = {'upload_ProdCat': upload_ProdCat}
+
+    return upload_cust_prod_catogories, product_cat_list,data
 
 
 def get_unspsc_drop_down():
@@ -1397,7 +1409,16 @@ def get_unspsc_cat_custdesc_data():
         if prod_cat_desc['prod_cat_desc'] == None:
             prod_cat_desc['prod_cat_desc'] = ''
 
-    return upload_cust_prod_desc_catogories, product_cat_list
+    upload_ProdCat = django_query_instance.django_filter_query(UnspscCategoriesCustDesc,
+                                                               {'client': global_variables.GLOBAL_CLIENT,
+                                                                'del_ind': False,
+                                                                'language_id': CONST_DEFAULT_LANGUAGE,
+                                                                },
+                                                               ['prod_cat_id'], ['prod_cat_id', 'category_desc'])
+
+    data = {'upload_ProdCat': upload_ProdCat}
+
+    return upload_cust_prod_desc_catogories, product_cat_list,data
 
 
 def get_unspscdesc_drop_down():
@@ -1491,6 +1512,7 @@ def get_account_assignment_value():
             data["del_ind_flag"] = True
         # data["valid_from"] = data["valid_from"].strftime("%Y-%m-%d")
         # data["valid_to"] = data["valid_to"].strftime("%Y-%m-%d")
+
     return upload_data_accounting
 
 

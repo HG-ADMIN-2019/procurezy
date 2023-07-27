@@ -69,6 +69,7 @@ function account_assignment_cat(acct_cat, comp_num) {
 //onclick of upload button display id_data_upload popup and set GLOBAL_ACTION button value
 function onclick_upload_button() {
     GLOBAL_ACTION = "aad_upload"
+    $("#id_error_msg_upload").prop("hidden",true)
     $("#id_popup_tbody").empty();
     $('#id_data_upload').modal('show');
     document.getElementById('id_file_data_upload').value = "";
@@ -79,6 +80,7 @@ function onclick_copy_button() {
     GLOBAL_ACTION = "COPY"
     onclick_copy_update_button("copy")
     document.getElementById("id_del_add_button").style.display = "block";
+    $("#save_id").prop("hidden", false);
 }
 
 // on click update icon display the selected checkbox data to update
@@ -86,22 +88,10 @@ function onclick_update_button() {
     GLOBAL_ACTION = "UPDATE"
     onclick_copy_update_button("UPDATE")
     document.getElementById("id_del_add_button").style.display = "none";
+    $("#save_id").prop("hidden", false);
 }
 
-// on click add icon display the row in to add the new entries
-function add_popup_row() {
-    $("#error_msg_id").css("display", "none")
-    basic_add_new_html = '';
-    var display_db_data = '';
-    $('#id_popup_table').DataTable().destroy();
-    $(".modal").on("hidden.bs.modal", function () {
-        $("#id_error_msg").html("");
-    });
-    new_row_data();   // Add a new row in popup
-    if (GLOBAL_ACTION == "aad_upload") {
-        $(".class_del_checkbox").prop("hidden", false);
-    }
-}
+
 function get_acct_assmt_cat(rowid){
     var row = $(rowid);
     var selectedValue = row[0].value;
@@ -262,21 +252,7 @@ function read_popup_data() {
     return aad_data;
 }
 
-// Function for add a new row data
-function new_row_data() {
-    acc_value_desc_dropdown();
-    basic_add_new_html = '<tr> <td><input class="input" type="checkbox" required></td>'+
-    '<td><select id="comp_id" class="form-control" onchange="get_acct_assmt_cat(this)">' + company_dropdwn + ' </select></td>'+
-    '<td><select id="acct_assmt_cat" class="form-control" onchange="get_acct_assmt_val(this)">'+assign_val.acc_ass_dropdwn+'</select></td>'+
-    '<td><select class="form-control">'+assign_val.acc_ass_val_dropdwn+'</select></td>'+
-    '<td><input class="form-control check_special_char" type="text"  maxlength="255" ></td>'+
-    '<td><select class="form-control">' + language_dropdwn + '</select></td>'+
-    '<td hidden><input value="GUID" hidden></td>'+
-    '<td class="class_del_checkbox" hidden><input type="checkbox" required></td> <td hidden></td>'+
-     '</tr>';
-    $('#id_popup_tbody').append(basic_add_new_html);
-    table_sort_filter('id_popup_table');
-}
+
 
  // Function to get main table data
  function get_main_table_data() {
@@ -311,4 +287,10 @@ function new_row_data() {
             main_table_aad_checked.push(aad_arr_obj);
         }
     });
+}
+
+// onclick of valid popup
+function valid_popup(){
+  $('#id_data_upload').modal('hide');
+  $("#valid_upload").modal('show');
 }
