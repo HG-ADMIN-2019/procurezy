@@ -269,10 +269,12 @@ function get_main_table_data(){
 
 // Function to get the selected row data
 function get_selected_row_data(){
-    $("#display_basic_table TBODY TR").each(function () {
-        var row = $(this);
+    main_table_number_range_checked = [];
+    $(tableSelector).DataTable().$('input[type="checkbox"]').each(function () {
+        var checkbox = $(this);
+        var row = checkbox.closest("tr");
         var number_range_arr_obj = {};
-        number_range_arr_obj.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
+        number_range_arr_obj.del_ind = checkbox.is(':checked');
         if(number_range_arr_obj.del_ind){
             number_range_arr_obj.sequence = row.find("TD").eq(1).html();
             number_range_arr_obj.starting = row.find("TD").eq(2).html();

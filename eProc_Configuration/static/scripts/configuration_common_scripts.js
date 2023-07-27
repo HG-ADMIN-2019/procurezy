@@ -163,6 +163,13 @@ function valueChanged() {
     }
 }
 
+//onclick of checkbox display delete,update and copy Buttons
+function enableDeleteButton() {
+    if ($('input[type="checkbox"]').is(":checked")) {
+       $('#delete_data').prop('disabled', false);
+    }
+}
+
 //onclick of delete,delete the row.
 function application_settings_delete_Row(myTable) {
     $('#id_popup_table').DataTable().destroy();
