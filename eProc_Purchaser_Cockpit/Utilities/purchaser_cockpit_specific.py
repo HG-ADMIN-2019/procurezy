@@ -1,6 +1,7 @@
 import datetime
 import re
 
+from asn1crypto.core import Null
 from django.db.models import Q
 
 from eProc_Basic.Utilities.constants.constants import CONST_SC_HEADER_ORDERED, CONST_SC_HEADER_APPROVED
@@ -29,7 +30,9 @@ def filter_based_on_sc_item_field(client, order_list):
                                                                            'ordered_at': datetime.date.today()},
                                                                           'guid')
     sc_item_details = django_query_instance.django_filter_only_query(ScItem,
-                                                                     {'client': client, 'grouping_ind': True}).order_by(
+                                                                     {'client': client, 'source_relevant_ind': True,
+                                                                      'po_doc_num': Null
+                                                                      }).order_by(
         *order_list)
     for sc_item in sc_item_details:
         guid = sc_item.header_guid_id
