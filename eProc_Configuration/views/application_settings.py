@@ -426,6 +426,12 @@ def create_update_delete_flags(request):
     if app_data['table_name'] == 'CalenderConfig':
         display_data = application_settings_save_instance.generate_calender_delete_flags(app_data)
         return JsonResponse(display_data, safe=False)
+    if app_data['table_name'] == 'MessagesId':
+        display_data = application_settings_save_instance.generate_message_id_delete_flags(app_data)
+        return JsonResponse(display_data, safe=False)
+    if app_data['table_name'] == 'PoSplitType':
+        display_data = application_settings_save_instance.generate_po_split_type_delete_flags(app_data)
+        return JsonResponse(display_data, safe=False)
 
 
 def get_dropdown_data(request):

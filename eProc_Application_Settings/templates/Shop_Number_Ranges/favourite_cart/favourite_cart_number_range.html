@@ -235,13 +235,10 @@
                         if (j < docTypeArray.length && docTypeArray[j] === false) {
                             check = '<input type="checkbox" disabled>';
                             $('#delete_data').prop('disabled', true);
-                            document.getElementById('delete_data').style.visibility = 'visible';
                         } else {
-                            check = '<input type="checkbox">';
-                            document.getElementById('delete_data').style.visibility = 'visible';
+                            check = '<input type="checkbox" onclick="enableDeleteButton()">';
                         }
                         j++; // Move to the next index in docTypeArray
-                        $('#delete_data').prop('disabled', false);
                         edit_basic_data +=
                             '<tr>' +
                             '<td>' + check + '</td>' +
