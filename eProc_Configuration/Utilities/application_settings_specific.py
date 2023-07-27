@@ -314,6 +314,46 @@ class ApplicationSettingsSave:
 
         return data
 
+    def generate_message_id_delete_flags(self, message_id_data):
+        delete_flags = []  # List to store delete_flag for each value
+
+        for message_id_detail in message_id_data['data']:
+            delete_flag = True
+
+            # Check if value is present in the MessagesIdDesc table
+            if django_query_instance.django_existence_check(MessagesIdDesc,
+                                                            {'messages_id': message_id_detail['message_id'],
+                                                             'client': self.client,
+                                                             'del_ind': False}):
+                delete_flag = False
+
+            delete_flags.append(delete_flag)  # Store delete_flag value for each iteration
+            data = {
+                'delete_flags': delete_flags  # Include the delete_flags list in the response data
+            }
+
+        return data
+
+    def generate_po_split_type_delete_flags(self, po_split_type_data):
+        delete_flags = []  # List to store delete_flag for each value
+
+        for po_split_type_detail in po_split_type_data['data']:
+            delete_flag = True
+
+            # Check if value is present in the MessagesIdDesc table
+            if django_query_instance.django_existence_check(PoSplitCriteria,
+                                                            {'po_split_type': po_split_type_detail['po_split_type'],
+                                                             'client': self.client,
+                                                             'del_ind': False}):
+                delete_flag = False
+
+            delete_flags.append(delete_flag)  # Store delete_flag value for each iteration
+            data = {
+                'delete_flags': delete_flags  # Include the delete_flags list in the response data
+            }
+
+        return data
+
     def save_document_type_data(self, documenttype_data):
         documenttype_db_list = []
         used_flag_set = []

@@ -3,6 +3,11 @@ var validate_add_attributes = [];
 var po_split_types={};
 var main_table_low_value = [];
 
+//hide the myModal popup: Implemented Dependency delete purpose
+function hideModal() {
+    $('#potype_Modal').modal('hide');
+}
+
 //onclick of cancel empty the popup table body and error messages
 $(".remove_upload_data").click(() => {
     $("#id_error_msg").html("");
@@ -94,14 +99,16 @@ function get_main_table_data(){
 }
 
 // Function to get the selected row data
-function get_selected_row_data(){
-    $("#display_basic_table TBODY TR").each(function() {
-        var row = $(this);
+function get_row_data(tableSelector) {
+    main_table_po_split_checked = []; // Clear the previous data before collecting new data
+    $(tableSelector).DataTable().$('input[type="checkbox"]').each(function () {
+        var checkbox = $(this);
+        var row = checkbox.closest("tr");
         var po_split_type_dic = {};
-        po_split_type_dic.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
+        po_split_type_dic.del_ind = checkbox.is(':checked');
         if(po_split_type_dic.del_ind) {
-            po_split_type_dic.po_split_type = row.find("TD").eq(1).html();
-            po_split_type_dic.po_split_type_desc = row.find("TD").eq(2).html();
+            po_split_type_dic.po_split_type = row.find("TD").eq(1).find('input[type="text"]').val() || row.find("TD").eq(1).html();
+            po_split_type_dic.po_split_type_desc = row.find("TD").eq(2).find('input[type="text"]').val() || row.find("TD").eq(2).html();
             main_table_po_split_checked.push(po_split_type_dic);
         }
     });

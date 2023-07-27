@@ -87,10 +87,12 @@ function read_popup_data() {
 
 // Function to get the selected row data
 function get_row_data(tableSelector){
-    $(tableSelector + " TBODY TR").each(function () {
-        var row = $(this);
+    main_table_doctype_checked = [];
+    $(tableSelector).DataTable().$('input[type="checkbox"]').each(function () {
+        var checkbox = $(this);
+        var row = checkbox.closest("tr");
         var doctype_arr_obj = {};
-        doctype_arr_obj.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
+        doctype_arr_obj.del_ind = checkbox.is(':checked');
         if(doctype_arr_obj.del_ind){
             doctype_arr_obj.document_type = row.find("TD").eq(1).find('input[type="text"]').val() || row.find("TD").eq(1).html();
             doctype_arr_obj.document_type_desc = row.find("TD").eq(2).find('input[type="text"]').val() || row.find("TD").eq(2).html();
