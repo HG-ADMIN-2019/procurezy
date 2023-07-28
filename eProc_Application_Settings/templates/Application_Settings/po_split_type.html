@@ -237,11 +237,11 @@
                 var $chkbox_all = $('td input[type="checkbox"]', res);
                 var j = 0; // Index for docTypeArray
                 for (var i = 0; i < $chkbox_all.length; i++) {
-                    if ($chkbox_all[i].checked) {
+                    if ($chkbox_all[i].checked) {g
                         var row = $chkbox_all[i].parentNode.parentNode;
                         if (j < docTypeArray.length && docTypeArray[j] === false) {
                             check = '<input type="checkbox" disabled>';
-                            $('#delete_data').prop('disabled', true);
+                            $('#delete_data').prop('disabled', true);g
                         } else {
                             check = '<input type="checkbox" onclick="enableDeleteButton()">';
                         }
