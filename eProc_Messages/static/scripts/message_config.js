@@ -3,6 +3,11 @@ var validate_add_attributes = [];
 var main_table_low_value = [];
 var message_id={};
 
+//hide the myModal popup: Implemented Dependency delete purpose
+function hideModal() {
+    $('#msg_id_Modal').modal('hide');
+}
+
 //*****************************
 $(document).ready(function () {
     $('#display_basic_table').DataTable().destroy();
@@ -14,6 +19,7 @@ $(document).ready(function () {
 // on click update icon display the selected checkbox data to update
 function onclick_update_button() {
     GLOBAL_ACTION = "UPDATE"
+    display_button(); // Call the display_button function to show/hide the buttons
     onclick_copy_update_button()
     document.getElementById("id_del_add_button").style.display = "none";
 }
@@ -165,15 +171,16 @@ function get_main_table_data() {
 }
 
 // Function to get the selected row data
-function get_selected_row_data(){
-    $("#display_basic_table TBODY TR").each(function () {
-        var row = $(this);
+function get_row_data(tableSelector) {
+    main_table_message_id_checked = []; // Clear the previous data before collecting new data
+    $(tableSelector).DataTable().$('input[type="checkbox"]').each(function () {
+        var checkbox = $(this);
+        var row = checkbox.closest("tr");
         var message_id_arr_obj = {};
-        message_id_arr_obj.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
-        if(message_id_arr_obj.del_ind){
-            message_id_arr_obj.message_id = row.find("TD").eq(1).html();
-            message_id_arr_obj.message_type = row.find("TD").eq(2).html();
-            message_id_arr_obj.msg_id_guid = row.find("TD").eq(3).html();
+        message_id_arr_obj.del_ind = checkbox.is(':checked');
+        if (message_id_arr_obj.del_ind) {
+            message_id_arr_obj.message_id = row.find("TD").eq(1).find('input[type="text"]').val() || row.find("TD").eq(1).html();
+            message_id_arr_obj.message_type = row.find("TD").eq(2).find('input[type="text"]').val() || row.find("TD").eq(2).html();
             main_table_message_id_checked.push(message_id_arr_obj);
         }
     });

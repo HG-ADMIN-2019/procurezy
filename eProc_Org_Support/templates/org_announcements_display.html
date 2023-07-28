@@ -255,6 +255,7 @@
                 display_annsmt_data(Response.announcement_result1);
                 $('#success_msg_id').text(Response.success_message);
                 $("#error_msg_div").prop("hidden", false);
+                location.reload();
                 CloseLoaderPopup();
             }
         });
@@ -335,6 +336,7 @@ function message_display_time() {
                 $("#error_msg_div").prop("hidden", false)
 <!--                setTimeout(function () { $("#error_msg_div").prop("hidden", true); }, 5000)-->
                 message_display_time();
+                location.reload();
                 CloseLoaderPopup();
             }
         });
