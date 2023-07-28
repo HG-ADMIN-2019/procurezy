@@ -1,7 +1,7 @@
 {% extends 'root/base.html' %}
 {% load static %}
-{% block maincontent %}
 {% block title %}  Authorization Group (Application Settings) {% endblock %}
+{% block maincontent %}
 {% include 'root/loader.html' %}
 
 <div class="container-fluid">
@@ -28,8 +28,8 @@
                     <button class="btn btn-secondary btn-sm" title="Edit" id="id_edit_data"  onclick="onclick_edit_button()">
                         <i class="fas fa-edit"></i> edit
                     </button>
-                    <button class="btn btn-outline-danger btn-sm" title="Delete" id="id_delete_data" value="auth_group_delete"  data-target="#id_delete_confirm_popup"  data-toggle="modal" style="display:none;">
-                        <i class="fa fa-trash"></i> Delete
+                    <button class="btn btn-outline-danger btn-sm" id="id_delete_data" title= "DELETE" value="Delete" style="display:none;" onclick="onclick_delete_button()">
+                        <i class="fa fa-trash"></i> delete
                     </button>
                     <button class="btn btn-secondary btn-sm" title="Cancel" id="id_cancel_data" style="display:none;" type="button"  onclick="display_basic_db_data()">
                         <i class="fas fa-times"></i> cancel
@@ -113,6 +113,9 @@
                 <!-- Modal footer -->
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-primary remove_upload_data" title="Cancel" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
+                    <button class="btn btn-primary btn-sm" title="Delete" id="delete_data" value="DELETE" data-toggle="modal" data-target="#id_delete_confirm_popup" onclick="hideModal()">
+                        <i class="fa fa-trash"></i> Delete
+                    </button>
                     <button id="id_delete_duplicate" class="btn btn-primary" style="display:none;" type="button" onclick="delete_duplicate()"><i class="fa fa-trash"></i> delete duplicates</button>
                     <button class="btn btn-primary" title="Save" id="save_id"><i class="fas fa-save"></i> save</button>
                 </div>
@@ -227,32 +230,108 @@
         }
         table_sort_filter('id_popup_table');
     }
-   
-    //delete the selected row in db................
-    var main_table_auth_group_checked = [];
-    function main_table_delete() {
-    $('#success_msg_id').empty()
-    GLOBAL_ACTION = 'DELETE'
+
+   // Onclick delete Button
+    function onclick_delete_button() {
+        $("#error_msg_id").css("display", "none");
+        $('#id_popup_table').DataTable().destroy();
+        $("#id_popup_tbody").empty();
+        GLOBAL_ACTION = "DELETE";
+        var edit_basic_data = "";
+        var guid = '';
         main_table_auth_group_checked = [];
-        $('#display_basic_table').DataTable().destroy();
-        get_selected_row_data(); // Function call to get the selected row data
-        $('#id_delete_confirm_popup').modal('hide');
-        data = {'data':main_table_auth_group_checked,'table_name':'AuthorizationGroup','action':GLOBAL_ACTION}
+        get_row_data("#display_basic_table"); // Function call to get the selected row data
+        display_button(); // Call the display_button function to show/hide the buttons
+        var data = {'data': main_table_auth_group_checked, 'table_name': 'AuthorizationGroup', 'action': GLOBAL_ACTION };
         OpenLoaderPopup();
         $.ajax({
             type: 'POST',
-            url: "{% url 'eProc_Configuration:create_update_application_data' %}",
+            url: "{% url 'eProc_Configuration:create_update_delete_flags' %}",
             data: JSON.stringify(data),
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             success: function(Response) {
-                rendered_auth_group_data = Response[0];
-                rendered_auth_group_field_data = Response[2];
-                display_basic_db_data();
-                success_response(Response); // Function call to display response data
-                 CloseLoaderPopup();
-            }
+                var docTypeArray = Response.delete_flags; // Get the delete_flags array from the response
+                var res = get_all_checkboxes(); // Function to get all the checkboxes
+                var $chkbox_all = $('td input[type="checkbox"]', res);
+                var j = 0; // Index for docTypeArray
+                for (var i = 0; i < $chkbox_all.length; i++) {
+                    if ($chkbox_all[i].checked) {
+                        var row = $chkbox_all[i].parentNode.parentNode;
+                        if (j < docTypeArray.length && docTypeArray[j] === false) {
+                            check = '<input type="checkbox" disabled>';
+                            $('#delete_data').prop('disabled', true);
+                        } else {
+                            check = '<input type="checkbox" onclick="enableDeleteButton()">';
+                        }
+                        j++; // Move to the next index in docTypeArray
+                        edit_basic_data +=
+                            `<tr>
+                                <td>${check}</td>
+                                <td><input type="text" class="input form-control authgroup"  value="${row.cells[1].innerHTML}" disabled></td>
+                                <td><input class="form-control description" type="text"  name="description" value="${row.cells[2].innerHTML}"  disabled></td>
+                                <td><input class="form-control" value="${row.cells[3].innerHTML}" disabled></td>
+                                <td><input class="form-control"  value="${row.cells[4].innerHTML}" disabled></td>
+                                <td hidden><input type="text" value="GUID"></td>
+                                <td class="class_del_checkbox" hidden><input type="checkbox" required></td>
+                            </tr>`;
+                    }
+                }
+                CloseLoaderPopup();
+                $('#id_popup_tbody').append(edit_basic_data);
+                $("#id_del_ind_checkbox").prop("hidden", true);
+                $('#auth_group_Modal').modal('show');
+                table_sort_filter('id_popup_table');
+                enableDeleteButton();
+            },
         });
+    }
+
+    //delete the selected row in db................
+    var main_table_auth_group_checked = [];
+    function main_table_delete() {
+        $('#success_msg_id').empty()
+        GLOBAL_ACTION = 'DELETE'
+        main_table_auth_group_checked = [];
+        $('#display_basic_table').DataTable().destroy();
+        get_row_data("#id_popup_table");
+        $('#id_delete_confirm_popup').modal('hide');
+        if(main_table_auth_group_checked.length == "0"){
+            var msg = "JMSG005";
+            var msg_type ;
+            msg_type = message_config_details(msg);
+            $("#error_msg_id").prop("hidden", false);
+            if(msg_type.message_type == "ERROR"){
+                display_message("error_msg_id", msg_type.messages_id_desc)
+            }
+            else if(msg_type.message_type == "WARNING"){
+                display_message("id_warning_msg_id", msg_type.messages_id_desc)
+            }
+            else if(msg_type.message_type == "INFORMATION"){
+                display_message("id_info_msg_id", msg_type.messages_id_desc)
+            }
+            $('#id_delete_confirm_popup').modal('hide');
+            $('#auth_group_Modal').modal('show')
+            table_sort_filter('display_basic_table');
+        }
+        else{
+            data = {'data':main_table_auth_group_checked,'table_name':'AuthorizationGroup','action':GLOBAL_ACTION}
+            OpenLoaderPopup();
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'eProc_Configuration:create_update_application_data' %}",
+                data: JSON.stringify(data),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function(Response) {
+                    rendered_auth_group_data = Response[0];
+                    rendered_auth_group_field_data = Response[2];
+                    display_basic_db_data();
+                    success_response(Response); // Function call to display response data
+                     CloseLoaderPopup();
+                }
+            });
+        }
     }
    
     //onclick of add button display auth_group_Modal popup and set GLOBAL_ACTION button value
@@ -271,6 +350,7 @@
                 $("#error_msg_id").css("display", "none")
                 $("#header_select").prop( "hidden", false );
                 GLOBAL_ACTION = button.value
+                display_button();
                 $('#id_popup_table').DataTable().destroy();
                 $("#id_popup_tbody").empty();
                 $('#auth_group_Modal').modal('show');

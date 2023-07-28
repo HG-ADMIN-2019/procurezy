@@ -3,6 +3,11 @@ var validate_add_attributes = [];
 var main_table_low_value = [];
 var auth_group={};
 
+//hide the myModal popup: Implemented Dependency delete purpose
+function hideModal() {
+    $('#auth_group_Modal').modal('hide');
+}
+
 //onclick of cancel empty the popup table body and error messages
 $(".remove_upload_data").click(() => {
     $("#id_error_msg").html("");
@@ -126,19 +131,20 @@ function get_main_table_data() {
 }
 
 // Function to get the selected row data
-function get_selected_row_data(){
-    $("#display_basic_table TBODY TR").each(function() {
-        var row = $(this);
+function get_row_data(tableSelector) {
+    main_table_auth_group_checked = []; // Clear the previous data before collecting new data
+    $(tableSelector).DataTable().$('input[type="checkbox"]').each(function () {
+        var checkbox = $(this);
+        var row = checkbox.closest("tr");
         var auth_group_arr_obj = {};
-        auth_group_arr_obj.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
+        auth_group_arr_obj.del_ind = checkbox.is(':checked');
         if( auth_group_arr_obj.del_ind) {
-        auth_group_arr_obj.auth_obj_grp = row.find("TD").eq(1).html();
-        auth_group_arr_obj.auth_obj_id = row.find("TD").eq(4).html();
-        auth_group_arr_obj.auth_grp_desc = row.find("TD").eq(2).html().toUpperCase();
-        auth_group_arr_obj.auth_level = row.find("TD").eq(3).html();
-        auth_group_arr_obj.auth_grp_guid = row.find("TD").eq(5).html();
-        auth_group_arr_obj.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
-        main_table_auth_group_checked.push(auth_group_arr_obj);
+            auth_group_arr_obj.auth_obj_grp = row.find("TD").eq(1).find('input[type="text"]').val() || row.find("TD").eq(1).html();
+            auth_group_arr_obj.auth_grp_desc =  row.find("TD").eq(2).find('input[type="text"]').val() || row.find("TD").eq(2).html();
+            auth_group_arr_obj.auth_level = row.find("TD").eq(3).find(".form-control").val() || row.find("TD").eq(3).html();
+            auth_group_arr_obj.auth_obj_id = row.find("TD").eq(4).find(".form-control").val() || row.find("TD").eq(4).html();
+            auth_group_arr_obj.auth_grp_guid = row.find("TD").eq(5).find('input[type="text"]').val() || row.find("TD").eq(5).html();
+            main_table_auth_group_checked.push(auth_group_arr_obj);
         }
     });
 }
