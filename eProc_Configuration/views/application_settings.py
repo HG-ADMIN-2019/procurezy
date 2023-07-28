@@ -414,6 +414,12 @@ def create_update_delete_flags(request):
     update_user_info(request)
     app_data = JsonParser_obj.get_json_from_req(request)
     application_settings_save_instance = ApplicationSettingsSave()
+    if app_data['table_name'] == 'AuthorizationGroup':
+        display_data = application_settings_save_instance.generate_auth_grp_delete_flags(app_data)
+        return JsonResponse(display_data, safe=False)
+    if app_data['table_name'] == 'UserRoles':
+        display_data = application_settings_save_instance.generate_roles_delete_flags(app_data)
+        return JsonResponse(display_data, safe=False)
     if app_data['table_name'] == 'DocumentType':
         display_data = application_settings_save_instance.generate_DocumentType_delete_flags(app_data)
         return JsonResponse(display_data, safe=False)
