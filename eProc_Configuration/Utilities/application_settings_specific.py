@@ -229,6 +229,46 @@ class ApplicationSettingsSave:
 
         return data, message
 
+    def generate_auth_grp_delete_flags(self, auth_grp_data):
+        delete_flags = []  # List to store delete_flag for each value
+
+        for auth_grp_detail in auth_grp_data['data']:
+            delete_flag = True
+
+            # Check if value is present in the transaction table
+            if django_query_instance.django_existence_check(Authorization,
+                                                            {'auth_obj_grp': auth_grp_detail['auth_obj_grp'],
+                                                             'client': self.client,
+                                                             'del_ind': False}):
+                delete_flag = False
+            delete_flags.append(delete_flag)  # Store delete_flag value for each iteration
+
+            data = {
+                'delete_flags': delete_flags
+            }
+
+        return data
+
+    def generate_roles_delete_flags(self, roles_data):
+        delete_flags = []  # List to store delete_flag for each value
+
+        for roles_detail in roles_data['data']:
+            delete_flag = True
+
+            # Check if value is present in the transaction table
+            if django_query_instance.django_existence_check(Authorization,
+                                                            {'role': roles_detail['role'],
+                                                             'client': self.client,
+                                                             'del_ind': False}):
+                delete_flag = False
+            delete_flags.append(delete_flag)  # Store delete_flag value for each iteration
+
+            data = {
+                'delete_flags': delete_flags
+            }
+
+        return data
+
     def generate_DocumentType_delete_flags(self, document_type_data):
         delete_flags = []  # List to store delete_flag for each value
 

@@ -53,8 +53,7 @@ class CompareTableHeader:
             exclude_list.append('COMPANY_ID')
             exclude_list.append('PORG_ID')
             exclude_list.append('OBJECT_ID')
-        if self.table_name == 'UserData':
-            exclude_list.append('OBJECT_ID')
+
         field_details = []
         for field in self.model_name._meta.fields:
             tmp = field.get_attname_column()

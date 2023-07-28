@@ -744,14 +744,14 @@ def convert_UserData_to_dictionary(arr):
     convertion_list = []
     for row in arr:
         dictionary = {'email': row[0], 'username': row[1], 'person_no': row[2], 'form_of_address': row[3],
-                      'first_name': row[4], 'last_name': row[5], 'phone_num': row[6], 'password': row[7],
-                      'date_joined': row[8], 'first_login': row[9], 'last_login': row[10], 'is_active': row[11],
-                      'is_superuser': row[12], 'is_staff': row[13], 'date_format': row[14],
-                      'employee_id': row[15], 'decimal_notation': row[16], 'user_type': row[17],
-                      'login_attempts': row[18], 'user_locked': row[19], 'pwd_locked': row[20], 'sso_user': row[21],
-                      'valid_from': row[22], 'valid_to': row[23], 'del_ind': row[24], 'currency_id': row[25],
-                      'language_id': row[26],
-                      'object_id': row[27], 'time_zone': row[28]}
+                      'first_name': row[4], 'last_name': row[5],'gender': row[6], 'phone_num': row[7], 'password': row[8],
+                      'date_joined': row[9], 'first_login': row[10], 'last_login': row[11], 'is_active': row[12],
+                      'is_superuser': row[13], 'is_staff': row[14], 'date_format': row[15],
+                      'employee_id': row[16], 'decimal_notation': row[17], 'user_type': row[18],
+                      'login_attempts': row[19], 'user_locked': row[20], 'pwd_locked': row[21], 'sso_user': row[22],
+                      'valid_from': row[23], 'valid_to': row[24], 'del_ind': row[25], 'currency_id': row[26],
+                      'language_id': row[27],
+                      'object_id': row[28], 'time_zone': row[29]}
         convertion_list.append(dictionary)
     return convertion_list
 
@@ -1466,17 +1466,17 @@ def extract_employee_data(request):
     writer = csv.writer(response)
 
     writer.writerow(
-        ['EMAIL', 'USERNAME', 'PERSON_NO', 'FORM_OF_ADDRESS', 'FIRST_NAME', 'LAST_NAME', 'PHONE_NUM', 'PASSWORD',
+        ['EMAIL', 'USERNAME', 'PERSON_NO', 'FORM_OF_ADDRESS', 'FIRST_NAME', 'LAST_NAME', 'GENDER','PHONE_NUM', 'PASSWORD',
          'DATE_JOINED', 'FIRST_LOGIN', 'LAST_LOGIN', 'IS_ACTIVE', 'IS_SUPERUSER', 'IS_STAFF', 'DATE_FORMAT',
          'EMPLOYEE_ID', 'DECIMAL_NOTATION', 'USER_TYPE', 'LOGIN_ATTEMPTS', 'USER_LOCKED', 'PWD_LOCKED', 'SSO_USER',
-         'VALID_FROM', 'VALID_TO', 'del_ind', 'CURRENCY_ID', 'LANGUAGE_ID', 'OBJECT_ID', 'TIME_ZONE'])
+         'VALID_FROM', 'VALID_TO', 'del_ind', 'CURRENCY', 'LANGUAGE_ID', 'OBJECT_ID', 'TIME_ZONE'])
     # get only active record
     emp = django_query_instance.django_filter_query(UserData,
                                                     {'del_ind': False,
                                                      'client': global_variables.GLOBAL_CLIENT
                                                      }, None,
                                                     ['email', 'username', 'person_no', 'form_of_address',
-                                                     'first_name', 'last_name', 'phone_num', 'password',
+                                                     'first_name', 'last_name','gender', 'phone_num', 'password',
                                                      'date_joined', 'first_login', 'last_login', 'is_active',
                                                      'is_superuser', 'is_staff', 'date_format',
                                                      'employee_id', 'decimal_notation', 'user_type',
@@ -1487,7 +1487,7 @@ def extract_employee_data(request):
 
     for employee in emp_data:
         emp_info = [employee['email'], employee['username'], employee['person_no'], employee['form_of_address'],
-                    employee['first_name'], employee['last_name'], employee['phone_num'], employee['password'],
+                    employee['first_name'], employee['last_name'],employee['gender'], employee['phone_num'], employee['password'],
                     employee['date_joined'], employee['first_login'], employee['last_login'], employee['is_active'],
                     employee['is_superuser'], employee['is_staff'], employee['date_format'],
                     employee['employee_id'], employee['decimal_notation'], employee['user_type'],
