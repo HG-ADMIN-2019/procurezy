@@ -31,7 +31,7 @@ def filter_based_on_sc_item_field(client, order_list):
                                                                           'guid')
     sc_item_details = django_query_instance.django_filter_only_query(ScItem,
                                                                      {'client': client, 'source_relevant_ind': True,
-                                                                      'po_doc_num': Null
+                                                                      'po_doc_num': None
                                                                       }).order_by(
         *order_list)
     for sc_item in sc_item_details:

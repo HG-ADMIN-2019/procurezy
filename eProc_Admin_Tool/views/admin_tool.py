@@ -565,7 +565,8 @@ def m_docsearch_meth(request):
     result = ''
     page_range = 0
     report_search = False
-    client = getClients(request)
+    update_user_info(request)
+    client = global_variables.GLOBAL_CLIENT
     sc_header = []
     sc_appr = []
     sc_completion = []
@@ -595,7 +596,7 @@ def m_docsearch_meth(request):
                               inp_to_date,
                               inp_supl,
                               inp_created_by,
-                              inp_requester, client, report_search)
+                              inp_requester, report_search)
 
         company_details = OrgCompanies.objects.filter(client=client, del_ind=False, company_guid=1000)
         for comp in company_details:
@@ -631,10 +632,10 @@ def m_docsearch_meth(request):
                                   inp_to_date,
                                   inp_supl,
                                   inp_created_by,
-                                  inp_requester, client, report_search)
+                                  inp_requester, report_search)
             company_details = OrgCompanies.objects.filter(client=client, del_ind=False, company_guid=inp_comp_code)
             for comp in company_details:
-                result = result.filter(co_code=comp.company_id)
+                result = result.filter(comp_code=comp.company_id)
     else:
         rep_search_form = DocumentSearchForm()
 

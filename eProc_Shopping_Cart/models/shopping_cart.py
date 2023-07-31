@@ -410,8 +410,8 @@ class ScItem(models.Model):
 
     @staticmethod
     def get_item_data_by_fields(client, obj, prod_cat_query, **kwargs):
-        return list(obj.objects.filter(prod_cat_query, grouping_ind=True, client=client, del_ind=False,
-                                       **kwargs).values().order_by())
+        return obj.objects.filter(prod_cat_query, grouping_ind=True, client=client, del_ind=False,
+                                       **kwargs).values().order_by()
 
     @staticmethod
     def get_item_data_by_fields_src(client, obj, prod_cat_query, company_query, **kwargs):
