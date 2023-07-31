@@ -2,74 +2,9 @@ var orgnodetyp_data = new Array();
 var validate_add_attributes = [];
 var org_node_type = {};
 
-// on click Delete icon
-function onclick_delete_button() {
-    GLOBAL_ACTION = "DELETE";
-    $('#delete_data').show();
-    $('#save_id').hide();
-    onclick_copy_update_button("DELETE");
-}
-
-//**********************************************************
-function onclick_copy_update_button() {
-    $("#error_msg_id").css("display", "none")
-    $('#id_popup_table').DataTable().destroy();
-    $("#id_popup_tbody").empty();
-    //Reference the Table.
-    var res = get_all_checkboxes(); // Function to get all the checkboxes
-    var $chkbox_all = $('td input[type="checkbox"]', res);
-    //Reference the CheckBoxes in Table.
-    var edit_basic_data = "";
-    var unique_input = '';
-    var dropdown_values = [];
-    //Loop through the CheckBoxes.
-    for (var i = 0; i < $chkbox_all.length; i++) {
-        if ($chkbox_all[i].checked) {
-            var row = $chkbox_all[i].parentNode.parentNode;
-             if (GLOBAL_ACTION == "DELETE"){
-                if ((row.cells[4].innerHTML=="False") || (row.cells[4].innerHTML=="false")){
-                    check = '<input type="checkbox" disabled>'
-                    document.getElementById('delete_data').style.visibility='visible';
-                     $('#save_id').hide();
-                    $('#delete_data').prop('disabled', true);
-                }
-                else
-                {
-                    check = '<input type="checkbox">'
-                    document.getElementById('delete_data').style.visibility = 'visible'
-                    $('#delete_data').prop('disabled', false);
-                }
-                var node_type = row.cells[1].innerHTML;
-                var node_type_desc = row.cells[2].innerHTML;
-                dropdown_values.push([node_type, node_type_desc])
-                guid = row.cells[3].innerHTML;
-                unique_input = '<input type="text" class="input form-control"  value="' + row.cells[1].innerHTML + '" id="nodetype" name="nodetype">'
-                edit_basic_data += '<tr><td>'+check+'</td><td>'+unique_input+'</td><td><input type="text" class="input form-control"  value="' + row.cells[2].innerHTML + '"  id="nodetype" name="nodetype"></td><td hidden><input value"'+guid+'"</td><td class="class_del_checkbox" hidden><input type="checkbox" required></td><td class="id_del_ind_checkbox1" hidden><input type="checkbox" name = "del_ind_flag" required></td></tr>';
-                $("#header_select").prop("hidden", false);
-            }
-            else {
-                $('#save_id').show();
-                document.getElementById('save_id').style.visibility = 'visible';
-            }
-        }
-    }
-    display_button()
-    $('#id_popup_tbody').append(edit_basic_data);
-    $("#id_del_ind_checkbox").prop("hidden", true);
-    $('#org_node_Modal').modal('show');
-    table_sort_filter('id_popup_table');
-}
-
-//***************************
-function display_button(){
-    if(GLOBAL_ACTION == "DELETE"){
-        $('#delete_data').show();
-        $('#save_id').hide();
-    }
-    else{
-        $('#save_id').show();
-        document.getElementById('save_id').style.visibility = 'visible';
-    }
+//hide the myModal popup: Implemented Dependency delete purpose
+function hideModal() {
+    $('#org_node_Modal').modal('hide');
 }
 
 //onclick of cancel empty the popup table body and error messages
@@ -147,25 +82,24 @@ function get_main_table_data(){
 
 // Function for add a new row data
 function new_row_data() {
-    basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select type="text" class="input form-control nodetype"   name="nodetype" onchange="GetSelectedTextValue(this)">' + node_type_dropdown + '</select></td><td><input class="form-control description" type="text"  name="description" value="'+desc_nodetype+'"  disabled></td><td hidden>guid</td><td class="class_del_checkbox" hidden><input type="checkbox" required></td><td class="id_del_ind_checkbox1" hidden><input type="checkbox" name="del_ind_flag" required></td></tr>';
+    basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select type="text" class="input form-control nodetype" name="nodetype" onchange="GetSelectedTextValue(this)">' + node_type_dropdown + '</select></td><td><input class="form-control description" type="text"  name="description" value="'+desc_nodetype+'" disabled></td><td hidden>guid</td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
     table_sort_filter('id_popup_table');
 }
 
 // Function to get the selected row data
-function get_selected_row_data() {
-    $("#id_popup_table TBODY TR").each(function() {
-        var row = $(this);
+function get_row_data(tableSelector) {
+    main_table_org_node_type_checked = []; // Clear the previous data before collecting new data
+    $(tableSelector).DataTable().$('input[type="checkbox"]').each(function () {
+        var checkbox = $(this);
+        var row = checkbox.closest("tr");
         var org_node_type_arr_obj = {};
-        var checked_box = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked')
-        disable_check = row.find("TD").eq(0).find('input[type="checkbox"]').is(':disabled');
-        if(checked_box)
+        org_node_type_arr_obj.del_ind = checkbox.is(':checked');
+        if(org_node_type_arr_obj.del_ind)
         {
-            org_node_type_arr_obj.del_ind_flag = row.find("TD").eq(5).find('input[type="checkbox"]').is(':checked');
-            org_node_type_arr_obj.del_ind = checked_box;
-            org_node_type_arr_obj.description = row.find("TD").eq(2).find('input[type="text"]').val().toUpperCase();
-            org_node_type_arr_obj.node_type = row.find("TD").eq(1).find('input[type="text"]').val();
-            org_node_type_arr_obj.node_type_guid = row.find("TD").eq(3).find('input[type="text"]').val();
+            org_node_type_arr_obj.node_type = row.find("TD").eq(1).find('input[type="text"]').val() || row.find("TD").eq(1).html();
+            org_node_type_arr_obj.description = row.find("TD").eq(2).find('input[type="text"]').val() || row.find("TD").eq(2).html();
+            org_node_type_arr_obj.node_type_guid = row.find("TD").eq(3).find('input[type="text"]').val() || row.find("TD").eq(3).html();
             main_table_org_node_type_checked.push(org_node_type_arr_obj);
         }
     });

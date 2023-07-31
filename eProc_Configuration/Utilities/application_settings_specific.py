@@ -229,6 +229,46 @@ class ApplicationSettingsSave:
 
         return data, message
 
+    def generate_node_type_delete_flags(self, node_type_data):
+        delete_flags = []  # List to store delete_flag for each value
+
+        for node_type_detail in node_type_data['data']:
+            delete_flag = True
+
+            # Check if value is present in the transaction table
+            if django_query_instance.django_existence_check(OrgModelNodetypeConfig,
+                                                            {'node_type': node_type_detail['node_type'],
+                                                             'client': self.client,
+                                                             'del_ind': False}):
+                delete_flag = False
+            delete_flags.append(delete_flag)  # Store delete_flag value for each iteration
+
+            data = {
+                'delete_flags': delete_flags
+            }
+
+        return data
+
+    def generate_attributes_delete_flags(self, attributes_data):
+        delete_flags = []  # List to store delete_flag for each value
+
+        for attributes_detail in attributes_data['data']:
+            delete_flag = True
+
+            # Check if value is present in the transaction table
+            if django_query_instance.django_existence_check(OrgModelNodetypeConfig,
+                                                            {'node_values': attributes_detail['node_values'],
+                                                             'client': self.client,
+                                                             'del_ind': False}):
+                delete_flag = False
+            delete_flags.append(delete_flag)  # Store delete_flag value for each iteration
+
+            data = {
+                'delete_flags': delete_flags
+            }
+
+        return data
+
     def generate_auth_grp_delete_flags(self, auth_grp_data):
         delete_flags = []  # List to store delete_flag for each value
 
