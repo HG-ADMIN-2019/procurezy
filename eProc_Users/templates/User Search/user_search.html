@@ -693,9 +693,35 @@ function check_data() {
         var row = $(this);
 
         //*************** reading data from the pop-up ***************
-        country_name = row.find("TD").eq(2).find('input[type="text"]').val().toUpperCase();
-        country_code = row.find("TD").eq(1).find('input[type="text"]').val().toUpperCase();
-        checked_box = row.find("TD").eq(3).find('input[type="checkbox"]').is(':checked')
+        email = row.find("TD").eq(1).find('input[type="text"]').val().toUpperCase();
+        username = row.find("TD").eq(2).find('input[type="text"]').val().toUpperCase();
+        person_no = row.find("TD").eq(3).find('input[type="text"]').val().toUpperCase();
+        form_of_address = row.find("TD").eq(4).find('input[type="text"]').val().toUpperCase();
+        first_name = row.find("TD").eq(5).find('input[type="text"]').val().toUpperCase();
+        last_name = row.find("TD").eq(6).find('input[type="text"]').val().toUpperCase();
+        gender = row.find("TD").eq(7).find('input[type="text"]').val().toUpperCase();
+        phone_num = row.find("TD").eq(8).find('input[type="text"]').val().toUpperCase();
+        password = row.find("TD").eq(9).find('input[type="text"]').val().toUpperCase();
+        date_joined = row.find("TD").eq(10).find('input[type="text"]').val().toUpperCase();
+        first_login = row.find("TD").eq(11).find('input[type="text"]').val().toUpperCase();
+        last_login = row.find("TD").eq(12).find('input[type="text"]').val().toUpperCase();
+        is_active = row.find("TD").eq(13).find('input[type="text"]').val().toUpperCase();
+        is_superuser = row.find("TD").eq(14).find('input[type="text"]').val().toUpperCase();
+        is_staff = row.find("TD").eq(15).find('input[type="text"]').val().toUpperCase();
+        date_format = row.find("TD").eq(16).find('input[type="text"]').val().toUpperCase();
+        employee_id = row.find("TD").eq(17).find('input[type="text"]').val().toUpperCase();
+        decimal_notation = row.find("TD").eq(18).find('input[type="text"]').val().toUpperCase();
+        user_type = row.find("TD").eq(19).find('input[type="text"]').val().toUpperCase();
+        login_attempts = row.find("TD").eq(20).find('input[type="text"]').val().toUpperCase();
+        pwd_locked = row.find("TD").eq(21).find('input[type="text"]').val().toUpperCase();
+        sso_user = row.find("TD").eq(22).find('input[type="text"]').val().toUpperCase();
+        valid_from = row.find("TD").eq(23).find('input[type="text"]').val().toUpperCase();
+        valid_to = row.find("TD").eq(24).find('input[type="text"]').val().toUpperCase();
+        currency_id = row.find("TD").eq(25).find('input[type="text"]').val().toUpperCase();
+         language_id = row.find("TD").eq(26).find('input[type="text"]').val().toUpperCase();
+        object_id = row.find("TD").eq(27).find('input[type="text"]').val().toUpperCase();
+        language_id = row.find("TD").eq(28).find('input[type="text"]').val().toUpperCase();
+        del_ind = row.find("TD").eq(29).find('input[type="checkbox"]').is(':checked')
             if (checked_box){
                 del_ind = '1'
             }

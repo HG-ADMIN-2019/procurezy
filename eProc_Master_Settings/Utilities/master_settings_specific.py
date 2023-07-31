@@ -1310,7 +1310,8 @@ class MasterSettingsSave:
         message = get_message_detail_based_on_action(payment_desc_data['action'])
 
         upload_response = get_paymentdesc_data()
-        return upload_response, message
+        data = get_paymentdesc_dropdown()
+        return upload_response, message,data
 
 
 def get_unspsc_cat_cust_data():

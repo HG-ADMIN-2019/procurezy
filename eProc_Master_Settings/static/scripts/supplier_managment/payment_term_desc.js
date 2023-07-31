@@ -103,7 +103,7 @@ function new_row_data() {
         '<td><select id="payterm_key" name="payterm_key" class="form-control"  type="text">'+payment_term_dropdown+'</select></td>'+
         '<td><input  type="text"  name="description" class="form-control check_special_char" maxlength="50"></td>'+
         '<td><input  type="number"  name="day_limit" class="form-control check_number" maxlength="10"></td>'+
-        '<td class="class_del_checkbox" hidden><input type="checkbox" required></td>'+
+        '<td class="class_del_checkbox" hidden><input type="checkbox"></td>'+
         '<td hidden><input  type="text"  name="guid"></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
     table_sort_filter('id_popup_table');
