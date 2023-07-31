@@ -83,7 +83,7 @@
             </div>
         </div>
         {% endif %} -->
-
+    <div class="alert alert-success display-none" id="org_announcement_update_success" role="alert"> </div>
     <div style="margin-top:25px" id="error_msg_div" class="alert alert-success" hidden><span id="success_msg_id"></span></div>
 
     {% if announcement_result1 %}
@@ -142,7 +142,7 @@
     {% endif %}
 </div>
 </div>
-<div class="alert alert-success display-none" id="org_announcement_update_success" role="alert"> </div>
+
 <!-- Custom Modal Popup for Save Confirmation -->
 <div class="modal fade" id="saveConfirmationModal" tabindex="-1" role="dialog" aria-labelledby="saveConfirmationModalLabel" aria-hidden="true">
     <div class="modal-dialog modal-dialog-centered" role="document">
@@ -534,7 +534,8 @@ $('#sup_tab tbody').on('click', 'input[class="annsmt_checkbox"]', function(e){
 }
 
  function save_announcement_data() {
-        var sub_val = $('#announcement_subject').val();
+        var sub_val = $('#modal_announcement_subject').val();
+
         console.log('Title Value:', sub_val);
         var desc_val = $('#announcement_desc').val();
         var from_date_val = $('#from_date').val();
@@ -550,9 +551,9 @@ $('#sup_tab tbody').on('click', 'input[class="annsmt_checkbox"]', function(e){
         var form_data = {};
         form_data = {
             announcement_id: document.getElementById('announcement_id').value,
-            announcement_subject: document.getElementById('announcement_subject').value,
+            announcement_subject: document.getElementById('modal_announcement_subject').value,
             announcement_description: document.getElementById('announcement_desc').value,
-            status: document.getElementById('status').value,
+            status: document.getElementById('announcement_status').value,
             priority: document.getElementById('priority').value,
             announcement_from_date: document.getElementById('from_date').value,
             announcement_to_date: document.getElementById('to_date').value,
@@ -565,6 +566,7 @@ $('#sup_tab tbody').on('click', 'input[class="annsmt_checkbox"]', function(e){
             url: "{% url 'eProc_Org_Support:org_announcement_save' %}",
             data: JSON.stringify(form_data),
             success: function (response) {
+                 $('#saveConfirmationModal').modal('hide');
                 document.getElementById('org_announcement_update_success').innerHTML = response.message;
                 //console.log(response.updated_guid)
                 $('#save_error_div').hide();
