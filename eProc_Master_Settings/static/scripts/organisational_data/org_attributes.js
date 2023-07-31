@@ -10,13 +10,6 @@ function onclick_update_button() {
     document.getElementById("id_del_add_button").style.display = "none";
 }
 
-//******************************
-function onclick_delete_button() {
-    GLOBAL_ACTION = "DELETE"
-    onclick_copy_update_button("DELETE")
-    document.getElementById("id_del_add_button").style.display = "none";
-}
-
 //************************************
 function onclick_copy_update_button(data) {
     $('#display_basic_table').DataTable().destroy();
@@ -103,18 +96,6 @@ function onclick_copy_update_button(data) {
     table_sort_filter("id_popup_table");
     $('#org_attr_Modal').modal('show');
     table_sort_filter('display_basic_table');
-}
-
-//***************************
-function display_button(){
-    if(GLOBAL_ACTION == "DELETE"){
-        $('#delete_data').show();
-        $('#save_id').hide();
-    }
-    else{
-        $('#delete_data').hide();
-        $('#save_id').show();
-    }
 }
 
 //onclick of cancel empty the popup table body and error messages
@@ -262,23 +243,22 @@ function get_main_table_data() {
 }
 
 // Function to get the selected row data
-function get_selected_row_data() {
-    $("#id_popup_table TBODY TR").each(function() {
-        var row = $(this);
+function get_row_data(tableSelector) {
+    main_table_org_attr_checked = []; // Clear the previous data before collecting new data
+    $(tableSelector).DataTable().$('input[type="checkbox"]').each(function () {
+        var checkbox = $(this);
+        var row = checkbox.closest("tr");
         var org_attr_arr_obj = {};
-        var checked_box = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
-        disable_check = row.find("TD").eq(8).find('input[type="text"]').val();
-        if(checked_box)
+        org_attr_arr_obj.del_ind = checkbox.is(':checked');
+        if(org_attr_arr_obj.del_ind)
         {
-            org_attr_arr_obj.del_ind_flag = row.find("TD").eq(9).find('input[type="checkbox"]').is(':checked');
-            org_attr_arr_obj.del_ind = checked_box;
-            org_attr_arr_obj.attribute_id = row.find("TD").eq(1).find('input[type="text"]').val();
-            org_attr_arr_obj.attribute_name = row.find("TD").eq(2).find('input[type="text"]').val();
-            org_attr_arr_obj.range_indicator = row.find("TD").eq(3).find('input[type="checkbox"]').is(':checked');
-            org_attr_arr_obj.multiple_value = row.find("TD").eq(4).find('input[type="checkbox"]').is(':checked');
-            org_attr_arr_obj.allow_defaults = row.find("TD").eq(5).find('input[type="checkbox"]').is(':checked');
-            org_attr_arr_obj.inherit_values = row.find("TD").eq(6).find('input[type="checkbox"]').is(':checked');
-            org_attr_arr_obj.maximum_length = row.find("TD").eq(7).find('input[type="checkbox"]').is(':checked');
+            org_attr_arr_obj.attribute_id = row.find("input[name='attribute_id']").val() || row.find("td").eq(1).text();
+            org_attr_arr_obj.attribute_name = row.find("input[name='attribute_name']").val() || row.find("td").eq(2).text();
+            org_attr_arr_obj.range_indicator = row.find("input[name='range_indicator']").is(':checked');
+            org_attr_arr_obj.multiple_value = row.find("input[name='multiple_value']").is(':checked');
+            org_attr_arr_obj.allow_defaults = row.find("input[name='allow_defaults']").is(':checked');
+            org_attr_arr_obj.inherit_values = row.find("input[name='inherit_values']").is(':checked');
+            org_attr_arr_obj.maximum_length = row.find("input[name='maximum_length']").val()  || row.find("td").eq(7).text();
             main_table_org_attr_checked.push(org_attr_arr_obj);
         }
     });

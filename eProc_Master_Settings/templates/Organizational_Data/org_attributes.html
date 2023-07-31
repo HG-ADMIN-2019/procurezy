@@ -28,8 +28,8 @@
                     <button class="btn btn-secondary btn-sm" id="id_edit_data" title="Edit" onclick="onclick_edit_button()">
                         <i class="fas fa-edit"></i> edit
                     </button>
-                    <button class="btn btn-outline-danger btn-sm" id="id_delete_data" value="org_attr_delete" title= "Delete" style="display:none;" onclick="onclick_delete_button()">
-                        <i class="fa fa-trash" ></i> delete
+                    <button class="btn btn-outline-danger btn-sm" id="id_delete_data" title= "DELETE" value="Delete" style="display:none;" onclick="onclick_delete_button()">
+                        <i class="fa fa-trash"></i> delete
                     </button>
                     <button class="btn btn-primary btn-sm" title="Update" id="id_update_data" style="display:none;" value="UPDATE" type="button" onclick="onclick_update_button()">
                         <i class="far fa-edit"></i> update
@@ -133,18 +133,17 @@
                         <div id="id_info_msg_id" class="alert alert-primary display-none" role="alert"></div>
                         <table class="class_popup_table table table-bordered mt-2" id="id_popup_table">
                             <thead>
-                            <tr>
-                                <th id="header_select">Select</th>
-                                <th>Attribute</th>
-                                <th>Description</th>
-                                <th>Range Indicator</th>
-                                <th>Multiple Values</th>
-                                <th>Allow Defaults</th>
-                                <th>Inherit Values</th>
-                                <th>Maximum Length</th>
-                                <th id="id_del_ind_checkbox" hidden>Del Indicator</th>
-                                <th id="id_del_ind_checkbox1" hidden>Del Indicator Flag</th>
-                            </tr>
+                                <tr>
+                                    <th id="header_select">Select</th>
+                                    <th>Attribute</th>
+                                    <th>Description</th>
+                                    <th>Range Indicator</th>
+                                    <th>Multiple Values</th>
+                                    <th>Allow Defaults</th>
+                                    <th>Inherit Values</th>
+                                    <th>Maximum Length</th>
+                                    <th id="id_del_ind_checkbox" hidden>Del Indicator</th>
+                                </tr>
                             </thead>
                             <tbody id=id_popup_tbody>
                             </tbody>
@@ -152,13 +151,12 @@
                     </div>
                 </div>
                 <!-- Modal footer -->
-                <div class="modal-footer"><div class="modal-footer">
+                <div class="modal-footer">
                     <button type="button" class="btn btn-outline-primary remove_upload_data" title="Cancel" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
                     <button class="btn btn-primary" title="Save" id="save_id"><i class="fas fa-save"></i> save</button>
-                     <button class="btn btn-primary btn-sm" title="Delete" id="delete_data" value="DELETE" data-toggle="modal" data-target="#id_delete_confirm_popup">
+                    <button class="btn btn-primary btn-sm" title="Delete" id="delete_data" value="DELETE" data-toggle="modal" data-target="#id_delete_confirm_popup" onclick="hideModal()">
                         <i class="fa fa-trash"></i> Delete
                     </button>
-                </div>
                 </div>
             </div>
         </div>
@@ -193,6 +191,7 @@
     var appname = uiConstants["CONST_APPNAME01"]
     var db_header_data = uiConstants["CONST_HEADER_DATA_ORG_ATTR"]
     var attribute_id_dropdown_onload = '';
+    var main_table_org_attr_checked = [];
 
     //********************
     var attribute_id_dropdown;
@@ -262,28 +261,89 @@
         table_sort_filter('id_popup_table');
     }
 
+    // Onclick delete Button
+    function onclick_delete_button() {
+        $("#error_msg_id").css("display", "none");
+        $('#id_popup_table').DataTable().destroy();
+        $("#id_popup_tbody").empty();
+        GLOBAL_ACTION = "DELETE";
+        var edit_basic_data = "";
+        var guid = '';
+        main_table_org_attr_checked = [];
+        get_row_data("#display_basic_table"); // Function call to get the selected row data
+        display_button(); // Call the display_button function to show/hide the buttons
+        var data = {'data': main_table_org_attr_checked, 'table_name': 'OrgAttributes', 'action': GLOBAL_ACTION };
+        OpenLoaderPopup();
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'eProc_Configuration:create_update_delete_flags' %}",
+            data: JSON.stringify(data),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function(Response) {
+                var docTypeArray = Response.delete_flags; // Get the delete_flags array from the response
+                var res = get_all_checkboxes(); // Function to get all the checkboxes
+                var $chkbox_all = $('td input[type="checkbox"]', res);
+                var j = 0; // Index for docTypeArray
+                for (var i = 0; i < $chkbox_all.length; i++) {
+                    if ($chkbox_all[i].checked) {
+                        var row = $chkbox_all[i].parentNode.parentNode;
+                        if (j < docTypeArray.length && docTypeArray[j] === false) {
+                            check = '<input type="checkbox" disabled>';
+                            $('#delete_data').prop('disabled', true);
+                        } else {
+                            check = '<input type="checkbox" onclick="enableDeleteButton()">';
+                        }
+                        j++; // Move to the next index in docTypeArray
+                        edit_basic_data +=
+                            `<tr>
+                                <td>${check}</td>
+                                <td><td><select type="text" class="input form-control attribute" name="attribute" value="${row.cells[1].innerHTML}"  disabled></td>
+                                <td><td><input class="form-control attribute_name" type="text" name="attribute_name" value="${row.cells[2].innerHTML}" disabled></td>
+                                <td><input type="checkbox" name="multiple_value" required></td>
+                                <td><input type="checkbox" name="allow_defaults" required></td>
+                                <td><input type="checkbox" name="inherit_values" required></td>
+                                <td><input type="number" name="maxlength"></td>
+                                <td><input type="checkbox" name="range_indicator" required></td>
+                                <td class="class_del_checkbox" hidden><input type="checkbox" required></td>
+                            </tr>`;
+                    }
+                }
+                CloseLoaderPopup();
+                $('#id_popup_tbody').append(edit_basic_data);
+                $("#id_del_ind_checkbox").prop("hidden", true);
+                $('#org_attr_Modal').modal('show');
+                table_sort_filter('id_popup_table');
+            },
+        });
+    }
+
     //delete the selected row in db................
-    var main_table_org_attr_checked = [];
-    var msg_type = {};
     function main_table_delete() {
         $('#success_msg_id').empty()
         GLOBAL_ACTION = 'DELETE'
         main_table_org_attr_checked = [];
         var disable_check = '';
         $('#display_basic_table').DataTable().destroy();
-        get_selected_row_data(); // Function call to get the selected row data
-        if(disable_check){
-            $('#delete_data').prop('disabled', true);
-            error_message = ui_messeges("JMSG112"); // Get message details
-            var display4 = msg_type.messages_id_desc;
-            document.getElementById("id_error_msg_checkbox").innerHTML = display4+ "Checkbox";
+        get_row_data("#id_popup_table");
+        $('#id_delete_confirm_popup').modal('hide');
+        if(main_table_po_split_checked.length == "0"){
+            var msg = "JMSG005";
+            var msg_type ;
+            msg_type = message_config_details(msg);
+            $("#error_msg_id").prop("hidden", false);
+            if(msg_type.message_type == "ERROR"){
+                display_message("error_msg_id", msg_type.messages_id_desc)
+            }
+            else if(msg_type.message_type == "WARNING"){
+                display_message("id_warning_msg_id", msg_type.messages_id_desc)
+            }
+            else if(msg_type.message_type == "INFORMATION"){
+                display_message("id_info_msg_id", msg_type.messages_id_desc)
+            }
             $('#id_delete_confirm_popup').modal('hide');
-        }
-        else if (main_table_org_attr_checked.length == "0"){
-              get_message_details("JMSG005"); // Get message details
-               var display4 = msg_type.messages_id_desc;
-              document.getElementById("id_error_msg_checkbox").innerHTML = display4+ "Checkbox";
-              $('#id_delete_confirm_popup').modal('hide');
+            $('#org_attr_Modal').modal('show')
+            table_sort_filter('display_basic_table');
         }
         else{
             $('#id_save_confirm_popup').modal('hide');
@@ -357,7 +417,6 @@
                 //Reference the CheckBoxes in Table.
                 var edit_basic_data = "";
                 var dropdown_values = [];
-                dropdown_value();
                 //Loop through the CheckBoxes.
                 for (var i = 0; i < $chkbox_all.length; i++) {
                     if ($chkbox_all[i].checked) {
