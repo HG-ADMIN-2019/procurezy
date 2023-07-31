@@ -595,7 +595,7 @@ def m_docsearch_meth(request):
                               inp_to_date,
                               inp_supl,
                               inp_created_by,
-                              inp_requester, report_search)
+                              inp_requester, client, report_search)
 
         company_details = OrgCompanies.objects.filter(client=client, del_ind=False, company_guid=1000)
         for comp in company_details:
@@ -631,7 +631,7 @@ def m_docsearch_meth(request):
                                   inp_to_date,
                                   inp_supl,
                                   inp_created_by,
-                                  inp_requester, report_search)
+                                  inp_requester, client, report_search)
             company_details = OrgCompanies.objects.filter(client=client, del_ind=False, company_guid=inp_comp_code)
             for comp in company_details:
                 result = result.filter(co_code=comp.company_id)
@@ -1222,10 +1222,10 @@ def extract_employee_template(request):
     writer = csv.writer(response)
 
     writer.writerow(
-        ['EMAIL', 'USERNAME', 'PERSON_NO', 'FORM_OF_ADDRESS', 'FIRST_NAME', 'LAST_NAME', 'PHONE_NUM', 'PASSWORD',
+        ['EMAIL', 'USERNAME', 'PERSON_NO', 'FORM_OF_ADDRESS', 'FIRST_NAME', 'LAST_NAME', 'GENDER','PHONE_NUM', 'PASSWORD',
          'DATE_JOINED', 'FIRST_LOGIN', 'LAST_LOGIN', 'IS_ACTIVE', 'IS_SUPERUSER', 'IS_STAFF', 'DATE_FORMAT',
          'EMPLOYEE_ID', 'DECIMAL_NOTATION', 'USER_TYPE', 'LOGIN_ATTEMPTS', 'USER_LOCKED', 'PWD_LOCKED', 'SSO_USER',
-         'VALID_FROM', 'VALID_TO', 'del_ind', 'CURRENCY_ID', 'LANGUAGE_ID', 'OBJECT_ID', 'TIME_ZONE'])
+         'VALID_FROM', 'VALID_TO', 'del_ind', 'CURRENCY', 'LANGUAGE_ID', 'OBJECT_ID', 'TIME_ZONE'])
 
     return response
 

@@ -3,6 +3,11 @@ var validate_add_attributes = [];
 var main_table_low_value = [];
 var roles={};
 
+//hide the myModal popup: Implemented Dependency delete purpose
+function hideModal() {
+    $('#Roles_Modal').modal('hide');
+}
+
 //onclick of cancel empty the popup table body and error messages
 $(".remove_upload_data").click(() => {
     $("#id_error_msg").html("");
@@ -105,14 +110,16 @@ function get_main_table_data() {
 }
 
 // Function to get the selected row data
-function get_selected_row_data() {
-    $("#display_basic_table TBODY TR").each(function() {
-        var row = $(this);
+function get_row_data(tableSelector) {
+    main_table_roles_checked = [];
+    $(tableSelector).DataTable().$('input[type="checkbox"]').each(function () {
+        var checkbox = $(this);
+        var row = checkbox.closest("tr");
         var roles_arr_obj = {};
-        roles_arr_obj.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
+        roles_arr_obj.del_ind = checkbox.is(':checked');
         if(roles_arr_obj.del_ind) {
-            roles_arr_obj.role = row.find("TD").eq(1).html();
-            roles_arr_obj.role_desc = row.find("TD").eq(2).html();
+            roles_arr_obj.role = row.find("TD").eq(1).find('input[type="text"]').val() || row.find("TD").eq(1).html();
+            roles_arr_obj.role_desc = row.find("TD").eq(2).find('input[type="text"]').val() || row.find("TD").eq(2).html();
             main_table_roles_checked.push(roles_arr_obj);
         }
     });
