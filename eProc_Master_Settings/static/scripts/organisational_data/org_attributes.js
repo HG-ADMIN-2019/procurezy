@@ -242,25 +242,21 @@ function get_main_table_data() {
     table_sort_filter('display_basic_table');
 }
 
-// Function to get the selected row data
 function get_row_data(tableSelector) {
-    main_table_org_attr_checked = []; // Clear the previous data before collecting new data
-    $(tableSelector).DataTable().$('input[type="checkbox"]').each(function () {
+    main_table_org_attr_checked = [];
+    $(tableSelector).DataTable().$('input[type="checkbox"]:checked').each(function () {
         var checkbox = $(this);
-        var row = checkbox.closest("tr");
+        var row = checkbox.closest("tr"); // This ensures row represents the selected row
         var org_attr_arr_obj = {};
-        org_attr_arr_obj.del_ind = checkbox.is(':checked');
-        if(org_attr_arr_obj.del_ind)
-        {
-            org_attr_arr_obj.attribute_id = row.find("input[name='attribute_id']").val() || row.find("td").eq(1).text();
-            org_attr_arr_obj.attribute_name = row.find("input[name='attribute_name']").val() || row.find("td").eq(2).text();
-            org_attr_arr_obj.range_indicator = row.find("input[name='range_indicator']").is(':checked');
-            org_attr_arr_obj.multiple_value = row.find("input[name='multiple_value']").is(':checked');
-            org_attr_arr_obj.allow_defaults = row.find("input[name='allow_defaults']").is(':checked');
-            org_attr_arr_obj.inherit_values = row.find("input[name='inherit_values']").is(':checked');
-            org_attr_arr_obj.maximum_length = row.find("input[name='maximum_length']").val()  || row.find("td").eq(7).text();
-            main_table_org_attr_checked.push(org_attr_arr_obj);
-        }
+        org_attr_arr_obj.del_ind = true; // Since we already checked if it's checked
+        org_attr_arr_obj.attribute_id = row.find("input[name='attribute_id']").val() || row.find("td").eq(1).text();
+        org_attr_arr_obj.attribute_name = row.find("input[name='attribute_name']").val() || row.find("td").eq(2).text();
+        org_attr_arr_obj.range_indicator = row.find("input[name='range_indicator']").is(':checked');
+        org_attr_arr_obj.multiple_value = row.find("input[name='multiple_value']").is(':checked');
+        org_attr_arr_obj.allow_defaults = row.find("input[name='allow_defaults']").is(':checked');
+        org_attr_arr_obj.inherit_values = row.find("input[name='inherit_values']").is(':checked');
+        org_attr_arr_obj.maximum_length = row.find("input[name='maximum_length']").val() || row.find("td").eq(7).text();
+        main_table_org_attr_checked.push(org_attr_arr_obj);
     });
 }
 

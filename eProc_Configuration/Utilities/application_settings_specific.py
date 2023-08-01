@@ -229,6 +229,30 @@ class ApplicationSettingsSave:
 
         return data, message
 
+    def generate_prod_cat_id_delete_flags(self, prod_cat_id_data):
+        delete_flags = []  # List to store delete_flag for each value
+
+        for prod_cat_id_detail in prod_cat_id_data['data']:
+            delete_flag = True
+
+            # Tables to check for existence
+            tables_to_check = [UnspscCategoriesCust, UnspscCategoriesCustDesc]
+
+            for table_name in tables_to_check:
+                if django_query_instance.django_existence_check(table_name,
+                                                                {'prod_cat_id': prod_cat_id_detail['prod_cat_id'],
+                                                                 'client': self.client,
+                                                                 'del_ind': False}):
+                    delete_flag = False
+                    break
+
+            delete_flags.append(delete_flag)  # Store delete_flag value for each iteration
+        data = {
+            'delete_flags': delete_flags  # Include the delete_flags list in the response data
+        }
+
+        return data
+
     def generate_node_type_delete_flags(self, node_type_data):
         delete_flags = []  # List to store delete_flag for each value
 
