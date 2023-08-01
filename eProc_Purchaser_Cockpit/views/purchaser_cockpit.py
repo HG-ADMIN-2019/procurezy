@@ -148,7 +148,20 @@ def PO_grouping(request):
     update_user_info(request)
     client = global_variables.GLOBAL_CLIENT
     response = ''
-    sc_header_list = []
+    supplier_id = []
+    po_flag = False
     po_data = JsonParser_obj.get_json_from_req(request)
+    for doc in po_data:
+        if doc['supplier_id'] not in supplier_id:
+            supplier_id.append(doc['supplier_id'])
+
+    temp = supplier_id[0]
+    for supp in supplier_id:
+        if supp == temp:
+            po_flag = True
+        else:
+            po_flag = False
+
+    response = po_flag
 
     return JsonResponse(response, safe=False)

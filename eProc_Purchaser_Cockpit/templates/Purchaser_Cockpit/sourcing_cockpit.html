@@ -61,7 +61,7 @@
     {% if sc_header_item_details %}
         <div class="card">
             <div>
-                 <button class="btn btn-primary  btn-sm mt-2 ml-2"  title="Generate PO" id="id_generate_po" value="generate_po" data-toggle="modal" data-target="#confirm_po_pop_up" style="display:none;" >
+                 <button class="btn btn-primary  btn-sm mt-2 ml-2"  title="Generate PO" id="id_generate_po" value="generate_po" onclick="create_po()" style="display:none;" >
                     <i></i> Generate PO
                 </button>
             <div>
@@ -69,6 +69,7 @@
                 <table id="sc_header_item" class="table table_sort_filter_export_excel">
                     <thead class="thead-light">
                         <tr>
+                            <th scope="col">Select</th>
                             <th scope="col">SC Number</th>
                             <th scope="col">Description</th>
                             <th scope="col">Supplier ID</th>
@@ -77,12 +78,12 @@
                             <th scope="col">Unit</th>
                             <th scope="col">Quantity</th>
                             <th scope="col">Product Category</th>
-                            <th scope="col">Select</th>
                         </tr>
                     </thead>
                     <tbody id="add_attr_body" >
                         {% for header_item in sc_header_item_details %}
                         <tr>
+                            <td scope="row"><input type="checkbox" name="select" value="select" onclick="po_generate()"></td>
                             <td scope="row">{{ header_item.0 }}</td>
                             <td scope="row" class="hg-desc">{{ header_item.1 }}</td>
                             <td scope="row">{{ header_item.2 }}</td>
@@ -91,7 +92,6 @@
                             <td scope="row">{{ header_item.5 }}</td>
                             <td scope="row">{{ header_item.6 }}</td>
                             <td scope="row">{{ header_item.7 }}</td>
-                            <td scope="row"><input type="checkbox" name="select" value="select" onclick="po_generate()"></td>
                         </tr>
                         {% endfor %}
                     </tbody>
@@ -163,7 +163,7 @@
                                     <th>Unit</th>
                                     <th>Quantity</th>
                                     <th>Product Category</th>
-                                    <th id="id_del_ind_checkbox" hidden>Del Indicator</th>
+<!--                                    <th id="id_del_ind_checkbox" hidden>Del Indicator</th>-->
                                 </tr>
                             </thead>
                             <tbody id=id_popup_tbody>
@@ -174,7 +174,7 @@
                 <!-- Modal footer -->
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-primary remove_upload_data" title="Cancel" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
-                    <button class="btn btn-primary" title="Save" id="save_id"><i class="fas fa-save"></i> Create PO</button>
+                    <button class="btn btn-primary" title="Save" id="save_id"><i class="fas fa-save" ></i> Create PO</button>
 <!--                    <button class="btn btn-primary btn-sm" title="Delete" id="delete_data" value="DELETE" data-toggle="modal" data-target="#id_delete_confirm_popup" onclick="hideModal()">-->
 <!--                        <i class="fa fa-trash"></i> Delete-->
 <!--                    </button>-->
@@ -206,10 +206,9 @@ function reload(){
       OpenLoaderPopup();
   }
 
-
 function po_generate(){
     $("#id_generate_po").prop("hidden", false);
-    $("#id_generate_po").show();
+    $("#id_generate_po").toggle();
 }
 // Function to delete User
 function create_po() {
@@ -224,44 +223,13 @@ function create_po() {
         $("#sc_header_item TBODY TR").each(function () {
             var row = $(this);
             po_data={};
-            var check_status = row.find("TD").eq(8).find('input[type="checkbox"]').is(':checked');
+            var check_status = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
             if(check_status){
-            po_data.doc_number = row.find("TD").eq(0).html();
-            po_data.supplier_d = row.find("TD").eq(2).html();
+            po_data.doc_number = row.find("TD").eq(1).html();
+            po_data.supplier_id = row.find("TD").eq(3).html();
             selected_row_data.push(po_data);
             }
         });
-        $.each(selected_row_data, function (i, item) {
-            if ($.inArray(item, add_attr_unique_list) == -1) {
-                add_attr_unique_list.push(item);
-            }
-        });
-        if (add_attr_unique_list.length == 0) {
-            alert("cannot generate PO");
-        }
-        else{
-            var grid = document.getElementById("sc_header_item");
-            var checkBoxes = grid.getElementsByTagName("INPUT");
-            for (var i = 0; i < checkBoxes.length; i++) {
-                if (checkBoxes[i].checked) {
-                    var row = checkBoxes[i].parentNode.parentNode;
-                    edit_basic_data +=
-                                '<tr>'+
-                                '<td><input type="number" class="form-control" value="' + row.cells[0].innerHTML + '" name="sc_number" disabled></td>' +
-                                '<td><input class="form-control" value="' + row.cells[1].innerHTML + '" type="text"  name="description"  disabled></td>' +
-                                '<td><input value="' + row.cells[2].innerHTML + '" type="text" class="form-control"  name="supplier_id"   disabled></td>' +
-                                '<td><input value="' + row.cells[3].innerHTML + '" type="text" class="form-control"  name="company_code"  disabled></td>' +
-                                '<td><input  type="text" class="form-control" value="' + row.cells[4].innerHTML + '" name="delivery_date" disabled></td>' +
-                                '<td><input value="' + row.cells[5].innerHTML + '" type="text" class="form-control"  name="unit"  disabled></td>' +
-                                '<td><input value="' + row.cells[6].innerHTML + '" type="text" class="form-control"  name="quantity" disabled></td>' +
-                                '<td><input value="' + row.cells[7].innerHTML + '" type="text" class="form-control"  name="prod_cat"  disabled></td>' +
-                                '<td class="class_del_checkbox"><input type="checkbox" required></td>' +
-                                '</tr>';
-                        }
-                }
-            $('#id_popup_table').append(edit_basic_data);
-            table_sort_filter('id_popup_table');
-            $('#poGroupModal').modal('show');
         data =  selected_row_data
         OpenLoaderPopup();
     $.ajax({
@@ -272,13 +240,38 @@ function create_po() {
         dataType: "json",
         success: function (Response) {
             console.log(Response);
-            $('#success_msg_id').text(Response)
-            $("#error_msg_div").prop("hidden",false);
-<!--            message_display_time();-->
+            if(Response){
+                var grid = document.getElementById("sc_header_item");
+                var checkBoxes = grid.getElementsByTagName("INPUT");
+                for (var i = 0; i < checkBoxes.length; i++) {
+                    if (checkBoxes[i].checked) {
+                        var row = checkBoxes[i].parentNode.parentNode;
+                        edit_basic_data +=
+                                    '<tr>'+
+                                    '<td><input type="number" class="form-control" value="' + row.cells[1].innerHTML + '" name="sc_number" disabled></td>' +
+                                    '<td><input class="form-control" value="' + row.cells[2].innerHTML + '" type="text"  name="description"  disabled></td>' +
+                                    '<td><input value="' + row.cells[3].innerHTML + '" type="text" class="form-control"  name="supplier_id"   disabled></td>' +
+                                    '<td><input value="' + row.cells[4].innerHTML + '" type="text" class="form-control"  name="company_code"  disabled></td>' +
+                                    '<td><input  type="text" class="form-control" value="' + row.cells[5].innerHTML + '" name="delivery_date" disabled></td>' +
+                                    '<td><input value="' + row.cells[6].innerHTML + '" type="text" class="form-control"  name="unit"  disabled></td>' +
+                                    '<td><input value="' + row.cells[7].innerHTML + '" type="text" class="form-control"  name="quantity" disabled></td>' +
+                                    '<td><input value="' + row.cells[8].innerHTML + '" type="text" class="form-control"  name="prod_cat"  disabled></td>' +
+<!--                                    '<td class="class_del_checkbox"><input type="checkbox" required></td>' +-->
+                                    '</tr>';
+                            }
+                }
+                $('#id_popup_table').append(edit_basic_data);
+                table_sort_filter('id_popup_table');
+                $('#poGroupModal').modal('show');
+            }
+            else{
+                   $('#success_msg_id').text("Cannot generate PO")
+                    $("#error_msg_div").prop("hidden",false);
+            }
             CloseLoaderPopup();
         }
     });
-    }
+
 }
 </script>
 {% endblock %}
