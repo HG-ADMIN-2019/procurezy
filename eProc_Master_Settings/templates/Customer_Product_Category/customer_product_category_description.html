@@ -643,7 +643,7 @@
             cusprodcatdesc_description = row.find("TD").eq(3).find('input[type="text"]').val();
             cusprodcatdesc_language_id = row.find("TD").eq(2).find('select[type="text"]').val();
             cusprodcatdesc_prod_cat_id = row.find("TD").eq(1).find('select[type="text"]').val();
-            checked_box = row.find("TD").eq(3).find('input[type="checkbox"]').is(':checked')
+            checked_box = row.find("TD").eq(5).find('input[type="checkbox"]').is(':checked')
             if (cusprodcatdesc_code_check.includes(cusprodcatdesc_prod_cat_id)) {
                 $(row).remove();
             }
@@ -668,8 +668,8 @@ function get_main_table_data_upload() {
             var main_attribute = {};
             main_attribute.prod_cat_id = row.find("TD").eq(1).html();
             main_attribute.language_id = row.find("TD").eq(2).html();
-            var cusprodcatdesc_compare =  main_attribute.prod_cat_id +'-'+ main_attribute.language_id
             main_attribute.del_ind = row.find("TD").eq(5).find('input[type="checkbox"]').is(':checked');
+            var cusprodcatdesc_compare =  main_attribute.prod_cat_id +'-'+ main_attribute.language_id + main_attribute.del_ind
             main_table_low_value.push(cusprodcatdesc_compare);
         });
     table_sort_filter('display_basic_table');

@@ -449,8 +449,8 @@ def convert_SpendLimitValue_to_dictionary(arr):
 def convert_ApproverLimit_to_dictionary(arr):
     convertion_list = []
     for row in arr:
-        dictionary = {'company_id': row[0], 'approver_username': row[1],
-                      'app_code_id': row[2], 'del_ind': row[3]}
+        dictionary = {'company_id': row[2], 'approver_username': row[0],
+                      'app_code_id': row[1], 'del_ind': row[3]}
         convertion_list.append(dictionary)
     return convertion_list
 
@@ -458,9 +458,9 @@ def convert_ApproverLimit_to_dictionary(arr):
 def convert_ApproverLimitValue_to_dictionary(arr):
     convertion_list = []
     for row in arr:
-        dictionary = {'company_id': row[0], 'app_types': row[1],
-                      'app_code_id': row[2], 'upper_limit_value': row[3],
-                      'currency_id': row[4], 'del_ind': row[5]}
+        dictionary = {'company_id': row[2], 'app_types': row[4],
+                      'app_code_id': row[0], 'upper_limit_value': row[1],
+                      'currency_id': row[5], 'del_ind': row[3]}
         convertion_list.append(dictionary)
     return convertion_list
 
