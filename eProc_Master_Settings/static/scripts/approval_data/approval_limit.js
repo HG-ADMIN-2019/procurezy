@@ -3,6 +3,12 @@ var validate_add_attributes = [];
 var main_table_low_value = [];
 var approval_limit={};
 
+  // onclick of valid popup
+function valid_popup(){
+  $('#id_data_upload').modal('hide');
+  $("#valid_upload").modal('show');
+}
+
 
 //**************************************
 function approval_limit_find(company_num) {
@@ -44,6 +50,7 @@ function company_dropdwn_change(row){
 //onclick of upload button display id_data_upload popup and set GLOBAL_ACTION button value
 function onclick_upload_button() {
     GLOBAL_ACTION = "approval_limit_upload"
+    $("#id_error_msg_upload").prop("hidden",true)
     $("#id_popup_tbody").empty();
     $('#id_data_upload').modal('show');
     document.getElementById('id_file_data_upload').value = "";
@@ -54,6 +61,7 @@ function onclick_update_button() {
     GLOBAL_ACTION = "UPDATE"
     onclick_copy_update_button("update")
     document.getElementById("id_del_add_button").style.display = "none";
+     $("#save_id").prop("hidden", false);
 }
 
 //onclick of cancel empty the popup table body and error messages
@@ -73,34 +81,6 @@ $(".remove_upload_data").click(() => {
     $('#id_popup_table').DataTable().destroy();
 });
 
-// on click add icon display the row in to add the new entries
-function add_popup_row() {
-    $("#error_msg_id").css("display", "none");
-    basic_add_new_html = '';
-    var display_db_data = '';
-    $('#id_popup_table').DataTable().destroy();
-    $(".modal").on("hidden.bs.modal", function() {
-        $("#id_error_msg").html("");
-    });
-    new_row_data();   // Add a new row in popup
-    var company_num = '';
-    $("#id_popup_table").on("change", "select[name='company_dropdown']", function() {
-        var row = $(this).closest("tr");
-        company_dropdwn_change(row);
-    });
-    $("#id_popup_table").on("draw.dt", function () {
-        $("#id_popup_table TBODY TR").each(function () {
-            var row = $(this);
-            row.find("TD").eq(3).find("select").empty();
-            company_num = row.find("TD").eq(1).find("select option:selected").val();
-            var assign_val = approval_limit_find(company_num);
-            row.find("TD").eq(3).find("select").append(assign_val.app_code_id_dropdown);
-        });
-    });
-    if (GLOBAL_ACTION == "UPLOAD") {
-        $(".class_del_checkbox").prop("hidden", false);
-    }
-}
 
 //onclick of cancel display the table in display mode............
 function display_basic_db_data() {
@@ -142,10 +122,15 @@ function delete_duplicate() {
             $(row).remove();
         }
         approval_limit_code_check.push(approval_limit_compare);
-    })
-    table_sort_filter_popup('id_popup_table')
-    check_data()
-}
+        main_table_low_value = get_main_table_data_upload(); //Read data from main table
+        if (main_table_low_value.includes(approval_limit_compare)) {
+            $(row).remove();
+        }
+        main_table_low_value.push(approval_limit_compare);
+        })
+        table_sort_filter_popup_pagination('id_popup_table')
+        check_data()
+    }
 
 // Functtion to hide and display save related popups
 $('#save_id').click(function () {
@@ -207,10 +192,29 @@ function get_main_table_data() {
         main_attribute.approver_username = row.find("TD").eq(2).html();
         main_attribute.company_id = row.find("TD").eq(1).html();
         main_attribute.app_code_id = row.find("TD").eq(3).html();
+        main_attribute.del_ind = row.find("TD").eq(5).find('input[type="checkbox"]').is(':checked');
         var approval_limit_compare_maintable = main_attribute.approver_username +'-'+main_attribute.company_id +'-'+ main_attribute.app_code_id
         main_table_low_value.push(approval_limit_compare_maintable);
     });
     table_sort_filter('display_basic_table');
+}
+
+// Function to get main table data
+function get_main_table_data_upload() {
+    main_table_low_value = [];
+    $('#display_basic_table').DataTable().destroy();
+    $("#display_basic_table TBODY TR").each(function() {
+        var row = $(this);
+        var main_attribute = {};
+        main_attribute.approver_username = row.find("TD").eq(2).html();
+        main_attribute.company_id = row.find("TD").eq(1).html();
+        main_attribute.app_code_id = row.find("TD").eq(3).html();
+        main_attribute.del_ind = row.find("TD").eq(5).find('input[type="checkbox"]').is(':checked');
+        var approval_limit_compare_maintable = main_attribute.approver_username +'-'+main_attribute.company_id +'-'+ main_attribute.app_code_id+ '-'+ main_attribute.del_ind
+        main_table_low_value.push(approval_limit_compare_maintable);
+    });
+    table_sort_filter('display_basic_table');
+    return main_table_low_value
 }
 
 // Function to get the selected row data

@@ -729,7 +729,6 @@ class MasterSettingsSave:
                 applim_db_list.append(applim_db_dictionary)
 
             else:
-
                 django_query_instance.django_update_query(ApproverLimit,
                                                           {'approver_username': applim_detail['approver_username'],
                                                            'company_id': applim_detail['company_id'],
@@ -750,8 +749,9 @@ class MasterSettingsSave:
         message = get_message_detail_based_on_action(applim_data['action'])
 
         upload_response = get_approverid_data()
+        data = get_approverid_dropdown()
 
-        return upload_response, message
+        return upload_response, message, data
 
     def save_app_limit_value_data(self, applimval_data):
         applimval_db_list = []
@@ -808,8 +808,9 @@ class MasterSettingsSave:
 
         message = get_message_detail_based_on_action(applimval_data['action'])
         upload_response = get_approvervalue_data()
+        data = get_approvervalue_dropdown()
 
-        return upload_response, message
+        return upload_response, message,data
 
     def save_spending_limit_value_data(self, spend_limit_value_data):
         spend_limit_value_db_list = []
