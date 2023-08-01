@@ -116,11 +116,11 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-primary remove_upload_data" title="Cancel" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
                     <button id="id_delete_duplicate" class="btn btn-primary" style="display:none;" type="button" onclick="display_buttonp()"><i class="fa fa-trash"></i> delete duplicates</button>
-                    <button id="id_check_data" style="display:none;" class="btn btn-primary" type="button" onclick="check_data()"><i class="fas fa-check"></i> check</button>
-                    <button class="btn btn-primary" title="Save" id="save_id"><i class="fas fa-save"></i> save</button>
                     <button class="btn btn-primary btn-sm" title="Delete" id="delete_data" value="DELETE" data-toggle="modal" data-target="#id_delete_confirm_popup" onclick="hideModal()">
                         <i class="fa fa-trash"></i> Delete
                     </button>
+                    <button id="id_check_data" style="display:none;" class="btn btn-primary" type="button" onclick="check_data()"><i class="fas fa-check"></i> check</button>
+                    <button class="btn btn-primary" title="Save" id="save_id"><i class="fas fa-save"></i> save</button>
                 </div>
             </div>
         </div>
@@ -231,7 +231,7 @@
         var edit_basic_data = "";
         var guid = '';
         main_table_org_node_type_checked = [];
-         get_row_data("#display_basic_table");
+        get_row_data("#display_basic_table");
         display_button(); // Call the display_button function to show/hide the buttons
         var data = {'data': main_table_org_node_type_checked, 'table_name': 'OrgNodeTypes', 'action': GLOBAL_ACTION };
         OpenLoaderPopup();
@@ -368,7 +368,6 @@
                 $('#org_node_Modal').modal('show');
                 new_row_data(); // Function for add a new row data
                 $("#id_del_ind_checkbox").prop("hidden", true);
-                document.getElementById('delete_data').style.visibility='hidden';
                 document.getElementById("id_del_add_button").style.display = "block";
                 CloseLoaderPopup();
             }

@@ -270,8 +270,8 @@
         var edit_basic_data = "";
         var guid = '';
         main_table_org_attr_checked = [];
-        get_row_data("#display_basic_table"); // Function call to get the selected row data
-        display_button(); // Call the display_button function to show/hide the buttons
+        get_row_data("#display_basic_table");
+        display_button();
         var data = {'data': main_table_org_attr_checked, 'table_name': 'OrgAttributes', 'action': GLOBAL_ACTION };
         OpenLoaderPopup();
         $.ajax({

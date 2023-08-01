@@ -149,3 +149,48 @@ function get_selected_row_data() {
     });
 }
 
+// Function to get the selected row data
+function get_main_table_data_upload() {
+     main_table_low_value = [];
+    $('#display_basic_table').DataTable().destroy();
+    $("#display_basic_table TBODY TR").each(function () {
+        var row = $(this);
+        var main_attribute = {};
+            main_attribute.language_id = row.find("TD").eq(1).html();
+            main_attribute.payment_term_key = row.find("TD").eq(2).html();            
+            main_attribute.payment_term_guid = row.find("TD").eq(6).html();
+            main_attribute.del_ind = row.find("TD").eq(5).find('input[type="checkbox"]').is(':checked');
+            var compare = main_attribute.payment_term_key + '-' +  main_attribute.language_id + '-' + main_attribute.del_ind
+            main_table_low_value.push(compare);
+
+    });
+    table_sort_filter('display_basic_table');
+}
+
+    //********************************
+    function delete_duplicate() {
+        $('#id_popup_table').DataTable().destroy();
+        var paymentermdesc_code_check = new Array
+        var main_table_low_value = new Array
+        $("#id_popup_table TBODY TR").each(function () {
+        var row = $(this);
+        payment_term_desc.language_id = row.find("TD").eq(1).find('select[type="text"]').val();
+        payment_term_desc.payment_term_key = row.find("TD").eq(2).find('select[type="text"]').val();
+        payment_term_desc.description = row.find("TD").eq(3).find('input[type="text"]').val();
+        payment_term_desc.day_limit = row.find("TD").eq(4).find('input[type="number"]').val();
+        payment_term_desc.payment_term_guid = row.find("TD").eq(6).find('input[type="text"]').val();
+        checked_box = row.find("TD").eq(5).find('input[type="checkbox"]').is(':checked')
+            if (paymentermdesc_code_check.includes(payment_term_key)) {
+                $(row).remove();
+            }
+            paymentermdesc_code_check.push(payment_term_key);
+            main_table_low_value = get_main_table_data_upload(); //Read data from main table
+            if (main_table_low_value.includes(payment_term_key)) {
+                $(row).remove();
+            }
+            main_table_low_value.push(payment_term_key);
+        })
+        table_sort_filter_popup_pagination('id_popup_table')
+        check_data()
+    }
+

@@ -28,8 +28,9 @@
                     <button class="btn btn-secondary btn-sm" title="Edit" id="id_edit_data" onclick="onclick_edit_button()">
                         <i class="fas fa-edit" ></i> edit
                     </button>
-                    <button class="btn btn-outline-danger btn-sm " title= "Delete" id="id_delete_data" value="prodcat_delete" style="display:none;"  onclick="onclick_delete_button()">
-                        <i class="fa fa-trash"></i> Delete</button>
+                    <button class="btn btn-outline-danger btn-sm" id="id_delete_data" title= "DELETE" value="Delete" style="display:none;" onclick="onclick_delete_button()">
+                        <i class="fa fa-trash"></i> delete
+                    </button>
                     <button class="btn btn-primary btn-sm " title="Copy" id="id_copy_data" style="display:none;" value="COPY" type="button" onclick="onclick_copy_button()">
                         <i class="fa fa-copy"></i> Copy
                     </button>
@@ -103,7 +104,6 @@
                                 <th>UNSPSC Code</th>
                                 <th>Description</th>
                                 <th id="id_del_ind_checkbox" hidden>Del Indicator</th>
-                                <th id="id_del_ind_checkbox1" hidden>Del Indicator Flag</th>
                             </tr>
                         </thead>
                         <tbody id=id_popup_tbody>
@@ -116,7 +116,7 @@
                     <button id="id_delete_duplicate" class="btn btn-primary" style="display:none;" type="button" onclick="display_buttonp()"><i class="fa fa-trash"></i> delete duplicates</button>
                     <button id="id_check_data" style="display:none;" class="btn btn-primary" type="button" onclick="check_data()"><i class="fas fa-check"></i> check</button>
                     <button class="btn btn-primary" title="Save" id="save_id"><i class="fas fa-save"></i> save</button>
-                    <button class="btn btn-primary btn-sm" title="Delete" id="delete_data" value="DELETE" data-toggle="modal" data-target="#id_delete_confirm_popup">
+                    <button class="btn btn-primary btn-sm" title="Delete" id="delete_data" value="DELETE" data-toggle="modal" data-target="#id_delete_confirm_popup" onclick="hideModal()">
                         <i class="fa fa-trash"></i> Delete
                     </button>
                 </div>
@@ -194,48 +194,86 @@
         table_sort_filter('id_popup_table');
     }
 
-    //***************************
+    // Onclick delete Button
+    function onclick_delete_button() {
+        $("#error_msg_id").css("display", "none");
+        $('#id_popup_table').DataTable().destroy();
+        $("#id_popup_tbody").empty();
+        GLOBAL_ACTION = "DELETE";
+        var edit_basic_data = "";
+        var guid = '';
+        main_table_prodcat_checked = [];
+        get_row_data("#display_basic_table"); // Function call to get the selected row data
+        display_button(); // Call the display_button function to show/hide the buttons
+        var data = {'data': main_table_prodcat_checked, 'table_name': 'UnspscCategories', 'action': GLOBAL_ACTION };
+        OpenLoaderPopup();
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'eProc_Configuration:create_update_delete_flags' %}",
+            data: JSON.stringify(data),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function(Response) {
+                var docTypeArray = Response.delete_flags; // Get the delete_flags array from the response
+                var res = get_all_checkboxes(); // Function to get all the checkboxes
+                var $chkbox_all = $('td input[type="checkbox"]', res);
+                var j = 0; // Index for docTypeArray
+                for (var i = 0; i < $chkbox_all.length; i++) {
+                    if ($chkbox_all[i].checked) {
+                        var row = $chkbox_all[i].parentNode.parentNode;
+                        if (j < docTypeArray.length && docTypeArray[j] === false) {
+                            check = '<input type="checkbox" disabled>';
+                            $('#delete_data').prop('disabled', true);
+                        } else {
+                            check = '<input type="checkbox" onclick="enableDeleteButton()">';
+                            $('#delete_data').prop('disabled', true);
+                        }
+                        j++; // Move to the next index in docTypeArray
+                        edit_basic_data +=
+                            `<tr>
+                                <td>${check}</td>
+                                <td><input class="input form-control check_number" type="text" title="Minimum length is 2"  name="prod_cat_id" value="${row.cells[1].innerHTML}" disabled></td>
+                                <td><input class="input form-control check_special_char" type="text" name="prod_cat_desc" value="${row.cells[2].innerHTML}" disabled></td>
+                                <td class="class_del_checkbox" hidden><input type="checkbox" required></td>
+                            </tr>`;
+                    }
+                }
+                CloseLoaderPopup();
+                $('#id_popup_tbody').append(edit_basic_data);
+                $("#id_del_ind_checkbox").prop("hidden", true);
+                $('#unspscModal').modal('show');
+                table_sort_filter('id_popup_table');
+            },
+        });
+    }
+
     //delete the selected row in db................
     var main_table_prodcat_checked = [];
     function main_table_delete() {
         GLOBAL_ACTION = 'DELETE'
-         document.getElementById('delete_data').style.visibility = 'visible';
-         $('#success_msg_id').empty()
+        document.getElementById('delete_data').style.visibility = 'visible';
+        $('#success_msg_id').empty()
         main_table_prodcat_checked = [];
         var prodcat_arr_obj = {};
-        $('#display_basic_table').DataTable().destroy(); // to be checked
-        var disable_check = '';
-        get_selected_row_data(); // Function call to get the selected row data
-         if(disable_check){
-            $('#delete_data').prop('disabled', true);
-            error_message = ui_messeges("JMSG112")// Get message details
-            var display4 = msg_type.messages_id_desc;
-            document.getElementById("id_error_msg_checkbox").innerHTML = display4+ "Checkbox";
-            $('#id_delete_confirm_popup').modal('hide');
-        }
-        else if(main_table_prodcat_checked.length == "0"){
-                get_message_details("JMSG005"); // Get message details
-                $('#id_delete_confirm_popup').modal('hide');
-        }
-        else{
-            $('#id_save_confirm_popup').modal('hide');
-            data = {'data':main_table_prodcat_checked,'table_name':'UnspscCategories','action':GLOBAL_ACTION}
-            OpenLoaderPopup();
-            $.ajax({
-                type: 'POST',
-                url: "{% url 'eProc_Configuration:create_update_application_data' %}",
-                data: JSON.stringify(data),
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                success: function(Response) {
-                    rendered_prodcat_data = Response[0];
-                    display_basic_db_data();
-                    $('#unspscModal').modal('hide');
-                    success_response(Response); // Display Response data
-                    CloseLoaderPopup();
-                }
-            });
-        }
+        $('#display_basic_table').DataTable().destroy();
+        get_row_data("#id_popup_table");
+        $('#id_save_confirm_popup').modal('hide');
+        data = {'data':main_table_prodcat_checked,'table_name':'UnspscCategories','action':GLOBAL_ACTION}
+        OpenLoaderPopup();
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'eProc_Configuration:create_update_application_data' %}",
+            data: JSON.stringify(data),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function(Response) {
+                rendered_prodcat_data = Response[0];
+                display_basic_db_data();
+                $('#unspscModal').modal('hide');
+                success_response(Response); // Display Response data
+                CloseLoaderPopup();
+            }
+        });
     }
 
     // validating the  popup table for duplicate entries

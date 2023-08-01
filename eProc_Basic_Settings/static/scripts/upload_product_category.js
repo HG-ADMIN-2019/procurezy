@@ -3,27 +3,30 @@ var validate_add_attributes = [];
 var prodcat={};
 var main_table_low_value = [];
 
+//hide the myModal popup: Implemented Dependency delete purpose
+function hideModal() {
+    $('#unspscModal').modal('hide');
+}
+
+
 //onclick of add button display unspscModal popup and set GLOBAL_ACTION button value
 function onclick_add_button(button) {
     $("#error_msg_id").css("display", "none")
     $("#header_select").prop( "hidden", false );
     GLOBAL_ACTION = button.value
+    display_button();
     $('#id_popup_table').DataTable().destroy();
     $("#id_popup_tbody").empty();
-    $('#unspscModal').modal('show');
-    // Add a new row in popup
     new_row_data();
-    table_sort_filter('id_popup_table');
+    $('#unspscModal').modal('show');
     $("#id_del_ind_checkbox").prop("hidden", true);
-    display_button();
     document.getElementById("id_del_add_button").style.display = "block";
-    $("#save_id").prop("hidden", false);
-    $('#delete_data').hide();
 }
 
 // on click copy icon display the selected checkbox data
 function onclick_copy_button() {
     GLOBAL_ACTION = "COPY"
+    display_button();
     onclick_copy_update_button("copy")
     document.getElementById("id_del_add_button").style.display = "block";
 }
@@ -31,16 +34,9 @@ function onclick_copy_button() {
 // on click update icon display the selected checkbox data to update
 function onclick_update_button() {
     GLOBAL_ACTION = "UPDATE"
+    display_button();
     onclick_copy_update_button("update")
     document.getElementById("id_del_add_button").style.display = "none";
-}
-
-
-function onclick_delete_button() {
-    GLOBAL_ACTION = "DELETE"
-    $('#delete_data').show();
-    $('#save_id').hide();
-    onclick_copy_update_button("DELETE")
 }
 
 function onclick_copy_update_button(data) {
@@ -59,29 +55,12 @@ function onclick_copy_update_button(data) {
             var row = $chkbox_all[i].parentNode.parentNode;
             if(GLOBAL_ACTION == "UPDATE"){
                 unique_input = '<input class="form-control" type="text" value="' + row.cells[1].innerHTML + '" name="prod_cat_id"  maxlength="20"  disabled>'
-                edit_basic_data += '<tr><td hidden><input type="checkbox" required></td><td>'+unique_input+'</td><td><input type="text" class="form-control check_special_char" value="' + row.cells[2].innerHTML + '" name="prod_cat_desc"  maxlength="100" required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td><td class="id_del_ind_checkbox1" hidden><input type="checkbox" name = "del_ind_flag" required></td></tr>';
-                $("#header_select").prop("hidden", true);
+                edit_basic_data += '<tr><td><input type="checkbox" required></td><td>'+unique_input+'</td><td><input type="text" class="form-control check_special_char" value="' + row.cells[2].innerHTML + '" name="prod_cat_desc"  maxlength="100" required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+                $("#header_select").prop("hidden", false);
             }
             else if (GLOBAL_ACTION == "COPY"){
                 unique_input = '<input class="form-control check_number" type="text" value="' + row.cells[1].innerHTML + '" name="prod_cat_id"  maxlength="20"  required>'
-                edit_basic_data += '<tr><td><input type="checkbox" required></td><td>'+unique_input+'</td><td><input type="text" class="form-control check_special_char" value="' + row.cells[2].innerHTML + '" name="prod_cat_desc"  maxlength="100" required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td><td class="id_del_ind_checkbox1" hidden><input type="checkbox" name = "del_ind_flag" required></td></tr>';
-                $("#header_select").prop("hidden", false);
-            }
-            else if (GLOBAL_ACTION == "DELETE"){
-                if ((row.cells[3].innerHTML=="False") || (row.cells[3].innerHTML=="false")){
-                    check = '<input type="checkbox" disabled>'
-                    document.getElementById('delete_data').style.visibility='hidden';
-                    $('#save_id').hide();
-                    $('#delete_data').prop('disabled', true);
-                }
-                else
-                {
-                    check = '<input type="checkbox">'
-                    document.getElementById('delete_data').style.visibility = 'visible'
-                    $('#delete_data').prop('disabled', false);
-                }
-                unique_input = '<input class="form-control" type="text" value="' + row.cells[1].innerHTML + '" name="prod_cat_id" onkeypress="return /[0-9]/i.test(event.key)" maxlength="20" style="text-transform:uppercase" required>'
-                edit_basic_data += '<tr><td>'+check+'</td><td>'+unique_input+'</td><td><input type="text" class="form-control" value="' + row.cells[2].innerHTML + '" name="prod_cat_desc" onkeypress="return /[a-z ]/i.test(event.key)" maxlength="100" required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td><td class="id_del_ind_checkbox1" hidden><input type="checkbox" name = "del_ind_flag" required></td></tr>';
+                edit_basic_data += '<tr><td><input type="checkbox" required></td><td>'+unique_input+'</td><td><input type="text" class="form-control check_special_char" value="' + row.cells[2].innerHTML + '" name="prod_cat_desc"  maxlength="100" required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
                 $("#header_select").prop("hidden", false);
             }
             else {
@@ -91,23 +70,10 @@ function onclick_copy_update_button(data) {
             }
         }
     }
-    display_button();
     $('#id_popup_tbody').append(edit_basic_data);
     $("#id_del_ind_checkbox").prop("hidden", true);
     $('#unspscModal').modal('show');
     table_sort_filter('id_popup_table');
-}
-
-function display_button(){
-    if(GLOBAL_ACTION == "DELETE"){
-        $('#delete_data').show();
-        $('#save_id').hide();
-    }
-    else{
-        $('#save_id').show();
-         document.getElementById('save_id').style.visibility = 'visible';
-         $('#delete_data').hide();
-    }
 }
 
 //onclick of cancel empty the popup table body and error messages
@@ -126,17 +92,16 @@ $(".remove_upload_data").click(() => {
 });
 
 function display_error_message(error_message){
-        // $('#error_message').text(error_message);
-        // document.getElementById("error_message").style.color = "Red";
-        var errorElement = document.getElementById("error_message");
-        if (errorElement) {
-            errorElement.textContent = error_message;
-            errorElement.style.color = "Red";
-        }
-        $("#error_msg_id").css("display", "block");
-        $('#id_save_confirm_popup').modal('hide');
-        $('#unspscModal').modal('show');
+    var errorElement = document.getElementById("error_message");
+    if (errorElement) {
+        errorElement.textContent = error_message;
+        errorElement.style.color = "Red";
+    }
+    $("#error_msg_id").css("display", "block");
+    $('#id_save_confirm_popup').modal('hide');
+    $('#unspscModal').modal('show');
 }
+
 // on click add icon display the row in to add the new entries
 function add_popup_row() {
     $("#error_msg_id").css("display", "none")
@@ -194,10 +159,9 @@ function read_popup_data(){
     $("#id_popup_table TBODY TR").each(function () {
         var row = $(this);
         prodcat={};
-        prodcat.del_ind_flag = row.find("TD").eq(4).find('input[type="checkbox"]').is(':checked');
         prodcat.del_ind = row.find("TD").eq(3).find('input[type="checkbox"]').is(':checked');
-        prodcat.prod_cat_desc = row.find("TD").eq(2).find('input[type="text"]').val().toUpperCase();
         prodcat.prod_cat_id = row.find("TD").eq(1).find('input[type="text"]').val().toUpperCase();
+        prodcat.prod_cat_desc = row.find("TD").eq(2).find('input[type="text"]').val().toUpperCase();
         if (prodcat == undefined){
         prodcat.prod_cat_id = row.find("TD").eq(1).find('input[type="text"]').val();
         }
@@ -216,23 +180,22 @@ function get_main_table_data(){
         var row = $(this);
         var main_attribute = {};
         main_attribute.prod_cat_id = row.find("TD").eq(1).html();
-        // main_attribute.prod_cat_desc = row.find("TD").eq(2).html();
         main_table_low_value.push(main_attribute.prod_cat_id);
     });
     table_sort_filter('display_basic_table');
 }
 
 // Function to get the selected row data
-function get_selected_row_data(){
-    $("#id_popup_table TBODY TR").each(function() {
-        var row = $(this);
+function get_row_data(tableSelector) {
+    main_table_prodcat_checked = [];
+    $(tableSelector).DataTable().$('input[type="checkbox"]').each(function () {
+        var checkbox = $(this);
+        var row = checkbox.closest("tr");
         var prodcat_arr_obj = {};
-        var checked_box = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked')
-        if(checked_box) {
-            prodcat_arr_obj.del_ind_flag = row.find("TD").eq(4).find('input[type="checkbox"]').is(':checked');
-            prodcat_arr_obj.del_ind = checked_box;
-            prodcat_arr_obj.prod_cat_desc = row.find("TD").eq(2).find('input[type="text"]').val().toUpperCase();
-            prodcat_arr_obj.prod_cat_id = row.find("TD").eq(1).find('input[type="text"]').val().toUpperCase();
+        prodcat_arr_obj.del_ind = checkbox.is(':checked');
+        if(prodcat_arr_obj.del_ind) {
+            prodcat_arr_obj.prod_cat_id = row.find("TD").eq(1).find('input[type="text"]').val() || row.find("TD").eq(1).html();
+            prodcat_arr_obj.prod_cat_desc = row.find("TD").eq(2).find('input[type="text"]').val() || row.find("TD").eq(2).html();
             main_table_prodcat_checked.push(prodcat_arr_obj);
         }
     });
@@ -240,12 +203,15 @@ function get_selected_row_data(){
 
 // Function for add a new row data
 function new_row_data() {
-    basic_add_new_html = '<tr><td><input type="checkbox" required></td>'+
-    '<td><input class="input form-control check_number" type="text" title="Minimum length is 2" minlength="10" maxlength="10"  name="prod_cat_id" required></td>'+
-    '<td><input class="input form-control check_special_char" type="text" maxlength="20" name="prod_cat_desc" required></td>'+
-    '<td class="class_del_checkbox" hidden><input type="checkbox" required></td>'+
-    '<td class="id_del_ind_checkbox1" hidden><input type="checkbox" name = "del_ind_flag" required></td></tr>'
+    basic_add_new_html =
+    `<tr>
+        <td><input type="checkbox" required></td>
+        <td><input class="input form-control check_number" type="text" title="Minimum length is 2" minlength="10" maxlength="10"  name="prod_cat_id" required></td>
+        <td><input class="input form-control check_special_char" type="text" maxlength="20" name="prod_cat_desc" required></td>
+        <td class="class_del_checkbox" hidden><input type="checkbox" required></td>
+    </tr>`;
     $('#id_popup_tbody').append(basic_add_new_html);
+    table_sort_filter('id_popup_table');
 }
 
 
