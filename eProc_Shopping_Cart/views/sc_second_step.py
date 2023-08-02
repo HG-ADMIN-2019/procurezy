@@ -655,18 +655,13 @@ def order_shopping_cart(request):
                 sc_header_instance = django_query_instance.django_get_query(ScHeader,
                                                                             {'client': global_variables.GLOBAL_CLIENT,
                                                                              'doc_number': sc_details[0]})
-                sc_item_details = django_query_instance.django_filter_only_query(ScItem, {
-                    'header_guid': sc_header_instance.guid, 'client': client, 'del_ind': False
-                })
-                for sc_item in sc_item_details:
-                    if not sc_item.source_relevant_ind == 1:
-                        create_purchase_order = CreatePurchaseOrder(sc_header_instance)
-                        status, error_message, output, po_doc_list = create_purchase_order.create_po()
+                create_purchase_order = CreatePurchaseOrder(sc_header_instance)
+                status, error_message, output, po_doc_list = create_purchase_order.create_po()
                 # Send purchase order email to supplier
 
-                    for po_document_number in po_doc_list:
-                        email_supp_monitoring_guid = ''
-                        send_po_attachment_email(output, po_document_number, email_supp_monitoring_guid)
+                for po_document_number in po_doc_list:
+                    email_supp_monitoring_guid = ''
+                    send_po_attachment_email(output, po_document_number, email_supp_monitoring_guid)
             # function to send SC Approval email
             #  check for sc_completion_flag == true  , if not send mail
             if sc_completion_flag == 'False':
