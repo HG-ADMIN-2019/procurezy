@@ -25,7 +25,7 @@ from eProc_Basic.Utilities.global_defination import global_variables
 from eProc_Basic.Utilities.messages.messages import MSG001, MSG0120
 from eProc_Calendar_Settings.Utilities.calender_settings_generic import calculate_delivery_date
 from eProc_Configuration.models import PoSplitCriteria, NumberRanges, OrgAddress, SupplierMaster, OrgPorg, OrgPGroup, \
-    DocumentType, UnitOfMeasures
+    DocumentType, UnitOfMeasures, PoGroupCriteria_Temp
 from eProc_Doc_Details.Utilities.details_generic import GetAttachments
 from eProc_Doc_Search_and_Display.Utilities.search_display_specific import get_po_header_app
 from eProc_Emails.Utilities.email_notif_generic import send_po_attachment_email
@@ -93,6 +93,46 @@ def get_po_split_type(company_code):
     return po_split_list
 
 
+def get_po_split_group_type(company_code):
+    """
+
+    """
+    po_split_active_list_cocode = []
+    po_split_list = django_query_instance.django_filter_value_list_query(PoGroupCriteria_Temp,
+                                                                         {'client': global_variables.GLOBAL_CLIENT,
+                                                                          'del_ind': False,
+                                                                          'company_code_id': '*',
+                                                                          'activate': True}, 'po_split_group_type')
+
+    if django_query_instance.django_existence_check(PoGroupCriteria_Temp,
+                                                    {'client': global_variables.GLOBAL_CLIENT,
+                                                     'del_ind': False,
+                                                     'company_code_id': company_code,
+                                                     'activate': False}):
+        po_split_inactive_list_cocode = django_query_instance.django_filter_value_list_query(PoGroupCriteria_Temp,
+                                                                                             {
+                                                                                                 'client': global_variables.GLOBAL_CLIENT,
+                                                                                                 'del_ind': False,
+                                                                                                 'company_code_id': company_code,
+                                                                                                 'activate': False},
+                                                                                             'po_split_group_type')
+        po_split_list = remove_element_from_list(po_split_list, po_split_inactive_list_cocode)
+    if django_query_instance.django_existence_check(PoGroupCriteria_Temp,
+                                                    {'client': global_variables.GLOBAL_CLIENT,
+                                                     'del_ind': False,
+                                                     'company_code_id': company_code,
+                                                     'activate': True}):
+        po_split_active_list_cocode = django_query_instance.django_filter_value_list_query(PoGroupCriteria_Temp,
+                                                                                           {
+                                                                                               'client': global_variables.GLOBAL_CLIENT,
+                                                                                               'del_ind': False,
+                                                                                               'company_code_id': company_code,
+                                                                                               'activate': True},
+                                                                                           'po_split_group_type')
+    po_split_list = list(set(po_split_list + po_split_active_list_cocode))
+    return po_split_list
+
+
 class CreatePurchaseOrder:
     def __init__(self, sc_header_instance):
         self.supplier_name = ''
@@ -124,13 +164,15 @@ class CreatePurchaseOrder:
         po_creation_flag = False
         # get split type for the sc company code
         po_split_list = get_po_split_type(self.sc_header_instance.co_code)
+        # po_split_list = get_po_split_group_type(self.sc_header_instance.co_code)
         print("splitting type:", po_split_list)
         if po_split_list:
             if CONST_PO_SPLIT_SUPPLIER in po_split_list:
                 supplier_list = django_query_instance.django_filter_value_list_query(ScItem,
                                                                                      {
                                                                                          'client': global_variables.GLOBAL_CLIENT,
-                                                                                         'header_guid': self.sc_header_instance.guid},
+                                                                                         'header_guid': self.sc_header_instance.guid,
+                                                                                         'source_relevant_ind': 0},
                                                                                      'supplier_id')
                 print("supplier list", supplier_list)
                 # supplier level split

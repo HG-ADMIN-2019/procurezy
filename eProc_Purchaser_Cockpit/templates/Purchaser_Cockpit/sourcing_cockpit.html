@@ -174,7 +174,7 @@
                 <!-- Modal footer -->
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-primary remove_upload_data" title="Cancel" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
-                    <button class="btn btn-primary" title="Save" id="save_id"><i class="fas fa-save" ></i> Create PO</button>
+                    <button class="btn btn-primary" title="Save" id="create_po" onclick="generate_po()"><i class="fas fa-save" ></i> Create PO</button>
 <!--                    <button class="btn btn-primary btn-sm" title="Delete" id="delete_data" value="DELETE" data-toggle="modal" data-target="#id_delete_confirm_popup" onclick="hideModal()">-->
 <!--                        <i class="fa fa-trash"></i> Delete-->
 <!--                    </button>-->
@@ -208,7 +208,7 @@ function reload(){
 
 function po_generate(){
     $("#id_generate_po").prop("hidden", false);
-    $("#id_generate_po").toggle();
+    $("#id_generate_po").show();
 }
 // Function to delete User
 function create_po() {
@@ -269,6 +269,46 @@ function create_po() {
                     $("#error_msg_div").prop("hidden",false);
             }
             CloseLoaderPopup();
+        }
+    });
+}
+
+function generate_po(){
+    $('#id_popup_table').DataTable().destroy();
+    po_data = new Array();
+    validate_add_attributes = [];
+    $("#id_popup_table TBODY TR").each(function () {
+        var row = $(this);
+        po={};
+<!--        po.del_ind = row.find("TD").eq(3).find('input[type="checkbox"]').is(':checked');-->
+        po.doc_number = row.find("TD").eq(0).find('input[type="number"]').val();
+        po.description = row.find("TD").eq(1).find('input[type="text"]').val();
+        po.supplier_id = row.find("TD").eq(2).find('input[type="text"]').val();
+        po.company_code = row.find("TD").eq(3).find('input[type="text"]').val();
+        po.del_date = row.find("TD").eq(4).find('input[type="text"]').val();
+        po.unit = row.find("TD").eq(5).find('input[type="text"]').val();
+        po.qty = row.find("TD").eq(6).find('input[type="text"]').val();
+        po.prod_cat = row.find("TD").eq(7).find('input[type="text"]').val();
+        if (po == undefined){
+            po.doc_number = row.find("TD").eq(0).find('input[type="text"]').val();
+        }
+<!--        validate_add_attributes.push(po.country_code);-->
+        po_data.push(po);
+    });
+    table_sort_filter('id_popup_table');
+    data =  po_data
+    OpenLoaderPopup();
+    $.ajax({
+        type: 'POST',
+        url: "{% url 'eProc_Purchaser_Cockpit:generate_po' %}",
+        data:JSON.stringify(data),
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: function (Response) {
+            console.log(Response);
+            $('#success_msg_id').text("Response");
+            $("#error_msg_div").prop("hidden",false);
+            $('#poGroupModal').modal('hide');
         }
     });
 
