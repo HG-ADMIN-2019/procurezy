@@ -317,9 +317,9 @@
                                     appid_id_list = appid + appid_list
                                 });
                                 edit_basic_data += '<tr><td><input type="checkbox" required></td>'+
-                                '<td><select class="form-control" type = "text">value ="' + value.company_id + '"'+company_id_list+'</select></td>'+
-                                '<td><select type="text" class="form-control">value ="' + value.username + '"'+ user_id_list +'</select></td>'+
-                                '<td><select class="form-control" type = "text">value ="' + value.app_code_id + '"'+appid_id_list+'</select></td>'+
+                                '<td><select class="form-control" type = "text"><option value ="' + value.company_id + '"'+company_id_list+'>'+value.company_id+'</option></select></td>'+
+                                '<td><select type="text" class="form-control"><option value ="' + value.approver_username + '"'+user_id_list+'>'+value.approver_username+'</option></select></td>'+
+                                '<td><select class="form-control" type = "text"><option value ="' + value.app_code_id + '"'+appid_id_list+'>'+value.app_code_id+'</option></select></td>'+
                                 '<td hidden><input type="text" value=""></td><td>' + del_ind + '</td></tr>';
                             });
                             $('#id_popup_tbody').append(edit_basic_data);
@@ -409,7 +409,7 @@
                     dataType: "json",
                     success: function(Response) {
                         rendered_approval_limit_data = Response[0];
-                         rendered_user_data = Response[2].user_details
+                        rendered_user_data = Response[2].user_details
                         rendered_company_data = Response[2].upload_data_company
                         rendered_app_code_id_data = Response[2].upload_data_app_code_id
                         display_basic_db_data();
