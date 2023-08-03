@@ -727,6 +727,7 @@ $('#sup_tab tbody').on('click', 'input[class="annsmt_checkbox"]', function(e){
             data: JSON.stringify(form_data),
             success: function (response) {
                  $('#saveConfirmationModal').modal('hide');
+                 edit_org_announcement_data(response.announcementDetails);
                 document.getElementById('org_announcement_update_success').innerHTML = response.message;
                 //console.log(response.updated_guid)
                 $('#save_error_div').hide();
