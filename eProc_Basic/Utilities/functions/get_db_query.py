@@ -13,7 +13,7 @@ django_query_instance = DjangoQueries()
 
 
 def getClients(request):
-    client = request.user.client
+    client = request.user.client_id
     return client
 
 
