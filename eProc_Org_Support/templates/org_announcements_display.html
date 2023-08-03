@@ -125,9 +125,10 @@
                                     <input type="checkbox" class="annsmt_checkbox" onclick="valueChanged();">
                                 </td>
                                 <td hidden>{{results.unique_announcement_id}}</td>
-                                <td>
-                                    {{ results.announcement_id }}
-                                </td>
+<td>
+    {{ results.announcement_id }}
+</td>
+
                                 <td>{{results.announcement_subject}}</td>
                                 <td>{{results.announcement_description}}</td>
                                 <td>{{results.status}}</td>
@@ -135,7 +136,7 @@
                                 <td>{{results.announcement_from_date|date:'d-m-Y'}}</td>
                                 <td>{{results.announcement_to_date|date:'d-m-Y'}}</td>
 <td class="item-action-icon-section">
-    <span title="Edit Announcement" onclick="showAnnouncementDetails('{{results.unique_announcement_id}}');">
+    <span title="Edit Announcement" onclick="edit_org_announcement_data('{{results.unique_announcement_id}}');">
         <i class="material-icons item-action-icons">edit</i>
     </span>
     <span title="Delete Announcement" onclick="get_annsmt_detail_to_delete(this.id)" id="{{results.unique_announcement_id}}">
@@ -474,20 +475,21 @@
         $('#save_button').show();
         $('#edit_button').hide();
                 var announcementDetails = {
-            announcement_id: "{{ results.announcement_id }}",
-            announcement_subject: "{{ results.announcement_subject }}",
-            announcement_description: "{{ results.announcement_description }}",
-            status: "{{ results.status }}",
-            priority: "{{ results.priority }}",
-            announcement_from_date: "{{ results.from_date }}",
-            announcement_to_date: "{{ results.to_date }}"
+            announcement_id: document.getElementById('announcement_id').value,
+            announcement_subject: document.getElementById('modal_announcement_subject').value,
+            announcement_description: document.getElementById('announcement_desc').value,
+            status: document.getElementById('announcement_status').value,
+            priority: document.getElementById('priority').value,
+            announcement_from_date: document.getElementById('from_date').value,
+            announcement_to_date: document.getElementById('to_date').value,
+            announcement_guid: document.getElementById('announcement_guid').value,
         };
         // Update the modal content with the announcement details
         $("#announcement_id").val(announcementDetails.announcement_id);
         $("#modal_announcement_subject").val(announcementDetails.announcement_subject);
         $("#announcement_desc").val(announcementDetails.announcement_description);
-        $("#announcement_status_").val(announcementDetails.announcement_status_);
-        $("#priority_").val(announcementDetails.priority_);
+        $("#announcement_status_").val(announcementDetails.announcement_status);
+        $("#priority_").val(announcementDetails.priority);
         $("#from_date").val(announcementDetails.announcement_from_date);
         $("#to_date").val(announcementDetails.announcement_to_date);
 
