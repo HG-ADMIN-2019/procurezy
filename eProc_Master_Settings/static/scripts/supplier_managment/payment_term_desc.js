@@ -165,6 +165,7 @@ function get_main_table_data_upload() {
 
     });
     table_sort_filter('display_basic_table');
+    return main_table_low_value
 }
 
     //********************************

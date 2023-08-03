@@ -312,7 +312,9 @@
                     dataType: "json",
                     success: function(Response) {
                         rendered_wfschema_data  = Response[0];
-                        dropdown_db_values  = Response[2];
+                        rendered_company_data = Response[2].upload_data_company
+                        rendered_approvartype_data = Response[2].upload_data_apptypes
+                        dropdown_db_values = Response[2].dropdown_db_values
                         display_basic_db_data();
                         $('#Wfschema_Modal').modal('hide');
                         success_response(Response); // Function call to display response data
@@ -719,7 +721,7 @@
                                     workschm_id_list = workschm + workschm_list
                                 });
                                  edit_basic_data += '<tr><td class="class_select_checkbox"><input type="checkbox" required></td>'+
-                                '<td><select class="form-control" type="text"> value ="' + value.company_id + '"+"'+company_id_list+'"</select></td><td><select id="workflow_schema" name="workflow_schema" type="text" class="input form-control"> value ="' + value.workflow_schema + '"'+workschm_id_list+'</select></td><td><select class="form-control" type="text"> value ="' + value.app_types + '"+"'+apptype_id_list+'"</select></td><td hidden><input type="text" value=""></td><td>'+ del_ind +'</td></tr>';
+                                '<td><select class="form-control" type="text"><option value ="' + value.company_id + '"'+company_id_list+'>'+value.company_id+'</option></select></td><td><select id="workflow_schema" name="workflow_schema" type="text" class="input form-control"><option value ="' + value.workflow_schema + '"'+workschm_id_list+'>'+value.workflow_schema+'</option></select></td><td><select class="form-control" type="text"><option value ="' + value.app_types + '"'+apptype_id_list+'>'+value.app_types+'</option></select></td><td hidden><input type="text" value=""></td><td>'+ del_ind +'</td></tr>';
                             });
                             $('#id_popup_tbody').append(edit_basic_data);
                             var i =0;
@@ -782,13 +784,14 @@
         var wfsch_check = new Array
         del_ind = ''
         $("#id_popup_table TBODY TR").each(function() {
+            $('#id_popup_table').DataTable().destroy();
             var row = $(this);
             workflw_schm_dic = {}
             //*************** reading data from the pop-up ***************
             workflw_schm_dic.workflow_schema = row.find("TD").eq(2).find('select[type="text"]').val();
             workflw_schm_dic.company_id = row.find("TD").eq(1).find('select[type="text"]').val();
             workflw_schm_dic.app_types = row.find("TD").eq(3).find('select[type="text"]').val();
-            checked_box = row.find("TD").eq(4).find('input[type="checkbox"]').is(':checked')
+            checked_box = row.find("TD").eq(5).find('input[type="checkbox"]').is(':checked')
             if (checked_box){
                 workflw_schm_dic.del_ind = '1'
             }

@@ -40,60 +40,60 @@
                 </div>
                 <table id="display_basic_table" class="class_basic_org_attr_table table table-bordered custom-table">
                     <thead id="id_org_attr_table_header">
-                    <tr>
-                        <th id="hg_select_checkbox"  hidden>
-                            <div id="id_check_all" style="display:none;">
-                                <input type="checkbox" id="selectAll" name="chk[]">
-                            </div>
-                        </th>
-                        <th>Attribute</th>
-                        <th>Description</th>
-                        <th>Range Indicator</th>
-                        <th>Multiple Values</th>
-                        <th>Allow Defaults</th>
-                        <th>Inherit Values</th>
-                        <th>Maximum Length</th>
-                        <th hidden>Del_ind_Flag</th>
-                    </tr>
+                        <tr>
+                            <th id="hg_select_checkbox" hidden>
+                                <div id="id_check_all" style="display:none;">
+                                    <input type="checkbox" id="selectAll" name="chk[]">
+                                </div>
+                            </th>
+                            <th>Attribute</th>
+                            <th>Description</th>
+                            <th>Range Indicator</th>
+                            <th>Multiple Values</th>
+                            <th>Allow Defaults</th>
+                            <th>Inherit Values</th>
+                            <th>Maximum Length</th>
+                            <th hidden>Del_ind_Flag</th>
+                        </tr>
                     </thead>
                     <tbody id="id_org_attr_tbody">
-                    {% for orgattributes in org_attributes %}
-                    <tr>
-                        <td class="class_select_checkbox" hidden><input type="checkbox" class="checkbox_check" onclick="valueChanged()" required></td>
-                        <td>{{orgattributes.attribute_id}}</td>
-                        <td>{{orgattributes.attribute_name}}</td>
-                        <td class="class_select_checkbox">
-                            {% if orgattributes.range_indicator %}
-                            <input type="checkbox" name="range_indicator" value="" checked disabled>
-                            {% else %}
-                            <input type="checkbox" name="range_indicator" value="" disabled>
-                            {% endif %}
-                        </td>
-                        <td class="class_select_checkbox">
-                            {% if orgattributes.multiple_value %}
-                            <input type="checkbox" name="multiple_value" value="" checked disabled>
-                            {% else %}
-                            <input type="checkbox" name="multiple_value" value="" disabled>
-                            {% endif %}
-                        </td>
-                        <td class="class_select_checkbox">
-                            {% if orgattributes.allow_defaults %}
-                            <input type="checkbox" name="allow_defaults" value="" checked disabled>
-                            {% else %}
-                            <input type="checkbox" name="allow_defaults" value="" disabled>
-                            {% endif %}
-                        </td>
-                        <td class="class_select_checkbox">
-                            {% if orgattributes.inherit_values %}
-                            <input type="checkbox" name="inherit_values" value="" checked disabled>
-                            {% else %}
-                            <input type="checkbox" name="inherit_values" value="" disabled>
-                            {% endif %}
-                        </td>
-                        <td>{{orgattributes.maximum_length}}</td>
-                        <td hidden>{{orgattributes.del_ind_flag}}</td>
-                    </tr>
-                    {% endfor %}
+                        {% for orgattributes in org_attributes %}
+                            <tr>
+                                <td class="class_select_checkbox" hidden><input type="checkbox" class="checkbox_check" onclick="valueChanged()" required></td>
+                                <td>{{orgattributes.attribute_id}}</td>
+                                <td>{{orgattributes.attribute_name}}</td>
+                                <td class="class_select_checkbox">
+                                    {% if orgattributes.range_indicator %}
+                                    <input type="checkbox" name="range_indicator" value="" checked disabled>
+                                    {% else %}
+                                    <input type="checkbox" name="range_indicator" value="" disabled>
+                                    {% endif %}
+                                </td>
+                                <td class="class_select_checkbox">
+                                    {% if orgattributes.multiple_value %}
+                                    <input type="checkbox" name="multiple_value" value="" checked disabled>
+                                    {% else %}
+                                    <input type="checkbox" name="multiple_value" value="" disabled>
+                                    {% endif %}
+                                </td>
+                                <td class="class_select_checkbox">
+                                    {% if orgattributes.allow_defaults %}
+                                    <input type="checkbox" name="allow_defaults" value="" checked disabled>
+                                    {% else %}
+                                    <input type="checkbox" name="allow_defaults" value="" disabled>
+                                    {% endif %}
+                                </td>
+                                <td class="class_select_checkbox">
+                                    {% if orgattributes.inherit_values %}
+                                    <input type="checkbox" name="inherit_values" value="" checked disabled>
+                                    {% else %}
+                                    <input type="checkbox" name="inherit_values" value="" disabled>
+                                    {% endif %}
+                                </td>
+                                <td>{{orgattributes.maximum_length}}</td>
+                                <td hidden>{{orgattributes.del_ind_flag}}</td>
+                            </tr>
+                        {% endfor %}
                     </tbody>
                 </table>
             </div>
@@ -283,7 +283,7 @@
             success: function(Response) {
                 var docTypeArray = Response.delete_flags; // Get the delete_flags array from the response
                 var res = get_all_checkboxes(); // Function to get all the checkboxes
-                var $chkbox_all = $('td input[type="checkbox"]', res);
+                var $chkbox_all = $('td .checkbox_check', res);
                 var j = 0; // Index for docTypeArray
                 for (var i = 0; i < $chkbox_all.length; i++) {
                     if ($chkbox_all[i].checked) {
@@ -292,21 +292,24 @@
                             check = '<input type="checkbox" disabled>';
                             $('#delete_data').prop('disabled', true);
                         } else {
-                            check = '<input type="checkbox" onclick="enableDeleteButton()">';
+                            check = '<input type="checkbox" class="checkbox_check" onclick="enableDeleteButton()">';
+                             $('#delete_data').prop('disabled', true);
                         }
                         j++; // Move to the next index in docTypeArray
-                        edit_basic_data +=
-                            `<tr>
+                        $.each(main_table_org_attr_checked, function (i, item) {
+                            edit_basic_data += `
+                            <tr>
                                 <td>${check}</td>
-                                <td><td><select type="text" class="input form-control attribute" name="attribute" value="${row.cells[1].innerHTML}"  disabled></td>
-                                <td><td><input class="form-control attribute_name" type="text" name="attribute_name" value="${row.cells[2].innerHTML}" disabled></td>
-                                <td><input type="checkbox" name="multiple_value" required></td>
-                                <td><input type="checkbox" name="allow_defaults" required></td>
-                                <td><input type="checkbox" name="inherit_values" required></td>
-                                <td><input type="number" name="maxlength"></td>
-                                <td><input type="checkbox" name="range_indicator" required></td>
+                                <td><input type="text" class="input form-control attribute" name="attribute" value="${row.cells[1].innerHTML}" disabled></td>
+                                <td><input class="form-control attribute_name" type="text" name="attribute_name" value="${row.cells[2].innerHTML}" disabled></td>
+                                <td><input type="checkbox" name="range_indicator" ${item.range_indicator ? 'checked' : ''} disabled></td>
+                                <td><input type="checkbox" name="multiple_value" ${item.multiple_value ? 'checked' : ''} disabled></td>
+                                <td><input type="checkbox" name="allow_defaults" ${item.allow_defaults ? 'checked' : ''} disabled></td>
+                                <td><input type="checkbox" name="inherit_values" ${item.inherit_values ? 'checked' : ''} disabled></td>
+                                <td><input type="number" value="${row.cells[7].innerHTML}" name="maxlength" disabled></td>
                                 <td class="class_del_checkbox" hidden><input type="checkbox" required></td>
                             </tr>`;
+                        });
                     }
                 }
                 CloseLoaderPopup();
@@ -327,49 +330,28 @@
         $('#display_basic_table').DataTable().destroy();
         get_row_data("#id_popup_table");
         $('#id_delete_confirm_popup').modal('hide');
-        if(main_table_po_split_checked.length == "0"){
-            var msg = "JMSG005";
-            var msg_type ;
-            msg_type = message_config_details(msg);
-            $("#error_msg_id").prop("hidden", false);
-            if(msg_type.message_type == "ERROR"){
-                display_message("error_msg_id", msg_type.messages_id_desc)
+        $('#id_save_confirm_popup').modal('hide');
+        data = {'data':main_table_org_attr_checked,'table_name':'OrgAttributes','action':GLOBAL_ACTION}
+        OpenLoaderPopup();
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'eProc_Configuration:create_update_application_data' %}",
+            data: JSON.stringify(data),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function(Response) {
+                rendered_org_attr_data = Response[0];
+                rendered_dropdown_values = Response[2];
+                display_basic_db_data();
+                $('#org_attr_Modal').modal('hide');
+                success_response(Response); // Function call to display response data
+                CloseLoaderPopup();
             }
-            else if(msg_type.message_type == "WARNING"){
-                display_message("id_warning_msg_id", msg_type.messages_id_desc)
-            }
-            else if(msg_type.message_type == "INFORMATION"){
-                display_message("id_info_msg_id", msg_type.messages_id_desc)
-            }
-            $('#id_delete_confirm_popup').modal('hide');
-            $('#org_attr_Modal').modal('show')
-            table_sort_filter('display_basic_table');
-        }
-        else{
-            $('#id_save_confirm_popup').modal('hide');
-            data = {'data':main_table_org_attr_checked,'table_name':'OrgAttributes','action':GLOBAL_ACTION}
-            OpenLoaderPopup();
-            $.ajax({
-                type: 'POST',
-                url: "{% url 'eProc_Configuration:create_update_application_data' %}",
-                data: JSON.stringify(data),
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                success: function(Response) {
-                    rendered_org_attr_data = Response[0];
-                    rendered_dropdown_values = Response[2];
-                    display_basic_db_data();
-                    $('#org_attr_Modal').modal('hide');
-                    success_response(Response); // Function call to display response data
-                    CloseLoaderPopup();
-                }
-            });
-        }
+        });
     }
 
     //onclick of add button display org_attr_Modal popup and set GLOBAL_ACTION button value
     function onclick_add_button(button) {
-        GLOBAL_ACTION = button.value
         OpenLoaderPopup();
         var data = {'table_name':'OrgAttributes'}
         $.ajax({
@@ -378,6 +360,7 @@
             data: JSON.stringify(data),
             success: function(response) {
                 rendered_dropdown_values = response.upload_dropdown_db_values
+                GLOBAL_ACTION = button.value
                 dropdown_value();
                 display_button();
                 $("#error_msg_id").css("display", "none")

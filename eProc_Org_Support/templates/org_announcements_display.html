@@ -727,14 +727,15 @@ $('#sup_tab tbody').on('click', 'input[class="annsmt_checkbox"]', function(e){
             data: JSON.stringify(form_data),
             success: function (response) {
                  $('#saveConfirmationModal').modal('hide');
+                 edit_org_announcement_data(response.announcementDetails);
                 document.getElementById('org_announcement_update_success').innerHTML = response.message;
                 //console.log(response.updated_guid)
                 $('#save_error_div').hide();
                 $('#org_announcement_update_success').show();
                 $('html, body').animate({ scrollTop: 0 }, 'slow');
                 document.getElementById('announcement_guid').value = response.updated_guid;
-                document.getElementById('org_save_button').style.display = 'none';
-                document.getElementById('org_edit_button').style.display = 'block';
+<!--                document.getElementById('org_save_button').style.display = 'none';-->
+<!--                document.getElementById('org_edit_button').style.display = 'block';-->
                 $(".hg_edit_display_mode").prop("disabled", true);
                 CloseLoaderPopup();
             }
