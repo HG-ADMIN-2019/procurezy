@@ -81,6 +81,7 @@ function display_basic_db_data() {
 function delete_duplicate() {
     $('#id_popup_table').DataTable().destroy();
     var approval_type_code_check = new Array
+     var main_table_low_value = new Array
     $("#id_popup_table TBODY TR").each(function() {
         var row = $(this);
         //*************** reading data from the pop-up ***************

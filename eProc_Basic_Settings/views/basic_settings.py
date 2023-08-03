@@ -431,7 +431,7 @@ def convert_AccountingDataDesc_to_dictionary(arr):
 def convert_SpendLimitId_to_dictionary(arr):
     convertion_list = []
     for row in arr:
-        dictionary = {'company_id': row[0], 'spender_username': row[1], 'spend_code_id': row[2],
+        dictionary = {'company_id': row[2], 'spender_username': row[1], 'spend_code_id': row[0],
                       'del_ind': row[3]}
         convertion_list.append(dictionary)
     return convertion_list
@@ -440,8 +440,8 @@ def convert_SpendLimitId_to_dictionary(arr):
 def convert_SpendLimitValue_to_dictionary(arr):
     convertion_list = []
     for row in arr:
-        dictionary = {'company_id': row[0], 'spend_code_id': row[1], 'upper_limit_value': row[2],
-                      'currency_id': row[3], 'del_ind': row[4]}
+        dictionary = {'company_id': row[2], 'spend_code_id': row[0], 'upper_limit_value': row[1],
+                      'currency_id': row[4], 'del_ind': row[3]}
         convertion_list.append(dictionary)
     return convertion_list
 

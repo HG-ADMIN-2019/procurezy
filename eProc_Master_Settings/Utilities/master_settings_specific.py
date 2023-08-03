@@ -469,8 +469,9 @@ class MasterSettingsSave:
 
         message = get_message_detail_based_on_action(workflowschema_data['action'])
         upload_response = get_workflowschema_data()
+        data = get_workflowschema_drop_down()
 
-        return upload_response, message
+        return upload_response, message,data
 
     def save_spend_limit(self, spendlimit_data):
         """
@@ -519,8 +520,9 @@ class MasterSettingsSave:
 
         message = get_message_detail_based_on_action(spendlimit_data['action'])
         upload_response = get_spendlimitid_data()
+        data = get_spendlimitid_dropdown()
 
-        return upload_response, message
+        return upload_response, message,data
 
     def save_org_addr_map(self, addresstype_data):
         """
@@ -878,7 +880,8 @@ class MasterSettingsSave:
         message = get_message_detail_based_on_action(spend_limit_value_data['action'])
 
         upload_response = get_spendlimitvalue_data()
-        return upload_response, message
+        data = get_spendlimitvalue_dropdown()
+        return upload_response, message,data
 
     def save_address_data(self, address_data):
         address_db_list = []
