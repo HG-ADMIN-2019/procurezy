@@ -126,9 +126,7 @@
                                 </td>
                                 <td hidden>{{results.unique_announcement_id}}</td>
                                 <td>
-                                    <a style="color: #049ca2; cursor: pointer;" class="org-table-action-icon edit-announcement-link" onclick="showAnnouncementDetails('{{ results.unique_announcement_id }}');">
-                                        {{ results.announcement_id }}
-                                    </a>
+                                    {{ results.announcement_id }}
                                 </td>
                                 <td>{{results.announcement_subject}}</td>
                                 <td>{{results.announcement_description}}</td>
@@ -136,11 +134,15 @@
                                 <td>{{results.priority}}</td>
                                 <td>{{results.announcement_from_date|date:'d-m-Y'}}</td>
                                 <td>{{results.announcement_to_date|date:'d-m-Y'}}</td>
-                                <td class="item-action-icon-section">
-                                    <span title="Delete Announcement" onclick="get_annsmt_detail_to_delete(this.id)" id="{{results.unique_announcement_id}}">
-                                        <i class="material-icons item-action-icons">delete_outline</i>
-                                    </span>
-                                </td>
+<td class="item-action-icon-section">
+    <span title="Edit Announcement" onclick="showAnnouncementDetails('{{results.unique_announcement_id}}');">
+        <i class="material-icons item-action-icons">edit</i>
+    </span>
+    <span title="Delete Announcement" onclick="get_annsmt_detail_to_delete(this.id)" id="{{results.unique_announcement_id}}">
+        <i class="material-icons item-action-icons">delete_outline</i>
+    </span>
+</td>
+
                             </tr>
                             {% endfor %}
                         </tbody>
