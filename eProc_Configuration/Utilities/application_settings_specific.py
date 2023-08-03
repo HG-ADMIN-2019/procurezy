@@ -281,7 +281,7 @@ class ApplicationSettingsSave:
 
             # Check if value is present in the transaction table
             if django_query_instance.django_existence_check(OrgModelNodetypeConfig,
-                                                            {'node_values': attributes_detail['node_values'],
+                                                            {'node_values': attributes_detail['attribute_id'],
                                                              'client': self.client,
                                                              'del_ind': False}):
                 delete_flag = False
