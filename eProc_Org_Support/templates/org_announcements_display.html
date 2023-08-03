@@ -734,8 +734,8 @@ $('#sup_tab tbody').on('click', 'input[class="annsmt_checkbox"]', function(e){
                 $('#org_announcement_update_success').show();
                 $('html, body').animate({ scrollTop: 0 }, 'slow');
                 document.getElementById('announcement_guid').value = response.updated_guid;
-                document.getElementById('org_save_button').style.display = 'none';
-                document.getElementById('org_edit_button').style.display = 'block';
+<!--                document.getElementById('org_save_button').style.display = 'none';-->
+<!--                document.getElementById('org_edit_button').style.display = 'block';-->
                 $(".hg_edit_display_mode").prop("disabled", true);
                 CloseLoaderPopup();
             }
