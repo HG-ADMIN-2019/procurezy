@@ -1877,12 +1877,18 @@ def get_source_relevant_ind(company_code, prod_cat_id, call_off, product_id):
                                                      'client': global_variables.GLOBAL_CLIENT,
                                                      'del_ind': False}):
         return True
-    elif django_query_instance.django_existence_check(SourcingMapping,
+    if django_query_instance.django_existence_check(SourcingRule,
+                                                    {'call_off': call_off,
+                                                     'prod_cat_id_from__gte': prod_cat_id,
+                                                     'prod_cat_id_to__lte': prod_cat_id,
+                                                     'client': global_variables.GLOBAL_CLIENT,
+                                                     'del_ind': False}):
+        if django_query_instance.django_existence_check(SourcingMapping,
                                                     {'product_id': product_id,
                                                      'prod_cat_id': prod_cat_id,
                                                      'company_id': company_code,
                                                      'client': global_variables.GLOBAL_CLIENT,
                                                      'del_ind': False}):
-        return True
+            return True
 
     return False

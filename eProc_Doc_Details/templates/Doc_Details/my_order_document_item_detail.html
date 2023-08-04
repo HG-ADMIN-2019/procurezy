@@ -147,11 +147,9 @@
                                 <a class="dropdown-item accoutingData-{{ forloop.counter }}"
                                    onclick="showSection(this, 'accoutingData-{{ forloop.counter }}')">Cost
                                     Assignment</a>
-                                {% if items.related_documents %}
                                 <a class="dropdown-item related_documents{{ forloop.counter }}"
                                    onclick="showSection(this, 'related_documents-{{ forloop.counter }}')">Related
                                     Documents</a>
-                                {% endif %}
                             </div>
                         </div>
                     </div>
@@ -392,6 +390,7 @@
                     </div>
                     <!-- end of hideable content which lets the user change shipping address -->
                     <div id="related_documents-{{ forloop.counter }}" style="display:none;" class="item{{ forloop.counter }}">
+                        {% if items.related_documents%}
                         <div class="card">
                             <div class="card-header item-table-action__header">
                                 <span>History</span>
@@ -431,7 +430,16 @@
                                 </table>
                             </div>
                         </div>
-                        
+                        {% else %}
+                            <div class="card">
+                                <div class="card-header item-table-action__header">
+                                    <span>History</span>
+                                </div>
+                                <div class="card-body">
+                                    <span>Item is in Sourcing</span>
+                                </div>
+                            </div>
+                        {% endif %}
                     </div>
                 </td>
             </tr>
