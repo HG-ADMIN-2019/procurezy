@@ -87,7 +87,7 @@ def org_announcement_save(request):
             msgid = 'MSG155'
             error_msg = get_message_desc(msgid)[1]
 
-        return JsonResponse({'message': error_msg, 'updated_guid': guid})
+            return JsonResponse({'message': error_msg, 'updated_guid': guid})
 
     return render(request, 'org_announcement.html', context)
 
