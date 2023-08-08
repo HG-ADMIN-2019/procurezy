@@ -1,5 +1,6 @@
 from django.db.models.query_utils import Q
 
+from eProc_Basic.Utilities.functions.date_format_as_db import convert_date_to_str
 from eProc_Basic.Utilities.functions.django_query_set import DjangoQueries
 from eProc_Basic.Utilities.functions.messages_config import get_msg_desc, get_message_desc
 from eProc_Basic.Utilities.global_defination import global_variables
@@ -317,13 +318,8 @@ def check_acc_assign_values_data(ui_data, status):
                 else:
                     invalid_count = invalid_count + 1
         else:
-            if acc_value['valid_from'] == "%Y-%m-%d":
-                from_val = datetime.strptime(acc_value['valid_from'], "%Y-%m-%d")
-                to_val = datetime.strptime(acc_value['valid_to'], "%Y-%m-%d")
-            else:
-                from_val = datetime.strptime(acc_value['valid_from'], "%d-%m-%Y")
-                to_val = datetime.strptime(acc_value['valid_to'], "%d-%m-%Y")
-
+            from_val = datetime.strptime(acc_value['valid_from'], "%d-%m-%Y")
+            to_val = datetime.strptime(acc_value['valid_to'], "%d-%m-%Y")
             if django_query_instance.django_existence_check(AccountingData,
                                                             {'del_ind': False,
                                                              'client': global_variables.GLOBAL_CLIENT,
@@ -3057,6 +3053,11 @@ def get_valid_employee_data(ui_data, status):
                 else:
                     invalid_count = invalid_count + 1
         else:
+            date_joined = str(datetime.strptime(employee_dictionary['date_joined'], '%Y-%m-%d %H:%M:%S.%f'))
+            first_login = str(datetime.strptime(employee_dictionary['first_login'], '%Y-%m-%d %H:%M:%S.%f'))
+            last_login = str(datetime.strptime(employee_dictionary['last_login'], '%Y-%m-%d %H:%M:%S.%f'))
+            valid_from = str(datetime.strptime(employee_dictionary['valid_from'], '%Y-%m-%d %H:%M:%S.%f'))
+            valid_to = str(datetime.strptime(employee_dictionary['valid_to'], '%Y-%m-%d %H:%M:%S.%f'))
             if django_query_instance.django_existence_check(UserData,
                                                             {'del_ind': False,
                                                              'email': employee_dictionary['email'],
@@ -3076,12 +3077,9 @@ def get_valid_employee_data(ui_data, status):
                                                              ['phone_num'],
                                                              'password': employee_dictionary
                                                              ['password'],
-                                                             'date_joined': employee_dictionary
-                                                             ['date_joined'],
-                                                             'first_login': employee_dictionary
-                                                             ['first_login'],
-                                                             'last_login': employee_dictionary
-                                                             ['last_login'],
+                                                             'date_joined': date_joined,
+                                                             'first_login': first_login,
+                                                             'last_login':  last_login,
                                                              'is_active': employee_dictionary
                                                              ['is_active'],
                                                              'is_superuser': employee_dictionary
@@ -3104,10 +3102,8 @@ def get_valid_employee_data(ui_data, status):
                                                              ['pwd_locked'],
                                                              'sso_user': employee_dictionary
                                                              ['sso_user'],
-                                                             'valid_from': employee_dictionary
-                                                             ['valid_from'],
-                                                             'valid_to': employee_dictionary
-                                                             ['valid_to'],
+                                                             'valid_from':valid_from,
+                                                             'valid_to': valid_to,
                                                              'del_ind': employee_dictionary
                                                              ['del_ind'],
                                                              'currency_id': employee_dictionary

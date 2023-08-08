@@ -1460,6 +1460,7 @@ def check_data(request):
 
 
 def extract_employee_data(request):
+    get_client = global_variables.GLOBAL_CLIENT
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="EMPLOYEE.CSV"'
 
@@ -1473,7 +1474,7 @@ def extract_employee_data(request):
     # get only active record
     emp = django_query_instance.django_filter_query(UserData,
                                                     {'del_ind': False,
-                                                     'client': global_variables.GLOBAL_CLIENT
+                                                     'client': get_client
                                                      }, None,
                                                     ['email', 'username', 'person_no', 'form_of_address',
                                                      'first_name', 'last_name','gender', 'phone_num', 'password',
