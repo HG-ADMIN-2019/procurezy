@@ -3,6 +3,7 @@
 
 {% block title %} Purchase Orders (SOM) {% endblock %}
 {% block maincontent %}
+
 <div class="container-fluid">
     <div class="mep-form_wrapper">
         <div class="d-flex justify-content-between">
@@ -19,16 +20,16 @@
                         <input type="text" class="form-control check_for_search" id="sc_number" name="sc_number" >
                     </div>
                     <div class="col-md">
-                        <label for="">Product Category</label>
-                        <input type="text" class="form-control check_for_search" id="product_category" name="product_category">
+                        <label for="">Product Description</label>
+                        <input type="text" class="form-control check_for_search" id="product_desc" name="product_desc">
                     </div>
                     <div class="col-md">
                         <label for="">From Date</label>
-                        <input type="date" class="form-control check_for_search" id="from_date" name='from_date'>
+                        <input type="date" class="form-control" id="from_date" name='from_date' value="dd-mm-yyyy">
                     </div>
                     <div class="col-md">
                         <label for="">to Date</label>
-                        <input type="date" class="form-control check_for_search" id="to_date" name='to_date'>
+                        <input type="date" class="form-control " id="to_date" name='to_date'>
                     </div>
                     <div class="col-md">
                         <label for="">Company Code</label>
@@ -40,17 +41,24 @@
                         </button>
                     </div>
                  </div>
+                 <br>
+                <div class="elements-space-between">
+                    <input type="reset" value="Clear filters" class="ip-form-clear-filters">
+                    <div>
+                        <span class="badge help-text-badge help-text-star-search"></span>
+                    </div>
+                </div>
             </form>
             <hr>
         </div>
     </div>
-    {% if sc_header_item_details|length > 0 %}
+    {% if count > 0 %}
         <div class="search_result_count_card card">
             <div class="card-body">
-              <h6 class="card-title">Total number of results found :{{som_po_data|length}}</h6>
+              <h6 class="card-title">Total number of results found :{{count}}</h6>
             </div>
         </div>
-    {% elif sc_header_item_details|length == 0  %}
+    {% elif count == 0  %}
     <div class="search_result_count_card card">
         <div class="card-body">
             <h6 class="card-title">No Results Found</h6>
@@ -89,7 +97,7 @@
                             <td scope="row" class="hg-desc">{{ header_item.1 }}</td>
                             <td scope="row">{{ header_item.2 }}</td>
                             <td scope="row">{{ header_item.3 }}</td>
-                            <td scope="row">{{ header_item.4 }}</td>
+                            <td scope="row">{{ header_item.4|date:'d-m-Y' }}</td>
                             <td scope="row">{{ header_item.5 }}</td>
                             <td scope="row">{{ header_item.6 }}</td>
                             <td scope="row">{{ header_item.7 }}</td>
@@ -190,20 +198,18 @@
 $(document).ready( function() {
   nav_bar_shop_assist()
   table_sort_filter_export_excel();
-  $('#po_number').val(localStorage.getItem("po_number"));
-  $('#company_name').val(localStorage.getItem("company_name"));
-  $('#received_date').val(localStorage.getItem("received_date"));
-  $('#buyer_name').val(localStorage.getItem("buyer_name"));
-  $('#buyer_email_id').val(localStorage.getItem("buyer_email_id"));
-  $('#buyer_phone_num').val(localStorage.getItem("buyer_phone_num"));
+  $('#sc_number').val(localStorage.getItem("sc_number"));
+  $('#product_desc').val(localStorage.getItem("product_desc"));
+  $('#company_code').val(localStorage.getItem("company_code"));
+  document.getElementById('from_date').value = new Date().toISOString().substring(0, 10);
+  document.getElementById('to_date').value = new Date().toISOString().substring(0, 10);
 });
 function reload(){
-      localStorage.setItem("po_number", document.getElementById("po_number").value);
-      localStorage.setItem("company_name", document.getElementById("company_name").value);
-      localStorage.setItem("received_date", document.getElementById("received_date").value);
-      localStorage.setItem("buyer_name", document.getElementById("buyer_name").value);
-      localStorage.setItem("buyer_email_id", document.getElementById("buyer_email_id").value);
-      localStorage.setItem("buyer_phone_num", document.getElementById("buyer_phone_num").value);
+      localStorage.setItem("sc_number", document.getElementById("sc_number").value);
+      localStorage.setItem("product_desc", document.getElementById("product_desc").value);
+      localStorage.setItem("company_code", document.getElementById("company_code").value);
+      localStorage.setItem("from_date", document.getElementById("from_date").value);
+      localStorage.setItem("to_date", document.getElementById("to_date").value);
       OpenLoaderPopup();
   }
 
