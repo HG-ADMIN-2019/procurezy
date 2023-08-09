@@ -12,6 +12,7 @@ function hideModal() {
 // on click update icon display the selected checkbox data to update
 function onclick_update_button() {
     GLOBAL_ACTION = "UPDATE"
+    display_button();
     onclick_copy_update_button("UPDATE")
     document.getElementById("id_del_add_button").style.display = "none";
 }
@@ -149,13 +150,13 @@ function get_row_data(tableSelector) {
         if(calendar_arr_obj.del_ind){
             var cntry_name;
             var cntry_code;
-            cntry_name = row.find("TD").eq(2).html();
+            cntry_name = (row.find("TD").eq(2).find('select[type="text"]').val()) || row.find("td:eq(2)").html();
             for (i = 0; i < render_country_data.length; i++) {
                 if (cntry_name == render_country_data[i].country_name)
                     cntry_code = render_country_data[i].country_code;
             }
             calendar_arr_obj.calender_id = (row.find("TD").eq(1).find('input[type="text"]').val()) || row.find("TD").eq(1).html();
-            calendar_arr_obj.country = (row.find("TD").eq(2).find('input[type="text"]').val()) || row.find("TD").eq(2).html();
+            calendar_arr_obj.country = (row.find("TD").eq(2).find('select[type="text"]').val()) || row.find("TD").eq(2).html();
             calendar_arr_obj.description = (row.find("TD").eq(3).find('input[type="text"]').val()) || row.find("TD").eq(3).html();
             calendar_arr_obj.year = (row.find("TD").eq(4).find('input[type="text"]').val()) || row.find("TD").eq(4).html();
             calendar_arr_obj.working_days = row.find("td").eq(5).find('select[id="working_days"]').val() || row.find("td").eq(5).html();

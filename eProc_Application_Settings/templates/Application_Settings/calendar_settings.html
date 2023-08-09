@@ -378,6 +378,7 @@
         GLOBAL_ACTION = "DELETE";
         var edit_basic_data = "";
         var guid = '';
+        var dropdown_values = [];
         main_table_number_range_checked = [];
         get_row_data("#display_basic_table"); // Function call to get the selected row data
         display_button(); // Call the display_button function to show/hide the buttons
@@ -398,31 +399,56 @@
                     if ($chkbox_all[i].checked) {
                         var row = $chkbox_all[i].parentNode.parentNode;
                         if (j < docTypeArray.length && docTypeArray[j] === false) {
-                            check = '<input type="checkbox" disabled>';
+                            check = '<input type="checkbox" class="checkbox_check" disabled>';
                             $('#delete_data').prop('disabled', true);
-                            document.getElementById('delete_data').style.visibility = 'visible';
                         } else {
-                            check = '<input type="checkbox">';
-                            document.getElementById('delete_data').style.visibility = 'visible';
+                            check = '<input type="checkbox" class="checkbox_check" onclick="enableDeleteButton()">';
+                            $('#delete_data').prop('disabled', true);
                         }
                         j++; // Move to the next index in docTypeArray
-                        $('#delete_data').prop('disabled', false);
+                        cntry_name = row.cells[2].innerHTML;
                         edit_basic_data +=
                         '<tr>'+
                             '<td>' + check + '</td>' +
                             '<td><input class="form-control" type="text" value="' + row.cells[1].innerHTML + '" name="calender_id"  maxlength="10" style="text-transform:uppercase" disabled></td>'+
                             '<td><input id="country"  class="form-control datatable-scroll-wrap " type="text" name="country" value="' + row.cells[2].innerHTML + '" disabled></td>'+
-                            '<td><input value="' + row.cells[3].innerHTML + '"  class="form-control check_special_char" type="text" name="description"></td>'+
-                            '<td><input value="'+row.cells[4].innerHTML+'" class="form-control yearPicker" type="text" maxlength="4"  name="year"></td>'+
-                            '<td style="width:110px;"> <select style="overflow-y:scroll;" id="working_days"  class="form-control multiple_select working_days" type="text" name="working_days"  multiple  title="Select.." data-selected-text-format="count" data-actions-box="true">'+workingdays_dropdown+'</select> </td>'+                            '<td class="class_del_checkbox" hidden> <input type="checkbox" ></td>'+
+                            '<td><input value="' + row.cells[3].innerHTML + '"  class="form-control check_special_char" type="text" name="description" disabled></td>'+
+                            '<td><input value="'+row.cells[4].innerHTML+'" class="form-control yearPicker" type="text" maxlength="4"  name="year" disabled></td>'+
+                            '<td style="width:110px;"> <select style="overflow-y:scroll;" id="working_days"  class="form-control multiple_select working_days" type="text" name="working_days"  multiple  title="Select.." data-selected-text-format="count" data-actions-box="true" disabled>'+workingdays_dropdown+' </select> </td>'+
+                            '<td class="class_del_checkbox" hidden> <input type="checkbox" ></td>'+
                             '<td hidden><input type="text" id="calendar_config_guid" value="'+row.cells[6].innerHTML+'"></td>'+
                         '</tr> ';
+                        var country_drp_values = row.cells[2].innerHTML
+                        for (var j = 0; j < render_country_data.length; j++) {
+                            if (cntry_name == render_country_data[j].country_name)
+                                country_code = render_country_data[j].country_code;
+                        }
+                        var wdays_value = row.cells[5].innerText;
+                        var wday_copy_values = [];
+                        wday_copy_values = wdays_value.split(" ")
+                        dropdown_values.push([country_code,wday_copy_values])
                     }
                 }
-                CloseLoaderPopup();
                 $('#id_popup_tbody').append(edit_basic_data);
+                var i =0;
+                var day_val = '';
+                $("#id_popup_table TBODY TR").each(function() {
+                    var row = $(this);
+                    var country_values = dropdown_values[i][0]
+                    var workingdays_value = dropdown_values[i][0]
+                    for(k=0;k<workingdays_value.length;k++){
+                        day_val = get_values(workingdays_value[k]);
+                        $(row.find("TD").eq(5).find("select option[value="+ day_val +"]")).attr('selected','selected');
+                    }
+                    $(row.find("TD").eq(2).find("select option[value="+country_values+"]")).attr('selected','selected');
+                    i++;
+                });
+                DatePicker();
+                MultipleSelect();
                 $("#id_del_ind_checkbox").prop("hidden", true);
                 $('#Calendar_Modal').modal('show');
+                $("#header_select").prop("hidden", false);
+                CloseLoaderPopup();
                 table_sort_filter('id_popup_table');
             },
         });
@@ -489,10 +515,6 @@
         $('.working_days').selectpicker();
         $('.multiple_select').selectpicker();
     }
-<!--   $('#id_wdays').attr({-->
-<!--    "max-height": 280px;-->
-<!--    'overflow-y': auto;-->
-<!--});-->
 
     function get_days(workingday){
         var day;
