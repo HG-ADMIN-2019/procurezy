@@ -263,6 +263,7 @@
                             $('#delete_data').prop('disabled', true);
                         } else {
                             check = '<input type="checkbox" onclick="enableDeleteButton()">';
+                            $('#delete_data').prop('disabled', true);
                         }
                         j++; // Move to the next index in docTypeArray
                         edit_basic_data +=
@@ -296,42 +297,22 @@
         $('#display_basic_table').DataTable().destroy();
         get_row_data("#id_popup_table");
         $('#id_delete_confirm_popup').modal('hide');
-        if(main_table_auth_group_checked.length == "0"){
-            var msg = "JMSG005";
-            var msg_type ;
-            msg_type = message_config_details(msg);
-            $("#error_msg_id").prop("hidden", false);
-            if(msg_type.message_type == "ERROR"){
-                display_message("error_msg_id", msg_type.messages_id_desc)
+        data = {'data':main_table_auth_group_checked,'table_name':'AuthorizationGroup','action':GLOBAL_ACTION}
+        OpenLoaderPopup();
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'eProc_Configuration:create_update_application_data' %}",
+            data: JSON.stringify(data),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function(Response) {
+                rendered_auth_group_data = Response[0];
+                rendered_auth_group_field_data = Response[2];
+                display_basic_db_data();
+                success_response(Response); // Function call to display response data
+                 CloseLoaderPopup();
             }
-            else if(msg_type.message_type == "WARNING"){
-                display_message("id_warning_msg_id", msg_type.messages_id_desc)
-            }
-            else if(msg_type.message_type == "INFORMATION"){
-                display_message("id_info_msg_id", msg_type.messages_id_desc)
-            }
-            $('#id_delete_confirm_popup').modal('hide');
-            $('#auth_group_Modal').modal('show')
-            table_sort_filter('display_basic_table');
-        }
-        else{
-            data = {'data':main_table_auth_group_checked,'table_name':'AuthorizationGroup','action':GLOBAL_ACTION}
-            OpenLoaderPopup();
-            $.ajax({
-                type: 'POST',
-                url: "{% url 'eProc_Configuration:create_update_application_data' %}",
-                data: JSON.stringify(data),
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                success: function(Response) {
-                    rendered_auth_group_data = Response[0];
-                    rendered_auth_group_field_data = Response[2];
-                    display_basic_db_data();
-                    success_response(Response); // Function call to display response data
-                     CloseLoaderPopup();
-                }
-            });
-        }
+        });
     }
    
     //onclick of add button display auth_group_Modal popup and set GLOBAL_ACTION button value
