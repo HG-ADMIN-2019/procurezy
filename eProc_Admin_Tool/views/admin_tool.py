@@ -1180,7 +1180,8 @@ def delete_org_announcement(request):
 
     announcement_ids = [annsmt_data['unique_announcement_id'] for annsmt_data in announcement_result1]
 
-    response = {'announcement_ids': announcement_ids, 'success_message': success_message, 't_count': t_count}
+    response = {'announcement_ids': announcement_ids, 'success_message': success_message, 't_count': t_count,
+                'announcement_result1': announcement_result1}
     return JsonResponse(response, safe=False)
 
 
@@ -1222,7 +1223,8 @@ def extract_employee_template(request):
     writer = csv.writer(response)
 
     writer.writerow(
-        ['EMAIL', 'USERNAME', 'PERSON_NO', 'FORM_OF_ADDRESS', 'FIRST_NAME', 'LAST_NAME', 'GENDER','PHONE_NUM', 'PASSWORD',
+        ['EMAIL', 'USERNAME', 'PERSON_NO', 'FORM_OF_ADDRESS', 'FIRST_NAME', 'LAST_NAME', 'GENDER', 'PHONE_NUM',
+         'PASSWORD',
          'DATE_JOINED', 'FIRST_LOGIN', 'LAST_LOGIN', 'IS_ACTIVE', 'IS_SUPERUSER', 'IS_STAFF', 'DATE_FORMAT',
          'EMPLOYEE_ID', 'DECIMAL_NOTATION', 'USER_TYPE', 'LOGIN_ATTEMPTS', 'USER_LOCKED', 'PWD_LOCKED', 'SSO_USER',
          'VALID_FROM', 'VALID_TO', 'del_ind', 'CURRENCY', 'LANGUAGE_ID', 'OBJECT_ID', 'TIME_ZONE'])

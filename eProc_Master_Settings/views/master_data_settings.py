@@ -716,7 +716,7 @@ def extract_spendlimit_data(request):
     spendlim_data = query_update_del_ind(spendlimitvals)
 
     for spendlimitval in spendlim_data:
-        spendlimitval_info = [spendlimitval[spendlimitval['company_id'], 'spender_username'],
+        spendlimitval_info = [spendlimitval['company_id'],spendlimitval[ 'spender_username'],
                               spendlimitval['spend_code_id'], spendlimitval['del_ind']]
         writer.writerow(spendlimitval_info)
 

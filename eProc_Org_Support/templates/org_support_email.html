@@ -10,10 +10,10 @@
                 </div>
                 <!-- Modal body -->
                 <div class="modal-body scrollbox">
-                    <div id="email_del_add_button" class="mb-2" hidden>
-                        <button class="btn btn-outline-primary" type="button" onclick="add_popup_row_email()"><i class="fa fa-plus"></i> add new row</button>
-                        <button id="email_delete_btn" hidden class="btn btn-outline-primary" onclick="application_settings_delete_Row_email('id_popup_table_email')"><i class="fa fa-trash"></i> delete</button>
-                    </div>
+<!--                    <div id="email_del_add_button" class="mb-2" hidden>-->
+<!--                        <button class="btn btn-outline-primary" type="button" onclick="add_popup_row_email()"><i class="fa fa-plus"></i> add new row</button>-->
+<!--                        <button id="email_delete_btn" hidden class="btn btn-outline-primary" onclick="application_settings_delete_Row_email('id_popup_table_email')"><i class="fa fa-trash"></i> delete</button>-->
+<!--                    </div>-->
 
                     <div class="alert alert-success " id="org_support_email_success" role="alert" hidden> <span id="success_msg_id"></span></div>
                     <div id="id_check_error_messages_mail" class="alert alert-danger check_error_messages" hidden></div>
@@ -95,17 +95,21 @@ function application_settings_delete_Row_email(myTable) {
         alert(e);
     }
 }
-function cancel_support_details_email(){
-    $(".hg_edit_display_mode").prop( "disabled", true );
-    document.getElementById('save_cancel_btn_email').style.display = 'none'
-    document.getElementById('edit_id_email').style.display = 'block'
-    $(".class_email_checkbox").prop( "hidden", true );
-     $("#select_email").prop( "hidden", true );
-     $("#email_del_add_button").prop( "hidden", true );
-     $("#org_support_email_success").prop( "hidden", true );
-     $("#email_checkbox").prop( "hidden", true );
-     $(".email_checkbox").hide();
+function cancel_support_details_email() {
+    $(".hg_edit_display_mode").prop("disabled", true);
+    document.getElementById('save_cancel_btn_email').style.display = 'none';
+    document.getElementById('edit_id_email').style.display = 'block';
+    $(".class_email_checkbox").prop("hidden", true);
+    $("#select_email").prop("hidden", true);
+    $("#email_del_add_button").prop("hidden", true);
+    $("#org_support_email_success").prop("hidden", true);
+    $("#email_checkbox").prop("hidden", true);
+    $(".email_checkbox").hide();
+
+    // Close the modal
+    $('#myModalEmail').modal('hide');
 }
+
 function onclick_edit_email(){
     $(".hg_edit_display_mode").prop( "disabled", false );
      $("#email_del_add_button").prop( "hidden", false );
@@ -200,10 +204,16 @@ function save_email_support_data(){
         url: "{% url 'eProc_Org_Support:org_support_save' %}",
         data: JSON.stringify(form_data),
         success: function(response) {
-          document.getElementById('org_support_email_success').innerHTML = response.message;
-           $('#org_support_email_success').prop( "hidden", false );
-        $("#org_support_guid").val(response.updated_guid);
-        }
+    document.getElementById('org_support_email_success').innerHTML = response.message;
+    $('#org_support_email_success').prop('hidden', false);
+    $("#org_support_guid").val(response.updated_guid);
+
+    // Close the modal after a delay
+    setTimeout(function() {
+        $('#myModalEmail').modal('hide');
+    }, 5000); // Close after 5 seconds (adjust the delay as needed)
+}
+
     });
 
 }

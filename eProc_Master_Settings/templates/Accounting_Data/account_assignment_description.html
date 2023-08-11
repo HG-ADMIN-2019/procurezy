@@ -550,28 +550,57 @@ function new_row_data() {
                 invalid_count = invalid_count + 1;
                 }
                 var compare = accdesc_dic.account_assign_value + '-' + accdesc_dic.account_assign_cat + '-' + accdesc_dic.company_id + '-' + accdesc_dic.language_id
-            var format = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
-            //*************** checking for special characters for aad description ***************
-            if (format.test(accdesc_dic.description)) {
-                error_message = ui_messeges("JMSG003")// Get message details
-                var display = msg_type.messages_id_desc;
-                document.getElementById("id_error_msg_aad_name").innerHTML = display + "Description";
+                get_main_table_data();
+        var format = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
+       //*************** checking for empty records for product id name (max length = 2) ***************
+            if(accdesc_dic.description.length == 0){
+                $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
+                row_color_highlight_empty(row);
+                $("#id_error_msg_prod_cat_desc").prop("hidden",false);
+                error_message = ui_messeges("JMSG002")// Get message details
+                var display8 = error_message;
+                document.getElementById("id_error_msg_aad_name").innerHTML = display8+ "Country Name";
+                $("#id_check_special_character_messages").prop("hidden",false);
+                count = count +1;
+            }
+            //*************** checking for special characters for country name ***************
+            else if(format.test(accdesc_dic.description)){
                 $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "1px solid #FF0000");
-                count = count + 1;
-            } else {
-                $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "none");
+                row_color_highlight_special(row);
+                $("#id_error_msg_language_id").prop("hidden",false);
+                error_message = ui_messeges("JMSG003")// Get message details
+                var display3 = error_message;
+                document.getElementById("id_error_msg_aad_name").innerHTML = display3+ "Country Name";
+                $("#id_check_special_character_messages").prop("hidden",false);
+                count = count +1;
             }
-            if (aad_code_check.includes(compare)) {
-                $(row).css("background-color", "#f8d7da");
-                Duplicate_count = Duplicate_count + 1;
-            } else {
-                $(row).css("background-color", "");
+            else if(aad_code_check.includes((compare)&&(accdesc_dic.del_ind))){
+                 $(row).css("border", "#f8d7da");
+                 row_color_highlight(row);
+                 $("#id_check_error_messages").prop("hidden",false);
+                 var display7 = ui_messeges("JMSG001");
+                 document.getElementById("id_check_error_messages").innerHTML = display7;
+                 $("#save_id").prop("hidden", true);
+                 $("#id_delete_duplicate").show()
+                 $("#id_check_data").prop("hidden", false);
+                 count = count +1;
             }
-            if(invalid_count != 0){
-                $("#id_delete_invalid_aav").show()
+            else if(main_table_low_value.includes((compare)&&(accdesc_dic.del_ind))){
+                 $(row).css("border", "#f8d7da");
+                 row_color_highlight(row);
+                 $("#id_check_error_messages").prop("hidden",false);
+                 var display7 = ui_messeges("JMSG001");
+                 document.getElementById("id_check_error_messages").innerHTML = display7;
+                 $("#save_id").prop("hidden", true);
+                 $("#id_delete_duplicate").show()
+                 $("#id_check_data").prop("hidden", false);
+                 count = count +1;
             }
             else{
-                $("#id_delete_invalid_aav").hide()
+                $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "none");
+                row_color_no_highlight(row);
+                $(row).css("border", "");
+                $("#id_delete_duplicate").hide()
             }
             if(accdesc_dic.check_value=="0"){
                 get_message_details("JMSG052"); // Get message details
@@ -583,29 +612,40 @@ function new_row_data() {
                 $(row.find("TD").eq(2).find("select")).css("border", "none");
             }
             aad_code_check.push(compare)
+            main_table_low_value.push(compare)
+            table_sort_filter_popup_pagination('id_popup_table');
         });
+
         //*************** shows save button if there are no errors(special characters and max length) ***************
-        if (count == 0) {
-            $("#id_check_special_character_messages").prop("hidden", true)
+         if(count == 0){
+            $('#id_popup_table').DataTable().destroy();
+            $("#id_popup_table").find("input,button,textarea,select").attr("disabled", "disabled");
+            document.getElementById("id_del_add_button").style.display = "none";
             $("#save_id").prop("hidden", false);
-        }
-        popup_data_dict = {
-            'data_list': aad_list,
-        }
-        OpenLoaderPopup();
-        $.ajax({
-            type: 'POST',
-            url: "{% url 'eProc_Configuration_Check:check_acc_assign_desc' %}",
-            data: JSON.stringify(popup_data_dict),
-            success: function(response) {
-                table_sort_filter_popup_pagination('id_popup_table')
-                var message = ''
-                update_check_message(response.messages)
-                CloseLoaderPopup();
+            $("#id_check_data").prop("hidden", true);
+            if (aad_list == 0) {
+                $("#save_id").prop("hidden", true);
             }
-        });
-    }
-        
+            popup_data_dict ={'data_list' : aad_list}
+            OpenLoaderPopup();
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'eProc_Configuration_Check:check_acc_assign_desc' %}",
+                data: JSON.stringify(popup_data_dict),
+                success: function(response) {
+                    table_sort_filter_popup_pagination('id_popup_table')
+                     $("#id_check_special_character_messages").prop("hidden", false);
+                     if (count == 0) {
+                            $("#id_check_special_character_messages").prop("hidden", true);
+                     }
+                    var message = ''
+                    update_check_message(response.messages[1])
+                    CloseLoaderPopup();
+                }
+            });
+         }
+}
+
     // validating the  popup table for duplicate entries
     function compare_table_for_duplicate_entries(validate_add_attributes, aad) {
         add_attr_duplicates = false;

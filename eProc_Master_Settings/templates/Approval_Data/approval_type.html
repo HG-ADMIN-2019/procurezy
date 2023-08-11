@@ -15,7 +15,7 @@
                 <button class="btn btn-outline-primary" title="Extract" onclick="location.href='{% url 'eProc_Master_Settings:extract_approver_type_data' %}'" type="button">
                     <i class="fas fa-download"></i> extract data
                 </button>
-                <button class="btn btn-outline-primary modal_upload" title="Upload" id="id_upload_redirect_data" value="currency_upload" onclick="onclick_upload_button()" type="button">
+                <button class="btn btn-outline-primary modal_upload" title="Upload" id="id_upload_redirect_data" value="approval_type_upload" onclick="onclick_upload_button()" type="button">
                     <i class="fas fa-cloud-upload-alt"></i> upload data
                 </button>
                 <button class="btn btn-primary" title="Add Approval Type" type="button" id="id_add_data" value="ADD" data-toggle="modal" data-target="#App_Type_Modal" onclick="onclick_add_button(this)">
@@ -209,7 +209,7 @@
                     dataType: "json",
                     success: function(Response) {
                         rendered_approval_type_data = Response[0];
-                        rendered_approval_type_values = Response[2];
+                        rendered_approval_type_values = Response[2].dropdown_db_values;
                         display_basic_db_data();
                         $('#App_Type_Modal').modal('hide');
                         success_response(Response); // Function call to display response data
@@ -311,7 +311,7 @@
             dataType: "json",
             success: function(Response) {
                 rendered_approval_type_data = Response[0];
-                rendered_approval_type_values = Response[2];
+                rendered_approval_type_values = Response[2].dropdown_db_values;
                 display_basic_db_data();
                 success_response(Response); // Function call to display response data
                 CloseLoaderPopup();
@@ -397,7 +397,7 @@
                                         app_typ_id_list = app_typ + app_typ_list
                                     });
                                     edit_basic_data += '<tr><td class="class_select_checkbox"><input type="checkbox" required></td>'+
-                                    '<td><select type="text" class="input form-control approvaltype"  name="approvaltype" onchange="GetSelectedTextValue(this)"> value="' + value.app_types + '"'+app_typ_id_list+'</select></td><td><input class="form-control" type="text"  value="' + value.appr_type_desc + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" disabled></td><td>' + del_ind + '</td></tr>';
+                                    '<td><select type="text" class="input form-control approvaltype"  name="approvaltype" onchange="GetSelectedTextValue(this)"><option value="' + value.app_types + '"'+app_typ_id_list+'>' + value.app_types + '</options></select></td><td><input class="form-control" type="text"  value="' + value.appr_type_desc + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" disabled></td><td>' + del_ind + '</td></tr>';
                                     inc_index += 1;
                             });
                             $('#id_popup_tbody').append(edit_basic_data);
@@ -405,7 +405,7 @@
                             $("#id_popup_table TBODY TR").each(function() {
                                 var row = $(this);
                                 var app_typ_id_list = dropdown_values[i][0]
-                                $(row.find("TD").eq(1).find("select option[value="+app_typ_id_list+"]")).attr('selected','selected');
+                                $(row.find("TD").eq(1).find("select[value="+app_typ_id_list+"]")).attr('selected','selected');
                                 i++;
                             });
                             $("#id_del_ind_checkbox").prop("hidden", false);
