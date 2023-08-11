@@ -53,6 +53,24 @@ class CompareTableHeader:
             exclude_list.append('COMPANY_ID')
             exclude_list.append('PORG_ID')
             exclude_list.append('OBJECT_ID')
+        if self.table_name == 'UserData':
+            exclude_list.append('PERSON_NO')
+            exclude_list.append('FORM_OF_ADDRESS')
+            exclude_list.append('GENDER')
+            exclude_list.append('IS_STAFF')
+            exclude_list.append('PASSWORD')
+            exclude_list.append('DATE_JOINED')
+            exclude_list.append('FIRST_LOGIN')
+            exclude_list.append('LAST_LOGIN')
+            exclude_list.append('IS_ACTIVE')
+            exclude_list.append('IS_SUPERUSER')
+            exclude_list.append('PWD_LOCKED')
+            exclude_list.append('USER_LOCKED')
+            exclude_list.append('LOGIN_ATTEMPTS')
+            exclude_list.append('VALID_FROM')
+            exclude_list.append('VALID_TO')
+            exclude_list.append('SSO_USER')
+            exclude_list.append('OBJECT_ID')
 
         field_details = []
         for field in self.model_name._meta.fields:

@@ -831,7 +831,7 @@ class MasterSettingsSave:
                     'spend_lim_value_guid': guid,
                     'spend_code_id': spend_limit_value_detail['spend_code_id'].upper(),
                     'upper_limit_value': spend_limit_value_detail['upper_limit_value'],
-                    'company_id': spend_limit_value_detail['company_id'],
+                    'company_id': OrgCompanies.objects.get(company_id=spend_limit_value_detail['company_id']),
                     'currency_id': Currency.objects.get(currency_id=spend_limit_value_detail['currency_id']),
                     'del_ind': False,
                     'client': self.client,

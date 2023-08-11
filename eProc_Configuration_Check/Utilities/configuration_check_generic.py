@@ -3053,65 +3053,31 @@ def get_valid_employee_data(ui_data, status):
                 else:
                     invalid_count = invalid_count + 1
         else:
-            date_joined = str(datetime.strptime(employee_dictionary['date_joined'], '%Y-%m-%d %H:%M:%S.%f'))
-            first_login = str(datetime.strptime(employee_dictionary['first_login'], '%Y-%m-%d %H:%M:%S.%f'))
-            last_login = str(datetime.strptime(employee_dictionary['last_login'], '%Y-%m-%d %H:%M:%S.%f'))
-            valid_from = str(datetime.strptime(employee_dictionary['valid_from'], '%Y-%m-%d %H:%M:%S.%f'))
-            valid_to = str(datetime.strptime(employee_dictionary['valid_to'], '%Y-%m-%d %H:%M:%S.%f'))
             if django_query_instance.django_existence_check(UserData,
                                                             {'del_ind': False,
                                                              'email': employee_dictionary['email'],
                                                              'username': employee_dictionary
                                                              ['username'],
-                                                             'person_no': employee_dictionary
-                                                             ['person_no'],
-                                                             'form_of_address': employee_dictionary
-                                                             ['form_of_address'],
                                                              'first_name': employee_dictionary
                                                              ['first_name'],
                                                              'last_name': employee_dictionary
                                                              ['last_name'],
-                                                             'gender': employee_dictionary
-                                                             ['gender'],
                                                              'phone_num': employee_dictionary
                                                              ['phone_num'],
-                                                             'password': employee_dictionary
-                                                             ['password'],
-                                                             'date_joined': date_joined,
-                                                             'first_login': first_login,
-                                                             'last_login':  last_login,
-                                                             'is_active': employee_dictionary
-                                                             ['is_active'],
-                                                             'is_superuser': employee_dictionary
-                                                             ['is_superuser'],
-                                                             'is_staff': employee_dictionary
-                                                             ['is_staff'],
+                                                             ['user_type']: employee_dictionary
+                                                              ['user_type'],
                                                              'date_format': employee_dictionary
                                                              ['date_format'],
                                                              'employee_id': employee_dictionary
                                                              ['employee_id'],
                                                              'decimal_notation': employee_dictionary
                                                              ['decimal_notation'],
-                                                             'user_type': employee_dictionary
-                                                             ['user_type'],
-                                                             'login_attempts': employee_dictionary
-                                                             ['login_attempts'],
-                                                             'user_locked': employee_dictionary
-                                                             ['user_locked'],
-                                                             'pwd_locked': employee_dictionary
-                                                             ['pwd_locked'],
-                                                             'sso_user': employee_dictionary
-                                                             ['sso_user'],
-                                                             'valid_from':valid_from,
-                                                             'valid_to': valid_to,
                                                              'del_ind': employee_dictionary
                                                              ['del_ind'],
                                                              'currency_id': employee_dictionary
                                                              ['currency_id'],
                                                              'language_id': employee_dictionary
                                                              ['language_id'],
-                                                             'object_id': employee_dictionary
-                                                             ['object_id'],
                                                              'time_zone': employee_dictionary
                                                              ['time_zone']
                                                              }):
