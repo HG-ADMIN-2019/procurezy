@@ -277,35 +277,17 @@
                             <th id="header_select">Select</th>
                             <th>EMAIL</th>
                             <th>USERNAME</th>
-                            <th>PERSON_NO</th>
-                            <th>FORM_OF_ADDRESS</th>
-                            <th>FIRST_NAME</th>
-                            <th>LAST_NAME</th>
-                            <th>GENDER</th>
+                            <th >FIRST_NAME</th>
+                            <th >LAST_NAME</th>
                             <th>PHONE_NUM</th>
-                            <th>PASSWORD</th>
-                            <th>DATE_JOINED</th>
-                            <th>FIRST_LOGIN</th>
-                            <th>LAST_LOGIN</th>
-                            <th>IS_ACTIVE</th>
-                            <th>IS_SUPERUSER</th>
-                            <th>IS_STAFF</th>
                             <th>DATE_FORMAT</th>
                             <th>EMPLOYEE_ID</th>
                             <th>DECIMAL_NOTATION</th>
                             <th>USER_TYPE</th>
-                            <th>LOGIN_ATTEMPTS</th>
-                            <th>USER_LOCKED</th>
-                            <th>PWD_LOCKED</th>
-                            <th>SSO_USER</th>
-                            <th>VALID_FROM</th>
-                            <th>VALID_TO</th>
-                            <th>Del_Ind</th>
                             <th>CURRENCY</th>
                             <th>LANGUAGE_ID</th>
-                            <th>OBJECT_ID</th>
                             <th>TIME_ZONE</th>
-                            <th id="id_del_ind_checkbox" hidden>Del Indicator</th>
+                            <th id="id_del_ind_checkbox">Del Indicator</th>
                         </tr>
                         </thead>
                         <tbody id="id_popup_tbody">
@@ -568,108 +550,97 @@ function main_table_delete(){
 //onclick of data Upload copy data to modal pop-up
 
 function onclick_display_csv_data() {
-    $("#valid_upload").modal('hide');
-    $("#id_delete_duplicate").hide()
-    $("#id_check_success_messages").empty();
-    $("#id_check_error_messages").empty();
-    $("#id_check_success_messages").prop("hidden", true);
-    $("#id_check_error_messages").prop("hidden", true);
-    $("#id_check_special_character_messages").prop("hidden", true);
-    $("#error_msg_id").css("display", "none")
-    $('#id_popup_table').DataTable().destroy();
-    formdata = new FormData();
-    attached_file = $('#id_file_data_upload').prop('files')[0]
-    file_extension = (attached_file.name).split(".")[1]
-    file_extension = file_extension.toUpperCase();
-    if(file_extension == 'CSV'){
-    formdata.append("file_attach", attached_file);
-    formdata.append("Tablename",Tablename);
-    formdata.append("appname",appname);
-    $('#id_data_upload').modal('hide');
-    $('#id_popup_tbody').empty();
-    OpenLoaderPopup();
-    $.ajax({
-        type: 'POST',
-        url: "{% url 'eProc_Basic_Settings:data_upload' %}",
-        data: formdata,
-        contentType: "application/json; charset=utf-8",
-        success: function(response) {
-            if(response.error_message) {
-                $("#id_error_msg_upload").prop("hidden",false)
-                document.getElementById("id_error_msg_upload").innerHTML = response.valid_data_list;
-                document.getElementById("id_error_msg_upload").style.color = "Red";
-                $('#id_data_upload').modal('show');
+        $("#valid_upload").modal('hide');
+        $("#id_delete_duplicate").hide()
+        $("#id_check_success_messages").empty();
+        $("#id_check_error_messages").empty();
+        $("#id_check_success_messages").prop("hidden", true);
+        $("#id_check_error_messages").prop("hidden", true);
+        $("#id_check_special_character_messages").prop("hidden", true);
+        $("#error_msg_id").css("display", "none")
+        $('#id_popup_table').DataTable().destroy();
+        formdata = new FormData();
+        attached_file = $('#id_file_data_upload').prop('files')[0]
+        if(attached_file == undefined){
+           display_file_select_error(); // Display error message if no file is selected
+        }
+        else {
+            file_extension = (attached_file.name).split(".")[1]
+            file_extension = file_extension.toUpperCase();
+            if(file_extension == 'CSV'){
+            formdata.append("file_attach", attached_file);
+            formdata.append("Tablename",Tablename);
+            formdata.append("appname",appname);
+            db_header_data = db_header_data
+            formdata.append("db_header_data",db_header_data);
+            $('#id_data_upload').modal('hide');
+            $('#id_popup_tbody').empty();
+            OpenLoaderPopup();
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'eProc_Basic_Settings:data_upload' %}",
+                data: formdata,
+                contentType: "application/json; charset=utf-8",
+                success: function(response) {
+                    if(response.error_message) {
+                        $("#id_error_msg_upload").prop("hidden",false)
+                        document.getElementById("id_error_msg_upload").innerHTML = response.error_message;
+                        document.getElementById("id_error_msg_upload").style.color = "Red";
+                        $('#id_data_upload').modal('show');
+                    }
+                    else{
+                        emp_data_array = response.valid_data_list;
+                        var edit_basic_data = '';
+                        var del_ind = '';
+                        console.log(response.valid_data_list);
+                        $("#id_popup_tbody").empty();
+                            $.each(response.valid_data_list, function (i, value) {
+                            del_ind = '<td>' + value.del_ind + '</td>'
+                            if (value.del_ind == 1) {
+                                del_ind=' <input type="checkbox" value="' + value.del_ind + '" checked>'
+                            }
+                            else {
+                                del_ind= '<input type="checkbox" value="' + value.del_ind + '" required>'
+                            }
+                            edit_basic_data += '<tr><td class="class_select_checkbox"><input type="checkbox" required></td>'+
+                            '<td><input class="form-control" type="text" value="' + value.email + '" maxlength="2" onkeypress="return /[a-z]/i.test(event.key)" required></td>'+
+                            '<td><input class="form-control" type="text" value="' + value.username + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td>'+
+                            '<td><input class="form-control" type="text" value="' + value.first_name + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td>'+
+                            '<td><input class="form-control" type="text" value="' + value.last_name + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td>'+
+                            '<td><input class="form-control" type="text" value="' + value.phone_num + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td>'+
+                            '<td><input class="form-control" type="text" value="' + value.date_format + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td>'+
+                            '<td><input class="form-control" type="text" value="' + value.employee_id + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td>'+
+                            '<td><input class="form-control" type="text" value="' + value.decimal_notation+ '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td>'+
+                            '<td><input class="form-control" type="text" value="' + value.user_type + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td>'+
+                            '<td><input class="form-control" type="text" value="' + value.currency_id + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td>'+
+                            '<td><input class="form-control" type="text" value="' + value.language_id + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td>'+
+                            '<td><input class="form-control" type="text" value="' + value.time_zone + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td>'+
+                            '<td><input class="form-control" type="text" value="' + value.del_ind + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td></tr>'
+                        });
+                        $('#id_popup_tbody').append(edit_basic_data);
+                        $( "#id_del_ind_checkbox").prop( "hidden", false );
+                        $( "#header_select").prop( "hidden", false );
+
+                        $( ".class_del_checkbox").prop( "hidden", false );
+                        $('#myModal').modal('show');
+                        $('#id_data_upload').modal('hide');
+                        document.getElementById("id_del_add_button").style.display = "block";
+                        $('#id_check_data').modal('show');
+                        $("#id_check_data").prop("hidden", false);
+                        $("#save_id").prop("hidden", true);
+                        table_sort_filter('id_popup_table');
+                    }
+                     CloseLoaderPopup();
+                },
+                cache: false,
+                processData: false,
+                contentType: false,
+            });
             }
             else{
-                emp_data_array = response;
-                var edit_basic_data = '';
-                var del_ind = '';
-                console.log(response.valid_data_list);
-                $("#id_popup_tbody").empty();
-                    $.each(response.valid_data_list, function (i, value) {
-                    del_ind = '<td>' + value.del_ind + '</td>'
-                    if (value.del_ind == 1) {
-                        del_ind=' <input type="checkbox" value="' + value.del_ind + '" checked>'
-                    }
-                    else {
-                        del_ind= '<input type="checkbox" value="' + value.del_ind + '" required>'
-                    }
-                    edit_basic_data += '<tr><td class="class_select_checkbox"><input type="checkbox" required></td>'+
-                                '<td><input class="form-control" type="text" value="' + value.email + '" maxlength="2" onkeypress="return /[a-z]/i.test(event.key)" required></td>'+
-                                '<td><input class="form-control" type="text" value="' + value.username + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td>'+
-                                '<td><input class="form-control" type="text" value="' + value.person_no + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td>'+
-                                '<td><input class="form-control" type="text" value="' + value.form_of_address + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td>'+
-                                '<td><input class="form-control" type="text" value="' + value.first_name + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td>'+
-                                '<td><input class="form-control" type="text" value="' + value.gender + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td>'+
-                                '<td><input class="form-control" type="text" value="' + value.last_name + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td>'+
-                                '<td><input class="form-control" type="text" value="' + value.phone_num + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td>'+
-                                '<td><input class="form-control" type="text" value="' + value.password + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td>'+
-                                '<td><input class="form-control" type="text" value="' + value.date_joined + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td>'+
-                                '<td><input class="form-control" type="text" value="' + value.first_login + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td>'+
-                                '<td><input class="form-control" type="text" value="' + value.last_login + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td>'+
-                                '<td><input class="form-control" type="text" value="' + value.is_active + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td>'+
-                                '<td><input class="form-control" type="text" value="' + value.is_superuser + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td>'+
-                                '<td><input class="form-control" type="text" value="' + value.is_staff + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td>'+
-                                '<td><input class="form-control" type="text" value="' + value.date_format + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td>'+
-                                '<td><input class="form-control" type="text" value="' + value.employee_id + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td>'+
-                                '<td><input class="form-control" type="text" value="' + value.decimal_notation+ '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td>'+
-                                '<td><input class="form-control" type="text" value="' + value.user_type + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td>'+
-                                '<td><input class="form-control" type="text" value="' + value.login_attempts + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td>'+
-                                '<td><input class="form-control" type="text" value="' + value.user_locked + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td>'+
-                                '<td><input class="form-control" type="text" value="' + value.pwd_locked + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td>'+
-                                '<td><input class="form-control" type="text" value="' + value.sso_user + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td>'+
-                                '<td><input class="form-control" type="text" value="' + value.valid_from + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td>'+
-                                '<td><input class="form-control" type="text" value="' + value.valid_to + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td>'+
-                                '<td><input class="form-control" type="text" value="' + value.del_ind + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td>'+
-                                '<td><input class="form-control" type="text" value="' + value.currency_id + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td>'+
-                                '<td><input class="form-control" type="text" value="' + value.language_id + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td>'+
-                                '<td><input class="form-control" type="text" value="' + value.object_id + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td>'+
-                                '<td><input class="form-control" type="text" value="' + value.time_zone + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td>'+
-                                '<td>'+ del_ind +'</td></tr>';
-                });
-                $('#id_popup_tbody').append(edit_basic_data);
-                $( "#id_del_ind_checkbox").prop( "hidden", false );
-                $( "#header_select").prop( "hidden", false );
-
-                $( ".class_del_checkbox").prop( "hidden", false );
-                $('#myModal').modal('show');
-                $('#id_data_upload').modal('hide');
-                document.getElementById("id_del_add_button").style.display = "block";
-                $('#id_check_data').modal('show');
-                $("#id_check_data").prop("hidden", false);
-                $("#save_id").prop("hidden", true);
-                table_sort_filter('id_popup_table');
+                 display_file_select_error(); // Display error message for file selection except .csv
             }
-             CloseLoaderPopup();
-        },
-        cache: false,
-        processData: false,
-        contentType: false,
-    });
-    }
-    else{
-         display_file_select_error(); // Display error message for file selection except .csv
-    }
+        }
 }
 
 //check function restricting special char and diaplay the data count of csv file

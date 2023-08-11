@@ -744,7 +744,8 @@ def convert_UserData_to_dictionary(arr):
     convertion_list = []
     for row in arr:
         dictionary = {'email': row[0], 'username': row[1], 'person_no': row[2], 'form_of_address': row[3],
-                      'first_name': row[4], 'last_name': row[5],'gender': row[6], 'phone_num': row[7], 'password': row[8],
+                      'first_name': row[4], 'last_name': row[5], 'gender': row[6], 'phone_num': row[7],
+                      'password': row[8],
                       'date_joined': row[9], 'first_login': row[10], 'last_login': row[11], 'is_active': row[12],
                       'is_superuser': row[13], 'is_staff': row[14], 'date_format': row[15],
                       'employee_id': row[16], 'decimal_notation': row[17], 'user_type': row[18],
@@ -1467,7 +1468,8 @@ def extract_employee_data(request):
     writer = csv.writer(response)
 
     writer.writerow(
-        ['EMAIL', 'USERNAME', 'PERSON_NO', 'FORM_OF_ADDRESS', 'FIRST_NAME', 'LAST_NAME', 'GENDER','PHONE_NUM', 'PASSWORD',
+        ['EMAIL', 'USERNAME', 'PERSON_NO', 'FORM_OF_ADDRESS', 'FIRST_NAME', 'LAST_NAME', 'GENDER', 'PHONE_NUM',
+         'PASSWORD',
          'DATE_JOINED', 'FIRST_LOGIN', 'LAST_LOGIN', 'IS_ACTIVE', 'IS_SUPERUSER', 'IS_STAFF', 'DATE_FORMAT',
          'EMPLOYEE_ID', 'DECIMAL_NOTATION', 'USER_TYPE', 'LOGIN_ATTEMPTS', 'USER_LOCKED', 'PWD_LOCKED', 'SSO_USER',
          'VALID_FROM', 'VALID_TO', 'del_ind', 'CURRENCY', 'LANGUAGE_ID', 'OBJECT_ID', 'TIME_ZONE'])
@@ -1477,7 +1479,7 @@ def extract_employee_data(request):
                                                      'client': get_client
                                                      }, None,
                                                     ['email', 'username', 'person_no', 'form_of_address',
-                                                     'first_name', 'last_name','gender', 'phone_num', 'password',
+                                                     'first_name', 'last_name', 'gender', 'phone_num', 'password',
                                                      'date_joined', 'first_login', 'last_login', 'is_active',
                                                      'is_superuser', 'is_staff', 'date_format',
                                                      'employee_id', 'decimal_notation', 'user_type',
@@ -1488,7 +1490,8 @@ def extract_employee_data(request):
 
     for employee in emp_data:
         emp_info = [employee['email'], employee['username'], employee['person_no'], employee['form_of_address'],
-                    employee['first_name'], employee['last_name'],employee['gender'], employee['phone_num'], employee['password'],
+                    employee['first_name'], employee['last_name'], employee['gender'], employee['phone_num'],
+                    employee['password'],
                     employee['date_joined'], employee['first_login'], employee['last_login'], employee['is_active'],
                     employee['is_superuser'], employee['is_staff'], employee['date_format'],
                     employee['employee_id'], employee['decimal_notation'], employee['user_type'],
