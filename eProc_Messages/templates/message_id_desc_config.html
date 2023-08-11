@@ -167,6 +167,56 @@
         });
     }
 
+    function message_drpdown() {
+        message_id_dropdown = '';
+        var hidden_message_ids = []; // Array to store node types with all their node values used in the main table
+
+        // Function to check if all node values of a specific node type are used in the main table
+        function areAll_languageUsed(messages_id) {
+            var language_Values = main_table_data[messages_id];
+            if (!language_Values) {
+                return false;
+            }
+            return language_Values.length === render_language_data.length;
+        }
+
+        // Iterate through the rendered_message_id_data to build the messages_id dropdown
+        $.each(rendered_message_id_data, function(i, item) {
+            var message_id = item.messages_id;
+            if (!areAll_languageUsed(message_id)) {
+                message_id_dropdown += '<option value="' + message_id + '">' + message_id + '</option>';
+            } else {
+                hidden_message_ids.push(message_id);
+            }
+        });
+        $.each(hidden_message_ids, function(i, hidden_message_id) {
+            message_id_dropdown = message_id_dropdown.replace(new RegExp('<option value="' + hidden_message_id + '">.*<\/option>'), '');
+        });
+
+        // Extract the first node type value from message_id_dropdown using regular JavaScript
+        var firs_messageMatch = message_id_dropdown.match(/value="([^"]+)"/);
+        if (firs_messageMatch && firs_messageMatch[1]) {
+            firs_message = firs_messageMatch[1];
+        }
+        if (firs_message !== null) {
+            var unused_message_idForFirstType = [];
+            var used_message_id = {};
+            $.each(main_table_data[firs_message], function(index, value) {
+                used_message_id[value] = true;
+            });
+            $.each(render_language_data, function(i, item) {
+                var language = item.language_id;
+                if (!used_message_id.hasOwnProperty(language)) {
+                    unused_message_idForFirstType.push(language);
+                }
+            });
+            language_dropdown = '';
+            $.each(unused_message_idForFirstType, function(i, language) {
+                language_dropdown += '<option value="' + language_id + '">' + language_id + '</option>';
+            });
+        }
+    }
+
     //onclick of add button display msg_desc_Modal popup and set GLOBAL_ACTION button value
     function onclick_add_button(button){
          OpenLoaderPopup();
@@ -178,7 +228,8 @@
             success: function(response) {
                 rendered_message_id_data = response.messages_id_list
                 render_language_data = response.language_list
-                drop_down()
+                get_msg_id_data()
+                message_drpdown()
                  $("#error_msg_id").css("display", "none")
                  $("#id_info_msg_id").css("display", "none")
                  $("#id_warning_msg_id").css("display", "none")

@@ -189,6 +189,24 @@ function get_main_table_data() {
     table_sort_filter('display_basic_table');
 }
 
+function get_msg_id_data() {
+    main_table_data = {}; // Object to store node values for each node type
+    $('#display_basic_table').DataTable().destroy();
+    $("#display_basic_table TBODY TR").each(function() {
+        var row = $(this);
+        var main_attribute = {};
+        main_attribute.messages_id = row.find("TD").eq(1).html();
+        main_attribute.messages_desc = row.find("TD").eq(2).html();
+        main_attribute.language_id = row.find("TD").eq(3).html();
+        var compare_maintable = main_attribute.messages_id + '-' + main_attribute.messages_desc+ '-' + main_attribute.language_id;
+        if (!main_table_data.hasOwnProperty(main_attribute.messages_id)) {
+            main_table_data[main_attribute.messages_id] = [];
+        }
+        main_table_data[main_attribute.messages_id].push(main_attribute.language_id);
+    });
+    table_sort_filter('display_basic_table');
+}
+
 // Function to get the selected row data
 function get_selected_row_data() {
     $("#display_basic_table TBODY TR").each(function () {

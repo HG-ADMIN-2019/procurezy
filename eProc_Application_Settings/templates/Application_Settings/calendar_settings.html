@@ -175,6 +175,7 @@
     var working_days_values = [];
     var wday_array = [];
     var country_dropdwn = [];
+    var main_table_calendar_checked = [];
 
     //******************************
     function calendar_drpdown(){
@@ -256,7 +257,7 @@
                         '<td><select id="country"  class="form-control datatable-scroll-wrap " type="text" name="country" disabled>'+country_dropdwn+'</select></td>'+
                         '<td><input value="' + row.cells[3].innerHTML + '"  class="form-control check_special_char" type="text" name="description"></td>'+
                         '<td><input value="'+row.cells[4].innerHTML+'" class="form-control yearPicker" type="text" maxlength="4"  name="year"></td>'+
-                        '<td style="width:110px;"> <select style="overflow-y:scroll;" id="working_days"  class="form-control multiple_select working_days" type="text" name="working_days"  multiple  title="Select.." data-selected-text-format="count" data-actions-box="true">'+workingdays_dropdown+'</select> </td>'+
+                        '<td style="width:160px;"> <select style="overflow-y:scroll;" id="working_days"  class="form-control multiple_select working_days" type="text" name="working_days"  multiple  title="Select.." data-selected-text-format="count" data-actions-box="true">'+workingdays_dropdown+'</select> </td>'+
                         '<td class="class_del_checkbox" hidden> <input type="checkbox" ></td>'+
                         '<td hidden><input type="text" id="calendar_config_guid" value="'+row.cells[6].innerHTML+'"></td>'+
                     '</tr> ';
@@ -372,8 +373,8 @@
 
     // Onclick delete Button in Main table
     function onclick_delete_button() {
-        $("#error_msg_id").css("display", "none");
         $('#id_popup_table').DataTable().destroy();
+        $("#error_msg_id").css("display", "none")
         $("#id_popup_tbody").empty();
         GLOBAL_ACTION = "DELETE";
         var edit_basic_data = "";
@@ -419,9 +420,9 @@
                             '<td hidden><input type="text" id="calendar_config_guid" value="'+row.cells[6].innerHTML+'"></td>'+
                         '</tr> ';
                         var country_drp_values = row.cells[2].innerHTML
-                        for (var j = 0; j < render_country_data.length; j++) {
-                            if (cntry_name == render_country_data[j].country_name)
-                                country_code = render_country_data[j].country_code;
+                        for (var k = 0; k < render_country_data.length; k++) {
+                            if (cntry_name == render_country_data[k].country_name)
+                                country_code = render_country_data[k].country_code;
                         }
                         var wdays_value = row.cells[5].innerText;
                         var wday_copy_values = [];
@@ -455,7 +456,6 @@
     }
 
     //delete the selected row in db................
-    var main_table_calendar_checked = [];
     function main_table_delete() {
         $('#success_msg_id').empty()
         main_table_calendar_checked = [];
