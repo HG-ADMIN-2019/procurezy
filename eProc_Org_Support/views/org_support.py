@@ -311,9 +311,9 @@ def get_support_data(request):
     chat_support_data = django_query_instance.django_filter_only_query(OrgSupport, {
         'client': global_variables.GLOBAL_CLIENT, 'del_ind': False, 'org_support_types': 'CHAT'
     })
-    user_dropdown_values = django_query_instance.django_filter_only_query(UserData, {
-        'client': global_variables.GLOBAL_CLIENT, 'del_ind': False, 'username': val.username
-    })
+    # user_dropdown_values = django_query_instance.django_filter_only_query(UserData, {
+    #     'client': global_variables.GLOBAL_CLIENT, 'del_ind': False, 'username': val.username
+    # })
     user_data_values = []
     for val in chat_support_data:
         res = val.username.split(',')
