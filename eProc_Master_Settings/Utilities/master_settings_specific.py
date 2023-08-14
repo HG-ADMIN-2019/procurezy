@@ -1255,7 +1255,8 @@ class MasterSettingsSave:
         self.save_workflow_acc_data(wfacc_data)
         message = get_message_detail_based_on_action(wfacc_data['action'])
         upload_response = get_workflowacc_data()
-        return upload_response, message
+        data = get_workflowacc_dropdown()
+        return upload_response, message,data
 
     def save_payment_desc(self, payment_desc_data):
         """

@@ -468,9 +468,9 @@ def convert_ApproverLimitValue_to_dictionary(arr):
 def convert_WorkflowACC_to_dictionary(arr):
     convertion_list = []
     for row in arr:
-        dictionary = {'company_id': row[0], 'account_assign_cat': row[1], 'acc_value': row[2],
-                      'app_username': row[3], 'sup_company_id': row[4], 'account_assign_cat': row[5],
-                      'sup_acc_value': row[6], 'currency_id': row[7], 'del_ind': row[8]}
+        dictionary = {'company_id': row[1], 'account_assign_cat': row[6], 'acc_value': row[0],
+                      'app_username': row[2], 'sup_company_id': row[3], 'account_assign_cat': row[8],
+                      'sup_acc_value': row[4], 'currency_id': row[7], 'del_ind': row[5]}
         convertion_list.append(dictionary)
     return convertion_list
 
