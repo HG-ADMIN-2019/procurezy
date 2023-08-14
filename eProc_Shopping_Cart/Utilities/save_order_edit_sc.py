@@ -1876,19 +1876,32 @@ def get_source_relevant_ind(company_code, prod_cat_id, call_off, product_id):
                                                      'prod_cat_id_to__lte': prod_cat_id,
                                                      'client': global_variables.GLOBAL_CLIENT,
                                                      'del_ind': False}):
-        return True
-    if django_query_instance.django_existence_check(SourcingRule,
-                                                    {'call_off': call_off,
-                                                     'prod_cat_id_from__gte': prod_cat_id,
-                                                     'prod_cat_id_to__lte': prod_cat_id,
-                                                     'client': global_variables.GLOBAL_CLIENT,
-                                                     'del_ind': False}):
         if django_query_instance.django_existence_check(SourcingMapping,
-                                                    {'product_id': product_id,
-                                                     'prod_cat_id': prod_cat_id,
-                                                     'company_id': company_code,
+                                                        {'product_id': product_id,
+                                                         'prod_cat_id': prod_cat_id,
+                                                         'company_id': company_code,
+                                                         'client': global_variables.GLOBAL_CLIENT,
+                                                         'del_ind': False}):
+            return True
+    if django_query_instance.django_existence_check(PurchaseControl,
+                                                    {'call_off': call_off,
+                                                     'purchase_ctrl_flag': False,
                                                      'client': global_variables.GLOBAL_CLIENT,
                                                      'del_ind': False}):
+        if django_query_instance.django_existence_check(SourcingRule,
+                                                        {'call_off': call_off,
+                                                         'prod_cat_id_from__gte': prod_cat_id,
+                                                         'prod_cat_id_to__lte': prod_cat_id,
+                                                         'client': global_variables.GLOBAL_CLIENT,
+                                                         'del_ind': False}):
             return True
+    if django_query_instance.django_existence_check(PurchaseControl,
+                                                    {'call_off': call_off,
+                                                     'company_code_id': company_code,
+                                                     'purchase_ctrl_flag': True,
+                                                     'prod_cat_id': prod_cat_id,
+                                                     'client': global_variables.GLOBAL_CLIENT,
+                                                     'del_ind': False}):
+        return False
 
     return False

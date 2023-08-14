@@ -51,9 +51,9 @@ def filter_based_on_sc_item_field(client, order_list):
     return sc_header_item_details
 
 
-def item_search(**kwargs):
+def item_search(inp_from_date, inp_to_date, **kwargs):
     client = global_variables.GLOBAL_CLIENT
-    prod_cat_query = Q()
+    PO_cat_query = Q()
     company_query = Q()
     sc_obj = ScItem
     sc_item_inst = ScItem()
@@ -84,13 +84,15 @@ def item_search(**kwargs):
                                                              **args_list)
                 sc_item_details = django_query_instance.django_filter_only_query(ScItem,
                                                                                  {'client': client,
-                                                                                  'grouping_ind': True}).order_by(
+                                                                                  'grouping_ind': True,
+                                                                                  'item_del_date__gte': inp_from_date,
+                                                                                  'item_del_date__lte': inp_to_date}).order_by(
                     *order_list)
                 for sc_item in sc_item_details:
                     guid = sc_item.header_guid_id
                     for guid_val in result:
                         if guid_val['guid'] == guid:
-                            sc_header_item_detail = [guid_val['doc_number'], sc_item.prod_cat_desc,
+                            sc_header_item_detail = [guid_val['doc_number'], sc_item.description,
                                                      sc_item.supplier_id,
                                                      sc_item.comp_code, sc_item.item_del_date, sc_item.unit,
                                                      sc_item.quantity,
@@ -98,9 +100,29 @@ def item_search(**kwargs):
                             sc_header_item_details.append(sc_header_item_detail)
             else:
                 if key == 'prod_cat_id':
-                    if '*' not in value:
-                        value_list = [value]
-                    prod_cat_query = django_q_query(value, value_list, 'prod_cat_desc')
+                    if '*' in value:
+                        prod_cat_list = ScItem.get_prod_cat_id(value)
+                        # supp_list = SupplierMaster.get_suppid_by_first_name(prod_cat)
+                        prod_cat_match = re.search(r'[a-zA-Z0-9]+', value)
+                        if value[0] == '*' and value[-1] == '*':
+                            PO_cat_query = Q(description__in=prod_cat_list) | Q(
+                                description__icontains=prod_cat_match.group(0))
+                        elif value[0] == '*':
+                            PO_cat_query = Q(description__in=prod_cat_list) | Q(
+                                description__iendswith=prod_cat_match.group(0))
+                        else:
+                            PO_cat_query = Q(description__in=prod_cat_list) | Q(
+                                description__istartswith=prod_cat_match.group(0))
+                    else:
+                        prod_cat_list = ScItem.get_prod_cat_id(value)
+                        prod_cat_list.append(value)
+                        args_list['description__in'] = prod_cat_list
+                    # if '*' not in value:
+                    #     value_list = [value]
+                    # prod_cat_query = django_q_query(value, value_list, 'description')
+                if inp_from_date or inp_to_date:
+                    args_list['item_del_date__gte'] = inp_from_date
+                    args_list['item_del_date__lte'] = inp_to_date
                 if key == 'comp_code':
                     if '*' not in value:
                         value_list = [value]
@@ -114,21 +136,22 @@ def item_search(**kwargs):
                     else:
                         args_list['comp_code'] = value
 
-                sc_details_query = list(sc_item_inst.get_item_data_by_fields_source(client,
-                                                                                    sc_obj,
-                                                                                    prod_cat_query,
-                                                                                    company_query,
-                                                                                    **args_list
-                                                                                    ))
+                sc_header_item_details = []
+                sc_details_query = list(sc_item_inst.get_item_data_by_fields_src(client,
+                                                                                 sc_obj,
+                                                                                 PO_cat_query,
+                                                                                 company_query,
+                                                                                 **args_list
+                                                                                 ))
                 for sc_item in sc_details_query:
                     guid = sc_item['header_guid_id']
                     scheader_details = django_query_instance.django_filter_only_query(ScHeader,
                                                                                       {'guid': guid,
                                                                                        'client': global_variables.GLOBAL_CLIENT,
-                                                                                       'status': CONST_SC_HEADER_ORDERED,
+                                                                                       'status': CONST_SC_HEADER_APPROVED,
                                                                                        }).values('doc_number')
                     for scheader_detail in scheader_details:
-                        sc_header_item_detail = [scheader_detail['doc_number'], sc_item['prod_cat_desc'],
+                        sc_header_item_detail = [scheader_detail['doc_number'], sc_item['description'],
                                                  sc_item['supplier_id'],
                                                  sc_item['comp_code'], sc_item['item_del_date'], sc_item['unit'],
                                                  sc_item['quantity'],
@@ -175,8 +198,8 @@ def get_sourcing_data(doc_num, from_date, to_date, prod_cat, comp_code):
             doc_list = hdr_inst.get_hdr_data_by_fields(hdr_obj, doc_num, client)
             args_list['doc_number__in'] = doc_list
         result1 = hdr_inst.get_hdr_data_for_docnum(client, hdr_obj,
-                                                  doc_num_query,
-                                                  **args_list)
+                                                   doc_num_query,
+                                                   **args_list)
         sc_item_details = django_query_instance.django_filter_only_query(ScItem,
                                                                          {'client': client,
                                                                           'grouping_ind': True}).order_by(
@@ -223,6 +246,6 @@ def get_sourcing_data(doc_num, from_date, to_date, prod_cat, comp_code):
         else:
             args_list['comp_code'] = comp_code
 
-    result = sc_inst.get_item_data_by_fields_src(client, hdr_obj_sc, PO_cat_query, company_query,
+    result = sc_inst.get_item_data_by_fields_src(client, hdr_obj_sc, PO_cat_query, company_query, doc_num_query,
                                                  **args_list)
     return result

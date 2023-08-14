@@ -28,8 +28,8 @@
                     <button id="id_edit_data" class="btn btn-secondary btn-sm" title="Edit" onclick="onclick_edit_button()">
                         <i class="fas fa-edit" id="edit" title="Edit"></i> edit
                     </button>
-                    <button class="btn btn-outline-danger btn-sm" title="Delete" id="id_delete_data" value="calendar_delete" style="display:none;" data-toggle="modal" data-target="#id_delete_confirm_popup">
-                        <i class="fa fa-trash" title="Delete"></i> delete
+                    <button class="btn btn-outline-danger btn-sm" id="id_delete_data" title= "DELETE" value="Delete" style="display:none;" onclick="onclick_delete_button()">
+                        <i class="fa fa-trash"></i> delete
                     </button>
                     <button class="btn btn-primary btn-sm" title="Update" id="id_update_data" style="display:none;" value="calendar_update" type="button" onclick="onclick_update_button()">
                         <i class="far fa-edit" title="Update"></i> update
@@ -129,6 +129,9 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-primary remove_upload_data" title="Cancel" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
                     <button class="btn btn-primary" title="Save" id="save_id"><i class="fas fa-save"></i> save</button>
+                    <button class="btn btn-primary btn-sm" title="Delete" id="delete_data" value="DELETE" data-toggle="modal" data-target="#id_delete_confirm_popup" onclick="hideModal()">
+                        <i class="fa fa-trash"></i> Delete
+                    </button>
                 </div>
             </div>
         </div>
@@ -200,6 +203,7 @@
         $('#id_popup_table').DataTable().destroy();
         $("#id_popup_tbody").empty();
         $('#Calendar_Modal').modal('show');
+        display_button(); // Call the display_button function to show/hide the buttons
         basic_add_new_html = '<tr> <td><input type="checkbox"> </td>'+
         '<td><input class="form-control" type="text"  pattern="[A-Z]" maxlength="10"  name="calender_id" style="text-transform:uppercase;" required></td>'+
         '<td><select id="country" class="input form-control" type="text" name="country"> {% for country in country_list %} <option value="{{country.country_code}}">{{country.country_name}}</option> {% endfor %} </select> </td>'+
@@ -244,7 +248,6 @@
                     unique_input = '<input class="form-control" type="text" value="' + row.cells[1].innerHTML + '" name="calender_id"  maxlength="10" style="text-transform:uppercase" disabled>'
                     cntry_name = row.cells[2].innerHTML;
                     Desc_inpt = '<input value="' + row.cells[3].innerHTML + '"  class="form-control check_special_char" type="text" name="description">'
-
                     edit_basic_data += 
                     '<tr>'+
                         '<td hidden><input type="checkbox" required></td>'+
@@ -366,6 +369,64 @@
         table_sort_filter_popup('id_popup_table');
     }
 
+    // Onclick delete Button in Main table
+    function onclick_delete_button() {
+        $("#error_msg_id").css("display", "none");
+        $('#id_popup_table').DataTable().destroy();
+        $("#id_popup_tbody").empty();
+        GLOBAL_ACTION = "DELETE";
+        var edit_basic_data = "";
+        var guid = '';
+        main_table_number_range_checked = [];
+        get_row_data("#display_basic_table"); // Function call to get the selected row data
+        display_button(); // Call the display_button function to show/hide the buttons
+        var data = {'data': main_table_calendar_checked, 'table_name': 'CalenderConfig', 'action': GLOBAL_ACTION };
+        OpenLoaderPopup();
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'eProc_Configuration:create_update_delete_flags' %}",
+            data: JSON.stringify(data),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function(Response) {
+                var docTypeArray = Response.delete_flags; // Get the delete_flags array from the response
+                var res = get_all_checkboxes(); // Function to get all the checkboxes
+                var $chkbox_all = $('td input[type="checkbox"]', res);
+                var j = 0; // Index for docTypeArray
+                for (var i = 0; i < $chkbox_all.length; i++) {
+                    if ($chkbox_all[i].checked) {
+                        var row = $chkbox_all[i].parentNode.parentNode;
+                        if (j < docTypeArray.length && docTypeArray[j] === false) {
+                            check = '<input type="checkbox" disabled>';
+                            $('#delete_data').prop('disabled', true);
+                            document.getElementById('delete_data').style.visibility = 'visible';
+                        } else {
+                            check = '<input type="checkbox">';
+                            document.getElementById('delete_data').style.visibility = 'visible';
+                        }
+                        j++; // Move to the next index in docTypeArray
+                        $('#delete_data').prop('disabled', false);
+                        edit_basic_data +=
+                        '<tr>'+
+                            '<td>' + check + '</td>' +
+                            '<td><input class="form-control" type="text" value="' + row.cells[1].innerHTML + '" name="calender_id"  maxlength="10" style="text-transform:uppercase" disabled></td>'+
+                            '<td><input id="country"  class="form-control datatable-scroll-wrap " type="text" name="country" value="' + row.cells[2].innerHTML + '" disabled></td>'+
+                            '<td><input value="' + row.cells[3].innerHTML + '"  class="form-control check_special_char" type="text" name="description"></td>'+
+                            '<td><input value="'+row.cells[4].innerHTML+'" class="form-control yearPicker" type="text" maxlength="4"  name="year"></td>'+
+                            '<td style="width:110px;"> <select style="overflow-y:scroll;" id="working_days"  class="form-control multiple_select working_days" type="text" name="working_days"  multiple  title="Select.." data-selected-text-format="count" data-actions-box="true">'+workingdays_dropdown+'</select> </td>'+                            '<td class="class_del_checkbox" hidden> <input type="checkbox" ></td>'+
+                            '<td hidden><input type="text" id="calendar_config_guid" value="'+row.cells[6].innerHTML+'"></td>'+
+                        '</tr> ';
+                    }
+                }
+                CloseLoaderPopup();
+                $('#id_popup_tbody').append(edit_basic_data);
+                $("#id_del_ind_checkbox").prop("hidden", true);
+                $('#Calendar_Modal').modal('show');
+                table_sort_filter('id_popup_table');
+            },
+        });
+    }
+
     //delete the selected row in db................
     var main_table_calendar_checked = [];
     function main_table_delete() {
@@ -374,24 +435,44 @@
         GLOBAL_ACTION = 'DELETE'
         main_table_country_checked = [];
         var Tabledata = { "Dbl_clck_tbl_id": 'CalenderConfig' };
-        // $('#display_basic_table').DataTable().destroy();
-        get_selected_row_data(); // Function call to get the selected row data
+        $('#display_basic_table').DataTable().destroy();
+        get_row_data("#id_popup_table");
         $('#id_delete_confirm_popup').modal('hide');
-        data = {'data':main_table_calendar_checked, 'table_name': 'CalenderConfig', 'action': GLOBAL_ACTION }
-        OpenLoaderPopup();
-        $.ajax({
-            type: 'POST',
-            url: "{% url 'eProc_Configuration:create_update_application_data' %}",
-            data: JSON.stringify(data),
-            contentType: "application/json; charset=utf-8",
-            dataType: "json",
-            success: function (Response) {
-                rendered_calendar_data = Response[0];
-                display_basic_db_data();
-                success_response(Response); // Function call to display response data
-                CloseLoaderPopup();
+         if(main_table_calendar_checked.length == "0"){
+            var msg = "JMSG005";
+            var msg_type ;
+            msg_type = message_config_details(msg);
+            $("#error_msg_id").prop("hidden", false);
+            if(msg_type.message_type == "ERROR"){
+                display_message("error_msg_id", msg_type.messages_id_desc)
             }
-        });
+            else if(msg_type.message_type == "WARNING"){
+                display_message("id_warning_msg_id", msg_type.messages_id_desc)
+            }
+            else if(msg_type.message_type == "INFORMATION"){
+                display_message("id_info_msg_id", msg_type.messages_id_desc)
+            }
+            $('#id_delete_confirm_popup').modal('hide');
+            $('#Calendar_Modal').modal('show')
+            table_sort_filter('display_basic_table');
+        }
+        else{
+            data = {'data':main_table_calendar_checked, 'table_name': 'CalenderConfig', 'action': GLOBAL_ACTION }
+            OpenLoaderPopup();
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'eProc_Configuration:create_update_application_data' %}",
+                data: JSON.stringify(data),
+                contentType: "application/json; charset=utf-8",
+                dataType: "json",
+                success: function (Response) {
+                    rendered_calendar_data = Response[0];
+                    display_basic_db_data();
+                    success_response(Response); // Function call to display response data
+                    CloseLoaderPopup();
+                }
+            });
+        }
     }
 
     function DatePicker() {
