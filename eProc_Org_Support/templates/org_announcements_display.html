@@ -18,7 +18,7 @@
         <div class="d-flex justify-content-between">
             <h3>Organizational Announcements</h3>
             <div>
-                <button class="btn btn-primary" data-toggle="modal" data-target="#saveConfirmationModal">
+                <button class="btn btn-primary" id="id_add_data" type="button" value="ADD" title="add_new_announcement" onclick="add_new_org_announcement(this);">
                     <i class="fas fa-user-plus"></i> Add New Announcement
                 </button>
             </div>
@@ -145,6 +145,7 @@
 </div>
 <div>
     <!-- Custom Modal Popup for Save Confirmation -->
+    <form id="address_clear">
     <div class="modal fade" id="saveConfirmationModal" tabindex="-1" role="dialog" aria-labelledby="saveConfirmationModalLabel" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
             <div class="modal-content">
@@ -218,6 +219,7 @@
                     </div>
                 </div>
             </div>
+            </form>
         </div>
     </div>
 <!--    <div class="modal fade" id="announcementDetailsModal" tabindex="-1" role="dialog" aria-labelledby="announcementDetailsModalLabel" aria-hidden="true">-->
@@ -346,6 +348,8 @@
 <!--end of delete confirmation popup-->
 
 <script>
+    var GLOBAL_ACTION = '';
+
 
     $(document).ready(function () {
         nav_bar_admin();
@@ -769,11 +773,13 @@ if (from_date_val  > to_date_val) {
 
 
     is_save_form_valid = save_announcement_form_validation(sub_val, desc_val, from_date_val, to_date_val);
+    if (action === "ADD" || action === "edit") {
     if (is_save_form_valid != '') {
         $('#save_error_div').html(is_save_form_valid);
         $('#save_error_div').show();
         scroll_top();
         return;
+    }
     }
 
     var form_data = {
@@ -838,6 +844,15 @@ if (from_date_val  > to_date_val) {
         }
 
         return is_valid, save_form_errors;
+    }
+
+        //***********************************
+    function add_new_org_announcement(button) {
+        $("#address_clear").trigger('reset');
+        $("#error_msg_id").css("display", "none")
+        GLOBAL_ACTION = button.value
+        $('#saveConfirmationModal').modal('show');
+        $("#id_add_addresses_address_number").prop("disabled", false);
     }
 
 
