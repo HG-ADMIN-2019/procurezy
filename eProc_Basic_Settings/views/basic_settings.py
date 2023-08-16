@@ -440,8 +440,8 @@ def convert_SpendLimitId_to_dictionary(arr):
 def convert_SpendLimitValue_to_dictionary(arr):
     convertion_list = []
     for row in arr:
-        dictionary = {'company_id': row[2], 'spend_code_id': row[0], 'upper_limit_value': row[1],
-                      'currency_id': row[4], 'del_ind': row[3]}
+        dictionary = {'company_id': row[0], 'spend_code_id': row[2], 'upper_limit_value': row[3],
+                      'currency_id': row[1], 'del_ind': row[4]}
         convertion_list.append(dictionary)
     return convertion_list
 
@@ -515,6 +515,28 @@ def convert_Incoterms_to_dictionary(arr):
         dictionary = {'incoterm_key': row[0], 'description': row[1], 'del_ind': row[2]}
         convertion_list.append(dictionary)
     return convertion_list
+
+
+def remove_invalid(convertion_list):
+    valid_convertion = {}  # Create an empty dictionary to store valid conversions
+
+    for conversion in convertion_list:
+        if django_query_instance.django_existence_check(OrgCompanies,
+                                                        {'del_ind': False,
+                                                         'company_id': conversion['company_id'],
+                                                         'client': global_variables.GLOBAL_CLIENT}):
+            valid_convertion['company_id'] = conversion['company_id']
+
+        if django_query_instance.django_existence_check(Currency,
+                                                        {'del_ind': False,
+                                                         'currency_id': conversion['currency_id']}):
+            valid_convertion['currency_id'] = conversion['currency_id']
+
+            valid_convertion['spend_code_id'] = conversion['spend_code_id']
+            valid_convertion['upper_limit_value'] = conversion['upper_limit_value']
+            valid_convertion['del_ind'] = conversion['del_ind']
+
+    return valid_convertion  # Return the vali
 
 
 def data_upload(request):
@@ -596,6 +618,8 @@ def data_upload(request):
             result['error_message'], result['data'] = upload_csv.csv_preview_data(header_detail, data_set_val)
             result = remove_duplicates(result['data'])
             convertion_list = convert_SpendLimitValue_to_dictionary(result)
+            valid_convertion = remove_invalid(convertion_list)
+            convertion_list = convert_SpendLimitValue_to_dictionary(valid_convertion)
             valid_data_list, message = check_spendlimit_value_data(convertion_list, 'UPLOAD')
             context = {'valid_data_list': valid_data_list}
             return JsonResponse(context, safe=False)

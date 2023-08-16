@@ -1177,8 +1177,7 @@ class MasterSettingsSave:
         for wfacc_detail in wfacc_data['data']:
             # if entry is not exists in db
             if not django_query_instance.django_existence_check(WorkflowACC,
-                                                                {'workflow_acc_guid': wfacc_detail[
-                                                                    'workflow_acc_guid'],
+                                                                {
                                                                  'acc_value': wfacc_detail['acc_value'],
                                                                  'company_id': wfacc_detail['company_id'],
                                                                  'app_username': wfacc_detail['app_username'],

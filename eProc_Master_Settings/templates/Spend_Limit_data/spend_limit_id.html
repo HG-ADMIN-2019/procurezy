@@ -320,10 +320,6 @@
                                 var dropdown_values = [];
                                 var del_ind = '';
                                 $("#id_popup_tbody").empty();
-                                var edit_basic_data = '';
-                                var dropdown_values = [];
-                                var del_ind = '';
-                                $("#id_popup_tbody").empty();
                                 $.each(response.valid_data_list, function(i, value) {
                                     var company_type_value = value.company_id
                                     var spend_limit_id = value.spend_code_id
@@ -384,7 +380,7 @@
                                 $('#id_check_data').modal('show');
                                 $("#id_check_data").prop("hidden", false);
                                 $("#save_id").prop("hidden", true);
-                                table_sort_filter_popup_pagination('id_popup_table')
+                                table_sort_filter('id_popup_table')
                             }
                               CloseLoaderPopup();
                     },
@@ -965,8 +961,8 @@
 
     // ****************************************
     function update_check_message(valid_data){
-        $.each(messages, function (i, message) {
-            $("#id_check_success_messages").append('<p>' + valid_data + '</p>')
+        $.each(valid_data, function (i, message) {
+            $("#id_check_success_messages").append('<p>' + message + '</p>')
         });
         $("#id_check_success_messages").prop("hidden",false)
     }

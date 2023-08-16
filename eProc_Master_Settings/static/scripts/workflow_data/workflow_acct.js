@@ -60,7 +60,7 @@ function read_popup_data() {
     $("#id_popup_table TBODY TR").each(function() {
         var row = $(this);
         wfacc = {};
-        wfacc.del_ind = row.find("TD").eq(9).find('input[type="checkbox"]').is(':checked');
+        wfacc.del_ind = row.find("TD").eq(10).find('input[type="checkbox"]').is(':checked');
         wfacc.company_id = row.find("TD").eq(1).find('select[type="text"]').val();
         wfacc.account_assign_cat = row.find("TD").eq(2).find('select[type="text"]').val();
         wfacc.acc_value = row.find("TD").eq(3).find('select[type="text"]').val();
@@ -69,7 +69,7 @@ function read_popup_data() {
         wfacc.sup_account_assign_cat = row.find("TD").eq(6).find('select[type="text"]').val();
         wfacc.sup_acc_value = row.find("TD").eq(7).find('select[type="text"]').val();
         wfacc.sup_currency_id = row.find("TD").eq(8).find('select[type="text"]').val();
-        wfacc.workflow_acc_guid = row.find("TD").eq(10).find('input[type="text"]').val();
+        wfacc.workflow_acc_guid = row.find("TD").eq(9).find('input[type="text"]').val();
         if (wfacc == undefined) {
             wfacc.app_username = row.find("TD").eq(4).find('select[type="text"]').val();
         }
