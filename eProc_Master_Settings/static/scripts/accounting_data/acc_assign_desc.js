@@ -240,7 +240,7 @@ function read_popup_data() {
         aad.company_id = row.find("TD").eq(1).find("select option:selected").val();
         aad.account_assign_cat = row.find("TD").eq(2).find("select option:selected").val();
         aad.account_assign_value = row.find("TD").eq(3).find("select option:selected").val();
-        aad.description = (row.find("TD").eq(4).find('input[type="text"]').val()).toUpperCase();
+        aad.description = row.find("TD").eq(4).find('input[type="text"]').val();
         aad.language_id = row.find("TD").eq(5).find("select option:selected").val();
         aad.acc_desc_guid = row.find("TD").eq(6).find('input[type="text"]').val();
         if (aad == undefined) {

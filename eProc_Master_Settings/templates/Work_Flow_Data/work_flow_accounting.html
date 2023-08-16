@@ -129,7 +129,7 @@
                                 <th>Superior Account Assignment Value</th>
                                 <th>Currency</th>
                                 <th id="id_del_ind_checkbox" hidden>Del Indicator</th>
-                                <th hidden></th>
+                                <th id="workflow_acc_guid" hidden ></th>
                             </tr>
                             </thead>
                             <tbody id="id_popup_tbody">
@@ -454,7 +454,7 @@
                                 '<td><select type="text" class="form-control"><option value ="' + value.account_assign_cat + '"'+supaccasscat_id_list+'>'+value.account_assign_cat+'</option></select></td>'+
                                 '<td><select type="text" class="form-control"> <option value="' + value.sup_acc_value + '"'+supaccassval_id_list+'>' + value.sup_acc_value + '</option></select></td>'+
                                 '<td><select class="form-control" type="text"><option value ="' + value.currency_id + '"'+currency_id_list+'>'+value.currency_id+'</option></select></td>'+
-                                '<td hidden><input type="text" value=""></td>'+
+                                '<td hidden><input type="text" id="workflow_acc_guid" value ="' + value.workflow_acc_guid + '"></td>'+
                                 '<td>' + del_ind + '</td></tr>';
                             });
                             $('#id_popup_tbody').append(edit_basic_data);
@@ -854,6 +854,7 @@
         del_ind = ''
         var wfacc_id_check = new Array
         $("#id_popup_table TBODY TR").each(function() {
+            $('#id_popup_table').DataTable().destroy();
             var row = $(this);
             wfacc_dic = {}
             //*************** reading data from the pop-up ***************
@@ -865,6 +866,7 @@
             wfacc_dic.sup_account_assign_cat = row.find("TD").eq(6).find('select[type="text"]').val();
             wfacc_dic.sup_acc_value = row.find("TD").eq(7).find('select[type="text"]').val();
             wfacc_dic.sup_currency_id = row.find("TD").eq(8).find('select[type="text"]').val();
+            wfacc.workflow_acc_guid = row.find("TD").eq(9).find('input[type="text"]').val();
             wfacc_compare = wfacc_dic.app_username +'-'+ wfacc_dic.acc_value +'-'+ wfacc_dic.sup_acc_value +'-'+ wfacc_dic.sup_account_assign_cat +'-'+ wfacc_dic.company_id +'-'+ wfacc_dic.sup_company_id +'-'+ wfacc_dic.sup_currency_id +'-'+ wfacc_dic.sup_acc_value
             checked_box = row.find("TD").eq(10).find('input[type="checkbox"]').is(':checked')
             if (checked_box) {
