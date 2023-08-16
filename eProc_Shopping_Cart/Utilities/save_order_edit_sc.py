@@ -1885,6 +1885,21 @@ def get_source_relevant_ind(company_code, prod_cat_id, call_off, product_id):
             return True
     if django_query_instance.django_existence_check(PurchaseControl,
                                                     {'call_off': call_off,
+                                                     'company_code_id': company_code,
+                                                     'purchase_ctrl_flag': True,
+                                                     'prod_cat_id': prod_cat_id,
+                                                     'client': global_variables.GLOBAL_CLIENT,
+                                                     'del_ind': False}):
+        return True
+    if django_query_instance.django_existence_check(PurchaseControl,
+                                                    {'call_off': '03',
+                                                     'company_code_id': company_code,
+                                                     'prod_cat_id': prod_cat_id,
+                                                     'client': global_variables.GLOBAL_CLIENT,
+                                                     'del_ind': False}):
+        return False
+    if django_query_instance.django_existence_check(PurchaseControl,
+                                                    {'call_off': call_off,
                                                      'purchase_ctrl_flag': False,
                                                      'client': global_variables.GLOBAL_CLIENT,
                                                      'del_ind': False}):
@@ -1895,13 +1910,5 @@ def get_source_relevant_ind(company_code, prod_cat_id, call_off, product_id):
                                                          'client': global_variables.GLOBAL_CLIENT,
                                                          'del_ind': False}):
             return True
-    if django_query_instance.django_existence_check(PurchaseControl,
-                                                    {'call_off': call_off,
-                                                     'company_code_id': company_code,
-                                                     'purchase_ctrl_flag': True,
-                                                     'prod_cat_id': prod_cat_id,
-                                                     'client': global_variables.GLOBAL_CLIENT,
-                                                     'del_ind': False}):
-        return False
 
     return False
