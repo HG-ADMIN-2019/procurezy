@@ -26,7 +26,7 @@ import datetime
 from django.utils.datastructures import MultiValueDictKeyError
 from eProc_Configuration.models import *
 from django.core.exceptions import ObjectDoesNotExist
-from django.db.models import Max
+from django.db.models import Max, Q
 from eProc_Configuration.models import NumberRanges
 from eProc_Basic.Utilities.constants.constants import *
 from eProc_Basic.Utilities.functions.get_db_query import getClients, getUsername, get_login_obj_id, \
@@ -1882,19 +1882,30 @@ def get_source_relevant_ind(company_code, prod_cat_id, call_off, product_id):
         # return True
         srcing_flag = True
     else:
-        if django_query_instance.django_existence_check(SourcingRule,
-                                                        {'call_off': call_off,
-                                                         'prod_cat_id_from__gte': prod_cat_id,
-                                                         'prod_cat_id_to__lte': prod_cat_id,
-                                                         'client': global_variables.GLOBAL_CLIENT,
-                                                         'del_ind': False}):
-            if django_query_instance.django_existence_check(SourcingMapping,
+        # if django_query_instance.django_existence_check(SourcingRule,
+        #                                                 {'call_off': call_off,
+        #                                                  'prod_cat_id_from__gte': prod_cat_id,
+        #                                                  'prod_cat_id_to__lte': prod_cat_id,
+        #                                                  'client': global_variables.GLOBAL_CLIENT,
+        #                                                  'del_ind': False}):
+        prod_cat_id = int(prod_cat_id)
+        temp = SourcingRule.objects.filter(Q(prod_cat_id_from__gte=prod_cat_id),
+                                           Q(prod_cat_id_to__lte=prod_cat_id),
+                                           client=global_variables.GLOBAL_CLIENT,
+                                           del_ind=False).values()
+        if not django_query_instance.django_existence_check(SourcingMapping,
                                                             {'product_id': product_id,
                                                              'prod_cat_id': prod_cat_id,
                                                              'company_id': company_code,
                                                              'client': global_variables.GLOBAL_CLIENT,
-                                                             'del_ind': False}):
-                srcing_flag = True
+                                                             'del_ind': False}) or django_query_instance.django_existence_check(
+            SourcingMapping,
+            {'product_id': product_id,
+             'prod_cat_id': prod_cat_id,
+             'company_id': company_code,
+             'client': global_variables.GLOBAL_CLIENT,
+             'del_ind': False}):
+            srcing_flag = True
         else:
             srcing_flag = False
 

@@ -560,6 +560,7 @@ class PurchaseControl(models.Model):
     company_code_id = models.CharField(db_column='COMPANY_CODE_ID', max_length=20, null=False)
     call_off = models.CharField(db_column='CALL_OFF', max_length=15, null=True)
     purchase_ctrl_flag = models.BooleanField(db_column='PURCHASE_CTRL_FLAG', default=False, null=False)
+    prod_cat_id = models.CharField(db_column='PROD_CAT_ID', max_length=50, null=False, default=None)
     del_ind = models.BooleanField(default=False, null=False)
     purchase_control_created_by = models.CharField(db_column='PURCHASE_CONTROL_CREATED_BY', max_length=30,
                                                    null=True)
