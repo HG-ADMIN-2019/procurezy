@@ -846,8 +846,8 @@ class SapConnector(models.Model):
 class SourcingRule(models.Model):
     sourcing_rule_guid = models.CharField(db_column='SOURCING_RULE_GUID', primary_key=True, max_length=32,
                                           null=False, default=None)
-    prod_cat_id_from = models.IntegerField(db_column='PROD_CAT_ID_FROM', max_length=20, null=False)
-    prod_cat_id_to = models.IntegerField(db_column='PROD_CAT_ID_TO', max_length=20, null=False)
+    prod_cat_id_from = models.IntegerField(db_column='PROD_CAT_ID_FROM', null=False)
+    prod_cat_id_to = models.IntegerField(db_column='PROD_CAT_ID_TO', null=False)
     sourcing_flag = models.BooleanField(default=False, null=False, db_column='SOURCING_FLAG')
     call_off = models.CharField(db_column='CALL_OFF', max_length=15, null=True)
     company_id = models.CharField(db_column='COMPANY_ID', max_length=8, null=True)
