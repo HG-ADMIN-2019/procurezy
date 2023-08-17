@@ -108,16 +108,17 @@
                                 <td>
                                     <label class="switch">
                                         <label class="toggle-control">
-                                            {% if results.status %}
-                                            <input type="checkbox" id="{{results.announcement_id}}-ACTIVE" class="toggle-block" checked>
+                                            {% if results.status == 'Active' %}
+                                            <input type="checkbox" id="{{results.announcement_id}}-Active" class="toggle-block" checked>
                                             <span class="control"></span>
                                             {% else %}
-                                            <input type="checkbox" id="{{results.announcement_id}}-INACTIVE" class="toggle-block">
+                                            <input type="checkbox" id="{{results.announcement_id}}-Inactive" class="toggle-block">
                                             <span class="control"></span>
                                             {% endif %}
                                         </label>
                                     </label>
                                 </td>
+
                                 <td>{{results.priority}}</td>
                                 <td data-date="{{results.announcement_from_date|date:'Y-m-d'}}">{{results.announcement_from_date|date:'d-m-Y'}}</td>
                                 <td data-date="{{results.announcement_to_date|date:'Y-m-d'}}">{{results.announcement_to_date|date:'d-m-Y'}}</td>
@@ -382,7 +383,7 @@
                 $('#success_msg_id').text(Response.success_message);
                 $("#error_msg_div").prop("hidden", false);
                 message_display_time();
-<!--                window.location.reload(5000);-->
+                window.location.reload(5000);
                 CloseLoaderPopup();
             }
         });
@@ -472,11 +473,11 @@
             }
             if (annsmt.status.toLowerCase() === 'active') {
             console.log('Status is true (active)');
-            lock_id = '<input type="checkbox" id="'+annsmt.announcement_id.concat("-ACTIVE")+'" class="toggle-block" checked><span class="control"></span>';
+            lock_id = '<input type="checkbox" id="'+annsmt.announcement_id.concat("-Active")+'" class="toggle-block" checked><span class="control"></span>';
             }
         else {
          console.log('Status is false (inactive)');
-            lock_id = '<input type="checkbox" id="'+annsmt.announcement_id.concat("-INACTIVE")+'" class="toggle-block"> <span class="control"></span>';
+            lock_id = '<input type="checkbox" id="'+annsmt.announcement_id.concat("-Inactive")+'" class="toggle-block"> <span class="control"></span>';
         }
             const date1 = new Date(annsmt.announcement_from_date);
             const date2 = new Date(annsmt.announcement_to_date);
@@ -551,7 +552,7 @@
 <!--                setTimeout(function () { $("#error_msg_div").prop("hidden", true); }, 5000)-->
                 message_display_time();
 
-<!--                window.location.reload(5000);-->
+                window.location.reload(5000);
                 CloseLoaderPopup();
             }
         });
@@ -732,7 +733,7 @@ if (from_date_val  > to_date_val) {
             setTimeout(function() {
                 $('#saveConfirmationModal').modal('hide');
             }, 5000); // Delay the modal closing for 2 seconds (adjust as needed)
-<!--            location.reload();-->
+            location.reload();
             CloseLoaderPopup();
         }
     });

@@ -392,9 +392,9 @@ def active_inactive_org(request):
 
     # Determine the new status based on the flag value
     if flag:
-        new_status = 'ACTIVE'
+        new_status = 'Active'
     else:
-        new_status = 'INACTIVE'
+        new_status = 'Inactive'
 
     announcementid = announcement_id.split('-')[0]
 
