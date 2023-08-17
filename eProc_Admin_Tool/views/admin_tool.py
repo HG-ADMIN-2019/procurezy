@@ -31,6 +31,7 @@ from eProc_Basic.Utilities.global_defination import global_variables
 from eProc_Basic_Settings.views import JsonParser_obj
 from eProc_Configuration.models import *
 from eProc_Configuration.models.basic_data import Country
+from eProc_Configuration.models.development_data import FieldTypeDescription
 from eProc_Configuration.models.master_data import OrgPorg
 from eProc_Doc_Search_and_Display.Utilities.search_display_generic import get_hdr_data, get_hdr_data_app_monitoring
 from eProc_Emails.models import EmailUserMonitoring, EmailDocumentMonitoring, EmailSupplierMonitoring
@@ -885,6 +886,7 @@ def get_acct_report(request):
 def org_announcements_search(request):
     global t_count, announcement_result1
     encrypted_guid = []
+    update_user_info(request)
     client = global_variables.GLOBAL_CLIENT
     status_dropdown_values = django_query_instance.django_filter_value_list_query(FieldTypeDescription, {
         'del_ind': False, 'field_name': 'status', 'client': global_variables.GLOBAL_CLIENT

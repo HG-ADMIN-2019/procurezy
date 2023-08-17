@@ -384,3 +384,34 @@ def delete_table_row(request):
                                                    'org_support_guid': call_support_guid}, {'del_ind': True})
     return True
 
+
+def active_inactive_org(request):
+    emp_lock_flag_detail = JsonParser_obj.get_json_from_req(request)
+    announcement_id = emp_lock_flag_detail['announcement_id']
+    flag = emp_lock_flag_detail['flag']
+
+    # Determine the new status based on the flag value
+    if flag:
+        new_status = 'ACTIVE'
+    else:
+        new_status = 'INACTIVE'
+
+    announcementid = announcement_id.split('-')[0]
+
+    # Update the status in the database
+    django_query_instance.django_update_query(
+        OrgAnnouncements,
+        {'client': global_variables.GLOBAL_CLIENT,
+         'announcement_id': announcementid,
+         'del_ind': False},
+        {'status': new_status}
+    )
+
+    # Prepare the response
+    response = {
+        'status': new_status,
+        'message': 'Status updated successfully'
+    }
+
+    return JsonResponse(response, safe=False)
+

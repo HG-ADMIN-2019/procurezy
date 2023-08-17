@@ -14,4 +14,5 @@ urlpatterns = [
     path('update_org_support_details/', views.update_org_support_details, name='update_org_support_details'),
     path('customer_support_chat/', views.customer_support_chat, name='customer_support_chat'),
     path('delete_table_row/', views.delete_table_row, name='delete_table_row'),
+    path('active_inactive_org/', views.active_inactive_org, name='active_inactive_org'),
 ]
