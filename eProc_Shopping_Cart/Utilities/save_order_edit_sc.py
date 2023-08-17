@@ -1884,7 +1884,7 @@ def get_source_relevant_ind(company_code, prod_cat_id, call_off, product_id):
                                                      'client': global_variables.GLOBAL_CLIENT,
                                                      'del_ind': False}):
         # return True
-        srcing_flag = True
+        srcing_flag = False
     else:
         if django_query_instance.django_existence_check(SourcingRule,
                                                         {'call_off': call_off,
