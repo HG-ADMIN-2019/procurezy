@@ -176,18 +176,28 @@ function new_row_data(){
     `<tr>
         <td><input type="checkbox" required></td>
         <td><select class="input form-control" type="text">${pc_company_dropdown}</select></td>
-        <td>
-            <select class="input form-control" type="text">
-                <option value="1">Catalog</option>
-                <option value="2">Free text</option>
-                <option value="3">PR</option>
-                <option value="4">Limit</option>
-            </select>
-        </td>
+        <td><select class="input form-control" type="text">${call_off_dropdown}</select></td>
         <td><select type="text" class="input form-control">${activate_dropdown}</select></td>
         <td hidden><input  type="text" class="form-control"  name="guid"></td>
         <td class="class_del_checkbox" hidden><input type="checkbox" required></td>
     </tr>`
     $('#id_popup_tbody').append(basic_add_new_html);
     table_sort_filter('id_popup_table');
+}
+
+function get_company_data() {
+    main_table_data = {}; // Object to store node values for each node type
+    $('#display_basic_table').DataTable().destroy();
+    $("#display_basic_table TBODY TR").each(function() {
+        var row = $(this);
+        var main_attribute = {};
+        main_attribute.company_code_id = row.find("TD").eq(1).html();
+        main_attribute.call_off = row.find("TD").eq(2).html();
+        var compare_maintable = main_attribute.company_code_id + '-' + main_attribute.call_off
+        if (!main_table_data.hasOwnProperty(main_attribute.company_code_id)) {
+            main_table_data[main_attribute.company_code_id] = [];
+        }
+        main_table_data[main_attribute.company_code_id].push(main_attribute.call_off);
+    });
+    table_sort_filter('display_basic_table');
 }
