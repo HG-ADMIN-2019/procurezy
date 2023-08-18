@@ -246,7 +246,8 @@ def my_order_doc_details(req, flag, type, guid, mode, access_type):
                'product_category': product_category, 'limit_form': UpdateLimitItem(),
                'requesters_currency': requester_currency, 'header_level_gl_acc': header_level_gl_acc,
                'highest_item_guid': highest_item_guid, 'item_detail_list': item_detail_list, 'eform_info': eform_info,
-               'hdr_det': sc_hdr_details, 'itm_det': sc_item_details, 'editable_flag': editable_flag, 'acc_det': sc_accounting_details,
+               'hdr_det': sc_hdr_details, 'itm_det': sc_item_details, 'editable_flag': editable_flag,
+               'acc_det': sc_accounting_details,
                'requester_first_name': requester_first_name,
                'app_det': sc_approval_data,
                'actual_price': actual_price,
@@ -438,7 +439,8 @@ def my_order_doc_details_new(req, flag, type, guid, mode, access_type):
                'product_category': product_category, 'limit_form': UpdateLimitItem(),
                'requesters_currency': requester_currency, 'header_level_gl_acc': header_level_gl_acc,
                'highest_item_guid': highest_item_guid, 'item_detail_list': item_detail_list, 'eform_info': eform_info,
-               'hdr_det': sc_hdr_details, 'itm_det': sc_item_details, 'editable_flag': editable_flag, 'acc_det': sc_accounting_details,
+               'hdr_det': sc_hdr_details, 'itm_det': sc_item_details, 'editable_flag': editable_flag,
+               'acc_det': sc_accounting_details,
                'requester_first_name': requester_first_name,
                'app_det': sc_approval_data,
                'actual_price': actual_price,
@@ -495,7 +497,7 @@ def my_order_document_detail(request, encrypt_sc_header_guid, access_type):
 def docDetails(req, flag, type, guid, mode, access_type):
     update_user_info(req)
     guid = decrypt(guid)
-
+    editable_flag = ''
     sc_header_instance = ScHeader.objects.get(guid=guid)
 
     # To validate access based on creator and requester

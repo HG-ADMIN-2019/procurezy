@@ -77,9 +77,8 @@ def item_search(inp_from_date, inp_to_date, **kwargs):
                     else:
                         doc_num_query = Q(doc_number__in=value) | Q(doc_number__istartswith=doc_num_match.group(0))
                 else:
-                    # doc_list = sc_hdr_inst.get_hdr_data_by_fields(hdr_obj, value, client)
-                    # args_list['doc_number__in'] = doc_list
-                    args_list['doc_number'] = value
+                    doc_list = sc_hdr_inst.get_hdr_data_by_fields(hdr_obj, value, client)
+                    args_list['doc_number__in'] = doc_list
                 result = sc_hdr_inst.get_hdr_data_for_docnum(client, hdr_obj,
                                                              doc_num_query,
                                                              **args_list)
