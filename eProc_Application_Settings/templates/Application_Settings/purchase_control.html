@@ -189,59 +189,65 @@
         ]
     };
 
-    // Hide dropdown when click on add button
-    function company_drpdown() {
-        pc_company_dropdown = '';
-        var hidden_pc_company_type = []; // Array to store node types with all their node values used in the main table
+// Hide dropdown when click on add button
+function company_drpdown() {
+    pc_company_dropdown = '';
+    var hidden_pc_company_type = []; // Array to store node types with all their node values used in the main table
 
-        // Function to check if all call of of a specific company are used in the main table
-        function areAll_calloff_Used(company_code_id) {
-            var call_off_code = main_table_data[company_code_id];
-            if (!call_off_code) {
-                return false;
-            }
-            return call_off_code.length === rendered_call_off_data.length;
+    // Function to check if all call off of a specific company are used in the main table
+    function areAll_calloff_Used(company_code_id) {
+        var call_off_code = main_table_data[company_code_id];
+        if (!call_off_code) {
+            return false;
         }
-
-        // Iterate through the rendered_pc_company_data to build the company_code_id dropdown
-        $.each(rendered_pc_company_data, function(i, item) {
-            var company_code = item.company_code_id;
-            if (!areAll_calloff_Used(company_code)) {
-                pc_company_dropdown += '<option value="' + company_code + '">' + company_code + '</option>';
-            } else {
-                hidden_pc_company_type.push(company_code);
-            }
-        });
-        $.each(hidden_pc_company_type, function(i, hidden_pc_company_type) {
-            pc_company_dropdown = pc_company_dropdown.replace(new RegExp('<option value="' + hidden_pc_company_type + '">.*<\/option>'), '');
-        });
-
-        // Extract the first node type value from pc_company_dropdown using regular JavaScript
-        var first_companyMatch = pc_company_dropdown.match(/value="([^"]+)"/);
-        if (first_companyMatch && first_companyMatch[1]) {
-            first_company = first_companyMatch[1];
-        }
-        if (first_company !== null) {
-            var unused_companyForFirstType = [];
-            var used_company = {};
-            $.each(main_table_data[first_company], function(index, value) {
-                used_company[value] = true;
-            });
-            $.each(rendered_call_off_data, function(i, item) {
-                var call_off_ = item.value;
-                if (!used_company.hasOwnProperty(call_off_)) {
-                    unused_companyForFirstType.push(call_off_);
-                }
-            });
-            call_off_dropdown = '';
-            $.each(unused_companyForFirstType, function(i, call_off_) {
-                var descriptionItem = rendered_call_off_data.find(item => item.value === call_off_);
-                if (descriptionItem) {
-                    call_off_dropdown += '<option value="' + descriptionItem.value + '">' + descriptionItem.label + '</option>';
-                }
-            });
-        }
+        return call_off_code.length === rendered_call_off_data.data.length; // Access the array using rendered_call_off_data.data
     }
+
+    // Iterate through the rendered_pc_company_data to build the company_code_id dropdown
+    $.each(rendered_pc_company_data, function (i, item) {
+        var company_code = item.company_id;
+        if (!areAll_calloff_Used(company_code)) {
+            pc_company_dropdown += '<option value="' + company_code + '">' + company_code + '</option>';
+        } else {
+            hidden_pc_company_type.push(company_code);
+        }
+    });
+    $.each(hidden_pc_company_type, function (i, hidden_pc_company_type) {
+        pc_company_dropdown = pc_company_dropdown.replace(new RegExp('<option value="' + hidden_pc_company_type + '">.*<\/option>'), '');
+    });
+
+    // Extract the first node type value from pc_company_dropdown using regular JavaScript
+    var first_companyMatch = pc_company_dropdown.match(/value="([^"]+)"/);
+    if (first_companyMatch && first_companyMatch[1]) {
+        first_company = first_companyMatch[1];
+    }
+    if (first_company !== null) {
+        var unused_companyForFirstType = [];
+        var used_company = {};
+        $.each(main_table_data[first_company], function (index, value) {
+            used_company[value] = true;
+        });
+        $.each(rendered_call_off_data.data, function (i, item) { // Access the array using rendered_call_off_data.data
+            var call_off_ = item.value;
+            if (!used_company.hasOwnProperty(call_off_)) {
+                unused_companyForFirstType.push(call_off_);
+            }
+        });
+        call_off_dropdown = '';
+        $.each(unused_companyForFirstType, function (i, call_off_) {
+            var descriptionItem = rendered_call_off_data.data.find(item => item.value === call_off_); // Access the array using rendered_call_off_data.data
+            if (descriptionItem) {
+                call_off_dropdown += '<option value="' + descriptionItem.value + '">' + descriptionItem.label + '</option>';
+            }
+        });
+    }
+
+    activate_dropdown = '';
+     $.each(rendered_activate, function(i, item){
+        activate_dropdown += '<option value="' + item.field_type_id + '">' + item.field_type_id + '</option>';
+     });
+}
+
 
     //************************
     function drop_down(){

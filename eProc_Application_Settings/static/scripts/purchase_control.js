@@ -175,7 +175,7 @@ function new_row_data(){
     basic_add_new_html +=
     `<tr>
         <td><input type="checkbox" required></td>
-        <td><select class="input form-control" type="text">${pc_company_dropdown}</select></td>
+        <td><select class="input form-control" type="text" onchange="get_call_off_values(this)">${pc_company_dropdown}</select></td>
         <td><select class="input form-control" type="text">${call_off_dropdown}</select></td>
         <td><select type="text" class="input form-control">${activate_dropdown}</select></td>
         <td hidden><input  type="text" class="form-control"  name="guid"></td>
@@ -184,6 +184,30 @@ function new_row_data(){
     $('#id_popup_tbody').append(basic_add_new_html);
     table_sort_filter('id_popup_table');
 }
+
+function get_call_off_values(selectElement) {
+    var selected_company = selectElement.value;
+    var call_offDropdown = $(selectElement).closest('tr').find('.form-control').eq(1);
+    var call_off = main_table_data[selected_company];
+    var used_call_offValues = {}; // Object to store the used node values for the selected node type
+
+    // Loop through the node values in the main_table_data and store the used ones for the selected node type
+    $.each(call_off, function (index, value) {
+        used_call_offValues[value] = true;
+    });
+
+    call_offDropdown.empty();
+
+    // Now, populate the dropdown with only the unused node values from rendered_call_off_data.data
+    $.each(rendered_call_off_data.data, function (i, item) {
+        var call_offValue = item.value;
+        var call_offLabel = item.label;
+        if (!used_call_offValues.hasOwnProperty(call_offValue)) {
+            call_offDropdown.append('<option value="' + call_offValue + '">' + call_offLabel + '</option>');
+        }
+    });
+}
+
 
 function get_company_data() {
     main_table_data = {}; // Object to store node values for each node type
