@@ -147,7 +147,7 @@ function onclick_add_button_email(button) {
                 console.log(response['email_support_data_array'].length);
                 for (i = 0; i < response['email_support_data_array'].length; i++) {
                     content += '<tr>';
-                    content += '<td><input class="input form-control hg_edit_display_mode" id="email" required type="text" name="email" value="' + response['email_support_data_array'][i] + '" onkeypress="return /[a-z 0-9]/i.test(event.key)" disabled /></td>';
+                    content += '<td><input class="input form-control hg_edit_display_mode" id="email" required type="text" name="email" value="' + response['email_support_data_array'][i] + '" disabled /></td>'
                     content += '<td hidden><input class="input" type="text" name="org_support_guid" value="' + response['email_support_guid_array'][i] + '" /></td>';
                     content += '</tr>';
                     $('#id_popup_table_email tbody').html(content);
@@ -167,37 +167,61 @@ function onclick_add_button_email(button) {
 }
 
 function save_email_support_data() {
-    var form_data = [];
+        var form_data = [];
+        var isValid = true; // Initialize isValid as true
+        $("#id_popup_table_email TBODY TR").each(function () {
+            var row = $(this);
+            var support_data = {};
+            support_data.support_type = 'EMAIL';
+            support_data.support_email = row.find("TD").eq(0).find('input[type="text"]').val();
+            support_data.support_number = '';
+            support_data.username = '';
+            support_data.org_support_guid = row.find("TD").eq(1).find('input[type="text"]').val();
 
-    $("#id_popup_table_email TBODY TR").each(function () {
-        var row = $(this);
-        var support_data = {};
-        support_data.support_type = 'EMAIL';
-        support_data.support_email = row.find("TD").eq(0).find('input[type="text"]').val(); // Assuming this is the correct index for the Support Email input
-        support_data.support_number = '';
-        support_data.username = '';
-        support_data.org_support_guid = row.find("TD").eq(1).find('input[type="text"]').val(); // Assuming this is the correct index for the Org Support Guid input
-        form_data.push(support_data);
-    });
+            isValid = email(support_data.support_email);
 
-    $.ajax({
-        type: 'POST',
-        url: "{% url 'eProc_Org_Support:org_support_save' %}",
-        data: JSON.stringify(form_data),
-        success: function(response) {
-            document.getElementById('org_support_email_success').innerHTML = response.message;
-            $('#org_support_email_success').prop('hidden', false);
-            $("#org_support_guid").val(response.updated_guid);
+            if (isValid) {
+                // Check for additional condition: presence of "." after "@" in the email
+                isValid = support_data.support_email.indexOf('@') !== -1 && support_data.support_email.indexOf('.', support_data.support_email.indexOf('@')) !== -1;
+            }
 
-            // Close the modal after a delay
-            setTimeout(function() {
-                $('#org_support_email_success').prop('hidden', true);
-                $('#myModalEmail').modal('hide');
-            }, 5000); // Close after 5 seconds (adjust the delay as needed)
+            if (!isValid) {
+                console.log("Invalid email:", support_data.support_email);
+                $('#org_support_email_success').text("Invalid email: " + support_data.support_email);
+                $('#org_support_email_success').prop('hidden', false);
+            } else {
+                form_data.push(support_data);
+            }
+        });
+
+        if (!isValid) {
+            // If any email is invalid, don't proceed to save
+            return;
         }
-    });
-}
 
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'eProc_Org_Support:org_support_save' %}",
+            data: JSON.stringify(form_data),
+            success: function(response) {
+                document.getElementById('org_support_email_success').innerHTML = response.message;
+                $('#org_support_email_success').prop('hidden', false);
+                $("#org_support_guid").val(response.updated_guid);
+
+                // Close the modal after a delay
+                setTimeout(function() {
+                    $('#org_support_email_success').prop('hidden', true);
+                    $('#myModalEmail').modal('hide');
+                }, 5000); // Close after 5 seconds (adjust the delay as needed)
+            }
+        });
+    }
+
+    // Email validation function
+    function email(inputtxt) {
+        var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,})+$/; // Modified the regex pattern
+        return inputtxt.match(mailformat);
+    }
 
 
 </script>

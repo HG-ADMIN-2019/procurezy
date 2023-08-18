@@ -246,7 +246,7 @@
 
     <!--change confirmation popup-->
     <div class="modal fade" id="id_confirm_popup" data-backdrop="static" data-keyboard="false">
-        <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-dialog modal-dialog-centered modal-sm">
             <div class="modal-content">
                 <div class="modal-header" >
                     <h5 class="modal-title">Please Confirm</h5>
@@ -674,37 +674,25 @@ function save_announcement_data() {
     var to_date_val = $('#to_date').val();
 
     // Check if From Date is greater than To Date
-if (from_date_val  > to_date_val) {
-    $("#org_announcement_update_success").prop("hidden", false);
-    var msg = "JMSG017";
-    var msg_type = message_config_details(msg);
-    $("#org_announcement_update_success").prop("hidden", false);
-
-    if (msg_type.message_type == "ERROR") {
-        display_message("org_announcement_update_success", msg_type.messages_id_desc);
-    } else if (msg_type.message_type == "WARNING") {
-        display_message("id_warning_msg_id", msg_type.messages_id_desc);
-    } else if (msg_type.message_type == "INFORMATION") {
-        display_message("id_info_msg_id", msg_type.messages_id_desc);
-    }
-
-    var display = msg_type.messages_id_desc;
-<!--    $('#id_save_confirm_popup').modal('hide');-->
-<!--    $('#Adrs_Type_Modal').modal('show');-->
-<!--    validDate = 'N';-->
-}
-
-
-    is_save_form_valid = save_announcement_form_validation(sub_val, desc_val, from_date_val, to_date_val);
-    if (action === "ADD" || action === "edit") {
-    if (is_save_form_valid != '') {
-        $('#save_error_div').html(is_save_form_valid);
-        $('#save_error_div').show();
-        scroll_top();
+if (from_date_val > to_date_val) {
+        // Display an error message and prevent further processing
+        $('#org_announcement_update_success').removeClass('display-none').addClass('alert-danger');
+        $('#org_announcement_update_success').html("From Date cannot be greater than To Date.");
         return;
     }
+
+    // Validate the rest of the form
+    is_save_form_valid = save_announcement_form_validation(sub_val, desc_val, from_date_val, to_date_val);
+    if (action === "ADD" || action === "edit") {
+        if (is_save_form_valid != '') {
+            $('#save_error_div').html(is_save_form_valid);
+            $('#save_error_div').show();
+            scroll_top();
+            return;
+        }
     }
 
+    // Continue with saving the announcement data using AJAX
     var form_data = {
         announcement_id: document.getElementById('announcement_id').value,
         announcement_subject: document.getElementById('modal_announcement_subject').value,
