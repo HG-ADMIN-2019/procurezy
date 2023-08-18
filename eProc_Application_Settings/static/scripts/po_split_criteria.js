@@ -127,3 +127,20 @@ function get_selected_row_data(){
         }
     });
 }
+
+function get_split_type_data() {
+    main_table_data = {}; // Object to store node values for each node type
+    $('#display_basic_table').DataTable().destroy();
+    $("#display_basic_table TBODY TR").each(function() {
+        var row = $(this);
+        var main_attribute = {};
+        main_attribute.po_split_type = parseInt(row.find("TD").eq(1).html());
+        main_attribute.company_code_id = row.find("TD").eq(2).html();
+        var compare_maintable = main_attribute.po_split_type + '-' + main_attribute.company_code_id
+        if (!main_table_data.hasOwnProperty(main_attribute.po_split_type)) {
+            main_table_data[main_attribute.po_split_type] = [];
+        }
+        main_table_data[main_attribute.po_split_type].push(main_attribute.company_code_id);
+    });
+    table_sort_filter('display_basic_table');
+}

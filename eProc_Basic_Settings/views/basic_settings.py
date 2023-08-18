@@ -767,16 +767,13 @@ def convert_UNSPSCDESC_to_dictionary(arr):
 def convert_UserData_to_dictionary(arr):
     convertion_list = []
     for row in arr:
-        dictionary = {'email': row[0], 'username': row[1], 'person_no': row[2], 'form_of_address': row[3],
-                      'first_name': row[4], 'last_name': row[5], 'gender': row[6], 'phone_num': row[7],
-                      'password': row[8],
-                      'date_joined': row[9], 'first_login': row[10], 'last_login': row[11], 'is_active': row[12],
-                      'is_superuser': row[13], 'is_staff': row[14], 'date_format': row[15],
-                      'employee_id': row[16], 'decimal_notation': row[17], 'user_type': row[18],
-                      'login_attempts': row[19], 'user_locked': row[20], 'pwd_locked': row[21], 'sso_user': row[22],
-                      'valid_from': row[23], 'valid_to': row[24], 'del_ind': row[25], 'currency_id': row[26],
-                      'language_id': row[27],
-                      'object_id': row[28], 'time_zone': row[29]}
+        dictionary = {'email': row[0], 'username': row[1],
+                      'first_name': row[2], 'last_name': row[3], 'phone_num': row[4],
+                      'date_format': row[5],
+                      'employee_id': row[6], 'decimal_notation': row[7], 'user_type': row[8],
+                      'del_ind': row[9], 'currency_id': row[10],
+                      'language_id': row[11],
+                      'time_zone': row[12]}
         convertion_list.append(dictionary)
     return convertion_list
 

@@ -212,7 +212,10 @@
             });
             language_dropdown = '';
             $.each(unused_message_idForFirstType, function(i, language) {
-                language_dropdown += '<option value="' + language_id + '">' + language_id + '</option>';
+                var descriptionItem = render_language_data.find(item => item.language_id === language);
+                if (descriptionItem) {
+                    language_dropdown += '<option value="' + descriptionItem.language_id + '">' + descriptionItem.description + '</option>';
+                }
             });
         }
     }
@@ -230,9 +233,9 @@
                 render_language_data = response.language_list
                 get_msg_id_data()
                 message_drpdown()
-                 $("#error_msg_id").css("display", "none")
-                 $("#id_info_msg_id").css("display", "none")
-                 $("#id_warning_msg_id").css("display", "none")
+                $("#error_msg_id").css("display", "none")
+                $("#id_info_msg_id").css("display", "none")
+                $("#id_warning_msg_id").css("display", "none")
                 $( "#header_select").prop( "hidden", false );
                 GLOBAL_ACTION=button.value
                 $("#id_popup_tbody").empty();
@@ -361,7 +364,7 @@
                         }
                         else {
                             guid =row.cells[4].innerHTML;
-                            unique_input = '<select id="messages_id" name="messages_id" class="form-control" type="text"  value="' + row.cells[1].innerHTML + '" title="Select...">'+ message_id_dropdown +'</select>'
+                            unique_input = '<select id="messages_id" name="messages_id" class="form-control" type="text"  value="' + row.cells[1].innerHTML + '" title="Select..." onchange="get_language_dropdown(this)>'+ message_id_dropdown +'</select>'
                             edit_basic_data += '<tr><td><input type="checkbox" required></td>' +
                             '<td>'+ unique_input +'</td>' +
                             '<td><input class="input form-control check_special_char" type="text" id="messages_desc" name="messages_desc" value="' + row.cells[2].innerHTML + '"  required></td>'+

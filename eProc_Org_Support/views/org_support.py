@@ -3,6 +3,7 @@ from django.db.models.query_utils import Q
 from django.http.response import JsonResponse
 from django.shortcuts import render
 from eProc_Basic.Utilities.functions.messages_config import get_msg_desc, get_message_desc
+from eProc_Basic_Settings.views.basic_settings import JsonParser_obj
 from eProc_Chat.Utitlities.doc_chat_specific import create_chat_participant
 from eProc_Org_Model.models.org_model import OrgModel
 from eProc_Org_Support.models.org_support_models import OrgSupport, OrgAnnouncements
@@ -125,8 +126,6 @@ def org_announcement_save(request):
         return JsonResponse(response_data)
 
     return render(request, 'org_announcements_display.html', context)
-
-
 
 
 @login_required
@@ -384,3 +383,35 @@ def delete_table_row(request):
                                                   {'client': global_variables.GLOBAL_CLIENT,
                                                    'org_support_guid': call_support_guid}, {'del_ind': True})
     return True
+
+
+def active_inactive_org(request):
+    emp_lock_flag_detail = JsonParser_obj.get_json_from_req(request)
+    announcement_id = emp_lock_flag_detail['announcement_id']
+    flag = emp_lock_flag_detail['flag']
+
+    # Determine the new status based on the flag value
+    if flag:
+        new_status = 'Active'
+    else:
+        new_status = 'Inactive'
+
+    announcementid = announcement_id.split('-')[0]
+
+    # Update the status in the database
+    django_query_instance.django_update_query(
+        OrgAnnouncements,
+        {'client': global_variables.GLOBAL_CLIENT,
+         'announcement_id': announcementid,
+         'del_ind': False},
+        {'status': new_status}
+    )
+
+    # Prepare the response
+    response = {
+        'status': new_status,
+        'message': 'Status updated successfully'
+    }
+
+    return JsonResponse(response, safe=False)
+
