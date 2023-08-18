@@ -497,7 +497,7 @@ def my_order_document_detail(request, encrypt_sc_header_guid, access_type):
 def docDetails(req, flag, type, guid, mode, access_type):
     update_user_info(req)
     guid = decrypt(guid)
-    editable_flag = ''
+    editable_flag = 0
     sc_header_instance = ScHeader.objects.get(guid=guid)
 
     # To validate access based on creator and requester
