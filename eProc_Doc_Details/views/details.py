@@ -880,6 +880,8 @@ def update_sc(request):
                         for po_document_number in po_doc_list:
                             email_supp_monitoring_guid = ''
                             send_po_attachment_email(output, po_document_number, email_supp_monitoring_guid)
+                        ScHeader.objects.update_or_create(guid=sc_header_guid,
+                                                          defaults={'status': CONST_SC_HEADER_APPROVED})
                     else:
                         next_level_approver = django_query_instance.django_filter_value_list_query(ScPotentialApproval,
                                                                                                    {

@@ -295,7 +295,7 @@ def review_page(request):
 
     # to get manager detail
     default_cmp_code = user_setting.get_attr_default(user_object_id, CONST_CO_CODE)
-    purchase_control_call_off_list = get_order_status(default_cmp_code, global_variables.GLOBAL_CLIENT)
+    purchase_control_call_off_list = get_order_status(default_cmp_code, prod_cat_list, global_variables.GLOBAL_CLIENT)
     if default_cmp_code:
         manager_detail, msg_info = get_manger_detail(client, username, accounting_data['default_acc_ass_cat'],
                                                      total_value,

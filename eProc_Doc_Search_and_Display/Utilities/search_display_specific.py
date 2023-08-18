@@ -80,7 +80,7 @@ def get_shopping_cart_approval(data):
         cmp_code.append(scitems['comp_code'])
     if cmp_code:
         default_cmp_code = list(set(cmp_code))
-    purchase_control_call_off_list = get_order_status(default_cmp_code, global_variables.GLOBAL_CLIENT)
+    purchase_control_call_off_list = get_order_status(default_cmp_code, prod_cat_list, global_variables.GLOBAL_CLIENT)
     for purchase_control_call_off in purchase_control_call_off_list:
         if purchase_control_call_off in call_off_list:
             completion_work_flow = get_completion_work_flow(global_variables.GLOBAL_CLIENT, prod_cat_list,
@@ -168,7 +168,7 @@ def get_sc_header_app(result, client):
             cmp_code.append(scitems.comp_code)
 
         default_cmp_code = list(set(cmp_code))
-        purchase_control_call_off_list = get_order_status(default_cmp_code, global_variables.GLOBAL_CLIENT)
+        purchase_control_call_off_list = get_order_status(default_cmp_code, prod_cat_list, global_variables.GLOBAL_CLIENT)
         for purchase_control_call_off in purchase_control_call_off_list:
             if purchase_control_call_off in call_off_list:
                 completion_work_flow = get_completion_work_flow(client, prod_cat_list, default_cmp_code)
@@ -488,42 +488,50 @@ class DocumentSearch:
         return search_criteria
 
 
-def get_order_status(company_code, client):
+def get_order_status(company_code, prod_cat_list, client):
     """
 
     """
+    purchase_control_list = ''
     po_split_active_list_cocode = []
-    purchase_control_list = django_query_instance.django_filter_value_list_query(PurchaseControl,
-                                                                                 {'client': client,
-                                                                                  'del_ind': False,
-                                                                                  'company_code_id': '*',
-                                                                                  'purchase_ctrl_flag': True},
-                                                                                 'call_off')
+    for prod_cat in prod_cat_list:
+        purchase_control_list = django_query_instance.django_filter_value_list_query(PurchaseControl,
+                                                                                     {'client': client,
+                                                                                      'del_ind': False,
+                                                                                      'company_code_id': '*',
+                                                                                      'purchase_ctrl_flag': True,
+                                                                                      'prod_cat_id': prod_cat
+                                                                                      },
+                                                                                     'call_off')
 
-    if django_query_instance.django_existence_check(PurchaseControl,
-                                                    {'client': client,
-                                                     'del_ind': False,
-                                                     'company_code_id': company_code,
-                                                     'purchase_ctrl_flag': False}):
-        purchase_control_inactive_list_cocode = django_query_instance.django_filter_value_list_query(PurchaseControl,
-                                                                                                     {
-                                                                                                         'client': client,
-                                                                                                         'del_ind': False,
-                                                                                                         'company_code_id': company_code,
-                                                                                                         'purchase_ctrl_flag': False},
-                                                                                                     'call_off')
-        purchase_control_list = remove_element_from_list(purchase_control_list, purchase_control_inactive_list_cocode)
-    if django_query_instance.django_existence_check(PurchaseControl,
-                                                    {'client': client,
-                                                     'del_ind': False,
-                                                     'company_code_id': company_code,
-                                                     'purchase_ctrl_flag': True}):
-        po_split_active_list_cocode = django_query_instance.django_filter_value_list_query(PurchaseControl,
-                                                                                           {
-                                                                                               'client': client,
-                                                                                               'del_ind': False,
-                                                                                               'company_code_id': company_code,
-                                                                                               'purchase_ctrl_flag': True},
-                                                                                           'call_off')
-    purchase_control_list = list(set(purchase_control_list + po_split_active_list_cocode))
+        if django_query_instance.django_existence_check(PurchaseControl,
+                                                        {'client': client,
+                                                         'del_ind': False,
+                                                         'company_code_id': company_code,
+                                                         'purchase_ctrl_flag': False,
+                                                         'prod_cat_id': prod_cat}):
+            purchase_control_inactive_list_cocode = django_query_instance.django_filter_value_list_query(PurchaseControl,
+                                                                                                         {
+                                                                                                             'client': client,
+                                                                                                             'del_ind': False,
+                                                                                                             'company_code_id': company_code,
+                                                                                                             'purchase_ctrl_flag': False,
+                                                                                                         'prod_cat_id': prod_cat},
+                                                                                                         'call_off')
+            purchase_control_list = remove_element_from_list(purchase_control_list, purchase_control_inactive_list_cocode)
+        if django_query_instance.django_existence_check(PurchaseControl,
+                                                        {'client': client,
+                                                         'del_ind': False,
+                                                         'company_code_id': company_code,
+                                                         'purchase_ctrl_flag': True,
+                                                         'prod_cat_id': prod_cat}):
+            po_split_active_list_cocode = django_query_instance.django_filter_value_list_query(PurchaseControl,
+                                                                                               {
+                                                                                                   'client': client,
+                                                                                                   'del_ind': False,
+                                                                                                   'company_code_id': company_code,
+                                                                                                   'purchase_ctrl_flag': True,
+                                                                                               'prod_cat_id': prod_cat},
+                                                                                               'call_off')
+        purchase_control_list = list(set(purchase_control_list + po_split_active_list_cocode))
     return purchase_control_list
