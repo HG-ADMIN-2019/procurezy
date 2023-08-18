@@ -3056,30 +3056,28 @@ def get_valid_employee_data(ui_data, status):
             if django_query_instance.django_existence_check(UserData,
                                                             {'del_ind': False,
                                                              'email': employee_dictionary['email'],
-                                                             'username': employee_dictionary
-                                                             ['username'],
-                                                             'first_name': employee_dictionary
-                                                             ['first_name'],
-                                                             'last_name': employee_dictionary
-                                                             ['last_name'],
-                                                             'phone_num': employee_dictionary
-                                                             ['phone_num'],
-                                                             ['user_type']: employee_dictionary
-                                                              ['user_type'],
-                                                             'date_format': employee_dictionary
-                                                             ['date_format'],
-                                                             'employee_id': employee_dictionary
-                                                             ['employee_id'],
-                                                             'decimal_notation': employee_dictionary
-                                                             ['decimal_notation'],
-                                                             'del_ind': employee_dictionary
-                                                             ['del_ind'],
-                                                             'currency_id': employee_dictionary
-                                                             ['currency_id'],
-                                                             'language_id': employee_dictionary
-                                                             ['language_id'],
-                                                             'time_zone': employee_dictionary
-                                                             ['time_zone']
+                                                             # 'username': employee_dictionary
+                                                             # ['username'],
+                                                             # 'first_name': employee_dictionary
+                                                             # ['first_name'],
+                                                             # 'last_name': employee_dictionary
+                                                             # ['last_name'],
+                                                             # 'phone_num': employee_dictionary
+                                                             # ['phone_num'],
+                                                             # ['user_type']: employee_dictionary
+                                                             #  ['user_type'],
+                                                             # 'date_format': employee_dictionary
+                                                             # ['date_format'],
+                                                             # 'employee_id': employee_dictionary
+                                                             # ['employee_id'],
+                                                             # 'decimal_notation': employee_dictionary
+                                                             # ['decimal_notation'],
+                                                             # 'currency_id': employee_dictionary
+                                                             # ['currency_id'],
+                                                             # 'language_id': employee_dictionary
+                                                             # ['language_id'],
+                                                             # 'time_zone': employee_dictionary
+                                                             # ['time_zone']
                                                              }):
                 duplicate_count = duplicate_count + 1
             elif django_query_instance.django_existence_check(UserData,

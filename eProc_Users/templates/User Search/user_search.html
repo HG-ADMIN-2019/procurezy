@@ -547,6 +547,14 @@ function main_table_delete(){
     });
 }
 
+
+    //**********************************************
+    function update_check_message(messages) {
+        $.each(messages, function (i, message) {
+            $("#id_check_success_messages").append('<p>' + message + '</p>')
+        });
+        $("#id_check_success_messages").prop("hidden",false)
+    }
 //onclick of data Upload copy data to modal pop-up
 
 function onclick_display_csv_data() {
@@ -645,266 +653,76 @@ function onclick_display_csv_data() {
 
 //check function restricting special char and diaplay the data count of csv file
 function check_data() {
+    $("#id_delete_duplicate").hide()
     $('#id_popup_table').DataTable().destroy();
     $("#id_check_success_messages").empty()
     $("#id_check_error_messages").empty()
-    $("#id_check_success_messages").prop("hidden",true)
-    $("#id_check_error_messages").prop("hidden",true)
-    $("#id_check_special_character_messages").prop("hidden",true)
-    document.getElementById("id_error_msg_country_code").innerHTML = "";
-    document.getElementById("id_error_msg_country_name").innerHTML = "";
-    document.getElementById("id_error_msg_country_length").innerHTML = "";
+    $("#id_check_success_messages").prop("hidden", true)
+    $("#id_check_error_messages").prop("hidden", true)
+    $("#id_check_special_character_messages").prop("hidden", true)
     count = 0;
     var emp_array = new Array
     var DB_array = new Array
-    var country_list = new Array
-    var country_code_check = new Array
+    var user_list = new Array
+    var user_code_check = new Array
     del_ind = ''
     $("#id_popup_table TBODY TR").each(function() {
+        $('#id_popup_table').DataTable().destroy();
         var row = $(this);
-
+         user_dic = {}
         //*************** reading data from the pop-up ***************
-        email = row.find("TD").eq(1).find('input[type="text"]').val().toUpperCase();
-        username = row.find("TD").eq(2).find('input[type="text"]').val().toUpperCase();
-        person_no = row.find("TD").eq(3).find('input[type="text"]').val().toUpperCase();
-        form_of_address = row.find("TD").eq(4).find('input[type="text"]').val().toUpperCase();
-        first_name = row.find("TD").eq(5).find('input[type="text"]').val().toUpperCase();
-        last_name = row.find("TD").eq(6).find('input[type="text"]').val().toUpperCase();
-        gender = row.find("TD").eq(7).find('input[type="text"]').val().toUpperCase();
-        phone_num = row.find("TD").eq(8).find('input[type="text"]').val().toUpperCase();
-        password = row.find("TD").eq(9).find('input[type="text"]').val().toUpperCase();
-        date_joined = row.find("TD").eq(10).find('input[type="text"]').val().toUpperCase();
-        first_login = row.find("TD").eq(11).find('input[type="text"]').val().toUpperCase();
-        last_login = row.find("TD").eq(12).find('input[type="text"]').val().toUpperCase();
-        is_active = row.find("TD").eq(13).find('input[type="text"]').val().toUpperCase();
-        is_superuser = row.find("TD").eq(14).find('input[type="text"]').val().toUpperCase();
-        is_staff = row.find("TD").eq(15).find('input[type="text"]').val().toUpperCase();
-        date_format = row.find("TD").eq(16).find('input[type="text"]').val().toUpperCase();
-        employee_id = row.find("TD").eq(17).find('input[type="text"]').val().toUpperCase();
-        decimal_notation = row.find("TD").eq(18).find('input[type="text"]').val().toUpperCase();
-        user_type = row.find("TD").eq(19).find('input[type="text"]').val().toUpperCase();
-        login_attempts = row.find("TD").eq(20).find('input[type="text"]').val().toUpperCase();
-        pwd_locked = row.find("TD").eq(21).find('input[type="text"]').val().toUpperCase();
-        sso_user = row.find("TD").eq(22).find('input[type="text"]').val().toUpperCase();
-        valid_from = row.find("TD").eq(23).find('input[type="text"]').val().toUpperCase();
-        valid_to = row.find("TD").eq(24).find('input[type="text"]').val().toUpperCase();
-        currency_id = row.find("TD").eq(25).find('input[type="text"]').val().toUpperCase();
-         language_id = row.find("TD").eq(26).find('input[type="text"]').val().toUpperCase();
-        object_id = row.find("TD").eq(27).find('input[type="text"]').val().toUpperCase();
-        language_id = row.find("TD").eq(28).find('input[type="text"]').val().toUpperCase();
-        del_ind = row.find("TD").eq(29).find('input[type="checkbox"]').is(':checked')
+        user_dic.email = row.find("TD").eq(1).find('input[type="text"]').val();
+        user_dic.username = row.find("TD").eq(2).find('input[type="text"]').val();
+        user_dic.first_name = row.find("TD").eq(3).find('input[type="text"]').val();
+        user_dic.last_name = row.find("TD").eq(4).find('input[type="text"]').val();
+        user_dic.phone_num = row.find("TD").eq(5).find('input[type="text"]').val();
+        user_dic.date_format = row.find("TD").eq(6).find('input[type="text"]').val();
+        user_dic.employee_id = row.find("TD").eq(7).find('input[type="text"]').val();
+        user_dic.decimal_notation = row.find("TD").eq(8).find('input[type="text"]').val();
+        user_dic.user_type = row.find("TD").eq(9).find('input[type="text"]').val();
+        user_dic.currency_id = row.find("TD").eq(10).find('input[type="text"]').val();
+        user_dic.language_id = row.find("TD").eq(11).find('input[type="text"]').val();
+        user_dic.time_zone = row.find("TD").eq(12).find('input[type="text"]').val();
+        checked_box = row.find("TD").eq(13).find('input[type="checkbox"]').is(':checked')
             if (checked_box){
-                del_ind = '1'
+                user_dic.del_ind = '1'
             }
             else{
-               del_ind = '0'
+               user_dic.del_ind = '0'
             }
-        country_list.push([country_code, country_name, del_ind])
+            user_list.push(user_dic)
+         table_sort_filter_popup_pagination('id_popup_table');
+        });
 
-        var format = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
-
-
-            //*************** checking for max length for country code (max length = 2) ***************
-            if(country_code.length >2){
-               var url_new = "{% url 'eProc_Basic:get_message_description' %}";
-                var msg = "JMSG004";
-                var msg_type ;
-              msg_type = message_config_details(msg);
-              $("#error_msg_id").prop("hidden", false)
-
-              if(msg_type.message_type == "ERROR"){
-                    display_message("error_msg_id", msg_type.messages_id_desc)
-              }
-              else if(msg_type.message_type == "WARNING"){
-                 display_message("id_warning_msg_id", msg_type.messages_id_desc)
-              }
-              else if(msg_type.message_type == "INFORMATION"){
-                 display_message("id_info_msg_id", msg_type.messages_id_desc)
-              }
-
-              var display = msg_type.messages_id_desc;
-             document.getElementById("id_error_msg_country_length").innerHTML = display  + "Country Code";
-
-
-                $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
-                count = count +1;
+          //*************** shows save button if there are no errors(special characters and max length) ***************
+        if(count == 0){
+            $('#id_popup_table').DataTable().destroy();
+            $("#id_popup_table").find("input,button,textarea,select").attr("disabled", "disabled");
+            document.getElementById("id_del_add_button").style.display = "none";
+            $("#save_id").prop("hidden", false);
+            $("#id_check_data").prop("hidden", true);
+            if (user_list == 0) {
+                $("#save_id").prop("hidden", true);
             }
-
-            //*************** checking for special characters for country code ***************
-            else if(format.test(country_code)){
-                var url_new = "{% url 'eProc_Basic:get_message_description' %}";
-                var msg = "JMSG003";
-                var msg_type ;
-              msg_type = message_config_details(msg);
-              $("#error_msg_id").prop("hidden", false)
-
-              if(msg_type.message_type == "ERROR"){
-                    display_message("error_msg_id", msg_type.messages_id_desc)
-              }
-              else if(msg_type.message_type == "WARNING"){
-                 display_message("id_warning_msg_id", msg_type.messages_id_desc)
-              }
-              else if(msg_type.message_type == "INFORMATION"){
-                 display_message("id_info_msg_id", msg_type.messages_id_desc)
-              }
-              var display4 = msg_type.messages_id_desc;
-              document.getElementById("id_error_msg_country_code").innerHTML = display4 + "Country Code";
-
-
-                $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
-                count = count +1;
-            }
-            else{
-            $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "none");
-            }
-
-            //*************** checking for special characters for country name ***************
-            if(format.test(country_name)){
-               var url_new = "{% url 'eProc_Basic:get_message_description' %}";
-                var msg = "JMSG003";
-                var msg_type ;
-              msg_type = message_config_details(msg);
-              $("#error_msg_id").prop("hidden", false)
-
-              if(msg_type.message_type == "ERROR"){
-                    display_message("error_msg_id", msg_type.messages_id_desc)
-              }
-              else if(msg_type.message_type == "WARNING"){
-                 display_message("id_warning_msg_id", msg_type.messages_id_desc)
-              }
-              else if(msg_type.message_type == "INFORMATION"){
-                 display_message("id_info_msg_id", msg_type.messages_id_desc)
-              }
-
-              var display4 = msg_type.messages_id_desc;
-              document.getElementById("id_error_msg_country_name").innerHTML = display4 + "Country Name";
-
-                $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "1px solid #FF0000");
-                count = count +1;
-           }
-           else{
-            $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "none");
-            }
-
-           if(country_code_check.includes(country_code)){
-                $(row).css("border", "#f8d7da");
-                //$(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
-                //$(row.find("TD").eq(2).find('input[type="text"]')).css("border", "1px solid #FF0000");
-
-            }
-            else{
-                $(row).css("border", "");
-            }
-
-            country_code_check.push(country_code)
-    });
-
-    //*************** shows save button if there are no errors(special characters and max length) ***************
-    if(count == 0){
-            $("#id_check_special_character_messages").prop("hidden",true)
-             $("#save_id").prop("hidden", false);
+            popup_data_dict = {'data_list': user_list}
+            OpenLoaderPopup();
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'eProc_Configuration_Check:check_Employee' %}",
+                data: JSON.stringify(popup_data_dict),
+                success: function(response) {
+                    table_sort_filter_popup_pagination('id_popup_table')
+                     $("#id_check_special_character_messages").prop("hidden", false);
+                     if (count == 0) {
+                        $("#id_check_special_character_messages").prop("hidden", true);
+                     }
+                    var message = ''
+                    update_check_message(response.messages[1])
+                    CloseLoaderPopup();
+                }
+            });
+        }
     }
-    popup_data_dict ={'data_list' : country_list, 'Tablename' : Tablename, 'appname' : appname,
-    'db_header_data' : ['EMAIL','USERNAME','PERSON_NO','FORM_OF_ADDRESS','FIRST_NAME','LAST_NAME','PHONE_NUM','PASSWORD','DATE_JOINED','FIRST_LOGIN','LAST_LOGIN','IS_ACTIVE','IS_SUPERUSER','IS_STAFF','DATE_FORMAT','EMPLOYEE_ID','DECIMAL_NOTATION','USER_TYPE','LOGIN_ATTEMPTS','USER_LOCKED','PWD_LOCKED','SSO_USER','VALID_FROM','VALID_TO','del_ind','CURRENCY_ID','LANGUAGE_ID','OBJECT_ID', 'TIME_ZONE']}
-    $.ajax({
-        type: 'POST',
-        url: "{% url 'eProc_Basic_Settings:check_data' %}",
-        data: JSON.stringify(popup_data_dict),
-        success: function(response) {
-            //table_sort_filter_popup_pagination('id_popup_table')
-            table_sort_filter('id_popup_table');
-            $("#id_check_special_character_messages").prop("hidden",false)
-            if(count == 0){
-                $("#id_check_special_character_messages").prop("hidden",true)
-            }
-
-            //*************** retrieving data counts from views ***************
-            check_messages = response
-            var newArrayDataOfOjbect = Object.values(check_messages)
-            $("#id_check_success_messages").prop("hidden",false)
-
-            //*************** if pop-up data count is greater than zero ***************
-            if (newArrayDataOfOjbect[1]>0){
-               if (newArrayDataOfOjbect[1] > 0) {
-
-
-                             var msg = "JMSG010";
-                             var msg_type ;
-                             msg_type = message_config_details(msg);
-                             $("#error_msg_id").prop("hidden", false)
-                             var display = msg_type.messages_id_desc;
-
-                        $("#id_check_success_messages").append('<p>' + display + newArrayDataOfOjbect[0] + '</p>')
-
-
-                             var msg = "JMSG011";
-                             var msg_type ;
-                             msg_type = message_config_details(msg);
-                             $("#error_msg_id").prop("hidden", false)
-                             var display1 = msg_type.messages_id_desc;
-
-                        $("#id_check_success_messages").append('<p>' + display1 + newArrayDataOfOjbect[1] + '</p>')
-
-
-                             var msg = "JMSG012";
-                             var msg_type ;
-                             msg_type = message_config_details(msg);
-                             $("#error_msg_id").prop("hidden", false)
-                             var display2 = msg_type.messages_id_desc;
-                        $("#id_check_success_messages").append('<p>' + display2 + newArrayDataOfOjbect[3] + '</p>')
-
-                                 var msg = "JMSG013";
-                                 var msg_type ;
-                                 msg_type = message_config_details(msg);
-                                 $("#error_msg_id").prop("hidden", false)
-                                 var display3 = msg_type.messages_id_desc;
-                        $("#id_check_success_messages").append('<p>' + display3 + newArrayDataOfOjbect[4] + '</p>')
-
-                                 var msg = "JMSG014";
-                                 var msg_type ;
-                                 msg_type = message_config_details(msg);
-                                 $("#error_msg_id").prop("hidden", false)
-                                 var display4 = msg_type.messages_id_desc;
-                        $("#id_check_success_messages").append('<p>' + display4 + newArrayDataOfOjbect[5] + '</p>')
-
-                                 var msg = "JMSG053";
-                                 var msg_type ;
-                                 msg_type = message_config_details(msg);
-                                 $("#error_msg_id").prop("hidden", false)
-                                 var display5 = msg_type.messages_id_desc;
-	   				  $("#id_check_success_messages").append('<p>' + display5 + newArrayDataOfOjbect[6] + '</p>')
-                //*************** if duplicate data data count is greater than zero ***************
-                if(newArrayDataOfOjbect[2]>0){
-                  $("#id_check_error_messages").prop("hidden",false)
-
-                                 var msg = "JMSG015";
-                                 var msg_type ;
-                                 msg_type = message_config_details(msg);
-                                 $("#error_msg_id").prop("hidden", false)
-                                 var display6 = msg_type.messages_id_desc;
-                }
-                else{
-                    $("#id_check_error_messages").prop("hidden",true)
-                    $("#id_delete_duplicate").hide()
-                }
-            }
-            //*************** if pop-up data count is zero ***************
-            else{
-                $("#id_check_success_messages").hide()
-                        $("#id_check_error_messages").prop("hidden", false)
-
-                                 var msg = "JMSG006";
-                                 var msg_type ;
-                                 msg_type = message_config_details(msg);
-                                 $("#error_msg_id").prop("hidden", false)
-                                 var display8 = msg_type.messages_id_desc;
-                        $("#id_check_error_messages").append('<p>' + display8 + '</p>')
-                        $("#save_id").prop("hidden", true);
-            }
-        }
-        }
-    });
-}
 var data = {};
 var block_id = '';
  $('.toggle-block').change(function() {
