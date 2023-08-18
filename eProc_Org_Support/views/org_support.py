@@ -3,6 +3,7 @@ from django.db.models.query_utils import Q
 from django.http.response import JsonResponse
 from django.shortcuts import render
 from eProc_Basic.Utilities.functions.messages_config import get_msg_desc, get_message_desc
+from eProc_Basic_Settings.views.basic_settings import JsonParser_obj
 from eProc_Chat.Utitlities.doc_chat_specific import create_chat_participant
 from eProc_Org_Model.models.org_model import OrgModel
 from eProc_Org_Support.models.org_support_models import OrgSupport, OrgAnnouncements
@@ -60,36 +61,71 @@ def org_announcement_save(request):
     if request.method == "POST" and request.is_ajax():
         org_announcement_data = JsonParser().get_json_from_req(request)
 
-        announcement_num = org_announcement_data['announcement_id']
-        if announcement_num == '':
-            announcement_num = random_int(8)
-
         guid = org_announcement_data['announcement_guid']
         if guid == '':
             guid = guid_generator()
 
-            defaults = {
-                'unique_announcement_id': guid,
-                'announcement_id': announcement_num,
-                'announcement_subject': org_announcement_data['announcement_subject'],
-                'announcement_description': org_announcement_data['announcement_description'],
-                'status': org_announcement_data['status'],
-                'priority': org_announcement_data['priority'],
-                'announcement_from_date': org_announcement_data['announcement_from_date'],
-                'announcement_to_date': org_announcement_data['announcement_to_date'],
-                'client': client,
-                'del_ind': False,
-                'object_id': obj_id,
-            }
+        defaults = {
+            'unique_announcement_id': guid,
+            'announcement_subject': org_announcement_data['announcement_subject'],
+            'announcement_description': org_announcement_data['announcement_description'],
+            'status': org_announcement_data['status'],
+            'priority': org_announcement_data['priority'],
+            'announcement_from_date': org_announcement_data['announcement_from_date'],
+            'announcement_to_date': org_announcement_data['announcement_to_date'],
+            'client': client,
+            'del_ind': False,
+            'object_id': obj_id,
+        }
 
-            django_query_instance.django_update_or_create_query(OrgAnnouncements, {'unique_announcement_id': guid},
-                                                                defaults)
+        # Check if an announcement with the given unique_announcement_id already exists
+        existing_announcement = django_query_instance.django_get_query(OrgAnnouncements, {
+            'unique_announcement_id': guid
+        })
+
+        if existing_announcement:
+            # Preserve the original announcement_id when updating
+            defaults['announcement_id'] = existing_announcement.announcement_id
+            django_query_instance.django_update_query(OrgAnnouncements, {'unique_announcement_id': guid}, defaults)
+            msgid = 'MSG156'  # Use a different message code for update success
+            success_msg = get_message_desc(msgid)[1]
+        else:
+            # Generate a new announcement_id for new announcements
+            defaults['announcement_id'] = random_int(8)
+            django_query_instance.django_create_query(OrgAnnouncements, defaults)
             msgid = 'MSG155'
-            error_msg = get_message_desc(msgid)[1]
+            success_msg = get_message_desc(msgid)[1]
 
-        return JsonResponse({'message': error_msg, 'updated_guid': guid})
+        # Create a new dictionary with announcement data
+        announcement_result1 = {
+            'unique_announcement_id': guid,
+            'announcement_id': defaults['announcement_id'],
+            'announcement_subject': org_announcement_data['announcement_subject'],
+            'announcement_description': org_announcement_data['announcement_description'],
+            'status': org_announcement_data['status'],
+            'priority': org_announcement_data['priority'],
+            'announcement_from_date': org_announcement_data['announcement_from_date'],
+            'announcement_to_date': org_announcement_data['announcement_to_date'],
+        }
 
-    return render(request, 'org_announcement.html', context)
+        announcement_result1 = django_query_instance.django_filter_query(OrgAnnouncements, {
+            'client': global_variables.GLOBAL_CLIENT, 'del_ind': False
+        }, None, None)
+        t_count = len(announcement_result1)
+
+        announcement_ids = [annsmt_data['unique_announcement_id'] for annsmt_data in announcement_result1]
+        # Include the 'announcement_results1' dictionary in the JSON response
+        response_data = {
+            'announcement_ids': announcement_ids,
+            't_count': t_count,
+            'message': success_msg,
+            'updated_guid': guid,
+            'announcement_result1': announcement_result1,
+        }
+
+        return JsonResponse(response_data)
+
+    return render(request, 'org_announcements_display.html', context)
 
 
 @login_required
@@ -274,9 +310,9 @@ def get_support_data(request):
     chat_support_data = django_query_instance.django_filter_only_query(OrgSupport, {
         'client': global_variables.GLOBAL_CLIENT, 'del_ind': False, 'org_support_types': 'CHAT'
     })
-    user_dropdown_values = django_query_instance.django_filter_only_query(UserData, {
-        'client': global_variables.GLOBAL_CLIENT, 'del_ind': False, 'username': val.username
-    })
+    # user_dropdown_values = django_query_instance.django_filter_only_query(UserData, {
+    #     'client': global_variables.GLOBAL_CLIENT, 'del_ind': False, 'username': val.username
+    # })
     user_data_values = []
     for val in chat_support_data:
         res = val.username.split(',')
@@ -347,3 +383,35 @@ def delete_table_row(request):
                                                   {'client': global_variables.GLOBAL_CLIENT,
                                                    'org_support_guid': call_support_guid}, {'del_ind': True})
     return True
+
+
+def active_inactive_org(request):
+    emp_lock_flag_detail = JsonParser_obj.get_json_from_req(request)
+    announcement_id = emp_lock_flag_detail['announcement_id']
+    flag = emp_lock_flag_detail['flag']
+
+    # Determine the new status based on the flag value
+    if flag:
+        new_status = 'Active'
+    else:
+        new_status = 'Inactive'
+
+    announcementid = announcement_id.split('-')[0]
+
+    # Update the status in the database
+    django_query_instance.django_update_query(
+        OrgAnnouncements,
+        {'client': global_variables.GLOBAL_CLIENT,
+         'announcement_id': announcementid,
+         'del_ind': False},
+        {'status': new_status}
+    )
+
+    # Prepare the response
+    response = {
+        'status': new_status,
+        'message': 'Status updated successfully'
+    }
+
+    return JsonResponse(response, safe=False)
+

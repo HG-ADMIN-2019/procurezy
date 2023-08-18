@@ -31,6 +31,7 @@ from eProc_Basic.Utilities.global_defination import global_variables
 from eProc_Basic_Settings.views import JsonParser_obj
 from eProc_Configuration.models import *
 from eProc_Configuration.models.basic_data import Country
+from eProc_Configuration.models.development_data import FieldTypeDescription
 from eProc_Configuration.models.master_data import OrgPorg
 from eProc_Doc_Search_and_Display.Utilities.search_display_generic import get_hdr_data, get_hdr_data_app_monitoring
 from eProc_Emails.models import EmailUserMonitoring, EmailDocumentMonitoring, EmailSupplierMonitoring
@@ -885,6 +886,7 @@ def get_acct_report(request):
 def org_announcements_search(request):
     global t_count, announcement_result1
     encrypted_guid = []
+    update_user_info(request)
     client = global_variables.GLOBAL_CLIENT
     status_dropdown_values = django_query_instance.django_filter_value_list_query(FieldTypeDescription, {
         'del_ind': False, 'field_name': 'status', 'client': global_variables.GLOBAL_CLIENT
@@ -1180,7 +1182,8 @@ def delete_org_announcement(request):
 
     announcement_ids = [annsmt_data['unique_announcement_id'] for annsmt_data in announcement_result1]
 
-    response = {'announcement_ids': announcement_ids, 'success_message': success_message, 't_count': t_count}
+    response = {'announcement_ids': announcement_ids, 'success_message': success_message, 't_count': t_count,
+                'announcement_result1': announcement_result1}
     return JsonResponse(response, safe=False)
 
 
@@ -1222,7 +1225,8 @@ def extract_employee_template(request):
     writer = csv.writer(response)
 
     writer.writerow(
-        ['EMAIL', 'USERNAME', 'PERSON_NO', 'FORM_OF_ADDRESS', 'FIRST_NAME', 'LAST_NAME', 'GENDER','PHONE_NUM', 'PASSWORD',
+        ['EMAIL', 'USERNAME', 'PERSON_NO', 'FORM_OF_ADDRESS', 'FIRST_NAME', 'LAST_NAME', 'GENDER', 'PHONE_NUM',
+         'PASSWORD',
          'DATE_JOINED', 'FIRST_LOGIN', 'LAST_LOGIN', 'IS_ACTIVE', 'IS_SUPERUSER', 'IS_STAFF', 'DATE_FORMAT',
          'EMPLOYEE_ID', 'DECIMAL_NOTATION', 'USER_TYPE', 'LOGIN_ATTEMPTS', 'USER_LOCKED', 'PWD_LOCKED', 'SSO_USER',
          'VALID_FROM', 'VALID_TO', 'del_ind', 'CURRENCY', 'LANGUAGE_ID', 'OBJECT_ID', 'TIME_ZONE'])

@@ -11,10 +11,10 @@
                 </div>
                 <!-- Modal body -->
                 <div class="modal-body scrollbox">
-                    <div id="id_del_add_button" class="mb-2" hidden>
-                        <button class="btn btn-outline-primary" type="button" onclick="add_popup_row()"><i class="fa fa-plus"></i> add new row</button>
-                        <button class="btn btn-outline-primary" id="call_delete_btn" hidden onclick="delete_table_row('id_popup_table')"><i class="fa fa-trash"></i> delete</button>
-                    </div>
+<!--                    <div id="id_del_add_button" class="mb-2" hidden>-->
+<!--                        <button class="btn btn-outline-primary" type="button" onclick="add_popup_row()"><i class="fa fa-plus"></i> add new row</button>-->
+<!--                        <button class="btn btn-outline-primary" id="call_delete_btn" hidden onclick="delete_table_row('id_popup_table')"><i class="fa fa-trash"></i> delete</button>-->
+<!--                    </div>-->
 
                     <div class="alert alert-success" id="org_support_update_success" role="alert" hidden><span id="success_msg_id"></span></div>
                     <div id="id_check_error_messages" class="alert alert-danger check_error_messages display-none" hidden></div>
@@ -26,7 +26,7 @@
                     <table class="class_popup_table table table-bordered mt-2" id="id_popup_table" >
                         <thead>
                         <tr>
-                            <th id="select_call" class="display-none">Select</th>
+<!--                            <th id="select_call" class="display-none">Select</th>-->
                             <th>Support Number</th>
                             <th id="id_del_ind_checkbox" hidden>Del Indicator</th>
                             <th hidden></th>
@@ -121,66 +121,86 @@ function add_popup_row() {
     }
     table_sort_filter_popup_pagination('id_popup_table');
 }
-  function onclick_edit(){
-    $(".hg_edit_display_mode").prop( "disabled", false );
-    $("#id_del_add_button").prop( "hidden", false );
-    // $("#email_del_add_button").prop( "hidden", false );
-      $("#select_call").prop( "hidden", false );
-      document.getElementById('select_call').style.display = 'block';
-     $(".class_call_checkbox").prop( "hidden", false );
-     document.getElementById('save_cancel_btn').style.display = 'block';
-     $("#save_cancel_btn").prop( "hidden", false );
-     document.getElementById('edit_id').style.display = 'none';
-     $("#call_checkbox").show();
-     $(".call_checkbox_row").show();
-}
-    function save_support_data(){
+function onclick_edit() {
+    // Enable the necessary elements for editing
+    $(".hg_edit_display_mode").prop("disabled", false);
+    $("#id_del_add_button").prop("hidden", false);
+    $("#save_cancel_btn").css("display", "block");
+    $("#save_id").prop("disabled", false); // Enable the Save button
 
-    var form_data=[];
+    // Hide the Edit button
+    $("#edit_id").hide();
+
+    // Hide the support number column header
+    $("#select_call").prop("hidden", true);
+
+    // Show the support number input fields for editing
+    $(".class_popup_table tbody tr td:nth-child(2) input").prop("disabled", false);
+}
+
+function save_support_data() {
+    var form_data = [];
     var isValid = 'Y';
 
     $("#id_popup_table TBODY TR").each(function () {
-    var row = $(this);
-    var support_data = {};
-        support_data.support_type = 'CALL'
-        support_data.support_email = ''
-        support_data.support_number = row.find("TD").eq(1).find('input[type="text"]').val()
-        support_data.username = ''
-        support_data.org_support_guid = row.find("TD").eq(3).find('input[type="text"]').val()
+        var row = $(this);
+        var support_data = {};
+        support_data.support_type = 'CALL';
+        support_data.support_email = '';
+        support_data.support_number = row.find("TD").eq(1).find('input[type="text"]').val();
+        support_data.username = '';
+        support_data.org_support_guid = row.find("TD").eq(3).find('input[type="text"]').val();
 
-        isValid = phonenumber(support_data.support_number)
-        if(!isValid)
-        { console.log("valid")}
-         form_data.push(support_data)
-
+        isValid = phonenumber(support_data.support_number);
+        if (!isValid) {
+            console.log("valid");
+        }
+        form_data.push(support_data);
     });
+
+    // Perform the AJAX request
     $.ajax({
         type: 'POST',
         url: "{% url 'eProc_Org_Support:org_support_save' %}",
         data: JSON.stringify(form_data),
-        success: function(response) {
-           $("#success_msg_id").text(response.message);
-           $("#org_support_update_success").prop( "hidden", false );
-           $("#org_support_guid").val(response.updated_guid);
+        success: function (response) {
+            // Handle the AJAX success response here
+            $("#success_msg_id").text(response.message);
+            $("#org_support_update_success").prop("hidden", false);
+            $("#org_support_guid").val(response.updated_guid);
+
+            // Disable the necessary elements after saving
+            $(".hg_edit_display_mode").prop("disabled", true);
+            $("#id_del_add_button").prop("hidden", true);
+            $("#select_call").prop("hidden", true);
+            $(".class_call_checkbox").prop("hidden", true);
+            $("#save_cancel_btn").css("display", "none");
+            $("#edit_id").show(); // Show the Edit button
+            $("#call_checkbox").hide();
+            $(".call_checkbox_row").hide();
+            setTimeout(function () {
+                $('#org_support_update_success').prop('hidden', true); // Hide the success message
+                $('#myModal').modal('hide'); // Hide the entire modal
+            }, 5000); // 5000 milliseconds = 5 seconds
         }
     });
-
 }
-function cancel_support_details(){
-    $(".hg_edit_display_mode").prop( "disabled", true );
-    document.getElementById('save_cancel_btn').style.display = 'none';
-    $("#save_cancel_btn").prop( "hidden", true );
-    document.getElementById('edit_id').style.display = 'block';
-    $("#edit_id").prop( "hidden", false );
-      $(".class_call_checkbox").prop( "hidden", true );
-     $("#select_call").prop( "hidden", true );
-    // document.getElementById('select_call').style.display = 'block';
-<!--     $("#call_checkbox").prop( "hidden", true );-->
-     $("#call_checkbox").hide();
-    $("#id_del_add_button").prop( "hidden", true );
+
+function cancel_support_details() {
+    $(".hg_edit_display_mode").prop("disabled", true);
+    $("#save_cancel_btn").css("display", "none");
+    $("#edit_id").show();
+    $(".class_call_checkbox").prop("hidden", true);
+    $("#select_call").prop("hidden", true);
+    $("#call_checkbox").hide();
+    $("#id_del_add_button").prop("hidden", true);
     $("#org_support_update_success").prop("hidden", true);
     $(".call_checkbox_row").hide();
+
+    // Close the modal when the Cancel button is clicked
+    $('#myModal').modal('hide');
 }
+
 function phonenumber(inputtxt)
 {
     console.log(inputtxt);
