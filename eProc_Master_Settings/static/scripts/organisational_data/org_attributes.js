@@ -3,17 +3,27 @@ var validate_add_attributes = [];
 var main_table_low_value = [];
 var org_attr={};
 
+//hide the myModal popup: Implemented Dependency delete purpose
+function hideModal() {
+    $('#org_attr_Modal').modal('hide');
+}
+
+//onclick of checkbox enable delete button in popup -> Dependency delete
+function enableDeleteButton() {
+    var $popupCheckboxes = $('#id_popup_table td .checkbox_check');
+    var $deleteButton = $('#delete_data');
+    // Check if any checkbox is checked in the popup
+    var anyCheckboxChecked = $popupCheckboxes.is(":checked");
+    // Enable or disable the delete button based on whether any checkbox is checked
+    $deleteButton.prop('disabled', !anyCheckboxChecked || $popupCheckboxes.length === 0);
+}
+
 // on click update icon display the selected checkbox data to update
 function onclick_update_button() {
     GLOBAL_ACTION = "UPDATE"
     display_button();
     onclick_copy_update_button("UPDATE")
     document.getElementById("id_del_add_button").style.display = "none";
-}
-
-//hide the myModal popup: Implemented Dependency delete purpose
-function hideModal() {
-    $('#org_attr_Modal').modal('hide');
 }
 
 //************************************
@@ -28,7 +38,7 @@ function onclick_copy_update_button(data) {
     var checkBoxes = document.getElementsByClassName("checkbox_check");
     var edit_basic_data = "";
     var dropdown_values = [];
-    dropdown_value();
+//    dropdown_value();
     //Loop through the CheckBoxes.
     for (var i = 0; i < checkBoxes.length; i++) {
         if (checkBoxes[i].checked) {

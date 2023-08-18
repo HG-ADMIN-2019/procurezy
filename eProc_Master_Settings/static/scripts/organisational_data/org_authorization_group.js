@@ -99,9 +99,9 @@ function read_popup_data() {
         auth_group.auth_level = row.find("TD").eq(3).find("select option:selected").val();
         auth_group.auth_obj_id = row.find("TD").eq(4).find("select option:selected").val();
         auth_group.auth_grp_guid = row.find("TD").eq(5).find('input[type="text"]').val();
-        // if (auth_group == undefined) {
-        //     auth_group.auth_obj_grp = row.find("TD").eq(1).find('input[type="text"]').val();
-        // }
+         if (auth_group == undefined) {
+             auth_group.auth_obj_grp = row.find("TD").eq(1).find('input[type="text"]').val();
+         }
         if (auth_group.auth_grp_guid == undefined) {
             auth_group.auth_grp_guid = ''
         }
@@ -130,6 +130,28 @@ function get_main_table_data() {
     table_sort_filter('display_basic_table');
 }
 
+function get_auth_grp_data() {
+    main_table_data = {}; // Object to store node values for each node type
+    $('#display_basic_table').DataTable().destroy();
+    $("#display_basic_table TBODY TR").each(function() {
+        var row = $(this);
+        var main_attribute = {};
+        main_attribute.auth_obj_grp = row.find("TD").eq(1).html();
+        main_attribute.auth_grp_desc = row.find("TD").eq(2).html().toUpperCase();
+        main_attribute.auth_level = row.find("TD").eq(3).html();
+        main_attribute.auth_obj_id = row.find("TD").eq(4).html();
+        var main_attribute_compare = main_attribute.auth_obj_grp + ' - ' + main_attribute.auth_grp_desc + ' - ' + main_attribute.auth_level + ' - ' + main_attribute.auth_obj_id
+        if (!main_table_data.hasOwnProperty(main_attribute.auth_obj_grp)) {
+            main_table_data[main_attribute.auth_obj_grp] = [];
+        }
+        main_table_data[main_attribute.auth_obj_grp].push({
+            auth_level: main_attribute.auth_level,
+            auth_obj_id: main_attribute.auth_obj_id
+        });
+    });
+    table_sort_filter('display_basic_table');
+}
+
 // Function to get the selected row data
 function get_row_data(tableSelector) {
     main_table_auth_group_checked = []; // Clear the previous data before collecting new data
@@ -152,11 +174,44 @@ function get_row_data(tableSelector) {
 // Function for add a new row data
 function new_row_data(){
     basic_add_new_html = '<tr><td><input type="checkbox" required></td>'+
-    '<td><select type="text" class="input form-control authgroup"  onchange="GetSelectedTextValue(this)">'+ auth_group_id_dropdown+'</select></td>'+
+    '<td><select type="text" class="input form-control authgroup" onchange="get_type_obj_values(this)">'+ auth_group_id_dropdown+'</select></td>'+
     '<td><input class="form-control description" type="text"  name="description" value="'+auth_grp_desc+'"  disabled></td>'+
     '<td><select class="form-control">'+auth_level_dropdown+'</select></td>'+
     '<td><select class="form-control">'+auth_obj_id_dropdown+'</select></td>'+
     '<td hidden><input type="text" value="GUID"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
     table_sort_filter('id_popup_table');
+}
+
+function get_type_obj_values(selectElement) {
+    var selected_auth_group = selectElement.value;
+    var auth_levelDropdown = $(selectElement).closest('tr').find('.form-control').eq(3);
+    var auth_objDropdown = $(selectElement).closest('tr').find('.form-control').eq(4);
+    var auth_group = main_table_data[selected_auth_group];
+    var used_auth_group = {}; // Object to store the used node values for the selected node type
+
+    // Loop through the node values in the main_table_data and store the used ones for the selected node type
+    $.each(auth_group, function(index, value) {
+        used_auth_group[value.auth_level] = true;
+        used_auth_group[value.auth_obj_id] = true;
+    });
+
+    auth_levelDropdown.empty();
+    auth_objDropdown.empty();
+
+    // Now, populate the auth_levelDropdown with only the unused auth_level values
+    $.each(rendered_auth_type, function(i, item) {
+        var authLevelValue = item.field_type_id;
+        if (!used_auth_group.hasOwnProperty(authLevelValue)) {
+            auth_levelDropdown.append('<option value="' + authLevelValue + '">' + authLevelValue + '</option>');
+        }
+    });
+
+    // Populate the auth_objDropdown with only the unused auth_obj_id values
+    $.each(rendered_auth_obj_data, function(i, item) {
+        var authObjIDValue = item.auth_obj_id;
+        if (!used_auth_group.hasOwnProperty(authObjIDValue)) {
+            auth_objDropdown.append('<option value="' + authObjIDValue + '">' + authObjIDValue + '</option>');
+        }
+    });
 }

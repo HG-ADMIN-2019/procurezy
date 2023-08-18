@@ -163,7 +163,7 @@ function read_popup_data() {
 // Function for add a new row data
 function new_row_data() {
     basic_add_new_html = '<tr><td><input type="checkbox" required></td>'+
-    '<td><select id="messages_id" name="messages_id" title="Select.." class="form-control"  type="text">'+ message_id_dropdown +'</select></td>' +
+    '<td><select id="messages_id" name="messages_id" title="Select.." class="form-control"  type="text" onchange="get_language_dropdown(this)">'+ message_id_dropdown +'</select></td>' +
     '<td><input class="input form-control check_special_char" type="text" id="messages_desc" name="messages_desc"  required></td>'+
     '<td><select id="language" name="language_id" title="Select..." class="form-control"  type="text">' + language_dropdown +'</select></td>' +
     '<td hidden><input  type="text" class="form-control"  name="guid"></td>'+
@@ -171,6 +171,29 @@ function new_row_data() {
     '</tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
     table_sort_filter('id_popup_table');
+}
+
+function get_language_dropdown(selectElement) {
+    var selectedMessage = selectElement.value;
+    var language_dropdown = $(selectElement).closest('tr').find('.form-control').eq(2);
+    var languages = main_table_data[selectedMessage];
+    var usedLanguage = {}; // Object to store the used node values for the selected node type
+
+    // Loop through the node values in the main_table_data and store the used ones for the selected node type
+    $.each(languages, function(index, value) {
+        usedLanguage[value] = true;
+    });
+    language_dropdown.empty();
+
+    // Now, populate the dropdown with only the unused node values
+    $.each(render_language_data, function(i, item) {
+        var language = item.language_id;
+        var description = item.description;
+
+        if (!usedLanguage.hasOwnProperty(description)) {
+            language_dropdown.append('<option value="' + language + '">' + description + '</option>');
+        }
+    });
 }
 
 // Function to get main table data
@@ -185,6 +208,24 @@ function get_main_table_data() {
         main_attribute.language_id = row.find("TD").eq(3).html();
         var compare_maintable = main_attribute.messages_id+'-'+main_attribute.language_id;
         main_table_low_value.push(compare_maintable);
+    });
+    table_sort_filter('display_basic_table');
+}
+
+function get_msg_id_data() {
+    main_table_data = {}; // Object to store node values for each node type
+    $('#display_basic_table').DataTable().destroy();
+    $("#display_basic_table TBODY TR").each(function() {
+        var row = $(this);
+        var main_attribute = {};
+        main_attribute.messages_id = row.find("TD").eq(1).html();
+        main_attribute.messages_desc = row.find("TD").eq(2).html();
+        main_attribute.language_id = row.find("TD").eq(3).html();
+        var compare_maintable = main_attribute.messages_id + '-' + main_attribute.messages_desc+ '-' + main_attribute.language_id;
+        if (!main_table_data.hasOwnProperty(main_attribute.messages_id)) {
+            main_table_data[main_attribute.messages_id] = [];
+        }
+        main_table_data[main_attribute.messages_id].push(main_attribute.language_id);
     });
     table_sort_filter('display_basic_table');
 }

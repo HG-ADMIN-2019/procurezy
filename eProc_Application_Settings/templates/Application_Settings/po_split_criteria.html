@@ -177,6 +177,58 @@
         });
     }
 
+    // Hide dropdown when click on add button
+    function split_type_drpdown() {
+        po_split_type_dropdown = '';
+        var hidden_po_split_type = []; // Array to store node types with all their node values used in the main table
+
+        // Function to check if all node values of a specific node type are used in the main table
+        function areAll_companyUsed(po_split_type) {
+            var company_Values = main_table_data[po_split_type];
+            if (!company_Values) {
+                return false;
+            }
+            return company_Values.length === rendered_company_data.length;
+        }
+
+        // Iterate through the rendered_po_split_types_data to build the po_split_type dropdown
+        $.each(rendered_po_split_types_data, function(i, item) {
+            var po_split_type = item.po_split_type;
+            var po_split_type_desc = item.po_split_type_desc; // Get the description
+            if (!areAll_companyUsed(po_split_type)) {
+                po_split_type_dropdown += '<option value="' + po_split_type + '">' + po_split_type_desc + '</option>';
+            } else {
+                hidden_po_split_type.push(po_split_type);
+            }
+        });
+        $.each(hidden_po_split_type, function(i, hidden_po_split_type) {
+            po_split_type_dropdown = po_split_type_dropdown.replace(new RegExp('<option value="' + hidden_po_split_type + '">.*<\/option>'), '');
+        });
+
+        // Extract the first node type value from po_split_type_dropdown using regular JavaScript
+        var first_split_typeMatch = po_split_type_dropdown.match(/value="([^"]+)"/);
+        if (first_split_typeMatch && first_split_typeMatch[1]) {
+            first_split = first_split_typeMatch[1];
+        }
+        if (first_split !== null) {
+            var unused_split_typeForFirstType = [];
+            var used_split_type = {};
+            $.each(main_table_data[first_split], function(index, value) {
+                used_split_type[value] = true;
+            });
+            company_dropdown = '';
+            $.each(rendered_company_data, function(i, item) {
+                var company = item.company_id;
+                if (!used_split_type.hasOwnProperty(company)) {
+                    unused_split_typeForFirstType.push(company);
+                }
+            });
+            $.each(unused_split_typeForFirstType, function(i, company) {
+                company_dropdown += '<option value="' + company + '">' + company + '</option>'
+            });
+        }
+    }
+
     //*************************
     var po_split_dropdown = '';
     $.each(rendered_po_split_types_data, function (i, item) {
@@ -314,7 +366,8 @@
                 rendered_po_split_types_data = response.po_split_typ
                 rendered_activate = response.dropdown_activate
                 rendered_company_data = response.upload_data_company
-                dropdown_value()
+                get_split_type_data()
+                split_type_drpdown()
                 $("#error_msg_id").css("display", "none")
                 $( "#header_select").prop( "hidden", false );
                 GLOBAL_ACTION = button.value
