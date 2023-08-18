@@ -335,7 +335,7 @@ def get_header_based_on_calloff(search_fields):
         'purch_grp__in': pgroup_id, 'client': global_variables.GLOBAL_CLIENT, 'del_ind': False
     }, 'sc_header_guid')
 
-    call_off = [CONST_CATALOG_CALLOFF, CONST_FREETEXT_CALLOFF, CONST_PR_CALLOFF, CONST_LIMIT_ORDER_CALLOFF]
+    call_off = [CONST_FREETEXT_CALLOFF, CONST_PR_CALLOFF, CONST_LIMIT_ORDER_CALLOFF]
 
     scitem_call_off = django_query_instance.django_filter_only_query(ScItem, {
         'header_guid__in': purch_header_guid, 'client': global_variables.GLOBAL_CLIENT, 'call_off__in': call_off
