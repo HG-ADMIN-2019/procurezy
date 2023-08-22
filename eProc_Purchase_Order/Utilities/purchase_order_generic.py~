@@ -297,7 +297,7 @@ class CreatePurchaseOrder:
             #     self.supplier_name) + ',\n Please find attached purchase order.\n\nRegards,\nMajjaka'
             # send_to_list.append(get_supplier_email(supplier_id))
             # email_supp_monitoring_guid = ''
-            send_po_attachment_email(self.output, self.po_document_number, email_supp_monitoring_guid)
+            # send_po_attachment_email(self.output, self.po_document_number, email_supp_monitoring_guid)
 
             return True
         # except ValidationError:

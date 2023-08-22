@@ -661,7 +661,7 @@ def order_shopping_cart(request):
 
                 for po_document_number in po_doc_list:
                     email_supp_monitoring_guid = ''
-                    # send_po_attachment_email(output, po_document_number, email_supp_monitoring_guid)
+                    send_po_attachment_email(output, po_document_number, email_supp_monitoring_guid)
             # function to send SC Approval email
             #  check for sc_completion_flag == true  , if not send mail
             if sc_completion_flag == 'False':

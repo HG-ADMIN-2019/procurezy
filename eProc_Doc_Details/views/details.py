@@ -883,7 +883,7 @@ def update_sc(request):
                         # Send purchase order email to supplier
                         for po_document_number in po_doc_list:
                             email_supp_monitoring_guid = ''
-                            # send_po_attachment_email(output, po_document_number, email_supp_monitoring_guid)
+                            send_po_attachment_email(output, po_document_number, email_supp_monitoring_guid)
                     else:
                         next_level_approver = django_query_instance.django_filter_value_list_query(ScPotentialApproval,
                                                                                                    {
