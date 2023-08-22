@@ -64,7 +64,7 @@ def save_appr_status(request):
         # Send purchase order email to supplier
                 for po_document_number in po_doc_list:
                     email_supp_monitoring_guid = ''
-                    send_po_attachment_email(data['output'], po_document_number, email_supp_monitoring_guid)
+                    # send_po_attachment_email(data['output'], po_document_number, email_supp_monitoring_guid)
 
                     if not status:
                         update_po_error_status(sc_header_instance.guid, CONST_VALIDATION_ERROR)
