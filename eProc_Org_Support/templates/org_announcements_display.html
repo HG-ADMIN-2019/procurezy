@@ -301,7 +301,7 @@
     $(document).ready(function () {
         nav_bar_admin();
         console.log(document.getElementById("input_announcement_subject").value);
-        document.getElementById("announcement_subject").value = "";
+        document.getElementById("input_announcement_subject").value = "";
         table_sort_filter_basic("qwsqwsqws")
     });
 
@@ -390,40 +390,54 @@
     }
 
     // Onclick of edit button
-    function edit_org_announcement_data(clickedElement) {
-        $('#save_button').show();
-        $('#edit_button').hide();
-        // Get the row that contains the clicked element (Edit button)
-        const row = $(clickedElement).closest('tr');
-        var announcementDetails = {
-            announcement_id: row.find('td:nth-child(3)').text(),
-            announcement_subject: row.find('td:nth-child(4)').text(),
-            announcement_description: row.find('td:nth-child(5)').text(),
-            status: row.find('.toggle-block').prop('checked') ? 'Active' : 'Inactive',
-            priority: row.find('td:nth-child(7)').text(),
-            announcement_from_date: row.find('td:nth-child(8)').data('date'),
-            announcement_to_date: row.find('td:nth-child(9)').data('date'),
-            announcement_guid: row.find('td:nth-child(2)').text(),
-        };
-        // Update the modal content with the announcement details
-        $("#announcement_id").val(announcementDetails.announcement_id);
-        $("#modal_announcement_subject").val(announcementDetails.announcement_subject);
-        $("#announcement_desc").val(announcementDetails.announcement_description);
-        $("#announcement_status_").val(announcementDetails.status);
-        $("#priority_").val(announcementDetails.priority);
-        $("#from_date").val(announcementDetails.announcement_from_date);
-        $("#to_date").val(announcementDetails.announcement_to_date);
-        $("#announcement_guid").val(announcementDetails.announcement_guid);
-        // Enable specific fields for editing
-        $("#modal_announcement_subject").prop("disabled", false);
-        $("#announcement_desc").prop("disabled", false);
-        $("#announcement_status_").prop("disabled", false);
-        $("#priority_").prop("disabled", false);
-        $("#from_date").prop("disabled", false);
-        $("#to_date").prop("disabled", false);
-        // Show the modal
-        $("#saveConfirmationModal").modal("show");
-    }
+function edit_org_announcement_data(clickedElement) {
+    $('#save_button').show();
+    $('#edit_button').hide();
+
+    // Get the row that contains the clicked element (Edit button)
+    const row = $(clickedElement).closest('tr');
+
+    // Get the announcement details
+    const announcementDetails = {
+        announcement_id: row.find('td:nth-child(3)').text(),
+        announcement_subject: row.find('td:nth-child(4)').text(),
+        announcement_description: row.find('td:nth-child(5)').text(),
+        status: row.find('.toggle-block').prop('checked') ? 'Active' : 'Inactive',
+        priority: row.find('td:nth-child(7)').text(),
+        announcement_from_date: parseFormattedDate(row.find('td:nth-child(8)').text()),
+        announcement_to_date: parseFormattedDate(row.find('td:nth-child(9)').text()),
+        announcement_guid: row.find('td:nth-child(2)').text(),
+    };
+
+    // Update the modal content with the announcement details
+    $("#announcement_id").val(announcementDetails.announcement_id);
+    $("#modal_announcement_subject").val(announcementDetails.announcement_subject);
+    $("#announcement_desc").val(announcementDetails.announcement_description);
+    $("#announcement_status_").val(announcementDetails.status);
+    $("#priority_").val(announcementDetails.priority);
+    $("#from_date").val(formatDateForInput(announcementDetails.announcement_from_date));
+    $("#to_date").val(formatDateForInput(announcementDetails.announcement_to_date));
+    $("#announcement_guid").val(announcementDetails.announcement_guid);
+
+    // Enable specific fields for editing
+    $("#modal_announcement_subject, #announcement_desc, #announcement_status_, #priority_, #from_date, #to_date").prop("disabled", false);
+
+    // Show the modal
+    $("#saveConfirmationModal").modal("show");
+    $("#org_announcement_update_success").css("display", "none");
+}
+
+function parseFormattedDate(dateString) {
+    const parts = dateString.split("-");
+    return new Date(parts[2], parts[1] - 1, parts[0]);
+}
+
+function formatDateForInput(date) {
+    const year = date.getFullYear();
+    const month = ("0" + (date.getMonth() + 1)).slice(-2);
+    const day = ("0" + date.getDate()).slice(-2);
+    return `${year}-${month}-${day}`;
+}
 
     function view_org_announcement_data(clickedElement) {
         $('#save_button').hide();
@@ -552,7 +566,7 @@
 <!--                setTimeout(function () { $("#error_msg_div").prop("hidden", true); }, 5000)-->
                 message_display_time();
 
-                window.location.reload(5000);
+<!--                window.location.reload(5000);-->
                 CloseLoaderPopup();
             }
         });
@@ -721,7 +735,6 @@ if (from_date_val > to_date_val) {
             setTimeout(function() {
                 $('#saveConfirmationModal').modal('hide');
             }, 5000); // Delay the modal closing for 2 seconds (adjust as needed)
-            location.reload();
             CloseLoaderPopup();
         }
     });
@@ -758,13 +771,43 @@ if (from_date_val > to_date_val) {
     }
 
         //***********************************
-    function add_new_org_announcement(button) {
-        $("#address_clear").trigger('reset');
-        $("#error_msg_id").css("display", "none")
-        GLOBAL_ACTION = button.value
-        $('#saveConfirmationModal').modal('show');
-        $("#id_add_addresses_address_number").prop("disabled", false);
-    }
+function add_new_org_announcement(button) {
+        $('#save_button').show();
+    $('#edit_button').hide();
+    // Clear the modal content
+    $("#announcement_id").val("");
+    $("#modal_announcement_subject").val("");
+    $("#announcement_desc").val("");
+    $("#announcement_status_").val("");
+    $("#priority_").val("");
+    $("#from_date").val("");
+    $("#to_date").val("");
+    $("#announcement_guid").val("");
+
+    // Reset any disabled fields
+    $("#modal_announcement_subject").prop("disabled", false);
+    $("#announcement_desc").prop("disabled", false);
+    $("#announcement_status_").prop("disabled", false);
+    $("#priority_").prop("disabled", false);
+    $("#from_date").prop("disabled", false);
+    $("#to_date").prop("disabled", false);
+
+    // Trigger form reset and hide error messages
+    $("#address_clear").trigger('reset');
+    $("#error_msg_id").css("display", "none");
+
+    // Set the global action and enable specific fields
+    GLOBAL_ACTION = button.value;
+    $("#id_add_addresses_address_number").prop("disabled", false);
+
+    // Hide the success message
+    $("#org_announcement_update_success").css("display", "none");
+
+    // Show the modal for adding a new announcement
+    $('#saveConfirmationModal').modal('show');
+}
+
+
 
       var previous_state;
 function lock_active_change(){

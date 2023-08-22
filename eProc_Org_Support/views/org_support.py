@@ -1,3 +1,5 @@
+import ast
+
 from django.contrib.auth.decorators import login_required
 from django.db.models.query_utils import Q
 from django.http.response import JsonResponse
@@ -315,15 +317,18 @@ def get_support_data(request):
     # })
     user_data_values = []
     for val in chat_support_data:
-        res = val.username.split(',')
+        username_str = val.username  # Assuming val.username = '\'CHAITRA\''
+        username_str = username_str.replace('\\', '')  # Remove backslashes
+        username = ast.literal_eval(username_str)  # Convert to Python object
+
         selected_user_data = django_query_instance.django_filter_only_query(UserData, {
-            'client': global_variables.GLOBAL_CLIENT, 'del_ind': False, 'username__in': res
+            'client': global_variables.GLOBAL_CLIENT, 'del_ind': False, 'username__in': username
         })
         for names in selected_user_data:
             user_names = names.first_name + ' ' + names.last_name + ' - ' + names.email
             user_data_values.append(user_names)
 
-        chat_support_data_array = res
+        chat_support_data_array = username
         chat_support_guid_array.append(val.org_support_guid)
 
     return JsonResponse(
