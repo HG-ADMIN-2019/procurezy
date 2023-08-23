@@ -7,20 +7,9 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <!-- Modal body -->
             <div class="modal-body scrollbox">
                 <div id="chat_del_add_button" class="mb-2" hidden>
-                    <!-- Commented out the buttons -->
-                    <!--
-                    <button class="btn btn-outline-primary" id="add_new_row_btn" type="button" onclick="add_popup_row_chat()">
-                        <i class="fa fa-plus"></i> add new row
-                    </button>
-                    <button class="btn btn-outline-primary" id="chat_delete_btn" onclick="application_settings_delete_Row_chat('id_popup_table_chat')">
-                        <i class="fa fa-trash"></i> delete
-                    </button>
-                    -->
                 </div>
-
                 <div class="alert alert-success display-none" id="org_support_chat_success" role="alert"></div>
                 <div id="id_check_error_messages_chat" class="alert alert-danger check_error_messages" hidden></div>
 
@@ -31,7 +20,6 @@
                 <table class="class_popup_table table table-bordered mt-2" id="id_popup_table_chat">
                     <thead>
                         <tr>
-                            <!-- <th id="select_chat" hidden>Select</th> -->
                             <th>Support Username</th>
                             <th id="id_del_ind_checkbox_chat" hidden>Del Indicator</th>
                             <th hidden></th>
@@ -40,8 +28,6 @@
                     <tbody id="id_popup_tbody_chat"></tbody>
                 </table>
             </div>
-
-            <!-- Modal footer -->
             <div class="modal-footer">
                 <button class="btn btn-primary display-none" id="edit_id_chat" onclick="onclick_edit_chat()">
                     <i class="fas fa-save"></i> edit
@@ -58,7 +44,6 @@
         </div>
     </div>
 </div>
-<!--end of modal popup for Chat-->
 
 <script>
     //**************************
@@ -220,6 +205,7 @@
                         content += '<td hidden><input class="input" type="text" name="org_support_guid" value="' + response['chat_support_guid_array'] + '" /></td>';
                         content += '</tr>';
                         $('#id_popup_table_chat tbody').html(content);
+                        $('#myModalChat').modal('show');
     <!--                         MultipleSelect();-->
                         $("#username").val(temp[0]);
     <!--                          $("select[name=username]").val(dt);-->
@@ -235,7 +221,7 @@
             $("#id_del_ind_checkbox_chat").prop("hidden", true);
     <!--    document.getElementById("id_del_add_button").style.display = "block";-->
             $("#save_id_chat").prop("hidden", false);
-            $('#myModalChat').modal('show');
+
         }
 
     // on click add icon display the row in to add the new entries for chat
