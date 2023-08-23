@@ -72,10 +72,32 @@ function display_error_message(error_message){
 function new_row_data() {
     basic_add_new_html =
         '<tr><td><input type="checkbox" required></td>'+
-        '<td><select type="text" class="input form-control">'+ po_split_type_dropdown +'</select></td>'+
+        '<td><select type="text" class="input form-control" onchange="get_company_values(this)">'+ po_split_type_dropdown +'</select></td>'+
         '<td><select type="text" class="input form-control">'+ company_dropdown +'</select></td><td><select type="text" class="input form-control">'+ activate_dropdown +'</select></td><td hidden><input type="text" class= "form-control" name="po_split_criteria_guid"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
     table_sort_filter('id_popup_table');
+}
+
+function get_company_values(selectElement) {
+    var selected_company = selectElement.value;
+    var companyDropdown = $(selectElement).closest('tr').find('.form-control').eq(1);
+    var company = main_table_data[selected_company];
+    var used_companyValues = {}; // Object to store the used node values for the selected node type
+
+    // Loop through the node values in the main_table_data and store the used ones for the selected node type
+    $.each(company, function (index, value) {
+        used_companyValues[value] = true;
+    });
+
+    companyDropdown.empty();
+
+    // Now, populate the dropdown with only the unused node values from rendered_call_off_data.data
+    $.each(rendered_company_data, function (i, item) {
+        var companyValue = item.company_id;
+        if (!used_companyValues.hasOwnProperty(companyValue)) {
+            companyDropdown.append('<option value="' + companyValue + '">' + companyValue + '</option>');
+        }
+    });
 }
 
 // Function to get main table data

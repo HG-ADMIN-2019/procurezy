@@ -185,6 +185,7 @@
     function auth_group_drpdown() {
         var hiddenAuthGroupIDs = [];
         var usedAuthGroupIDs = {};
+        auth_group_id_dropdown='';
 
         // Function to check if all auth_level and auth_obj_id values for a specific auth_group_id are used in the main table
         function areAllValuesUsed(authGroupID) {
