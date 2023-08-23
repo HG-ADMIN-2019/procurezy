@@ -1,4 +1,5 @@
 import ast
+import datetime
 
 from django.contrib.auth.decorators import login_required
 from django.db.models.query_utils import Q
@@ -78,6 +79,10 @@ def org_announcement_save(request):
             'client': client,
             'del_ind': False,
             'object_id': obj_id,
+            'announcements_created_at': datetime.datetime.now(),
+            'announcements_created_by': global_variables.GLOBAL_LOGIN_USERNAME,
+            'announcements_changed_at': datetime.datetime.now(),
+            'announcements_changed_by': global_variables.GLOBAL_LOGIN_USERNAME,
         }
 
         # Check if an announcement with the given unique_announcement_id already exists
@@ -211,6 +216,10 @@ def org_support_save(request):
                 'client': client,
                 'del_ind': False,
                 'object_id': obj_id,
+                'org_support_created_at': datetime.datetime.now(),
+                'org_support_created_by': global_variables.GLOBAL_LOGIN_USERNAME,  # Assuming the user is logged in
+                'org_support_changed_at': datetime.datetime.now(),
+                'org_support_changed_by': global_variables.GLOBAL_LOGIN_USERNAME,
             }
 
             django_query_instance.django_update_or_create_query(OrgSupport, {'org_support_guid': guid},
