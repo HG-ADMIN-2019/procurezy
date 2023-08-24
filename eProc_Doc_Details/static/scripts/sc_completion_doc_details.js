@@ -178,6 +178,7 @@ function show_item_detail_div() {
     }
     if (edit_flag) {
         // Item data
+        if(editable_flag){
         $('.pr_lead_time').prop('disabled', false)
         $("#ScItem-purch_grp-" + rendered_item_guid[item_detail_visible_div]).prop("disabled", false);
         $("#ScItem-silent_po-" + rendered_item_guid[item_detail_visible_div]).prop("disabled", false);
@@ -230,6 +231,7 @@ function show_item_detail_div() {
             $("#ScItem-price_unit-" + rendered_item_guid[item_detail_visible_div]).prop("disabled", false);
         }
 
+    }
     }
 }
 

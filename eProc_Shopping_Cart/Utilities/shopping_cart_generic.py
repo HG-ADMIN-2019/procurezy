@@ -439,7 +439,7 @@ def get_currency_converted_price_data(cart_items):
     return total_actual_price, total_discount_value, total_tax_value, total_value, cart_items
 
 
-def validate_get_currency_converted_price_data(cart_items,currency, sc_check_instance,check_flag):
+def validate_get_currency_converted_price_data(cart_items, currency, sc_check_instance, check_flag):
     """
 
     """
@@ -532,7 +532,7 @@ def get_cart_items_detail():
                                                            ['item_num'],
                                                            None)
     cart_items_count = len(cart_items)
-    return cart_items,cart_items_count
+    return cart_items, cart_items_count
 
 
 def update_delivery_date_to_item_table(cart_items):
@@ -577,14 +577,14 @@ def get_manger_and_purchasing_details(company_code, default_acc_ass_cat, total_v
     manager_details = []
     sc_completion_flag = False
     approver_id = []
-    purchase_control_call_off_list = get_order_status(company_code, global_variables.GLOBAL_CLIENT)
+    purchase_control_call_off_list = get_order_status(company_code, prod_cat_list, global_variables.GLOBAL_CLIENT)
     if company_code:
         manager_detail, error_msg = get_manger_detail(global_variables.GLOBAL_CLIENT,
-                                                     global_variables.GLOBAL_LOGIN_USERNAME,
-                                                     default_acc_ass_cat,
-                                                     total_value,
-                                                     company_code, default_acc,
-                                                     global_variables.GLOBAL_USER_CURRENCY)
+                                                      global_variables.GLOBAL_LOGIN_USERNAME,
+                                                      default_acc_ass_cat,
+                                                      total_value,
+                                                      company_code, default_acc,
+                                                      global_variables.GLOBAL_USER_CURRENCY)
         if manager_detail:
             manager_details, approver_id = get_users_first_name(manager_detail)
 

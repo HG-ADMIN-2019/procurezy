@@ -405,7 +405,7 @@
                             $("#id_popup_table TBODY TR").each(function() {
                                 var row = $(this);
                                 var app_typ_id_list = dropdown_values[i][0]
-                                $(row.find("TD").eq(1).find("select option[value="+app_typ_id_list+"]")).attr('selected','selected');
+                                $(row.find("TD").eq(1).find("select[value="+app_typ_id_list+"]")).attr('selected','selected');
                                 i++;
                             });
                             $("#id_del_ind_checkbox").prop("hidden", false);

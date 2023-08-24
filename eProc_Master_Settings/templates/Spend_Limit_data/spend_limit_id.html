@@ -160,7 +160,7 @@
     <select id="drop_down_attr1"> </select>
 </div>
 </div>
-</div>
+
 <script>
    var main_table_spendlimitid = [];
     var master_data_settings = '{{master_data_settings|safe}}';
@@ -320,10 +320,6 @@
                                 var dropdown_values = [];
                                 var del_ind = '';
                                 $("#id_popup_tbody").empty();
-                                var edit_basic_data = '';
-                                var dropdown_values = [];
-                                var del_ind = '';
-                                $("#id_popup_tbody").empty();
                                 $.each(response.valid_data_list, function(i, value) {
                                     var company_type_value = value.company_id
                                     var spend_limit_id = value.spend_code_id
@@ -358,22 +354,22 @@
                                     });
                                     edit_basic_data += '<tr><td><input type="checkbox" required></td><td><select class="form-control" type = "text"><option value ="' + value.company_id + '"'+company_id_list+'>'+value.company_id+'</option></select></td><td><input class="form-control"  type="text" value="'+value.spender_username+'" maxlength="16" onkeypress="return /[a-z0-9]/i.test(event.key)" name="spender_username" style="text-transform:uppercase;" required></td><td><select class="form-control" type = "text"><option value ="' + value.spend_code_id + '"'+spendcode_id_list+'>'+value.spend_code_id+'</option></select></td><td hidden><input type="text" value=""></td><td>' + del_ind + '</td></tr>';
                                 });
-                                $('#id_popup_tbody').append(edit_basic_data);
+                                $('#id_popup_table').append(edit_basic_data);
                                 var i =0;
-                                $("#id_popup_table TBODY TR").each(function(index, tr) {
+                                $("#id_popup_table TBODY TR").each(function() {
                                     var row = $(this);
-                                    var company_id_list= dropdown_values[i][0]
-                                    var spendcode_id_list= dropdown_values[i][1]
-                                    var assign_val = spending_limit_find(account_assgn_val)
-                                    row.find("TD").eq(3).find("select").append(assign_val.spend_code_id_dropdown)
-                                    $(row.find("TD").eq(1).find("select option[value="+company_id_list+"]")).attr('selected','selected');
-                                    $(row.find("TD").eq(3).find("select option[value="+spendcode_id_list+"]")).attr('selected','selected');
-                                    $(row.find("TD").eq(1).find("select")).change(function() {
+                                    var company_type_value = dropdown_values[i][0]
+                                    var spendid_type_value = dropdown_values[i][1]
+                                    var comp_val = spending_limit_find(spendid_type_value)
+                                    $(row.find("TD").eq(1).find("select option[value="+company_type_value+"]")).attr('selected','selected');
+                                    $(row.find("TD").eq(3).find("select option[value="+spendid_type_value+"]")).attr('selected','selected');
+                                    $(row.find("TD").eq(1).find("select")).change(function () {
                                         row.find("TD").eq(3).find("select").empty()
-                                        account_assign = row.find("TD").eq(1).find("select option:selected").val();
-                                        row.find("TD").eq(3).find("select").append(assign_val.spend_code_id_dropdown)
-                                    })
-                                    i = i + 1;
+                                        company_num = row.find("TD").eq(1).find("select option:selected").val();
+                                        var comp_val = spending_limit_find(company_num)
+                                        row.find("TD").eq(3).find("select").append(comp_val.spend_code_id_dropdown)
+                                        })
+                                    i++;
                                 });
                                 $("#id_del_ind_checkbox").prop("hidden", false);
                                 $( "#header_select").prop( "hidden", false );
@@ -384,7 +380,7 @@
                                 $('#id_check_data').modal('show');
                                 $("#id_check_data").prop("hidden", false);
                                 $("#save_id").prop("hidden", true);
-                                table_sort_filter_popup_pagination('id_popup_table')
+                                table_sort_filter('id_popup_table')
                             }
                               CloseLoaderPopup();
                     },
@@ -567,10 +563,10 @@
                     table_sort_filter_popup_pagination('id_popup_table')
                      $("#id_check_special_character_messages").prop("hidden", false);
                      if (count == 0) {
-                            $("#id_check_special_character_messages").prop("hidden", true);
+                           $("#id_check_special_character_messages").prop("hidden", true);
                      }
-                    var message = ''
-                    update_check_message(response.messages[1])
+                    var valid_data = ''
+                    update_check_message(response.valid_data)
                     CloseLoaderPopup();
                 }
             });
@@ -716,6 +712,7 @@
                 }
             });
             if (common.length != 0) {
+                $('#Spnd_Lim_Val_Modal').modal('show');
                 display_duplicate_entry(common);  //Function to highlight the rows in popup
                 error_message = ui_messeges("JMSG001") // Get message details}
                 no_duplicate_value = 'N'
@@ -964,8 +961,8 @@
     });
 
     // ****************************************
-    function update_check_message(messages){
-        $.each(messages, function (i, message) {
+    function update_check_message(valid_data){
+        $.each(valid_data, function (i, message) {
             $("#id_check_success_messages").append('<p>' + message + '</p>')
         });
         $("#id_check_success_messages").prop("hidden",false)

@@ -175,6 +175,7 @@
     var working_days_values = [];
     var wday_array = [];
     var country_dropdwn = [];
+    var main_table_calendar_checked = [];
 
     //******************************
     function calendar_drpdown(){
@@ -208,7 +209,7 @@
         '<td><input class="form-control" type="text"  pattern="[A-Z]" maxlength="10"  name="calender_id" style="text-transform:uppercase;" required></td>'+
         '<td><select id="country" class="input form-control" type="text" name="country"> {% for country in country_list %} <option value="{{country.country_code}}">{{country.country_name}}</option> {% endfor %} </select> </td>'+
         '<td> <input class="form-control check_special_char" type="text" name="description"> </td>'+
-        '<td> <input class="form-control yearPicker" type="text" maxlength="4"  name="year" style="width:150px"> </td>'+
+        '<td> <input class="form-control yearPicker" type="text" maxlength="4"  name="year"> </td>'+
         '<td style="width: 160px;"> <select style="overflow-y:scroll;" type="text" class="input form-control multiple_select" type="text" name="working_days" title="Select.." multiple data-selected-text-format="count" data-actions-box="true" >'+
         '<option value="1">Sunday</option><option value="2">Monday</option><option value="3">Tuesday</option><option value="4">Wednesday</option><option value="5">Thursday</option><option value="6">Friday</option><option value="7">Saturday</option></select>'+
         '</td>'+
@@ -248,7 +249,6 @@
                     unique_input = '<input class="form-control" type="text" value="' + row.cells[1].innerHTML + '" name="calender_id"  maxlength="10" style="text-transform:uppercase" disabled>'
                     cntry_name = row.cells[2].innerHTML;
                     Desc_inpt = '<input value="' + row.cells[3].innerHTML + '"  class="form-control check_special_char" type="text" name="description">'
-
                     edit_basic_data += 
                     '<tr>'+
                         '<td hidden><input type="checkbox" required></td>'+
@@ -256,7 +256,7 @@
                         '<td><select id="country"  class="form-control datatable-scroll-wrap " type="text" name="country" disabled>'+country_dropdwn+'</select></td>'+
                         '<td><input value="' + row.cells[3].innerHTML + '"  class="form-control check_special_char" type="text" name="description"></td>'+
                         '<td><input value="'+row.cells[4].innerHTML+'" class="form-control yearPicker" type="text" maxlength="4"  name="year"></td>'+
-                        '<td style="width:110px;"> <select style="overflow-y:scroll;" id="working_days"  class="form-control multiple_select working_days" type="text" name="working_days"  multiple  title="Select.." data-selected-text-format="count" data-actions-box="true">'+workingdays_dropdown+'</select> </td>'+
+                        '<td style="width:160px;"> <select style="overflow-y:scroll;" id="working_days"  class="form-control multiple_select working_days" type="text" name="working_days"  multiple  title="Select.." data-selected-text-format="count" data-actions-box="true">'+workingdays_dropdown+'</select> </td>'+
                         '<td class="class_del_checkbox" hidden> <input type="checkbox" ></td>'+
                         '<td hidden><input type="text" id="calendar_config_guid" value="'+row.cells[6].innerHTML+'"></td>'+
                     '</tr> ';
@@ -370,14 +370,15 @@
         table_sort_filter_popup('id_popup_table');
     }
 
-    // Onclick delete Button in Main table
+    // Onclick delete Button
     function onclick_delete_button() {
-        $("#error_msg_id").css("display", "none");
         $('#id_popup_table').DataTable().destroy();
+        $("#error_msg_id").css("display", "none")
         $("#id_popup_tbody").empty();
         GLOBAL_ACTION = "DELETE";
         var edit_basic_data = "";
         var guid = '';
+        var dropdown_values = [];
         main_table_number_range_checked = [];
         get_row_data("#display_basic_table"); // Function call to get the selected row data
         display_button(); // Call the display_button function to show/hide the buttons
@@ -398,38 +399,62 @@
                     if ($chkbox_all[i].checked) {
                         var row = $chkbox_all[i].parentNode.parentNode;
                         if (j < docTypeArray.length && docTypeArray[j] === false) {
-                            check = '<input type="checkbox" disabled>';
+                            check = '<input type="checkbox" class="checkbox_check" disabled>';
                             $('#delete_data').prop('disabled', true);
-                            document.getElementById('delete_data').style.visibility = 'visible';
                         } else {
-                            check = '<input type="checkbox">';
-                            document.getElementById('delete_data').style.visibility = 'visible';
+                            check = '<input type="checkbox" class="checkbox_check" onclick="enableDeleteButton()">';
+                            $('#delete_data').prop('disabled', true);
                         }
                         j++; // Move to the next index in docTypeArray
-                        $('#delete_data').prop('disabled', false);
+                        cntry_name = row.cells[2].innerHTML;
                         edit_basic_data +=
                         '<tr>'+
                             '<td>' + check + '</td>' +
                             '<td><input class="form-control" type="text" value="' + row.cells[1].innerHTML + '" name="calender_id"  maxlength="10" style="text-transform:uppercase" disabled></td>'+
                             '<td><input id="country"  class="form-control datatable-scroll-wrap " type="text" name="country" value="' + row.cells[2].innerHTML + '" disabled></td>'+
-                            '<td><input value="' + row.cells[3].innerHTML + '"  class="form-control check_special_char" type="text" name="description"></td>'+
-                            '<td><input value="'+row.cells[4].innerHTML+'" class="form-control yearPicker" type="text" maxlength="4"  name="year"></td>'+
-                            '<td style="width:110px;"> <select style="overflow-y:scroll;" id="working_days"  class="form-control multiple_select working_days" type="text" name="working_days"  multiple  title="Select.." data-selected-text-format="count" data-actions-box="true">'+workingdays_dropdown+'</select> </td>'+                            '<td class="class_del_checkbox" hidden> <input type="checkbox" ></td>'+
+                            '<td><input value="' + row.cells[3].innerHTML + '"  class="form-control check_special_char" type="text" name="description" disabled></td>'+
+                            '<td><input value="'+row.cells[4].innerHTML+'" class="form-control yearPicker" type="text" maxlength="4"  name="year" disabled></td>'+
+                            '<td style="width:110px;"> <select style="overflow-y:scroll;" id="working_days"  class="form-control multiple_select working_days" type="text" name="working_days"  multiple  title="Select.." data-selected-text-format="count" data-actions-box="true" disabled>'+workingdays_dropdown+' </select> </td>'+
+                            '<td class="class_del_checkbox" hidden> <input type="checkbox" ></td>'+
                             '<td hidden><input type="text" id="calendar_config_guid" value="'+row.cells[6].innerHTML+'"></td>'+
                         '</tr> ';
+                        var country_drp_values = row.cells[2].innerHTML
+                        for (var k = 0; k < render_country_data.length; k++) {
+                            if (cntry_name == render_country_data[k].country_name)
+                                country_code = render_country_data[k].country_code;
+                        }
+                        var wdays_value = row.cells[5].innerText;
+                        var wday_copy_values = [];
+                        wday_copy_values = wdays_value.split(" ")
+                        dropdown_values.push([country_code,wday_copy_values])
                     }
                 }
-                CloseLoaderPopup();
                 $('#id_popup_tbody').append(edit_basic_data);
+                var i =0;
+                var day_val = '';
+                $("#id_popup_table TBODY TR").each(function() {
+                    var row = $(this);
+                    var country_values = dropdown_values[i][0]
+                    var workingdays_value = dropdown_values[i][0]
+                    for(k=0;k<workingdays_value.length;k++){
+                        day_val = get_values(workingdays_value[k]);
+                        $(row.find("TD").eq(5).find("select option[value="+ day_val +"]")).attr('selected','selected');
+                    }
+                    $(row.find("TD").eq(2).find("select option[value="+country_values+"]")).attr('selected','selected');
+                    i++;
+                });
+                DatePicker();
+                MultipleSelect();
                 $("#id_del_ind_checkbox").prop("hidden", true);
                 $('#Calendar_Modal').modal('show');
+                $("#header_select").prop("hidden", false);
+                CloseLoaderPopup();
                 table_sort_filter('id_popup_table');
             },
         });
     }
 
     //delete the selected row in db................
-    var main_table_calendar_checked = [];
     function main_table_delete() {
         $('#success_msg_id').empty()
         main_table_calendar_checked = [];
@@ -439,41 +464,21 @@
         $('#display_basic_table').DataTable().destroy();
         get_row_data("#id_popup_table");
         $('#id_delete_confirm_popup').modal('hide');
-         if(main_table_calendar_checked.length == "0"){
-            var msg = "JMSG005";
-            var msg_type ;
-            msg_type = message_config_details(msg);
-            $("#error_msg_id").prop("hidden", false);
-            if(msg_type.message_type == "ERROR"){
-                display_message("error_msg_id", msg_type.messages_id_desc)
+        data = {'data':main_table_calendar_checked, 'table_name': 'CalenderConfig', 'action': GLOBAL_ACTION }
+        OpenLoaderPopup();
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'eProc_Configuration:create_update_application_data' %}",
+            data: JSON.stringify(data),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (Response) {
+                rendered_calendar_data = Response[0];
+                display_basic_db_data();
+                success_response(Response); // Function call to display response data
+                CloseLoaderPopup();
             }
-            else if(msg_type.message_type == "WARNING"){
-                display_message("id_warning_msg_id", msg_type.messages_id_desc)
-            }
-            else if(msg_type.message_type == "INFORMATION"){
-                display_message("id_info_msg_id", msg_type.messages_id_desc)
-            }
-            $('#id_delete_confirm_popup').modal('hide');
-            $('#Calendar_Modal').modal('show')
-            table_sort_filter('display_basic_table');
-        }
-        else{
-            data = {'data':main_table_calendar_checked, 'table_name': 'CalenderConfig', 'action': GLOBAL_ACTION }
-            OpenLoaderPopup();
-            $.ajax({
-                type: 'POST',
-                url: "{% url 'eProc_Configuration:create_update_application_data' %}",
-                data: JSON.stringify(data),
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                success: function (Response) {
-                    rendered_calendar_data = Response[0];
-                    display_basic_db_data();
-                    success_response(Response); // Function call to display response data
-                    CloseLoaderPopup();
-                }
-            });
-        }
+        });
     }
 
     function DatePicker() {
@@ -489,10 +494,6 @@
         $('.working_days').selectpicker();
         $('.multiple_select').selectpicker();
     }
-<!--   $('#id_wdays').attr({-->
-<!--    "max-height": 280px;-->
-<!--    'overflow-y': auto;-->
-<!--});-->
 
     function get_days(workingday){
         var day;

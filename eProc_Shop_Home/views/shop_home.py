@@ -279,13 +279,14 @@ def shopping_cart_home(request):
         'org_support_types': 'CHAT', 'client': client, 'del_ind': False
     })
 
-    for chat in support_chat:
-        if support_chat is not None and len(support_chat) > 1:
-            support_chat_array.append(chat.username)
-            support_uname = json.dumps(support_chat_array)
-        else:
-            # support_chat_array.append(chat.username)
-            support_uname = [chat.username]
+    support_uname = []  # Initialize the list outside the loop
+
+    if support_chat is not None and len(support_chat) > 1:
+        for chat in support_chat:
+            support_uname.append(chat.username.strip("[]'"))
+    else:
+        if len(support_chat) == 1:
+            support_uname = [support_chat[0].username.strip("[]'")]
 
     context['support_email'] = support_email_data
     context['support_phone'] = support_call

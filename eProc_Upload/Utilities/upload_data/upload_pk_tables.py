@@ -53,6 +53,24 @@ class CompareTableHeader:
             exclude_list.append('COMPANY_ID')
             exclude_list.append('PORG_ID')
             exclude_list.append('OBJECT_ID')
+        if self.table_name == 'UserData':
+            exclude_list.append('PERSON_NO')
+            exclude_list.append('FORM_OF_ADDRESS')
+            exclude_list.append('GENDER')
+            exclude_list.append('PASSWORD')
+            exclude_list.append('DATE_JOINED')
+            exclude_list.append('FIRST_LOGIN')
+            exclude_list.append('LAST_LOGIN')
+            exclude_list.append('IS_ACTIVE')
+            exclude_list.append('IS_SUPERUSER')
+            exclude_list.append('IS_STAFF')
+            exclude_list.append('LOGIN_ATTEMPTS')
+            exclude_list.append('PWD_LOCKED')
+            exclude_list.append('USER_LOCKED')
+            exclude_list.append('SSO_USER')
+            exclude_list.append('VALID_FROM')
+            exclude_list.append('VALID_TO')
+            exclude_list.append('OBJECT_ID')
 
         field_details = []
         for field in self.model_name._meta.fields:
@@ -122,16 +140,16 @@ class CompareTableHeader:
         # Makes list of required header and index of the same header in csv file
         for db_header in db_header_value:
             for upload_csv_header in range(len(upload_csv_header_data)):
-                if upload_csv_header_data[upload_csv_header] not in self.field_name:
-                    if upload_csv_header_data[upload_csv_header] != 'PRODUCT_IMAGE_PATH':
-                        msgid = 'MSG189'
-                        error_msg = get_message_desc(msgid)[1]
-
-                        error_message = error_msg
-                        print(upload_csv_header_data[upload_csv_header])
-                        print(self.field_name)
-                        return error_message, correct_order_list
-                pair = []
+                # if upload_csv_header_data[upload_csv_header] not in self.field_name:
+                #     if upload_csv_header_data[upload_csv_header] != 'PRODUCT_IMAGE_PATH':
+                #         msgid = 'MSG189'
+                #         error_msg = get_message_desc(msgid)[1]
+                #
+                #         error_message = error_msg
+                #         print(upload_csv_header_data[upload_csv_header])
+                #         print(self.field_name)
+                #         return error_message, correct_order_list
+                # pair = []
                 if db_header['field_name'] == upload_csv_header_data[upload_csv_header]:
                     pair_list.append({'field_name': db_header['field_name'], 'field_length': db_header['field_length'],
                                       'field_position': upload_csv_header})

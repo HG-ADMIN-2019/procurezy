@@ -26,13 +26,14 @@ from eProc_Basic.Utilities.functions.django_query_set import DjangoQueries
 from eProc_Basic.Utilities.functions.guid_generator import guid_generator
 from eProc_Basic.Utilities.global_defination import global_variables
 from eProc_Configuration.models import EmailContents, AccountAssignmentCategory, UnitOfMeasures, \
-    OrgClients
+    OrgClients, SupplierMaster
 from eProc_Emails.models import EmailUserMonitoring, EmailDocumentMonitoring, EmailSupplierMonitoring
 from eProc_Notes_Attachments.models import Notes
-from eProc_Purchase_Order.models import PoHeader
+from eProc_Purchase_Order.models import PoHeader, PoItem
 from eProc_Registration.models import UserData
 from eProc_Shopping_Cart.Utilities.shopping_cart_generic import get_acc_detail
-from eProc_Shopping_Cart.models import ScPotentialApproval
+from eProc_Shopping_Cart.models import ScPotentialApproval, ScItem
+from eProc_Suppliers.Utilities.supplier_generic import Supplier
 
 django_query_instance = DjangoQueries()
 
@@ -500,9 +501,23 @@ def send_po_attachment_email(output, po_document_number, email_supp_monitoring_g
     global client_name, supp_name
     client = global_variables.GLOBAL_CLIENT
     po_supp_guid = email_supp_monitoring_guid
+    supplier_id = ''
     po_details = django_query_instance.django_get_query(PoHeader, {
         'doc_number': po_document_number, 'client': global_variables.GLOBAL_CLIENT, 'del_ind': False
     })
+    sc_item_details = django_query_instance.django_filter_value_list_query(PoItem, {
+            'po_header_guid': po_details.po_header_guid, 'client': global_variables.GLOBAL_CLIENT, 'del_ind': False
+        }, 'sc_item_guid')
+
+    for supp in sc_item_details:
+        supplier_id = django_query_instance.django_filter_value_list_query(ScItem, {
+            'guid': supp, 'client': global_variables.GLOBAL_CLIENT, 'del_ind': False
+        }, 'supplier_id')
+
+    supp_email = django_query_instance.django_filter_value_list_query(SupplierMaster, {
+            'supplier_id': supplier_id[0], 'client': global_variables.GLOBAL_CLIENT, 'del_ind': False
+        }, 'email')
+
     client_data = django_query_instance.django_get_query(OrgClients, {
         'client': client, 'del_ind': False
     })
@@ -586,7 +601,7 @@ def send_po_attachment_email(output, po_document_number, email_supp_monitoring_g
         email_data['doc_num'] = po_document_number
         email_data['object_type'] = details['object_type']
         email_data['username'] = po_details.requester
-        email_data['receiver_email'] = po_details.supplier_email
+        email_data['receiver_email'] = supp_email[0]
         email_data['sender_email'] = settings.EMAIL_HOST_USER
         email_data['email_supplier_monitoring_guid'] = po_supp_guid
         email_data['client'] = po_details.client_id

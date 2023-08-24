@@ -378,7 +378,7 @@
                                     }
                                     currency_id_list = currency + currency_list
                                 });
-                                edit_basic_data += '<tr><td><input type="checkbox" required></td><td><select class="form-control" type = "text"><option value ="' + value.company_id + '"'+company_id_list+'>'+value.company_id+'</option></select></td><td><input class="form-control"  type="text" value="'+value.spend_code_id+'" maxlength="8" onkeypress="return /[a-z0-9]/i.test(event.key)" name="spend_code_id" style="text-transform:uppercase;" required></td><td><input class="form-control"  type="number" value="'+value.upper_limit_value+'" maxlength="16" onkeypress="return /[a-z0-9]/i.test(event.key)" name="upper_limit_value" style="text-transform:uppercase;" required></td><td><select class="form-control" type="text"><option value ="' + value.currency_id + '"'+'+currency_id_list+'+'>'+value.currency_id+'</option></select></td><td hidden><input type="text" value=""></td><td>' + del_ind + '</td></tr>';
+                                edit_basic_data += '<tr><td><input type="checkbox" required></td><td><select class="form-control" type = "text"><option value ="' + value.company_id + '"'+company_id_list+'></option></select></td><td><input class="form-control"  type="text" value="'+value.spend_code_id+'" maxlength="8" onkeypress="return /[a-z0-9]/i.test(event.key)" name="spend_code_id" style="text-transform:uppercase;" required></td><td><input class="form-control"  type="number" value="'+value.upper_limit_value+'" maxlength="16" onkeypress="return /[a-z0-9]/i.test(event.key)" name="upper_limit_value" style="text-transform:uppercase;" required></td><td><select class="form-control" type="text"><option value ="' + value.currency_id + '"'+currency_id_list+'></option></select></td><td hidden><input type="text" value=""></td><td>' + del_ind + '</td></tr>';
                             });
                             $('#id_popup_tbody').append(edit_basic_data);
                             var i =0;
@@ -390,16 +390,15 @@
                             $(row.find("TD").eq(4).find("select option[value="+currency_id_list+"]")).attr('selected','selected');
                                 i++;
                             });
-                            $("#hg_select_checkbox").prop("hidden", false);
                             $(".class_del_checkbox").prop("hidden", false);
                             $("#id_del_ind_checkbox").prop("hidden", false);
                             $('#Spnd_Lim_Val_Modal').modal('show');
                             $('#id_data_upload').modal('hide');
-                            document.getElementById("id_check_data").style.display = "block";
                             document.getElementById("id_del_add_button").style.display = "block";
+                            $('#id_check_data').show();
                             $("#id_check_data").prop("hidden", false);
                             $("#save_id").prop("hidden", true);
-                            table_sort_filter_popup_pagination('id_popup_table')
+                            table_sort_filter('id_popup_table')
                         }
                         CloseLoaderPopup();
                     },
@@ -467,7 +466,6 @@
                 }
             }
             if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
-                var spend_limit_value_array = spend_limit_value_data;
                 $('#id_save_confirm_popup').modal('hide');
                 data = {'data':spend_limit_value_data,'table_name':'SpendLimitValue','action':GLOBAL_ACTION}
                 OpenLoaderPopup();
@@ -761,7 +759,7 @@
             spend_limit_value.spend_code_id = row.find("TD").eq(2).find('input[type="text"]').val();
             spend_limit_value.upper_limit_value =row.find("TD").eq(3).find('input[type="number"]').val();
             spend_limit_value.currency_id = row.find("TD").eq(4).find("select option:selected").val();
-            spend_limit_value.spend_lim_value_guid = row.find("TD").eq(5).find('input[type="text"]').val().toUpperCase()
+            spend_limit_value.spend_lim_value_guid = row.find("TD").eq(5).find('input[type="text"]').val();
             if (spend_limit_value == undefined) {
                 spend_limit_value.spend_code_id = row.find("TD").eq(1).find('input[type="text"]').val();
             }
@@ -887,8 +885,9 @@
             //*************** reading data from the pop-up ***************
             spendlimit_value_dic.company_id = row.find("TD").eq(1).find('select[type="text"]').val()
             spendlimit_value_dic.spend_code_id = row.find("TD").eq(2).find('input[type="text"]').val()
-            spendlimit_value_dic.upper_limit_value = row.find("TD").eq(3).find('input[type="text"]').val()
+            spendlimit_value_dic.upper_limit_value = row.find("TD").eq(3).find('input[type="number"]').val()
             spendlimit_value_dic.currency_id = row.find("TD").eq(4).find('select[type="text"]').val()
+            spend_limit_value.spend_lim_value_guid = row.find("TD").eq(5).find('input[type="text"]').val()
             checked_box = row.find("TD").eq(6).find('input[type="checkbox"]').is(':checked')
             if (checked_box){
                 spendlimit_value_dic.del_ind = '1'

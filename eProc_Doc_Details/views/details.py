@@ -130,6 +130,20 @@ def my_order_doc_details(req, flag, type, guid, mode, access_type):
     if not is_valid:
         return HttpResponseForbidden()
     item_dictionary_list = []
+    # check for editable or non editable items based on purchase control table entry
+    for sc_item in sc_item_details:
+        if sc_item.call_off in ['01', '02']:
+            if django_query_instance.django_existence_check(PurchaseControl,
+                                                            {'call_off': sc_item.call_off,
+                                                             'company_code_id': sc_item.company_code,
+                                                             'purchase_ctrl_flag': True,
+                                                             'prod_cat_id': sc_item.prod_cat_id,
+                                                             'client': global_variables.GLOBAL_CLIENT,
+                                                             'del_ind': False}):
+                editable_flag = True
+            else:
+                editable_flag = False
+
     for sc_items in sc_item_details:
         item_details = {'prod_cat': sc_items.prod_cat_id, 'value': sc_items.value, 'guid': sc_items.guid}
         item_detail_list.append(item_details)
@@ -232,7 +246,8 @@ def my_order_doc_details(req, flag, type, guid, mode, access_type):
                'product_category': product_category, 'limit_form': UpdateLimitItem(),
                'requesters_currency': requester_currency, 'header_level_gl_acc': header_level_gl_acc,
                'highest_item_guid': highest_item_guid, 'item_detail_list': item_detail_list, 'eform_info': eform_info,
-               'hdr_det': sc_hdr_details, 'itm_det': sc_item_details, 'acc_det': sc_accounting_details,
+               'hdr_det': sc_hdr_details, 'itm_det': sc_item_details, 'editable_flag': editable_flag,
+               'acc_det': sc_accounting_details,
                'requester_first_name': requester_first_name,
                'app_det': sc_approval_data,
                'actual_price': actual_price,
@@ -334,6 +349,19 @@ def my_order_doc_details_new(req, flag, type, guid, mode, access_type):
     for sc_items in sc_item_details:
         item_details = {'prod_cat': sc_items['prod_cat_id'], 'value': sc_items['value'], 'guid': sc_items['guid']}
         item_detail_list.append(item_details)
+        # check for editable or non editable items based on purchase control table entry
+        for sc_item in sc_item_details:
+            if sc_item.call_off in ['01', '02']:
+                if django_query_instance.django_existence_check(PurchaseControl,
+                                                                {'call_off': sc_item.call_off,
+                                                                 'company_code_id': sc_item.company_code,
+                                                                 'purchase_ctrl_flag': True,
+                                                                 'prod_cat_id': sc_item.prod_cat_id,
+                                                                 'client': global_variables.GLOBAL_CLIENT,
+                                                                 'del_ind': False}):
+                    editable_flag = True
+                else:
+                    editable_flag = False
     # append eform details to item
     item_dictionary_list = update_eform_scitem(header_guid)
     for item in item_dictionary_list:
@@ -411,7 +439,8 @@ def my_order_doc_details_new(req, flag, type, guid, mode, access_type):
                'product_category': product_category, 'limit_form': UpdateLimitItem(),
                'requesters_currency': requester_currency, 'header_level_gl_acc': header_level_gl_acc,
                'highest_item_guid': highest_item_guid, 'item_detail_list': item_detail_list, 'eform_info': eform_info,
-               'hdr_det': sc_hdr_details, 'itm_det': sc_item_details, 'acc_det': sc_accounting_details,
+               'hdr_det': sc_hdr_details, 'itm_det': sc_item_details, 'editable_flag': editable_flag,
+               'acc_det': sc_accounting_details,
                'requester_first_name': requester_first_name,
                'app_det': sc_approval_data,
                'actual_price': actual_price,
@@ -450,7 +479,7 @@ def my_order_doc_details_new(req, flag, type, guid, mode, access_type):
 
 
 @login_required
-def my_order_document_detail(request, encrypt_sc_header_guid,access_type):
+def my_order_document_detail(request, encrypt_sc_header_guid, access_type):
     """
 
     """
@@ -468,7 +497,7 @@ def my_order_document_detail(request, encrypt_sc_header_guid,access_type):
 def docDetails(req, flag, type, guid, mode, access_type):
     update_user_info(req)
     guid = decrypt(guid)
-
+    editable_flag = 0
     sc_header_instance = ScHeader.objects.get(guid=guid)
 
     # To validate access based on creator and requester
@@ -504,6 +533,19 @@ def docDetails(req, flag, type, guid, mode, access_type):
     base_currency = get_requester_currency(requester)
     update_requester_info(requester)
     check_for_prod_cat = False
+    # check for editable or non editable items based on purchase control table entry
+    for sc_item in itm_data:
+        if sc_item.call_off in ['01', '02']:
+            if django_query_instance.django_existence_check(PurchaseControl,
+                                                            {'call_off': sc_item.call_off,
+                                                             'company_code_id': sc_item.comp_code,
+                                                             'purchase_ctrl_flag': True,
+                                                             'prod_cat_id': sc_item.prod_cat_id,
+                                                             'client': global_variables.GLOBAL_CLIENT,
+                                                             'del_ind': False}):
+                editable_flag = 1
+            else:
+                editable_flag = 0
     for items in itm_data:
         item_details = {}
         # To validate product category in case of sc completion scenario
@@ -671,6 +713,7 @@ def docDetails(req, flag, type, guid, mode, access_type):
         'item_dictionary_list': item_dictionary_list,
         'hdr_det': hdr_data,  # sc_header
         'itm_det': itm_data,
+        'editable_flag': editable_flag,
         'acc_det': acc_data,
         'app_det': appr_data,
         'addr_det': addr_data,
@@ -833,6 +876,8 @@ def update_sc(request):
                                                                      'sc_header_guid': sc_header_guid,
                                                                      'app_id': CONST_AUTO}):
 
+                        ScHeader.objects.update_or_create(guid=sc_header_guid,
+                                                          defaults={'status': CONST_SC_HEADER_APPROVED})
                         create_purchase_order = CreatePurchaseOrder(sc_header_instance)
                         status, error_message, output, po_doc_list = create_purchase_order.create_po()
                         # Send purchase order email to supplier
@@ -863,7 +908,7 @@ def update_sc(request):
                         app_id = update_approval_status(sc_header_guid)
                         if app_id == CONST_AUTO:
                             django_query_instance.django_update_query(ScHeader,
-                                                                      {'guid':sc_header_guid},
+                                                                      {'guid': sc_header_guid},
                                                                       {'status': CONST_SC_HEADER_APPROVED,
                                                                        'ordered_at': datetime.now()})
                         else:

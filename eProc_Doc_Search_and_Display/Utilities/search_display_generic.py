@@ -24,9 +24,10 @@ django_query_instance = DjangoQueries()
 
 
 # Get header data from search inputs
-def get_hdr_data(doc_type, doc_num, from_date, to_date, prod_cat, created_by, requester, client, search_flag):
+def get_hdr_data(doc_type, doc_num, from_date, to_date, prod_cat, created_by, requester, search_flag):
     global hdr_obj_sc
     username = global_variables.GLOBAL_LOGIN_USERNAME
+    client = global_variables.GLOBAL_CLIENT
     if doc_type == 'SC':
         hdr_obj = ScHeader
         hdr_inst = ScHeader()

@@ -20,7 +20,7 @@ from eProc_Purchase_Order.Utilities.purchase_order_generic import CreatePurchase
     update_po_error_status
 from eProc_Registration.models import UserData
 from eProc_Shopping_Cart.context_processors import update_user_info
-from eProc_Shopping_Cart.models import ScHeader
+from eProc_Shopping_Cart.models import ScHeader, ScItem
 from eProc_Workflow.Utilities.work_flow_specific import update_appr_status
 import time
 
@@ -54,18 +54,22 @@ def save_appr_status(request):
         'email_user_monitoring_guid': ''
     }
     if header_status == CONST_SC_HEADER_APPROVED:
-        create_purchase_order = CreatePurchaseOrder(sc_header_instance)
-        status, error_message, data['output'], po_doc_list = create_purchase_order.create_po()
-
+        sc_item_details = django_query_instance.django_filter_only_query(ScItem, {
+            'header_guid': sc_header_instance.guid, 'client': client, 'del_ind': False
+        })
+        for sc_item in sc_item_details:
+            if not sc_item.source_relevant_ind == 1:
+                create_purchase_order = CreatePurchaseOrder(sc_header_instance)
+                status, error_message, data['output'], po_doc_list = create_purchase_order.create_po()
         # Send purchase order email to supplier
-        for po_document_number in po_doc_list:
-            email_supp_monitoring_guid = ''
-            send_po_attachment_email(data['output'], po_document_number, email_supp_monitoring_guid)
+                for po_document_number in po_doc_list:
+                    email_supp_monitoring_guid = ''
+                    send_po_attachment_email(data['output'], po_document_number, email_supp_monitoring_guid)
 
-        if not status:
-            update_po_error_status(sc_header_instance.guid, CONST_VALIDATION_ERROR)
-        variant_name = 'APPROVED_SC'
-        email_notify(email_data, variant_name, client)
+                    if not status:
+                        update_po_error_status(sc_header_instance.guid, CONST_VALIDATION_ERROR)
+                    variant_name = 'APPROVED_SC'
+                    # email_notify(email_data, variant_name, client)
     if header_status == CONST_SC_HEADER_REJECTED:
         variant_name = 'SC_REJECTED'
         email_notify(email_data, variant_name, client)

@@ -173,6 +173,81 @@
     var db_header_data = uiConstants["CONST_HEADER_DATA_PUR_CONTROL"]
     var activate_dropdown,pc_company_dropdown;
 
+    var call_off_dropdown = `
+        <option value="1">Catalog</option>
+        <option value="2">Free text</option>
+        <option value="3">PR</option>
+        <option value="4">Limit</option>
+    `;
+
+    var rendered_call_off_data = {
+        data: [
+            { value: "1", label: "Catalog" },
+            { value: "2", label: "Free text" },
+            { value: "3", label: "PR" },
+            { value: "4", label: "Limit" }
+        ]
+    };
+
+    // Hide dropdown when click on add button
+    function company_drpdown() {
+        pc_company_dropdown = '';
+        var hidden_pc_company_type = []; // Array to store node types with all their node values used in the main table
+
+        // Function to check if all call off of a specific company are used in the main table
+        function areAll_calloff_Used(company_code_id) {
+            var call_off_code = main_table_data[company_code_id];
+            if (!call_off_code) {
+                return false;
+            }
+            return call_off_code.length === rendered_call_off_data.data.length; // Access the array using rendered_call_off_data.data
+        }
+
+        // Iterate through the rendered_pc_company_data to build the company_code_id dropdown
+        $.each(rendered_pc_company_data, function (i, item) {
+            var company_code = item.company_id;
+            if (!areAll_calloff_Used(company_code)) {
+                pc_company_dropdown += '<option value="' + company_code + '">' + company_code + '</option>';
+            } else {
+                hidden_pc_company_type.push(company_code);
+            }
+        });
+        $.each(hidden_pc_company_type, function (i, hidden_pc_company_type) {
+            pc_company_dropdown = pc_company_dropdown.replace(new RegExp('<option value="' + hidden_pc_company_type + '">.*<\/option>'), '');
+        });
+
+        // Extract the first node type value from pc_company_dropdown using regular JavaScript
+        var first_companyMatch = pc_company_dropdown.match(/value="([^"]+)"/);
+        if (first_companyMatch && first_companyMatch[1]) {
+            first_company = first_companyMatch[1];
+        }
+        if (first_company !== null) {
+            var unused_companyForFirstType = [];
+            var used_company = {};
+            $.each(main_table_data[first_company], function (index, value) {
+                used_company[value] = true;
+            });
+            $.each(rendered_call_off_data.data, function (i, item) { // Access the array using rendered_call_off_data.data
+                var call_off_ = item.value;
+                if (!used_company.hasOwnProperty(call_off_)) {
+                    unused_companyForFirstType.push(call_off_);
+                }
+            });
+            call_off_dropdown = '';
+            $.each(unused_companyForFirstType, function (i, call_off_) {
+                var descriptionItem = rendered_call_off_data.data.find(item => item.value === call_off_); // Access the array using rendered_call_off_data.data
+                if (descriptionItem) {
+                    call_off_dropdown += '<option value="' + descriptionItem.value + '">' + descriptionItem.label + '</option>';
+                }
+            });
+        }
+
+        activate_dropdown = '';
+         $.each(rendered_activate, function(i, item){
+            activate_dropdown += '<option value="' + item.field_type_id + '">' + item.field_type_id + '</option>';
+         });
+    }
+
     //************************
     function drop_down(){
         pc_company_dropdown = '';
@@ -271,7 +346,8 @@
             success: function(response) {
                 rendered_activate = response.dropdown_activate
                 rendered_pc_company_data = response.upload_company_code
-                drop_down();
+                get_company_data()
+                company_drpdown();
                 $("#error_msg_id").css("display", "none")
                 $("#header_select").prop("hidden", false);
                 GLOBAL_ACTION = button.value

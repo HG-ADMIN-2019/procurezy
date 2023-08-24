@@ -180,9 +180,14 @@ function delete_duplicate() {
             $(row).remove();
         }
         aad_code_check.push(compare);
+        main_table_low_value = get_main_table_data_upload(); //Read data from main table
+            if (main_table_low_value.includes(compare)) {
+                $(row).remove();
+            }
+            main_table_low_value.push(compare);
     })
     table_sort_filter_popup_pagination('id_popup_table')
-    check_data();
+        check_data()
 }
 
 //********************************************
@@ -235,7 +240,7 @@ function read_popup_data() {
         aad.company_id = row.find("TD").eq(1).find("select option:selected").val();
         aad.account_assign_cat = row.find("TD").eq(2).find("select option:selected").val();
         aad.account_assign_value = row.find("TD").eq(3).find("select option:selected").val();
-        aad.description = (row.find("TD").eq(4).find('input[type="text"]').val()).toUpperCase();
+        aad.description = row.find("TD").eq(4).find('input[type="text"]').val();
         aad.language_id = row.find("TD").eq(5).find("select option:selected").val();
         aad.acc_desc_guid = row.find("TD").eq(6).find('input[type="text"]').val();
         if (aad == undefined) {
@@ -269,6 +274,25 @@ function read_popup_data() {
         main_table_low_value.push(compare_maintable);
     });
     table_sort_filter('display_basic_table');
+ }
+
+ // Function to get main table data
+ function get_main_table_data_upload() {
+    main_table_low_value = [];
+    $('#display_basic_table').DataTable().destroy();
+    $("#display_basic_table TBODY TR").each(function() {
+        var row = $(this);
+        var main_attribute = {};
+        main_attribute.company_id = row.find("TD").eq(1).html()
+        main_attribute.account_assign_cat = row.find("TD").eq(2).html()
+        main_attribute.account_assign_value = row.find("TD").eq(3).html()
+        main_attribute.language_id = row.find("TD").eq(5).html
+        main_attribute.del_ind = row.find("TD").eq(7).find('input[type="checkbox"]').is(':checked');
+        var compare_maintable = main_attribute.account_assign_value+'-'+main_attribute.account_assign_cat+'-'+main_attribute.company_id+'-'+main_attribute.language_id+'-'+main_attribute.del_ind;
+        main_table_low_value.push(compare_maintable);
+    });
+    table_sort_filter('display_basic_table');
+    return main_table_low_value
  }
  
  // Function to get the selected row data
