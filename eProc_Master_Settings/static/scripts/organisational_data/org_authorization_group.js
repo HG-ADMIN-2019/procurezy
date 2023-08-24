@@ -138,7 +138,7 @@ function get_auth_grp_data() {
         var main_attribute = {};
         main_attribute.auth_obj_grp = row.find("TD").eq(1).html();
         main_attribute.auth_grp_desc = row.find("TD").eq(2).html().toUpperCase();
-        main_attribute.auth_level = row.find("TD").eq(3).html().toUpperCase();;
+        main_attribute.auth_level = row.find("TD").eq(3).html();
         main_attribute.auth_obj_id = row.find("TD").eq(4).html();
         var main_attribute_compare = main_attribute.auth_obj_grp + ' - ' + main_attribute.auth_grp_desc + ' - ' + main_attribute.auth_level + ' - ' + main_attribute.auth_obj_id
         if (!main_table_data.hasOwnProperty(main_attribute.auth_obj_grp)) {
@@ -191,6 +191,12 @@ function get_auth_level_values(selectElement) {
     var used_auth_group_level = {};
     var used_auth_group_obj = {};
 
+    if(rendered_auth_group_field_data.length != 0){
+        auth_grp_desc = rendered_auth_group_field_data[0].field_type_desc;
+    } else {
+        auth_grp_desc = "";
+    }
+
     // Loop through the node values in the main_table_data and store the used ones for the selected node type
     $.each(auth_group, function(index, value) {
         used_auth_group_level[value.auth_level] = true;
@@ -200,35 +206,37 @@ function get_auth_level_values(selectElement) {
     auth_levelDropdown.empty();
     auth_objDropdown.empty();
 
+    var usedAuthLevels = {};
+    var usedAuthObjIDs = {};
+    $.each(main_table_data[selected_auth_group], function (index, value) {
+        var authLevel = value.auth_level;
+        var authObjID = value.auth_obj_id;
+
+        if (!usedAuthLevels.hasOwnProperty(authLevel)) {
+            usedAuthLevels[authLevel] = new Set();
+        }
+        usedAuthLevels[authLevel].add(authObjID);
+    });
     // Now, populate the auth_levelDropdown with only the unused auth_level values
-     $.each(rendered_auth_type, function(i, item) {
+    $.each(rendered_auth_type, function(i, item) {
         var authLevelValue = item.field_type_id;
         if (rendered_auth_obj_data.length != Object.keys(used_auth_group_obj).length) {
             auth_levelDropdown.append('<option value="' + authLevelValue + '">' + authLevelValue + '</option>');
         }
     });
 
-    // Populate the auth_objDropdown with only the unused auth_obj_id values
-    $.each(rendered_auth_obj_data, function(i, item) {
-        var authObjIDValue = item.auth_obj_id;
-        if (!used_auth_group_obj.hasOwnProperty(authObjIDValue)) {
-            auth_objDropdown.append('<option value="' + authObjIDValue + '">' + authObjIDValue + '</option>');
-        }
-    });
-
-    // Update the auth_grp_desc based on the selected auth_group_id
-    if (rendered_auth_group_field_data.length !== 0) {
-        auth_grp_desc = rendered_auth_group_field_data.find(function(item) {
-            return item.field_type_id === selected_auth_group;
-        }).field_type_desc;
-    } else {
-        auth_grp_desc = "";
+    // Populate the auth_objDropdown with only the unused auth_obj_id values based on the first selected auth_levelDropdown value
+    var firstAuthLevel = auth_levelDropdown.val();
+    if (firstAuthLevel) {
+        $.each(rendered_auth_obj_data, function(i, item) {
+            var authObjIDValue = item.auth_obj_id;
+            if (!usedAuthObjIDs.hasOwnProperty(authObjIDValue) && (!usedAuthLevels[firstAuthLevel] || !usedAuthLevels[firstAuthLevel].has(authObjIDValue))) {
+                auth_objDropdown.append('<option value="' + authObjIDValue + '">' + authObjIDValue + '</option>');
+            }
+        });
     }
-
-    // Find the description input field in the same row and update its value
-    var descriptionInput = $(selectElement).closest('tr').find('.description');
-    descriptionInput.val(auth_grp_desc);
 }
+
 
 function get_auth_obj_values(selectElement, event) {
     var selected_auth_group = $(selectElement).closest('tr').find('.authgroup').val();
@@ -239,7 +247,7 @@ function get_auth_obj_values(selectElement, event) {
 
     // Loop through the node values in the main_table_data and store the used ones for the selected node type and level
     $.each(auth_group, function(index, value) {
-        if (value.auth_level.trim() === selected_auth_level) {
+        if (value.auth_level === selected_auth_level) {
             used_auth_group_obj[value.auth_obj_id] = true;
         }
     });
