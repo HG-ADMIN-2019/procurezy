@@ -138,7 +138,7 @@ function get_auth_grp_data() {
         var main_attribute = {};
         main_attribute.auth_obj_grp = row.find("TD").eq(1).html();
         main_attribute.auth_grp_desc = row.find("TD").eq(2).html().toUpperCase();
-        main_attribute.auth_level = row.find("TD").eq(3).html();
+        main_attribute.auth_level = row.find("TD").eq(3).html().toUpperCase();;
         main_attribute.auth_obj_id = row.find("TD").eq(4).html();
         var main_attribute_compare = main_attribute.auth_obj_grp + ' - ' + main_attribute.auth_grp_desc + ' - ' + main_attribute.auth_level + ' - ' + main_attribute.auth_obj_id
         if (!main_table_data.hasOwnProperty(main_attribute.auth_obj_grp)) {
@@ -202,7 +202,7 @@ function get_auth_level_values(selectElement) {
 
     // Now, populate the auth_levelDropdown with only the unused auth_level values
      $.each(rendered_auth_type, function(i, item) {
-        var authLevelValue = item.field_type_desc;
+        var authLevelValue = item.field_type_id;
         if (rendered_auth_obj_data.length != Object.keys(used_auth_group_obj).length) {
             auth_levelDropdown.append('<option value="' + authLevelValue + '">' + authLevelValue + '</option>');
         }
@@ -216,11 +216,18 @@ function get_auth_level_values(selectElement) {
         }
     });
 
-    if(rendered_auth_group_field_data.length != 0){
-        auth_grp_desc = rendered_auth_group_field_data[0].field_type_desc;
+    // Update the auth_grp_desc based on the selected auth_group_id
+    if (rendered_auth_group_field_data.length !== 0) {
+        auth_grp_desc = rendered_auth_group_field_data.find(function(item) {
+            return item.field_type_id === selected_auth_group;
+        }).field_type_desc;
     } else {
         auth_grp_desc = "";
     }
+
+    // Find the description input field in the same row and update its value
+    var descriptionInput = $(selectElement).closest('tr').find('.description');
+    descriptionInput.val(auth_grp_desc);
 }
 
 function get_auth_obj_values(selectElement, event) {
@@ -232,7 +239,7 @@ function get_auth_obj_values(selectElement, event) {
 
     // Loop through the node values in the main_table_data and store the used ones for the selected node type and level
     $.each(auth_group, function(index, value) {
-        if (value.auth_level === selected_auth_level) {
+        if (value.auth_level.trim() === selected_auth_level) {
             used_auth_group_obj[value.auth_obj_id] = true;
         }
     });
