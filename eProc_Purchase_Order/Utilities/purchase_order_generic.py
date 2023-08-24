@@ -25,7 +25,7 @@ from eProc_Basic.Utilities.global_defination import global_variables
 from eProc_Basic.Utilities.messages.messages import MSG001, MSG0120
 from eProc_Calendar_Settings.Utilities.calender_settings_generic import calculate_delivery_date
 from eProc_Configuration.models import PoSplitCriteria, NumberRanges, OrgAddress, SupplierMaster, OrgPorg, OrgPGroup, \
-    DocumentType, UnitOfMeasures, PoGroupCriteria_Temp
+    DocumentType, UnitOfMeasures, PoGroupCriteria
 from eProc_Doc_Details.Utilities.details_generic import GetAttachments
 from eProc_Doc_Search_and_Display.Utilities.search_display_specific import get_po_header_app
 from eProc_Emails.Utilities.email_notif_generic import send_po_attachment_email
