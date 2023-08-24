@@ -110,7 +110,7 @@ def generate_po(request):
             status, error_message, output, po_doc_list = create_purchase_order.create_po()
             for po_document_number in po_doc_list:
                 email_supp_monitoring_guid = ''
-                # send_po_attachment_email(output, po_document_number, email_supp_monitoring_guid)
+                send_po_attachment_email(output, po_document_number, email_supp_monitoring_guid)
 
             if error_message:
                 response = "error"
