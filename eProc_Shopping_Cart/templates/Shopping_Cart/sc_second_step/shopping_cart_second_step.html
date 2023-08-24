@@ -353,6 +353,10 @@ for (let item_number = 0; i < cart_length; item_number++) {
         document.getElementById('OR').value = acc_cat_values;
     }
 
+    var highest_value_item_number = document.getElementById('highest_item').value
+var highest_item_acc_asgn_cat = (document.getElementById('change_acc_type_'+highest_value_item_number).innerHTML).split(' - ')[0]
+var highest_item_change_acc_value = (document.getElementById('change_acc_value_'+highest_value_item_number).innerHTML).split(' - ')[0]
+
 const check_manager_detail = (response) => {
     GLOBAL_MANAGER_DETAIL = response.approver_id;
     $('#div_manager_detail').empty();

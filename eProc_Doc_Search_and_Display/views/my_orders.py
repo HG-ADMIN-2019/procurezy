@@ -13,7 +13,9 @@ from eProc_Doc_Search_and_Display.Utilities.search_display_specific import get_m
     get_sc_header_app, DocumentSearch, get_po_header_app
 from eProc_Purchase_Order.models import PoApproval, PoPotentialApproval
 from eProc_Shopping_Cart.context_processors import update_user_info
+
 django_query_instance = DjangoQueries()
+
 
 @login_required
 @authorize_view(CONST_MY_ORDER)
@@ -75,7 +77,7 @@ def sc_po_hdr_search(request):
             result = document_search_instance.get_header_details(search_criteria)
         elif document_type == CONST_DOC_TYPE_PO:
             doc_header_details = document_search_instance.get_po_header_details(search_criteria)
-            result=doc_header_details
+            result = doc_header_details
     else:
         if settings.SEARCH_FORM == 'X':
             search_form = ExtSearch()
@@ -87,10 +89,11 @@ def sc_po_hdr_search(request):
 
     if document_type == CONST_DOC_TYPE_SC:
         # Appending SCHeader fields and its respective SCApproval
-        doc_header_details, doc_approver_details, sc_completion, requester_first_name = get_sc_header_app(result, client)
+        doc_header_details, doc_approver_details, sc_completion, requester_first_name = get_sc_header_app(result,
+                                                                                                          client)
     elif document_type == CONST_DOC_TYPE_PO:
         for po_header_guid in doc_header_details:
-            po_header_guid['guid']=po_header_guid['po_header_guid']
+            po_header_guid['guid'] = po_header_guid['po_header_guid']
             del po_header_guid['po_header_guid']
             po_header_guid['created_at'] = po_header_guid['po_header_created_at']
             del po_header_guid['po_header_created_at']
@@ -99,7 +102,7 @@ def sc_po_hdr_search(request):
         doc_header_details, doc_approver_details, sc_completion, requester_first_name = get_po_header_app(result,
                                                                                                           client)
         for doc_approver_detail in doc_approver_details:
-            doc_approver_detail['header_guid_id']=doc_approver_detail['po_header_guid_id']
+            doc_approver_detail['header_guid_id'] = doc_approver_detail['po_header_guid_id']
             del doc_approver_detail['po_header_guid_id']
 
     # Paginating search results and restricting the results to 50 per page
@@ -122,7 +125,7 @@ def sc_po_hdr_search(request):
         'inc_nav': True,
         'inc_footer': True,
         'doc_approver_details': doc_approver_details,
-        'sc_appr':doc_approver_details,
+        'sc_appr': doc_approver_details,
         'doc_header_details': doc_header_details,
         'sc_completion': sc_completion,
         'requester_first_name': requester_first_name,

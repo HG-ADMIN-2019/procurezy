@@ -541,6 +541,15 @@
         });
     }
 
+
+//Get message for check data function
+function get_msg_desc_check_data(msg){
+    var msg_type ;
+    msg_type = message_config_details(msg);
+    $("#error_msg_id").prop("hidden", false);
+    return msg_type.messages_id_desc;
+}
+
 </script>
 <script src="{% static 'scripts/upload-countries.js' %}"></script>
 {% endblock %}

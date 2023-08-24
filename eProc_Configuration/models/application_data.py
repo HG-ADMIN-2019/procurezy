@@ -355,6 +355,26 @@ class PoSplitType(models.Model):
         managed = True
 
 
+class PoSplitGroupType(models.Model):
+    po_split_group_type = models.PositiveIntegerField(db_column='PO_SPLIT_GROUP_TYPE', primary_key=True)
+    # 01 - Supplier,02 - Currency,03 - Ship to address,04 - Purchasing Group, 05 - CallOff, 06 - Limit Order,
+    # 07 - Purchase Requision,08- Incoterm,09 - Payment Terms,10 - product type
+    po_split_group_type_desc = models.CharField(db_column='PO_SPLIT_GROUP_TYPE_DESC', max_length=30, null=False)
+    po_split_group_type_created_by = models.CharField(db_column='PO_SPLIT_GROUP_TYPE_CREATED_BY', max_length=30,
+                                                      null=True)
+    po_split_group_type_created_at = models.DateTimeField(db_column='PO_SPLIT_GROUP_TYPE_CREATED_AT', max_length=50,
+                                                          null=True)
+    po_split_group_type_changed_by = models.CharField(db_column='PO_SPLIT_GROUP_TYPE_CHANGED_BY', max_length=30,
+                                                      null=True)
+    po_split_group_type_changed_at = models.DateTimeField(db_column='PO_SPLIT_GROUP_TYPE_CHANGED_AT', max_length=50,
+                                                          null=True)
+    del_ind = models.BooleanField(default=False, null=False)
+
+    class Meta:
+        db_table = "MAD_SPLIT_GROUP_TYPE"
+        managed = True
+
+
 class PoSplitCriteria(models.Model):
     po_split_criteria_guid = models.CharField(db_column='PO_SPLIT_CRITERIA_GUID', max_length=32, primary_key=True)
     company_code_id = models.CharField(db_column='COMPANY_CODE_ID', max_length=20, null=False)
@@ -390,7 +410,8 @@ class PoGroupCriteria(models.Model):
     po_group_criteria_changed_at = models.DateTimeField(db_column='PO_GROUP_CRITERIA_CHANGED_AT', max_length=50,
                                                         null=True)
     client = models.ForeignKey('eProc_Configuration.OrgClients', on_delete=models.PROTECT, null=False)
-    po_split_type = models.ForeignKey('eProc_Configuration.PoSplitType', on_delete=models.PROTECT, null=False)
+    po_split_group_type = models.ForeignKey('eProc_Configuration.PoSplitGroupType', on_delete=models.PROTECT,
+                                            null=False)
 
     class Meta:
         db_table = "MAD_PO_GROUP_CRITERIA"
@@ -519,6 +540,7 @@ class PurchaseControl(models.Model):
     company_code_id = models.CharField(db_column='COMPANY_CODE_ID', max_length=20, null=False)
     call_off = models.CharField(db_column='CALL_OFF', max_length=15, null=True)
     purchase_ctrl_flag = models.BooleanField(db_column='PURCHASE_CTRL_FLAG', default=False, null=False)
+    prod_cat_id = models.CharField(db_column='PROD_CAT_ID', max_length=50, null=False, default=None)
     del_ind = models.BooleanField(default=False, null=False)
     purchase_control_created_by = models.CharField(db_column='PURCHASE_CONTROL_CREATED_BY', max_length=30,
                                                    null=True)
@@ -804,8 +826,8 @@ class SapConnector(models.Model):
 class SourcingRule(models.Model):
     sourcing_rule_guid = models.CharField(db_column='SOURCING_RULE_GUID', primary_key=True, max_length=32,
                                           null=False, default=None)
-    prod_cat_id_from = models.CharField(db_column='PROD_CAT_ID_FROM', max_length=20, null=False)
-    prod_cat_id_to = models.CharField(db_column='PROD_CAT_ID_TO', max_length=20, null=False)
+    prod_cat_id_from = models.IntegerField(db_column='PROD_CAT_ID_FROM', null=False)
+    prod_cat_id_to = models.IntegerField(db_column='PROD_CAT_ID_TO', null=False)
     sourcing_flag = models.BooleanField(default=False, null=False, db_column='SOURCING_FLAG')
     call_off = models.CharField(db_column='CALL_OFF', max_length=15, null=True)
     company_id = models.CharField(db_column='COMPANY_ID', max_length=8, null=True)

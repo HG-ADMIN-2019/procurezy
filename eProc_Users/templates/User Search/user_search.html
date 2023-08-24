@@ -263,9 +263,12 @@
                     <div id="id_check_success_messages" class="alert alert-success check_success_message" hidden></div>
                     <div id="id_check_error_messages" class="alert alert-danger check_error_messages" hidden></div>
                     <div id="id_check_special_character_messages" class="alert alert-danger check_special_character_messages" hidden>
-                        <p id="id_error_msg_emp_id" ></p>
-                        <p id="id_error_msg2" ></p>
-                        <p id="id_error_msg3" ></p>
+                        <p id="id_error_msg_email" ></p>
+                        <p id="id_error_msg_username" ></p>
+                        <p id="id_error_msg_first_name" ></p>
+                        <p id="id_error_msg_last_name" ></p>
+                        <p id="id_error_msg_phonenumber" ></p>
+                        <p id="id_error_msg_empid" ></p>
                     </div>
                     <div id="error_msg_id" class="alert alert-danger display-none" role="alert"><span id="error_message"></span></div>
                     <div id="id_warning_msg_id" class="alert alert-warning display-none" role="alert"></div>
@@ -287,7 +290,7 @@
                             <th>CURRENCY</th>
                             <th>LANGUAGE_ID</th>
                             <th>TIME_ZONE</th>
-                            <th id="id_del_ind_checkbox">Del Indicator</th>
+                            <th id="id_del_ind_checkbox" hidden>Del Indicator</th>
                         </tr>
                         </thead>
                         <tbody id="id_popup_tbody">
@@ -308,6 +311,23 @@
     </div>
 
     <!--end of modal popup for Add,copy,update and upload-->
+{% include 'configuration_common_pop_up.html' %}
+    <div>
+        {% if messages %}
+        {% for message in messages %}
+        {% if message.tags == 'success' %}
+        <div style="color: green; ">{{ message }}</div>
+        {% endif %}
+        {% if message.tags == 'error' %}
+        <div style="color: red; ">{{ message }}</div>
+        {% endif %}
+        {% if message.tags == 'info' %}
+        <div style="color: Black bold"><b>{{ message }}</b> </div>
+        {% endif %}
+        {% endfor %}
+        {% endif %}
+    </div>
+
 
 <!--modal popup to upload the csv file-->
     <div class="modal fade" id="id_data_upload">
@@ -400,6 +420,14 @@
     <!--   end of valid confirm popup-->
 
     {{ employee_results|json_script:"employee_results" }}
+    {{ dropdown_user|json_script:"dropdown_user" }}
+    {{ dropdown_user_date_format|json_script:"dropdown_user_date_format" }}
+    {{ dropdown_decimal_list|json_script:"dropdown_decimal_list" }}
+     {{ dropdown_language|json_script:"dropdown_language" }}
+    {{ dropdown_currency_id|json_script:"dropdown_currency_id" }}
+    {{ dropdown_time_zones|json_script:"dropdown_time_zones" }}
+    {{ dropdown_messages|json_script:"dropdown_messages" }}
+
 
 <script src="{% static 'scripts/user-search.js' %}"></script>
 
@@ -410,6 +438,51 @@ var appname = uiConstants["CONST_APPNAME03"]
 var db_header_data = uiConstants["CONST_HEADER_DATA_EMP_DETAIL"]
 var data_delete = '';
 var rendered_emp_data = JSON.parse(document.getElementById('employee_results').textContent);
+var rendered_dropdown_user = JSON.parse(document.getElementById('dropdown_user').textContent);
+var rendered_dropdown_user_date_format = JSON.parse(document.getElementById('dropdown_user_date_format').textContent);
+var rendered_dropdown_decimal_list = JSON.parse(document.getElementById('dropdown_decimal_list').textContent);
+var rendered_dropdown_time_zones = JSON.parse(document.getElementById('dropdown_time_zones').textContent);
+var rendered_dropdown_messages = JSON.parse(document.getElementById('dropdown_messages').textContent);
+var rendered_dropdown_currency_id = JSON.parse(document.getElementById('dropdown_currency_id').textContent);
+var rendered_dropdown_language = JSON.parse(document.getElementById('dropdown_language').textContent);
+var messages_list = {{dropdown_messages|safe}};
+
+
+     var currency_opt = ''
+     var language_opt = ''
+     var timezone_opt = ''
+    function dropdown_values(){
+        var rendered_dropdown_currency_id = {{ dropdown_currency_id| safe}};
+        currency_opt = ''
+        $.each(rendered_dropdown_currency_id, function (i, value) {
+            currency_opt += '<option value="' + value.currency_id + '"> ' + value.description + ' </option>'
+        });
+        var rendered_dropdown_language = {{ dropdown_language| safe}};
+         language_opt = ''
+        $.each(rendered_dropdown_language, function (i, value) {
+            language_opt += '<option value="' + value.language_id + '"> ' + value.description + ' </option>'
+        });
+        var rendered_dropdown_time_zones = {{ dropdown_time_zones| safe}};
+         timezone_opt = ''
+        $.each(rendered_dropdown_time_zones, function (i, value) {
+            timezone_opt += '<option value="' + value.time_zone + '"> ' + value.description + ' </option>'
+        });
+        rendered_dropdown_decimal_list = {{ dropdown_decimal_list | safe }};
+        decimal_opt = ''
+        $.each(rendered_dropdown_decimal_list, function (i, value) {
+            decimal_opt += '<option> ' + rendered_dropdown_decimal_list[i] + ' </option>'
+        });
+        rendered_dropdown_user_date_format = {{ dropdown_user_date_format | safe }}
+        date_format_opt = ''
+        $.each(rendered_dropdown_user_date_format, function (i, value) {
+            date_format_opt += '<option> ' + rendered_dropdown_user_date_format[i] + ' </option>'
+        })
+         rendered_dropdown_user = {{ dropdown_user | safe }}
+        user_opt = ''
+        $.each(rendered_dropdown_user, function (i, value) {
+            user_opt += '<option> ' + rendered_dropdown_user[i] + ' </option>'
+        })
+    }
 
 function reload()
 {
@@ -600,9 +673,17 @@ function onclick_display_csv_data() {
                         emp_data_array = response.valid_data_list;
                         var edit_basic_data = '';
                         var del_ind = '';
+                        var dropdown_values = [];
                         console.log(response.valid_data_list);
                         $("#id_popup_tbody").empty();
                             $.each(response.valid_data_list, function (i, value) {
+                                var currency_id_value = value.currency_id
+                                var language_id_value = value.language_id
+                                var time_zone_value = value.time_zone
+                                var decimal_notation_value = value.decimal_notation
+                                var date_format_value = value.date_format
+                                var user_type_value = value.user_type
+                                dropdown_values.push([currency_id_value, language_id_value,time_zone_value,user_type_value,decimal_notation_value,date_format_value])
                             del_ind = '<td>' + value.del_ind + '</td>'
                             if (value.del_ind == 1) {
                                 del_ind=' <input type="checkbox" value="' + value.del_ind + '" checked>'
@@ -610,22 +691,116 @@ function onclick_display_csv_data() {
                             else {
                                 del_ind= '<input type="checkbox" value="' + value.del_ind + '" required>'
                             }
+
+                            var currency_opt = ''
+                            var currency_list = ''
+                            var currency_id_list = ''
+                            $.each(rendered_dropdown_currency_id, function (i, item) {
+                                 if( value.currency_id == item.currency_id){
+                                      currency_opt += '<option value="' + item.currency_id + '">' + item.description + '</option>';
+                                 }else{
+                                       currency_list += '<option value="' + item.currency_id + '">' + item.description + '</option>';
+                                 }
+                                currency_id_list = currency_opt + currency_list
+                            });
+
+                            var language_opt = ''
+                            var language_list = ''
+                            var language_id_list = ''
+                            $.each(rendered_dropdown_language, function (i, item) {
+                                 if( value.language_id == item.language_id){
+                                    language_opt += '<option value="' + item.language_id + '">' + item.description + '</option>';
+                                 }else{
+                                    language_list += '<option value="' + item.language_id + '">' + item.description + '</option>';
+                                 }
+                                language_id_list = language_opt + language_list
+                            });
+
+
+                            var timezone_opt = ''
+                            var time_zone_list = '';
+                            var time_zone_id_list = '';
+                            $.each(rendered_dropdown_time_zones, function (i, item) {
+                                 if( value.time_zone == item.time_zone){
+                                    timezone_opt  += '<option value="' + item.time_zone + '">' + item.description + '</option>';
+                                 }else{
+                                    time_zone_list += '<option value="' + item.time_zone + '">' + item.description + '</option>';
+                                 }
+                                time_zone_id_list = timezone_opt + time_zone_list
+                            });
+
+
+                             var date_format_opt = ''
+                             var date_format_list = '';
+                             var date_format_id_list = '';
+                            $.each(rendered_dropdown_user_date_format, function (i, item) {
+                                 if( value.date_format == rendered_dropdown_user_date_format[i]){
+                                   date_format_opt += '<option value="' + rendered_dropdown_user_date_format[i] + '">' +  rendered_dropdown_user_date_format[i] + '</option>';
+                                 }else{
+                                   date_format_list += '<option value="' + rendered_dropdown_user_date_format[i] + '">' + rendered_dropdown_user_date_format[i] + '</option>';
+                                 }
+                                    date_format_id_list = date_format_opt + date_format_list
+                            })
+
+                            var decimal_opt = '';
+                            var decimal_opt_list = '';
+                            var decimal_opt_id_list = '';
+                            $.each(rendered_dropdown_decimal_list, function (i, item) {
+                                 if( value.decimal_notation == rendered_dropdown_decimal_list[i] ){
+                                    decimal_opt += '<option value="' + rendered_dropdown_decimal_list[i] + '">' + rendered_dropdown_decimal_list[i] + '</option>';
+                                 }else{
+                                    decimal_opt_list += '<option value="' + rendered_dropdown_decimal_list[i] + '">' + rendered_dropdown_decimal_list[i] + '</option>';
+                                 }
+                                decimal_opt_id_list = decimal_opt + decimal_opt_list
+                            });
+
+
+                             var dropdown_opt = ''
+                             var dropdown_list_list = '';
+                             var dropdown_list_id_list = '';
+                            $.each(rendered_dropdown_user, function (i, item) {
+                                 if( value.user_type == rendered_dropdown_user[i] ){
+                                   dropdown_opt += '<option value="' + rendered_dropdown_user[i] + '">' + rendered_dropdown_user[i] + '</option>';
+                                 }else{
+                                   dropdown_list_list += '<option value="' + rendered_dropdown_user[i] + '">' + rendered_dropdown_user[i] + '</option>';
+                                 }
+                                    dropdown_list_id_list = dropdown_opt + dropdown_list_list
+                            })
+
                             edit_basic_data += '<tr><td class="class_select_checkbox"><input type="checkbox" required></td>'+
-                            '<td><input class="form-control" type="text" value="' + value.email + '" maxlength="2" onkeypress="return /[a-z]/i.test(event.key)" required></td>'+
+                            '<td><input class="form-control" type="email" value="' + value.email + '" maxlength="40" onkeypress="return /[a-z]/i.test(event.key)" required></td>'+
                             '<td><input class="form-control" type="text" value="' + value.username + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td>'+
                             '<td><input class="form-control" type="text" value="' + value.first_name + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td>'+
                             '<td><input class="form-control" type="text" value="' + value.last_name + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td>'+
-                            '<td><input class="form-control" type="text" value="' + value.phone_num + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td>'+
-                            '<td><input class="form-control" type="text" value="' + value.date_format + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td>'+
-                            '<td><input class="form-control" type="text" value="' + value.employee_id + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td>'+
-                            '<td><input class="form-control" type="text" value="' + value.decimal_notation+ '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td>'+
-                            '<td><input class="form-control" type="text" value="' + value.user_type + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td>'+
-                            '<td><input class="form-control" type="text" value="' + value.currency_id + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td>'+
-                            '<td><input class="form-control" type="text" value="' + value.language_id + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td>'+
-                            '<td><input class="form-control" type="text" value="' + value.time_zone + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td>'+
-                            '<td><input class="form-control" type="text" value="' + value.del_ind + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td></tr>'
+                            '<td><input class="form-control" type="tel" value="' + value.phone_num + '" maxlength="100" required></td>'+
+                            '<td><select class="form-control" ><option value ="' + value.date_format + '"'+date_format_id_list+'>'+value.date_format+'</option></select></td>'+
+                            '<td><input class="form-control" type="text" value="' + value.employee_id + '" maxlength="100" required></td>'+
+                            '<td><select class="form-control" ><option value ="' + value.decimal_notation + '"'+decimal_opt_id_list+'>'+value.decimal_notation+'</option></select></td>'+
+                            '<td><select class="form-control" type="text"><option value ="' + value.user_type + '"'+dropdown_list_id_list+'>'+value.user_type+'</option></select></td>'+
+                            '<td><select class="form-control" type="text"><option value ="' + value.currency_id + '"'+currency_id_list+'>'+value.currency_id+'</option></select></td>'+
+                            '<td><select class="form-control" type="text"><option value ="' + value.language_id + '"'+language_id_list+'>'+value.language_id+'</option></select></td>'+
+                            '<td><select class="form-control" type="text"><option value ="' + value.time_zone + '"'+time_zone_id_list+'>'+value.time_zone+'</option></select></td>'+
+                            '<td>'+ del_ind +'</td></tr>'
                         });
                         $('#id_popup_tbody').append(edit_basic_data);
+<!--                         var i =0;-->
+<!--                            $("#id_popup_table TBODY TR").each(function() {-->
+<!--                                var row = $(this);-->
+<!--                                var date_format_id_list = dropdown_values[i][0]-->
+<!--                                var decimal_opt_id_list = dropdown_values[i][1]-->
+<!--                                var dropdown_list_id_list = dropdown_values[i][2]-->
+<!--                                var currency_id_list = dropdown_values[i][3]-->
+<!--                                var language_id_list = dropdown_values[i][4]-->
+<!--                                var time_zone_id_list = dropdown_values[i][5]-->
+
+<!--                                $(row.find("TD").eq(6).find("select option[value="+date_format_id_list+"]")).attr('selected','selected');-->
+<!--                                $(row.find("TD").eq(8).find("select option[value="+decimal_opt_id_list+"]")).attr('selected','selected');-->
+<!--                                $(row.find("TD").eq(9).find("select option[value="+dropdown_list_id_list+"]")).attr('selected','selected');-->
+<!--                                $(row.find("TD").eq(10).find("select option[value="+currency_id_list+"]")).attr('selected','selected');-->
+<!--                                $(row.find("TD").eq(11).find("select option[value="+language_id_list+"]")).attr('selected','selected');-->
+<!--                                $(row.find("TD").eq(12).find("select option[value="+time_zone_id_list+"]")).attr('selected','selected');-->
+<!--                                i++;-->
+<!--                            });-->
                         $( "#id_del_ind_checkbox").prop( "hidden", false );
                         $( "#header_select").prop( "hidden", false );
 
@@ -651,6 +826,33 @@ function onclick_display_csv_data() {
         }
 }
 
+function display_error_message(error_message){
+        $('#error_message').text(error_message);
+        document.getElementById("error_message").style.color = "Red";
+        $("#error_msg_id").css("display", "block")
+        $('#id_save_confirm_popup').modal('hide');
+        $('#custproddescModal').modal('show');
+    }
+ //onclick of cancel empty the popup table body and error messages
+    $(".remove_upload_data").click(() => {
+        $("#id_error_msg").html("");
+        $("#id_popup_tbody").empty();
+        $("#id_error_msg").empty();
+        $('#myModal').modal('hide');
+        $("#id_error_msg").prop("hidden", true);
+        $("#id_error_msg_email").prop("hidden", true);
+        $("#id_error_msg_username").prop("hidden", true);
+        $("#id_error_msg_first_name").prop("hidden", true);
+        $("#id_error_msg_last_name").prop("hidden", true);
+        $("#id_error_msg_phonenumber").prop("hidden", true);
+        $("#id_error_msg_empid").prop("hidden", true);
+        $("#id_check_error_messages").prop("hidden", true);
+        $("#id_check_success_messages").prop("hidden", true);
+        $("#id_check_special_character_messages").prop("hidden", true)
+        $("#id_check_data").prop("hidden", true);
+        $('#id_popup_table').DataTable().destroy();
+    });
+
 //check function restricting special char and diaplay the data count of csv file
 function check_data() {
     $("#id_delete_duplicate").hide()
@@ -660,6 +862,12 @@ function check_data() {
     $("#id_check_success_messages").prop("hidden", true)
     $("#id_check_error_messages").prop("hidden", true)
     $("#id_check_special_character_messages").prop("hidden", true)
+    document.getElementById("id_error_msg_email").innerHTML = "";
+    document.getElementById("id_error_msg_username").innerHTML = "";
+    document.getElementById("id_error_msg_first_name").innerHTML = "";
+    document.getElementById("id_error_msg_last_name").innerHTML = "";
+    document.getElementById("id_error_msg_phonenumber").innerHTML = "";
+    document.getElementById("id_error_msg_empid").innerHTML = "";
     count = 0;
     var emp_array = new Array
     var DB_array = new Array
@@ -668,21 +876,22 @@ function check_data() {
     del_ind = ''
     $("#id_popup_table TBODY TR").each(function() {
         $('#id_popup_table').DataTable().destroy();
+        $("#id_check_data").prop("hidden", false);
         var row = $(this);
          user_dic = {}
         //*************** reading data from the pop-up ***************
-        user_dic.email = row.find("TD").eq(1).find('input[type="text"]').val();
+        user_dic.email = row.find("TD").eq(1).find('input[type="email"]').val();
         user_dic.username = row.find("TD").eq(2).find('input[type="text"]').val();
         user_dic.first_name = row.find("TD").eq(3).find('input[type="text"]').val();
         user_dic.last_name = row.find("TD").eq(4).find('input[type="text"]').val();
-        user_dic.phone_num = row.find("TD").eq(5).find('input[type="text"]').val();
-        user_dic.date_format = row.find("TD").eq(6).find('input[type="text"]').val();
+        user_dic.phone_num = row.find("TD").eq(5).find('input[type="tel"]').val();
+        user_dic.date_format = row.find("TD").eq(6).find('select').val();
         user_dic.employee_id = row.find("TD").eq(7).find('input[type="text"]').val();
-        user_dic.decimal_notation = row.find("TD").eq(8).find('input[type="text"]').val();
-        user_dic.user_type = row.find("TD").eq(9).find('input[type="text"]').val();
-        user_dic.currency_id = row.find("TD").eq(10).find('input[type="text"]').val();
-        user_dic.language_id = row.find("TD").eq(11).find('input[type="text"]').val();
-        user_dic.time_zone = row.find("TD").eq(12).find('input[type="text"]').val();
+        user_dic.decimal_notation = row.find("TD").eq(8).find('select').val();
+        user_dic.user_type = row.find("TD").eq(9).find('select').val();
+        user_dic.currency_id = row.find("TD").eq(10).find('select').val();
+        user_dic.language_id = row.find("TD").eq(11).find('select').val();
+        user_dic.time_zone = row.find("TD").eq(12).find('select').val();
         checked_box = row.find("TD").eq(13).find('input[type="checkbox"]').is(':checked')
             if (checked_box){
                 user_dic.del_ind = '1'
@@ -691,8 +900,114 @@ function check_data() {
                user_dic.del_ind = '0'
             }
             user_list.push(user_dic)
-         table_sort_filter_popup_pagination('id_popup_table');
+
+       //*************** checking for empty records for product id name (max length = 2) ***************
+            if(user_dic.email.length == 0){
+                $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
+                row_color_highlight_empty(row);
+                $("#id_error_msg_prod_cat_desc").prop("hidden",false);
+                error_message = ui_messeges("JMSG002")// Get message details
+                var display8 = error_message;
+                document.getElementById("id_error_msg_email").innerHTML = display8+ "Email ID";
+                $("#id_check_special_character_messages").prop("hidden",false);
+                $("#id_check_data").prop("hidden", false);
+                count = count +1;
+            }
+            else{
+                $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "none");
+                row_color_no_highlight(row);
+                $(row).css("border", "");
+                $("#id_delete_duplicate").hide()
+            }
+            if(user_dic.username.length == 0){
+                $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
+                row_color_highlight_empty(row);
+                $("#id_error_msg_prod_cat_desc").prop("hidden",false);
+                error_message = ui_messeges("JMSG002")// Get message details
+                var display8 = error_message;
+                document.getElementById("id_error_msg_username").innerHTML = display8+ "User Name";
+                $("#id_check_special_character_messages").prop("hidden",false);
+                $("#id_check_data").prop("hidden", false);
+                count = count +1;
+            }
+            else{
+                $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "none");
+                row_color_no_highlight(row);
+                $(row).css("border", "");
+                $("#id_delete_duplicate").hide()
+            }
+             if(user_dic.first_name.length == 0){
+                $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
+                row_color_highlight_empty(row);
+                $("#id_error_msg_prod_cat_desc").prop("hidden",false);
+                error_message = ui_messeges("JMSG002")// Get message details
+                var display8 = error_message;
+                document.getElementById("id_error_msg_first_name").innerHTML = display8+ "First Name";
+                $("#id_check_special_character_messages").prop("hidden",false);
+                $("#id_check_data").prop("hidden", false);
+                count = count +1;
+            }
+            else{
+                $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "none");
+                row_color_no_highlight(row);
+                $(row).css("border", "");
+                $("#id_delete_duplicate").hide()
+            }
+             if(user_dic.last_name.length == 0){
+                $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
+                row_color_highlight_empty(row);
+                $("#id_error_msg_prod_cat_desc").prop("hidden",false);
+                error_message = ui_messeges("JMSG002")// Get message details
+                var display8 = error_message;
+                document.getElementById("id_error_msg_last_name").innerHTML = display8+ "Last Name";
+                $("#id_check_special_character_messages").prop("hidden",false);
+                $("#id_check_data").prop("hidden", false);
+                count = count +1;
+            }
+            else{
+                $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "none");
+                row_color_no_highlight(row);
+                $(row).css("border", "");
+                $("#id_delete_duplicate").hide()
+            }
+            if(user_dic.phone_num.length == 0){
+                $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
+                row_color_highlight_empty(row);
+                $("#id_error_msg_prod_cat_desc").prop("hidden",false);
+                error_message = ui_messeges("JMSG002")// Get message details
+                var display8 = error_message;
+                document.getElementById("id_error_msg_phonenumber").innerHTML = display8+ "Phone Number";
+                $("#id_check_special_character_messages").prop("hidden",false);
+                $("#id_check_data").prop("hidden", false);
+                count = count +1;
+            }
+            else{
+                $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "none");
+                row_color_no_highlight(row);
+                $(row).css("border", "");
+                $("#id_delete_duplicate").hide()
+            }
+            if(user_dic.employee_id.length == 0){
+                $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
+                row_color_highlight_empty(row);
+                $("#id_error_msg_prod_cat_desc").prop("hidden",false);
+                error_message = ui_messeges("JMSG002")// Get message details
+                var display8 = error_message;
+                document.getElementById("id_error_msg_empid").innerHTML = display8+ "Employee ID";
+                $("#id_check_special_character_messages").prop("hidden",false);
+                $("#id_check_data").prop("hidden", false);
+                count = count +1;
+            }
+            else{
+                $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "none");
+                row_color_no_highlight(row);
+                $(row).css("border", "");
+                $("#id_delete_duplicate").hide()
+            }
+            table_sort_filter_popup_pagination('id_popup_table');
+
         });
+
 
           //*************** shows save button if there are no errors(special characters and max length) ***************
         if(count == 0){
@@ -851,6 +1166,38 @@ $('#user_tab tbody').on('click', 'input[class="emp_checkbox"]', function(e){
    }
 }
 
+//*******************************************************
+// on click add icon display the row in to add the new entries
+function add_popup_row() {
+    $("#error_msg_id").css("display", "none")
+    basic_add_new_html = '';
+    $('#id_popup_table').DataTable().destroy();
+    $(".modal").on("hidden.bs.modal", function () {
+        $("#id_error_msg").html(" ");
+    });
+   dropdown_values()
+         basic_add_new_html = '<tr><td class="class_select_checkbox"><input type="checkbox" required></td>'+
+                            '<td><input class="form-control" type="email" maxlength="40" onkeypress="return /[a-z]/i.test(event.key)" required></td>'+
+                            '<td><input class="form-control" type="text" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td>'+
+                            '<td><input class="form-control" type="text" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td>'+
+                            '<td><input class="form-control" type="text"  maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td>'+
+                            '<td><input class="form-control" type="tel"  maxlength="100" required></td>'+
+                            '<td><select class="form-control">'+date_format_opt+'</select></td>'+
+                            '<td><input class="form-control" type="text"  maxlength="100" required></td>'+
+                            '<td><select class="form-control" >'+decimal_opt+'</select></td>'+
+                            '<td><select class="form-control" >'+user_opt+'</select></td>'+
+                            '<td><select class="form-control" >'+currency_opt+'</select></td>'+
+                            '<td><select class="form-control" >'+language_opt+'</select></td>'+
+                            '<td><select class="form-control" >'+timezone_opt+'</select></td>'+
+                            '<td><input type="checkbox" required></td></tr>'
+         $('#id_popup_tbody').append(basic_add_new_html);
+         table_sort_filter('id_popup_table');
+         $(".class_del_checkbox").prop("hidden", false);
+         $("#id_del_ind_checkbox").prop("hidden", false);
+
+}
+
 
 </script>
 {% endblock %}
+

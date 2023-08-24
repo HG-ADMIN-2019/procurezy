@@ -3,6 +3,7 @@ from eProc_Basic.Utilities.functions.django_query_set import DjangoQueries
 from eProc_Basic.Utilities.functions.guid_generator import guid_generator
 from eProc_Basic.Utilities.global_defination import global_variables
 from eProc_Chat.models import *
+from eProc_Chat.models.chat_model import ChatParticipants
 from eProc_Configuration.models import OrgClients, Languages
 from eProc_Notification.Utilities.notification_generic import trigger_doc_notification
 from eProc_Shopping_Cart.models import ScHeader, ScApproval, ScPotentialApproval

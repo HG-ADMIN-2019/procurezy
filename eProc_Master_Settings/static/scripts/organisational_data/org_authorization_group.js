@@ -174,43 +174,89 @@ function get_row_data(tableSelector) {
 // Function for add a new row data
 function new_row_data(){
     basic_add_new_html = '<tr><td><input type="checkbox" required></td>'+
-    '<td><select type="text" class="input form-control authgroup" onchange="get_type_obj_values(this)">'+ auth_group_id_dropdown+'</select></td>'+
+    '<td><select type="text" class="input form-control authgroup" onchange="get_auth_level_values(this)">'+ auth_group_id_dropdown+'</select></td>'+
     '<td><input class="form-control description" type="text"  name="description" value="'+auth_grp_desc+'"  disabled></td>'+
-    '<td><select class="form-control">'+auth_level_dropdown+'</select></td>'+
+    '<td><select class="form-control" onchange="get_auth_obj_values(this)">'+auth_level_dropdown+'</select></td>'+
     '<td><select class="form-control">'+auth_obj_id_dropdown+'</select></td>'+
     '<td hidden><input type="text" value="GUID"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
     table_sort_filter('id_popup_table');
 }
 
-function get_type_obj_values(selectElement) {
+function get_auth_level_values(selectElement) {
     var selected_auth_group = selectElement.value;
-    var auth_levelDropdown = $(selectElement).closest('tr').find('.form-control').eq(3);
-    var auth_objDropdown = $(selectElement).closest('tr').find('.form-control').eq(4);
+    var auth_levelDropdown = $(selectElement).closest('tr').find('.form-control').eq(2);
+    var auth_objDropdown = $(selectElement).closest('tr').find('.form-control').eq(3);
     var auth_group = main_table_data[selected_auth_group];
-    var used_auth_group = {}; // Object to store the used node values for the selected node type
+    var used_auth_group_level = {};
+    var used_auth_group_obj = {};
+
+    if(rendered_auth_group_field_data.length != 0){
+        auth_grp_desc = rendered_auth_group_field_data[0].field_type_desc;
+    } else {
+        auth_grp_desc = "";
+    }
 
     // Loop through the node values in the main_table_data and store the used ones for the selected node type
     $.each(auth_group, function(index, value) {
-        used_auth_group[value.auth_level] = true;
-        used_auth_group[value.auth_obj_id] = true;
+        used_auth_group_level[value.auth_level] = true;
+        used_auth_group_obj[value.auth_obj_id] = true;
     });
 
     auth_levelDropdown.empty();
     auth_objDropdown.empty();
 
+    var usedAuthLevels = {};
+    var usedAuthObjIDs = {};
+    $.each(main_table_data[selected_auth_group], function (index, value) {
+        var authLevel = value.auth_level;
+        var authObjID = value.auth_obj_id;
+
+        if (!usedAuthLevels.hasOwnProperty(authLevel)) {
+            usedAuthLevels[authLevel] = new Set();
+        }
+        usedAuthLevels[authLevel].add(authObjID);
+    });
     // Now, populate the auth_levelDropdown with only the unused auth_level values
     $.each(rendered_auth_type, function(i, item) {
         var authLevelValue = item.field_type_id;
-        if (!used_auth_group.hasOwnProperty(authLevelValue)) {
+        if (rendered_auth_obj_data.length != Object.keys(used_auth_group_obj).length) {
             auth_levelDropdown.append('<option value="' + authLevelValue + '">' + authLevelValue + '</option>');
         }
     });
 
-    // Populate the auth_objDropdown with only the unused auth_obj_id values
+    // Populate the auth_objDropdown with only the unused auth_obj_id values based on the first selected auth_levelDropdown value
+    var firstAuthLevel = auth_levelDropdown.val();
+    if (firstAuthLevel) {
+        $.each(rendered_auth_obj_data, function(i, item) {
+            var authObjIDValue = item.auth_obj_id;
+            if (!usedAuthObjIDs.hasOwnProperty(authObjIDValue) && (!usedAuthLevels[firstAuthLevel] || !usedAuthLevels[firstAuthLevel].has(authObjIDValue))) {
+                auth_objDropdown.append('<option value="' + authObjIDValue + '">' + authObjIDValue + '</option>');
+            }
+        });
+    }
+}
+
+
+function get_auth_obj_values(selectElement, event) {
+    var selected_auth_group = $(selectElement).closest('tr').find('.authgroup').val();
+    var selected_auth_level = $(selectElement).val();
+    var auth_objDropdown = $(selectElement).closest('tr').find('.form-control').eq(3);
+    var auth_group = main_table_data[selected_auth_group];
+    var used_auth_group_obj = {};
+
+    // Loop through the node values in the main_table_data and store the used ones for the selected node type and level
+    $.each(auth_group, function(index, value) {
+        if (value.auth_level === selected_auth_level) {
+            used_auth_group_obj[value.auth_obj_id] = true;
+        }
+    });
+    auth_objDropdown.empty();
+
+    // Populate the auth_objDropdown with only the unused auth_obj_id values for the selected auth_level
     $.each(rendered_auth_obj_data, function(i, item) {
         var authObjIDValue = item.auth_obj_id;
-        if (!used_auth_group.hasOwnProperty(authObjIDValue)) {
+        if (!used_auth_group_obj.hasOwnProperty(authObjIDValue)) {
             auth_objDropdown.append('<option value="' + authObjIDValue + '">' + authObjIDValue + '</option>');
         }
     });

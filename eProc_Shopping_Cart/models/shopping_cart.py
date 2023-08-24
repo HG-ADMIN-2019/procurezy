@@ -388,33 +388,34 @@ class ScItem(models.Model):
         if '*' in prod_cat:
             prd_cat = re.search(r'[a-zA-Z0-9]+', prod_cat)
             if prod_cat[0] == '*' and prod_cat[-1] == '*':
-                queryset = ScItem.objects.values_list('prod_cat_id', flat=False).filter(
-                    prod_cat_id__icontains=prd_cat.group(0))
+                queryset = ScItem.objects.values_list('description', flat=False).filter(
+                    description__icontains=prd_cat.group(0))
             elif prod_cat[0] == '*':
-                queryset = ScItem.objects.values_list('prod_cat_id', flat=False).filter(
-                    prod_cat_id__iendswith=prd_cat.group(0))
+                queryset = ScItem.objects.values_list('description', flat=False).filter(
+                    description__iendswith=prd_cat.group(0))
             else:
-                queryset = ScItem.objects.values_list('prod_cat_id', flat=False).filter(
-                    prod_cat_id__istartswith=prd_cat.group(0))
+                queryset = ScItem.objects.values_list('description', flat=False).filter(
+                    description__istartswith=prd_cat.group(0))
 
         else:
-            queryset = ScItem.objects.values_list('prod_cat_id', flat=False).filter(prod_cat_id=prod_cat)
+            queryset = ScItem.objects.values_list('description', flat=False).filter(description=prod_cat)
         prod_cat_list = []
         for field in queryset:
             prod_cat_list.append(field[0])
         return prod_cat_list
 
+    @staticmethod
     def get_item_data_by_objid(self, obj, objid, client):
         return obj.objects.filter(doc_number=objid, client=client, del_ind=False).values().order_by('doc_number')
 
     @staticmethod
     def get_item_data_by_fields(client, obj, prod_cat_query, **kwargs):
-        return list(obj.objects.filter(prod_cat_query, grouping_ind=True, client=client, del_ind=False,
-                                       **kwargs).values().order_by())
+        return obj.objects.filter(prod_cat_query, client=client, del_ind=False,
+                                       **kwargs).values().order_by()
 
     @staticmethod
     def get_item_data_by_fields_src(client, obj, prod_cat_query, company_query, **kwargs):
-        return list(obj.objects.filter(prod_cat_query, company_query, grouping_ind=True, client=client, del_ind=False,
+        return list(obj.objects.filter(prod_cat_query, company_query, source_relevant_ind=True, po_doc_num=None, client=client, del_ind=False,
                                        **kwargs).values().order_by())
 
 

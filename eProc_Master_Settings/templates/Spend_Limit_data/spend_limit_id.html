@@ -160,7 +160,7 @@
     <select id="drop_down_attr1"> </select>
 </div>
 </div>
-</div>
+
 <script>
    var main_table_spendlimitid = [];
     var master_data_settings = '{{master_data_settings|safe}}';
@@ -712,6 +712,7 @@
                 }
             });
             if (common.length != 0) {
+                $('#Spnd_Lim_Val_Modal').modal('show');
                 display_duplicate_entry(common);  //Function to highlight the rows in popup
                 error_message = ui_messeges("JMSG001") // Get message details}
                 no_duplicate_value = 'N'
