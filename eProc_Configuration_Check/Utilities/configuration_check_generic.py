@@ -2262,8 +2262,8 @@ def check_determine_gl_acc_data(ui_data, status):
                                                                  'account_assign_cat': glaccount_detail[
                                                                      'account_assign_cat'],
                                                                  'company_id': glaccount_detail['company_id'],
-                                                                 'item_from_value': glaccount_detail['from_value'],
-                                                                 'item_to_value': glaccount_detail['to_value'],
+                                                                 'item_from_value': glaccount_detail['item_from_value'],
+                                                                 'item_to_value': glaccount_detail['item_to_value'],
                                                                  'currency_id': glaccount_detail['currency_id'],
                                                                  'client': global_variables.GLOBAL_CLIENT,
                                                                  }):
@@ -2278,8 +2278,8 @@ def check_determine_gl_acc_data(ui_data, status):
                                                                  'account_assign_cat': glaccount_detail[
                                                                      'account_assign_cat'],
                                                                  'company_id': glaccount_detail['company_id'],
-                                                                 'item_from_value': glaccount_detail['from_value'],
-                                                                 'item_to_value': glaccount_detail['to_value'],
+                                                                 'item_from_value': glaccount_detail['item_from_value'],
+                                                                 'item_to_value': glaccount_detail['item_to_value'],
                                                                  'currency_id': glaccount_detail['currency_id'],
                                                                  'client': global_variables.GLOBAL_CLIENT,
                                                                  'del_ind': False}):
@@ -2297,8 +2297,8 @@ def check_determine_gl_acc_data(ui_data, status):
                                                              'account_assign_cat': glaccount_detail[
                                                                  'account_assign_cat'],
                                                              'company_id': glaccount_detail['company_id'],
-                                                             'item_from_value': glaccount_detail['from_value'],
-                                                             'item_to_value': glaccount_detail['to_value'],
+                                                             'item_from_value': glaccount_detail['item_from_value'],
+                                                             'item_to_value': glaccount_detail['item_to_value'],
                                                              'currency_id': glaccount_detail['currency_id'],
                                                              'client': global_variables.GLOBAL_CLIENT,
                                                              'del_ind': False}):
@@ -2312,8 +2312,8 @@ def check_determine_gl_acc_data(ui_data, status):
                                                                'account_assign_cat': glaccount_detail[
                                                                    'account_assign_cat'],
                                                                'company_id': glaccount_detail['company_id'],
-                                                               'item_from_value': glaccount_detail['from_value'],
-                                                               'item_to_value': glaccount_detail['to_value'],
+                                                               'item_from_value': glaccount_detail['item_from_value'],
+                                                               'item_to_value': glaccount_detail['item_to_value'],
                                                                'currency_id': glaccount_detail['currency_id'],
                                                                'client': global_variables.GLOBAL_CLIENT,
                                                                'del_ind': False}):

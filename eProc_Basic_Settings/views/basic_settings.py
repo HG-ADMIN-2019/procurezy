@@ -401,9 +401,9 @@ def convert_OrgCompanies_to_dictionary(arr):
 def convert_DetermineGLAccount_to_dictionary(arr):
     convertion_list = []
     for row in arr:
-        dictionary = {'prod_cat_id': row[0], 'company_id': row[1], 'account_assign_cat': row[2],
-                      'gl_acc_num': row[3], 'gl_acc_default': row[4], 'item_from_value': row[5],
-                      'item_to_value': row[6], 'currency_id': row[7], 'del_ind': row[8]}
+        dictionary = {'prod_cat_id': row[0], 'company_id': row[5], 'account_assign_cat': row[7],
+                      'gl_acc_num': row[3], 'gl_acc_default': row[4], 'item_from_value': row[1],
+                      'item_to_value': row[2], 'currency_id': row[8], 'del_ind': row[6]}
         convertion_list.append(dictionary)
     return convertion_list
 
