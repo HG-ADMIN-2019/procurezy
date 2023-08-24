@@ -73,7 +73,46 @@ def sc_item_field_filter(request):
         search_fields['prod_cat_id'] = request.POST.get('product_desc')
         search_fields['comp_code'] = request.POST.get('company_code')
         sc_item_inst = ScItem()
+        # temp = sc_item_inst.get_prod_cat_id(prod_cat)
+        # if inp_from_date or inp_to_date:
+        #     sc_details_query = list(ScItem.objects.filter(
+        #         item_del_date__lte=inp_to_date,
+        #         item_del_date__gte=inp_from_date
+        #     ).values())
+        #     for sc_item in sc_details_query:
+        #         guid = sc_item['header_guid_id']
+        #         scheader_details = django_query_instance.django_filter_only_query(ScHeader,
+        #                                                                           {'guid': guid,
+        #                                                                            'client': client}).values(
+        #             'doc_number')
+        #         for scheader_detail in scheader_details:
+        #             sc_header_item_detail = [scheader_detail['doc_number'], sc_item['prod_cat_desc'],
+        #                                      sc_item['supplier_id'],
+        #                                      sc_item['comp_code'], sc_item['item_del_date'], sc_item['unit'],
+        #                                      sc_item['quantity'],
+        #                                      sc_item['prod_cat_id']]
+        #
+        #             sc_header_item.append(sc_header_item_detail)
+        #     sc_header_item_details = sc_header_item
         sc_header_item_details = item_search(inp_from_date, inp_to_date,**search_fields)
+        # sc_header_item_details1 = get_sourcing_data(inp_doc_num, inp_from_date, inp_to_date, prod_cat, inp_comp_code)
+
+        # for sc_item in sc_header_item_details:
+        #     guid = sc_item['header_guid_id']
+        #     scheader_details = django_query_instance.django_filter_only_query(ScHeader,
+        #                                                                       {'guid': guid,
+        #                                                                        'client': client,
+        #                                                                        'status': CONST_SC_HEADER_APPROVED}).values(
+        #         'doc_number')
+        #     for scheader_detail in scheader_details:
+        #         sc_header_item_detail = [scheader_detail['doc_number'], sc_item['description'],
+        #                                  sc_item['supplier_id'],
+        #                                  sc_item['comp_code'], sc_item['item_del_date'], sc_item['unit'],
+        #                                  sc_item['quantity'],
+        #                                  sc_item['prod_cat_id']]
+        #         sc_header_item.append(sc_header_item_detail)
+        # sc_header_item_details = sc_header_item
+
         count = len(sc_header_item_details)
 
     context = {

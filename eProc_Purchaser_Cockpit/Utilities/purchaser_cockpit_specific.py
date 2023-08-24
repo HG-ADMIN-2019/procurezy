@@ -85,7 +85,7 @@ def item_search(inp_from_date, inp_to_date, **kwargs):
                                                              **args_list)
                 sc_item_details = django_query_instance.django_filter_only_query(ScItem,
                                                                                  {'client': client,
-                                                                                  'grouping_ind': True,
+                                                                                  'source_relevant_ind': True,
                                                                                   'item_del_date__gte': inp_from_date,
                                                                                   'item_del_date__lte': inp_to_date}).order_by(
                     *order_list)
@@ -99,6 +99,7 @@ def item_search(inp_from_date, inp_to_date, **kwargs):
                                                      sc_item.quantity,
                                                      sc_item.prod_cat_id]
                             sc_header_item_details.append(sc_header_item_detail)
+                return sc_header_item_details
             else:
                 if key == 'prod_cat_id':
                     if '*' in value:
@@ -160,7 +161,7 @@ def item_search(inp_from_date, inp_to_date, **kwargs):
 
                         sc_header_item_details.append(sc_header_item_detail)
 
-    return sc_header_item_details
+            return sc_header_item_details
 
 
 def get_sourcing_data(doc_num, from_date, to_date, prod_cat, comp_code):
