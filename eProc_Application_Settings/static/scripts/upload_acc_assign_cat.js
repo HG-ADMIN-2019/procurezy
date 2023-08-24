@@ -126,8 +126,10 @@ function GetSelectedTextValue(rowid){
 
 // Function to get the selected row data
 function get_row_data(tableSelector) {
-    $(tableSelector + " TBODY TR").each(function () {
-        var row = $(this);
+    main_table_aac_checked = []; // Clear the previous data before collecting new data
+    $(tableSelector).DataTable().$('input[type="checkbox"]').each(function () {
+        var checkbox = $(this);
+        var row = checkbox.closest("tr");
         var aac_arr_obj = {};
         aac_arr_obj.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
         if(aac_arr_obj.del_ind){

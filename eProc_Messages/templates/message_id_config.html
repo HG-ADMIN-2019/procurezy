@@ -28,8 +28,8 @@
                     <button id="id_edit_data" class="btn btn-secondary btn-sm" title="Edit" onclick="onclick_edit_button()">
                         <i class="fas fa-edit" id="edit"></i> edit
                     </button>
-                    <button class="btn btn-outline-danger btn-sm" title="Delete" id="id_delete_data" value="DELETE" style="display:none;" data-toggle="modal" data-target="#id_delete_confirm_popup">
-                        <i class="fa fa-trash" ></i> delete
+                    <button class="btn btn-outline-danger btn-sm" id="id_delete_data" title= "DELETE" value="Delete" style="display:none;" onclick="onclick_delete_button()">
+                        <i class="fa fa-trash"></i> delete
                     </button>
                     <button class="btn btn-primary btn-sm" title="Update" id="id_update_data" style="display:none;" value="UPDATE" type="button" onclick="onclick_update_button()">
                         <i class="far fa-edit"></i> update
@@ -110,6 +110,9 @@
                 <!-- Modal footer -->
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-primary remove_upload_data" title="Cancel" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
+                    <button class="btn btn-primary btn-sm" title="Delete" id="delete_data" value="DELETE" data-toggle="modal" data-target="#id_delete_confirm_popup" onclick="hideModal()">
+                        <i class="fa fa-trash"></i> Delete
+                    </button>
                     <button class="btn btn-primary" title="Save" id="save_id"><i class="fas fa-save"></i> save</button>
                 </div>
             </div>
@@ -154,11 +157,6 @@
     //*************************
     function drop_down() {
         get_main_table_data(); //Read data from main table
-        msg_type_dropdown = '';
-        $.each(rendered_msgtype_values, function(i, item) {
-            msg_type_dropdown += '<option value="' + item.field_type_id + '">' + item.field_type_id + '</option>';
-        });
-
         msg_id_dropdown = '';
         var available_msg_id_values = rendered_msgid_values.filter(function(item) {
             return !main_table_low_value.includes(item.field_type_id);
@@ -167,6 +165,15 @@
         $.each(available_msg_id_values, function(i, item) {
             msg_id_dropdown += '<option value="' + item.field_type_id + '">' + item.field_type_id + '</option>';
         });
+
+        msg_type_dropdown = '';
+        if(available_msg_id_values.length != 0){
+            $.each(rendered_msgtype_values, function(i, item) {
+                msg_type_dropdown += '<option value="' + item.field_type_id + '">' + item.field_type_id + '</option>';
+            });
+        } else {
+            msg_type_dropdown = "";
+        }
     }
 
 
@@ -179,12 +186,13 @@
             url: "{% url 'eProc_Configuration:get_dropdown_data' %}",
             data: JSON.stringify(data),
             success: function(response) {
-            rendered_msgtype_values = response.dropdown_msg_type_values
-            rendered_msgid_values = response.dropdown_msg_id_values
-            drop_down()
+                rendered_msgtype_values = response.dropdown_msg_type_values
+                rendered_msgid_values = response.dropdown_msg_id_values
+                drop_down()
                 $("#error_msg_id").css("display", "none")
                 $( "#header_select").prop( "hidden", false );
                 GLOBAL_ACTION=button.value
+                display_button(); // Call the display_button function to show/hide the buttons
                 $('#id_popup_table').DataTable().destroy();
                 $("#id_popup_tbody").empty();
                 new_row_data();   // Add a new row in popup
@@ -214,7 +222,7 @@
                 $("#id_popup_tbody").empty();
                 //Reference the Table.
                 var res = get_all_checkboxes(); // Function to get all the checkboxes
-                var $chkbox_all = $('td input[type="checkbox"]', res);;
+                var $chkbox_all = $('td input[type="checkbox"]', res);
                 //Reference the CheckBoxes in Table.
                 var edit_basic_data = "";
                 var dropdown_values = [];
@@ -309,15 +317,69 @@
         table_sort_filter('id_popup_table');
     }
 
+    // Onclick delete Button
+    function onclick_delete_button() {
+        $("#error_msg_id").css("display", "none");
+        $('#id_popup_table').DataTable().destroy();
+        $("#id_popup_tbody").empty();
+        GLOBAL_ACTION = "DELETE";
+        var edit_basic_data = "";
+        var guid = '';
+        main_table_message_id_checked = [];
+        get_row_data("#display_basic_table"); // Function call to get the selected row data
+        display_button(); // Call the display_button function to show/hide the buttons
+        var data = {'data': main_table_message_id_checked, 'table_name': 'MessagesId', 'action': GLOBAL_ACTION };
+        OpenLoaderPopup();
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'eProc_Configuration:create_update_delete_flags' %}",
+            data: JSON.stringify(data),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function(Response) {
+                var docTypeArray = Response.delete_flags; // Get the delete_flags array from the response
+                var res = get_all_checkboxes(); // Function to get all the checkboxes
+                var $chkbox_all = $('td input[type="checkbox"]', res);
+                var j = 0; // Index for docTypeArray
+                for (var i = 0; i < $chkbox_all.length; i++) {
+                    if ($chkbox_all[i].checked) {
+                        var row = $chkbox_all[i].parentNode.parentNode;
+                        if (j < docTypeArray.length && docTypeArray[j] === false) {
+                            check = '<input type="checkbox" disabled>';
+                            $('#delete_data').prop('disabled', true);
+                        } else {
+                            check = '<input type="checkbox" onclick="enableDeleteButton()">';
+                            $('#delete_data').prop('disabled', true);
+                        }
+                        j++; // Move to the next index in docTypeArray
+                        edit_basic_data +=
+                            `<tr>
+                                <td>${check}</td>
+                                <td><input class="form-control" type="text" value="${row.cells[1].innerHTML}" name="message_id" disabled></td>
+                                <td><input id="message_type" name="message_type" class="form-control" value="${row.cells[2].innerHTML}" type="text" disabled></td>
+                                <td class="class_del_checkbox" hidden><input type="checkbox" required></td>
+                                <td hidden></td>
+                            </tr>`;
+                    }
+                }
+                CloseLoaderPopup();
+                $('#id_popup_tbody').append(edit_basic_data);
+                $("#id_del_ind_checkbox").prop("hidden", true);
+                $('#msg_id_Modal').modal('show');
+                table_sort_filter('id_popup_table');
+            },
+        });
+    }
+
     //delete the selected row in db................
     var main_table_message_id_checked = [];
     function main_table_delete() {
         $('#success_msg_id').empty()
         GLOBAL_ACTION = 'DELETE'
-	    main_table_country_checked = [];
+	    main_table_message_id_checked = [];
         var Tabledata = { "Dbl_clck_tbl_id": 'MessagesId' };
         $('#display_basic_table').DataTable().destroy();
-        get_selected_row_data(); // Function call to get the selected row data
+        get_row_data("#id_popup_table"); // Function call to get the selected row data
         $('#id_delete_confirm_popup').modal('hide');
         data = {'data':main_table_message_id_checked,'table_name':'MessagesId','action':GLOBAL_ACTION}
         OpenLoaderPopup();

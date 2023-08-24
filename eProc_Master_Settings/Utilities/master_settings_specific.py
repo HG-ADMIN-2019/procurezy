@@ -469,8 +469,9 @@ class MasterSettingsSave:
 
         message = get_message_detail_based_on_action(workflowschema_data['action'])
         upload_response = get_workflowschema_data()
+        data = get_workflowschema_drop_down()
 
-        return upload_response, message
+        return upload_response, message,data
 
     def save_spend_limit(self, spendlimit_data):
         """
@@ -519,8 +520,9 @@ class MasterSettingsSave:
 
         message = get_message_detail_based_on_action(spendlimit_data['action'])
         upload_response = get_spendlimitid_data()
+        data = get_spendlimitid_dropdown()
 
-        return upload_response, message
+        return upload_response, message,data
 
     def save_org_addr_map(self, addresstype_data):
         """
@@ -729,7 +731,6 @@ class MasterSettingsSave:
                 applim_db_list.append(applim_db_dictionary)
 
             else:
-
                 django_query_instance.django_update_query(ApproverLimit,
                                                           {'approver_username': applim_detail['approver_username'],
                                                            'company_id': applim_detail['company_id'],
@@ -750,8 +751,9 @@ class MasterSettingsSave:
         message = get_message_detail_based_on_action(applim_data['action'])
 
         upload_response = get_approverid_data()
+        data = get_approverid_dropdown()
 
-        return upload_response, message
+        return upload_response, message, data
 
     def save_app_limit_value_data(self, applimval_data):
         applimval_db_list = []
@@ -808,8 +810,9 @@ class MasterSettingsSave:
 
         message = get_message_detail_based_on_action(applimval_data['action'])
         upload_response = get_approvervalue_data()
+        data = get_approvervalue_dropdown()
 
-        return upload_response, message
+        return upload_response, message,data
 
     def save_spending_limit_value_data(self, spend_limit_value_data):
         spend_limit_value_db_list = []
@@ -828,7 +831,7 @@ class MasterSettingsSave:
                     'spend_lim_value_guid': guid,
                     'spend_code_id': spend_limit_value_detail['spend_code_id'].upper(),
                     'upper_limit_value': spend_limit_value_detail['upper_limit_value'],
-                    'company_id': spend_limit_value_detail['company_id'],
+                    'company_id': OrgCompanies.objects.get(company_id=spend_limit_value_detail['company_id']),
                     'currency_id': Currency.objects.get(currency_id=spend_limit_value_detail['currency_id']),
                     'del_ind': False,
                     'client': self.client,
@@ -877,7 +880,8 @@ class MasterSettingsSave:
         message = get_message_detail_based_on_action(spend_limit_value_data['action'])
 
         upload_response = get_spendlimitvalue_data()
-        return upload_response, message
+        data = get_spendlimitvalue_dropdown()
+        return upload_response, message,data
 
     def save_address_data(self, address_data):
         address_db_list = []
@@ -1173,8 +1177,7 @@ class MasterSettingsSave:
         for wfacc_detail in wfacc_data['data']:
             # if entry is not exists in db
             if not django_query_instance.django_existence_check(WorkflowACC,
-                                                                {'workflow_acc_guid': wfacc_detail[
-                                                                    'workflow_acc_guid'],
+                                                                {
                                                                  'acc_value': wfacc_detail['acc_value'],
                                                                  'company_id': wfacc_detail['company_id'],
                                                                  'app_username': wfacc_detail['app_username'],
@@ -1251,7 +1254,8 @@ class MasterSettingsSave:
         self.save_workflow_acc_data(wfacc_data)
         message = get_message_detail_based_on_action(wfacc_data['action'])
         upload_response = get_workflowacc_data()
-        return upload_response, message
+        data = get_workflowacc_dropdown()
+        return upload_response, message,data
 
     def save_payment_desc(self, payment_desc_data):
         """
@@ -1310,7 +1314,8 @@ class MasterSettingsSave:
         message = get_message_detail_based_on_action(payment_desc_data['action'])
 
         upload_response = get_paymentdesc_data()
-        return upload_response, message
+        data = get_paymentdesc_dropdown()
+        return upload_response, message,data
 
 
 def get_unspsc_cat_cust_data():

@@ -163,6 +163,17 @@ function valueChanged() {
     }
 }
 
+//onclick of checkbox enable delete button in popup -> Dependency delete
+function enableDeleteButton() {
+    var $popupCheckboxes = $('#id_popup_tbody input[type="checkbox"]');
+    var $deleteButton = $('#delete_data');
+    // Check if any checkbox is checked in the popup
+    var anyCheckboxChecked = $popupCheckboxes.is(":checked");
+    // Enable or disable the delete button based on whether any checkbox is checked
+    $deleteButton.prop('disabled', !anyCheckboxChecked || $popupCheckboxes.length === 0);
+}
+
+
 //onclick of delete,delete the row.
 function application_settings_delete_Row(myTable) {
     $('#id_popup_table').DataTable().destroy();

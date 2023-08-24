@@ -3,9 +3,16 @@ var validate_add_attributes = [];
 var main_table_low_value = [];
 var alv={};
 
+  // onclick of valid popup
+function valid_popup(){
+  $('#id_data_upload').modal('hide');
+  $("#valid_upload").modal('show');
+}
+
 //onclick of upload button display id_data_upload popup and set GLOBAL_ACTION button value
 function onclick_upload_button() {
     GLOBAL_ACTION = "alv_upload"
+    $("#id_error_msg_upload").prop("hidden",true)
     $("#id_popup_tbody").empty();
     $('#id_data_upload').modal('show');
     document.getElementById('id_file_data_upload').value = "";
@@ -16,6 +23,7 @@ function onclick_copy_button() {
     GLOBAL_ACTION = "COPY"
     onclick_copy_update_button("COPY")
     document.getElementById("id_del_add_button").style.display = "block";
+     $("#save_id").prop("hidden", false);
 }
 
 // on click update icon display the selected checkbox data to update
@@ -23,6 +31,7 @@ function onclick_update_button() {
     GLOBAL_ACTION = "UPDATE"
     onclick_copy_update_button("UPDATE")
     document.getElementById("id_del_add_button").style.display = "none";
+     $("#save_id").prop("hidden", false);
 }
 
 //onclick of cancel empty the popup table body and error messages
@@ -41,21 +50,6 @@ $(".remove_upload_data").click(() => {
     $("#id_check_data").prop("hidden", true);
     $('#id_popup_table').DataTable().destroy();
 });
-
-// on click add icon display the row in to add the new entries
-function add_popup_row() {
-    $("#error_msg_id").css("display", "none")
-    basic_add_new_html = '';
-    var display_db_data = '';
-    $('#id_popup_table').DataTable().destroy();
-    $(".modal").on("hidden.bs.modal", function() {
-        $("#id_error_msg").html("");
-    });
-    new_row_data();   // Add a new row in popup
-    if (GLOBAL_ACTION == "alv_upload") {
-        $(".class_del_checkbox").prop("hidden", false);
-    }
-}
 
 
 //onclick of cancel display the table in display mode............
@@ -85,6 +79,7 @@ function display_basic_db_data() {
 function delete_duplicate() {
     $('#id_popup_table').DataTable().destroy();
     var alv_code_check = new Array
+     var main_table_low_value = new Array
     $("#id_popup_table TBODY TR").each(function() {
         var row = $(this);
 
@@ -100,6 +95,11 @@ function delete_duplicate() {
             $(row).remove();
         }
         alv_code_check.push(alv_compare);
+          main_table_low_value = get_main_table_data_upload(); //Read data from main table
+        if (main_table_low_value.includes(alv_compare)) {
+            $(row).remove();
+        }
+        main_table_low_value.push(alv_compare);
     })
     table_sort_filter_popup_pagination('id_popup_table')
     check_data()
@@ -190,4 +190,23 @@ function get_main_table_data() {
         main_table_low_value.push(alv_compare_maintable);
     });
     table_sort_filter('display_basic_table');
+}
+
+// Function to get main table data
+function get_main_table_data_upload() {
+    main_table_low_value = [];
+    $('#display_basic_table').DataTable().destroy();
+    $("#display_basic_table TBODY TR").each(function() {
+        var row = $(this);
+        var main_attribute = {};
+        main_attribute.app_code_id = row.find("TD").eq(3).html();
+        main_attribute.company_id = row.find("TD").eq(1).html();
+        main_attribute.app_types = row.find("TD").eq(2).html();
+        main_attribute.currency_id = row.find("TD").eq(5).html();
+        main_attribute.del_ind = row.find("TD").eq(7).find('input[type="checkbox"]').is(':checked');
+        var alv_compare_maintable = main_attribute.app_code_id +'-'+ main_attribute.company_id +'-'+main_attribute.app_types +'-'+ main_attribute.currency_id + '-'+ main_attribute.del_ind
+        main_table_low_value.push(alv_compare_maintable);
+    });
+    table_sort_filter('display_basic_table');
+    return main_table_low_value
 }

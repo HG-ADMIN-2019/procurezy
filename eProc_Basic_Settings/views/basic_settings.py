@@ -401,9 +401,9 @@ def convert_OrgCompanies_to_dictionary(arr):
 def convert_DetermineGLAccount_to_dictionary(arr):
     convertion_list = []
     for row in arr:
-        dictionary = {'prod_cat_id': row[0], 'company_id': row[1], 'account_assign_cat': row[2],
-                      'gl_acc_num': row[3], 'gl_acc_default': row[4], 'item_from_value': row[5],
-                      'item_to_value': row[6], 'currency_id': row[7], 'del_ind': row[8]}
+        dictionary = {'prod_cat_id': row[0], 'company_id': row[5], 'account_assign_cat': row[7],
+                      'gl_acc_num': row[3], 'gl_acc_default': row[4], 'item_from_value': row[1],
+                      'item_to_value': row[2], 'currency_id': row[8], 'del_ind': row[6]}
         convertion_list.append(dictionary)
     return convertion_list
 
@@ -431,7 +431,7 @@ def convert_AccountingDataDesc_to_dictionary(arr):
 def convert_SpendLimitId_to_dictionary(arr):
     convertion_list = []
     for row in arr:
-        dictionary = {'company_id': row[0], 'spender_username': row[1], 'spend_code_id': row[2],
+        dictionary = {'company_id': row[2], 'spender_username': row[1], 'spend_code_id': row[0],
                       'del_ind': row[3]}
         convertion_list.append(dictionary)
     return convertion_list
@@ -440,8 +440,8 @@ def convert_SpendLimitId_to_dictionary(arr):
 def convert_SpendLimitValue_to_dictionary(arr):
     convertion_list = []
     for row in arr:
-        dictionary = {'company_id': row[0], 'spend_code_id': row[1], 'upper_limit_value': row[2],
-                      'currency_id': row[3], 'del_ind': row[4]}
+        dictionary = {'company_id': row[0], 'spend_code_id': row[2], 'upper_limit_value': row[3],
+                      'currency_id': row[1], 'del_ind': row[4]}
         convertion_list.append(dictionary)
     return convertion_list
 
@@ -449,8 +449,8 @@ def convert_SpendLimitValue_to_dictionary(arr):
 def convert_ApproverLimit_to_dictionary(arr):
     convertion_list = []
     for row in arr:
-        dictionary = {'company_id': row[0], 'approver_username': row[1],
-                      'app_code_id': row[2], 'del_ind': row[3]}
+        dictionary = {'company_id': row[2], 'approver_username': row[0],
+                      'app_code_id': row[1], 'del_ind': row[3]}
         convertion_list.append(dictionary)
     return convertion_list
 
@@ -458,9 +458,9 @@ def convert_ApproverLimit_to_dictionary(arr):
 def convert_ApproverLimitValue_to_dictionary(arr):
     convertion_list = []
     for row in arr:
-        dictionary = {'company_id': row[0], 'app_types': row[1],
-                      'app_code_id': row[2], 'upper_limit_value': row[3],
-                      'currency_id': row[4], 'del_ind': row[5]}
+        dictionary = {'company_id': row[2], 'app_types': row[4],
+                      'app_code_id': row[0], 'upper_limit_value': row[1],
+                      'currency_id': row[5], 'del_ind': row[3]}
         convertion_list.append(dictionary)
     return convertion_list
 
@@ -468,9 +468,9 @@ def convert_ApproverLimitValue_to_dictionary(arr):
 def convert_WorkflowACC_to_dictionary(arr):
     convertion_list = []
     for row in arr:
-        dictionary = {'company_id': row[0], 'account_assign_cat': row[1], 'acc_value': row[2],
-                      'app_username': row[3], 'sup_company_id': row[4], 'account_assign_cat': row[5],
-                      'sup_acc_value': row[6], 'currency_id': row[7], 'del_ind': row[8]}
+        dictionary = {'company_id': row[1], 'account_assign_cat': row[6], 'acc_value': row[0],
+                      'app_username': row[2], 'sup_company_id': row[3], 'account_assign_cat': row[8],
+                      'sup_acc_value': row[4], 'currency_id': row[7], 'del_ind': row[5]}
         convertion_list.append(dictionary)
     return convertion_list
 
@@ -515,6 +515,28 @@ def convert_Incoterms_to_dictionary(arr):
         dictionary = {'incoterm_key': row[0], 'description': row[1], 'del_ind': row[2]}
         convertion_list.append(dictionary)
     return convertion_list
+
+
+def remove_invalid(convertion_list):
+    valid_convertion = {}  # Create an empty dictionary to store valid conversions
+
+    for conversion in convertion_list:
+        if django_query_instance.django_existence_check(OrgCompanies,
+                                                        {'del_ind': False,
+                                                         'company_id': conversion['company_id'],
+                                                         'client': global_variables.GLOBAL_CLIENT}):
+            valid_convertion['company_id'] = conversion['company_id']
+
+        if django_query_instance.django_existence_check(Currency,
+                                                        {'del_ind': False,
+                                                         'currency_id': conversion['currency_id']}):
+            valid_convertion['currency_id'] = conversion['currency_id']
+
+            valid_convertion['spend_code_id'] = conversion['spend_code_id']
+            valid_convertion['upper_limit_value'] = conversion['upper_limit_value']
+            valid_convertion['del_ind'] = conversion['del_ind']
+
+    return valid_convertion  # Return the vali
 
 
 def data_upload(request):
@@ -596,6 +618,8 @@ def data_upload(request):
             result['error_message'], result['data'] = upload_csv.csv_preview_data(header_detail, data_set_val)
             result = remove_duplicates(result['data'])
             convertion_list = convert_SpendLimitValue_to_dictionary(result)
+            valid_convertion = remove_invalid(convertion_list)
+            convertion_list = convert_SpendLimitValue_to_dictionary(valid_convertion)
             valid_data_list, message = check_spendlimit_value_data(convertion_list, 'UPLOAD')
             context = {'valid_data_list': valid_data_list}
             return JsonResponse(context, safe=False)
@@ -743,15 +767,13 @@ def convert_UNSPSCDESC_to_dictionary(arr):
 def convert_UserData_to_dictionary(arr):
     convertion_list = []
     for row in arr:
-        dictionary = {'email': row[0], 'username': row[1], 'person_no': row[2], 'form_of_address': row[3],
-                      'first_name': row[4], 'last_name': row[5], 'phone_num': row[6], 'password': row[7],
-                      'date_joined': row[8], 'first_login': row[9], 'last_login': row[10], 'is_active': row[11],
-                      'is_superuser': row[12], 'is_staff': row[13], 'date_format': row[14],
-                      'employee_id': row[15], 'decimal_notation': row[16], 'user_type': row[17],
-                      'login_attempts': row[18], 'user_locked': row[19], 'pwd_locked': row[20], 'sso_user': row[21],
-                      'valid_from': row[22], 'valid_to': row[23], 'del_ind': row[24], 'currency_id': row[25],
-                      'language_id': row[26],
-                      'object_id': row[27], 'time_zone': row[28]}
+        dictionary = {'email': row[0], 'username': row[1],
+                      'first_name': row[2], 'last_name': row[3], 'phone_num': row[4],
+                      'date_format': row[5],
+                      'employee_id': row[6], 'decimal_notation': row[7], 'user_type': row[8],
+                      'del_ind': row[9], 'currency_id': row[10],
+                      'language_id': row[11],
+                      'time_zone': row[12]}
         convertion_list.append(dictionary)
     return convertion_list
 
@@ -1460,23 +1482,25 @@ def check_data(request):
 
 
 def extract_employee_data(request):
+    get_client = global_variables.GLOBAL_CLIENT
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="EMPLOYEE.CSV"'
 
     writer = csv.writer(response)
 
     writer.writerow(
-        ['EMAIL', 'USERNAME', 'PERSON_NO', 'FORM_OF_ADDRESS', 'FIRST_NAME', 'LAST_NAME', 'PHONE_NUM', 'PASSWORD',
+        ['EMAIL', 'USERNAME', 'PERSON_NO', 'FORM_OF_ADDRESS', 'FIRST_NAME', 'LAST_NAME', 'GENDER', 'PHONE_NUM',
+         'PASSWORD',
          'DATE_JOINED', 'FIRST_LOGIN', 'LAST_LOGIN', 'IS_ACTIVE', 'IS_SUPERUSER', 'IS_STAFF', 'DATE_FORMAT',
          'EMPLOYEE_ID', 'DECIMAL_NOTATION', 'USER_TYPE', 'LOGIN_ATTEMPTS', 'USER_LOCKED', 'PWD_LOCKED', 'SSO_USER',
-         'VALID_FROM', 'VALID_TO', 'del_ind', 'CURRENCY_ID', 'LANGUAGE_ID', 'OBJECT_ID', 'TIME_ZONE'])
+         'VALID_FROM', 'VALID_TO', 'del_ind', 'CURRENCY', 'LANGUAGE_ID', 'OBJECT_ID', 'TIME_ZONE'])
     # get only active record
     emp = django_query_instance.django_filter_query(UserData,
                                                     {'del_ind': False,
-                                                     'client': global_variables.GLOBAL_CLIENT
+                                                     'client': get_client
                                                      }, None,
                                                     ['email', 'username', 'person_no', 'form_of_address',
-                                                     'first_name', 'last_name', 'phone_num', 'password',
+                                                     'first_name', 'last_name', 'gender', 'phone_num', 'password',
                                                      'date_joined', 'first_login', 'last_login', 'is_active',
                                                      'is_superuser', 'is_staff', 'date_format',
                                                      'employee_id', 'decimal_notation', 'user_type',
@@ -1487,7 +1511,8 @@ def extract_employee_data(request):
 
     for employee in emp_data:
         emp_info = [employee['email'], employee['username'], employee['person_no'], employee['form_of_address'],
-                    employee['first_name'], employee['last_name'], employee['phone_num'], employee['password'],
+                    employee['first_name'], employee['last_name'], employee['gender'], employee['phone_num'],
+                    employee['password'],
                     employee['date_joined'], employee['first_login'], employee['last_login'], employee['is_active'],
                     employee['is_superuser'], employee['is_staff'], employee['date_format'],
                     employee['employee_id'], employee['decimal_notation'], employee['user_type'],

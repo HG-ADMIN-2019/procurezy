@@ -1,7 +1,7 @@
 {% extends 'root/base.html' %}
 {% load static %}
-{% block maincontent %}
 {% block title %}  Authorization Group (Application Settings) {% endblock %}
+{% block maincontent %}
 {% include 'root/loader.html' %}
 
 <div class="container-fluid">
@@ -28,8 +28,8 @@
                     <button class="btn btn-secondary btn-sm" title="Edit" id="id_edit_data"  onclick="onclick_edit_button()">
                         <i class="fas fa-edit"></i> edit
                     </button>
-                    <button class="btn btn-outline-danger btn-sm" title="Delete" id="id_delete_data" value="auth_group_delete"  data-target="#id_delete_confirm_popup"  data-toggle="modal" style="display:none;">
-                        <i class="fa fa-trash"></i> Delete
+                    <button class="btn btn-outline-danger btn-sm" id="id_delete_data" title= "DELETE" value="Delete" style="display:none;" onclick="onclick_delete_button()">
+                        <i class="fa fa-trash"></i> delete
                     </button>
                     <button class="btn btn-secondary btn-sm" title="Cancel" id="id_cancel_data" style="display:none;" type="button"  onclick="display_basic_db_data()">
                         <i class="fas fa-times"></i> cancel
@@ -113,6 +113,9 @@
                 <!-- Modal footer -->
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-primary remove_upload_data" title="Cancel" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
+                    <button class="btn btn-primary btn-sm" title="Delete" id="delete_data" value="DELETE" data-toggle="modal" data-target="#id_delete_confirm_popup" onclick="hideModal()">
+                        <i class="fa fa-trash"></i> Delete
+                    </button>
                     <button id="id_delete_duplicate" class="btn btn-primary" style="display:none;" type="button" onclick="delete_duplicate()"><i class="fa fa-trash"></i> delete duplicates</button>
                     <button class="btn btn-primary" title="Save" id="save_id"><i class="fas fa-save"></i> save</button>
                 </div>
@@ -179,6 +182,100 @@
         })
     }
 
+    function auth_group_drpdown() {
+        var hiddenAuthGroupIDs = [];
+        var usedAuthGroupIDs = {};
+
+        // Function to check if all auth_level and auth_obj_id values for a specific auth_group_id are used in the main table
+        function areAllValuesUsed(authGroupID) {
+            var authValues = main_table_data[authGroupID];
+            if (!authValues) {
+                return false;
+            }
+
+            var authLevelObj = {};
+            authValues.forEach(item => {
+                var authLevel = item.auth_level; // Assuming this property holds the auth_level
+                if (!authLevelObj[authLevel]) {
+                    authLevelObj[authLevel] = new Set();
+                }
+                authLevelObj[authLevel].add(item.auth_obj_id);
+            });
+            for (const authLevelData of rendered_auth_type) {
+                const authLevel = authLevelData.field_type_id;
+                const assignedObjs = authLevelObj[authLevel];
+
+                if (!assignedObjs || ![...assignedObjs].every(objId => rendered_auth_obj_data.includes(objId))) {
+                    return false;
+                }
+            }
+            return true;
+        }
+
+        if (rendered_auth_group_field_data.length != 0) {
+            auth_grp_desc = rendered_auth_group_field_data[0].field_type_desc;
+        } else {
+            auth_grp_desc = "";
+        }
+
+        // Iterate through the rendered_auth_group_field_data to build the auth_group_id dropdown
+        auth_group_id_dropdown='';
+        $.each(rendered_auth_group_field_data, function (i, item) {
+            var authGroupID = item.field_type_id;
+            if (!areAllValuesUsed(authGroupID)) {
+                auth_group_id_dropdown += '<option value="' + authGroupID + '">' + authGroupID + '</option>';
+            } else {
+                hiddenAuthGroupIDs.push(authGroupID);
+            }
+        });
+        $.each(hiddenAuthGroupIDs, function (i, hiddenAuthGroupID) {
+            auth_group_id_dropdown = auth_group_id_dropdown.replace(new RegExp('<option value="' + hiddenAuthGroupID + '">.*<\/option>'), '');
+        });
+
+        // Extract the first auth_group_id value from auth_group_id_dropdown using regular JavaScript
+        var firstAuthGroupIDMatch = auth_group_id_dropdown.match(/value="([^"]+)"/);
+        if (firstAuthGroupIDMatch && firstAuthGroupIDMatch[1]) {
+            var firstAuthGroupID = firstAuthGroupIDMatch[1];
+        }
+        var firstAuthLevel = null;
+        if (firstAuthGroupID !== null) {
+            var usedAuthLevels = {};
+            var usedAuthObjIDs = {};
+
+            $.each(main_table_data[firstAuthGroupID], function (index, value) {
+                var authLevel = value.auth_level;
+                var authObjID = value.auth_obj_id;
+
+                if (!usedAuthLevels.hasOwnProperty(authLevel)) {
+                    usedAuthLevels[authLevel] = new Set();
+                }
+                usedAuthLevels[authLevel].add(authObjID);
+            });
+
+            auth_level_dropdown = '';
+            $.each(rendered_auth_type, function (i, item) {
+                var authLevelValue = item.field_type_id;
+                if (!usedAuthLevels[authLevelValue] || ![...usedAuthLevels[authLevelValue]].every(objId => rendered_auth_obj_data.includes(objId))) {
+                    auth_level_dropdown += '<option value="' + authLevelValue + '">' + authLevelValue + '</option>';
+                }
+            });
+
+            // Set the firstAuthLevel from the first element in rendered_auth_type
+            firstAuthLevel = rendered_auth_type[0].field_type_id;
+
+            auth_obj_id_dropdown = '';
+            if (firstAuthLevel) {
+                $.each(rendered_auth_obj_data, function (i, item) {
+                    var authObjIDValue = item.auth_obj_id;
+                    if (!usedAuthObjIDs.hasOwnProperty(authObjIDValue) && (!usedAuthLevels[firstAuthLevel] || !usedAuthLevels[firstAuthLevel].has(authObjIDValue))) {
+                        auth_obj_id_dropdown += '<option value="' + authObjIDValue + '">' + authObjIDValue + '</option>';
+                    }
+                });
+            }
+        }
+    }
+
+
     // validate and save for add,copy,update and upload data
     function popup_save_data() {
         $('#success_msg_id').empty()
@@ -227,15 +324,72 @@
         }
         table_sort_filter('id_popup_table');
     }
-   
+
+   // Onclick delete Button
+    function onclick_delete_button() {
+        $("#error_msg_id").css("display", "none");
+        $('#id_popup_table').DataTable().destroy();
+        $("#id_popup_tbody").empty();
+        GLOBAL_ACTION = "DELETE";
+        var edit_basic_data = "";
+        var guid = '';
+        main_table_auth_group_checked = [];
+        get_row_data("#display_basic_table"); // Function call to get the selected row data
+        display_button(); // Call the display_button function to show/hide the buttons
+        var data = {'data': main_table_auth_group_checked, 'table_name': 'AuthorizationGroup', 'action': GLOBAL_ACTION };
+        OpenLoaderPopup();
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'eProc_Configuration:create_update_delete_flags' %}",
+            data: JSON.stringify(data),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function(Response) {
+                var docTypeArray = Response.delete_flags; // Get the delete_flags array from the response
+                var res = get_all_checkboxes(); // Function to get all the checkboxes
+                var $chkbox_all = $('td input[type="checkbox"]', res);
+                var j = 0; // Index for docTypeArray
+                for (var i = 0; i < $chkbox_all.length; i++) {
+                    if ($chkbox_all[i].checked) {
+                        var row = $chkbox_all[i].parentNode.parentNode;
+                        if (j < docTypeArray.length && docTypeArray[j] === false) {
+                            check = '<input type="checkbox" disabled>';
+                            $('#delete_data').prop('disabled', true);
+                        } else {
+                            check = '<input type="checkbox" onclick="enableDeleteButton()">';
+                            $('#delete_data').prop('disabled', true);
+                        }
+                        j++; // Move to the next index in docTypeArray
+                        edit_basic_data +=
+                            `<tr>
+                                <td>${check}</td>
+                                <td><input type="text" class="input form-control authgroup"  value="${row.cells[1].innerHTML}" disabled></td>
+                                <td><input class="form-control description" type="text"  name="description" value="${row.cells[2].innerHTML}"  disabled></td>
+                                <td><input class="form-control" value="${row.cells[3].innerHTML}" disabled></td>
+                                <td><input class="form-control"  value="${row.cells[4].innerHTML}" disabled></td>
+                                <td hidden><input type="text" value="GUID"></td>
+                                <td class="class_del_checkbox" hidden><input type="checkbox" required></td>
+                            </tr>`;
+                    }
+                }
+                CloseLoaderPopup();
+                $('#id_popup_tbody').append(edit_basic_data);
+                $("#id_del_ind_checkbox").prop("hidden", true);
+                $('#auth_group_Modal').modal('show');
+                table_sort_filter('id_popup_table');
+                enableDeleteButton();
+            },
+        });
+    }
+
     //delete the selected row in db................
     var main_table_auth_group_checked = [];
     function main_table_delete() {
-    $('#success_msg_id').empty()
-    GLOBAL_ACTION = 'DELETE'
+        $('#success_msg_id').empty()
+        GLOBAL_ACTION = 'DELETE'
         main_table_auth_group_checked = [];
         $('#display_basic_table').DataTable().destroy();
-        get_selected_row_data(); // Function call to get the selected row data
+        get_row_data("#id_popup_table");
         $('#id_delete_confirm_popup').modal('hide');
         data = {'data':main_table_auth_group_checked,'table_name':'AuthorizationGroup','action':GLOBAL_ACTION}
         OpenLoaderPopup();
@@ -267,10 +421,12 @@
                 rendered_auth_obj_data = response.upload_data_AuthorizationGroup
                 rendered_auth_group_field_data = response.auth_group_db_values
                 rendered_auth_type = response.auth_type_db_values
-                dropdown_value();
+                get_auth_grp_data()
+                auth_group_drpdown();
                 $("#error_msg_id").css("display", "none")
                 $("#header_select").prop( "hidden", false );
                 GLOBAL_ACTION = button.value
+                display_button();
                 $('#id_popup_table').DataTable().destroy();
                 $("#id_popup_tbody").empty();
                 $('#auth_group_Modal').modal('show');
@@ -295,7 +451,7 @@
         basic_add_new_html = '<tr><td><input type="checkbox" required></td>'+
         '<td><select type="text" class="input form-control authgroup"   onchange="GetSelectedTextValue(this)">'+ auth_group_id_dropdown+'</select></td>'+
         '<td><input class="form-control description" type="text"  name="description" value="'+auth_grp_desc+'"  disabled></td>'+
-        '<td><select class="form-control">'+auth_level_dropdown+'</select></td>'+
+        '<td><select class="form-control" onchange="get_auth_obj_values(this)">'+auth_level_dropdown+'</select></td>'+
         '<td><select class="form-control">'+auth_obj_id_dropdown+'</select></td>'+
         '<td hidden><input type="text" value="GUID"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
         $('#id_popup_tbody').append(basic_add_new_html);

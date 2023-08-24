@@ -136,8 +136,8 @@ function delete_duplicate() {
         gl_acc_default = row.find("TD").eq(5).find('input[type="checkbox"]').is(':checked');
         account_assign_cat = row.find("TD").eq(3).find("select option:selected").val();
         company_id = row.find("TD").eq(2).find("select option:selected").val();
-        from_value = row.find("TD").eq(6).find('input[type="number"]').val();
-        to_value = row.find("TD").eq(7).find('input[type="number"]').val();
+        item_from_value = row.find("TD").eq(6).find('input[type="number"]').val();
+        item_to_value = row.find("TD").eq(7).find('input[type="number"]').val();
         currency_id = row.find("TD").eq(8).find("select option:selected").val();
         checked_box = row.find("TD").eq(5).find('input[type="checkbox"]').is(':checked');
         var compare = gl_acc_num + '-' + company_id + '-' + account_assign_cat
@@ -177,8 +177,8 @@ function read_popup_data() {
         detgl.account_assign_cat = row.find("TD").eq(3).find("select option:selected").val();
         detgl.gl_acc_num = row.find("TD").eq(4).find("select option:selected").val();
         detgl.gl_acc_default = row.find("TD").eq(5).find('input[type="checkbox"]').is(':checked');
-        detgl.from_value = row.find("TD").eq(6).find('input[type="number"]').val();
-        detgl.to_value = row.find("TD").eq(7).find('input[type="number"]').val();
+        detgl.item_from_value = row.find("TD").eq(6).find('input[type="number"]').val();
+        detgl.item_to_value = row.find("TD").eq(7).find('input[type="number"]').val();
         detgl.currency_id = row.find("TD").eq(8).find("select option:selected").val();
         detgl.det_gl_acc_guid = row.find("TD").eq(9).find('input[type="text"]').val();
         var compare = detgl.prod_cat_id + '-' + detgl.company_id + '-' + detgl.account_assign_cat +'-'+ detgl.gl_acc_num
@@ -261,8 +261,8 @@ function get_selected_row_data() {
             detgl_arr_obj.gl_acc_default = row.find("TD").eq(5).find('input[type="checkbox"]').is(':checked');
             detgl_arr_obj.account_assign_cat = row.find("TD").eq(3).html();
             detgl_arr_obj.company_id = row.find("TD").eq(2).html();
-            detgl_arr_obj.from_value = row.find("TD").eq(6).html();
-            detgl_arr_obj.to_value = row.find("TD").eq(7).html();
+            detgl_arr_obj.item_from_value = row.find("TD").eq(6).html();
+            detgl_arr_obj.item_to_value = row.find("TD").eq(7).html();
             detgl_arr_obj.currency_id = row.find("TD").eq(8).html();
             detgl_arr_obj.det_gl_acc_guid = row.find("TD").eq(9).html();
             main_table_detgl_checked.push(detgl_arr_obj);

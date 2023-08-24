@@ -69,7 +69,7 @@ def trigger_doc_notification(notif_usernames, notification, bus_type, notificati
         'notification_group': bus_type,
         'notification_type': notification_subtype,
         'client': global_variables.GLOBAL_CLIENT
-    }, 'notification_type_id')[0]
+    }, 'notification_type_id')
 
     for notif_username in notif_usernames:
         if not django_query_instance.django_existence_check(Notifications, {

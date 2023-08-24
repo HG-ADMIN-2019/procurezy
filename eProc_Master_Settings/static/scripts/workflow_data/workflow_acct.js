@@ -6,6 +6,7 @@ var wfacc = {};
 //onclick of upload button display id_data_upload popup and set GLOBAL_ACTION button value
 function onclick_upload_button() {
     GLOBAL_ACTION = "workflowacc_upload"
+    $("#id_error_msg_upload").prop("hidden",true)
     $("#id_popup_tbody").empty();
     $('#id_data_upload').modal('show');
     document.getElementById('id_file_data_upload').value = "";
@@ -16,6 +17,7 @@ function onclick_copy_button() {
     GLOBAL_ACTION = "COPY"
     onclick_copy_update_button("copy")
     document.getElementById("id_del_add_button").style.display = "block";
+    $("#save_id").prop("hidden", false);
 }
 
 //*********************************************
@@ -58,7 +60,7 @@ function read_popup_data() {
     $("#id_popup_table TBODY TR").each(function() {
         var row = $(this);
         wfacc = {};
-        wfacc.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
+        wfacc.del_ind = row.find("TD").eq(10).find('input[type="checkbox"]').is(':checked');
         wfacc.company_id = row.find("TD").eq(1).find('select[type="text"]').val();
         wfacc.account_assign_cat = row.find("TD").eq(2).find('select[type="text"]').val();
         wfacc.acc_value = row.find("TD").eq(3).find('select[type="text"]').val();
@@ -121,6 +123,66 @@ function get_main_table_data() {
     table_sort_filter('display_basic_table');
 }
 
+//********************************
+    function delete_duplicate() {
+        $('#id_popup_table').DataTable().destroy();
+        var wfacc_code_check = new Array
+        var main_table_low_value = new Array
+        wfacc_data = new Array();
+        $("#id_popup_table TBODY TR").each(function() {
+        var row = $(this);
+        wfacc = {};
+        wfacc.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
+        wfacc.company_id = row.find("TD").eq(1).find('select[type="text"]').val();
+        wfacc.account_assign_cat = row.find("TD").eq(2).find('select[type="text"]').val();
+        wfacc.acc_value = row.find("TD").eq(3).find('select[type="text"]').val();
+        wfacc.app_username = row.find("TD").eq(4).find('select[type="text"]').val();
+        wfacc.sup_company_id = row.find("TD").eq(5).find('select[type="text"]').val();
+        wfacc.sup_account_assign_cat = row.find("TD").eq(6).find('select[type="text"]').val();
+        wfacc.sup_acc_value = row.find("TD").eq(7).find('select[type="text"]').val();
+        wfacc.sup_currency_id = row.find("TD").eq(8).find('select[type="text"]').val();
+        wfacc.workflow_acc_guid = row.find("TD").eq(9).find('input[type="text"]').val();
+        if (wfacc == undefined) {
+            wfacc.app_username = row.find("TD").eq(4).find('select[type="text"]').val();
+        }
+        if(wfacc.workflow_acc_guid == undefined) {
+            wfacc.workflow_acc_guid = ''
+        }
+        var wfacc_compare = wfacc.company_id +'-'+  wfacc.account_assign_cat +'-'+ wfacc.acc_value +'-'+ wfacc.app_username +'-'+ wfacc.sup_company_id +'-'+wfacc.sup_account_assign_cat +'-'+ wfacc.sup_acc_value +'-'+ wfacc.sup_currency_id
+        wfacc_code_check.push(wfacc_compare);
+        wfacc_data.push(wfacc);
+
+            main_table_low_value = get_main_table_data_upload(); //Read data from main table
+            if (main_table_low_value.includes(wfacc_compare)) {
+                $(row).remove();
+            }
+            main_table_low_value.push(wfacc_compare);
+        })
+        table_sort_filter_popup_pagination('id_popup_table')
+        check_data()
+    }
+// Function to get main table data
+function get_main_table_data_upload() {
+    main_table_low_value = [];
+    $('#display_basic_table').DataTable().destroy();
+    $("#display_basic_table TBODY TR").each(function() {
+        var row = $(this);
+        var main_attribute = {};
+        main_attribute.company_id = row.find("TD").eq(1).html();
+        main_attribute.account_assign_cat = row.find("TD").eq(2).html();
+        main_attribute.acc_value = row.find("TD").eq(3).html();
+        main_attribute.app_username = row.find("TD").eq(4).html();
+        main_attribute.sup_company_id = row.find("TD").eq(5).html();
+        main_attribute.sup_account_assign_cat = row.find("TD").eq(6).html();
+        main_attribute.sup_acc_value = row.find("TD").eq(7).html();
+        main_attribute.sup_currency_id = row.find("TD").eq(8).html();
+        main_attribute.del_ind = row.find("TD").eq(9).find('input[type="checkbox"]').is(':checked');
+        var wfacc_compare_maintable = main_attribute.company_id+'-'+main_attribute.account_assign_cat+'-'+main_attribute.acc_value+'-'+main_attribute.app_username+'-'+main_attribute.sup_company_id+'-'+main_attribute.sup_account_assign_cat+'-'+main_attribute.sup_acc_value+'-'+main_attribute.sup_currency_id +'-'+ main_attribute.del_ind
+        main_table_low_value.push(wfacc_compare_maintable);
+    });
+    table_sort_filter('display_basic_table');
+    return main_table_low_value
+}
 // Function to get the selected row data
 function get_selected_row_data() {
     $("#display_basic_table TBODY TR").each(function () {
@@ -246,3 +308,9 @@ function sup_acc_ass_cat_dropdwn(row,company_num){
     var acct_cat_val = account_assignment_cat(sup_acct_cat,company_num)
     row.find("TD").eq(7).find("select").append(acct_cat_val.acc_ass_val_dropdwn)
 }
+
+  // onclick of valid popup
+    function valid_popup(){
+      $('#id_data_upload').modal('hide');
+      $("#valid_upload").modal('show');
+    }

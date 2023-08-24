@@ -881,7 +881,7 @@
                                 edit_basic_data +=
                                         '<tr>'+
                                             '<td><input type="checkbox" required></td>'+
-                                            '<td><select type="text" class="input form-control prodid"  name="prodid" onchange="GetSelectedTextValue(this)">value ="' + value.prod_cat_id + '"'+prod_cat_id_list+'</select></td>'+
+                                            '<td><select type="text" class="input form-control prodid"  name="prodid" onchange="GetSelectedTextValue(this)"><option value ="' + value.prod_cat_id + '"'+prod_cat_id_list+'>'+value.prod_cat_id+'</option></select></td>'+
                                             '<td hidden><input class="form-control description" type="text"  name="description"  value="'+prod_catid_desc+'" disabled>value ="' + value.category_desc + '"</td>'+
                                             '<td hidden><guid></td><td>'+ del_ind +'</td>'+
                                         '</tr>';

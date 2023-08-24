@@ -116,7 +116,7 @@ function read_popup_data() {
         var row = $(this);
         transaction_types = {};
         transaction_types.del_ind = row.find("TD").eq(7).find('input[type="checkbox"]').is(':checked');
-        transaction_types.transaction_type = row.find("TD").eq(1).find('input[type="text"]').val();
+        transaction_types.transaction_type = row.find("TD").eq(1).find('input[type="text"]').val().toUpperCase();
         transaction_types.document_type = row.find("TD").eq(2).find("select option:selected").val();
         transaction_types.sequence = row.find("TD").eq(3).find('Select').val();
         transaction_types.description = row.find("TD").eq(4).find('input[type="text"]').val();

@@ -3,17 +3,26 @@ var validate_add_attributes = [];
 var main_table_low_value = [];
 var org_attr={};
 
+//hide the myModal popup: Implemented Dependency delete purpose
+function hideModal() {
+    $('#org_attr_Modal').modal('hide');
+}
+
+//onclick of checkbox enable delete button in popup -> Dependency delete
+function enableDeleteButton() {
+    var $popupCheckboxes = $('#id_popup_table td .checkbox_check');
+    var $deleteButton = $('#delete_data');
+    // Check if any checkbox is checked in the popup
+    var anyCheckboxChecked = $popupCheckboxes.is(":checked");
+    // Enable or disable the delete button based on whether any checkbox is checked
+    $deleteButton.prop('disabled', !anyCheckboxChecked || $popupCheckboxes.length === 0);
+}
+
 // on click update icon display the selected checkbox data to update
 function onclick_update_button() {
     GLOBAL_ACTION = "UPDATE"
+    display_button();
     onclick_copy_update_button("UPDATE")
-    document.getElementById("id_del_add_button").style.display = "none";
-}
-
-//******************************
-function onclick_delete_button() {
-    GLOBAL_ACTION = "DELETE"
-    onclick_copy_update_button("DELETE")
     document.getElementById("id_del_add_button").style.display = "none";
 }
 
@@ -29,7 +38,7 @@ function onclick_copy_update_button(data) {
     var checkBoxes = document.getElementsByClassName("checkbox_check");
     var edit_basic_data = "";
     var dropdown_values = [];
-    dropdown_value();
+//    dropdown_value();
     //Loop through the CheckBoxes.
     for (var i = 0; i < checkBoxes.length; i++) {
         if (checkBoxes[i].checked) {
@@ -44,28 +53,7 @@ function onclick_copy_update_button(data) {
                 '<td><input type="checkbox"  name="inherit_values" required></td>'+
                 '<td><input type="number" value="' + row.cells[7].innerHTML + '" name="maxlength"></td>'+
                 '<td class="class_del_checkbox" hidden><input type="checkbox" required></td>'+
-                '<td class="class_del_checkbox1" hidden><input type="checkbox" required></td></tr>';
                  $("#header_select").prop("hidden", true);
-            }
-            else if (GLOBAL_ACTION == "DELETE"){
-                if ((row.cells[8].innerHTML=="False") || (row.cells[8].innerHTML=="false")){
-                    check = '<input type="checkbox" disabled>'
-                    $('#delete_data').prop('disabled', true);
-                }
-                else
-                {
-                    check = '<input type="checkbox">'
-                    $('#delete_data').prop('disabled', false);
-                }
-                unique_input = '<input class="form-control" type="text" value="' + row.cells[1].innerHTML + '" name="prod_cat_id" onkeypress="return /[0-9]/i.test(event.key)" maxlength="20" style="text-transform:uppercase" required>'
-                edit_basic_data += '<tr><td>'+check+'</td><td>'+unique_input+'</td>'+
-                '<td><input type="text" class="form-control" value="' + row.cells[2].innerHTML + '" name="prod_cat_desc" onkeypress="return /[a-z ]/i.test(event.key)" maxlength="100" required></td>'+
-                '<td><input type="checkbox"  name="range_indicator" required></td><td><input type="checkbox"  name="multiple_value" required></td>'+
-                '<td><input type="checkbox" name="allow_defaults" required></td><td><input type="checkbox"  name="inherit_values" required></td>'+
-                '<td><input type="number" value="' + row.cells[7].innerHTML + '" name="maxlength"></td>'+
-                '<td class="class_del_checkbox" hidden><input type="checkbox" required></td>'+
-                '<td class="id_del_ind_checkbox1" hidden><input type="text" name = "del_ind_flag" value="' + row.cells[8].innerHTML + '"></td></tr>';
-                $("#header_select").prop("hidden", false);
             }
             var attribute = row.cells[1].innerHTML;
             var range_indicator = row.cells[3].children.range_indicator.checked
@@ -98,23 +86,9 @@ function onclick_copy_update_button(data) {
         }
         i++;
     });
-    display_button();
     $("#id_del_ind_checkbox").prop("hidden", true);
-    table_sort_filter("id_popup_table");
     $('#org_attr_Modal').modal('show');
-    table_sort_filter('display_basic_table');
-}
-
-//***************************
-function display_button(){
-    if(GLOBAL_ACTION == "DELETE"){
-        $('#delete_data').show();
-        $('#save_id').hide();
-    }
-    else{
-        $('#delete_data').hide();
-        $('#save_id').show();
-    }
+    table_sort_filter("id_popup_table");
 }
 
 //onclick of cancel empty the popup table body and error messages
@@ -185,7 +159,7 @@ function display_basic_db_data() {
     $('#id_org_attr_tbody').append(edit_basic_data);
     $("#hg_select_checkbox").prop("hidden", true);
     $(".class_select_checkbox").prop("hidden", true);
-    $('input.checkbox_check:checkbox').removeAttr('checked');
+    $('input.checkbox_check:checkbox').prop('checked', false);
     $('#id_edit_data').show();
     $('#id_cancel_data').hide();
     $('#id_delete_data').hide();
@@ -229,7 +203,6 @@ function read_popup_data() {
     $("#id_popup_table TBODY TR").each(function() {
         var row = $(this);
         org_attr = {};
-        org_attr.del_ind_flag = row.find("TD").eq(8).find('input[type="checkbox"]').is(':checked');
         org_attr.del_ind = row.find("TD").eq(8).find('input[type="checkbox"]').is(':checked');
         org_attr.attribute_id = row.find("TD").eq(1).find('select[type="text"]').val();
         org_attr.attribute_name = row.find("TD").eq(2).find('input[type="text"]').val();
@@ -262,23 +235,21 @@ function get_main_table_data() {
 }
 
 // Function to get the selected row data
-function get_selected_row_data() {
-    $("#id_popup_table TBODY TR").each(function() {
-        var row = $(this);
+function get_row_data(tableSelector) {
+    main_table_org_attr_checked = [];
+    $(tableSelector).DataTable().$('td .checkbox_check').each(function () {
+        var checkbox = $(this);
+        var row = checkbox.closest("tr");
         var org_attr_arr_obj = {};
-        var checked_box = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
-        disable_check = row.find("TD").eq(8).find('input[type="text"]').val();
-        if(checked_box)
-        {
-            org_attr_arr_obj.del_ind_flag = row.find("TD").eq(9).find('input[type="checkbox"]').is(':checked');
-            org_attr_arr_obj.del_ind = checked_box;
-            org_attr_arr_obj.attribute_id = row.find("TD").eq(1).find('input[type="text"]').val();
-            org_attr_arr_obj.attribute_name = row.find("TD").eq(2).find('input[type="text"]').val();
-            org_attr_arr_obj.range_indicator = row.find("TD").eq(3).find('input[type="checkbox"]').is(':checked');
-            org_attr_arr_obj.multiple_value = row.find("TD").eq(4).find('input[type="checkbox"]').is(':checked');
-            org_attr_arr_obj.allow_defaults = row.find("TD").eq(5).find('input[type="checkbox"]').is(':checked');
-            org_attr_arr_obj.inherit_values = row.find("TD").eq(6).find('input[type="checkbox"]').is(':checked');
-            org_attr_arr_obj.maximum_length = row.find("TD").eq(7).find('input[type="checkbox"]').is(':checked');
+        org_attr_arr_obj.del_ind = checkbox.is(':checked');
+        if(org_attr_arr_obj.del_ind){
+            org_attr_arr_obj.attribute_id = row.find("input[name='attribute']").val() || row.find("td").eq(1).text();
+            org_attr_arr_obj.attribute_name = row.find("input[name='attribute_name']").val() || row.find("td").eq(2).text();
+            org_attr_arr_obj.range_indicator = row.find("input[name='range_indicator']").is(':checked');
+            org_attr_arr_obj.multiple_value = row.find("input[name='multiple_value']").is(':checked');
+            org_attr_arr_obj.allow_defaults = row.find("input[name='allow_defaults']").is(':checked');
+            org_attr_arr_obj.inherit_values = row.find("input[name='inherit_values']").is(':checked');
+            org_attr_arr_obj.maximum_length = row.find("input[name='maxlength']").val() || row.find("td").eq(7).text();
             main_table_org_attr_checked.push(org_attr_arr_obj);
         }
     });
@@ -286,7 +257,7 @@ function get_selected_row_data() {
 
 // Function for add a new row data
 function new_row_data() {
-    basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select type="text" class="input form-control attribute"  name="attribute" onchange="GetSelectedTextValue(this)">'+ attribute_id_dropdown +'</select></td><td><input class="form-control attribute_name" type="text" name="attribute_name" value="'+desc_attribute+'" disabled></td><td><input type="checkbox" name="range_indicator" required></td><td><input type="checkbox" name="multiple_value" required></td><td><input type="checkbox" name="allow_defaults" required></td><td><input type="checkbox" name="inherit_values" required></td><td><input type="number" name="maxlength"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td><td class="id_del_ind_checkbox1" hidden><input type="checkbox" name = "del_ind_flag" required></td></tr>';
+    basic_add_new_html = '<tr><td><input type="checkbox" class="checkbox_check" required></td><td><select type="text" class="input form-control attribute"  name="attribute" onchange="GetSelectedTextValue(this)">'+ attribute_id_dropdown +'</select></td><td><input class="form-control attribute_name" type="text" name="attribute_name" value="'+desc_attribute+'" disabled></td><td><input type="checkbox" name="range_indicator" required></td><td><input type="checkbox" name="multiple_value" required></td><td><input type="checkbox" name="allow_defaults" required></td><td><input type="checkbox" name="inherit_values" required></td><td><input type="number" name="maxlength"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
     table_sort_filter('id_popup_table');
     var attributeSelect = $("#attribute-1");

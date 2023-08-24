@@ -1,5 +1,6 @@
 from django.db.models.query_utils import Q
 
+from eProc_Basic.Utilities.functions.date_format_as_db import convert_date_to_str
 from eProc_Basic.Utilities.functions.django_query_set import DjangoQueries
 from eProc_Basic.Utilities.functions.messages_config import get_msg_desc, get_message_desc
 from eProc_Basic.Utilities.global_defination import global_variables
@@ -317,13 +318,8 @@ def check_acc_assign_values_data(ui_data, status):
                 else:
                     invalid_count = invalid_count + 1
         else:
-            if acc_value['valid_from'] == "%Y-%m-%d":
-                from_val = datetime.strptime(acc_value['valid_from'], "%Y-%m-%d")
-                to_val = datetime.strptime(acc_value['valid_to'], "%Y-%m-%d")
-            else:
-                from_val = datetime.strptime(acc_value['valid_from'], "%d-%m-%Y")
-                to_val = datetime.strptime(acc_value['valid_to'], "%d-%m-%Y")
-
+            from_val = datetime.strptime(acc_value['valid_from'], "%d-%m-%Y")
+            to_val = datetime.strptime(acc_value['valid_to'], "%d-%m-%Y")
             if django_query_instance.django_existence_check(AccountingData,
                                                             {'del_ind': False,
                                                              'client': global_variables.GLOBAL_CLIENT,
@@ -2266,8 +2262,8 @@ def check_determine_gl_acc_data(ui_data, status):
                                                                  'account_assign_cat': glaccount_detail[
                                                                      'account_assign_cat'],
                                                                  'company_id': glaccount_detail['company_id'],
-                                                                 'item_from_value': glaccount_detail['from_value'],
-                                                                 'item_to_value': glaccount_detail['to_value'],
+                                                                 'item_from_value': glaccount_detail['item_from_value'],
+                                                                 'item_to_value': glaccount_detail['item_to_value'],
                                                                  'currency_id': glaccount_detail['currency_id'],
                                                                  'client': global_variables.GLOBAL_CLIENT,
                                                                  }):
@@ -2282,8 +2278,8 @@ def check_determine_gl_acc_data(ui_data, status):
                                                                  'account_assign_cat': glaccount_detail[
                                                                      'account_assign_cat'],
                                                                  'company_id': glaccount_detail['company_id'],
-                                                                 'item_from_value': glaccount_detail['from_value'],
-                                                                 'item_to_value': glaccount_detail['to_value'],
+                                                                 'item_from_value': glaccount_detail['item_from_value'],
+                                                                 'item_to_value': glaccount_detail['item_to_value'],
                                                                  'currency_id': glaccount_detail['currency_id'],
                                                                  'client': global_variables.GLOBAL_CLIENT,
                                                                  'del_ind': False}):
@@ -2301,8 +2297,8 @@ def check_determine_gl_acc_data(ui_data, status):
                                                              'account_assign_cat': glaccount_detail[
                                                                  'account_assign_cat'],
                                                              'company_id': glaccount_detail['company_id'],
-                                                             'item_from_value': glaccount_detail['from_value'],
-                                                             'item_to_value': glaccount_detail['to_value'],
+                                                             'item_from_value': glaccount_detail['item_from_value'],
+                                                             'item_to_value': glaccount_detail['item_to_value'],
                                                              'currency_id': glaccount_detail['currency_id'],
                                                              'client': global_variables.GLOBAL_CLIENT,
                                                              'del_ind': False}):
@@ -2316,8 +2312,8 @@ def check_determine_gl_acc_data(ui_data, status):
                                                                'account_assign_cat': glaccount_detail[
                                                                    'account_assign_cat'],
                                                                'company_id': glaccount_detail['company_id'],
-                                                               'item_from_value': glaccount_detail['from_value'],
-                                                               'item_to_value': glaccount_detail['to_value'],
+                                                               'item_from_value': glaccount_detail['item_from_value'],
+                                                               'item_to_value': glaccount_detail['item_to_value'],
                                                                'currency_id': glaccount_detail['currency_id'],
                                                                'client': global_variables.GLOBAL_CLIENT,
                                                                'del_ind': False}):
@@ -3060,64 +3056,28 @@ def get_valid_employee_data(ui_data, status):
             if django_query_instance.django_existence_check(UserData,
                                                             {'del_ind': False,
                                                              'email': employee_dictionary['email'],
-                                                             'username': employee_dictionary
-                                                             ['username'],
-                                                             'person_no': employee_dictionary
-                                                             ['person_no'],
-                                                             'form_of_address': employee_dictionary
-                                                             ['form_of_address'],
-                                                             'first_name': employee_dictionary
-                                                             ['first_name'],
-                                                             'last_name': employee_dictionary
-                                                             ['last_name'],
-                                                             'gender': employee_dictionary
-                                                             ['gender'],
-                                                             'phone_num': employee_dictionary
-                                                             ['phone_num'],
-                                                             'password': employee_dictionary
-                                                             ['password'],
-                                                             'date_joined': employee_dictionary
-                                                             ['date_joined'],
-                                                             'first_login': employee_dictionary
-                                                             ['first_login'],
-                                                             'last_login': employee_dictionary
-                                                             ['last_login'],
-                                                             'is_active': employee_dictionary
-                                                             ['is_active'],
-                                                             'is_superuser': employee_dictionary
-                                                             ['is_superuser'],
-                                                             'is_staff': employee_dictionary
-                                                             ['is_staff'],
-                                                             'date_format': employee_dictionary
-                                                             ['date_format'],
-                                                             'employee_id': employee_dictionary
-                                                             ['employee_id'],
-                                                             'decimal_notation': employee_dictionary
-                                                             ['decimal_notation'],
-                                                             'user_type': employee_dictionary
-                                                             ['user_type'],
-                                                             'login_attempts': employee_dictionary
-                                                             ['login_attempts'],
-                                                             'user_locked': employee_dictionary
-                                                             ['user_locked'],
-                                                             'pwd_locked': employee_dictionary
-                                                             ['pwd_locked'],
-                                                             'sso_user': employee_dictionary
-                                                             ['sso_user'],
-                                                             'valid_from': employee_dictionary
-                                                             ['valid_from'],
-                                                             'valid_to': employee_dictionary
-                                                             ['valid_to'],
-                                                             'del_ind': employee_dictionary
-                                                             ['del_ind'],
-                                                             'currency_id': employee_dictionary
-                                                             ['currency_id'],
-                                                             'language_id': employee_dictionary
-                                                             ['language_id'],
-                                                             'object_id': employee_dictionary
-                                                             ['object_id'],
-                                                             'time_zone': employee_dictionary
-                                                             ['time_zone']
+                                                             # 'username': employee_dictionary
+                                                             # ['username'],
+                                                             # 'first_name': employee_dictionary
+                                                             # ['first_name'],
+                                                             # 'last_name': employee_dictionary
+                                                             # ['last_name'],
+                                                             # 'phone_num': employee_dictionary
+                                                             # ['phone_num'],
+                                                             # ['user_type']: employee_dictionary
+                                                             #  ['user_type'],
+                                                             # 'date_format': employee_dictionary
+                                                             # ['date_format'],
+                                                             # 'employee_id': employee_dictionary
+                                                             # ['employee_id'],
+                                                             # 'decimal_notation': employee_dictionary
+                                                             # ['decimal_notation'],
+                                                             # 'currency_id': employee_dictionary
+                                                             # ['currency_id'],
+                                                             # 'language_id': employee_dictionary
+                                                             # ['language_id'],
+                                                             # 'time_zone': employee_dictionary
+                                                             # ['time_zone']
                                                              }):
                 duplicate_count = duplicate_count + 1
             elif django_query_instance.django_existence_check(UserData,

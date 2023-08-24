@@ -18,9 +18,11 @@ from django.shortcuts import render
 from pymysql import NULL
 
 # from eProc_Application_Monitoring.Utilities.application_monitoring_generic import application_monitoring_docnum_search
+from requests import request
+
 from eProc_Attributes.models.org_attribute_models import OrgAttributesLevel
 from eProc_Basic.Utilities.constants.constants import CONST_DATE_FORMAT, CONST_DECIMAL_NOTATION, \
-    CONST_ERROR_SPLIT_CRITERIA, CONST_OTHER_ERROR
+    CONST_ERROR_SPLIT_CRITERIA, CONST_OTHER_ERROR, CONST_COFIG_UI_MESSAGE_LIST
 from eProc_Basic.Utilities.functions.django_query_set import DjangoQueries
 from eProc_Basic.Utilities.functions.encryption_util import encrypt, decrypt
 from eProc_Basic.Utilities.functions.get_db_query import get_country_id, getClients, get_user_id_by_email_id
@@ -29,8 +31,10 @@ from eProc_Basic.Utilities.functions.messages_config import get_message_desc
 from eProc_Basic.Utilities.functions.str_concatenate import concatenate_str
 from eProc_Basic.Utilities.global_defination import global_variables
 from eProc_Basic_Settings.views import JsonParser_obj
+from eProc_Configuration.Utilities.application_settings_generic import get_ui_messages
 from eProc_Configuration.models import *
 from eProc_Configuration.models.basic_data import Country
+from eProc_Configuration.models.development_data import FieldTypeDescription
 from eProc_Configuration.models.master_data import OrgPorg
 from eProc_Doc_Search_and_Display.Utilities.search_display_generic import get_hdr_data, get_hdr_data_app_monitoring
 from eProc_Emails.models import EmailUserMonitoring, EmailDocumentMonitoring, EmailSupplierMonitoring
@@ -75,8 +79,61 @@ def admin_tool(req):
     return render(req, 'Admin_Tool/admin_tool_nav.html', context)
 
 
+def user_date_format_array():
+    date_format_array = CONST_DATE_FORMAT
+    date_format_list = date_format_array
+
+    return date_format_list
+
+
+def user_decimal_list():
+    decimal_array = CONST_DECIMAL_NOTATION
+    decimal_list = decimal_array
+
+    return decimal_list
+
+
+def user_currency_id():
+    currency_id = django_query_instance.django_filter_query(Currency, {'del_ind': False}, None,
+                                                            ['currency_id', 'description'])
+
+    return currency_id
+
+
+def user_time_zones():
+    time_zones = django_query_instance.django_filter_query(TimeZone, {'del_ind': False}, None,
+                                                           ['time_zone', 'description'])
+
+    return time_zones
+
+
+def user_language_list():
+    language_list = django_query_instance.django_filter_query(Languages, {'del_ind': False}, None,
+                                                              ['language_id', 'description'])
+
+    return language_list
+
+
+def user_details_drpdown():
+    dropdown_usertype_values = ['Buyer', 'Support']
+
+    return dropdown_usertype_values
+
+
+def user_messages_list():
+    messages_list = get_ui_messages(CONST_COFIG_UI_MESSAGE_LIST)
+    return messages_list
+
+
 def user_search(request):
     update_user_info(request)
+    dropdown_user = user_details_drpdown()
+    dropdown_user_date_format = user_date_format_array()
+    dropdown_decimal_list = user_decimal_list()
+    dropdown_currency_id = user_currency_id()
+    dropdown_time_zones = user_time_zones()
+    dropdown_language = user_language_list()
+    dropdown_messages = user_messages_list()
     context = {
         'inc_nav': True,
         'inc_footer': True,
@@ -84,7 +141,17 @@ def user_search(request):
         'get_country_id': get_country_id(),
         'is_admin_active': True,
         'dropdown_usertype_values': get_usertype_values(),
+        'dropdown_user': dropdown_user,
+        'dropdown_user_date_format':dropdown_user_date_format,
+        'dropdown_decimal_list': dropdown_decimal_list,
+        'dropdown_currency_id': dropdown_currency_id,
+        'dropdown_time_zones': dropdown_time_zones,
+        'dropdown_language': dropdown_language,
+        'dropdown_messages': dropdown_messages
+
     }
+
+
 
     if request.method == 'GET':
         encrypted_email = []
@@ -886,6 +953,7 @@ def get_acct_report(request):
 def org_announcements_search(request):
     global t_count, announcement_result1
     encrypted_guid = []
+    update_user_info(request)
     client = global_variables.GLOBAL_CLIENT
     status_dropdown_values = django_query_instance.django_filter_value_list_query(FieldTypeDescription, {
         'del_ind': False, 'field_name': 'status', 'client': global_variables.GLOBAL_CLIENT
@@ -1179,9 +1247,10 @@ def delete_org_announcement(request):
     }, None, None)
     t_count = len(announcement_result1)
 
-    announcement_ids = [annsmt['unique_announcement_id'] for annsmt in announcement_result1]
+    announcement_ids = [annsmt_data['unique_announcement_id'] for annsmt_data in announcement_result1]
 
-    response = {'announcement_ids': announcement_ids, 'success_message': success_message, 't_count': t_count}
+    response = {'announcement_ids': announcement_ids, 'success_message': success_message, 't_count': t_count,
+                'announcement_result1': announcement_result1}
     return JsonResponse(response, safe=False)
 
 
@@ -1223,10 +1292,11 @@ def extract_employee_template(request):
     writer = csv.writer(response)
 
     writer.writerow(
-        ['EMAIL', 'USERNAME', 'PERSON_NO', 'FORM_OF_ADDRESS', 'FIRST_NAME', 'LAST_NAME', 'PHONE_NUM', 'PASSWORD',
+        ['EMAIL', 'USERNAME', 'PERSON_NO', 'FORM_OF_ADDRESS', 'FIRST_NAME', 'LAST_NAME', 'GENDER', 'PHONE_NUM',
+         'PASSWORD',
          'DATE_JOINED', 'FIRST_LOGIN', 'LAST_LOGIN', 'IS_ACTIVE', 'IS_SUPERUSER', 'IS_STAFF', 'DATE_FORMAT',
          'EMPLOYEE_ID', 'DECIMAL_NOTATION', 'USER_TYPE', 'LOGIN_ATTEMPTS', 'USER_LOCKED', 'PWD_LOCKED', 'SSO_USER',
-         'VALID_FROM', 'VALID_TO', 'del_ind', 'CURRENCY_ID', 'LANGUAGE_ID', 'OBJECT_ID', 'TIME_ZONE'])
+         'VALID_FROM', 'VALID_TO', 'del_ind', 'CURRENCY', 'LANGUAGE_ID', 'OBJECT_ID', 'TIME_ZONE'])
 
     return response
 

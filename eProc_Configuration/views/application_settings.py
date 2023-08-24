@@ -414,6 +414,21 @@ def create_update_delete_flags(request):
     update_user_info(request)
     app_data = JsonParser_obj.get_json_from_req(request)
     application_settings_save_instance = ApplicationSettingsSave()
+    if app_data['table_name'] == 'UnspscCategories':
+        display_data = application_settings_save_instance.generate_prod_cat_id_delete_flags(app_data)
+        return JsonResponse(display_data, safe=False)
+    if app_data['table_name'] == 'OrgNodeTypes':
+        display_data = application_settings_save_instance.generate_node_type_delete_flags(app_data)
+        return JsonResponse(display_data, safe=False)
+    if app_data['table_name'] == 'OrgAttributes':
+        display_data = application_settings_save_instance.generate_attributes_delete_flags(app_data)
+        return JsonResponse(display_data, safe=False)
+    if app_data['table_name'] == 'AuthorizationGroup':
+        display_data = application_settings_save_instance.generate_auth_grp_delete_flags(app_data)
+        return JsonResponse(display_data, safe=False)
+    if app_data['table_name'] == 'UserRoles':
+        display_data = application_settings_save_instance.generate_roles_delete_flags(app_data)
+        return JsonResponse(display_data, safe=False)
     if app_data['table_name'] == 'DocumentType':
         display_data = application_settings_save_instance.generate_DocumentType_delete_flags(app_data)
         return JsonResponse(display_data, safe=False)
@@ -425,6 +440,12 @@ def create_update_delete_flags(request):
         return JsonResponse(display_data, safe=False)
     if app_data['table_name'] == 'CalenderConfig':
         display_data = application_settings_save_instance.generate_calender_delete_flags(app_data)
+        return JsonResponse(display_data, safe=False)
+    if app_data['table_name'] == 'MessagesId':
+        display_data = application_settings_save_instance.generate_message_id_delete_flags(app_data)
+        return JsonResponse(display_data, safe=False)
+    if app_data['table_name'] == 'PoSplitType':
+        display_data = application_settings_save_instance.generate_po_split_type_delete_flags(app_data)
         return JsonResponse(display_data, safe=False)
 
 

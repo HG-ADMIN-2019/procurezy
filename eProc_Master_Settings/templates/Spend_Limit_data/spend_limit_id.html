@@ -79,26 +79,7 @@
         </div>
     </div>
 </div>
-<!--save confirmation popup-->
-<div class="modal fade" id="id_check_popup">
-    <div class="modal-dialog modal-dialog-centered ">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h5 class="modal-title">Please Confirm</h5>
-                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                    <span aria-hidden="true">&times;</span>
-                </button>
-            </div>
-            <div class="modal-body">
-                <p id="confirmation_p_id">Please remove special characters</p>
-            </div>
-            <div class="modal-footer">
-                <button type="button" class="btn btn-outline-primary" onclick="open_upload()"><i class="fas fa-times"></i> Ok</button>
-            </div>
-        </div>
-    </div>
-</div>
-<!--end of save confirmation popup-->
+
 <!--iliyaz added -->
 <div class="modal fade" id="Spend_id_Modal" style="overflow:auto;">
     <div class="modal-dialog modal-dialog-centered modal-xl">
@@ -151,7 +132,7 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-outline-primary remove_upload_data" title="Cancel" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
                 <button id="id_delete_duplicate" class="btn btn-primary" title="Delete" style="display:none;" type="button" onclick="delete_duplicate()"><i class="fas fa-check"></i> Delete Duplicates</button>
-                <button id="id_check_data" style="display:none;" class="btn btn-primary" title="Check" type="button" onclick="check_data()"><i class="fas fa-check"></i> Check</button>
+                <button id="id_check_data" style="display:none;" class="btn btn-primary" title="Check" type="button" onclick="check_data()"><i class="fas fa-check"></i> check</button>
                 <button class="btn btn-primary" title="Save" id="save_id" ><i class="fas fa-save"></i> save</button>
             </div>
         </div>
@@ -179,7 +160,7 @@
     <select id="drop_down_attr1"> </select>
 </div>
 </div>
-</div>
+
 <script>
    var main_table_spendlimitid = [];
     var master_data_settings = '{{master_data_settings|safe}}';
@@ -298,128 +279,122 @@
 
     //onclick of data Upload copy data to modal pop-up
     function onclick_display_csv_data() {
+        $("#valid_upload").modal('hide');
+        $("#id_check_success_messages").empty();
+        $("#id_check_error_messages").empty();
+        $("#id_check_success_messages").prop("hidden", true);
+        $("#id_check_error_messages").prop("hidden", true);
+        $("#id_check_special_character_messages").prop("hidden", true);
         $("#error_msg_id").css("display", "none")
         $('#id_popup_table').DataTable().destroy();
         formdata = new FormData();
         attached_file = $('#id_file_data_upload').prop('files')[0]
-        file_extension = (attached_file.name).split(".")[1]
-        file_extension = file_extension.toUpperCase();
-        if(file_extension == 'CSV'){
-            formdata.append("file_attach", attached_file);
-            formdata.append("Tablename",Tablename);
-            formdata.append("appname",appname);
-            $('#id_data_upload').modal('hide');
-            $('#id_popup_tbody').empty();
-            OpenLoaderPopup();
-            $.ajax({
-                type: 'POST',
-                url: "{% url 'eProc_Basic_Settings:data_upload' %}",
-                data: formdata,
-                contentType: "application/json; charset=utf-8",
-                success: function(response) {
-                    if(response.error_message){     
-                        $("#id_error_msg_upload").prop("hidden",false)
-                        document.getElementById("id_error_msg_upload").innerHTML = response.error_message;
-                        document.getElementById("id_error_msg_upload").style.color = "Red";
-                        $('#id_data_upload').modal('show');
-                    }
-                    else {
-                        var edit_basic_data = '';
-                        var dropdown_values = [];
-                        var del_ind = '';
-                        $("#id_popup_tbody").empty();
-                        var high_light_row_index_list = []
-                        var edit_basic_data = '';
-                        var dropdown_values = [];
-                        var del_ind = '';
-                        $("#id_popup_tbody").empty();
-                        var high_light_row_index_list = []
-                        $.each(response.data, function(i, value) {
-                            flag = validate_row(value)
-                            // special char row list
-                            if (flag){
-                                high_light_row_index_list.push(i)
-                            }
-                            var company_type_value = value[1]
-                            var spend_limit_id = value[0] 
-                            dropdown_values.push([company_type_value, spend_limit_id])
-                            del_ind = '<td>' + value[3] + '</td>'
-                            if (value[1] == 1) {
-                                del_ind = ' <input type="checkbox" value="' + value[3] + '" checked>'
-                            } else {
-                                del_ind = '<input type="checkbox" value="' + value[3] + '" required>'
-                            }
-                            var company = '';
-                            var company_list = '';
-                            var company_id_list = '';
-                            $.each(rendered_company_data, function(i, item){
-                                if( value[1].company_type_value == item){   
-                                    company = '<option value="' + item.company_id + '">' + item.company_id + '</option>';
-                                }else{
-                                    company_list += '<option value="' + item.company_id + '">' + item.company_id + '</option>';
-                                }
-                                company_id_list = company + company_list
-                            });
-                            var spendcode = '';
-                            var spendcode_list = '';
-                            var spendcode_id_list = '';
-                            $.each(rendered_spendlimitid_data, function(i, item) {
-                                if( value[0].spndlimval_value == item) {
-                                    spendcode = '<option value="' + item.spend_code_id + '">' + item.spend_code_id + '</option>';
-                                }else {
-                                    spendcode_list += '<option value="' + item.spend_code_id + '">' + item.spend_code_id + '</option>';
-                                }
-                                spendcode_id_list = spendcode + spendcode_list
-                            });
-                            edit_basic_data += '<tr><td><input type="checkbox" required></td><td><select class="form-control" type = "text">'+company_id_list+'</select></td><td><input class="form-control"  type="text" value="'+value[1]+'" maxlength="16" onkeypress="return /[a-z0-9]/i.test(event.key)" name="spender_username" style="text-transform:uppercase;" required></td><td><select class="form-control" type = "text">'+spendcode_id_list+'</select></td><td hidden><input type="text" value=""></td><td>' + del_ind + '</td></tr>';
-                        });
-                        $('#id_popup_tbody').append(edit_basic_data);
-                        var i =0;
-                        $("#id_popup_table TBODY TR").each(function(index, tr) {
-                            var row = $(this);
-                            if(high_light_row_index_list.indexOf(index) !== -1) {
-                                row.css("background-color", "1px solid #a3bdca")
-                                $('#Spend_id_Modal').modal('show');
-                                $('#id_check_popup').modal('show');
-                            }
-                            else{
-                                row.css("background-color", "")
-                            }
-                            var company_id_list= dropdown_values[i][0]
-                            var spendcode_id_list= dropdown_values[i][1]
-                            var assign_val = spending_limit_find(account_assgn_val)
-                            row.find("TD").eq(3).find("select").append(assign_val.spend_code_id_dropdown)
-                            $(row.find("TD").eq(1).find("select option[value="+company_id_list+"]")).attr('selected','selected');
-                            $(row.find("TD").eq(3).find("select option[value="+spendcode_id_list+"]")).attr('selected','selected');
-                            $(row.find("TD").eq(1).find("select")).change(function() {
-                                row.find("TD").eq(3).find("select").empty()
-                                account_assign = row.find("TD").eq(1).find("select option:selected").val();
-                                row.find("TD").eq(3).find("select").append(assign_val.spend_code_id_dropdown)
-                            })
-                            i = i + 1;
-                        });
-                        $("#id_del_ind_checkbox").prop("hidden", false);
-                        $( "#header_select").prop( "hidden", false );
-                        $(".class_del_checkbox").prop("hidden", true);
-                        $('#Spend_id_Modal').modal('show');
-                        $('#id_data_upload').modal('hide');
-                        document.getElementById("id_del_add_button").style.display = "block";
-                        $('#id_check_data').modal('show');
-                        $("#id_check_data").prop("hidden", false);
-                        $("#save_id").prop("hidden", true);
-                        table_sort_filter_popup_pagination('id_popup_table')
-                    }
-                    CloseLoaderPopup();
-                },
-                cache: false,
-                processData: false,
-                contentType: false, 
-            });
+        if(attached_file == undefined){
+           display_file_select_error(); // Display error message if no file is selected
         }
-        else{
-            display_file_select_error(); // Display error message for file selection except .csv
+        else {
+            file_extension = (attached_file.name).split(".")[1]
+            file_extension = file_extension.toUpperCase();
+            if(file_extension == 'CSV'){
+                formdata.append("file_attach", attached_file);
+                formdata.append("Tablename",Tablename);
+                formdata.append("appname",appname);
+                $('#id_data_upload').modal('hide');
+                $('#id_popup_tbody').empty();
+                OpenLoaderPopup();
+                $.ajax({
+                    type: 'POST',
+                    url: "{% url 'eProc_Basic_Settings:data_upload' %}",
+                    data: formdata,
+                    contentType: "application/json; charset=utf-8",
+                    success: function(response) {
+                            if(response.error_message){
+                                $("#id_error_msg_upload").prop("hidden",false)
+                                document.getElementById("id_error_msg_upload").innerHTML = response.error_message;
+                                document.getElementById("id_error_msg_upload").style.color = "Red";
+                                $('#id_data_upload').modal('show');
+                            }
+                            else {
+                                spend_limit_data_array = response.valid_data_list;
+                                var edit_basic_data = '';
+                                var dropdown_values = [];
+                                var del_ind = '';
+                                $("#id_popup_tbody").empty();
+                                $.each(response.valid_data_list, function(i, value) {
+                                    var company_type_value = value.company_id
+                                    var spend_limit_id = value.spend_code_id
+                                    dropdown_values.push([company_type_value, spend_limit_id])
+                                    del_ind = '<td>' + value.del_ind + '</td>'
+                                    if (value.del_ind == 1) {
+                                        del_ind = ' <input type="checkbox" value="' + value.del_ind + '" checked>'
+                                    } else {
+                                        del_ind = '<input type="checkbox" value="' + value.del_ind + '" required>'
+                                    }
+                                    var company = '';
+                                    var company_list = '';
+                                    var company_id_list = '';
+                                    $.each(rendered_company_data, function(i, item){
+                                        if( value.company_id == item.company_id){
+                                            company = '<option value="' + item.company_id + '">' + item.company_id + '</option>';
+                                        }else{
+                                            company_list += '<option value="' + item.company_id + '">' + item.company_id + '</option>';
+                                        }
+                                        company_id_list = company + company_list
+                                    });
+                                    var spendcode = '';
+                                    var spendcode_list = '';
+                                    var spendcode_id_list = '';
+                                    $.each(rendered_spendlimitid_data, function(i, item) {
+                                        if( value.spend_code_id == item.spend_code_id) {
+                                            spendcode = '<option value="' + item.spend_code_id + '">' + item.spend_code_id + '</option>';
+                                        }else {
+                                            spendcode_list += '<option value="' + item.spend_code_id + '">' + item.spend_code_id + '</option>';
+                                        }
+                                        spendcode_id_list = spendcode + spendcode_list
+                                    });
+                                    edit_basic_data += '<tr><td><input type="checkbox" required></td><td><select class="form-control" type = "text"><option value ="' + value.company_id + '"'+company_id_list+'>'+value.company_id+'</option></select></td><td><input class="form-control"  type="text" value="'+value.spender_username+'" maxlength="16" onkeypress="return /[a-z0-9]/i.test(event.key)" name="spender_username" style="text-transform:uppercase;" required></td><td><select class="form-control" type = "text"><option value ="' + value.spend_code_id + '"'+spendcode_id_list+'>'+value.spend_code_id+'</option></select></td><td hidden><input type="text" value=""></td><td>' + del_ind + '</td></tr>';
+                                });
+                                $('#id_popup_table').append(edit_basic_data);
+                                var i =0;
+                                $("#id_popup_table TBODY TR").each(function() {
+                                    var row = $(this);
+                                    var company_type_value = dropdown_values[i][0]
+                                    var spendid_type_value = dropdown_values[i][1]
+                                    var comp_val = spending_limit_find(spendid_type_value)
+                                    $(row.find("TD").eq(1).find("select option[value="+company_type_value+"]")).attr('selected','selected');
+                                    $(row.find("TD").eq(3).find("select option[value="+spendid_type_value+"]")).attr('selected','selected');
+                                    $(row.find("TD").eq(1).find("select")).change(function () {
+                                        row.find("TD").eq(3).find("select").empty()
+                                        company_num = row.find("TD").eq(1).find("select option:selected").val();
+                                        var comp_val = spending_limit_find(company_num)
+                                        row.find("TD").eq(3).find("select").append(comp_val.spend_code_id_dropdown)
+                                        })
+                                    i++;
+                                });
+                                $("#id_del_ind_checkbox").prop("hidden", false);
+                                $( "#header_select").prop( "hidden", false );
+                                $(".class_del_checkbox").prop("hidden", true);
+                                $('#Spend_id_Modal').modal('show');
+                                $('#id_data_upload').modal('hide');
+                                document.getElementById("id_del_add_button").style.display = "block";
+                                $('#id_check_data').modal('show');
+                                $("#id_check_data").prop("hidden", false);
+                                $("#save_id").prop("hidden", true);
+                                table_sort_filter('id_popup_table')
+                            }
+                              CloseLoaderPopup();
+                    },
+                    cache: false,
+                    processData: false,
+                    contentType: false,
+                });
+            }
+            else{
+                    display_file_select_error(); // Display error message for file selection except .csv
+            }
         }
     }
+
 
     // *********************************
     function update_popup_data(data){
@@ -430,11 +405,7 @@
         $("#id_popup_tbody").empty();
         var high_light_row_index_list = []
         $.each(data, function(i, value) {
-            flag = validate_row(value)
-            // special char row list
-            if (flag){
-                high_light_row_index_list.push(i)
-            }
+
             var spend_limit_id = value.spend_code_id
             var company_type_value = value.company_id
             dropdown_values.push([company_type_value, spend_limit_id])
@@ -472,12 +443,6 @@
         var i =0;
         $("#id_popup_table TBODY TR").each(function(index, tr) {
             var row = $(this);
-            if(high_light_row_index_list.indexOf(index) !== -1) {
-                row.css("background-color", "1px solid #a3bdca")
-            }
-            else{
-                row.css("background-color", "")
-            }
             var spendcode_id_list= dropdown_values[i][0]
             var company_id_list= dropdown_values[i][1]
             $(row.find("TD").eq(1).find("select option[value="+company_id_list+"]")).attr('selected','selected');
@@ -507,6 +472,7 @@
         del_ind = ''
         ui_validation_flag = true
         $("#id_popup_table TBODY TR").each(function() {
+            $('#id_popup_table').DataTable().destroy();
             var row = $(this);
             spending_limit_dic = {}
             //*************** reading data from the pop-up ***************
@@ -521,76 +487,92 @@
             spending_limit_dic.del_ind = '0'
             }
             spendlimitid_list.push(spending_limit_dic)
-            
+            get_main_table_data();
             var format = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
-
-             //*************** checking for max length for country code (max length = 2) ***************
-            if(spending_limit_dic.spend_code_id.length >20){
-                error_message = ui_messeges("JMSG004") // Get message details
-                var display8 = msg_type.messages_id_desc;
-                document.getElementById("id_error_msg_spendlimitid_length").innerHTML = display8  + "Product ID";
+            //*************** checking for empty records for spendlimit id  (max length = 2) ***************
+            if(spending_limit_dic.spender_username.length == 0){
                 $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
+                row_color_highlight_empty(row);
+                $("#id_error_msg_prod_cat_desc").prop("hidden",false);
+                error_message = ui_messeges("JMSG002")// Get message details
+                var display8 = error_message;
+                document.getElementById("id_error_msg_spender_username").innerHTML = display8+ "spender_username";
+                $("#id_check_special_character_messages").prop("hidden",false);
                 count = count +1;
             }
-       
-            //*************** checking for special characters for country code ***************
-            else if(format.test(spending_limit_dic.spend_code_id)){
-                error_message = ui_messeges("JMSG003") // Get message details
-                var display = msg_type.messages_id_desc;
-                document.getElementById("id_error_msg_spend_code_id").innerHTML = display + "Product ID";
-                $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
+            //*************** checking for special characters for spendlimitid ***************
+            else if(format.test(spending_limit_dic.spender_username)){
+                $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "1px solid #FF0000");
+                row_color_highlight_special(row);
+                $("#id_error_msg_language_id").prop("hidden",false);
+                error_message = ui_messeges("JMSG003")// Get message details
+                var display3 = error_message;
+                document.getElementById("id_error_msg_spender_username").innerHTML = display3+ "spender_username";
+                $("#id_check_special_character_messages").prop("hidden",false);
                 count = count +1;
             }
-
-            //*************** checking for special characters for country code ***************
-            else if(format.test(spending_limit_dic.spend_code_id)){
-                error_message = ui_messeges("JMSG003") // Get message details
-                var display = msg_type.messages_id_desc;
-                document.getElementById("id_error_msg_spender_username").innerHTML = display + "Product ID";
-                $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
-                count = count +1;
+            else if(spendlimitid_code_check.includes((spending_limit_dic.spender_username)&&(spending_limit_dic.del_ind))){
+                 $(row).css("border", "#f8d7da");
+                 row_color_highlight(row);
+                 $("#id_check_error_messages").prop("hidden",false);
+                 var display7 = ui_messeges("JMSG001");
+                 document.getElementById("id_check_error_messages").innerHTML = display7;
+                 $("#save_id").prop("hidden", true);
+                 $("#id_delete_duplicate").show()
+                 $("#id_check_data").prop("hidden", false);
+                 count = count +1;
+            }
+            else if(main_table_low_value.includes((spending_limit_dic.spender_username)&&(spending_limit_dic.del_ind))){
+                 $(row).css("border", "#f8d7da");
+                 row_color_highlight(row);
+                 $("#id_check_error_messages").prop("hidden",false);
+                 var display7 = ui_messeges("JMSG001");
+                 document.getElementById("id_check_error_messages").innerHTML = display7;
+                 $("#save_id").prop("hidden", true);
+                 $("#id_delete_duplicate").show()
+                 $("#id_check_data").prop("hidden", false);
+                 count = count +1;
             }
             else{
-            $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "none");
-            }
-            if(spendlimitid_code_check.includes(spending_limit_dic.spend_code_id)){
-                $(row).css("border", "#f8d7da");
-            }
-            else{
+                $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "none");
+                row_color_no_highlight(row);
                 $(row).css("border", "");
             }
-            spendlimitid_code_check.push(spending_limit_dic.spend_code_id)
-        });        
-
-        //*************** shows save button if there are no errors(special characters and max length) ***************
-        if(count == 0){
-            $("#id_check_special_character_messages").prop("hidden",true)
-            $("#save_id").prop("hidden", false);
-        }
-        popup_data_dict ={'data_list' : spendlimitid_list }
-        OpenLoaderPopup();
-        $.ajax({
-            type: 'POST',
-            url: "{% url 'eProc_Configuration_Check:check_spending_limit' %}",
-            data: JSON.stringify(popup_data_dict),
-            success: function(response) {
-                table_sort_filter_popup_pagination('id_popup_table')
-                //table_sort_filter('id_popup_table');
-                var message = ''
-                update_check_message(response.messages)
-                CloseLoaderPopup();
-                // update_popup_data(response.valid_data)
-                document.getElementById('id_del_add_button').style.visibility='hidden';
-                document.getElementById('id_check_data').style.visibility='hidden';
-            }
+            spendlimitid_code_check.push(spending_limit_dic.spender_username)
+            main_table_low_value.push(spending_limit_dic.spender_username)
+            table_sort_filter_popup_pagination('id_popup_table');
         });
-    }       
 
-    // *********************
-    function open_upload(){
-        $('#Spend_id_Modal').modal('show');
-        $('#id_check_popup').modal('hide');
+          //*************** shows save button if there are no errors(special characters and max length) ***************
+         if(count == 0){
+            $('#id_popup_table').DataTable().destroy();
+            $("#id_popup_table").find("input,button,textarea,select").attr("disabled", "disabled");
+            document.getElementById("id_del_add_button").style.display = "none";
+            $("#save_id").prop("hidden", false);
+            $("#id_check_data").prop("hidden", true);
+            if (spendlimitid_list == 0) {
+                $("#save_id").prop("hidden", true);
+            }
+            popup_data_dict ={'data_list' : spendlimitid_list}
+            OpenLoaderPopup();
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'eProc_Configuration_Check:check_spending_limit' %}",
+                data: JSON.stringify(popup_data_dict),
+                success: function(response) {
+                    table_sort_filter_popup_pagination('id_popup_table')
+                     $("#id_check_special_character_messages").prop("hidden", false);
+                     if (count == 0) {
+                           $("#id_check_special_character_messages").prop("hidden", true);
+                     }
+                    var valid_data = ''
+                    update_check_message(response.valid_data)
+                    CloseLoaderPopup();
+                }
+            });
+        }
     }
+
 
     //****************************************
     var main_table_spendlimitid_checked = [];
@@ -654,6 +636,8 @@
                     dataType: "json",
                     success: function(Response) {
                         rendered_spendlimitid_data = Response[0];
+                        rendered_spndlimval_data = Response[2].upload_spndlimval
+                        rendered_company_data = Response[2].upload_data_company
                         display_basic_db_data();
                         $('#Spend_id_Modal').modal('hide');
                         success_response(Response);  // Display Response data
@@ -684,6 +668,24 @@
         table_sort_filter('display_basic_table');
     }
 
+     // Function to get main table data
+    function get_main_table_data_upload() {
+        main_table_low_value = [];
+        $('#display_basic_table').DataTable().destroy();
+        $("#display_basic_table TBODY TR").each(function() {
+            var row = $(this);
+            var main_attribute = {};
+            main_attribute.company_id = row.find("TD").eq(1).html();
+            main_attribute.spender_username = row.find("TD").eq(2).html();
+            main_attribute.spend_code_id = row.find("TD").eq(3).html();
+            main_attribute.del_ind = row.find("TD").eq(5).find('input[type="checkbox"]').is(':checked');
+            compare_maintable = main_attribute.company_id + '-' + main_attribute.spender_username + '-' + main_attribute.spend_code_id +'-'+ main_attribute.del_ind;
+            main_table_low_value.push(compare_maintable);
+        });
+        table_sort_filter('display_basic_table');
+         return main_table_low_value
+    }
+
     // validating the  popup table for duplicate entries
     function compare_table_for_duplicate_entries(validate_add_attributes, spend_limit) {
         add_attr_duplicates = false;
@@ -710,6 +712,7 @@
                 }
             });
             if (common.length != 0) {
+                $('#Spnd_Lim_Val_Modal').modal('show');
                 display_duplicate_entry(common);  //Function to highlight the rows in popup
                 error_message = ui_messeges("JMSG001") // Get message details}
                 no_duplicate_value = 'N'
@@ -721,7 +724,8 @@
 
     //onclick of upload button display id_data_upload popup and set GLOBAL_ACTION button value
     function onclick_upload_button() {
-        GLOBAL_ACTION = "spendlimid_upload"
+        GLOBAL_ACTION = "spendlimitid_upload"
+        $("#id_error_msg_upload").prop("hidden",true)
         $("#id_popup_tbody").empty();
         $('#id_data_upload').modal('show');
         document.getElementById('id_file_data_upload').value = "";
@@ -732,6 +736,7 @@
         GLOBAL_ACTION = "COPY"
         onclick_copy_update_button("copy")
         document.getElementById("id_del_add_button").style.display = "block";
+         $("#save_id").prop("hidden", false);
     }
 
     // on click update icon display the selected checkbox data to update
@@ -739,6 +744,7 @@
         GLOBAL_ACTION = "UPDATE"
         onclick_copy_update_button("update")
         document.getElementById("id_del_add_button").style.display = "none";
+         $("#save_id").prop("hidden", false);
     }
 
     //*****************************************
@@ -830,6 +836,8 @@
 
     //onclick of add button display Spend_id_Modal popup and set GLOBAL_ACTION button value
     function onclick_add_button(button) {
+        $('#id_popup_table').DataTable().destroy();
+        $("#id_popup_tbody").empty();
         OpenLoaderPopup();
         var data = {'table_name':'SpendLimitId'}
         $.ajax({
@@ -914,8 +922,13 @@
                 $(row).remove();
             }
             spend_limit_code_check.push(spend_limit_compare);
+            main_table_low_value = get_main_table_data_upload(); //Read data from main table
+            if (main_table_low_value.includes(spend_limit_compare)) {
+                $(row).remove();
+            }
+            main_table_low_value.push(spend_limit_compare);
         })
-        table_sort_filter_popup('id_popup_table')
+        table_sort_filter_popup_pagination('id_popup_table')
         check_data()
     }
 
@@ -948,8 +961,8 @@
     });
 
     // ****************************************
-    function update_check_message(messages){
-        $.each(messages, function (i, message) {
+    function update_check_message(valid_data){
+        $.each(valid_data, function (i, message) {
             $("#id_check_success_messages").append('<p>' + message + '</p>')
         });
         $("#id_check_success_messages").prop("hidden",false)
@@ -957,36 +970,63 @@
 
     // Function for add a new row data
    function add_popup_row() {
-    $("#error_msg_id").css("display", "none");
-    basic_add_new_html = '';
-    var display_db_data = '';
-    $('#id_popup_table').DataTable().destroy();
-    $(".modal").on("hidden.bs.modal", function() {
-        $("#id_error_msg").html("");
-    });
-    new_row_data();   // Add a new row in popup
-    var company_num = '';
-    $("#id_popup_table TBODY").on("change", "select[name='company_dropdown']", function() {
-        var row = $(this).closest("tr");
-        company_dropdwn_change(row);
-    });
-    $("#id_popup_table TBODY TR").each(function() {
-        var row = $(this);
-        row.find("TD").eq(3).find("select").empty();
-        company_num = row.find("TD").eq(1).find("select option:selected").val();
-        var assign_val = spending_limit_find(company_num);
-        row.find("TD").eq(3).find("select").append(assign_val.spend_code_id_dropdown);
-    });
-    if (GLOBAL_ACTION === "spendlimitid_upload") {
-        $(".class_del_checkbox").prop("hidden", false);
-    }
-}
+        OpenLoaderPopup();
+        var data = {'table_name':'SpendLimitId'}
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'eProc_Configuration:get_dropdown_data' %}",
+            data: JSON.stringify(data),
+            success: function(response) {
+                rendered_spndlimval_data = response.upload_spndlimval
+                rendered_company_data = response.upload_data_company
+                spend_limlt_id_drp()
+                $("#error_msg_id").css("display", "none")
+                basic_add_new_html = '';
+                var display_db_data = '';
+                $('#id_popup_table').DataTable().destroy();
+                $(".modal").on("hidden.bs.modal", function() {
+                    $("#id_error_msg").html("");
+                });
+
+                if (GLOBAL_ACTION === "spendlimitid_upload") {
+                    basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select class="input form-control" name="company_dropdown" type="text">' + company_dropdwn + '</select></td><td><input class="input form-control check_special_char" type="text" maxlength="16" style="text-transform:uppercase"></td><td><select class="form-control" type="text">' + spendcodeid_dropdwn + '</select></td><td hidden><input type="text" class="form-control" name="guid"></td><td class="class_del_checkbox"><input type="checkbox" required></td></tr>';
+                    $('#id_popup_tbody').append(basic_add_new_html);
+                    $(".class_del_checkbox").prop("hidden", false);
+                    $("#id_del_ind_checkbox").prop("hidden", false);
+                    table_sort_filter('id_popup_table');
+                }
+                else{
+                     new_row_data();   // Add a new row in popup
+                }
+                 var company_num = '';
+                $("#id_popup_table TBODY").on("change", "select[name='company_dropdown']", function() {
+                    var row = $(this).closest("tr");
+                    company_dropdwn_change(row);
+                });
+                $("#id_popup_table TBODY TR").each(function() {
+                    var row = $(this);
+                    row.find("TD").eq(3).find("select").empty();
+                    company_num = row.find("TD").eq(1).find("select option:selected").val();
+                    var assign_val = spending_limit_find(company_num);
+                    row.find("TD").eq(3).find("select").append(assign_val.spend_code_id_dropdown);
+                });
+                CloseLoaderPopup();
+            }
+        });
+   }
+
 
 function new_row_data() {
     basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select class="input form-control" name="company_dropdown" type="text">' + company_dropdwn + '</select></td><td><input class="input form-control check_special_char" type="text" maxlength="16" style="text-transform:uppercase"></td><td><select class="form-control" type="text">' + spendcodeid_dropdwn + '</select></td><td hidden><input type="text" class="form-control" name="guid"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
     table_sort_filter('id_popup_table');
 }
+
+ // onclick of valid popup
+    function valid_popup(){
+      $('#id_data_upload').modal('hide');
+      $("#valid_upload").modal('show');
+    }
 
 
     // Function to get the selected row data
