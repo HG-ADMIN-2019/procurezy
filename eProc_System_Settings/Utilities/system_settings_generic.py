@@ -32,6 +32,7 @@ class sys_attributes:
 
     # Gets the password policy
     def get_pwd_policy(self):
+        pwd_policy = ''
         if self.sys_attr:
             sys_attribute = 'PWD_POLICY'
             attributes = self.get_system_settings_list(sys_attribute)
@@ -41,6 +42,7 @@ class sys_attributes:
             return pwd_policy
 
     def get_attachment_extension(self):
+        attachment_extension_value = ''
         if self.sys_attr:
             sys_attribute = 'ATTACHMENT_EXTENSION'
             attributes = self.get_system_settings_list(sys_attribute)
@@ -50,6 +52,7 @@ class sys_attributes:
             return attachment_extension_value
 
     def get_attachment_size(self):
+        attachment_size = ''
         if self.sys_attr:
             sys_attribute = 'ATTACHMENT_SIZE'
             attributes = self.get_system_settings_list(sys_attribute)
