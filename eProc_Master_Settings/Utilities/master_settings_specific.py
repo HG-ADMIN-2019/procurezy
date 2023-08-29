@@ -596,8 +596,8 @@ class MasterSettingsSave:
                                                                  'account_assign_cat': glaccount_detail[
                                                                      'account_assign_cat'],
                                                                  'company_id': glaccount_detail['company_id'],
-                                                                 'item_from_value': glaccount_detail['from_value'],
-                                                                 'item_to_value': glaccount_detail['to_value'],
+                                                                 'item_from_value': glaccount_detail['item_from_value'],
+                                                                 'item_to_value': glaccount_detail['item_to_value'],
                                                                  'currency_id': glaccount_detail['currency_id'],
                                                                  'client': self.client}):
                 guid = guid_generator()
@@ -608,8 +608,8 @@ class MasterSettingsSave:
                                            'account_assign_cat': AccountAssignmentCategory.objects.
                                            get(account_assign_cat=glaccount_detail['account_assign_cat']),
                                            'company_id': glaccount_detail['company_id'],
-                                           'item_from_value': glaccount_detail['from_value'],
-                                           'item_to_value': glaccount_detail['to_value'],
+                                           'item_from_value': glaccount_detail['item_from_value'],
+                                           'item_to_value': glaccount_detail['item_to_value'],
                                            'currency_id': Currency.objects.
                                            get(currency_id=glaccount_detail['currency_id']),
                                            'determine_gl_account_created_at': self.current_date_time,
@@ -627,8 +627,8 @@ class MasterSettingsSave:
                                                            'account_assign_cat': glaccount_detail[
                                                                'account_assign_cat'],
                                                            'company_id': glaccount_detail['company_id'],
-                                                           'item_from_value': glaccount_detail['from_value'],
-                                                           'item_to_value': glaccount_detail['to_value'],
+                                                           'item_from_value': glaccount_detail['item_from_value'],
+                                                           'item_to_value': glaccount_detail['item_to_value'],
                                                            'currency_id': glaccount_detail['currency_id'],
                                                            'client': self.client},
                                                           {'del_ind': glaccount_detail['del_ind']})
