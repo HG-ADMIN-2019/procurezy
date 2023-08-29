@@ -191,11 +191,13 @@ function get_auth_level_values(selectElement) {
     var used_auth_group_level = {};
     var used_auth_group_obj = {};
 
-    if(rendered_auth_group_field_data.length != 0){
-        auth_grp_desc = rendered_auth_group_field_data[0].field_type_desc;
-    } else {
-        auth_grp_desc = "";
+    for (var i = 0; i < rendered_auth_group_field_data.length; i++) {
+        if (rendered_auth_group_field_data[i].field_type_id === selected_auth_group) {
+            auth_grp_desc = rendered_auth_group_field_data[i].field_type_desc;
+            break; // Exit the loop once a match is found
+        }
     }
+    $(selectElement).closest('tr').find('.description').val(auth_grp_desc);
 
     // Loop through the node values in the main_table_data and store the used ones for the selected node type
     $.each(auth_group, function(index, value) {
