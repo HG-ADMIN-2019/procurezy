@@ -78,7 +78,7 @@ JMSG034,Error,0,0,messages_id
 AUTH_0012,Appl Settings,0,0,auth_obj_id
 AUTH_GROUP_01,Shopping,0,0,auth_obj_grp
 JMSG031,Error,0,0,messages_id
-JMSG033,Error,0,0e,mssages_id
+JMSG033,Error,0,0,mssages_id
 MSG059,Error,0,0,messages_id
 SCHEMA_TEST,SCHEMA_TEST,1,0,workflow_schema
 JMSG051,Error,0,0,messages_id
@@ -186,7 +186,7 @@ MSG002,Success,0,0,messages_id
 10,Product Type,1,0,split_type
 JMSG036,Error,0,0,messages_id
 MSG018,Success,0,0,messages_id
-FIN,Financial Approver,1,0	,approval_type
+FIN,Financial Approver,1,0,approval_type
 MSG116,Error,0,0,messages_id
 MSG084,Error,0,0,messages_id
 MSG129,Error,0,0,messages_id
@@ -329,7 +329,7 @@ MSG170,Error,0,0,messages_id
 DOC03,Confirmation,0,0,document_type
 Low,Low Priority,0,0,Priority
 MSG012,Error,0,0,messages_id
-RESP_PROD_CAT,Responsibility,Product Categor,1,0,attribute_id
+RESP_PROD_CAT,Responsibility Product Categor,1,0,attribute_id
 MSG192,Error,0,0,messages_id
 MSG089,Information,0,0,messages_id
 AUTH_0019,Email Notif,0,0,auth_obj_id
