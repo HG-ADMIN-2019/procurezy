@@ -1217,7 +1217,7 @@ class ApplicationSettingsSave:
         set_reset_field(used_flag_reset, used_flag_set, 'attribute_id')
 
     def save_authorobject_data_into_db(self, authobj_data):
-        self.save_auth_obj(authobj_data['data'])
+        self.save_auth_obj(authobj_data['data'], self.username)
 
         message = get_message_detail_based_on_action(authobj_data['action'])
 
