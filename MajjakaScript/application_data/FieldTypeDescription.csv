@@ -1,6 +1,5 @@
 FIELD_TYPE_ID,FIELD_TYPE_DESC,USED_FLAG,del_ind,FIELD_NAME
 1,Supplier,0,0,split_type
-10,Product Type,0,0,split_type
 2,Currency,0,0,split_type
 3,Ship To address,0,0,split_type
 4,Purchasing Group,0,0,split_type
@@ -9,18 +8,15 @@ FIELD_TYPE_ID,FIELD_TYPE_DESC,USED_FLAG,del_ind,FIELD_NAME
 7,Purchase Requisition,0,0,split_type
 8,Incoterm,0,0,split_type
 9,Payment Terms,0,0,split_type
-ACC_CAT,ACCOUNT ASSIGNMENT CATEGORY,0,0,attribute_id
+10,Product Type,0,0,split_type
 Activate,activate,0,0,activate
 Active,Status Active,0,0,status
 All,All,0,0,user_type
 AS,Asset,0,0,acct_assignment_category
-AS_SET,ASSET,0,0,attribute_id
 ATTACHMENT_EXTENSION,ATTACHMENT EXTENSION,0,0,sys_attr_type
 ATTACHMENT_SIZE,ATTACHMENT SIZE,0,0,sys_attr_type
-AUTH_0001,WORK_OVERVIEW,0,0,auth_obj_id
 AUTH_0002,SHOPPING,0,0,auth_obj_id
 AUTH_0003,SHOPPING_PLUS,0,0,auth_obj_id
-AUTH_0004,GOODS_RECEIPTS,0,0,auth_obj_id
 AUTH_0005,SYSTEM_SETTINGS,0,0,auth_obj_id
 AUTH_0006,APPROVALS,0,0,auth_obj_id
 AUTH_0007,USER_SETTINGS,0,0,auth_obj_id
@@ -38,27 +34,24 @@ AUTH_0018,MY_ORDER,0,0,auth_obj_id
 AUTH_0019,EMAIL_NOTIF,0,0,auth_obj_id
 AUTH_0020,REPORTS,0,0,auth_obj_id
 AUTH_0021,USER_ADMIN,0,0,auth_obj_id
-AUTH_0022,SUBSTITUTION,0,0,auth_obj_id
 AUTH_0023,SC_COMPLETION,0,0,auth_obj_id
-AUTH_0024,GROUP_CATEGORY,0,0,auth_obj_id
-AUTH_0025,CHANGE_PO,0,0,auth_obj_id
 AUTH_0026,PERSONAL_SETTINGS,0,0,auth_obj_id
 AUTH_0027,PURCHASE_SETTINGS,0,0,auth_obj_id
-AUTH_0028,PASSWORD_POLICY,0,0,auth_obj_id
-AUTH_0029,LOGIN_ATTEMPTS,0,0,auth_obj_id
-AUTH_0030,SESSION_TIMEOUT,0,0,auth_obj_id
-AUTH_0031,DISPLAY TIME,0,0,auth_obj_id
-AUTH_0032,ATTACHMENT_SIZE,0,0,auth_obj_id
-AUTH_0033,ATTACHMENT_EXT,0,0,auth_obj_id
-AUTH_0034,APPROVAL_LIMIT,0,0,auth_obj_id
-AUTH_0035,CONFIRMATION,0,0,auth_obj_id
-AUTH_0036,CANCELLATION,0,0,auth_obj_id
-AUTH_0037,RETURN_DELIVERY,0,0,auth_obj_id
 AUTH_0038,WORK_FLOW_ITEMS,0,0,auth_obj_id
 AUTH_0039,EMPLOYEE_MANAGEMENT,0,0,auth_obj_id
 AUTH_0040,SUPPLIER_MANAGEMENT,0,0,auth_obj_id
-AUTH_0041,SOBO,0,0,auth_obj_id
-AUTH_101,WORK_SCHEMA,0,0,auth_obj_id
+AUTH_0042	CONTENT_MANAGEMENT	0	0	auth_obj_id
+AUTH_0043	PRODUCT_AND_SERVICE_CONFIG	0	0	auth_obj_id
+AUTH_0044	CATALOG_CONFIG	0	0	auth_obj_id
+AUTH_0045	TIME_SHEET	0	0	auth_obj_id
+AUTH_0046	PROJECTS	0	0	auth_obj_id
+AUTH_0047	EFFORTS	0	0	auth_obj_id
+AUTH_0048	APPLICATION_MONITOR	0	0	auth_obj_id
+AUTH_0049	SHOP_ASSIST	0	0	auth_obj_id
+AUTH_0050	SOM	0	0	auth_obj_id
+AUTH_0051	SUB_SOM	0	0	auth_obj_id
+AUTH_0052	RFQ	0	0	auth_obj_id
+AUTH_0100	Demo	0	0	auth_obj_id
 AUTH_GROUP_01,Shopping,0,0,auth_obj_grp
 AUTH_GROUP_02,Shopping plus,0,0,auth_obj_grp
 AUTH_GROUP_03,Approvals,0,0,auth_obj_grp
@@ -67,6 +60,8 @@ AUTH_GROUP_05,Purchaser,0,0,auth_obj_grp
 AUTH_GROUP_06,Admin,0,0,auth_obj_grp
 AUTH_GROUP_41,Shopping plus,0,0,auth_obj_grp
 Buyer,Buyer,0,0,user_type
+ACC_CAT,ACCOUNT ASSIGNMENT CATEGORY,0,0,attribute_id
+AS_SET,ASSET,0,0,attribute_id
 CALENDAR_ID,Calendar description,0,0,attribute_id
 CAT,Category Approver,0,0,approval_type
 CAT_ID,CATALOG ID,0,0,attribute_id
