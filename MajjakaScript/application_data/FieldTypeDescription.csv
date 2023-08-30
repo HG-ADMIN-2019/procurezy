@@ -23,7 +23,7 @@ MSG038,Error,0,0,messages_id
 MSG011,Error,0,0,messages_id
 MSG075,Error,0,0,messages_id
 MSG191,Error,0,0,messages_id
-AUTH_GROUP_03,Approvals,0,0auth_obj_grp
+AUTH_GROUP_03,Approvals,0,0,auth_obj_grp
 MSG057,Error,0,0,messages_id
 AUTH_0009,Purchasing,0,0,auth_obj_id
 Activate,Activate,0,0,purchase_ctrl_flag
@@ -78,7 +78,7 @@ JMSG034,Error,0,0,messages_id
 AUTH_0012,Appl Settings,0,0,auth_obj_id
 AUTH_GROUP_01,Shopping,0,0,auth_obj_grp
 JMSG031,Error,0,0,messages_id
-JMSG033,Error,0,0,mssages_id
+JMSG033,Error,0,0,messages_id
 MSG059,Error,0,0,messages_id
 SCHEMA_TEST,SCHEMA_TEST,1,0,workflow_schema
 JMSG051,Error,0,0,messages_id
@@ -252,7 +252,7 @@ AUTH_0038,Work Flow Items,0,0,auth_obj_id
 MSG035,Success,0,0,messages_id
 ATTACHMENT_SIZE,Attachment Size,0,0,sys_attr_type
 JMSG108,Error,0,0,messages_id
-FEATURE,Feature,1,0	,auth_level
+FEATURE,Feature,1,0,auth_level
 MSG095,Error,0,0,messages_id
 MSG067,Error,0,0,messages_id
 MSG037,Error,0,0,messages_id
