@@ -280,7 +280,6 @@ MSG108,Error0,0,messages_id
 MSG081,Error,0,0,messages_id
 MSG029,Error,0,0,messages_id
 INT_ORD,Internal Order,1,0,attribute_id
-MSG0199,Error,0,0,messages_id
 MSG137,Error,0,0,messages_id
 MSG167,Error,0,0,messages_id
 GLACC,General Ledger Account,1,0,acct_assignment_category
