@@ -311,7 +311,6 @@
     </div>
 
     <!--end of modal popup for Add,copy,update and upload-->
-{% include 'configuration_common_pop_up.html' %}
     <div>
         {% if messages %}
         {% for message in messages %}
@@ -418,6 +417,7 @@
         </div>
     </div>
     <!--   end of valid confirm popup-->
+
 
     {{ employee_results|json_script:"employee_results" }}
     {{ dropdown_user|json_script:"dropdown_user" }}

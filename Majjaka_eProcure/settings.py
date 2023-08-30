@@ -28,6 +28,7 @@ SECRET_KEY = '-p^#04gmm3jl$93p3jx9rm+t1nj4$xl9b_#%192&e_usmw*&nr'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
+
 # ALLOWED_HOSTS = ['www.majjaka-eprocure.com', 'majjaka-eprocure.com'] # for deployment
 ALLOWED_HOSTS = ['*']
 
@@ -160,10 +161,10 @@ DATABASES = {
     'default': {
         'ENGINE': 'django.db.backends.mysql',  # Database engine
         'HOST': 'sg2plzcpnl489587.prod.sin2.secureserver.net',  # Database host
-        'NAME': 'MEP_MIGRATE_DEV_NEW',  # Database name MEP_MIGRATE_DEV MEP_FIXING MEP_DEPLOYED_NEW_QA_23
-        # MEP_DEPLOYED_NEW_29 MEP_DEPLOYED_NEW_QA_0506
+        'NAME': 'MEP_MIGRATE_DEV_NEW',
+        # Database name MEP_MIGRATE_DEV MEP_FIXING MEP_DEPLOYED_NEW_QA_23 MEP_DEPLOYED_NEW_29 MEP_DEPLOYED_NEW_QA_0506
         'USER': 'MajjakaShopEProcure',  # Database username
-        'PASSWORD': 'Project@2019',  # Database credentials
+        'PASSWORD': 'Project@2019',  # Database credentialsgi
         'PORT': '3306',  # Database port number
         'OPTIONS': {
             'init_command': 'SET default_storage_engine=INNODB',  # Sets the default storage engine
