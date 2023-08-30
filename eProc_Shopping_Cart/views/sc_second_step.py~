@@ -500,7 +500,6 @@ def sc_second_step(request):
     request.session['total_value'] = total_item_value
     request.session['company_code'] = company_code
     system_settings_data = get_system_settings_data()
-    print("completion_work_flow ", completion_work_flow)
 
     context = {
         'shopping_cart_errors': shopping_cart_errors,
