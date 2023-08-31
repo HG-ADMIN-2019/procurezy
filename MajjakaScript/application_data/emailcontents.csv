@@ -5,23 +5,23 @@ Password - @password@
 You can access the application from the below link,
 @login_button@","Regards,
 Majjakaprocure Support
-@majjaka_logo@",0,EN
+@majjaka_logo@",EN,0
 111133,RESET_PASSWORD,Majjakaprocure- Password Reset,Hello @first_name@,"To reset the password for your account with email - @email@ , please click on the following link
 @reset_link@","Regards,
 Majjakaprocure Support
-@majjaka_logo@",0,EN
+@majjaka_logo@",EN,0
 11113345,PASSWORD_LOCK,Majjakaprocure- Password Locked,Hello @first_name@,Your password for account @email@ is locked due to exceeded number of login attempts. Please contact your local admin.,"Regards,
 Majjakaprocure Support
-@majjaka_logo@",0,EN
+@majjaka_logo@",EN,0
 111144,SC_REJECTED,Majjakaprocure- Shopping cart @sc_description@ rejected,Hello @first_name@,Your Shopping cart - @sc_description@ is rejected. Please contact your line manager for more details.,"Regards,
 Majjakaprocure Support
-@majjaka_logo@",0,EN
+@majjaka_logo@",EN,0
 111154,APPROVED_SC,Majjakaprocure- Shopping Cart @sc_description@ approved,Hello @first_name@,Your Shopping cart @doc_number@- @sc_description@ has been approved successfully.,"Regards,
 Majjakaprocure Support
-@majjaka_logo@",0,EN
+@majjaka_logo@",EN,0
 111155,PO_SUPPLIER,Purchase Order Detail @doc_number@ from @client_name@,Dear @supplier_username@,"Please find attached purchase order from @client_name@,
 "	"Regards,
-Majjakaprocure Support",0,EN
+Majjakaprocure Support",EN,0
 22233,SC_APPROVAL,Approve this shopping cart today,"ACTION REQUIRED
 Reminder: Approve this shopping cart today","View below the details for this Shopping Cart.
 
@@ -57,5 +57,5 @@ Approver : @approver_id@, Approver ID : @approver_id@, Decision Status : @decisi
 Received On : @received_on@ @time_zone@
 Processed On : @processed_on@ @time_zone@,
 "	"Regards,
-Majjakaprocure Support",0,EN
+Majjakaprocure Support",EN,0
 

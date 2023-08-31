@@ -1,4 +1,4 @@
-PO_SPLIT_TYPE,COMPANY_CODE_ID,ACTIVATE,del_ind
+po_split_type,company_code_id,activate,del_ind
 2,1000,True,0
 6,1000,True,0
 7,1000,True,0

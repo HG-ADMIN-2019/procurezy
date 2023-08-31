@@ -86,31 +86,31 @@ class InitialSetupClient(BasicSettingsSave, ApplicationSettingsSave, MasterSetti
         """
         directory = os.path.join(str(settings.BASE_DIR), 'MajjakaScript', 'application_data')
         # Save  OrgNodeTypes data
-        self.org_node_type_script(directory)
-        # save OrgAttributes
-        self.org_attribute_script(directory)
-        # save Roles
-        self.user_roles_script(directory)
-        #  save   auth obj
-        self.auth_obj_script(directory)
-        #     save auth
-        self.auth_script(directory)
-        #     save auth
-        self.auth_grp_script(directory)
-        #     save field type
-        self.field_desc_script(directory)
-        #     save field type
-        self.field_type_script(directory)
-        #     save message id
-        self.message_id_script(directory)
-        # save messages desc
-        self.message_id_desc_script(directory)
-        # save system settings
-        self.system_settings_script(directory)
-        # save node level attributes
+        # self.org_node_type_script(directory)
+        # # save OrgAttributes
+        # self.org_attribute_script(directory)
+        # # save Roles
+        # self.user_roles_script(directory)
+        # #  save   auth obj
+        # self.auth_obj_script(directory)
+        # #     save auth
+        # self.auth_script(directory)
+        # #     save auth
+        # self.auth_grp_script(directory)
+        # #     save field type
+        # self.field_desc_script(directory)
+        # #     save field type
+        # self.field_type_script(directory)
+        # #     save message id
+        # self.message_id_script(directory)
+        # # save messages desc
+        # self.message_id_desc_script(directory)
+        # # save system settings
+        # self.system_settings_script(directory)
+        # # save node level attributes
         # self.node_level_attribute_script(directory)
-        # save email
-        self.email_contents_script(directory)
+        # # save email
+        # self.email_contents_script(directory)
         # save UNSPC
         self.Unspc_code_script(directory)
         # save DOCUMENTS
@@ -120,13 +120,13 @@ class InitialSetupClient(BasicSettingsSave, ApplicationSettingsSave, MasterSetti
         # save CALENDER
         self.calendar_script(directory)
         # save HOLIDAY CALENDER
-        self.holiday_calendar_script(directory)
+        # self.holiday_calendar_script(directory)
         # save PURCHASE SPLIT TYPE
-        self.purchase_order_split_criteria_script(directory)
+        # self.purchase_order_split_criteria_script(directory)
         # save PURCHASE ORDER SPLIT TYPE
-        self.purchase_order_split_criteria_script(directory)
+        # self.purchase_order_split_criteria_script(directory)
         # save PURCHASE CONTROL
-        self.purchase_control_script(directory)
+        # self.purchase_control_script(directory)
         # save FAVOURITE CART
         self.favourite_cart_script(directory)
         # save SHOPPING CART
@@ -296,19 +296,19 @@ class InitialSetupClient(BasicSettingsSave, ApplicationSettingsSave, MasterSetti
                                        'del_ind': csv_data[2]})
             self.save_system_settings(csv_to_db_data)
 
-    # def node_level_attribute_script(self, directory):
-    #     file_path = os.path.join(directory, CONST_ORG_NODE_LEVEL_ATTRIBUTES_CSV)  # create path
-    #     if os.path.exists(file_path):
-    #         csv_file = open(file_path, 'r')  # open .csv file
-    #         csvreader = csv.reader(csv_file)  # read file
-    #         header = next(csvreader)  # skip header
-    #         csv_to_db_data = []
-    #         for csv_data in csvreader:
-    #             csv_to_db_data.append({'node_type': csv_data[0],
-    #                                    'node_values': csv_data[1],
-    #                                    'org_model_types': csv_data[2],
-    #                                    'del_ind': csv_data[3]})
-    #         self.save_orgattributes_level_data(csv_to_db_data)
+    def node_level_attribute_script(self, directory):
+        file_path = os.path.join(directory, CONST_ORG_NODE_LEVEL_ATTRIBUTES_CSV)  # create path
+        if os.path.exists(file_path):
+            csv_file = open(file_path, 'r')  # open .csv file
+            csvreader = csv.reader(csv_file)  # read file
+            header = next(csvreader)  # skip header
+            csv_to_db_data = []
+            for csv_data in csvreader:
+                csv_to_db_data.append({'node_type': csv_data[0],
+                                       'node_values': csv_data[1],
+                                       'org_model_types': csv_data[2],
+                                       'del_ind': csv_data[3]})
+            self.save_orgattributes_level_data(csv_to_db_data)
 
     def email_contents_script(self, directory):
         file_path = os.path.join(directory, CONST_EMAIL_CONTENTS_CSV)  # create path
@@ -335,8 +335,8 @@ class InitialSetupClient(BasicSettingsSave, ApplicationSettingsSave, MasterSetti
             header = next(csvreader)  # skip header
             csv_to_db_data = []
             for csv_data in csvreader:
-                csv_to_db_data.append({'PROD_CAT_ID': csv_data[0],
-                                       'PROD_CAT_DESC': csv_data[1],
+                csv_to_db_data.append({'prod_cat_id': csv_data[0],
+                                       'prod_cat_desc': csv_data[1],
                                        'del_ind': csv_data[2]})
             self.save_unspsc(csv_to_db_data)
 
@@ -348,10 +348,11 @@ class InitialSetupClient(BasicSettingsSave, ApplicationSettingsSave, MasterSetti
             header = next(csvreader)  # skip header
             csv_to_db_data = []
             for csv_data in csvreader:
-                csv_to_db_data.append({'DOCUMENT_TYPE': csv_data[0],
-                                       'DOCUMENT_TYPE_DESC': csv_data[1],
+                csv_to_db_data.append({'document_type': csv_data[0],
+                                       'document_type_desc': csv_data[1],
                                        'del_ind': csv_data[2]})
-            self.save_document_type_data(csv_to_db_data)
+            documenttype_data = {'data': csv_to_db_data}  # Wrap the data in a dictionary
+            self.save_document_type_data(documenttype_data)  # Pass the wrapped data to the function
 
     def acc_ass_cat_cust_type_script(self, directory):
         file_path = os.path.join(directory, CONST_ACCOUNT_ASSIGNMENT_CATEGORY_CSV)  # create path
@@ -374,13 +375,14 @@ class InitialSetupClient(BasicSettingsSave, ApplicationSettingsSave, MasterSetti
             header = next(csvreader)  # skip header
             csv_to_db_data = []
             for csv_data in csvreader:
-                csv_to_db_data.append({'CALENDER_ID': csv_data[0],
-                                       'COUNTRY_CODE': csv_data[1],
-                                       'DESCRIPTION': csv_data[2],
-                                       'YEAR': csv_data[3],
-                                       'WORKING_DAYS': csv_data[4],
-                                       'del_ind': csv_data[5]})
-            self.calendar_dropdown_data(csv_to_db_data)
+                csv_to_db_data.append({'calender_id': csv_data[0],  # Use 'calender_id' here
+                                       'country_code': csv_data[1],  # Use 'country_code' here
+                                       'description': csv_data[2],  # Use 'description' here
+                                       'year': csv_data[3],  # Use 'year' here
+                                       'working_days': csv_data[4],  # Use 'working_days' here
+                                       'del_ind': csv_data[5]})  # Use 'del_ind' here
+            calendar_data = {'data': csv_to_db_data}
+            self.save_calendar_data(calendar_data)
 
     def holiday_calendar_script(self, directory):
         file_path = os.path.join(directory, CONST_CALENDAR_HOLIDAY_CSV)  # create path
@@ -395,10 +397,10 @@ class InitialSetupClient(BasicSettingsSave, ApplicationSettingsSave, MasterSetti
                                        'DESCRIPTION': csv_data[2],
                                        'YEAR': csv_data[3],
                                        'del_ind': csv_data[4]})
-            self.holiday_data(csv_to_db_data)
+            self.save_calendar_holiday(csv_to_db_data)
 
     def purchase_order_split_type_script(self, directory):
-        file_path = os.path.join(directory, CONST_PO_SPLIT_CRITERIA_CSV)  # create path
+        file_path = os.path.join(directory, CONST_PO_SPLIT_TYPE_CSV)  # create path
         if os.path.exists(file_path):
             csv_file = open(file_path, 'r')  # open .csv file
             csvreader = csv.reader(csv_file)  # read file
@@ -411,16 +413,16 @@ class InitialSetupClient(BasicSettingsSave, ApplicationSettingsSave, MasterSetti
             self.save_po_split_type(csv_to_db_data)
 
     def purchase_order_split_criteria_script(self, directory):
-        file_path = os.path.join(directory, CONST_PO_SPLIT_TYPE_CSV)  # create path
+        file_path = os.path.join(directory, CONST_PO_SPLIT_CRITERIA_CSV)  # create path
         if os.path.exists(file_path):
             csv_file = open(file_path, 'r')  # open .csv file
             csvreader = csv.reader(csv_file)  # read file
             header = next(csvreader)  # skip header
             csv_to_db_data = []
             for csv_data in csvreader:
-                csv_to_db_data.append({'PO_SPLIT_TYPE': csv_data[0],
-                                       'COMPANY_CODE_ID': csv_data[1],
-                                       'ACTIVATE': csv_data[2],
+                csv_to_db_data.append({'po_split_type': csv_data[0],
+                                       'company_code_id': csv_data[1],
+                                       'activate': csv_data[2],
                                        'del_ind': csv_data[3]})
             self.save_po_split_creteria(csv_to_db_data)
 
@@ -446,27 +448,35 @@ class InitialSetupClient(BasicSettingsSave, ApplicationSettingsSave, MasterSetti
             header = next(csvreader)  # skip header
             csv_to_db_data = []
             for csv_data in csvreader:
-                csv_to_db_data.append({'sequence': csv_data[0],
-                                       'starting': csv_data[1],
-                                       'ending': csv_data[2],
-                                       'current': csv_data[3],
-                                       'del_ind': csv_data[4]})
-            self.save_number_range_data(csv_to_db_data)
+                csv_to_db_data.append({'sequence': int(csv_data[0]),
+                                       'starting': int(csv_data[1]),
+                                       'ending': int(csv_data[2]),
+                                       'current': int(csv_data[3]),
+                                       'document_type': csv_data[4],
+                                       'del_ind':int(csv_data[5])})
+            number_range_data = {'data': csv_to_db_data}
+
+            self.save_number_range_data(number_range_data)
 
     def shopping_cart_script(self, directory):
-        file_path = os.path.join(directory, CONST_SHOPPING_CART_NUMBER_RANGE_CSV)  # create path
+        file_path = os.path.join(directory, CONST_SHOPPING_CART_NUMBER_RANGE_CSV)
         if os.path.exists(file_path):
-            csv_file = open(file_path, 'r')  # open .csv file
-            csvreader = csv.reader(csv_file)  # read file
-            header = next(csvreader)  # skip header
+            csv_file = open(file_path, 'r')
+            csvreader = csv.reader(csv_file)
+            header = next(csvreader)
             csv_to_db_data = []
             for csv_data in csvreader:
                 csv_to_db_data.append({'sequence': csv_data[0],
                                        'starting': csv_data[1],
                                        'ending': csv_data[2],
                                        'current': csv_data[3],
-                                       'del_ind': csv_data[4]})
-            self.save_number_range_data(csv_to_db_data)
+                                       'document_type': csv_data[4],
+                                       'del_ind': csv_data[5]})
+
+            # Wrap the csv_to_db_data list in a dictionary with 'data' key
+            number_range_data = {'data': csv_to_db_data}
+
+            self.save_number_range_data(number_range_data)
 
     def purchase_order_script(self, directory):
         file_path = os.path.join(directory, CONST_PURCHASE_ORDER_NUMBER_RANGE_CSV)  # create path
@@ -480,8 +490,11 @@ class InitialSetupClient(BasicSettingsSave, ApplicationSettingsSave, MasterSetti
                                        'starting': csv_data[1],
                                        'ending': csv_data[2],
                                        'current': csv_data[3],
-                                       'del_ind': csv_data[4]})
-            self.save_number_range_data(csv_to_db_data)
+                                       'document_type': csv_data[4],
+                                       'del_ind': csv_data[5]})
+            number_range_data = {'data': csv_to_db_data}
+
+            self.save_number_range_data(number_range_data)
 
     def favourite_transaction_script(self, directory):
         file_path = os.path.join(directory, CONST_FAVOURITE_TRANSACTION_TYPE_CSV)  # create path
@@ -497,7 +510,9 @@ class InitialSetupClient(BasicSettingsSave, ApplicationSettingsSave, MasterSetti
                                        'active_inactive': csv_data[3],
                                        'document_type': csv_data[4],
                                        'del_ind': csv_data[5]})
-            self.save_transaction_data(csv_to_db_data)
+            transaction_data = {'data': csv_to_db_data}
+
+            self.save_transaction_data(transaction_data)
 
     def shopping_transaction_script(self, directory):
         file_path = os.path.join(directory, CONST_SHOPPING_CART_TRANSACTION_TYPE_CSV)  # create path
@@ -513,7 +528,9 @@ class InitialSetupClient(BasicSettingsSave, ApplicationSettingsSave, MasterSetti
                                        'active_inactive': csv_data[3],
                                        'document_type': csv_data[4],
                                        'del_ind': csv_data[5]})
-            self.save_transaction_data(csv_to_db_data)
+            transaction_data = {'data': csv_to_db_data}
+
+            self.save_transaction_data(transaction_data)
 
     def purchase_transaction_script(self, directory):
         file_path = os.path.join(directory, CONST_PURCHASE_ORDER_TRANSACTION_TYPE_CSV)  # create path
@@ -529,7 +546,9 @@ class InitialSetupClient(BasicSettingsSave, ApplicationSettingsSave, MasterSetti
                                        'active_inactive': csv_data[3],
                                        'document_type': csv_data[4],
                                        'del_ind': csv_data[5]})
-            self.save_transaction_data(csv_to_db_data)
+            transaction_data = {'data': csv_to_db_data}
+
+            self.save_transaction_data(transaction_data)
 
 
 def create_organization_structure(client_id):

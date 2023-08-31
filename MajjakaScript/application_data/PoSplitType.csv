@@ -1,4 +1,4 @@
-PO_SPLIT_TYPE,PO_SPLIT_TYPE_DESC,del_ind
+po_split_type,po_split_type_desc,del_ind
 1,Supplier,0
 2,Currency,0
 3,Ship To Address,0
