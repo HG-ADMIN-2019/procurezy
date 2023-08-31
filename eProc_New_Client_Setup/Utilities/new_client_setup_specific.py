@@ -86,31 +86,31 @@ class InitialSetupClient(BasicSettingsSave, ApplicationSettingsSave, MasterSetti
         """
         directory = os.path.join(str(settings.BASE_DIR), 'MajjakaScript', 'application_data')
         # Save  OrgNodeTypes data
-        # self.org_node_type_script(directory)
+        self.org_node_type_script(directory)
         # # save OrgAttributes
-        # self.org_attribute_script(directory)
+        self.org_attribute_script(directory)
         # # save Roles
-        # self.user_roles_script(directory)
+        self.user_roles_script(directory)
         # #  save   auth obj
-        # self.auth_obj_script(directory)
+        self.auth_obj_script(directory)
         # #     save auth
-        # self.auth_script(directory)
+        self.auth_script(directory)
         # #     save auth
-        # self.auth_grp_script(directory)
+        self.auth_grp_script(directory)
         # #     save field type
-        # self.field_desc_script(directory)
+        self.field_desc_script(directory)
         # #     save field type
-        # self.field_type_script(directory)
+        self.field_type_script(directory)
         # #     save message id
-        # self.message_id_script(directory)
+        self.message_id_script(directory)
         # # save messages desc
-        # self.message_id_desc_script(directory)
+        self.message_id_desc_script(directory)
         # # save system settings
-        # self.system_settings_script(directory)
+        self.system_settings_script(directory)
         # # save node level attributes
-        # self.node_level_attribute_script(directory)
+        self.node_level_attribute_script(directory)
         # # save email
-        # self.email_contents_script(directory)
+        self.email_contents_script(directory)
         # save UNSPC
         self.Unspc_code_script(directory)
         # save DOCUMENTS
@@ -120,13 +120,13 @@ class InitialSetupClient(BasicSettingsSave, ApplicationSettingsSave, MasterSetti
         # save CALENDER
         self.calendar_script(directory)
         # save HOLIDAY CALENDER
-        # self.holiday_calendar_script(directory)
+        self.holiday_calendar_script(directory)
         # save PURCHASE SPLIT TYPE
-        # self.purchase_order_split_criteria_script(directory)
+        self.purchase_order_split_criteria_script(directory)
         # save PURCHASE ORDER SPLIT TYPE
-        # self.purchase_order_split_criteria_script(directory)
+        self.purchase_order_split_criteria_script(directory)
         # save PURCHASE CONTROL
-        # self.purchase_control_script(directory)
+        self.purchase_control_script(directory)
         # save FAVOURITE CART
         self.favourite_cart_script(directory)
         # save SHOPPING CART
