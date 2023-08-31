@@ -276,7 +276,7 @@ MSG142,Information,0,0,messages_id
 MSG068,Error,0,0,messages_id
 D,Demo,0,0,address_type
 JMSG032,Error,0,0,messages_id
-MSG108,Error0,0,messages_id
+MSG108,Error,0,0,messages_id
 MSG081,Error,0,0,messages_id
 MSG029,Error,0,0,messages_id
 INT_ORD,Internal Order,1,0,attribute_id
