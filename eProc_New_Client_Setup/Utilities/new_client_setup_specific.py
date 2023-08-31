@@ -108,7 +108,7 @@ class InitialSetupClient(BasicSettingsSave, ApplicationSettingsSave, MasterSetti
         # save system settings
         self.system_settings_script(directory)
         # save node level attributes
-        self.node_level_attribute_script(directory)
+        # self.node_level_attribute_script(directory)
         # save email
         self.email_contents_script(directory)
         # save UNSPC
@@ -296,19 +296,19 @@ class InitialSetupClient(BasicSettingsSave, ApplicationSettingsSave, MasterSetti
                                        'del_ind': csv_data[2]})
             self.save_system_settings(csv_to_db_data)
 
-    def node_level_attribute_script(self, directory):
-        file_path = os.path.join(directory, CONST_ORG_NODE_LEVEL_ATTRIBUTES_CSV)  # create path
-        if os.path.exists(file_path):
-            csv_file = open(file_path, 'r')  # open .csv file
-            csvreader = csv.reader(csv_file)  # read file
-            header = next(csvreader)  # skip header
-            csv_to_db_data = []
-            for csv_data in csvreader:
-                csv_to_db_data.append({'node_type': csv_data[0],
-                                       'node_values': csv_data[1],
-                                       'org_model_types': csv_data[2],
-                                       'del_ind': csv_data[3]})
-            self.save_orgattributes_level_data(csv_to_db_data)
+    # def node_level_attribute_script(self, directory):
+    #     file_path = os.path.join(directory, CONST_ORG_NODE_LEVEL_ATTRIBUTES_CSV)  # create path
+    #     if os.path.exists(file_path):
+    #         csv_file = open(file_path, 'r')  # open .csv file
+    #         csvreader = csv.reader(csv_file)  # read file
+    #         header = next(csvreader)  # skip header
+    #         csv_to_db_data = []
+    #         for csv_data in csvreader:
+    #             csv_to_db_data.append({'node_type': csv_data[0],
+    #                                    'node_values': csv_data[1],
+    #                                    'org_model_types': csv_data[2],
+    #                                    'del_ind': csv_data[3]})
+    #         self.save_orgattributes_level_data(csv_to_db_data)
 
     def email_contents_script(self, directory):
         file_path = os.path.join(directory, CONST_EMAIL_CONTENTS_CSV)  # create path
