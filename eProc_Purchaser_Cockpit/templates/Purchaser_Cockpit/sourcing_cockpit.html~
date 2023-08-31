@@ -33,7 +33,7 @@
                     </div>
                     <div class="col-md">
                         <label for="">Company Code</label>
-                        <input type="text" class="form-control check_for_search" id="company_code" name="company_code" value="3000">
+                        <input type="text" class="form-control check_for_search" id="company_code" name="company_code">
                     </div>
                     <div class="col-auto my-1">
                         <button class="button-search-users btn btn-primary" type="submit" name="sc_search"

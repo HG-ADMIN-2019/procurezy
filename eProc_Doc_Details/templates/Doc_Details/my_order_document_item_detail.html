@@ -147,9 +147,11 @@
                                 <a class="dropdown-item accoutingData-{{ forloop.counter }}"
                                    onclick="showSection(this, 'accoutingData-{{ forloop.counter }}')">Cost
                                     Assignment</a>
+                                {% if hdr_det.status == 'APPROVED' %}
                                 <a class="dropdown-item related_documents{{ forloop.counter }}"
                                    onclick="showSection(this, 'related_documents-{{ forloop.counter }}')">Related
                                     Documents</a>
+                                {% endif %}
                             </div>
                         </div>
                     </div>
@@ -436,7 +438,7 @@
                                     <span>History</span>
                                 </div>
                                 <div class="card-body">
-                                    <span>Item is in Sourcing</span>
+                                    <span>Item is in Sourcing </span>
                                 </div>
                             </div>
                         {% endif %}
