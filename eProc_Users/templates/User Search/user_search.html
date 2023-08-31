@@ -304,7 +304,7 @@
                     <button type="button" class="btn btn-outline-primary remove_upload_data" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
                     <button id="id_delete_duplicate" class="btn btn-primary" style="display:none;" type="button" onclick="delete_duplicate()"><i class="fa fa-trash"></i> delete duplicates</button>
                     <button id="id_check_data" style="display:none;" class="btn btn-primary" type="button" onclick="check_data()"><i class="fas fa-check"></i> check</button>
-                    <button class="btn btn-primary" id="save_id"><i class="fas fa-save"></i> save</button>
+                    <button class="btn btn-primary" id="save_user_basic_info" onclick="save_user_basic_info()"><i class="fas fa-save"></i> save</button>
                 </div>
             </div>
         </div>
@@ -446,6 +446,7 @@ var rendered_dropdown_messages = JSON.parse(document.getElementById('dropdown_me
 var rendered_dropdown_currency_id = JSON.parse(document.getElementById('dropdown_currency_id').textContent);
 var rendered_dropdown_language = JSON.parse(document.getElementById('dropdown_language').textContent);
 var messages_list = {{dropdown_messages|safe}};
+var employee_data = new Array();
 
 
      var currency_opt = ''
@@ -810,7 +811,7 @@ function onclick_display_csv_data() {
                         document.getElementById("id_del_add_button").style.display = "block";
                         $('#id_check_data').modal('show');
                         $("#id_check_data").prop("hidden", false);
-                        $("#save_id").prop("hidden", true);
+                        $("#save_user_basic_info").prop("hidden", true);
                         table_sort_filter('id_popup_table');
                     }
                      CloseLoaderPopup();
@@ -1014,10 +1015,10 @@ function check_data() {
             $('#id_popup_table').DataTable().destroy();
             $("#id_popup_table").find("input,button,textarea,select").attr("disabled", "disabled");
             document.getElementById("id_del_add_button").style.display = "none";
-            $("#save_id").prop("hidden", false);
+            $("#save_user_basic_info").prop("hidden", false);
             $("#id_check_data").prop("hidden", true);
             if (user_list == 0) {
-                $("#save_id").prop("hidden", true);
+                $("#save_user_basic_info").prop("hidden", true);
             }
             popup_data_dict = {'data_list': user_list}
             OpenLoaderPopup();
@@ -1196,6 +1197,7 @@ function add_popup_row() {
          $("#id_del_ind_checkbox").prop("hidden", false);
 
 }
+
 
 
 </script>
