@@ -1,4 +1,4 @@
-email_contents_guid,object_type,subject,header,body,footer,language_id,del_ind
+email_contents_guid,email_type,email_subject,email_header,email_body,email_footer,language_id,del_ind
 1111111,REGISTRATION,Majjakaprocure- User registration successful,Hello @first_name@,"Your user has been successfully created in Majjakaprocure. Below are your logon credentials,
 Email - @email@
 Password - @password@
