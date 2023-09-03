@@ -120,7 +120,7 @@ class ApplicationSettingsSave:
         number_range_db_list = []
         range_check_flag = False
         doc_type = ''
-        for number_range_detail in number_range_data['data']:
+        for number_range_detail in number_range_data:
             doc_type = number_range_detail['document_type']
             delete_flag = True
             # if entry is not exists in db
@@ -462,7 +462,7 @@ class ApplicationSettingsSave:
         documenttype_db_list = []
         used_flag_set = []
         used_flag_reset = []
-        for documenttype_detail in documenttype_data['data']:
+        for documenttype_detail in documenttype_data:
             # if entry is not exists in db
             if not django_query_instance.django_existence_check(DocumentType,
                                                                 {'document_type': documenttype_detail[
@@ -507,7 +507,7 @@ class ApplicationSettingsSave:
     def save_transaction_data(self, transactiontype_data):
         transactiontype_db_list = []
         doc_type = ''
-        for transactiontype_detail in transactiontype_data['data']:
+        for transactiontype_detail in transactiontype_data:
             doc_type = transactiontype_detail['document_type']
             active_inactive_field = transactiontype_detail['active_inactive']
             # if entry is not exists in db
@@ -595,7 +595,7 @@ class ApplicationSettingsSave:
 
     def save_calendar_data(self, calendar_data):
         calendar_db_list = []
-        for calendar_detail in calendar_data['data']:
+        for calendar_detail in calendar_data:
             # if entry is not exists in db
             if not django_query_instance.django_existence_check(CalenderConfig,
                                                                 {'calender_id': calendar_detail[
@@ -651,7 +651,7 @@ class ApplicationSettingsSave:
 
     def save_calendar_holiday(self, calendar_data):
         calendar_db_list = []
-        for calendar_detail in calendar_data['data']:
+        for calendar_detail in calendar_data:
             # if entry is not exists in db
             delete_holiday_data(calendar_detail['calender_id'])
             if not django_query_instance.django_existence_check(CalenderHolidays,
@@ -711,7 +711,7 @@ class ApplicationSettingsSave:
         acct_assmt_field = ''
         used_flag_set = []
         used_flag_reset = []
-        for accasscat_detail in accasscat_data['data']:
+        for accasscat_detail in accasscat_data:
             acct_assmt_field = accasscat_detail['account_assign_cat']
             # if entry is not exists in db
             if not django_query_instance.django_existence_check(AccountAssignmentCategory,
@@ -762,7 +762,7 @@ class ApplicationSettingsSave:
         used_flag_set = []
         used_flag_reset = []
         acct_assmt_field = ''
-        for po_split_type in po_split_types['data']:
+        for po_split_type in po_split_types:
             acct_assmt_field = po_split_type['po_split_type']
             # if entry is not exists in db
             if not django_query_instance.django_existence_check(PoSplitType,
@@ -812,11 +812,11 @@ class ApplicationSettingsSave:
 
     def save_po_split_creteria(self, po_split_creteria):
         accasscat_db_list = []
-        for po_split in po_split_creteria['data']:
+        for po_split in po_split_creteria:
 
             # if entry is not exists in db
             if not django_query_instance.django_existence_check(PoSplitCriteria,
-                                                                {'po_split_type': int(po_split[
+                                                                {'po_split_type': (po_split[
                                                                                           'po_split_type']),
                                                                  'company_code_id':
                                                                      po_split['company_code_id'],
@@ -874,7 +874,7 @@ class ApplicationSettingsSave:
     def save_purchase_control(self, purhcase_control_data):
         pur_ctrl_db_list = []
 
-        for pur_crtl_detail in purhcase_control_data['data']:
+        for pur_crtl_detail in purhcase_control_data:
 
             # if entry is not exists in db
             if not django_query_instance.django_existence_check(PurchaseControl,
@@ -1332,7 +1332,7 @@ class ApplicationSettingsSave:
 
     def save_orgattributes_level_data(self, orgattlevel_data):
         orgattlevel_db_list = []
-        for orgattlevel_detail in orgattlevel_data['data']:
+        for orgattlevel_detail in orgattlevel_data:
             # if entry is not exists in db
             if not django_query_instance.django_existence_check(OrgModelNodetypeConfig,
                                                                 {'node_type': orgattlevel_detail['node_type'],

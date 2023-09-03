@@ -87,30 +87,30 @@ class InitialSetupClient(BasicSettingsSave, ApplicationSettingsSave, MasterSetti
         directory = os.path.join(str(settings.BASE_DIR), 'MajjakaScript', 'application_data')
         # Save  OrgNodeTypes data
         self.org_node_type_script(directory)
-        # # # save OrgAttributes
+        # # save OrgAttributes
         self.org_attribute_script(directory)
-        # # # save Roles
+        # # save Roles
         self.user_roles_script(directory)
-        # # #  save   auth obj
+        # #  save   auth obj
         self.auth_obj_script(directory)
-        # # #     save auth
+        # #     save auth
         self.auth_script(directory)
-        # # #     save auth
+        # #     save auth
         self.auth_grp_script(directory)
-        # # #     save field type
+        # #     save field type
         self.field_desc_script(directory)
-        # # #     save field type
+        # #     save field type
         self.field_type_script(directory)
-        # # #     save message id
+        # #     save message id
         self.message_id_script(directory)
-        # # # save messages desc
+        #  # save messages desc
         self.message_id_desc_script(directory)
-        # # # save system settings
+        #  # save system settings
         self.system_settings_script(directory)
-        # # # save node level attributes
-        self.node_level_attribute_script(directory)
-        # # # save email
-        self.email_contents_script(directory)
+        # save node level attributes
+        # self.node_level_attribute_script(directory)
+        # save email
+        # self.email_contents_script(directory)
         # save UNSPC
         self.Unspc_code_script(directory)
         # save DOCUMENTS
@@ -390,12 +390,13 @@ class InitialSetupClient(BasicSettingsSave, ApplicationSettingsSave, MasterSetti
             header = next(csvreader)  # skip header
             csv_to_db_data = []
             for csv_data in csvreader:
-                csv_to_db_data.append({'calender_id': csv_data[0],
-                                       'country': csv_data[1],
-                                       'description': csv_data[2],
-                                       'year': csv_data[3],
-                                       'del_ind': csv_data[4]})
-            self.save_calendar_data(csv_to_db_data)
+                csv_to_db_data.append({'calender_holiday_guid': csv_data[0],
+                                       'calender_id': csv_data[1],
+                                       'holiday_description': csv_data[2],
+                                       'from_date': csv_data[3],
+                                       'to_date': csv_data[4],
+                                       'del_ind': csv_data[5]})
+            self.save_calendar_holiday(csv_to_db_data)
 
     def purchase_order_split_type_script(self, directory):
         file_path = os.path.join(directory, CONST_PO_SPLIT_TYPE_CSV)  # create path
@@ -451,7 +452,7 @@ class InitialSetupClient(BasicSettingsSave, ApplicationSettingsSave, MasterSetti
                                        'ending': int(csv_data[2]),
                                        'current': int(csv_data[3]),
                                        'document_type': csv_data[4],
-                                       'del_ind':int(csv_data[5])})
+                                       'del_ind': int(csv_data[5])})
             self.save_number_range_data(csv_to_db_data)
 
     def shopping_cart_script(self, directory):

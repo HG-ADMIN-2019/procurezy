@@ -1,4 +1,4 @@
-email_contents_guid,email_type,email_subject,email_header,email_body,email_footer,language_id,del_ind
+email_type,email_subject,email_header,email_body,email_footer,language_id,del_ind
 1111111,REGISTRATION,Majjakaprocure- User registration successful,Hello @first_name@,"Your user has been successfully created in Majjakaprocure. Below are your logon credentials,
 Email - @email@
 Password - @password@
@@ -19,16 +19,14 @@ Majjakaprocure Support
 111154,APPROVED_SC,Majjakaprocure- Shopping Cart @sc_description@ approved,Hello @first_name@,Your Shopping cart @doc_number@- @sc_description@ has been approved successfully.,"Regards,
 Majjakaprocure Support
 @majjaka_logo@",EN,0
-111155,PO_SUPPLIER,Purchase Order Detail @doc_number@ from @client_name@,Dear @supplier_username@,"Please find attached purchase order from @client_name@,
-"	"Regards,
-Majjakaprocure Support",EN,0
-22233,SC_APPROVAL,Approve this shopping cart today,"ACTION REQUIRED
-Reminder: Approve this shopping cart today","View below the details for this Shopping Cart.
+PO_SUPPLIER,Purchase Order Detail @doc_number@ from @client_name@,Dear @supplier_username@, Please find attached purchase order from @client_name@,"Regards, Majjakaprocure Support",EN,0
+SC_APPROVAL,Approve this shopping cart today,ACTION REQUIRED
+Reminder: Approve this shopping cart today, View below the details for this Shopping Cart.
 
 Shopping Cart Details:
-â€¢ Company Code : @company_code@
-â€¢ Ordered By: @ordered_by@
-â€¢ Total Value of Shopping Cart: @total_val@
+• Company Code : @company_code@
+• Ordered By: @ordered_by@
+• Total Value of Shopping Cart: @total_val@
 
 To Approve or Reject this shopping cart please click on the login button below
 @login_button@
@@ -56,6 +54,7 @@ Step.no : @step_no@
 Approver : @approver_id@, Approver ID : @approver_id@, Decision Status : @decision_status@ , Approval status : @approval_status@
 Received On : @received_on@ @time_zone@
 Processed On : @processed_on@ @time_zone@,
-"	"Regards,
-Majjakaprocure Support",EN,0
 
+"Regards,"
+Majjakaprocure Support,
+EN,0
