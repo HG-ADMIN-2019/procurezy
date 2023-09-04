@@ -1,2 +1,2 @@
-CALENDER_ID,DESCRIPTION,COUNTRY_CODE,YEAR,del_ind
+calender_id,description,country,year,del_ind
 1000,india,India,2023,0
