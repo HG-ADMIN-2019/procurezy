@@ -556,7 +556,7 @@
                                     }
                                     language_id_list = language + language_list
                                 });
-                            edit_basic_data += '<tr><td><input type="checkbox" required></td><td><select class="form-control" type="text"><option value ="' + value.language_id + '"' + language_id_list + '>'+value.language_id+'</option></select></td><td><select class="form-control" type="text"><option value ="' + value.payment_term_key + '"'+' + payment_id_list + '+'>'+value.payment_term_key+'</option></select></td><td><input type="text" value="' + value.description + '" maxlength="50" name="description" class="form-control"></td><td><input type="number" value="' + value.day_limit + '" maxlength="10" name="day_limit" class="form-control"></td><td hidden><input type="text"></td><td>' + del_ind + '</td></tr>';
+                            edit_basic_data += '<tr><td><input type="checkbox" required></td><td><select class="form-control" type="text"><option value ="' + value.language_id + '"' + language_id_list + '>'+value.language_id+'</option></select></td><td><select class="form-control" type="text"><option value ="' + value.payment_term_key + '"'+' + payment_id_list + '+'>'+value.payment_term_key+'</option></select></td><td><input type="text" value="' + value.description + '" maxlength="50" name="description" class="form-control"></td><td><input type="number" value="' + value.day_limit + '" maxlength="10" name="day_limit" class="form-control"></td><td>' + del_ind + '</td><td hidden><input type="text"></td></tr>';
                             });
                             $('#id_popup_tbody').append(edit_basic_data);
                             var i =0;
@@ -650,7 +650,7 @@
                 $("#id_check_special_character_messages").prop("hidden",false);
                 count = count +1;
             }
-            else if(payment_term_desc_check.includes((payter_desc_dic.payment_term_key)&&(unspsc_desc_dic.del_ind))){
+            else if(payment_term_desc_check.includes((payter_desc_dic.payment_term_key)&&(payter_desc_dic.del_ind))){
                  $(row).css("border", "#f8d7da");
                  row_color_highlight(row);
                  $("#id_check_error_messages").prop("hidden",false);
@@ -661,7 +661,7 @@
                  $("#id_check_data").prop("hidden", false);
                  count = count +1;
             }
-            else if(main_table_low_value.includes((payter_desc_dic.payment_term_key)&&(unspsc_desc_dic.del_ind))){
+            else if(main_table_low_value.includes((payter_desc_dic.payment_term_key)&&(payter_desc_dic.del_ind))){
                  $(row).css("border", "#f8d7da");
                  row_color_highlight(row);
                  $("#id_check_error_messages").prop("hidden",false);

@@ -233,6 +233,50 @@
         });
     }
 
+    // on click add icon display the row in to add the new entries
+    function add_popup_row() {
+        OpenLoaderPopup();
+        var data = {'table_name':'OrgAddressMap'}
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'eProc_Configuration:get_dropdown_data' %}",
+            data: JSON.stringify(data),
+            success: function(response) {
+                rendered_address_data = response.address_data
+                rendered_company_data = response.upload_data_OrgCompanies
+                rendered_address_type_values = response.dropdown_db_values
+                addtype_drp();
+                $("#error_msg_id").css("display", "none")
+                basic_add_new_html = '';
+                var display_db_data = '';
+                $('#id_popup_table').DataTable().destroy();
+                $(".modal").on("hidden.bs.modal", function () {
+                    $("#id_error_msg").html("");
+                });
+                if (GLOBAL_ACTION == "addresstype_upload") {
+                    basic_add_new_html = '<tr><td><input type="checkbox" required></td>' +
+                            '<td><select class="form-control">'+company_dropdwn+'</select></td>' +
+                            '<td><select class="form-control">'+address_type_dropdown+'</select></td>' +
+                            '<td><select class="form-control">'+address_number_dropdwn+'</select></td>' +
+                            '<td><input  type="text" name = "valid_from" class="form-control formatDate"></td>' +
+                            '<td><input type="text" name = "valid_to"  class="form-control formatDate"></td>' +
+                            '<td class="class_del_checkbox"><input type="checkbox" required></td>' +
+                            '<td hidden><input  type="text" class="form-control"  name="guid"></td></tr>';
+                            $('#id_popup_tbody').append(basic_add_new_html);
+                            DatePicker();
+                            $('#id_popup_tbody').append(basic_add_new_html);
+                            $(".class_del_checkbox").prop("hidden", false);
+                            $("#id_del_ind_checkbox").prop("hidden", false);
+                            table_sort_filter('id_popup_table');
+                }
+                else {
+                      new_row_data();   // Add a new row in popup
+                }
+                CloseLoaderPopup();
+            }
+        });
+    }
+
     //*****************************************
     function onclick_copy_update_button() {
         $("#error_msg_id").css("display", "none")
@@ -396,121 +440,133 @@
 
     //onclick of data Upload copy data to modal pop-up
     function onclick_display_csv_data() {
+        $("#valid_upload").modal('hide');
+        document.getElementById('delete_data').style.visibility='hidden';
+        $("#id_check_success_messages").empty();
+        $("#id_check_error_messages").empty();
+        $("#id_check_success_messages").prop("hidden", true);
+        $("#id_check_error_messages").prop("hidden", true);
+        $("#id_check_special_character_messages").prop("hidden", true);
         $("#error_msg_id").css("display", "none")
         $('#id_popup_table').DataTable().destroy();
         formdata = new FormData();
         attached_file = $('#id_file_data_upload').prop('files')[0]
-        file_extension = (attached_file.name).split(".")[1]
-        file_extension = file_extension.toUpperCase();
-        if(file_extension == 'CSV'){
-            formdata.append("file_attach", attached_file);
-            formdata.append("Tablename",Tablename);
-            formdata.append("appname",appname);
-            $('#id_data_upload').modal('hide');
-            $('#id_popup_tbody').empty();
-            OpenLoaderPopup();
-            $.ajax({
-                type: 'POST',
-                url: "{% url 'eProc_Basic_Settings:data_upload' %}",
-                data: formdata,
-                contentType: "application/json; charset=utf-8",
-                success: function(response) {
-                    if(response.error_message){
-                        $("#id_error_msg_upload").prop("hidden",false)
-                        document.getElementById("id_error_msg_upload").innerHTML = response.error_message;
-                        document.getElementById("id_error_msg_upload").style.color = "Red";
-                        $('#id_data_upload').modal('show');
-                    }
-                    else{
-                        var address_type_data_array = response.data;
-                        var edit_basic_data = '';
-                        var del_ind = '';
-                        var dropdown_values = [];
-                        $("#id_popup_tbody").empty();
-                        $.each(response.data, function (i, value) {
-                            var address_type = value[2]
-                            var address_number = value[1]
-                            var company_id_value = value[0]
-                            dropdown_values.push([address_number,address_type,company_id_value])
-                            del_ind = '<td>' + value[5] + '</td>'
-                            if (value[5] == 1) {
-                                del_ind=' <input type="checkbox" value="' + value[5] + '" checked>'
-                            }
-                            else {
-                                del_ind= '<input type="checkbox" value="' + value[5] + '" required>'
-                            }
-                            var address_data = '';
-                            var address_data_list = '';
-                            var address_data_id_list = '';
-                            $.each(rendered_address_type_values, function(i, item){
-                                if( value[2].address_type_value == item){
-                                    address_data = '<option value="' + item.field_type_id + '">' + item.field_type_id + '</option>';
-                                }else{
-                                    address_data_list += '<option value="' + item.field_type_id + '">' + item.field_type_id + '</option>';
-                                }
-                                address_data_id_list = address_data + address_data_list
-                            });
-                            var address_number = '';
-                            var address_number_list = '';
-                            var address_number_id_list = '';
-                            $.each(rendered_address_data, function(i, item){
-                                if( value[1].address_number == item){
-                                    address_number = '<option value="' + item.address_number + '">' + item.address_number + '</option>';
-                                } else {
-                                    address_number_list += '<option value="' + item.address_number + '">' + item.address_number + '</option>';
-                                }
-                                address_number_id_list = address_number + address_number_list
-                            });
-                            var company = '';
-                            var company_list = '';
-                            var company_id_list = '';
-                            $.each(rendered_company_data, function(i, item){
-                                if( value[0].company_type_value == item){
-                                    company = '<option value="' + item.company_id + '">' + item.company_id + '</option>';
-                                } else {
-                                    company_list += '<option value="' + item.company_id + '">' + item.company_id + '</option>';
-                                }
-                                company_id_list = company + company_list
-                            });
-                            edit_basic_data += '<tr ><td><input type="checkbox" required></td><td><select class="form-control">value ="' + value[0] + '"'+company_id_list+'</select></td><td><select class = "form-control" type = "text"> value ="' + value[1] + '" maxlength="1" ' +address_data_id_list+'</select></td><td><select class = "form-control" type ="text"> type="text" name="address number" value ="' + value[2] + '" '+address_number_id_list+'</select></td><td><input  type="date" name = "valid_from" class="form-control" value ="' + value[4] + '"></td><td><input  type="date" name = "valid_to" value ="' + value[5] + '" class="form-control"></td><td hidden></td><td>'+ del_ind +'</td></tr>';
-                        });
-                        $('#id_popup_tbody').append(edit_basic_data);
-                        var i = 0;
-                        $("#id_popup_table TBODY TR").each(function () {
-                            var row = $(this);
-                            var address_number_id_list = dropdown_values[i][2]
-                            var address_data_id_list = dropdown_values[i][1]
-                            var company_id_list = dropdown_values[i][0]
-                            $(row.find("TD").eq(3).find("select option[value=" + address_number_id_list + "]")).attr('selected', 'selected');
-                            $(row.find("TD").eq(2).find("select option[value=" + address_data_id_list + "]")).attr('selected', 'selected');
-                                $(row.find("TD").eq(1).find("select option[value=" + company_id_list + "]")).attr('selected', 'selected');
-                            i++;
-                        })
-                        $("#id_del_ind_checkbox").prop("hidden", false);
-                        $(".class_del_checkbox").prop("hidden", false);
-                        $( "#header_select").prop( "hidden", false );
-                        $('#Adrs_Type_Modal').modal('show');
-                        $('#id_data_upload').modal('hide');
-                        document.getElementById("id_del_add_button").style.display = "block";
-                        $('#id_check_data').show();
-                        $("#id_check_data").prop("hidden", false);
-                        $("#save_id").prop("hidden", true);
-                        table_sort_filter('id_popup_table')
-                    }
-                    CloseLoaderPopup();
-                },
-                cache: false,
-                processData: false,
-                contentType: false,
-            });
+        if(attached_file == undefined){
+           display_file_select_error(); // Display error message if no file is selected
         }
-        else{
-            $("#id_error_msg_upload").prop("hidden",false)
-            get_message_details("JMSG110"); // Get message details
-            var display = msg_type.messages_id_desc;
-            document.getElementById("id_error_msg_upload").innerHTML = display;
-            document.getElementById("id_error_msg_upload").style.color = "Red";
-            $('#id_data_upload').modal('show');
+        else {
+            file_extension = (attached_file.name).split(".")[1]
+            file_extension = file_extension.toUpperCase();
+            if(file_extension == 'CSV'){
+                formdata.append("file_attach", attached_file);
+                formdata.append("Tablename",Tablename);
+                formdata.append("appname",appname);
+                $('#id_data_upload').modal('hide');
+                $('#id_popup_tbody').empty();
+                OpenLoaderPopup();
+                $.ajax({
+                    type: 'POST',
+                    url: "{% url 'eProc_Basic_Settings:data_upload' %}",
+                    data: formdata,
+                    contentType: "application/json; charset=utf-8",
+                    success: function(response) {
+                        if(response.error_message){
+                            $("#id_error_msg_upload").prop("hidden",false)
+                            document.getElementById("id_error_msg_upload").innerHTML = response.error_message;
+                            document.getElementById("id_error_msg_upload").style.color = "Red";
+                            $('#id_data_upload').modal('show');
+                        }
+                        else{
+                            var address_type_data_array = response.valid_data_list;
+                            var edit_basic_data = '';
+                            var del_ind = '';
+                            var dropdown_values = [];
+                            $("#id_popup_tbody").empty();
+                            $.each(response.valid_data_list, function (i, value) {
+                                var address_type = value.address_type
+                                var address_number = value.address_number
+                                var company_id_value = value.company_id
+                                dropdown_values.push([address_number,address_type,company_id_value])
+                                del_ind = '<td>' + value.del_ind + '</td>'
+                                if (value.del_ind == 1) {
+                                    del_ind=' <input type="checkbox" value="' + value.del_ind + '" checked>'
+                                }
+                                else {
+                                    del_ind= '<input type="checkbox" value="' + value.del_ind + '" required>'
+                                }
+                                var address_data = '';
+                                var address_data_list = '';
+                                var address_data_id_list = '';
+                                $.each(rendered_address_type_values, function(i, item){
+                                    if( value.address_type == item.field_type_id){
+                                        address_data = '<option value="' + item.field_type_id + '">' + item.field_type_id + '</option>';
+                                    }else{
+                                        address_data_list += '<option value="' + item.field_type_id + '">' + item.field_type_id + '</option>';
+                                    }
+                                    address_data_id_list = address_data + address_data_list
+                                });
+                                var address_number = '';
+                                var address_number_list = '';
+                                var address_number_id_list = '';
+                                $.each(rendered_address_data, function(i, item){
+                                    if( value[1].address_number == item){
+                                        address_number = '<option value="' + item.address_number + '">' + item.address_number + '</option>';
+                                    } else {
+                                        address_number_list += '<option value="' + item.address_number + '">' + item.address_number + '</option>';
+                                    }
+                                    address_number_id_list = address_number + address_number_list
+                                });
+                                var company = '';
+                                var company_list = '';
+                                var company_id_list = '';
+                                $.each(rendered_company_data, function(i, item){
+                                    if( value[0].company_type_value == item){
+                                        company = '<option value="' + item.company_id + '">' + item.company_id + '</option>';
+                                    } else {
+                                        company_list += '<option value="' + item.company_id + '">' + item.company_id + '</option>';
+                                    }
+                                    company_id_list = company + company_list
+                                });
+                                edit_basic_data += '<tr ><td><input type="checkbox" required></td><td><select class="form-control">value ="' + value[0] + '"'+company_id_list+'</select></td><td><select class = "form-control" type = "text"> value ="' + value[1] + '" maxlength="1" ' +address_data_id_list+'</select></td><td><select class = "form-control" type ="text"> type="text" name="address number" value ="' + value[2] + '" '+address_number_id_list+'</select></td><td><input  type="date" name = "valid_from" class="form-control" value ="' + value[4] + '"></td><td><input  type="date" name = "valid_to" value ="' + value[5] + '" class="form-control"></td><td hidden></td><td>'+ del_ind +'</td></tr>';
+                            });
+                            $('#id_popup_tbody').append(edit_basic_data);
+                            var i = 0;
+                            $("#id_popup_table TBODY TR").each(function () {
+                                var row = $(this);
+                                var address_number_id_list = dropdown_values[i][2]
+                                var address_data_id_list = dropdown_values[i][1]
+                                var company_id_list = dropdown_values[i][0]
+                                $(row.find("TD").eq(3).find("select option[value=" + address_number_id_list + "]")).attr('selected', 'selected');
+                                $(row.find("TD").eq(2).find("select option[value=" + address_data_id_list + "]")).attr('selected', 'selected');
+                                    $(row.find("TD").eq(1).find("select option[value=" + company_id_list + "]")).attr('selected', 'selected');
+                                i++;
+                            })
+                            $("#id_del_ind_checkbox").prop("hidden", false);
+                            $(".class_del_checkbox").prop("hidden", false);
+                            $( "#header_select").prop( "hidden", false );
+                            $('#Adrs_Type_Modal').modal('show');
+                            $('#id_data_upload').modal('hide');
+                            document.getElementById("id_del_add_button").style.display = "block";
+                            $('#id_check_data').show();
+                            $("#id_check_data").prop("hidden", false);
+                            $("#save_id").prop("hidden", true);
+                            table_sort_filter('id_popup_table')
+                        }
+                        CloseLoaderPopup();
+                    },
+                    cache: false,
+                    processData: false,
+                    contentType: false,
+                });
+            }
+            else{
+                $("#id_error_msg_upload").prop("hidden",false)
+                get_message_details("JMSG110"); // Get message details
+                var display = msg_type.messages_id_desc;
+                document.getElementById("id_error_msg_upload").innerHTML = display;
+                document.getElementById("id_error_msg_upload").style.color = "Red";
+                $('#id_data_upload').modal('show');
+            }
         }
     }
 
