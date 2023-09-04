@@ -1266,10 +1266,9 @@ function ajax_update_user_basic_data(data) {
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
                     success: function(Response) {
-                             message = Response.message
-                             msg_type = Response.msg_type
+                             message = Response
 
-                     if(msg_type.type=='success'){
+                     if(message){
                         document.getElementById('id_check_success_messages').innerHTML = message;
                         $('#id_check_error_messages').hide();
                         $('#id_check_success_messages').show();
@@ -1283,24 +1282,11 @@ function ajax_update_user_basic_data(data) {
                         }, 3000);
                         localStorage.setItem("error_flag", 0);
                     }
-                    if(msg_type.type=='error'){
-                        document.getElementById('id_check_error_messages').innerHTML = message;
-                        setTimeout(function() {
-                               CloseLoaderPopup();
-                         }, 500);
-                        $('#id_check_error_messages').show();
-                        $('#id_check_success_messages').hide();
-                        $('#myModal').modal('hide');
-                        localStorage.setItem("error_flag", 1);
-                           setTimeout(function() {
-                           $('#id_check_error_messages').hide();
-                    }, msg_display_interval*2500);
-                        return false;
-                    }
 
                     CloseLoaderPopup();
                     }
              });
+              table_sort_filter('id_popup_table');
     }
 
 
