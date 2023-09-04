@@ -32,7 +32,8 @@ def filter_based_on_sc_item_field(client, order_list):
                                                                           'guid')
     sc_item_details = django_query_instance.django_filter_only_query(ScItem,
                                                                      {'client': client, 'source_relevant_ind': True,
-                                                                      'po_doc_num': None
+                                                                      'po_doc_num': None,
+                                                                      'call_off__in': ['01', '02']
                                                                       }).order_by(
         *order_list)
     for sc_item in sc_item_details:
@@ -87,7 +88,8 @@ def item_search(inp_from_date, inp_to_date, **kwargs):
                                                                                  {'client': client,
                                                                                   'source_relevant_ind': True,
                                                                                   'item_del_date__gte': inp_from_date,
-                                                                                  'item_del_date__lte': inp_to_date}).order_by(
+                                                                                  'item_del_date__lte': inp_to_date,
+                                                                                  'call_off': '03'}).order_by(
                     *order_list)
                 for sc_item in sc_item_details:
                     guid = sc_item.header_guid_id
@@ -251,3 +253,33 @@ def get_sourcing_data(doc_num, from_date, to_date, prod_cat, comp_code):
     result = sc_inst.get_item_data_by_fields_src(client, hdr_obj_sc, PO_cat_query, company_query, doc_num_query,
                                                  **args_list)
     return result
+
+
+def filter_rfq(client, order_list):
+    """
+
+    :param client:
+    :param order_list:
+    :return:
+    """
+    sc_header_item_details = []
+    sc_item_details = django_query_instance.django_filter_only_query(ScItem,
+                                                                     {'client': client, 'source_relevant_ind': True,
+                                                                      'po_doc_num': None,
+                                                                      'call_off': '03'
+                                                                      }).order_by(
+        *order_list)
+    for sc_item in sc_item_details:
+        guid = sc_item.header_guid_id
+        scheader_details = django_query_instance.django_filter_only_query(ScHeader,
+                                                                          {'guid': guid,
+                                                                           'client': client,
+                                                                           'status': CONST_SC_HEADER_APPROVED,
+                                                                           }).values('doc_number')
+        for scheader_detail in scheader_details:
+            sc_header_item_detail = [scheader_detail['doc_number'], sc_item.description, sc_item.supplier_id,
+                                     sc_item.comp_code, sc_item.item_del_date, sc_item.unit, sc_item.quantity,
+                                     sc_item.prod_cat_id]
+
+            sc_header_item_details.append(sc_header_item_detail)
+    return sc_header_item_details
