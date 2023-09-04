@@ -19,7 +19,13 @@ Majjakaprocure Support
 111154,APPROVED_SC,Majjakaprocure- Shopping Cart @sc_description@ approved,Hello @first_name@,Your Shopping cart @doc_number@- @sc_description@ has been approved successfully.,"Regards,
 Majjakaprocure Support
 @majjaka_logo@",EN,0
-PO_SUPPLIER,Purchase Order Detail @doc_number@ from @client_name@,Dear @supplier_username@, Please find attached purchase order from @client_name@,"Regards, Majjakaprocure Support",EN,0
+PO_SUPPLIER,Purchase Order Detail @doc_number@ from @client_name@,
+Dear @supplier_username@, Please find attached purchase order from @client_name@,
+"Regards,"
+Majjakaprocure Support,
+EN,0
+
+
 SC_APPROVAL,Approve this shopping cart today,ACTION REQUIRED
 Reminder: Approve this shopping cart today, View below the details for this Shopping Cart.
 
@@ -55,6 +61,6 @@ Approver : @approver_id@, Approver ID : @approver_id@, Decision Status : @decisi
 Received On : @received_on@ @time_zone@
 Processed On : @processed_on@ @time_zone@,
 
-"Regards,"
+Regards,
 Majjakaprocure Support,
 EN,0

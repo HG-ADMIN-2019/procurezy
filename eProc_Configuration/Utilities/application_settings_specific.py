@@ -120,7 +120,7 @@ class ApplicationSettingsSave:
         number_range_db_list = []
         range_check_flag = False
         doc_type = ''
-        for number_range_detail in number_range_data:
+        for number_range_detail in number_range_data['data']:
             doc_type = number_range_detail['document_type']
             delete_flag = True
             # if entry is not exists in db
@@ -462,7 +462,7 @@ class ApplicationSettingsSave:
         documenttype_db_list = []
         used_flag_set = []
         used_flag_reset = []
-        for documenttype_detail in documenttype_data:
+        for documenttype_detail in documenttype_data['data']:
             # if entry is not exists in db
             if not django_query_instance.django_existence_check(DocumentType,
                                                                 {'document_type': documenttype_detail[
@@ -507,7 +507,7 @@ class ApplicationSettingsSave:
     def save_transaction_data(self, transactiontype_data):
         transactiontype_db_list = []
         doc_type = ''
-        for transactiontype_detail in transactiontype_data:
+        for transactiontype_detail in transactiontype_data['data']:
             doc_type = transactiontype_detail['document_type']
             active_inactive_field = transactiontype_detail['active_inactive']
             # if entry is not exists in db
@@ -595,7 +595,7 @@ class ApplicationSettingsSave:
 
     def save_calendar_data(self, calendar_data):
         calendar_db_list = []
-        for calendar_detail in calendar_data:
+        for calendar_detail in calendar_data['data']:
             # if entry is not exists in db
             if not django_query_instance.django_existence_check(CalenderConfig,
                                                                 {'calender_id': calendar_detail[
@@ -651,12 +651,13 @@ class ApplicationSettingsSave:
 
     def save_calendar_holiday(self, calendar_data):
         calendar_db_list = []
-        for calendar_detail in calendar_data:
+        for calendar_detail in calendar_data['data']:
             # if entry is not exists in db
             delete_holiday_data(calendar_detail['calender_id'])
             if not django_query_instance.django_existence_check(CalenderHolidays,
                                                                 {'calender_holiday_guid': calendar_detail[
-                                                                    'calender_holiday_guid']}):
+                                                                    'calender_holiday_guid'],
+                                                                 'client': self.client,}):
                 guid = guid_generator()
                 calendar_db_dictionary = {'calender_holiday_guid': guid,
                                           'calender_id': calendar_detail['calender_id'],
@@ -711,7 +712,7 @@ class ApplicationSettingsSave:
         acct_assmt_field = ''
         used_flag_set = []
         used_flag_reset = []
-        for accasscat_detail in accasscat_data:
+        for accasscat_detail in accasscat_data['data']:
             acct_assmt_field = accasscat_detail['account_assign_cat']
             # if entry is not exists in db
             if not django_query_instance.django_existence_check(AccountAssignmentCategory,
@@ -762,7 +763,7 @@ class ApplicationSettingsSave:
         used_flag_set = []
         used_flag_reset = []
         acct_assmt_field = ''
-        for po_split_type in po_split_types:
+        for po_split_type in po_split_types['data']:
             acct_assmt_field = po_split_type['po_split_type']
             # if entry is not exists in db
             if not django_query_instance.django_existence_check(PoSplitType,
@@ -812,11 +813,11 @@ class ApplicationSettingsSave:
 
     def save_po_split_creteria(self, po_split_creteria):
         accasscat_db_list = []
-        for po_split in po_split_creteria:
+        for po_split in po_split_creteria['data']:
 
             # if entry is not exists in db
             if not django_query_instance.django_existence_check(PoSplitCriteria,
-                                                                {'po_split_type': (po_split[
+                                                                {'po_split_type': int(po_split[
                                                                                           'po_split_type']),
                                                                  'company_code_id':
                                                                      po_split['company_code_id'],
@@ -874,7 +875,7 @@ class ApplicationSettingsSave:
     def save_purchase_control(self, purhcase_control_data):
         pur_ctrl_db_list = []
 
-        for pur_crtl_detail in purhcase_control_data:
+        for pur_crtl_detail in purhcase_control_data['data']:
 
             # if entry is not exists in db
             if not django_query_instance.django_existence_check(PurchaseControl,
@@ -1332,7 +1333,7 @@ class ApplicationSettingsSave:
 
     def save_orgattributes_level_data(self, orgattlevel_data):
         orgattlevel_db_list = []
-        for orgattlevel_detail in orgattlevel_data:
+        for orgattlevel_detail in orgattlevel_data['data']:
             # if entry is not exists in db
             if not django_query_instance.django_existence_check(OrgModelNodetypeConfig,
                                                                 {'node_type': orgattlevel_detail['node_type'],
@@ -1508,49 +1509,48 @@ class ApplicationSettingsSave:
         return upload_response, message, variant_list
 
     def save_email_settings(self, email_data):
-        """
-
-        """
         emailSettings_db_list = []
         for emailSettings_detail in email_data:
-            # if entry is not exists in db
-            if not django_query_instance.django_existence_check(EmailContents,
-                                                                {'object_type': emailSettings_detail['email_type'],
-                                                                 'language_id': emailSettings_detail['language_id'],
-                                                                 'client': self.client}):
-                guid = guid_generator()
-                emailSettings_db_dictionary = {'email_contents_guid': guid,
-                                               'object_type': emailSettings_detail['email_type'],
-                                               'subject': emailSettings_detail['email_subject'],
-                                               'header': emailSettings_detail['email_header'],
-                                               'body': emailSettings_detail['email_body'],
-                                               'footer': emailSettings_detail['email_footer'],
-                                               'language_id': Languages.objects.get(
-                                                   language_id=emailSettings_detail['language_id']),
-                                               'del_ind': False,
-                                               'client': self.client,
-                                               'email_contents_created_at': self.current_date_time,
-                                               'email_contents_created_by': self.username,
-                                               'email_contents_changed_at': self.current_date_time,
-                                               'email_contents_changed_by': self.username
-                                               }
-                emailSettings_db_list.append(emailSettings_db_dictionary)
-            else:
-                django_query_instance.django_update_query(EmailContents,
-                                                          {'object_type': emailSettings_detail['email_type'],
-                                                           'language_id': emailSettings_detail['language_id'],
-                                                           'client': self.client},
-                                                          {'object_type': emailSettings_detail['email_type'],
-                                                           'subject': emailSettings_detail['email_subject'],
-                                                           'header': emailSettings_detail['email_header'],
-                                                           'body': emailSettings_detail['email_body'],
-                                                           'footer': emailSettings_detail['email_footer'],
-                                                           'language_id': Languages.objects.get(
-                                                               language_id=emailSettings_detail['language_id']),
-                                                           'email_contents_changed_at': self.current_date_time,
-                                                           'email_contents_changed_by': self.username,
-                                                           'del_ind': emailSettings_detail['del_ind'],
-                                                           'client': self.client})
+            # Check if 'email_type' key exists in the dictionary
+            if 'email_type' in emailSettings_detail:
+                # Check if entry exists in the database
+                if not django_query_instance.django_existence_check(EmailContents,
+                                                                    {'object_type': emailSettings_detail['email_type'],
+                                                                     'language_id': emailSettings_detail['language_id'],
+                                                                     'client': self.client}):
+                    guid = guid_generator()
+                    emailSettings_db_dictionary = {'email_contents_guid': guid,
+                                                   'object_type': emailSettings_detail['email_type'],
+                                                   'subject': emailSettings_detail.get('email_subject', ''),
+                                                   'header': emailSettings_detail.get('email_header', ''),
+                                                   'body': emailSettings_detail.get('email_body', ''),
+                                                   'footer': emailSettings_detail.get('email_footer', ''),
+                                                   'language_id': Languages.objects.get(
+                                                       language_id=emailSettings_detail['language_id']),
+                                                   'del_ind': False,
+                                                   'client': self.client,
+                                                   'email_contents_created_at': self.current_date_time,
+                                                   'email_contents_created_by': self.username,
+                                                   'email_contents_changed_at': self.current_date_time,
+                                                   'email_contents_changed_by': self.username
+                                                   }
+                    emailSettings_db_list.append(emailSettings_db_dictionary)
+                else:
+                    django_query_instance.django_update_query(EmailContents,
+                                                              {'object_type': emailSettings_detail['email_type'],
+                                                               'language_id': emailSettings_detail['language_id'],
+                                                               'client': self.client},
+                                                              {'object_type': emailSettings_detail['email_type'],
+                                                               'subject': emailSettings_detail.get('email_subject', ''),
+                                                               'header': emailSettings_detail.get('email_header', ''),
+                                                               'body': emailSettings_detail.get('email_body', ''),
+                                                               'footer': emailSettings_detail.get('email_footer', ''),
+                                                               'language_id': Languages.objects.get(
+                                                                   language_id=emailSettings_detail['language_id']),
+                                                               'email_contents_changed_at': self.current_date_time,
+                                                               'email_contents_changed_by': self.username,
+                                                               'del_ind': emailSettings_detail.get('del_ind', False),
+                                                               'client': self.client})
         bulk_create_entry_db(EmailContents, emailSettings_db_list)
 
 
