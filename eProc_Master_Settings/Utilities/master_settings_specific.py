@@ -417,7 +417,7 @@ class MasterSettingsSave:
         """
 
         """
-        update_user_info(request)
+
         emp_data_db_list = []
 
         for emp_detail in emp_data['data']:
@@ -437,10 +437,11 @@ class MasterSettingsSave:
                     'decimal_notation': emp_detail['decimal_notation'],
                     'user_type': emp_detail['user_type'],
                     'currency_id': Currency.objects.get(
-                        currency_id=emp_data['currency_id']),
+                        currency_id=emp_detail['currency_id']),
                     'language_id': Languages.objects.get(
-                        language_id=emp_data['language_id']),
-                    'time_zone': TimeZone.objects.get(time_zone=emp_data['time_zone']),
+                        language_id=emp_detail['language_id']),
+                    'time_zone': TimeZone.objects.get(
+                        time_zone=emp_detail['time_zone']),
                     'del_ind': False,
                     'client': self.client,
                     'user_data_changed_at': self.current_date_time,
@@ -464,23 +465,25 @@ class MasterSettingsSave:
                                                               {'email': emp_detail['email'],
                                                                'client': self.client},
                                                               {'email': emp_detail['email'],
-                                                                'username': emp_detail['username'],
-                                                                'first_name': emp_detail['first_name'],
-                                                                'last_name': emp_detail['last_name'],
-                                                                'phone_num': emp_detail['phone_num'],
-                                                                'date_format': emp_detail['date_format'],
-                                                                'employee_id': emp_detail['employee_id'],
-                                                                'decimal_notation': emp_detail['decimal_notation'],
-                                                                'user_type': emp_detail['user_type'],
-                                                                'currency_id': Currency.objects.get(
-                                                                    currency_id=emp_data['currency_id']),
-                                                                'language_id': Languages.objects.get(
-                                                                    language_id=emp_data['language_id']),
-                                                                'time_zone': TimeZone.objects.get(time_zone=emp_data['time_zone']),
-                                                                'user_data_changed_at': self.current_date_time,
-                                                                'user_data_changed_by': self.username,
+                                                               'username': emp_detail['username'],
+                                                               'first_name': emp_detail['first_name'],
+                                                               'last_name': emp_detail['last_name'],
+                                                               'phone_num': emp_detail['phone_num'],
+                                                               'date_format': emp_detail['date_format'],
+                                                               'employee_id': emp_detail['employee_id'],
+                                                               'decimal_notation': emp_detail['decimal_notation'],
+                                                               'user_type': emp_detail['user_type'],
+                                                               'currency_id': Currency.objects.get(
+                                                                   currency_id=emp_detail['currency_id']),
+                                                               'language_id': Languages.objects.get(
+                                                                   language_id=emp_detail['language_id']),
+                                                               'time_zone': TimeZone.objects.get(
+                                                                   time_zone=emp_detail['time_zone']),
+                                                               'del_ind': False,
                                                                'client': self.client,
-                                                               'del_ind': emp_data['del_ind'] == 'True', })
+                                                               'user_data_changed_at': self.current_date_time,
+                                                               'user_data_changed_by': self.username
+                                                               })
 
         if emp_data_db_list:
             bulk_create_entry_db(UserData, emp_data_db_list)
