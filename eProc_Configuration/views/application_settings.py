@@ -554,3 +554,14 @@ def get_dropdown_data(request):
     if master_data['table_name'] == 'PurchaseControl':
         data = purchase_control_dropdown()
         return JsonResponse(data, safe=False)
+
+
+def get_auth_obj_data(request):
+    """
+
+    """
+    update_user_info(request)
+    app_data = JsonParser_obj.get_json_from_req(request)
+    application_settings_save_instance = ApplicationSettingsSave()
+    display_data = application_settings_save_instance.generate_auth_obj_id_data(app_data)
+    return JsonResponse(display_data, safe=False)

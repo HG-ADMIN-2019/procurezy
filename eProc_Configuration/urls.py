@@ -22,4 +22,5 @@ urlpatterns = [
     # path('dropdown_document_type', views.dropdown_document_type, name='dropdown_document_type'),
     path('update_po_criteria_dropdown', views.update_po_criteria_dropdown, name='update_po_criteria_dropdown'),
     path('get_dropdown_data', views.get_dropdown_data, name='get_dropdown_data'),
+    path('get_auth_obj_data', views.get_auth_obj_data, name='get_auth_obj_data'),
 ]

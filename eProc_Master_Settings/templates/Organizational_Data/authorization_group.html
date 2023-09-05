@@ -275,6 +275,20 @@
         }
     }
 
+    function get_auth_obj_value(selectElement) {
+        var selected_auth_level = $(selectElement).val();
+        OpenLoaderPopup();
+        var data = {'selected_auth_level': selected_auth_level};
+        $.ajax({
+                type: 'POST',
+                url: "{% url 'eProc_Configuration:get_auth_obj_data' %}",
+                data: JSON.stringify(data),
+                success: function(response) {
+                console.log(response);
+                CloseLoaderPopup();
+            }
+        });
+    }
 
     // validate and save for add,copy,update and upload data
     function popup_save_data() {
