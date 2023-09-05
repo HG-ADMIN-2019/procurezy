@@ -280,8 +280,8 @@
                             <th id="header_select">Select</th>
                             <th>EMAIL</th>
                             <th>USERNAME</th>
-                            <th >FIRST_NAME</th>
-                            <th >LAST_NAME</th>
+                            <th>FIRST_NAME</th>
+                            <th>LAST_NAME</th>
                             <th>PHONE_NUM</th>
                             <th>DATE_FORMAT</th>
                             <th>EMPLOYEE_ID</th>
@@ -290,7 +290,7 @@
                             <th>CURRENCY</th>
                             <th>LANGUAGE_ID</th>
                             <th>TIME_ZONE</th>
-                            <th id="id_del_ind_checkbox" hidden>Del Indicator</th>
+                            <th  hidden>Del Indicator</th>
                         </tr>
                         </thead>
                         <tbody id="id_popup_tbody">
@@ -769,18 +769,18 @@ function onclick_display_csv_data() {
                             })
 
                             edit_basic_data += '<tr><td class="class_select_checkbox"><input type="checkbox" required></td>'+
-                            '<td><input class="form-control" type="email" value="' + value.email + '" maxlength="40" onkeypress="return /[a-z]/i.test(event.key)" required></td>'+
+                            '<td><input  class="form-control" type="email" value="' + value.email + '" maxlength="40" onkeypress="return /[a-z]/i.test(event.key)" required></td>'+
                             '<td><input class="form-control" type="text" value="' + value.username + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td>'+
-                            '<td><input class="form-control" type="text" value="' + value.first_name + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td>'+
-                            '<td><input class="form-control" type="text" value="' + value.last_name + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td>'+
-                            '<td><input class="form-control" type="tel" value="' + value.phone_num + '" maxlength="100" required></td>'+
-                            '<td><select class="form-control" ><option value ="' + value.date_format + '"'+date_format_id_list+'>'+value.date_format+'</option></select></td>'+
-                            '<td><input class="form-control" type="text" value="' + value.employee_id + '" maxlength="100" required></td>'+
-                            '<td><select class="form-control" ><option value ="' + value.decimal_notation + '"'+decimal_opt_id_list+'>'+value.decimal_notation+'</option></select></td>'+
-                            '<td><select class="form-control" type="text"><option value ="' + value.user_type + '"'+dropdown_list_id_list+'>'+value.user_type+'</option></select></td>'+
-                            '<td><select class="form-control" type="text"><option value ="' + value.currency_id + '"'+currency_id_list+'>'+value.currency_id+'</option></select></td>'+
-                            '<td><select class="form-control" type="text"><option value ="' + value.language_id + '"'+language_id_list+'>'+value.language_id+'</option></select></td>'+
-                            '<td><select class="form-control" type="text"><option value ="' + value.time_zone + '"'+time_zone_id_list+'>'+value.time_zone+'</option></select></td>'+
+                            '<td><input  class="form-control" type="text" value="' + value.first_name + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td>'+
+                            '<td><input  class="form-control" type="text" value="' + value.last_name + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td>'+
+                            '<td><input  class="form-control" type="tel" value="' + value.phone_num + '" maxlength="100" required></td>'+
+                            '<td><select  class="form-control" ><option value ="' + value.date_format + '"'+date_format_id_list+'>'+value.date_format+'</option></select></td>'+
+                            '<td><input   class="form-control" type="text" value="' + value.employee_id + '" maxlength="100" required></td>'+
+                            '<td><select  class="form-control" ><option value ="' + value.decimal_notation + '"'+decimal_opt_id_list+'>'+value.decimal_notation+'</option></select></td>'+
+                            '<td><select  class="form-control" type="text"><option value ="' + value.user_type + '"'+dropdown_list_id_list+'>'+value.user_type+'</option></select></td>'+
+                            '<td><select  class="form-control" type="text"><option value ="' + value.currency_id + '"'+currency_id_list+'>'+value.currency_id+'</option></select></td>'+
+                            '<td><select  class="form-control" type="text"><option value ="' + value.language_id + '"'+language_id_list+'>'+value.language_id+'</option></select></td>'+
+                            '<td><select  class="form-control" type="text"><option value ="' + value.time_zone + '"'+time_zone_id_list+'>'+value.time_zone+'</option></select></td>'+
                             '<td>'+ del_ind +'</td></tr>'
                         });
                         $('#id_popup_tbody').append(edit_basic_data);
@@ -1198,6 +1198,111 @@ function add_popup_row() {
 
 }
 
+function ajax_update_user_basic_data(data) {
+        urlLink = "{% url 'eProc_Master_Settings:create_update_master_data' %}";
+        var response = AjaxCallAPIBasic(urlLink, data)
+        return response
+}
+// Funtion to save basic detail data
+    function save_user_basic_info() {
+            var name1_val= $('#first_name1').val();
+            var phone_num_val = $('#phone_num').val();
+            var email_val = $('#email1').val();
+            var err_flag, super_user_val = 0, user_locked_val = 0, pwd_locked_val = 0, is_active_val = 0 ;
+
+            OpenLoaderPopup();
+            var user_list_data = new Array
+            del_ind = ''
+            $("#id_popup_table TBODY TR").each(function() {
+                $('#id_popup_table').DataTable().destroy();
+                $("#id_check_data").prop("hidden", false);
+                var row = $(this);
+                 user_data_dict = {}
+                //*************** reading data from the pop-up ***************
+                user_data_dict.email = row.find("TD").eq(1).find('input[type="email"]').val();
+                user_data_dict.username = row.find("TD").eq(2).find('input[type="text"]').val();
+                user_data_dict.first_name = row.find("TD").eq(3).find('input[type="text"]').val();
+                user_data_dict.last_name = row.find("TD").eq(4).find('input[type="text"]').val();
+                user_data_dict.phone_num = row.find("TD").eq(5).find('input[type="tel"]').val();
+                user_data_dict.date_format = row.find("TD").eq(6).find('select').val();
+                user_data_dict.employee_id = row.find("TD").eq(7).find('input[type="text"]').val();
+                user_data_dict.decimal_notation = row.find("TD").eq(8).find('select').val();
+                user_data_dict.user_type = row.find("TD").eq(9).find('select').val();
+                user_data_dict.currency_id = row.find("TD").eq(10).find('select').val();
+                user_data_dict.language_id = row.find("TD").eq(11).find('select').val();
+                user_data_dict.time_zone = row.find("TD").eq(12).find('select').val();
+                checked_box = row.find("TD").eq(13).find('input[type="checkbox"]').is(':checked')
+                    if (checked_box){
+                        user_data_dict.del_ind = '1'
+                    }
+                    else{
+                       user_data_dict.del_ind = '0'
+                    }
+                     if($("#super_user").is(":checked")){
+                        super_user_val = 1;
+                    }
+                    user_data_dict.super_user= super_user_val;
+                    if($("#user_locked").is(":checked")){
+                        user_locked_val = 1;
+                    }
+                    user_data_dict.user_locked= user_locked_val;
+                    if($("#pwd_locked").is(":checked")){
+                        pwd_locked_val = 1;
+                    }
+                    user_data_dict.pwd_locked= pwd_locked_val;
+                     if($("#user_status").is(":checked")){
+                        is_active_val = 1;
+                    }
+                    user_data_dict.is_active= is_active_val;
+                    user_data_dict.status = GLOBAL_ACTION ;
+                    user_list_data.push(user_data_dict)
+                    table_sort_filter_popup_pagination('id_popup_table');
+                });
+                data = {'data':user_list_data,'table_name':'UserData','action':GLOBAL_ACTION}
+             $.ajax({
+                    type: 'POST',
+                    url: "{% url 'eProc_Master_Settings:create_update_master_data' %}",
+                    data: JSON.stringify(data),
+                    contentType: "application/json; charset=utf-8",
+                    dataType: "json",
+                    success: function(Response) {
+                             success_response(Response);
+                             message = Response.message
+                             msg_type = Response.msg_type
+
+                     if(msg_type.type=='success'){
+                        document.getElementById('id_check_success_messages').innerHTML = message;
+                        $('#id_check_error_messages').hide();
+                        $('#id_check_success_messages').show();
+                        $('html, body').animate({ scrollTop: 0 }, 'slow');
+                        setTimeout(function() {
+                                   CloseLoaderPopup();
+                        }, 500);
+                        setTimeout(function() {
+                                   $('#id_check_success_messages').hide();
+                                    $('#myModal').modal('hide');
+                        }, 3000);
+                        localStorage.setItem("error_flag", 0);
+                    }
+                    if(msg_type.type=='error'){
+                        document.getElementById('id_check_error_messages').innerHTML = message;
+                        setTimeout(function() {
+                               CloseLoaderPopup();
+                         }, 500);
+                        $('#id_check_error_messages').show();
+                        $('#id_check_success_messages').hide();
+                        $('#myModal').modal('hide');
+                        localStorage.setItem("error_flag", 1);
+                           setTimeout(function() {
+                           $('#id_check_error_messages').hide();
+                    }, msg_display_interval*2500);
+                        return false;
+                    }
+
+                    CloseLoaderPopup();
+                    }
+             });
+    }
 
 
 </script>
