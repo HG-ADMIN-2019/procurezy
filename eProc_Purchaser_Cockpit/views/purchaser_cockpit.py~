@@ -69,10 +69,7 @@ def sc_item_field_filter(request):
         # results
         search_fields['doc_number'] = request.POST.get('sc_number')
         search_fields['prod_cat_id'] = request.POST.get('product_desc')
-        if request.POST.get('company_code') == '':
-            search_fields['comp_code'] = '*'
-        else:
-            search_fields['comp_code'] = request.POST.get('company_code')
+        search_fields['comp_code'] = request.POST.get('company_code')
         sc_item_inst = ScItem()
         sc_header_item_details = item_search(inp_from_date, inp_to_date, **search_fields)
         count = len(sc_header_item_details)
