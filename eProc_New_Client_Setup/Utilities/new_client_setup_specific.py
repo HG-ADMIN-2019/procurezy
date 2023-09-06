@@ -113,6 +113,8 @@ class InitialSetupClient(BasicSettingsSave, ApplicationSettingsSave, MasterSetti
         safe_call(self.system_settings_script, 'system_settings_script')
         # Save node level attributes
         safe_call(self.node_level_attribute_script, 'node_level_attribute_script')
+        # Save email (uncomment this line to save email data)
+        # safe_call(self.email_contents_script, 'email_contents_script')
         # Save UNSPC
         safe_call(self.Unspc_code_script, 'Unspc_code_script')
         # Save DOCUMENTS
