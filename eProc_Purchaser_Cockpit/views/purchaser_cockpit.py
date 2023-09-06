@@ -19,7 +19,7 @@ from eProc_Doc_Search_and_Display.Utilities.search_display_generic import get_hd
 from eProc_Emails.Utilities.email_notif_generic import send_po_attachment_email
 from eProc_Purchase_Order.Utilities.purchase_order_generic import CreatePurchaseOrder
 from eProc_Purchaser_Cockpit.Utilities.purchaser_cockpit_specific import filter_based_on_sc_item_field, item_search, \
-    get_sourcing_data
+    get_sourcing_data, filter_rfq
 
 # purchaser_cockpit_search
 from eProc_Shopping_Cart.context_processors import update_user_info
@@ -68,12 +68,10 @@ def sc_item_field_filter(request):
         prod_cat = request.POST.get('product_desc')
         # results
         search_fields['doc_number'] = request.POST.get('sc_number')
-        # search_fields['from_date'] = request.POST.get('from_date')
-        # search_fields['to_date'] = request.POST.get('to_date')
         search_fields['prod_cat_id'] = request.POST.get('product_desc')
         search_fields['comp_code'] = request.POST.get('company_code')
         sc_item_inst = ScItem()
-        sc_header_item_details = item_search(inp_from_date, inp_to_date,**search_fields)
+        sc_header_item_details = item_search(inp_from_date, inp_to_date, **search_fields)
         count = len(sc_header_item_details)
 
     context = {
@@ -141,3 +139,50 @@ def PO_grouping(request):
     response = po_flag
 
     return JsonResponse(response, safe=False)
+
+
+def rfq_details(request):
+    supplier_id = False
+    comp_code = False
+    prod_cat = False
+    update_user_info(request)
+    client = global_variables.GLOBAL_CLIENT
+    order_list = []
+    search_fields = {}
+    # sc_header_item_details = ''
+    sc_header_item = []
+    sc_header_item_details = filter_rfq(client, order_list)
+    count = len(sc_header_item_details)
+    if request.method == 'POST':
+        search_fields = {}
+        inp_comp_code = request.POST.get('company_code')
+        inp_doc_type = 'SC'
+        inp_doc_num = request.POST.get('sc_number')
+        inp_from_date = request.POST.get('from_date')
+        inp_to_date = request.POST.get('to_date')
+        inp_supl = None
+        inp_created_by = None
+        inp_requester = None
+        prod_cat = request.POST.get('product_desc')
+        # results
+        search_fields['doc_number'] = request.POST.get('sc_number')
+        # search_fields['from_date'] = request.POST.get('from_date')
+        # search_fields['to_date'] = request.POST.get('to_date')
+        search_fields['prod_cat_id'] = request.POST.get('product_desc')
+        search_fields['comp_code'] = request.POST.get('company_code')
+        sc_item_inst = ScItem()
+        sc_header_item_details = item_search(inp_from_date, inp_to_date, **search_fields)
+        count = len(sc_header_item_details)
+
+    context = {
+        'sc_header_item_details': sc_header_item_details,
+        'count': count,
+        'prod_cat': prod_cat,
+        'supplier_id': supplier_id,
+        'comp_code': comp_code,
+        'inc_nav': True,
+        'shopping': True,
+        'is_slide_menu': True
+    }
+
+    return render(request, 'Purchaser_Cockpit/display_rfq.html', context)

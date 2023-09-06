@@ -138,7 +138,8 @@
                 </li>
                 <li class="nav-item" id="nav-item_rfq">
                     {% if sub_menu.RFQ %}
-                    <div class="nav-link" id="change_rfq_btn"><a href="#">RFQ</a></div>
+                    {% url 'eProc_Purchaser_Cockpit:rfq_details'  as rfq_url %}
+                    <div class="nav-link" id="change_rfq_btn"><a href="{{rfq_url}}" {% if request.path == rfq_url %} class="active"{% endif %}>RFQ</a></div>
                     {% endif %}
                 </li>
             </ul>

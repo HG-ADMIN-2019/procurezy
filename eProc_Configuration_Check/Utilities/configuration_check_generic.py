@@ -2555,7 +2555,7 @@ def check_paymentterm_desc_data(ui_data, status):
                                                                   {'del_ind': False,
                                                                    'client': global_variables.GLOBAL_CLIENT,
                                                                    'payment_term_key': payment_term_desc[
-                                                                       'payment_term_key']
+                                                                       'payment_term_key'],
                                                                    }):
                     update_count = update_count + 1
                     valid_data_list.append(payment_term_desc)

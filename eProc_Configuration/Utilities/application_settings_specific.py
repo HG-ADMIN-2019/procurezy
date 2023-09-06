@@ -1045,9 +1045,12 @@ class ApplicationSettingsSave:
         bulk_create_entry_db(MessagesIdDesc, messageIdDesc_db_list)
 
     def save_system_settings(self, systemsettings_data):
+        """
+
+        """
         systemsettings_db_list = []
         for systemsettings_detail in systemsettings_data:
-            guid = None  # Initialize guid variable here
+            # if entry is not exists in db
             if not django_query_instance.django_existence_check(SystemSettingsConfig,
                                                                 {'sys_attr_type': systemsettings_detail[
                                                                     'sys_attr_type'],
@@ -1056,34 +1059,33 @@ class ApplicationSettingsSave:
                                                                  'client': self.client
                                                                  }):
                 guid = guid_generator()
-                systemsettings_db_dictionary = {
-                    'system_settings_config_guid': guid,
-                    'sys_attr_type': systemsettings_detail['sys_attr_type'],
-                    'sys_attr_value': systemsettings_detail['sys_attr_value'],
-                    'del_ind': False,
-                    'client': self.client,
-                    'system_settings_config_created_at': self.current_date_time,
-                    'system_settings_config_created_by': self.username,
-                    'system_settings_config_changed_at': self.current_date_time,
-                    'system_settings_config_changed_by': self.username
-                }
+                systemsettings_db_dictionary = {'system_settings_config_guid': guid,
+                                                'sys_attr_type': systemsettings_detail['sys_attr_type'],
+                                                'sys_attr_value': systemsettings_detail['sys_attr_value'],
+                                                'del_ind': False,
+                                                'client': self.client,
+                                                'system_settings_config_created_at': self.current_date_time,
+                                                'system_settings_config_created_by': self.username,
+                                                'system_settings_config_changed_at': self.current_date_time,
+                                                'system_settings_config_changed_by': self.username
+                                                }
                 systemsettings_db_list.append(systemsettings_db_dictionary)
             else:
-                # Here, you should generate the guid again for the else block
-                guid = guid_generator()
-                systemsettings_db_dictionary = {
-                    'system_settings_config_guid': guid,
-                    'sys_attr_type': systemsettings_detail['sys_attr_type'],
-                    'sys_attr_value': systemsettings_detail['sys_attr_value'],
-                    'del_ind': False,
-                    'client': self.client,
-                    'system_settings_config_created_at': self.current_date_time,
-                    'system_settings_config_created_by': self.username,
-                    'system_settings_config_changed_at': self.current_date_time,
-                    'system_settings_config_changed_by': self.username
-                }
-                systemsettings_db_list.append(systemsettings_db_dictionary)
-
+                django_query_instance.django_update_query(SystemSettingsConfig,
+                                                          {'sys_attr_type': systemsettings_detail[
+                                                              'sys_attr_type'],
+                                                           'sys_attr_value': systemsettings_detail['sys_attr_value'],
+                                                           'client': self.client
+                                                           },
+                                                          {'system_settings_config_guid': guid,
+                                                           'sys_attr_type': systemsettings_detail['sys_attr_type'],
+                                                           'sys_attr_value': systemsettings_detail['sys_attr_value'],
+                                                           'del_ind': False,
+                                                           'client': self.client,
+                                                           'system_settings_config_created_at': self.current_date_time,
+                                                           'system_settings_config_created_by': self.username,
+                                                           'system_settings_config_changed_at': self.current_date_time,
+                                                           'system_settings_config_changed_by': self.username})
         bulk_create_entry_db(SystemSettingsConfig, systemsettings_db_list)
 
     def save_orgnode_types_data_into_db(self, orgnode_data):
@@ -1664,7 +1666,7 @@ def auth_object_data():
 
 def auth_grp_dropdown():
     upload_data_AuthorizationGroup = list(
-        AuthorizationObject.objects.filter(del_ind=False).values('auth_obj_id', 'auth_level_ID'))
+        AuthorizationObject.objects.filter(del_ind=False).values('auth_obj_id', 'auth_level'))
 
     auth_group_db_values = get_field_list_values('auth_obj_grp')
     auth_type_db_values = get_field_list_values('auth_level')
