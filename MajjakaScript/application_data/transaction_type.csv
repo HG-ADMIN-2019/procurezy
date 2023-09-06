@@ -1,8 +1,4 @@
 transaction_type,description,sequence,active_inactive,document_type,del_ind
-FSC,Favourite 31,1,1,DOC04,0
-SPO,Order,20,1,0,DOC02,0
-TEST 31,Test Trans,31,1,1,DOC04,0
-spo,test Tran2,21,1,1,DOC02,0
-FSC1,Favourite,31,1,1,DOC04,0
-SHC,Shopping 10,1,0,DOC01,0
-FSC,Favourite,30,1,0,DOC04,0
+SPO,Order,20,1,DOC02,0
+SHC,Shopping,10,1,DOC01,0
+FSC,Favourite,30,1,DOC04,0
