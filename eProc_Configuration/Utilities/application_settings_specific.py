@@ -1555,11 +1555,6 @@ class ApplicationSettingsSave:
                                                            'client': self.client})
         bulk_create_entry_db(EmailContents, emailSettings_db_list)
 
-    def generate_auth_obj_id_data(self, selected_auth_level):
-        auth_obj_ids = list(AuthorizationObject.objects.filter(del_ind=False,
-                                                               auth_level_ID=selected_auth_level).values(
-            'auth_obj_id'))
-        return auth_obj_ids
 
 class SystemSettingConfig:
     def __init__(self, client):
@@ -1671,7 +1666,7 @@ def auth_object_data():
 
 def auth_grp_dropdown():
     upload_data_AuthorizationGroup = list(
-        AuthorizationObject.objects.filter(del_ind=False).values('auth_obj_id', 'auth_level_ID'))
+        AuthorizationObject.objects.filter(del_ind=False).values('auth_obj_id', 'auth_level'))
 
     auth_group_db_values = get_field_list_values('auth_obj_grp')
     auth_type_db_values = get_field_list_values('auth_level')

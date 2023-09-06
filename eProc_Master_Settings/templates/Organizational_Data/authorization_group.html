@@ -178,7 +178,7 @@
         })
         auth_level_dropdown ='';
         $.each(rendered_auth_type, function(i, item){
-            auth_level_dropdown += '<option value="' + item.field_type_id + '">' + item.field_type_id +'</option>';
+            auth_level_dropdown += `<option value="' + item.field_type_id + '">' + item.field_type_id +'</option>`;
         })
     }
 
@@ -277,6 +277,7 @@
 
     function get_auth_obj_value(selectElement) {
         var selected_auth_level = $(selectElement).val();
+        selected_auth_level = selected_auth_level.replace(/"/g, '');
         OpenLoaderPopup();
         var data = {'selected_auth_level': selected_auth_level};
         $.ajax({
@@ -435,8 +436,8 @@
                 rendered_auth_obj_data = response.upload_data_AuthorizationGroup
                 rendered_auth_group_field_data = response.auth_group_db_values
                 rendered_auth_type = response.auth_type_db_values
-                get_auth_grp_data()
-                auth_group_drpdown();
+<!--                get_auth_grp_data()-->
+                dropdown_value();
                 $("#error_msg_id").css("display", "none")
                 $("#header_select").prop( "hidden", false );
                 GLOBAL_ACTION = button.value
