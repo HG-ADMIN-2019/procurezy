@@ -186,7 +186,7 @@ MSG002,Success,0,0,messages_id
 10,Product Type,1,0,split_type
 JMSG036,Error,0,0,messages_id
 MSG018,Success,0,0,messages_id
-FIN,Financial Approver,1,0,approval_type
+FIN,Financial Approver,0,0,approval_type
 MSG116,Error,0,0,messages_id
 MSG084,Error,0,0,messages_id
 MSG129,Error,0,0,messages_id
