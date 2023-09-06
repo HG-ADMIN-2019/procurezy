@@ -176,7 +176,7 @@ function new_row_data(){
     basic_add_new_html = '<tr><td><input type="checkbox" required></td>'+
     '<td><select type="text" class="input form-control authgroup" onchange="get_auth_level_values(this)">'+ auth_group_id_dropdown+'</select></td>'+
     '<td><input class="form-control description" type="text"  name="description" value="'+auth_grp_desc+'"  disabled></td>'+
-    '<td><select class="form-control" onchange="get_auth_obj_values(this)">'+auth_level_dropdown+'</select></td>'+
+    '<td><select class="form-control" onchange="get_auth_obj_value(this)">'+auth_level_dropdown+'</select></td>'+
     '<td><select class="form-control">'+auth_obj_id_dropdown+'</select></td>'+
     '<td hidden><input type="text" value="GUID"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
@@ -239,26 +239,14 @@ function get_auth_level_values(selectElement) {
     }
 }
 
-
-function get_auth_obj_values(selectElement, event) {
-    var selected_auth_group = $(selectElement).closest('tr').find('.authgroup').val();
-    var selected_auth_level = $(selectElement).val();
+function get_auth_obj_value(selectElement) {
+    var selected_auth_group = $(selectElement).val();
     var auth_objDropdown = $(selectElement).closest('tr').find('.form-control').eq(3);
-    var auth_group = main_table_data[selected_auth_group];
-    var used_auth_group_obj = {};
-
-    // Loop through the node values in the main_table_data and store the used ones for the selected node type and level
-    $.each(auth_group, function(index, value) {
-        if (value.auth_level === selected_auth_level) {
-            used_auth_group_obj[value.auth_obj_id] = true;
-        }
-    });
     auth_objDropdown.empty();
-
-    // Populate the auth_objDropdown with only the unused auth_obj_id values for the selected auth_level
     $.each(rendered_auth_obj_data, function(i, item) {
+        var authTypeValue = item.auth_level;
         var authObjIDValue = item.auth_obj_id;
-        if (!used_auth_group_obj.hasOwnProperty(authObjIDValue)) {
+        if (selected_auth_group==authTypeValue) {
             auth_objDropdown.append('<option value="' + authObjIDValue + '">' + authObjIDValue + '</option>');
         }
     });
