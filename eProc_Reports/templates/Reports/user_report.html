@@ -15,7 +15,7 @@
                 <h3>Users Report</h3>
                 <div></div>
             </div>
-            
+
             <hr>
 
             <div class="card card-shadow-1">
@@ -23,25 +23,25 @@
                     <form method="post" action="{% url 'eProc_Admin_Tool:user_report' %}">
                         {% csrf_token %}
                         {{ user_rep_form.non_field_errors }}
-    
+
                         <!-- The new set up UI changes-->
                         <div class="row" id="{{ user_rep_form.name }}" title="{{ user_rep_form.label }}">
-    
+
                             <div class="col-md">
                                 <label>User Report Type</label>
                                 {{ user_rep_form.userrep_type }}
                             </div>
-    
+
                             <div class="col-md">
                                 <label>Company Number</label>
                                 {{ user_rep_form.company_code }}
                             </div>
-    
+
                             <div class="col-md">
                                 <label>Username</label>
                                 {{ user_rep_form.username }}
                             </div>
-    
+
                             <div class="col-auto">
                                 <label>User Status</label>
                                 {{ user_rep_form.active }}
@@ -54,7 +54,7 @@
                             </div>
                         </div>
                         <br>
-                        
+
                         <div class="elements-space-between">
                             <button class="btn btn-link" type="reset" value="Reset">clear filters</button>
                             <div>
