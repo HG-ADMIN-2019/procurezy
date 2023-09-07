@@ -278,21 +278,27 @@
                         <thead>
                         <tr>
                             <th id="header_select">Select</th>
-                            <th>EMAIL</th>
-                            <th>USERNAME</th>
-                            <th>FIRST_NAME</th>
-                            <th>LAST_NAME</th>
-                            <th>PHONE_NUM</th>
-                            <th>DATE_FORMAT</th>
-                            <th>EMPLOYEE_ID</th>
-                            <th>DECIMAL_NOTATION</th>
-                            <th>USER_TYPE</th>
-                            <th>CURRENCY</th>
-                            <th>LANGUAGE_ID</th>
-                            <th>TIME_ZONE</th>
-                            <th  hidden>Del Indicator</th>
+                            <th>User Name</th>
+                            <th>Employee Number</th>
+                            <th>User Type</th>
+                            <th>First Name</th>
+                            <th>Last Name</th>
+                            <th>Currency</th>
                         </tr>
-                        </thead>
+
+
+                        <tr>
+                            <th>Language</th>
+                            <th>Time Zone</th>
+                            <th>E-mail</th>
+                            <th>Mobile</th>
+                            <th>Date Format</th>
+                            <th>Decimal Notation</th>
+                            <th>Del Indicator</th>
+                        </tr>
+
+                         </thead>
+
                         <tbody id="id_popup_tbody">
 
                         </tbody>
@@ -768,20 +774,20 @@ function onclick_display_csv_data() {
                                     dropdown_list_id_list = dropdown_opt + dropdown_list_list
                             })
 
-                            edit_basic_data += '<tr><td class="class_select_checkbox"><input type="checkbox" required></td>'+
-                            '<td><input  class="form-control" type="email" value="' + value.email + '" maxlength="40" onkeypress="return /[a-z]/i.test(event.key)" required></td>'+
-                            '<td><input class="form-control" type="text" value="' + value.username + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td>'+
-                            '<td><input  class="form-control" type="text" value="' + value.first_name + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td>'+
-                            '<td><input  class="form-control" type="text" value="' + value.last_name + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td>'+
-                            '<td><input  class="form-control" type="tel" value="' + value.phone_num + '" maxlength="100" required></td>'+
-                            '<td><select  class="form-control" ><option value ="' + value.date_format + '"'+date_format_id_list+'>'+value.date_format+'</option></select></td>'+
-                            '<td><input   class="form-control" type="text" value="' + value.employee_id + '" maxlength="100" required></td>'+
-                            '<td><select  class="form-control" ><option value ="' + value.decimal_notation + '"'+decimal_opt_id_list+'>'+value.decimal_notation+'</option></select></td>'+
-                            '<td><select  class="form-control" type="text"><option value ="' + value.user_type + '"'+dropdown_list_id_list+'>'+value.user_type+'</option></select></td>'+
-                            '<td><select  class="form-control" type="text"><option value ="' + value.currency_id + '"'+currency_id_list+'>'+value.currency_id+'</option></select></td>'+
-                            '<td><select  class="form-control" type="text"><option value ="' + value.language_id + '"'+language_id_list+'>'+value.language_id+'</option></select></td>'+
-                            '<td><select  class="form-control" type="text"><option value ="' + value.time_zone + '"'+time_zone_id_list+'>'+value.time_zone+'</option></select></td>'+
-                            '<td>'+ del_ind +'</td></tr>'
+                        edit_basic_data += '<tr><td class="class_select_checkbox"><input type="checkbox" required></td>' +
+                        '<td><input class="form-control" type="text" value="' + value.username + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td>' +
+                        '<td><input class="form-control" type="text" value="' + value.employee_id + '" maxlength="100" required></td>' +
+                        '<td><select class="form-control" type="text"><option value="' + value.user_type + '"' + dropdown_list_id_list + '>' + value.user_type + '</option></select></td>' +
+                        '<td><input class="form-control" type="text" value="' + value.first_name + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td>' +
+                        '<td><input class="form-control" type="text" value="' + value.last_name + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td>' +
+                        '<td><select class="form-control" type="text"><option value="' + value.currency_id + '"' + currency_id_list + '>' + value.currency_id + '</option></select></td></tr>' +
+                        '<tr><td><select class="form-control" type="text"><option value="' + value.language_id + '"' + language_id_list + '>' + value.language_id + '</option></select></td>' +
+                        '<td><select class="form-control" type="text"><option value="' + value.time_zone + '"' + time_zone_id_list + '>' + value.time_zone + '</option></select></td>' +
+                        '<td><input class="form-control" type="email" value="' + value.email + '" maxlength="40" onkeypress="return /[a-z]/i.test(event.key)" required></td>' +
+                        '<td><input class="form-control" type="tel" value="' + value.phone_num + '" maxlength="100" required></td>' +
+                        '<td><select class="form-control"><option value="' + value.date_format + '"' + date_format_id_list + '>' + value.date_format + '</option></select></td>' +
+                        '<td><select class="form-control"><option value="' + value.decimal_notation + '"' + decimal_opt_id_list + '>' + value.decimal_notation + '</option></select></td>' +
+                        '<td>' + del_ind + '</td></tr>';
                         });
                         $('#id_popup_tbody').append(edit_basic_data);
 <!--                         var i =0;-->
@@ -1278,6 +1284,8 @@ function ajax_update_user_basic_data(data) {
                         }, 500);
                         setTimeout(function() {
                                    $('#id_check_success_messages').hide();
+                                    $('#id_check_data').modal('hide');
+                                    $("#id_check_data").prop("hidden", true);
                                     $('#myModal').modal('hide');
                         }, 3000);
                         localStorage.setItem("error_flag", 0);
@@ -1286,6 +1294,8 @@ function ajax_update_user_basic_data(data) {
                     CloseLoaderPopup();
                     }
              });
+             $('#id_check_data').modal('hide');
+             $("#id_check_data").prop("hidden", true);
               table_sort_filter('id_popup_table');
     }
 
