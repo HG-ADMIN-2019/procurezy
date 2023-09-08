@@ -1671,6 +1671,9 @@ def auth_grp_dropdown():
     auth_group_db_values = get_field_list_values('auth_obj_grp')
     auth_type_db_values = get_field_list_values('auth_level')
 
+    for item in upload_data_AuthorizationGroup:
+        item['auth_level'] = item['auth_level'].strip()
+
     data = {
         'upload_data_AuthorizationGroup': upload_data_AuthorizationGroup,
         'auth_group_db_values': auth_group_db_values,
