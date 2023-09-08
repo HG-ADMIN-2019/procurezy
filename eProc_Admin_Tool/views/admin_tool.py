@@ -355,10 +355,10 @@ def user_report(request):
     client = getClients(request)
     page_range = 0
     company_list = get_companylist(request)
-    # default_comp_id = ''
+    default_comp_id = ''
 
     if request.method == 'GET':
-        # default_comp_id = '1000'
+        default_comp_id = '1000'
         if 'final_list' in request.session:
             request.POST = request.session['final_list']
             request.method = 'POST'
@@ -366,14 +366,14 @@ def user_report(request):
                                                                       {'del_ind': False, 'is_active': True, },
                                                                       None, None)
         comp_details = django_query_instance.django_get_query(OrgCompanies, {'client': client, 'del_ind': False,
-                                                                             'company_guid': company_list})
+                                                                             'company_guid': default_comp_id})
 
         # ---------------------------------------------------------------------
         user_list_star = django_query_instance.django_filter_only_query(UserData, {'is_active': True})
         ####################################################################################
-        if company_list is not None:
+        if default_comp_id is not None:
             # UserData
-            company_details = OrgCompanies.objects.filter(client=client, del_ind=False, company_id=company_list)
+            company_details = OrgCompanies.objects.filter(client=client, del_ind=False, company_id=default_comp_id)
             # Using the company code number and CCODE node type get the company details from Org Model table
             for comp_det in company_details:
                 comp_obj_id_info = OrgModel.objects.filter(Q(object_id=comp_det.object_id_id, node_type='CCODE',
@@ -413,7 +413,7 @@ def user_report(request):
             'inc_footer': True,
             'user_rep_form': user_rep_form,
             'final_list': final_list,
-            # 'company_list': company_list,
+            'default_comp_id': default_comp_id,
             't_count': t_count,
             'page_range': page_range,
             'company_list': company_list,
@@ -511,7 +511,7 @@ def user_report(request):
             'inc_footer': True,
             'user_rep_form': user_rep_form,
             'final_list': final_list,
-            # 'default_comp_id': default_comp_id,
+            'default_comp_id': default_comp_id,
             'page_range': page_range,
             't_count': t_count,
             'company_list': company_list,
