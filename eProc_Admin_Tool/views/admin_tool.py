@@ -33,9 +33,10 @@ from eProc_Basic.Utilities.global_defination import global_variables
 from eProc_Basic_Settings.views import JsonParser_obj
 from eProc_Configuration.Utilities.application_settings_generic import get_ui_messages
 from eProc_Configuration.models import *
+from eProc_Configuration.models.application_data import WorkflowSchema
 from eProc_Configuration.models.basic_data import Country
 from eProc_Configuration.models.development_data import FieldTypeDescription
-from eProc_Configuration.models.master_data import OrgPorg, OrgCompanies
+from eProc_Configuration.models.master_data import OrgPorg, OrgCompanies, WorkflowACC, ApproverLimit, ApproverLimitValue
 from eProc_Doc_Search_and_Display.Utilities.search_display_generic import get_hdr_data, get_hdr_data_app_monitoring
 from eProc_Emails.models import EmailUserMonitoring, EmailDocumentMonitoring, EmailSupplierMonitoring
 from eProc_Org_Model.Utilities import client
