@@ -26,6 +26,7 @@
         $('#acc_assgn_cat').val(acc_assgn_cat).attr('selected', 'selected');
     }
 
+    //*********************************************
     $('#hg_approval_report_search').click(function () {
         OpenLoaderPopup();
     })
