@@ -694,7 +694,7 @@ def m_docsearch_meth(request):
             inp_requester = request.POST.get('requester')
 
             # results
-            result = get_hdr_data(inp_doc_type,
+            result = get_hdr_data(request, inp_doc_type,
                                   inp_doc_num,
                                   inp_from_date,
                                   inp_to_date,
@@ -703,7 +703,7 @@ def m_docsearch_meth(request):
                                   inp_requester, report_search)
             company_details = OrgCompanies.objects.filter(client=client, del_ind=False, company_guid=inp_comp_code)
             for comp in company_details:
-                result = result.filter(comp_code=comp.company_id)
+                result = result.filter(co_code=comp.company_id)
     else:
         rep_search_form = DocumentSearchForm()
 
