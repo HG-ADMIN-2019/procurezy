@@ -322,9 +322,13 @@ class CreatePurchaseOrder:
             return False
         else:
             print(self.po_document_number)
+            print("sc_item_details ", sc_item_details)
             sgst_data = sum(dictionary_key_to_list(sc_item_details, 'sgst'))
             cgst_data = sum(dictionary_key_to_list(sc_item_details, 'cgst'))
             vat_data = sum(dictionary_key_to_list(sc_item_details, 'vat'))
+            sgst_data = 0.00
+            cgst_data = 0.00
+            vat_data = 0.00
             self.po_header_guid_generator = guid_generator()
             self.po_header_guid = self.po_header_guid_generator
             supplier_details = django_query_instance.django_get_query(SupplierMaster,
@@ -403,6 +407,7 @@ class CreatePurchaseOrder:
 
         for loop_counter, sc_item_detail in enumerate(sc_item_details):
             print("po item", loop_counter)
+            desc = sc_item_details[loop_counter]['description']
             po_item_num = loop_counter + 1
             delivery_date = calculate_delivery_date(sc_item_detail['guid'], int(sc_item_detail['lead_time']),
                                                     sc_item_detail['supplier_id'],
@@ -415,6 +420,8 @@ class CreatePurchaseOrder:
                 sc_item_detail['value'] = convert_currency(item_value,
                                                            str(sc_item_detail['currency']),
                                                            str(self.po_header_guid.currency))
+            if sc_item_detail['description'] == desc:
+                sc_item_detail['quantity'] += 1
             po_item_guid = guid_generator()
             po_item_dictionary = {
                 'po_item_guid': po_item_guid, 'po_item_num': po_item_num,
