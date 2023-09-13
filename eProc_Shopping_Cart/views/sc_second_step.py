@@ -31,6 +31,7 @@ from eProc_Purchase_Order.Utilities.purchase_order_generic import *
 from eProc_Purchase_Order.Utilities.purchase_order_generic import CreatePurchaseOrder
 # from eProc_Purchase_Order.Utilities.purchase_order_generic import CreatePurchaseOrder
 # from eProc_Purchase_Order.Utilities.purchase_order_generic import CreatePurchaseOrder
+from eProc_Registration.models.registration_model import UserData
 from eProc_Ship_To_Bill_To_Address.Utilites.ship_to_bill_to_generic import ShipToBillToAddress, \
     get_shipping_address_detail
 from eProc_Shopping_Cart.Shopping_Cart_Forms.call_off_forms.limit_form import UpdateLimitItem

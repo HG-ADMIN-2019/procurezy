@@ -14,11 +14,14 @@ from django.http import Http404
 from eProc_Basic.Utilities.constants.constants import CONST_OTHER_ERROR, CONST_SC_HEADER_APPROVED
 from eProc_Basic.Utilities.functions.django_query_set import DjangoQueries
 from eProc_Basic.Utilities.functions.get_db_query import getClients, getUsername
+from eProc_Basic.Utilities.global_defination import global_variables
 from eProc_Configuration.models import SupplierMaster, OrgCompanies
 from eProc_Purchase_Order.models.purchase_order import PoHeader
 from eProc_Shopping_Cart.models import *
 from eProc_Registration.models import UserData
 import re
+
+from eProc_Shopping_Cart.models.shopping_cart import ScHeader, ScItem
 
 django_query_instance = DjangoQueries()
 
@@ -55,10 +58,8 @@ def get_hdr_data(doc_type, doc_num, from_date, to_date, prod_cat, created_by, re
             else:
                 doc_num_query = Q(doc_number__in=result) | Q(doc_number__istartswith=doc_num_match.group(0))
         else:
-            # doc_list = sc_inst.get_item_data_by_objid(hdr_obj_sc, doc_num, client)
             doc_list = hdr_inst.get_hdr_data_by_objid(hdr_obj, doc_num, client)
-            # doc_list['prod_cat'] = prod_cat
-            print(doc_list[0]['guid'])
+            print(f"Retrieved {len(doc_list)} documents by doc_num: {doc_num}")
             args_list['header_guid__in'] = doc_list[0]['guid']
     else:
         if from_date is not None and to_date is not None and from_date != '' and to_date != '':
@@ -66,10 +67,10 @@ def get_hdr_data(doc_type, doc_num, from_date, to_date, prod_cat, created_by, re
             args_list['created_at__lte'] = to_date
             if search_flag:
                 args_list['created_by'] = username
+                print(f"Filtering by created_by: {username}")
         if prod_cat is not None and prod_cat != '':
             if '*' in prod_cat:
                 prod_cat_list = ScItem.get_prod_cat_id(prod_cat)
-                # supp_list = SupplierMaster.get_suppid_by_first_name(prod_cat)
                 prod_cat_match = re.search(r'[a-zA-Z0-9]+', prod_cat)
                 if prod_cat[0] == '*' and prod_cat[-1] == '*':
                     PO_cat_query = Q(prod_cat_id__in=prod_cat_list) | Q(prod_cat_id__icontains=prod_cat_match.group(0))
@@ -81,6 +82,7 @@ def get_hdr_data(doc_type, doc_num, from_date, to_date, prod_cat, created_by, re
                 prod_cat_list = ScItem.get_prod_cat_id(prod_cat)
                 prod_cat_list.append(prod_cat)
                 args_list['prod_cat_id__in'] = prod_cat_list
+                print(f"Filtering by prod_cat: {prod_cat}")
         if created_by is not None and created_by != '':
             if '*' in created_by:
                 user_list = UserData.get_usrid_by_first_name(created_by)
@@ -91,11 +93,12 @@ def get_hdr_data(doc_type, doc_num, from_date, to_date, prod_cat, created_by, re
                     creator_query = Q(created_by__in=user_list) | Q(created_by__endswith=creater_match.group(0))
                 else:
                     creator_query = Q(created_by__in=user_list) | Q(created_by__startswith=creater_match.group(0))
-                # args_list['created_by__contains'] = created_by.group(0)
+                print(f"Filtering by created_by: {created_by}")
             else:
                 user_list = UserData.get_usrid_by_first_name(created_by)
                 user_list.append(created_by)
                 args_list['created_by__in'] = user_list
+                print(f"Filtering by created_by: {created_by}")
         if requester is not None and requester != '':
             if '*' in requester:
                 user_list = UserData.get_usrid_by_first_name(requester)
@@ -106,13 +109,17 @@ def get_hdr_data(doc_type, doc_num, from_date, to_date, prod_cat, created_by, re
                     requester_query = Q(requester__in=user_list) | Q(requester__iendswith=requester_match.group(0))
                 else:
                     requester_query = Q(requester__in=user_list) | Q(requester__istartswith=requester_match.group(0))
+                print(f"Filtering by requester: {requester}")
             else:
                 user_list = UserData.get_usrid_by_first_name(requester)
                 user_list.append(requester)
                 args_list['requester__in'] = user_list
+                print(f"Filtering by requester: {requester}")
 
-    result = sc_inst.get_item_data_by_fields(client, hdr_obj_sc, PO_cat_query,
-                                             **args_list)
+    print(
+        f"Calling get_hdr_data with doc_type: {doc_type}, doc_num: {doc_num}, from_date: {from_date}, to_date: {to_date}, prod_cat: {prod_cat}, created_by: {created_by}, requester: {requester}, search_flag: {search_flag}")
+    result = sc_inst.get_item_data_by_fields(client, hdr_obj_sc, PO_cat_query, **args_list)
+    print(f"Result from get_hdr_data: {result}")
     return result
 
 
