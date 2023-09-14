@@ -577,13 +577,14 @@ def get_manger_and_purchasing_details(company_code, default_acc_ass_cat, total_v
     manager_details = []
     sc_completion_flag = False
     approver_id = []
+    company_code = [company_code]
     purchase_control_call_off_list = get_order_status(company_code, prod_cat_list, global_variables.GLOBAL_CLIENT)
     if company_code:
         manager_detail, error_msg = get_manger_detail(global_variables.GLOBAL_CLIENT,
                                                       global_variables.GLOBAL_LOGIN_USERNAME,
                                                       default_acc_ass_cat,
                                                       total_value,
-                                                      company_code, default_acc,
+                                                      company_code[0], default_acc,
                                                       global_variables.GLOBAL_USER_CURRENCY)
         if manager_detail:
             manager_details, approver_id = get_users_first_name(manager_detail)
