@@ -89,7 +89,7 @@ def item_search(inp_from_date, inp_to_date, **kwargs):
                                                                                   'source_relevant_ind': True,
                                                                                   'item_del_date__gte': inp_from_date,
                                                                                   'item_del_date__lte': inp_to_date,
-                                                                                  'call_off': '03'}).order_by(
+                                                                                  'call_off__in': ['01', '02']}).order_by(
                     *order_list)
                 for sc_item in sc_item_details:
                     guid = sc_item.header_guid_id
@@ -139,7 +139,7 @@ def item_search(inp_from_date, inp_to_date, **kwargs):
                                                                                                           'company_id')
                     else:
                         args_list['comp_code'] = value
-
+                args_list['call_off__in'] = ['01', '02']
                 sc_header_item_details = []
                 sc_details_query = list(sc_item_inst.get_item_data_by_fields_src(client,
                                                                                  sc_obj,

@@ -864,7 +864,7 @@ def get_completion_work_flow(client, prod_cat_list, default_cmp_code):
     }, 'object_id')
 
     orgattr_porg_object_id = django_query_instance.django_filter_value_list_query(OrgAttributesLevel, {
-        'attribute_id': CONST_CO_CODE, 'low': default_cmp_code, 'object_id__in': org_porg_object_id,
+        'attribute_id': CONST_CO_CODE, 'low__in': default_cmp_code, 'object_id__in': org_porg_object_id,
         'client': client, 'del_ind': False
     }, 'object_id')
 
@@ -876,7 +876,8 @@ def get_completion_work_flow(client, prod_cat_list, default_cmp_code):
         'porg_id__in': porg_id, 'client': client, 'del_ind': False
     }, 'object_id')
 
-    company_code_list = [default_cmp_code, 'ALL']
+    default_cmp_code.append("ALL")
+    company_code_list = default_cmp_code
 
     prod_cat_range = django_query_instance.django_filter_only_query(OrgAttributesLevel, {
         'object_id__in': pgrp_object_id, 'attribute_id': CONST_RESP_PROD_CAT, 'extended_value__in': company_code_list,

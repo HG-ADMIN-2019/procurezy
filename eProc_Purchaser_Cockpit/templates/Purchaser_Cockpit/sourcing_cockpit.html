@@ -313,7 +313,7 @@ function generate_po(){
         dataType: "json",
         success: function (Response) {
             console.log(Response);
-            $('#success_msg_id').text("Response");
+            $('#success_msg_id').text(Response);
             $("#error_msg_div").prop("hidden",false);
             $('#poGroupModal').modal('hide');
         }
