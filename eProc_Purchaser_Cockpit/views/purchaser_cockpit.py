@@ -121,11 +121,15 @@ def generate_po(request):
 
     # result = check_po(sc_header_list)
     sc_item_details = django_query_instance.django_filter_query(ScItem, {
-        'header_guid': guid_arr[0], 'client': client, 'del_ind': False
+        'header_guid__in': guid_arr, 'client': client, 'del_ind': False
     }, None, None)
 
     po_creation_flag = ''
     # for sc_item in sc_item_details:
+    desc = sc_item_details[0]['description']
+    for i in range(1, len(sc_item_details)):
+        if desc == sc_item_details[i]['description']:
+            print("same item")
     create_purchase_order = CreatePurchaseOrder(sc_header_instance)
     status = create_purchase_order.create_purchaser_order(sc_item_details, sc_item_details[0]['supplier_id'])
     if not status:

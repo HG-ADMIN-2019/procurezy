@@ -34,6 +34,7 @@ urlpatterns = [
     path('usersettings/', include('eProc_User_Settings.urls'), name='usersettings'),
     path('register/', include('eProc_Registration.urls')),
     path('Reports/', include('eProc_Reports.urls')),
+    path('Rfq/', include('eProc_Rfq.urls')),
     path('admin_tool/', include('eProc_Admin_Tool.urls')),
     path('org_model/', include('eProc_Org_Model.urls')),
     path('eProc_User_Admin/', include('eProc_User_Admin.urls')),
