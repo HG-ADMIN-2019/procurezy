@@ -785,7 +785,7 @@ class SaveShoppingCart:
             incoterm_desc = ''
             if int(prod_cat_id) in range(int(low), int(high)):
                 p_org = django_query_instance.django_get_query(OrgPorg, {
-                    'object_id': object_id, 'company_id': self.company_code, 'client': self.client, 'del_ind': False
+                    'object_id': object_id, 'client': self.client, 'del_ind': False
                 })
 
                 purch_group = django_query_instance.django_filter_value_list_query(OrgPGroup, {
