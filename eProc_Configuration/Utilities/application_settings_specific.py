@@ -884,6 +884,8 @@ class ApplicationSettingsSave:
                                                                         pur_crtl_detail['company_code_id'],
                                                                     'call_off':
                                                                         pur_crtl_detail['call_off'],
+                                                                    'prod_cat_id':
+                                                                        pur_crtl_detail['prod_cat_id'],
                                                                     'client': self.client
                                                                 }):
 
@@ -891,6 +893,7 @@ class ApplicationSettingsSave:
                 pur_crtl_db_dictionary = {'purchase_control_guid': guid,
                                           'company_code_id': pur_crtl_detail['company_code_id'],
                                           'call_off': pur_crtl_detail['call_off'],
+                                          'prod_cat_id': pur_crtl_detail['prod_cat_id'],
                                           'purchase_ctrl_flag': pur_crtl_detail['purchase_ctrl_flag'],
                                           'del_ind': False,
                                           'client': self.client,
@@ -907,6 +910,8 @@ class ApplicationSettingsSave:
                                                                   pur_crtl_detail['company_code_id'],
                                                               'call_off':
                                                                   pur_crtl_detail['call_off'],
+                                                              'prod_cat_id':
+                                                                  pur_crtl_detail['prod_cat_id'],
                                                               'client': self.client
                                                           },
 
@@ -915,6 +920,8 @@ class ApplicationSettingsSave:
                                                                   pur_crtl_detail['company_code_id'],
                                                               'call_off':
                                                                   pur_crtl_detail['call_off'],
+                                                              'prod_cat_id':
+                                                                  pur_crtl_detail['prod_cat_id'],
                                                               'purchase_ctrl_flag':
                                                                   pur_crtl_detail['purchase_ctrl_flag'],
                                                               'purchase_control_changed_at': self.current_date_time,
@@ -931,9 +938,10 @@ class ApplicationSettingsSave:
         message = get_message_detail_based_on_action(purhcase_control_data['action'])
 
         upload_response = get_configuration_data(PurchaseControl,
-                                                 {'del_ind': False},
+                                                 {'del_ind': False,
+                                                  'client': self.client},
                                                  ['purchase_control_guid', 'company_code_id', 'call_off',
-                                                  'purchase_ctrl_flag'])
+                                                  'purchase_ctrl_flag', 'prod_cat_id'])
 
         return upload_response, message
 
@@ -1854,9 +1862,13 @@ def purchase_control_dropdown():
 
     upload_company_code = list(
         OrgCompanies.objects.filter(client=global_variables.GLOBAL_CLIENT, del_ind=False).values('company_id'))
+
+    prod_catogories = list(
+        UnspscCategoriesCust.objects.filter(del_ind=False).values('prod_cat_id'))
     data = {
-        'dropdown_activate': dropdown_activate,
-        'upload_company_code': upload_company_code
+        'upload_company_code': upload_company_code,
+        'prod_catogories': prod_catogories,
+        'dropdown_activate': dropdown_activate
     }
     return data
 

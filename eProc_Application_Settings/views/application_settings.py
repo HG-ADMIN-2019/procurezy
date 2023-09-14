@@ -140,7 +140,7 @@ def display_purchase_control(request):
 
     upload_purchase_control = get_configuration_data(PurchaseControl, {'del_ind': False, 'client': client},
                                                      ['purchase_control_guid', 'company_code_id', 'call_off',
-                                                      'purchase_ctrl_flag'])
+                                                      'prod_cat_id', 'purchase_ctrl_flag'])
 
     dropdown_activate = list(
         FieldTypeDescription.objects.filter(field_name='purchase_ctrl_flag', del_ind=False,
@@ -150,11 +150,16 @@ def display_purchase_control(request):
         ))
 
     upload_comapny_code = list(OrgCompanies.objects.filter(client=client, del_ind=False).values('company_id'))
+
+    prod_catogories = list(
+        UnspscCategoriesCust.objects.filter(del_ind=False).values('prod_cat_id'))
+
     messages_list = get_ui_messages(CONST_COFIG_UI_MESSAGE_LIST)
 
     return render(request, 'Application_Settings/purchase_control.html',
                   {'display_purchase_control': upload_purchase_control,
                    'dropdown_company_code_id': upload_comapny_code,
+                   'prod_catogories': prod_catogories,
                    'dropdown_activate': dropdown_activate,
                    'messages_list': messages_list,
                    'inc_nav': True, })

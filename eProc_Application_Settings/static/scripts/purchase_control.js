@@ -2,6 +2,7 @@ var purhcase_control_data = new Array();
 var validate_add_attributes = [];
 var main_table_low_value = [];
 var purchase_contrl = {};
+var hidden_prod_cat_IDs = [];
 
 // on click update icon display the selected checkbox data to update
 function onclick_update_button() {
@@ -23,7 +24,7 @@ function display_basic_db_data() {
         } else {
             data = 'Deactivate'
         }
-        edit_basic_data += '<tr><td class="class_select_checkbox"><input class="checkbox_check" onclick="valueChanged()" type="checkbox" required></td><td>' + item.company_code_id + '</td><td>' + item.call_off + '</td><td>' + data + '</td><td hidden>' + item.purchase_control_guid + '</td><td hidden>' + item.del_ind_flag + '</td></tr>';
+        edit_basic_data += '<tr><td class="class_select_checkbox"><input class="checkbox_check" onclick="valueChanged()" type="checkbox" required></td><td>' + item.company_code_id + '</td><td>' + item.call_off + '</td><td>' + item.prod_cat_id + '</td><td>' + data + '</td><td hidden>' + item.purchase_control_guid + '</td><td hidden>' + item.del_ind_flag + '</td></tr>';
     });
     $('#id_pc_tbody').append(edit_basic_data);
     $("#hg_select_checkbox").prop("hidden", true);
@@ -103,8 +104,9 @@ function read_popup_data() {
         purchase_contrl.del_ind = row.find("TD").eq(5).find('input[type="checkbox"]').is(':checked');
         purchase_contrl.company_code_id = row.find("TD").eq(1).find('select[type="text"]').val();
         purchase_contrl.call_off = row.find("TD").eq(2).find('select[type="text"]').val();
-        purchase_contrl.purchase_ctrl_flag = row.find("TD").eq(3).find('select[type="text"]').val();
-        purchase_contrl.purchase_control_guid = row.find("TD").eq(4).find('input[type="text"]').val();
+        purchase_contrl.prod_cat_id = row.find("TD").eq(3).find('select option:selected').val();
+        purchase_contrl.purchase_ctrl_flag = row.find("TD").eq(4).find('select[type="text"]').val();
+        purchase_contrl.purchase_control_guid = row.find("TD").eq(5).find('input[type="text"]').val();
         var data = '';
         if (purchase_contrl.purchase_ctrl_flag == 'Activate'){
             data = true
@@ -115,7 +117,7 @@ function read_popup_data() {
         if (purchase_contrl == undefined) {
             purchase_contrl.company_code_id = row.find("TD").eq(1).find('select[type="text"]').val();
         }
-        var compare = purchase_contrl.company_code_id + '-' + purchase_contrl.call_off
+        var compare = purchase_contrl.company_code_id + '-' + purchase_contrl.call_off + '-' + purchase_contrl.prod_cat_id
         validate_add_attributes.push(compare);
         purhcase_control_data.push(purchase_contrl);
     });
@@ -132,7 +134,8 @@ function get_main_table_data() {
         var main_attribute = {};
         main_attribute.company_code_id = row.find("TD").eq(1).html();
         main_attribute.call_off = row.find("TD").eq(2).html();
-        main_attribute.purchase_ctrl_flag = row.find("TD").eq(3).html();
+        main_attribute.prod_cat_id = row.find("TD").eq(3).html();
+        main_attribute.purchase_ctrl_flag = row.find("TD").eq(4).html();
         var data = '';
         if (main_attribute.purchase_ctrl_flag == 'Activate') {
             data = true
@@ -140,8 +143,8 @@ function get_main_table_data() {
             data = false
         }
         main_attribute.purchase_ctrl_flag = data;
-        main_attribute.purchase_control_guid = row.find("TD").eq(4).html();
-        var compare_maintable = main_attribute.company_code_id + '-' + main_attribute.call_off
+        main_attribute.purchase_control_guid = row.find("TD").eq(5).html();
+        var compare_maintable = main_attribute.company_code_id + '-' + main_attribute.call_off + '-' + main_attribute.prod_cat_id
         main_table_low_value.push(compare_maintable);
     });
     table_sort_filter_page('display_basic_table');
@@ -156,8 +159,9 @@ function get_selected_row_data() {
          if (purchase_contrl_type_dic.del_ind) {
             purchase_contrl_type_dic.company_code_id = row.find("TD").eq(1).html();
             purchase_contrl_type_dic.call_off = row.find("TD").eq(2).html();
-            purchase_contrl_type_dic.purchase_ctrl_flag = row.find("TD").eq(3).html();
-            purchase_contrl_type_dic.purchase_control_guid = row.find("TD").eq(4).html();
+            purchase_contrl_type_dic.prod_cat_id = row.find("TD").eq(3).html();
+            purchase_contrl_type_dic.purchase_ctrl_flag = row.find("TD").eq(4).html();
+            purchase_contrl_type_dic.purchase_control_guid = row.find("TD").eq(5).html();
             var data = '';
             if (purchase_contrl_type_dic.purchase_ctrl_flag == 'Activate'){
                 data = true
@@ -176,7 +180,8 @@ function new_row_data(){
     `<tr>
         <td><input type="checkbox" required></td>
         <td><select class="input form-control" type="text" onchange="get_call_off_values(this)">${pc_company_dropdown}</select></td>
-        <td><select class="input form-control" type="text">${call_off_dropdown}</select></td>
+        <td><select class="input form-control" type="text" onchange="get_prod_cat_id_values(this)">${call_off_dropdown}</select></td>
+        <td><select class="form-control">${prod_cat_dropdown}</select></td>
         <td><select type="text" class="input form-control">${activate_dropdown}</select></td>
         <td hidden><input  type="text" class="form-control"  name="guid"></td>
         <td class="class_del_checkbox" hidden><input type="checkbox" required></td>
@@ -185,29 +190,31 @@ function new_row_data(){
     table_sort_filter('id_popup_table');
 }
 
-function get_call_off_values(selectElement) {
-    var selected_company = selectElement.value;
-    var call_offDropdown = $(selectElement).closest('tr').find('.form-control').eq(1);
-    var call_off = main_table_data[selected_company];
-    var used_call_offValues = {}; // Object to store the used node values for the selected node type
+function get_prod_cat_id_values(selectElement) {
+    var selected_call_off = selectElement.value;
+    var company_id = $(selectElement).closest('tr').find('.form-control').eq(0).val();
+    var prod_cat_idDropdown = $(selectElement).closest('tr').find('.form-control').eq(2);
+    prod_cat_idDropdown.empty();
 
-    // Loop through the node values in the main_table_data and store the used ones for the selected node type
-    $.each(call_off, function (index, value) {
-        used_call_offValues[value] = true;
+    var call_off_values = main_table_data[company_id];
+    main_table_call_off = {};
+    call_off_values.forEach(item => {
+        var call_off = item.call_off ;
+        if (!main_table_call_off[call_off ]) {
+            main_table_call_off[call_off ] = new Set();
+        }
+        main_table_call_off[call_off ].add(item.prod_cat_id);
     });
 
-    call_offDropdown.empty();
-
-    // Now, populate the dropdown with only the unused node values from rendered_call_off_data.data
-    $.each(rendered_call_off_data.data, function (i, item) {
-        var call_offValue = item.value;
-        var call_offLabel = item.label;
-        if (!used_call_offValues.hasOwnProperty(call_offValue)) {
-            call_offDropdown.append('<option value="' + call_offValue + '">' + call_offLabel + '</option>');
+    hidden_prod_cat_IDs = [];
+     rendered_prod_category.forEach(function (prod_cat_id) {
+        if (main_table_call_off[selected_call_off].has(prod_cat_id)) {
+            hidden_prod_cat_IDs.push(prod_cat_id);
+        } else {
+            prod_cat_idDropdown.append('<option value="' + prod_cat_id + '">' + prod_cat_id + '</option>');
         }
     });
 }
-
 
 function get_company_data() {
     main_table_data = {}; // Object to store node values for each node type
@@ -217,11 +224,14 @@ function get_company_data() {
         var main_attribute = {};
         main_attribute.company_code_id = row.find("TD").eq(1).html();
         main_attribute.call_off = row.find("TD").eq(2).html();
-        var compare_maintable = main_attribute.company_code_id + '-' + main_attribute.call_off
+        main_attribute.prod_cat_id = row.find("TD").eq(3).html();
         if (!main_table_data.hasOwnProperty(main_attribute.company_code_id)) {
             main_table_data[main_attribute.company_code_id] = [];
         }
-        main_table_data[main_attribute.company_code_id].push(main_attribute.call_off);
+        main_table_data[main_attribute.company_code_id].push({
+            call_off: main_attribute.call_off,
+            prod_cat_id: main_attribute.prod_cat_id,
+        });
     });
     table_sort_filter('display_basic_table');
 }
