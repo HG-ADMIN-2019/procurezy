@@ -478,7 +478,7 @@ def convert_WorkflowACC_to_dictionary(arr):
 def convert_OrgAddresstype_to_dictionary(arr):
     convertion_list = []
     for row in arr:
-        dictionary = {'company_id': row[0], 'address_type': row[1], 'address_number': row[2],
+        dictionary = {'company_id': row[2], 'address_type': row[0], 'address_number': row[1],
                       'valid_from': row[3], 'valid_to': row[4], 'del_ind': row[5]}
         convertion_list.append(dictionary)
     return convertion_list

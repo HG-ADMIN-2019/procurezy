@@ -163,28 +163,58 @@
 
     //*************************
     function dropdown_value(){
-        auth_obj_id_dropdown = '';
-        $.each(rendered_auth_obj_data, function(i, item){
-            auth_obj_id_dropdown += '<option value="' + item.auth_obj_id + '">' + item.auth_obj_id +'</option>';
+        auth_group_id_dropdown='';
+        $.each(rendered_auth_group_field_data, function(i, item){
+            auth_group_id_dropdown += '<option value="' + item.field_type_id + '">' + item.field_type_id +'</option>';
         })
+
         if(rendered_auth_group_field_data.length != 0){
             auth_grp_desc = rendered_auth_group_field_data[0].field_type_desc; }
         else {
             auth_grp_desc = "";
         }
-        auth_group_id_dropdown='';
-        $.each(rendered_auth_group_field_data, function(i, item){
-            auth_group_id_dropdown += '<option value="' + item.field_type_id + '">' + item.field_type_id +'</option>';
-        })
+
         auth_level_dropdown ='';
         $.each(rendered_auth_type, function(i, item){
             auth_level_dropdown += '<option value="' + item.field_type_id + '">' + item.field_type_id +'</option>';
+        })
+
+        auth_obj_id_dropdown = '';
+        var firstAuthType = rendered_auth_type[0].field_type_id;
+        $.each(rendered_auth_obj_data, function(i, item){
+            var authTypeValue = item.auth_level;
+            if(firstAuthType==authTypeValue){
+                auth_obj_id_dropdown += '<option value="' + item.auth_obj_id + '">' + item.auth_obj_id +'</option>';
+            }
         })
     }
 
     function auth_group_drpdown() {
         var hiddenAuthGroupIDs = [];
-        var usedAuthGroupIDs = {};
+        var hiddenAuthObjectIDs = [];
+
+        // Iterate through the rendered_auth_group_field_data to build the auth_group_id dropdown
+        auth_group_id_dropdown='';
+        $.each(rendered_auth_group_field_data, function (i, item) {
+            var authGroupID = item.field_type_id;
+
+            // Check if authGroupID is already in hiddenAuthGroupIDs or should be skipped
+            if (!hiddenAuthGroupIDs.includes(authGroupID)) {
+                if (areAllValuesUsed(authGroupID)) {
+                    auth_group_id_dropdown += '<option value="' + authGroupID + '">' + authGroupID + '</option>';
+                    return false;
+                }
+            }
+        });
+        $.each(hiddenAuthGroupIDs, function (i, hiddenAuthGroupID) {
+            auth_group_id_dropdown = auth_group_id_dropdown.replace(new RegExp('<option value="' + hiddenAuthGroupID + '">.*<\/option>'), '');
+        });
+
+        if (rendered_auth_group_field_data.length != 0) {
+            auth_grp_desc = rendered_auth_group_field_data[0].field_type_desc;
+        } else {
+            auth_grp_desc = "";
+        }
 
         // Function to check if all auth_level and auth_obj_id values for a specific auth_group_id are used in the main table
         function areAllValuesUsed(authGroupID) {
@@ -193,84 +223,50 @@
                 return false;
             }
 
-            var authLevelObj = {};
+            var main_table_auth_level = {};
             authValues.forEach(item => {
                 var authLevel = item.auth_level; // Assuming this property holds the auth_level
-                if (!authLevelObj[authLevel]) {
-                    authLevelObj[authLevel] = new Set();
+                if (!main_table_auth_level[authLevel]) {
+                    main_table_auth_level[authLevel] = new Set();
                 }
-                authLevelObj[authLevel].add(item.auth_obj_id);
+                main_table_auth_level[authLevel].add(item.auth_obj_id);
             });
+            var rendered_auth_level = {};
+            rendered_auth_obj_data.forEach(item => {
+                var authLevel = item.auth_level;
+                if (!rendered_auth_level[authLevel]) {
+                    rendered_auth_level[authLevel] = new Set();
+                }
+                rendered_auth_level[authLevel].add(item.auth_obj_id);
+            });
+
+            for (const authLevel in rendered_auth_level) {
+                if (main_table_auth_level.hasOwnProperty(authLevel)) {
+                    if (rendered_auth_level[authLevel].size === main_table_auth_level[authLevel].size) {
+                        hiddenAuthLevelIDs.push(authLevel);
+                    } else {
+                        auth_level_dropdown += '<option value="' + authLevel + '">' + authLevel + '</option>';
+                    }
+                }
+            }
+
             for (const authLevelData of rendered_auth_type) {
                 const authLevel = authLevelData.field_type_id;
-                const assignedObjs = authLevelObj[authLevel];
-
-                if (!assignedObjs || ![...assignedObjs].every(objId => rendered_auth_obj_data.includes(objId))) {
-                    return false;
+                if (rendered_auth_level[authLevel]) {
+                    rendered_auth_level[authLevel].forEach((auth_obj_id) => {
+                        if (main_table_auth_level[authLevel] && main_table_auth_level[authLevel].has(auth_obj_id)) {
+                            hiddenAuthObjectIDs.push(auth_obj_id);
+                        } else {
+                            auth_obj_id_dropdown += '<option value="' + auth_obj_id + '">' + auth_obj_id + '</option>';
+                        }
+                    });
                 }
             }
-            return true;
-        }
 
-        if (rendered_auth_group_field_data.length != 0) {
-            auth_grp_desc = rendered_auth_group_field_data[0].field_type_desc;
-        } else {
-            auth_grp_desc = "";
-        }
-
-        // Iterate through the rendered_auth_group_field_data to build the auth_group_id dropdown
-        auth_group_id_dropdown='';
-        $.each(rendered_auth_group_field_data, function (i, item) {
-            var authGroupID = item.field_type_id;
-            if (!areAllValuesUsed(authGroupID)) {
-                auth_group_id_dropdown += '<option value="' + authGroupID + '">' + authGroupID + '</option>';
+            if (auth_level_dropdown === '') {
+                return false;
             } else {
-                hiddenAuthGroupIDs.push(authGroupID);
-            }
-        });
-        $.each(hiddenAuthGroupIDs, function (i, hiddenAuthGroupID) {
-            auth_group_id_dropdown = auth_group_id_dropdown.replace(new RegExp('<option value="' + hiddenAuthGroupID + '">.*<\/option>'), '');
-        });
-
-        // Extract the first auth_group_id value from auth_group_id_dropdown using regular JavaScript
-        var firstAuthGroupIDMatch = auth_group_id_dropdown.match(/value="([^"]+)"/);
-        if (firstAuthGroupIDMatch && firstAuthGroupIDMatch[1]) {
-            var firstAuthGroupID = firstAuthGroupIDMatch[1];
-        }
-        var firstAuthLevel = null;
-        if (firstAuthGroupID !== null) {
-            var usedAuthLevels = {};
-            var usedAuthObjIDs = {};
-
-            $.each(main_table_data[firstAuthGroupID], function (index, value) {
-                var authLevel = value.auth_level;
-                var authObjID = value.auth_obj_id;
-
-                if (!usedAuthLevels.hasOwnProperty(authLevel)) {
-                    usedAuthLevels[authLevel] = new Set();
-                }
-                usedAuthLevels[authLevel].add(authObjID);
-            });
-
-            auth_level_dropdown = '';
-            $.each(rendered_auth_type, function (i, item) {
-                var authLevelValue = item.field_type_id;
-                if (!usedAuthLevels[authLevelValue] || ![...usedAuthLevels[authLevelValue]].every(objId => rendered_auth_obj_data.includes(objId))) {
-                    auth_level_dropdown += '<option value="' + authLevelValue + '">' + authLevelValue + '</option>';
-                }
-            });
-
-            // Set the firstAuthLevel from the first element in rendered_auth_type
-            firstAuthLevel = rendered_auth_type[0].field_type_id;
-
-            auth_obj_id_dropdown = '';
-            if (firstAuthLevel) {
-                $.each(rendered_auth_obj_data, function (i, item) {
-                    var authObjIDValue = item.auth_obj_id;
-                    if (!usedAuthObjIDs.hasOwnProperty(authObjIDValue) && (!usedAuthLevels[firstAuthLevel] || !usedAuthLevels[firstAuthLevel].has(authObjIDValue))) {
-                        auth_obj_id_dropdown += '<option value="' + authObjIDValue + '">' + authObjIDValue + '</option>';
-                    }
-                });
+                return true;
             }
         }
     }
@@ -421,7 +417,8 @@
                 rendered_auth_obj_data = response.upload_data_AuthorizationGroup
                 rendered_auth_group_field_data = response.auth_group_db_values
                 rendered_auth_type = response.auth_type_db_values
-                get_auth_grp_data()
+                get_auth_grp_data();
+<!--                dropdown_value();-->
                 auth_group_drpdown();
                 $("#error_msg_id").css("display", "none")
                 $("#header_select").prop( "hidden", false );

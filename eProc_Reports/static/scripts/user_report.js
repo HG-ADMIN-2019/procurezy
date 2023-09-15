@@ -1,4 +1,3 @@
-
 var default_value = "";
 var substitute_type = "";
 
@@ -15,7 +14,6 @@ window.onload = function () {
     default_value = sessionStorage.getItem("USER_REP");
     company_code = sessionStorage.getItem("COMPANY_CODE");
     active = sessionStorage.getItem("ACTIVE");
-
     if (default_value == 'Users_in_company') {
         $('#id_userrep_type').val(default_value).attr('selected', 'selected');
         $('#id_company_code').val(company_code).attr('selected', 'selected');
@@ -27,17 +25,9 @@ window.onload = function () {
         $('#username').hide();
         $('#acive').hide();
     }
-
-//    if (substitute_type !== null)
-//        $('#id_substitute_sub_type').val(substitute_type).attr('selected', 'selected')
 }
-
-// At the load of the page this script is executed to remove the Supplier related search fields and
-// only show the User related search fields
-
 default_value = sessionStorage.getItem("USER_REP");
 substitute_type = sessionStorage.getItem("SUBSTITUTE_TYPE");
-
 if (default_value == 'Users_in_company' || default_value == "" || default_value == null) {
     //Hide the Substitute search fields
 //  document.getElementById("substitute_sub_type").value = "";
@@ -117,6 +107,7 @@ function getSubReport(value) {
     }
 }
 
-$('#hg_user_report_search').click(function () {
-    OpenLoaderPopup();
-})
+    //******************************************
+    $('#hg_user_report_search').click(function () {
+        OpenLoaderPopup();
+    })

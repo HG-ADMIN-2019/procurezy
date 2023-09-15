@@ -104,6 +104,10 @@ def create_update_master_data(request):
         master_data['data'], message = check_company_data(master_data['data'], 'SAVE')
         display_data = master_settings_save_instance.save_company_data_into_db(master_data)
         return JsonResponse(display_data, safe=False)
+    if master_data['table_name'] == 'UserData':
+        master_data['data'], message = get_valid_employee_data(master_data['data'], 'SAVE')
+        display_data = master_settings_save_instance.save_employee_data_into_db(master_data)
+        return JsonResponse(display_data, safe=False)
 
 
 def account_ass_values(request):

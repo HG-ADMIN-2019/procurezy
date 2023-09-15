@@ -1,52 +1,39 @@
 {% extends 'root/base.html' %}
 {% load static %}
-
 {% block title %} Users Report (Admin Tool) {% endblock %}
-
 {% block maincontent %}
 <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-
-
     {% include 'root/loader.html' %}
-
     <div class="container-fluid">
         <div class="mep-form_wrapper">
             <div class="d-flex justify-content-between">
                 <h3>Users Report</h3>
                 <div></div>
             </div>
-            
             <hr>
-
             <div class="card card-shadow-1">
                 <div class="card-body">
                     <form method="post" action="{% url 'eProc_Admin_Tool:user_report' %}">
                         {% csrf_token %}
                         {{ user_rep_form.non_field_errors }}
-    
                         <!-- The new set up UI changes-->
                         <div class="row" id="{{ user_rep_form.name }}" title="{{ user_rep_form.label }}">
-    
                             <div class="col-md">
                                 <label>User Report Type</label>
                                 {{ user_rep_form.userrep_type }}
                             </div>
-    
                             <div class="col-md">
                                 <label>Company Number</label>
                                 {{ user_rep_form.company_code }}
                             </div>
-    
                             <div class="col-md">
                                 <label>Username</label>
                                 {{ user_rep_form.username }}
                             </div>
-    
                             <div class="col-auto">
                                 <label>User Status</label>
                                 {{ user_rep_form.active }}
                             </div>
-
                             <div class="col-auto my-1">
                                 <button class="btn btn-primary button-search-users" id="hg_user_report_search" type="submit"
                                     title="Please click to get the search details!"><i class="fas fa-search"></i> search
@@ -54,7 +41,6 @@
                             </div>
                         </div>
                         <br>
-                        
                         <div class="elements-space-between">
                             <button class="btn btn-link" type="reset" value="Reset">clear filters</button>
                             <div>
@@ -64,9 +50,7 @@
                     </form>
                 </div>
             </div>
-
             <!-- <br>
-
             <div class="search_result_count_card card">
                 {% if t_count > 0 %}
                 <div class="card-body">
@@ -80,7 +64,6 @@
                 </div>
                 {% endif %}
             </div> -->
-
             <!--    To Display Header Details only if there are any results-->
             {% if t_count > 0 %}
             {% if final_list %}
@@ -124,33 +107,43 @@
             {% endif %}
         </div>
     </div>
-
 <div class="hg_spacer2"> &nbsp; </div>
-
 <script src="{% static 'scripts/user_report.js' %}"></script>
 <script>
+    
     // Funtion to get username
+    $(document).ready(function () {
+        nav_bar_admin();
+        $('#id_username').attr('type', 'search');
+        // Script to generate sort and filter feature for tables
+        table_sort_filter_export_excel();
+        // Loader implementation on search button
+        $('#hg_user_report_search').click(function () {
+            // Store the form data in local storage
+            var formData = {
+                companyCode: $('#id_company_code').val(),
+                userRepType: $('#id_userrep_type').val(),
+                username: $('#id_username').val(),
+                userStatus: $('#id_user_status').val() // Assuming this is the correct ID for the dropdown
+            };
+            localStorage.setItem('formData', JSON.stringify(formData));
 
-$(document).ready(function () {
+            $('#hg_loader').modal('show');
+        });
 
-    nav_bar_admin();
-    $('#id_username').attr('type', 'search');
-    // Script to generate sort and filter feature for tables
-    table_sort_filter_export_excel();
+    // Check if there is stored form data and populate the form fields
+    var storedFormData = localStorage.getItem('formData');
+    if (storedFormData) {
+        var formData = JSON.parse(storedFormData);
+        $('#id_company_code').val(formData.companyCode);
+        $('#id_userrep_type').val(formData.userRepType);
+        $('#id_username').val(formData.username);
 
-    // Loader implementation on search button
-    $('#hg_user_report_search').click(function () {
-        $('#hg_loader').modal('show');
-    });
-
-    var sel = document.getElementById('id_company_code');
-    sel.selectedIndex = 2;
-    var sel = document.getElementById('id_userrep_type');
-    sel.selectedIndex = 0;
-    });
-
+        // Set the selected option for userStatus based on the stored value
+        $('#id_user_status').val(formData.userStatus); // Assuming this is the correct ID for the dropdown
+    }
+});
 </script>
-
 {% if inc_footer %}
 {% include 'root/footer.html' %}
 {% endif %}
