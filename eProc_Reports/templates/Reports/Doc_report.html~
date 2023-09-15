@@ -87,7 +87,11 @@
         </div>
         <!--    To Display Header Details only if there are any results-->
         {% if t_count > 0 %}
+<<<<<<< HEAD
+
+=======
 <!--    {{results}}-->
+>>>>>>> Bharsha
         <div class="card mt-5">
             <table id="doc_list" class="table table_sort_filter_export_excel">
                 <thead class="thead-light">

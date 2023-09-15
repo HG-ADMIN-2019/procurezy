@@ -13,6 +13,7 @@ import json
 import shutil
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
+from django.db.models.query_utils import Q
 from django.http.response import HttpResponseRedirect
 
 from eProc_Account_Assignment.Utilities.account_assignment_generic import AccountAssignment, get_header_level_gl_acc, \
@@ -32,6 +33,7 @@ from eProc_Emails.Utilities.email_notif_generic import appr_notify, send_po_atta
 from eProc_Form_Builder.models.form_builder import EformFieldData
 # from eProc_Purchase_Order.Utilities.purchase_order_generic import CreatePurchaseOrder
 from eProc_Purchase_Order.Utilities.purchase_order_generic import CreatePurchaseOrder
+from eProc_Registration.models.registration_model import UserData
 from eProc_Related_Documents.Utilities.related_documents_generic import get_item_level_related_documents
 from eProc_Shopping_Cart.models.add_to_cart import CartItemDetails
 from eProc_Shopping_Cart.models.shopping_cart import *
@@ -880,6 +882,8 @@ def update_sc(request):
                                                           defaults={'status': CONST_SC_HEADER_APPROVED})
                         create_purchase_order = CreatePurchaseOrder(sc_header_instance)
                         status, error_message, output, po_doc_list = create_purchase_order.create_po()
+                        ScApproval.objects.update_or_create(header_guid=sc_header_guid,
+                                                            defaults={'proc_lvl_sts': CONST_COMPLETED, 'app_sts': CONST_SC_APPR_APPROVED})
                         # Send purchase order email to supplier
                         for po_document_number in po_doc_list:
                             email_supp_monitoring_guid = ''

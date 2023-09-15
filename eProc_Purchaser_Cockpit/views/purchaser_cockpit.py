@@ -124,14 +124,25 @@ def generate_po(request):
         'header_guid__in': guid_arr, 'client': client, 'del_ind': False
     }, None, None)
 
-    po_creation_flag = ''
-    # for sc_item in sc_item_details:
-    desc = sc_item_details[0]['description']
-    for i in range(1, len(sc_item_details)):
-        if desc == sc_item_details[i]['description']:
-            print("same item")
     create_purchase_order = CreatePurchaseOrder(sc_header_instance)
-    status = create_purchase_order.create_purchaser_order(sc_item_details, sc_item_details[0]['supplier_id'])
+    po_creation_flag = ''
+    qty = ''
+    # check whether the items are same
+    desc = sc_item_details[0]['description']
+    company_id = sc_item_details[0]['comp_code']
+    for i in range(1, len(sc_item_details)):
+        qty = sc_item_details[0]['quantity']
+        if desc == sc_item_details[i]['description'] and company_id == sc_item_details[0]['comp_code']:
+            po_creation_flag = 1
+            qty = qty + sc_item_details[i]['quantity']
+    if po_creation_flag == 1:
+        sc_item_details1 = django_query_instance.django_filter_query(ScItem, {
+            'header_guid': guid_arr[0], 'client': client, 'del_ind': False
+        }, None, None)
+        sc_item_details1[0]['quantity'] = qty
+        status = create_purchase_order.create_purchaser_order(sc_item_details1, sc_item_details[0]['supplier_id'])
+    else:
+        status = create_purchase_order.create_purchaser_order(sc_item_details, sc_item_details[0]['supplier_id'])
     if not status:
         return False, create_purchase_order.error_message, create_purchase_order.output, create_purchase_order.po_doc_list
 

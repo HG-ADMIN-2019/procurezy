@@ -618,56 +618,43 @@
     }
 
     // on click add icon display the row in to add the new entries
-function add_popup_row() {
-        OpenLoaderPopup();
-        var data = {'table_name':'ApproverLimit'}
-        $.ajax({
-            type: 'POST',
-            url: "{% url 'eProc_Configuration:get_dropdown_data' %}",
-            data: JSON.stringify(data),
-            success: function(response) {
-                rendered_user_data = response.user_details
-                rendered_company_data = response.upload_data_company
-                rendered_app_code_id_data = response.upload_data_app_code_id
-                applim_dropdown()
-                $("#error_msg_id").css("display", "none");
-                basic_add_new_html = '';
-                var display_db_data = '';
-                $('#id_popup_table').DataTable().destroy();
-                $(".modal").on("hidden.bs.modal", function() {
-                    $("#id_error_msg").html("");
-                });
-                if (GLOBAL_ACTION == "approval_limit_upload") {
-                    basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select class="form-control" name="company_dropdown" type="text">'+company_id_dropdown+'</select></td><td><select class="form-control" type="text">'+user_name_dropdown+'</select></td><td><select class="form-control" type="text">'+app_code_id_dropdown+'</select></td><td hidden><input type="text" value=""></td><td class="class_del_checkbox" ><input type="checkbox" required></td></tr>';
-                    var table = $('#id_popup_table').DataTable();
-                    table.row.add($(basic_add_new_html)).draw();
-                    $(".class_del_checkbox").prop("hidden", false);
-                    $("#id_del_ind_checkbox").prop("hidden", false);
-                    table_sort_filter('id_popup_table');
-                }
-                else {
-                      new_row_data();   // Add a new row in popup
-                }
-
-
-                var company_num = '';
-                $("#id_popup_table").on("change", "select[name='company_dropdown']", function() {
-                    var row = $(this).closest("tr");
-                    company_dropdwn_change(row);
-                });
-                $("#id_popup_table").on("draw.dt", function () {
-                    $("#id_popup_table TBODY TR").each(function () {
-                        var row = $(this);
-                        row.find("TD").eq(3).find("select").empty();
-                        company_num = row.find("TD").eq(1).find("select option:selected").val();
-                        var assign_val = approval_limit_find(company_num);
-                        row.find("TD").eq(3).find("select").append(assign_val.app_code_id_dropdown);
-                    });
-                });
-                CloseLoaderPopup();
-            }
+    function add_popup_row() {
+        applim_dropdown()
+        $("#error_msg_id").css("display", "none");
+        basic_add_new_html = '';
+        var display_db_data = '';
+        $('#id_popup_table').DataTable().destroy();
+        $(".modal").on("hidden.bs.modal", function() {
+            $("#id_error_msg").html("");
         });
-}
+        if (GLOBAL_ACTION == "approval_limit_upload") {
+            basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select class="form-control" name="company_dropdown" type="text">'+company_id_dropdown+'</select></td><td><select class="form-control" type="text">'+user_name_dropdown+'</select></td><td><select class="form-control" type="text">'+app_code_id_dropdown+'</select></td><td hidden><input type="text" value=""></td><td class="class_del_checkbox" ><input type="checkbox" required></td></tr>';
+            var table = $('#id_popup_table').DataTable();
+            table.row.add($(basic_add_new_html)).draw();
+            $(".class_del_checkbox").prop("hidden", false);
+            $("#id_del_ind_checkbox").prop("hidden", false);
+            table_sort_filter('id_popup_table');
+        }
+        else {
+              new_row_data();   // Add a new row in popup
+        }
+
+
+        var company_num = '';
+        $("#id_popup_table").on("change", "select[name='company_dropdown']", function() {
+            var row = $(this).closest("tr");
+            company_dropdwn_change(row);
+        });
+        $("#id_popup_table").on("draw.dt", function () {
+            $("#id_popup_table TBODY TR").each(function () {
+                var row = $(this);
+                row.find("TD").eq(3).find("select").empty();
+                company_num = row.find("TD").eq(1).find("select option:selected").val();
+                var assign_val = approval_limit_find(company_num);
+                row.find("TD").eq(3).find("select").append(assign_val.app_code_id_dropdown);
+            });
+        });
+    }
 
     // validating the  popup table for duplicate entries
     function compare_table_for_duplicate_entries(validate_add_attributes, approval_limit) {

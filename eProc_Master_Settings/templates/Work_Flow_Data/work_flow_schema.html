@@ -404,37 +404,24 @@
 
     // on click add icon display the row in to add the new entries
     function add_popup_row() {
-         OpenLoaderPopup();
-        var data = {'table_name':'WorkflowSchema'}
-        $.ajax({
-            type: 'POST',
-            url: "{% url 'eProc_Configuration:get_dropdown_data' %}",
-            data: JSON.stringify(data),
-            success: function(response) {
-                rendered_company_data = response.upload_data_company
-                rendered_approvartype_data = response.upload_data_apptypes
-                dropdown_db_values = response.dropdown_db_values
-                workflow_dropdown()
-                $("#error_msg_id").css("display", "none")
-                basic_add_new_html = '';
-                var display_db_data = '';
-                $('#id_popup_table').DataTable().destroy();
-                $(".modal").on("hidden.bs.modal", function () {
-                    $("#id_error_msg").html(" ");
-                });
-                if (GLOBAL_ACTION == "workflowsch_upload") {
-                    basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select class=" input form-control">'+company_id_dropdown+'</select></td><td><select id="workflow_schema" name="workflow_schema"  type="text" class="input form-control">'+wrksch_types_dropdown_onload+'</select></td><td><select class=" input form-control">'+approvar_types_dropdown+'</select></td><td hidden></td><td class="class_del_checkbox"><input type="checkbox" required></td></tr>';
-                    $('#id_popup_tbody').append(basic_add_new_html);
-                    $(".class_del_checkbox").prop("hidden", false);
-                    $("#id_del_ind_checkbox").prop("hidden", false);
-                    table_sort_filter('id_popup_table');
-                }
-                else{
-                     new_row_data();   // Add a new row in popup
-                }
-                CloseLoaderPopup();
-            }
+        workflow_dropdown()
+        $("#error_msg_id").css("display", "none")
+        basic_add_new_html = '';
+        var display_db_data = '';
+        $('#id_popup_table').DataTable().destroy();
+        $(".modal").on("hidden.bs.modal", function () {
+            $("#id_error_msg").html(" ");
         });
+        if (GLOBAL_ACTION == "workflowsch_upload") {
+            basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select class=" input form-control">'+company_id_dropdown+'</select></td><td><select id="workflow_schema" name="workflow_schema"  type="text" class="input form-control">'+wrksch_types_dropdown_onload+'</select></td><td><select class=" input form-control">'+approvar_types_dropdown+'</select></td><td hidden></td><td class="class_del_checkbox"><input type="checkbox" required></td></tr>';
+            $('#id_popup_tbody').append(basic_add_new_html);
+            $(".class_del_checkbox").prop("hidden", false);
+            $("#id_del_ind_checkbox").prop("hidden", false);
+            table_sort_filter('id_popup_table');
+        }
+        else{
+             new_row_data();   // Add a new row in popup
+        }
     }
 
     //onclick of upload button display id_data_upload popup and set GLOBAL_ACTION button value
@@ -723,7 +710,6 @@
                                  edit_basic_data += '<tr><td class="class_select_checkbox"><input type="checkbox" required></td>'+
                                 '<td><select class="form-control" type="text"><option value ="' + value.company_id + '"'+company_id_list+'>'+value.company_id+'</option></select></td><td><select id="workflow_schema" name="workflow_schema" type="text" class="input form-control"><option value ="' + value.workflow_schema + '"'+workschm_id_list+'>'+value.workflow_schema+'</option></select></td><td><select class="form-control" type="text"><option value ="' + value.app_types + '"'+apptype_id_list+'>'+value.app_types+'</option></select></td><td hidden><input type="text" value=""></td><td>'+ del_ind +'</td></tr>';
                             });
-                            $('#id_popup_tbody').append(edit_basic_data);
                             var i =0;
                             $("#id_popup_table TBODY TR").each(function() {
                                 var row = $(this);
@@ -735,9 +721,10 @@
                                 $(row.find("TD").eq(3).find("select option[value="+apptype_id_list+"]")).attr('selected','selected');
                             i++;
                             });
-                            $( "#id_del_ind_checkbox").prop( "hidden", false );
-                            $( "#header_select").prop( "hidden", false );
+                            $('#id_popup_tbody').append(edit_basic_data);
                             $( ".class_del_checkbox").prop( "hidden", false );
+                            $("#id_del_ind_checkbox").prop("hidden", false);
+                            $( "#header_select").prop( "hidden", false );
                             $('#Wfschema_Modal').modal('show');
                             $('#id_data_upload').modal('hide');
                             document.getElementById("id_del_add_button").style.display = "block";
@@ -754,12 +741,7 @@
                 });
             }
             else{
-                $("#id_error_msg_upload").prop("hidden",false)
-                get_message_details("JMSG110"); // Get message details
-                var display = msg_type.messages_id_desc;
-                document.getElementById("id_error_msg_upload").innerHTML = display;
-                document.getElementById("id_error_msg_upload").style.color = "Red";
-                $('#id_data_upload').modal('show');
+                 display_file_select_error(); // Display error message for file selection except .csv
             }
         }
     }
