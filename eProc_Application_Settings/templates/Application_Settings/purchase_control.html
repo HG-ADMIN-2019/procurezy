@@ -185,14 +185,27 @@
         <option value='04'>Limit</option>
     `;
 
-    var rendered_call_off_data = {
-        data: [
-            { value:'01', label: 'Catalog' },
-            { value:'02', label: 'Free text' },
-            { value:'03', label: 'PR' },
-            { value:'04', label: 'Limit' }
-        ]
-    };
+    function dropdown() {
+        pc_company_dropdown = '';
+        $.each(rendered_pc_company_data, function (i, item) {
+            pc_company_dropdown += '<option value="' + item.company_id + '">' + item.company_id + '</option>'
+        });
+
+        call_off_dropdown = '';
+        $.each(rendered_call_off, function (i, item) {
+            call_off_dropdown += '<option value="' + item.value + '">' + item.desc + '</option>'
+        });
+
+        prod_cat_dropdown = '';
+        $.each(rendered_prod_category, function (i, item) {
+            prod_cat_dropdown += '<option value="' + item.prod_cat_id + '">' + item.prod_cat_id + '</option>'
+        });
+
+        activate_dropdown = '';
+         $.each(rendered_activate, function(i, item){
+            activate_dropdown += '<option value="' + item.field_type_id + '">' + item.field_type_id + '</option>';
+         });
+    }
 
     // Hide dropdown when click on add button
     function company_drpdown() {
@@ -449,7 +462,8 @@
                 rendered_prod_category = response.prod_catogories
                 rendered_activate = response.dropdown_activate
                 get_company_data();
-                company_drpdown();
+                dropdown();
+<!--                company_drpdown();-->
 <!--                company_dropdown();-->
                 $("#error_msg_id").css("display", "none")
                 $("#header_select").prop("hidden", false);
@@ -479,7 +493,7 @@
             success: function(response) {
                 rendered_activate = response.dropdown_activate
                 rendered_pc_company_data = response.upload_company_code
-                drop_down();
+                dropdown();
                 $("#error_msg_id").css("display", "none")
                 $('#id_popup_table').DataTable().destroy();
                 $("#id_popup_tbody").empty();
@@ -541,6 +555,7 @@
 
     // on click add icon display the row in to add the new entries
     function add_popup_row() {
+        dropdown();
         basic_add_new_html = '';
         var display_db_data = '';
         $('#id_popup_table').DataTable().destroy();
