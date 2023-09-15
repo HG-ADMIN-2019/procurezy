@@ -115,16 +115,16 @@
                     </div>
                 </div>
                 <!-- Modal footer -->
-                <div class="modal-footer">
-					<button type="button" class="btn btn-outline-primary remove_upload_data" title="Cancel" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
-                    <button id="id_delete_duplicate" class="btn btn-primary" title="Delete" style="display:none;" type="button" onclick="delete_duplicate()"><i class="fa fa-trash"></i> delete duplicates</button>
-                    <button id="id_check_data" style="display:none;" class="btn btn-primary" title="Check" type="button" onclick="check_data()"><i class="fas fa-check"></i> check</button>
+               <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-primary remove_upload_data" title="Cancel" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
+                    <button id="id_delete_duplicate" class="btn btn-primary" style="display:none;" type="button" onclick="delete_duplicate()"><i class="fa fa-trash"></i> delete duplicates</button>
+                    <button id="id_check_data" style="display:none;" class="btn btn-primary" type="button" onclick="check_data()"><i class="fas fa-check"></i> check</button>
                     <button class="btn btn-primary" title="Save" id="save_id"><i class="fas fa-save"></i> save</button>
                 </div>
             </div>
         </div>
     </div>
-    </div>
+
     <!--end of display basic approval_type table-->
     <!-- modal popup to upload the csv file; save confirmation popup; delete confirmation popup -->
     {% include 'configuration_common_pop_up.html' %}    
@@ -400,7 +400,7 @@
                                     '<td><select type="text" class="input form-control approvaltype"  name="approvaltype" onchange="GetSelectedTextValue(this)"><option value="' + value.app_types + '"'+app_typ_id_list+'>' + value.app_types + '</options></select></td><td><input class="form-control" type="text"  value="' + value.appr_type_desc + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" disabled></td><td>' + del_ind + '</td></tr>';
                                     inc_index += 1;
                             });
-                            $('#id_popup_tbody').append(edit_basic_data);
+
                             var i =0;
                             $("#id_popup_table TBODY TR").each(function() {
                                 var row = $(this);
@@ -408,13 +408,14 @@
                                 $(row.find("TD").eq(1).find("select[value="+app_typ_id_list+"]")).attr('selected','selected');
                                 i++;
                             });
+                            $('#id_popup_tbody').append(edit_basic_data);
+                            $( ".class_del_checkbox").prop( "hidden", false );
                             $("#id_del_ind_checkbox").prop("hidden", false);
                             $( "#header_select").prop( "hidden", false );
-                            $(".class_del_checkbox").prop("hidden", false);
                             $('#App_Type_Modal').modal('show');
                             $('#id_data_upload').modal('hide');
                             document.getElementById("id_del_add_button").style.display = "block";
-                            $('#id_check_data').modal('show');
+                            $('#id_check_data').show();
                             $("#id_check_data").prop("hidden", false);
                             $("#save_id").prop("hidden", true);
                             table_sort_filter('id_popup_table')
@@ -427,12 +428,7 @@
                 });
             }
             else {
-                $("#id_error_msg_upload").prop("hidden",false)
-                get_message_details("JMSG110"); // Get message details
-                var display = msg_type.messages_id_desc;
-                document.getElementById("id_error_msg_upload").innerHTML = display;
-                document.getElementById("id_error_msg_upload").style.color = "Red";
-                $('#id_data_upload').modal('show');
+                display_file_select_error(); // Display error message for file selection except .csv
             }
         }
     }

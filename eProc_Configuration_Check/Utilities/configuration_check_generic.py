@@ -3097,6 +3097,84 @@ def get_valid_employee_data(ui_data, status):
     return valid_data_list, message
 
 
+def get_valid_supplier_data(ui_data, status):
+    db_count = django_query_instance.django_filter_count_query(SupplierMaster,
+                                                               {'del_ind': False,
+                                                                })
+    message_type, message_desc = get_message_desc('MSG193')
+    db_count_message = message_desc + str(db_count)
+    file_count = len(ui_data)
+    duplicate_count = 0
+    message = {}
+    update_count = 0
+    insert_count = 0
+    delete_count = 0
+    invalid_count = 0
+    dependent_count = 0
+    valid_data_list = []
+    for supplier_dictionary in ui_data:
+        if supplier_dictionary['del_ind'] in ['1', True]:
+            if status == 'SAVE':
+                if django_query_instance.django_existence_check(SupplierMaster,
+                                                                {'supplier_id': supplier_dictionary[
+                                                                    'supplier_id']}):
+                    delete_count = delete_count + 1
+                    valid_data_list.append(supplier_dictionary)
+            else:
+                if django_query_instance.django_existence_check(SupplierMaster,
+                                                                {'del_ind': False,
+                                                                 'supplier_id': supplier_dictionary[
+                                                                     'supplier_id']}):
+                    delete_count = delete_count + 1
+                    valid_data_list.append(supplier_dictionary)
+                else:
+                    invalid_count = invalid_count + 1
+        else:
+            if django_query_instance.django_existence_check(SupplierMaster,
+                                                            {'del_ind': False,
+                                                             'supplier_id': supplier_dictionary['supplier_id'],
+                                                             # 'username': employee_dictionary
+                                                             # ['username'],
+                                                             # 'first_name': employee_dictionary
+                                                             # ['first_name'],
+                                                             # 'last_name': employee_dictionary
+                                                             # ['last_name'],
+                                                             # 'phone_num': employee_dictionary
+                                                             # ['phone_num'],
+                                                             # ['user_type']: employee_dictionary
+                                                             #  ['user_type'],
+                                                             # 'date_format': employee_dictionary
+                                                             # ['date_format'],
+                                                             # 'employee_id': employee_dictionary
+                                                             # ['employee_id'],
+                                                             # 'decimal_notation': employee_dictionary
+                                                             # ['decimal_notation'],
+                                                             # 'currency_id': employee_dictionary
+                                                             # ['currency_id'],
+                                                             # 'language_id': employee_dictionary
+                                                             # ['language_id'],
+                                                             # 'time_zone': employee_dictionary
+                                                             # ['time_zone']
+                                                             }):
+                duplicate_count = duplicate_count + 1
+            elif django_query_instance.django_existence_check(SupplierMaster,
+                                                              {'del_ind': False,
+                                                               'supplier_id': supplier_dictionary['supplier_id']}):
+                update_count = update_count + 1
+                valid_data_list.append(supplier_dictionary)
+            else:
+                insert_count = insert_count + 1
+                valid_data_list.append(supplier_dictionary)
+
+    # append message with count
+    message_count_dic = {'file_count': file_count, 'delete_count': delete_count, 'invalid_count': invalid_count,
+                         'duplicate_count': duplicate_count, 'update_count': update_count,
+                         'insert_count': insert_count,
+                         'dependent_count': dependent_count, 'db_count': db_count}
+    message = get_check_message(message_count_dic)
+    return valid_data_list, message
+
+
 def get_valid_unspsc_data(ui_data):
     data_list = []
     for data in ui_data:
