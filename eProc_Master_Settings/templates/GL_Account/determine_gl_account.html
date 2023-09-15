@@ -698,8 +698,8 @@
         var add_attr_unique_list = [];
         var no_duplicate_value = 'Y'
 $.each(detgl, function (i, item) {
-    if (!item.prod_cat_id || !item.item_from_value || !item.item_to_value || item.item_from_value >= item.item_to_value) {
-        error_message = ui_messeges("JMSG002");
+if (!item.prod_cat_id || !item.item_from_value || !item.item_to_value || item.item_from_value >= item.item_to_value || !item.account_assign_cat || !item.gl_acc_num) {
+            error_message = ui_messeges("JMSG002");
         no_duplicate_value = 'N';
         return false; // Exit the loop
     }
