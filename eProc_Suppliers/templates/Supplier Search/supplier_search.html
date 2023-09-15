@@ -16,9 +16,8 @@
                 <button class="btn btn-outline-primary"  title="Extract" onclick="location.href='{% url 'eProc_Basic_Settings:extract_supplier_data' %}'"type="button">
                     <i class="fas fa-download"></i> extract
                 </button>
-                <button class="btn btn-outline-primary" id="basic_save_upld_redirect" onclick="onclick_upload_button()">
-                    <i class="fas fa-cloud-upload-alt"></i> 
-                    upload data
+                <button class="btn btn-outline-primary modal_upload" id="id_upload_redirect_data" title="Upload" value="supplier_upload"  onclick="onclick_upload_button()" type="button">
+                    <i class="fas fa-cloud-upload-alt"></i> upload data
                 </button>
                 <button class="btn btn-primary" onclick="window.open(href = '{% url 'eProc_Admin_Tool:sup_details_page' None %}')">
                     <i class="fas fa-user-plus"></i> 
@@ -232,6 +231,7 @@
     </div>
 </div>
 
+
 <!--change confirmation popup-->
     <div class="modal fade" id="id_block_confirm_popup" data-backdrop="static" data-keyboard="false">
         <div class="modal-dialog modal-dialog-centered">
@@ -276,9 +276,161 @@
         </div>
     </div>
 </div>
+
+<!--modal popup for Add,copy,update and upload-->
+    <!-- The Modal -->
+    <div class="modal fade" id="myModal" style="overflow:auto;">
+        <div class="modal-dialog modal-dialog-centered modal-xl">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="update-countries-title"> Employee Upload</h5>
+                    <button type="button" class="close remove_upload_data" data-dismiss="modal" aria-label="Close">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <!-- Modal body -->
+                <div class="modal-body scrollbox">
+
+                    <div id="id_del_add_button" class="mb-4">
+                        <button class="btn btn-primary" type="button" onclick="add_popup_row()">
+                            <i class="fa fa-plus"></i> Add New Row
+                        </button>
+                        <button class="btn btn-outline-danger" onclick="application_settings_delete_Row('id_userpopup_table')">
+                            <i class="fa fa-trash"></i> delete
+                        </button>
+                    </div>
+                    <div id="id_check_success_messages" class="alert alert-success check_success_message" hidden></div>
+                    <div id="id_check_error_messages" class="alert alert-danger check_error_messages" hidden></div>
+                    <div id="id_check_special_character_messages" class="alert alert-danger check_special_character_messages" hidden>
+                        <p id="id_error_msg_email" ></p>
+                        <p id="id_error_msg_username" ></p>
+                        <p id="id_error_msg_first_name" ></p>
+                        <p id="id_error_msg_last_name" ></p>
+                        <p id="id_error_msg_phonenumber" ></p>
+                        <p id="id_error_msg_empid" ></p>
+                    </div>
+                    <div id="error_msg_id" class="alert alert-danger display-none" role="alert"><span id="error_message"></span></div>
+                    <div id="id_warning_msg_id" class="alert alert-warning display-none" role="alert"></div>
+                    <div id="id_info_msg_id" class="alert alert-primary display-none" role="alert"></div>
+
+                    <table class="class_popup_table table table-bordered mt-2" id="id_userpopup_table" >
+                        <thead>
+
+                        <tr>
+                            <th id="header_select">Select</th>
+                            <th> Supplier Number  </th>
+                            <th> Supplier Type </th>
+                            <th> Registration Number </th>
+                            <th> First Name</th>
+                            <th> Last Name</th>
+                            <th> Currency </th>
+                            <th> Language </th>
+                            <th> Country</th>
+                            <th> City</th>
+                            <th> Street</th>
+                            <th> Postal Code</th>
+                            <th> E-mail </th>
+                            <th> Phone </th>
+                            <th> Mobile </th>
+                            <th> Fax </th>
+                            <th> Search Term 1 </th>
+                            <th> Search Term 2</th>
+                            <th> Working Days</th>
+                            <th> Duns Number</th>
+                            <th> Output Medium</th>
+                            <th hidden> Del Indicator</th>
+                        </tr>
+
+                         </thead>
+
+                        <tbody id="id_userpopup_tbody">
+
+                        </tbody>
+                    </table>
+
+                </div>
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-primary remove_upload_data" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
+                    <button id="id_delete_duplicate" class="btn btn-primary" style="display:none;" type="button" onclick="delete_duplicate()"><i class="fa fa-trash"></i> delete duplicates</button>
+                    <button id="id_check_data" style="display:none;" class="btn btn-primary" type="button" onclick="check_data()"><i class="fas fa-check"></i> check</button>
+                    <button class="btn btn-primary" id="basic_save_upld_redirect" onclick="save_user_basic_info()"><i class="fas fa-save"></i> save</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!--end of modal popup for Add,copy,update and upload-->
+
+<!--modal popup to upload the csv file-->
+    <div class="modal fade" id="id_data_upload">
+        <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+            <div class="modal-content">
+                <!-- Modal Header -->
+                <div class="modal-header">
+                    <h5 class="modal-title">Data Upload</h5>
+                    <button type="button" class="close" data-dismiss="modal">&times;</button>
+                </div>
+                <!-- Modal body -->
+                <div class="modal-body">
+                    <div>
+                        <p id="id_error_msg_upload" class="alert alert-danger error" hidden></p>
+                    </div>
+                    <div><label> Upload a file</label></div>
+                    <input type="file" id="id_file_data_upload" name="file">
+                </div>
+                <!-- Modal footer -->
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-primary" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
+                    <button id="popup_save"  class="btn btn-primary" onclick="valid_popup()"><i class="fas fa-save"></i> Upload File</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--end of modal popup to upload the csv file-->
+<!--      valid confirm popup-->
+    <div class="modal fade" id="valid_upload">
+        <div class="modal-dialog modal-dialog-centered ">
+            <div class="modal-content">
+                 <div class="modal-header">
+                    <h5 class="modal-title">Information</h5>
+                 </div>
+                <div class="modal-body">
+                    <p>Only valid records will be uploaded to backend</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-primary" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
+                    <button type="button" class="btn btn-primary"  onclick="onclick_display_csv_data()" > Ok</button>
+                </div>
+            </div>
+        </div>
+    </div>
+    <!--   end of valid confirm popup-->
+
+
+
+<div>
+        {% if messages %}
+        {% for message in messages %}
+        {% if message.tags == 'success' %}
+        <div style="color: green; ">{{ message }}</div>
+        {% endif %}
+        {% if message.tags == 'error' %}
+        <div style="color: red; ">{{ message }}</div>
+        {% endif %}
+        {% if message.tags == 'info' %}
+        <div style="color: Black bold"><b>{{ message }}</b> </div>
+        {% endif %}
+        {% endfor %}
+        {% endif %}
+    </div>
+
 <script src="{% static 'scripts/supplier-search.js' %}"> </script>
 <script>
-    var GLOBAL_SUPPLIER_GUID = '';
+var Tablename = uiConstants["CONST_TABLENAME_SUPPLIERMASTER"]
+var appname = uiConstants["CONST_APPNAME01"]
+var db_header_data = uiConstants["CONST_HEADER_DATA_SUPPLIERMASTER"]
+var GLOBAL_SUPPLIER_GUID = '';
 
     function reload(){
         localStorage.setItem("fname", document.getElementById("name1").value);
@@ -293,11 +445,334 @@
         OpenLoaderPopup();
     }
 
+//onclick of data Upload copy data to modal pop-up
+
+function onclick_display_csv_data() {
+        $("#valid_upload").modal('hide');
+        $("#id_delete_duplicate").hide()
+        $("#id_check_success_messages").empty();
+        $("#id_check_error_messages").empty();
+        $("#id_check_success_messages").prop("hidden", true);
+        $("#id_check_error_messages").prop("hidden", true);
+        $("#id_check_special_character_messages").prop("hidden", true);
+        $("#error_msg_id").css("display", "none")
+        $('#id_userpopup_table').DataTable().destroy();
+        formdata = new FormData();
+        attached_file = $('#id_file_data_upload').prop('files')[0]
+        if(attached_file == undefined){
+           display_file_select_error(); // Display error message if no file is selected
+        }
+        else {
+            file_extension = (attached_file.name).split(".")[1]
+            file_extension = file_extension.toUpperCase();
+            if(file_extension == 'CSV'){
+            formdata.append("file_attach", attached_file);
+            formdata.append("Tablename",Tablename);
+            formdata.append("appname",appname);
+            db_header_data = db_header_data
+            formdata.append("db_header_data",db_header_data);
+            $('#id_data_upload').modal('hide');
+            $('#id_userpopup_tbody').empty();
+            OpenLoaderPopup();
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'eProc_Basic_Settings:data_upload' %}",
+                data: formdata,
+                contentType: "application/json; charset=utf-8",
+                success: function(response) {
+                    if(response.error_message) {
+                        $("#id_error_msg_upload").prop("hidden",false)
+                        document.getElementById("id_error_msg_upload").innerHTML = response.error_message;
+                        document.getElementById("id_error_msg_upload").style.color = "Red";
+                        $('#id_data_upload').modal('show');
+                    }
+                    else{
+                        emp_data_array = response.valid_data_list;
+                        var edit_basic_data = '';
+                        var del_ind = '';
+                        var dropdown_values = [];
+                        console.log(response.valid_data_list);
+                        $("#id_userpopup_tbody").empty();
+                            $.each(response.valid_data_list, function (i, value) {
+                                var currency_id_value = value.currency_id
+                                var language_id_value = value.language_id
+                                var country_code_value = value.country_code
+                                var supp_type_value = value.supp_type
+                                dropdown_values.push([currency_id_value, language_id_value,country_code_value,user_type_value,decimal_notation_value,date_format_value])
+                            del_ind = '<td>' + value.del_ind + '</td>'
+                            if (value.del_ind == 1) {
+                                del_ind=' <input type="checkbox" value="' + value.del_ind + '" checked>'
+                            }
+                            else {
+                                del_ind= '<input type="checkbox" value="' + value.del_ind + '" required>'
+                            }
+
+                            var currency_opt = ''
+                            var currency_list = ''
+                            var currency_id_list = ''
+                            $.each(rendered_dropdown_currency_id, function (i, item) {
+                                 if( value.currency_id == item.currency_id){
+                                      currency_opt += '<option value="' + item.currency_id + '">' + item.description + '</option>';
+                                 }else{
+                                       currency_list += '<option value="' + item.currency_id + '">' + item.description + '</option>';
+                                 }
+                                currency_id_list = currency_opt + currency_list
+                            });
+
+                            var language_opt = ''
+                            var language_list = ''
+                            var language_id_list = ''
+                            $.each(rendered_dropdown_language, function (i, item) {
+                                 if( value.language_id == item.language_id){
+                                    language_opt += '<option value="' + item.language_id + '">' + item.description + '</option>';
+                                 }else{
+                                    language_list += '<option value="' + item.language_id + '">' + item.description + '</option>';
+                                 }
+                                language_id_list = language_opt + language_list
+                            });
+
+
+                            var country_opt = ''
+                            var country_list = '';
+                            var country_id_list = '';
+                            $.each(rendered_dropdown_time_zones, function (i, item) {
+                                 if( value.country_code == item.country_code){
+                                    country_opt  += '<option value="' + item.country_code + '">' + item.description + '</option>';
+                                 }else{
+                                    country_list += '<option value="' + item.country_code + '">' + item.description + '</option>';
+                                 }
+                                 country_id_list = country_opt + country_list
+                            });
+
+                            var decimal_opt = '';
+                            var decimal_opt_list = '';
+                            var decimal_opt_id_list = '';
+                            $.each(rendered_dropdown_decimal_list, function (i, item) {
+                                 if( value.decimal_notation == rendered_dropdown_decimal_list[i] ){
+                                    decimal_opt += '<option value="' + rendered_dropdown_decimal_list[i] + '">' + rendered_dropdown_decimal_list[i] + '</option>';
+                                 }else{
+                                    decimal_opt_list += '<option value="' + rendered_dropdown_decimal_list[i] + '">' + rendered_dropdown_decimal_list[i] + '</option>';
+                                 }
+                                decimal_opt_id_list = decimal_opt + decimal_opt_list
+                            });
+
+
+                             var dropdown_opt = ''
+                             var dropdown_list_list = '';
+                             var dropdown_list_id_list = '';
+                            $.each(rendered_dropdown_user, function (i, item) {
+                                 if( value.user_type == rendered_dropdown_user[i] ){
+                                   dropdown_opt += '<option value="' + rendered_dropdown_user[i] + '">' + rendered_dropdown_user[i] + '</option>';
+                                 }else{
+                                   dropdown_list_list += '<option value="' + rendered_dropdown_user[i] + '">' + rendered_dropdown_user[i] + '</option>';
+                                 }
+                                    dropdown_list_id_list = dropdown_opt + dropdown_list_list
+                            })
+
+                        edit_basic_data += '<tr><tr><td class="class_select_checkbox"><input type="checkbox" required></td>' +
+                        '<td><input class="form-control" type="text" value="' + value.supplier_id + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td>' +
+                        '<td><input class="form-control" type="text" value="' + value.supp_type + '" maxlength="100" required></td>' +
+                        '<td><input class="form-control" type="text"> value="' + value.registration_number + '"' + dropdown_list_id_list + '>' + value.user_type + '</option></select></td>' +
+                        '<td><input class="form-control" type="text" value="' + value.name1 + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td>' +
+                        '<td><input class="form-control" type="text" value="' + value.name2 + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td>' +
+                        '<td><select class="form-control" type="text"><option value="' + value.currency_id + '"' + currency_id_list + '>' + value.currency_id + '</option></select></td></tr>' +
+                        '<tr><td><select class="form-control" type="text"><option value="' + value.language_id + '"' + language_id_list + '>' + value.language_id + '</option></select></td>' +
+                        '<td><select class="form-control" type="text"><option value="' + value.country_code + '"' + time_zone_id_list + '>' + value.time_zone + '</option></select></td>' +
+                        '<td><input class="form-control" type="text" value="' + value.city + '" maxlength="40" onkeypress="return /[a-z]/i.test(event.key)" required></td>' +
+                        '<td><input class="form-control" type="text" value="' + value.street + '" maxlength="100" required></td>' +
+                        '<td><input class="form-control" type="text" value="' + value.postal_code + '" maxlength="40" onkeypress="return /[a-z]/i.test(event.key)" required></td>' +
+                        '<td><input class="form-control" type="text" value="' + value.email + '" maxlength="40" onkeypress="return /[a-z]/i.test(event.key)" required></td>' +
+                        '<td><input class="form-control" type="text" value="' + value.landline + '" maxlength="40" onkeypress="return /[a-z]/i.test(event.key)" required></td>' +
+                        '<td><input class="form-control" type="text" value="' + value.mobile_num + '" maxlength="40" onkeypress="return /[a-z]/i.test(event.key)" required></td>' +
+                        '<td><input class="form-control" type="text" value="' + value.fax + '" maxlength="40" onkeypress="return /[a-z]/i.test(event.key)" required></td>' +
+                        '<td><input class="form-control" type="text" value="' + value.search_term1 + '" maxlength="40" onkeypress="return /[a-z]/i.test(event.key)" required></td>' +
+                        '<td><input class="form-control" type="text" value="' + value.search_term2 + '" maxlength="40" onkeypress="return /[a-z]/i.test(event.key)" required></td>' +
+                        '<td><input class="form-control" type="text" value="' + value.delivery_days + '" maxlength="40" onkeypress="return /[a-z]/i.test(event.key)" required></td>' +
+                        '<td><input class="form-control" type="text" value="' + value.duns_number + '" maxlength="40" onkeypress="return /[a-z]/i.test(event.key)" required></td>' +
+                        '<td><input class="form-control" type="text" value="' + value.output_medium + '" maxlength="40" onkeypress="return /[a-z]/i.test(event.key)" required></td>' +
+                        '<td>' + del_ind + '</td></tr></tr>';
+                        });
+                        $('#id_userpopup_tbody').append(edit_basic_data);
+<!--                         var i =0;-->
+<!--                            $("#id_userpopup_table TBODY TR").each(function() {-->
+<!--                                var row = $(this);-->
+<!--                                var date_format_id_list = dropdown_values[i][0]-->
+<!--                                var decimal_opt_id_list = dropdown_values[i][1]-->
+<!--                                var dropdown_list_id_list = dropdown_values[i][2]-->
+<!--                                var currency_id_list = dropdown_values[i][3]-->
+<!--                                var language_id_list = dropdown_values[i][4]-->
+<!--                                var time_zone_id_list = dropdown_values[i][5]-->
+
+<!--                                $(row.find("TD").eq(6).find("select option[value="+date_format_id_list+"]")).attr('selected','selected');-->
+<!--                                $(row.find("TD").eq(8).find("select option[value="+decimal_opt_id_list+"]")).attr('selected','selected');-->
+<!--                                $(row.find("TD").eq(9).find("select option[value="+dropdown_list_id_list+"]")).attr('selected','selected');-->
+<!--                                $(row.find("TD").eq(10).find("select option[value="+currency_id_list+"]")).attr('selected','selected');-->
+<!--                                $(row.find("TD").eq(11).find("select option[value="+language_id_list+"]")).attr('selected','selected');-->
+<!--                                $(row.find("TD").eq(12).find("select option[value="+time_zone_id_list+"]")).attr('selected','selected');-->
+<!--                                i++;-->
+<!--                            });-->
+                        $( "#id_del_ind_checkbox").prop( "hidden", false );
+                        $( "#header_select").prop( "hidden", false );
+
+                        $( ".class_del_checkbox").prop( "hidden", false );
+                        $('#myModal').modal('show');
+                        $('#id_data_upload').modal('hide');
+                        document.getElementById("id_del_add_button").style.display = "block";
+                        $('#id_check_data').modal('show');
+                        $("#id_check_data").prop("hidden", false);
+                        $("#save_user_basic_info").prop("hidden", true);
+                    }
+                     CloseLoaderPopup();
+                },
+                cache: false,
+                processData: false,
+                contentType: false,
+            });
+            }
+            else{
+                 display_file_select_error(); // Display error message for file selection except .csv
+            }
+        }
+}
+
+//check function restricting special char and diaplay the data count of csv file
+function check_data() {
+        $("#id_delete_duplicate").hide()
+        $('#id_popup_table').DataTable().destroy();
+        $("#id_check_success_messages").empty()
+        $("#id_check_error_messages").empty()
+        $("#id_check_success_messages").prop("hidden",true)
+        $("#id_check_error_messages").prop("hidden",true)
+        $("#id_check_special_character_messages").prop("hidden",true)
+        count = 0;
+        var prodcatdesc_array = new Array
+        var DB_array = new Array
+        var prodcatdesc_list = new Array
+        var prodcatdesc_code_check = new Array
+        del_ind = ''
+        $("#id_popup_table TBODY TR").each(function() {
+        $('#id_popup_table').DataTable().destroy();
+        var row = $(this);
+        unspsc_desc_dic = {}
+        //*************** reading data from the pop-up ***************
+        unspsc_desc_dic.prod_cat_id = row.find("TD").eq(1).find('select[type="text"]').val()
+        unspsc_desc_dic.language_id = row.find("TD").eq(2).find('select').val();
+        unspsc_desc_dic.description = row.find("TD").eq(3).find('input[type="text"]').val()
+        checked_box = row.find("TD").eq(5).find('input[type="checkbox"]').is(':checked')
+        if (checked_box){
+            unspsc_desc_dic.del_ind = '1'
+        }
+        else{
+            unspsc_desc_dic.del_ind = '0'
+        }
+        prodcatdesc_list.push(unspsc_desc_dic)
+        get_main_table_data();
+        var format = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
+       //*************** checking for empty records for product id name (max length = 2) ***************
+            if(unspsc_desc_dic.description.length == 0){
+                $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
+                row_color_highlight_empty(row);
+                $("#id_error_msg_prod_cat_desc").prop("hidden",false);
+                error_message = ui_messeges("JMSG002")// Get message details
+                var display8 = error_message;
+                document.getElementById("id_error_msg_prod_cat_desc").innerHTML = display8+ "Country Name";
+                $("#id_check_special_character_messages").prop("hidden",false);
+                count = count +1;
+            }
+            //*************** checking for special characters for country name ***************
+            else if(format.test(unspsc_desc_dic.description)){
+                $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "1px solid #FF0000");
+                row_color_highlight_special(row);
+                $("#id_error_msg_language_id").prop("hidden",false);
+                error_message = ui_messeges("JMSG003")// Get message details
+                var display3 = error_message;
+                document.getElementById("id_error_msg_language_id").innerHTML = display3+ "Country Name";
+                $("#id_check_special_character_messages").prop("hidden",false);
+                count = count +1;
+            }
+            else if(prodcatdesc_code_check.includes((unspsc_desc_dic.prod_cat_id)&&(unspsc_desc_dic.del_ind))){
+                 $(row).css("border", "#f8d7da");
+                 row_color_highlight(row);
+                 $("#id_check_error_messages").prop("hidden",false);
+                 var display7 = ui_messeges("JMSG001");
+                 document.getElementById("id_check_error_messages").innerHTML = display7;
+                 $("#save_id").prop("hidden", true);
+                 $("#id_delete_duplicate").show()
+                 $("#id_check_data").prop("hidden", false);
+                 count = count +1;
+            }
+            else if(main_table_low_value.includes((unspsc_desc_dic.prod_cat_id)&&(unspsc_desc_dic.del_ind))){
+                 $(row).css("border", "#f8d7da");
+                 row_color_highlight(row);
+                 $("#id_check_error_messages").prop("hidden",false);
+                 var display7 = ui_messeges("JMSG001");
+                 document.getElementById("id_check_error_messages").innerHTML = display7;
+                 $("#save_id").prop("hidden", true);
+                 $("#id_delete_duplicate").show()
+                 $("#id_check_data").prop("hidden", false);
+                 count = count +1;
+            }
+            else{
+                $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "none");
+                row_color_no_highlight(row);
+                $(row).css("border", "");
+                $("#id_delete_duplicate").hide()
+            }
+            prodcatdesc_code_check.push(unspsc_desc_dic.prod_cat_id)
+            main_table_low_value.push(unspsc_desc_dic.prod_cat_id)
+            table_sort_filter_popup_pagination('id_popup_table');
+        });
+
+        //*************** shows save button if there are no errors(special characters and max length) ***************
+         if(count == 0){
+            $('#id_popup_table').DataTable().destroy();
+            $("#id_popup_table").find("input,button,textarea,select").attr("disabled", "disabled");
+            document.getElementById("id_del_add_button").style.display = "none";
+            $("#save_id").prop("hidden", false);
+            $("#id_check_data").prop("hidden", true);
+            if (prodcatdesc_list == 0) {
+                $("#save_id").prop("hidden", true);
+            }
+            popup_data_dict ={'data_list' : prodcatdesc_list}
+            OpenLoaderPopup();
+            $.ajax({
+                type: 'POST',
+                url: "{% url 'eProc_Configuration_Check:check_cust_unspsc_category_desc' %}",
+                data: JSON.stringify(popup_data_dict),
+                success: function(response) {
+                    table_sort_filter_popup_pagination('id_popup_table')
+                     $("#id_check_special_character_messages").prop("hidden", false);
+                     if (count == 0) {
+                            $("#id_check_special_character_messages").prop("hidden", true);
+                     }
+                    var message = ''
+                    update_check_message(response.messages[1])
+                    CloseLoaderPopup();
+                }
+            });
+         }
+}
+
+  function update_check_message(messages){
+        $.each(messages, function (i, message) {
+            $("#id_check_success_messages").append('<p>' + message + '</p>')
+        });
+        $("#id_check_success_messages").prop("hidden",false)
+    }
+
+    // onclick of valid popup
+    function valid_popup(){
+      $('#id_data_upload').modal('hide');
+      $("#valid_upload").modal('show');
+    }
+
     //onclick of upload button display id_data_upload popup and set GLOBAL_ACTION button value
     function onclick_upload_button() {
         GLOBAL_ACTION = "supplier_upload"
+        $("#id_error_msg_upload").prop("hidden",true)
         $("#id_popup_tbody").empty();
         $('#id_data_upload').modal('show');
+        document.getElementById('id_file_data_upload').value = "";
     }
 
     function get_supplier_detail_to_delete(element) {

@@ -440,8 +440,8 @@ def convert_SpendLimitId_to_dictionary(arr):
 def convert_SpendLimitValue_to_dictionary(arr):
     convertion_list = []
     for row in arr:
-        dictionary = {'company_id': row[0], 'spend_code_id': row[2], 'upper_limit_value': row[3],
-                      'currency_id': row[1], 'del_ind': row[4]}
+        dictionary = {'company_id': row[0], 'spend_code_id': row[1], 'upper_limit_value': row[2],
+                      'currency_id': row[3], 'del_ind': row[4]}
         convertion_list.append(dictionary)
     return convertion_list
 
@@ -730,6 +730,13 @@ def data_upload(request):
             valid_data_list, message = get_valid_employee_data(convertion_list, 'UPLOAD')
             context = {'valid_data_list': valid_data_list}
             return JsonResponse(context, safe=False)
+        if Table_name == 'SupplierMaster':
+            result['error_message'], result['data'] = upload_csv.csv_preview_data(header_detail, data_set_val)
+            result = remove_duplicates(result['data'])
+            convertion_list = convert_Supplier_to_dictionary(result)
+            valid_data_list, message = get_valid_supplier_data(convertion_list, 'UPLOAD')
+            context = {'valid_data_list': valid_data_list}
+            return JsonResponse(context, safe=False)
 
 
 
@@ -760,6 +767,21 @@ def convert_UNSPSCDESC_to_dictionary(arr):
     convertion_list = []
     for row in arr:
         dictionary = {'description': row[0], 'del_ind': row[1], 'language_id': row[2], 'prod_cat_id': row[3]}
+        convertion_list.append(dictionary)
+    return convertion_list
+
+
+def convert_Supplier_to_dictionary(arr):
+    convertion_list = []
+    for row in arr:
+        dictionary = {'supplier_id': row[0],'supp_type': row[1],'registration_number': row[16],
+                      'name1': row[2], 'name2': row[3],
+                      'currency_id': row[19],'language_id': row[20],'country_code': row[18],
+                      'city': row[4], 'street': row[6], 'postal_code': row[5],
+                      'email': row[10],'landline': row[7], 'mobile_num': row[8], 'fax': row[9],
+                      'search_term1': row[12],'search_term2': row[13],
+                      'delivery_days':row[15],'duns_number': row[14],'output_medium_types': row[11],
+                      'del_ind': row[17]}
         convertion_list.append(dictionary)
     return convertion_list
 

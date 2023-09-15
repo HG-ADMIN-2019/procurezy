@@ -558,7 +558,7 @@
                                 });
                             edit_basic_data += '<tr><td><input type="checkbox" required></td><td><select class="form-control" type="text"><option value ="' + value.language_id + '"' + language_id_list + '>'+value.language_id+'</option></select></td><td><select class="form-control" type="text"><option value ="' + value.payment_term_key + '"'+' + payment_id_list + '+'>'+value.payment_term_key+'</option></select></td><td><input type="text" value="' + value.description + '" maxlength="50" name="description" class="form-control"></td><td><input type="number" value="' + value.day_limit + '" maxlength="10" name="day_limit" class="form-control"></td><td>' + del_ind + '</td><td hidden><input type="text"></td></tr>';
                             });
-                            $('#id_popup_tbody').append(edit_basic_data);
+
                             var i =0;
                             $("#id_popup_table TBODY TR").each(function() {
                                 var row = $(this);
@@ -568,16 +568,17 @@
                                 $(row.find("TD").eq(2).find("select option[value="+payment_id_list+"]")).attr('selected','selected');
                                 i++;
                             });
+                             $('#id_popup_tbody').append(edit_basic_data);
+                            $( ".class_del_checkbox").prop( "hidden", false );
                             $("#id_del_ind_checkbox").prop("hidden", false);
                             $( "#header_select").prop( "hidden", false );
-                            $(".class_del_checkbox").prop("hidden", false);
                             $('#Paytrm_desc_Modal').modal('show');
                             $('#id_data_upload').modal('hide');
                             document.getElementById("id_del_add_button").style.display = "block";
-                            $('#id_check_data').modal('show');
+                            $('#id_check_data').show();
                             $("#id_check_data").prop("hidden", false);
                             $("#save_id").prop("hidden", true);
-                            table_sort_filter('id_popup_table');
+                            table_sort_filter('id_popup_table')
                         }
                         CloseLoaderPopup();
                     },
