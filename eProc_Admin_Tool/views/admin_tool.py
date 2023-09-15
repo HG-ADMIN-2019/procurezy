@@ -53,7 +53,8 @@ from eProc_Reports.Report_Forms.user_report_form import UserReportForm
 from eProc_Reports.Utilities.reports_generic import get_companylist, get_usrid_by_username, get_account_assignlist, \
     get_langlist, get_companyDetails, get_account_assignvalues
 from eProc_Shopping_Cart.context_processors import update_user_info
-from eProc_Shopping_Cart.models import ScHeader, ScItem, ScPotentialApproval, ScApproval
+from eProc_Shopping_Cart.models import  ScItem, ScPotentialApproval, ScApproval
+from eProc_Shopping_Cart.models.shopping_cart import ScHeader
 from eProc_Suppliers.Utilities.supplier_generic import supplier_detail_search
 from eProc_Suppliers.Utilities.supplier_specific import get_supplier_data, update_country_encrypt
 from eProc_Suppliers.models import OrgSuppliers
@@ -143,7 +144,7 @@ def user_search(request):
         'is_admin_active': True,
         'dropdown_usertype_values': get_usertype_values(),
         'dropdown_user': dropdown_user,
-        'dropdown_user_date_format':dropdown_user_date_format,
+        'dropdown_user_date_format': dropdown_user_date_format,
         'dropdown_decimal_list': dropdown_decimal_list,
         'dropdown_currency_id': dropdown_currency_id,
         'dropdown_time_zones': dropdown_time_zones,
@@ -151,8 +152,6 @@ def user_search(request):
         'dropdown_messages': dropdown_messages
 
     }
-
-
 
     if request.method == 'GET':
         encrypted_email = []
@@ -648,7 +647,6 @@ def m_docsearch_meth(request):
     comp_list = get_companylist(request)
 
     if request.method == 'GET':
-        # inp_comp_code = request.GET('company_code')
         inp_doc_type = 'SC'
         inp_doc_num = None
         inp_from_date = datetime.today()
@@ -657,9 +655,8 @@ def m_docsearch_meth(request):
         inp_created_by = ''
         inp_requester = ''
 
-        # result
         result = get_hdr_data(request,
-                                inp_doc_type,
+                              inp_doc_type,
                               inp_doc_num,
                               inp_from_date,
                               inp_to_date,
@@ -669,7 +666,10 @@ def m_docsearch_meth(request):
 
         company_details = OrgCompanies.objects.filter(client=client, del_ind=False, company_guid=1000)
         for comp in company_details:
-            result = result.filter(co_code=comp.company_id)
+            if inp_doc_type == 'PO':
+                result = result.filter(company_code_id=comp.company_id)
+            else:  # For ScHeader queries
+                result = result.filter(co_code=comp.company_id)
 
     if not request.method == 'POST':
         if 'results' in request.session:
@@ -679,8 +679,6 @@ def m_docsearch_meth(request):
     if request.method == 'POST':
         request.session['results'] = request.POST
 
-    # rep_search_form = DocumentSearchForm()
-    # If method is post get the form values and get header details accordingly
     if request.method == 'POST':
         rep_search_form = DocumentSearchForm(request.POST)
 
@@ -694,7 +692,6 @@ def m_docsearch_meth(request):
             inp_created_by = request.POST.get('created_by')
             inp_requester = request.POST.get('requester')
 
-            # results
             result = get_hdr_data(request, inp_doc_type,
                                   inp_doc_num,
                                   inp_from_date,
@@ -704,21 +701,21 @@ def m_docsearch_meth(request):
                                   inp_requester, report_search)
             company_details = OrgCompanies.objects.filter(client=client, del_ind=False, company_guid=inp_comp_code)
             for comp in company_details:
-                result = result.filter(co_code=comp.company_id)
+                if inp_doc_type == 'PO':
+                    result = result.filter(company_code_id=comp.company_id)
+                else:  # For ScHeader queries
+                    result = result.filter(co_code=comp.company_id)
     else:
         rep_search_form = DocumentSearchForm()
 
     error_messages = rep_search_form.errors
     t_count = len(result)
-    # t_count = 0
 
     for header_guid in result:
         encrypted_header_guid.append(encrypt(header_guid))
 
-    # print(result)
     result = zip(result, encrypted_header_guid)
 
-    # Context to display in Doc_report.html
     context = {
         'inc_nav': True,
         'inc_footer': True,
@@ -739,6 +736,8 @@ def m_docsearch_meth(request):
     }
 
     return render(request, 'Reports/Doc_report.html', context)
+
+
 
 
 @login_required

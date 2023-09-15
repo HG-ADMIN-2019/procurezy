@@ -1,44 +1,33 @@
 {% extends 'root/base.html' %}
 {% load static %}
-
 {% block title %} Documents Report (Admin Tool) {% endblock %}
-
 {% block maincontent %}
-
 <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
-
 <style>
     .ui-autocomplete { z-index:2147483647; }
 </style>
-
     {% include 'root/loader.html' %}
-
 <div class="container-fluid">
     <div class="mep-form_wrapper">
-
         <div class="d-flex justify-content-between">
             <h3>Documents Report</h3> 
             <div></div>
         </div>
         <hr>
-
         <div class="card card-shadow-1">
             <div class="card-body">
                 <form method="POST" action="{% url 'eProc_Admin_Tool:doc_search_report' %}">
                     {% csrf_token %}
-    
-                        {% if error_messages %}
-                        <div class="alert alert-danger" id="err_msg" hidden>
-                                {% for  key, value in error_messages.items %}
-                                <span class="fieldWrapper">
-                                    {{ value }}
-                                </span>
-                                {% endfor %}
-                        </div>
+                    {% if error_messages %}
+                    <div class="alert alert-danger" id="err_msg" hidden>
+                        {% for  key, value in error_messages.items %}
+                        <span class="fieldWrapper">
+                            {{ value }}
+                        </span>
+                        {% endfor %}
+                    </div>
                     {% endif %}
-    
                     <!-- {{ sform.non_field_errors }}-->
-    
                     <div class="row">   
                         <div class="col-md">
                             <label>Document Type </label>
@@ -69,8 +58,7 @@
                             {{ sform.requester }}
                         </div>
                     </div>
-                    <br>   
-    
+                    <br>
                     <div class="elements-space-between">
                         <div>
                             <button class="btn btn-link" type="reset" value="Reset"> Clear filters</button>
@@ -79,20 +67,17 @@
                                 <i class="fas fa-search"></i> search
                             </button>
                         </div>
-                        
                         <div>
                             <span class="badge help-text-badge help-text-star-search"></span>
                         </div>
                     </div>
-                    
                 </form>
             </div>
         </div>
         <br>
-
         <div class="search_result_count_card card">
             {% if t_count > 0 %}
-            <div class="card-body" ><h6 class="card-title"> Total number of results found :{{t_count}}</h6>
+<!--            <div class="card-body" ><h6 class="card-title"> Total number of results found :{{t_count}}</h6>-->
             </div>
             {% endif %}
             {% if t_count == 0 %}
@@ -100,97 +85,92 @@
             </div>
             {% endif %}
         </div>
-
         <!--    To Display Header Details only if there are any results-->
         {% if t_count > 0 %}
 <!--    {{results}}-->
         <div class="card mt-5">
-<table id="doc_list" class="table table_sort_filter_export_excel">
-    <thead class="thead-light">
-    <tr>
-        {% if inp_doc_type == 'SC' %}
-        <th scope="col">SC Number</th>
-        {% endif %}
-        {% if inp_doc_type == 'PO' %}
-        <th scope="col">PO Number</th>
-        {% endif %}
-        {% if inp_doc_type == 'SC' %}
-        <th scope="col">SC Name</th>
-        {% endif %}
-        {% if inp_doc_type == 'PO' %}
-        <th scope="col">PO Name</th>
-        {% endif %}
-        <th scope="col">Status</th>
-        <th scope="col">Total Value</th>
-        <th scope="col">Currency</th>
-        <th scope="col">Requested By</th>
-        <th scope="col">Created By</th>
-        <th scope="col">Created At</th>
-        <th scope="col">Ordered At</th>
-        <th scope="col" hidden>Changed At</th>
-        <th scope="col" hidden>Changed By</th>
-    </tr>
-    </thead>
-    <tbody>
-    <!-- Looping over the cart_items to get individual fields -->
-    {% for items, encrypted_header_guid in results %}
-        {% if items.status != 'SAVED' %}
-        {% if inp_doc_type == 'SC' %}
-        <tr>
-            <td scope="row">{{ items.doc_number|default:"N/A" }}</td>
-            <td scope="row">{{ items.description|default:"N/A" }}</td>
-            <td scope="row">
-                {% if items.status == 'AWAITING_APPROVAL' %}
-                    <span>WAITING FOR APPROVAL</span>
-                {% elif items.status == 'SAVED' %}
-                    <span>SAVED</span>
-                {% elif items.status == 'APPROVED' %}
-                    <span>APPROVED</span>
-                {% elif items.status == 'PURCHASER_WORKLIST' %}
-                    <span>IN PURCHASER's WORK LIST</span>
-                {% elif items.status == 'REJECTED' %}
-                    <span>REJECTED</span>
-                {% else %}
-                    N/A
-                {% endif %}
-            </td>
-            <td scope="row">{{ items.total_value|default:"N/A" }}</td>
-            <td scope="row">{{ items.currency|default:"N/A" }}</td>
-            <td scope="row">{{ items.requester|default:"N/A" }}</td>
-            <td scope="row">{{ items.created_by|default:"N/A" }}</td>
-            <td scope="row">{{ items.created_at|default:"N/A" }}</td>
-            <td scope="row">
-                {% if items.ordered_at %}
-                    {{ items.ordered_at|date:"F d, Y, P" }}
-                {% else %}
-                    N/A
-                {% endif %}
-            </td>
-            <td scope="row" hidden>{{ items.changed_at|default:"N/A" }}</td>
-            <td scope="row" hidden>{{ items.changed_by|default:"N/A" }}</td>
-        </tr>
-        {% endif %}
-        {% endif %}
-    {% endfor %}
-    </tbody>
-</table>
-
+            <table id="doc_list" class="table table_sort_filter_export_excel">
+                <thead class="thead-light">
+                    <tr>
+                        {% if inp_doc_type == 'SC' %}
+                        <th scope="col">SC Number</th>
+                        {% endif %}
+                        {% if inp_doc_type == 'PO' %}
+                        <th scope="col">PO Number</th>
+                        {% endif %}
+                        {% if inp_doc_type == 'SC' %}
+                        <th scope="col">SC Name</th>
+                        {% endif %}
+                        {% if inp_doc_type == 'PO' %}
+                        <th scope="col">PO Name</th>
+                        {% endif %}
+                        <th scope="col">Status</th>
+                        <th scope="col">Total Value</th>
+                        <th scope="col">Currency</th>
+                        <th scope="col">Requested By</th>
+                        <th scope="col">Created By</th>
+                        <th scope="col">Created At</th>
+                        <th scope="col">Ordered At</th>
+                        <th scope="col" hidden>Changed At</th>
+                        <th scope="col" hidden>Changed By</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <!-- Looping over the cart_items to get individual fields -->
+                    {% for items, encrypted_header_guid in results %}
+                    {% if items.status != 'SAVED' %}
+                    {% if inp_doc_type == 'SC' %}
+                    <tr>
+                        <td scope="row">{{ items.doc_number|default:"N/A" }}</td>
+                        <td scope="row">{{ items.description|default:"N/A" }}</td>
+                        <td scope="row">
+                            {% if items.status == 'AWAITING_APPROVAL' %}
+                                <span>WAITING FOR APPROVAL</span>
+                            {% elif items.status == 'SAVED' %}
+                                <span>SAVED</span>
+                            {% elif items.status == 'APPROVED' %}
+                                <span>APPROVED</span>
+                            {% elif items.status == 'PURCHASER_WORKLIST' %}
+                                <span>IN PURCHASER's WORK LIST</span>
+                            {% elif items.status == 'REJECTED' %}
+                                <span>REJECTED</span>
+                            {% else %}
+                                N/A
+                            {% endif %}
+                        </td>
+                        <td scope="row">{{ items.total_value|default:"N/A" }}</td>
+                        <td scope="row">{{ items.currency|default:"N/A" }}</td>
+                        <td scope="row">{{ items.requester|default:"N/A" }}</td>
+                        <td scope="row">{{ items.created_by|default:"N/A" }}</td>
+                        <td scope="row">{{ items.created_at|default:"N/A" }}</td>
+                        <td scope="row">
+                            {% if items.ordered_at %}
+                            {{ items.ordered_at|date:"F d, Y, P" }}
+                            {% else %}
+                            N/A
+                            {% endif %}
+                        </td>
+                        <td scope="row" hidden>{{ items.changed_at|default:"N/A" }}</td>
+                        <td scope="row" hidden>{{ items.changed_by|default:"N/A" }}</td>
+                    </tr>
+                    {% endif %}
+                    {% endif %}
+                    {% endfor %}
+                </tbody>
+            </table>
         </div>
         {% endif %}
-
     </div>
 </div>
 <!-- start of username popup -->
 <div class="modal fade" id="get_username_popup">
     <div class="modal-dialog modal-dialog-centered">
         <div class="modal-content">
-
             <!-- Modal Header -->
             <div class="modal-header">
                 <h4 class="modal-title">Select User</h4>
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
-
             <!-- Modal body -->
             <div class="modal-body">
                 <div class="row">
@@ -204,7 +184,6 @@
                     </div>
                 </div>
             </div>
-
             <!-- Modal footer -->
             <div class="modal-footer">
                 <button type="button" class="btn btn-primary" id="select_username"  data-dismiss="modal"><i class="fa fa-check" aria-hidden="true"></i> select</button>
@@ -214,23 +193,20 @@
     </div>
 </div>
 <!-- end of username popup -->
-
 <div class="hg_spacer2"> &nbsp;</div>
-
 <script>
 <!-- var len = {{results|safe}};-->
 $(document).ready( function() {
-<!--    console.log(len);-->
     // display admin role submenu
     nav_bar_admin()
     // Script to generate sort and filter feature for tables
     table_sort_filter_export_excel();
     // Loader implementation on search button
-    $('#hg_doc_report_search').click(function() {
-        $('#hg_loader').modal('show');
-    });
+<!--    $('#hg_doc_report_search').click(function() {-->
+<!--        $('#hg_loader').modal('show');-->
+<!--    });-->
 
-    $('select option:first-child').attr("selected", "selected");
+<!--    $('select option:first-child').attr("selected", "selected");-->
 
     // user search autocomplete
     $("#created_by, #id_requester").autocomplete({
@@ -307,11 +283,8 @@ $(document).ready( function() {
                 }
             });
     });
-
-
 </script>
 <script src="{% static 'scripts/doc_report.js' %}"></script>
-
 {% if inc_footer %}
 {% include 'root/footer.html' %}
 {% endif %}
