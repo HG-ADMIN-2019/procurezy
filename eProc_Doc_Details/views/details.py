@@ -880,6 +880,8 @@ def update_sc(request):
                                                           defaults={'status': CONST_SC_HEADER_APPROVED})
                         create_purchase_order = CreatePurchaseOrder(sc_header_instance)
                         status, error_message, output, po_doc_list = create_purchase_order.create_po()
+                        ScApproval.objects.update_or_create(header_guid=sc_header_guid,
+                                                            defaults={'proc_lvl_sts': CONST_COMPLETED, 'app_sts': CONST_SC_APPR_APPROVED})
                         # Send purchase order email to supplier
                         for po_document_number in po_doc_list:
                             email_supp_monitoring_guid = ''
