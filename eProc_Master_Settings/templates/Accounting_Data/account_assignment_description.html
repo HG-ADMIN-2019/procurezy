@@ -724,51 +724,38 @@ function new_row_data() {
         });
     }
 
-// on click add icon display the row in to add the new entries
-function add_popup_row() {
-        OpenLoaderPopup();
-        var data = {'table_name':'AccountingDataDesc'}
-        $.ajax({
-            type: 'POST',
-            url: "{% url 'eProc_Configuration:get_dropdown_data' %}",
-            data: JSON.stringify(data),
-            success: function(response) {
-                rendered_accasscat_values = response.upload_accassvalues
-                rendered_accasscat_data = response.upload_data_acccat
-                rendered_language_data = response.upload_data_language
-                rendered_company_data = response.upload_data_company
-                acc_value_desc_dropdown()
-                $("#error_msg_id").css("display", "none")
-                basic_add_new_html = '';
-                var display_db_data = '';
-                $('#id_popup_table').DataTable().destroy();
-                $(".modal").on("hidden.bs.modal", function () {
-                    $("#id_error_msg").html(" ");
-                });
-                if (GLOBAL_ACTION == "cusprodcatdesc_upload") {
-                    acc_value_desc_dropdown();
-                    basic_add_new_html = '<tr> <td><input class="input" type="checkbox" required></td>'+
-                    '<td><select id="comp_id" class="form-control" onchange="get_acct_assmt_cat(this)">' + company_dropdwn + ' </select></td>'+
-                    '<td><select id="acct_assmt_cat" class="form-control" onchange="get_acct_assmt_val(this)">'+assign_val.acc_ass_dropdwn+'</select></td>'+
-                    '<td><select class="form-control">'+assign_val.acc_ass_val_dropdwn+'</select></td>'+
-                    '<td><input class="form-control check_special_char" type="text"  maxlength="255" ></td>'+
-                    '<td><select  id="language_dropdw" class="form-control">' + language_dropdwn + '</select></td>'+
-                    '<td hidden><input value="GUID" hidden></td>'+
-                    '<td class="class_del_checkbox"><input class="input" type="checkbox" required></td>'+
-                    '<td hidden></td></tr>';
-                    $('#id_popup_tbody').append(basic_add_new_html);
-                    $(".class_del_checkbox").prop("hidden", false);
-                    $("#id_del_ind_checkbox").prop("hidden", false);
-                    table_sort_filter('id_popup_table');
-                }
-                else {
-                      new_row_data();   // Add a new row in popup
-                      table_sort_filter('id_popup_table');
-                }
-                 CloseLoaderPopup();
-            }
+    // on click add icon display the row in to add the new entries
+    function add_popup_row() {
+        acc_value_desc_dropdown()
+        $("#error_msg_id").css("display", "none")
+        basic_add_new_html = '';
+        var display_db_data = '';
+        $('#id_popup_table').DataTable().destroy();
+        $(".modal").on("hidden.bs.modal", function () {
+            $("#id_error_msg").html(" ");
         });
+        if (GLOBAL_ACTION == "cusprodcatdesc_upload") {
+            acc_value_desc_dropdown();
+            basic_add_new_html = '<tr> <td><input class="input" type="checkbox" required></td>'+
+            '<td><select id="comp_id" class="form-control" onchange="get_acct_assmt_cat(this)">' + company_dropdwn + ' </select></td>'+
+            '<td><select id="acct_assmt_cat" class="form-control" onchange="get_acct_assmt_val(this)">'+assign_val.acc_ass_dropdwn+'</select></td>'+
+            '<td><select class="form-control">'+assign_val.acc_ass_val_dropdwn+'</select></td>'+
+            '<td><input class="form-control check_special_char" type="text"  maxlength="255" ></td>'+
+            '<td><select  id="language_dropdw" class="form-control">' + language_dropdwn + '</select></td>'+
+            '<td hidden><input value="GUID" hidden></td>'+
+            '<td class="class_del_checkbox"><input class="input" type="checkbox" required></td>'+
+            '<td hidden></td></tr>';
+            $('#id_popup_tbody').append(basic_add_new_html);
+            $(".class_del_checkbox").prop("hidden", false);
+            $("#id_del_ind_checkbox").prop("hidden", false);
+            table_sort_filter('id_popup_table');
+        }
+        else {
+            new_row_data();   // Add a new row in popup
+            table_sort_filter('id_popup_table');
+        }
    }
+
     //*******************************************
     function onclick_copy_update_button() {
         OpenLoaderPopup();

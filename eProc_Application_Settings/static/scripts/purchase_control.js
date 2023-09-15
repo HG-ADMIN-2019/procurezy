@@ -24,7 +24,7 @@ function display_basic_db_data() {
         } else {
             data = 'Deactivate'
         }
-        edit_basic_data += '<tr><td class="class_select_checkbox"><input class="checkbox_check" onclick="valueChanged()" type="checkbox" required></td><td>' + item.company_code_id + '</td><td>' + item.call_off + '</td><td>' + item.prod_cat_id + '</td><td>' + data + '</td><td hidden>' + item.purchase_control_guid + '</td><td hidden>' + item.del_ind_flag + '</td></tr>';
+        edit_basic_data += '<tr><td class="class_select_checkbox"><input class="checkbox_check" onclick="valueChanged()" type="checkbox" required></td><td>' + item.company_code_id + '</td><td>' + item.call_off + '</td><td>' + item.prod_cat_id + '</td><td>' + desc + '</td><td hidden>' + item.purchase_control_guid + '</td><td hidden>' + item.del_ind_flag + '</td></tr>';
     });
     $('#id_pc_tbody').append(edit_basic_data);
     $("#hg_select_checkbox").prop("hidden", true);
@@ -103,7 +103,7 @@ function read_popup_data() {
         purchase_contrl = {};
         purchase_contrl.del_ind = row.find("TD").eq(5).find('input[type="checkbox"]').is(':checked');
         purchase_contrl.company_code_id = row.find("TD").eq(1).find('select[type="text"]').val();
-        purchase_contrl.call_off = row.find("TD").eq(2).find('select[type="text"]').val();
+        purchase_contrl.call_off = parseInt(row.find("TD").eq(2).find('select[type="text"]').val());
         purchase_contrl.prod_cat_id = row.find("TD").eq(3).find('select option:selected').val();
         purchase_contrl.purchase_ctrl_flag = row.find("TD").eq(4).find('select[type="text"]').val();
         purchase_contrl.purchase_control_guid = row.find("TD").eq(5).find('input[type="text"]').val();

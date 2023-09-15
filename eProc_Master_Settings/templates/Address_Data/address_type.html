@@ -235,46 +235,33 @@
 
     // on click add icon display the row in to add the new entries
     function add_popup_row() {
-        OpenLoaderPopup();
-        var data = {'table_name':'OrgAddressMap'}
-        $.ajax({
-            type: 'POST',
-            url: "{% url 'eProc_Configuration:get_dropdown_data' %}",
-            data: JSON.stringify(data),
-            success: function(response) {
-                rendered_address_data = response.address_data
-                rendered_company_data = response.upload_data_OrgCompanies
-                rendered_address_type_values = response.dropdown_db_values
-                addtype_drp();
-                $("#error_msg_id").css("display", "none")
-                basic_add_new_html = '';
-                var display_db_data = '';
-                $('#id_popup_table').DataTable().destroy();
-                $(".modal").on("hidden.bs.modal", function () {
-                    $("#id_error_msg").html("");
-                });
-                if (GLOBAL_ACTION == "addresstype_upload") {
-                    basic_add_new_html = '<tr><td><input type="checkbox" required></td>' +
-                            '<td><select class="form-control">'+company_dropdwn+'</select></td>' +
-                            '<td><select class="form-control">'+address_type_dropdown+'</select></td>' +
-                            '<td><select class="form-control">'+address_number_dropdwn+'</select></td>' +
-                            '<td><input  type="text" name = "valid_from" class="form-control formatDate"></td>' +
-                            '<td><input type="text" name = "valid_to"  class="form-control formatDate"></td>' +
-                            '<td class="class_del_checkbox"><input type="checkbox" required></td>' +
-                            '<td hidden><input  type="text" class="form-control"  name="guid"></td></tr>';
-                            $('#id_popup_tbody').append(basic_add_new_html);
-                            DatePicker();
-                            $('#id_popup_tbody').append(basic_add_new_html);
-                            $(".class_del_checkbox").prop("hidden", false);
-                            $("#id_del_ind_checkbox").prop("hidden", false);
-                            table_sort_filter('id_popup_table');
-                }
-                else {
-                      new_row_data();   // Add a new row in popup
-                }
-                CloseLoaderPopup();
-            }
+        addtype_drp();
+        $("#error_msg_id").css("display", "none")
+        basic_add_new_html = '';
+        var display_db_data = '';
+        $('#id_popup_table').DataTable().destroy();
+        $(".modal").on("hidden.bs.modal", function () {
+            $("#id_error_msg").html("");
         });
+        if (GLOBAL_ACTION == "addresstype_upload") {
+            basic_add_new_html = '<tr><td><input type="checkbox" required></td>' +
+                    '<td><select class="form-control">'+company_dropdwn+'</select></td>' +
+                    '<td><select class="form-control">'+address_type_dropdown+'</select></td>' +
+                    '<td><select class="form-control">'+address_number_dropdwn+'</select></td>' +
+                    '<td><input  type="text" name = "valid_from" class="form-control formatDate"></td>' +
+                    '<td><input type="text" name = "valid_to"  class="form-control formatDate"></td>' +
+                    '<td class="class_del_checkbox"><input type="checkbox" required></td>' +
+                    '<td hidden><input  type="text" class="form-control"  name="guid"></td></tr>';
+                    $('#id_popup_tbody').append(basic_add_new_html);
+                    DatePicker();
+                    $('#id_popup_tbody').append(basic_add_new_html);
+                    $(".class_del_checkbox").prop("hidden", false);
+                    $("#id_del_ind_checkbox").prop("hidden", false);
+                    table_sort_filter('id_popup_table');
+        }
+        else {
+            new_row_data();   // Add a new row in popup
+        }
     }
 
     //*****************************************

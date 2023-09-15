@@ -172,55 +172,56 @@
     var edit_basic_data = '';
     var GLOBAL_ACTION = '';
     var no_duplicate_entries = 'Y'
-    var Tablename = uiConstants["CONST_TABLENAME_PURCHASE_CONTROL"]
     var appname = uiConstants["CONST_APPNAME01"]
+    var Tablename = uiConstants["CONST_TABLENAME_PURCHASE_CONTROL"]
     var db_header_data = uiConstants["CONST_HEADER_DATA_PUR_CONTROL"]
+    var rendered_call_off = uiConstants["CONST_PUR_CONTROL_CALLOFF_DATA"]
     var pc_company_dropdown,callOff_dropdown,prod_cat_dropdown,activate_dropdown;
 
     var call_off_dropdown = `
-        <option value='Catalog'>Catalog</option>
-        <option value='Free text'>Free text</option>
-        <option value='PR'>PR</option>
-        <option value='Limit'>Limit</option>
+        <option value='01'>Catalog</option>
+        <option value='02'>Free text</option>
+        <option value='03'>PR</option>
+        <option value='04'>Limit</option>
     `;
 
     var rendered_call_off_data = {
         data: [
-            { value: 'Catalog', label: 'Catalog' },
-            { value: 'Free text', label: 'Free text' },
-            { value: 'PR', label: 'PR' },
-            { value: 'Limit', label: 'Limit' }
+            { value:'01', label: 'Catalog' },
+            { value:'02', label: 'Free text' },
+            { value:'03', label: 'PR' },
+            { value:'04', label: 'Limit' }
         ]
     };
 
-<!--    // Hide dropdown when click on add button-->
-<!--    function company_drpdown() {-->
-<!--        pc_company_dropdown = '';-->
-<!--        var hidden_pc_company_type = []; // Array to store node types with all their node values used in the main table-->
+    // Hide dropdown when click on add button
+    function company_drpdown() {
+        pc_company_dropdown = '';
+        var hidden_pc_company_type = []; // Array to store node types with all their node values used in the main table
 
-<!--        // Function to check if all call off of a specific company are used in the main table-->
-<!--        function areAll_calloff_Used(company_code_id) {-->
-<!--            var call_off_code = main_table_data[company_code_id];-->
-<!--            if (!call_off_code) {-->
-<!--                return false;-->
-<!--            }-->
-<!--            return call_off_code.length === rendered_call_off_data.data.length; // Access the array using rendered_call_off_data.data-->
-<!--        }-->
+        // Function to check if all call off of a specific company are used in the main table
+        function areAll_calloff_Used(company_code_id) {
+            var call_off_code = main_table_data[company_code_id];
+            if (!call_off_code) {
+                return false;
+            }
+            return call_off_code.length === rendered_call_off_data.data.length; // Access the array using rendered_call_off_data.data
+        }
 
-<!--        // Iterate through the rendered_pc_company_data to build the company_code_id dropdown-->
-<!--        $.each(rendered_pc_company_data, function (i, item) {-->
-<!--            var company_code = item.company_id;-->
-<!--            if (!areAll_calloff_Used(company_code)) {-->
-<!--                pc_company_dropdown += '<option value="' + company_code + '">' + company_code + '</option>';-->
-<!--            } else {-->
-<!--                hidden_pc_company_type.push(company_code);-->
-<!--            }-->
-<!--        });-->
-<!--        $.each(hidden_pc_company_type, function (i, hidden_pc_company_type) {-->
-<!--            pc_company_dropdown = pc_company_dropdown.replace(new RegExp('<option value="' + hidden_pc_company_type + '">.*<\/option>'), '');-->
-<!--        });-->
+        // Iterate through the rendered_pc_company_data to build the company_code_id dropdown
+        $.each(rendered_pc_company_data, function (i, item) {
+            var company_code = item.company_id;
+            if (!areAll_calloff_Used(company_code)) {
+                pc_company_dropdown += '<option value="' + company_code + '">' + company_code + '</option>';
+            } else {
+                hidden_pc_company_type.push(company_code);
+            }
+        });
+        $.each(hidden_pc_company_type, function (i, hidden_pc_company_type) {
+            pc_company_dropdown = pc_company_dropdown.replace(new RegExp('<option value="' + hidden_pc_company_type + '">.*<\/option>'), '');
+        });
 
-<!--        // Extract the first node type value from pc_company_dropdown using regular JavaScript-->
+        // Extract the first node type value from pc_company_dropdown using regular JavaScript
 <!--        var first_companyMatch = pc_company_dropdown.match(/value="([^"]+)"/);-->
 <!--        if (first_companyMatch && first_companyMatch[1]) {-->
 <!--            first_company = first_companyMatch[1];-->
@@ -246,16 +247,21 @@
 <!--            });-->
 <!--        }-->
 
-<!--        prod_cat_dropdown = '';-->
-<!--        $.each(rendered_prod_category, function (i, item) {-->
-<!--            prod_cat_dropdown += '<option value="' + item.prod_cat_id + '">' + item.prod_cat_id + '</option>'-->
-<!--        });-->
+        call_off_dropdown = '';
+        $.each(rendered_call_off, function (i, item) {
+            call_off_dropdown += '<option value="' + item.value + '">' + item.desc + '</option>'
+        });
 
-<!--        activate_dropdown = '';-->
-<!--         $.each(rendered_activate, function(i, item){-->
-<!--            activate_dropdown += '<option value="' + item.field_type_id + '">' + item.field_type_id + '</option>';-->
-<!--         });-->
-<!--    }-->
+        prod_cat_dropdown = '';
+        $.each(rendered_prod_category, function (i, item) {
+            prod_cat_dropdown += '<option value="' + item.prod_cat_id + '">' + item.prod_cat_id + '</option>'
+        });
+
+        activate_dropdown = '';
+         $.each(rendered_activate, function(i, item){
+            activate_dropdown += '<option value="' + item.field_type_id + '">' + item.field_type_id + '</option>';
+         });
+    }
 
     function company_dropdown() {
         var hiddenCompanyIDs = [];
@@ -443,8 +449,8 @@
                 rendered_prod_category = response.prod_catogories
                 rendered_activate = response.dropdown_activate
                 get_company_data();
-<!--                company_drpdown();-->
-                company_dropdown();
+                company_drpdown();
+<!--                company_dropdown();-->
                 $("#error_msg_id").css("display", "none")
                 $("#header_select").prop("hidden", false);
                 GLOBAL_ACTION = button.value

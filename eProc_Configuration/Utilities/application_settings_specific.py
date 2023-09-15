@@ -883,7 +883,7 @@ class ApplicationSettingsSave:
                                                                     'company_code_id':
                                                                         pur_crtl_detail['company_code_id'],
                                                                     'call_off':
-                                                                        pur_crtl_detail['call_off'],
+                                                                        int(pur_crtl_detail['call_off']),
                                                                     'prod_cat_id':
                                                                         pur_crtl_detail['prod_cat_id'],
                                                                     'client': self.client
@@ -892,7 +892,7 @@ class ApplicationSettingsSave:
                 guid = guid_generator()
                 pur_crtl_db_dictionary = {'purchase_control_guid': guid,
                                           'company_code_id': pur_crtl_detail['company_code_id'],
-                                          'call_off': pur_crtl_detail['call_off'],
+                                          'call_off': int(pur_crtl_detail['call_off']),
                                           'prod_cat_id': pur_crtl_detail['prod_cat_id'],
                                           'purchase_ctrl_flag': pur_crtl_detail['purchase_ctrl_flag'],
                                           'del_ind': False,
@@ -909,7 +909,7 @@ class ApplicationSettingsSave:
                                                               'company_code_id':
                                                                   pur_crtl_detail['company_code_id'],
                                                               'call_off':
-                                                                  pur_crtl_detail['call_off'],
+                                                                  int(pur_crtl_detail['call_off']),
                                                               'prod_cat_id':
                                                                   pur_crtl_detail['prod_cat_id'],
                                                               'client': self.client
@@ -919,7 +919,7 @@ class ApplicationSettingsSave:
                                                               'company_code_id':
                                                                   pur_crtl_detail['company_code_id'],
                                                               'call_off':
-                                                                  pur_crtl_detail['call_off'],
+                                                                  int(pur_crtl_detail['call_off']),
                                                               'prod_cat_id':
                                                                   pur_crtl_detail['prod_cat_id'],
                                                               'purchase_ctrl_flag':
