@@ -1015,14 +1015,13 @@
         });
    }
 
+    function new_row_data() {
+        basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select class="input form-control">' + company_dropdwn + '</select></td><td><input class="input form-control check_special_char" type="text" maxlength="16" style="text-transform:uppercase"></td><td><select class="form-control" type="text">' + spendcodeid_dropdwn + '</select></td><td hidden><input type="text" class="form-control" name="guid"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+        $('#id_popup_tbody').append(basic_add_new_html);
+        table_sort_filter('id_popup_table');
+    }
 
-function new_row_data() {
-    basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select class="input form-control" name="company_dropdown" type="text">' + company_dropdwn + '</select></td><td><input class="input form-control check_special_char" type="text" maxlength="16" style="text-transform:uppercase"></td><td><select class="form-control" type="text">' + spendcodeid_dropdwn + '</select></td><td hidden><input type="text" class="form-control" name="guid"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
-    $('#id_popup_tbody').append(basic_add_new_html);
-    table_sort_filter('id_popup_table');
-}
-
- // onclick of valid popup
+    // onclick of valid popup
     function valid_popup(){
       $('#id_data_upload').modal('hide');
       $("#valid_upload").modal('show');

@@ -95,6 +95,11 @@ const uiConstants = {
     CONST_HEADER_DATA_INCOTERMS: ["INCOTERM_KEY", "DESCRIPTION", "del_ind"],
     CONST_HEADER_DATA_PAYMENT_TERMS_DESC: ['PAYMENT_TERM_KEY','DESCRIPTION','DAY_LIMIT','del_ind', 'LANGUAGE_ID'],
     CONST_HEADER_DATA_PUR_CONTROL: ["company_code_id", "purchase_ctrl_flag", "call_off", "del_ind"],
+
+
+    // VALUES
+    CONST_PUR_CONTROL_CALLOFF_DATA: [{ value:'01', desc: '01-Catalog' },{ value:'02', desc: '02-Free text' },
+                                            { value:'03', desc: '03-PR' },   { value:'04', desc: '04-Limit'}]
 }
 
 
