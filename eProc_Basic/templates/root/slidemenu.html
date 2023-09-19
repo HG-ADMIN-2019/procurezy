@@ -32,7 +32,7 @@
 
         {% if slide_menu.SHOP_ASSIST %}
         <li class="sidenav__listitem {% if is_purchase_active %}  sidenav__listitem-active {% endif %}" title="Purchase" id="sidenav__listitem-purchase">
-            <a {% if shop_purchaser_flag %} href="{% url 'eProc_Doc_Search_and_Display:sc_completion_doc_search' %}" {% else %} href="{% url 'eProc_Doc_Search_and_Display:sc_completion_doc_search' %}" {% endif %}>
+            <a href="{% url 'eProc_Doc_Search_and_Display:sc_completion_doc_search' %}">
                 <div>
                     <div class="sidenav__icon-container"><i class="fas fa-people-carry"></i></div>
                 </div>
@@ -62,7 +62,7 @@
         </li>
         {% endif %}
         {% if slide_menu.SOM %}
-        <li class="sidenav__listitem {% if is_content_mgmnt_active %} sidenav__listitem-active {% endif %}" title="Content Management" id="sidenav__listitem-contentmgmt">
+        <li class="sidenav__listitem {% if is_content_mgmnt_active %} sidenav__listitem-active {% endif %}" title="Content Management" id="sidenav__listitem-som">
             <a href="{% url 'eProc_Supplier_Order_Management:po_extract' %}">
                 <div>
                     <div class="sidenav__icon-container"><i class="fas fa-list fa-lg" ></i></div>
@@ -72,7 +72,7 @@
         </li>
         {% endif %}
         {% if slide_menu.PURCHASING %}
-        <li class="sidenav__listitem {% if is_content_mgmnt_active %} sidenav__listitem-active {% endif %}" title="Sourcing" id="sidenav__listitem-contentmgmt">
+        <li class="sidenav__listitem {% if is_content_mgmnt_active %} sidenav__listitem-active {% endif %}" title="Sourcing" id="sidenav__listitem-sourcing">
             <a href="{% url 'eProc_Purchaser_Cockpit:sc_item_field_filter' %}">
                 <div>
                     <div class="sidenav__icon-container"><i class="fas fa-list fa-lg" ></i></div>
