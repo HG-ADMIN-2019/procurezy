@@ -284,39 +284,26 @@
     }
 
     // on click add icon display the row in to add the new entries
-function add_popup_row() {
-        OpenLoaderPopup();
-        var data = {'table_name':'ApproverLimitValue'}
-        $.ajax({
-            type: 'POST',
-            url: "{% url 'eProc_Configuration:get_dropdown_data' %}",
-            data: JSON.stringify(data),
-            success: function(response) {
-                rendered_approval_type_data = response.upload_data_apptypes
-                rendered_currency_data = response.upload_data_currency
-                rendered_company_data = response.upload_data_company
-                applimval_drpdown()
-                $("#error_msg_id").css("display", "none")
-                basic_add_new_html = '';
-                var display_db_data = '';
-                $('#id_popup_table').DataTable().destroy();
-                $(".modal").on("hidden.bs.modal", function() {
-                    $("#id_error_msg").html("");
-                });
-                if (GLOBAL_ACTION == "alv_upload") {
-                    basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select class="form-control">'+company_id_dropdown+'</select></td><td><select class="form-control">'+ approval_type_dropdown +'</select></td><td><input class="form-control check_special_char" type="text" maxlength="8"  name="approver_code" style="text-transform:uppercase;" required></td><td><input class="form-control" type="number" name="upper_limit_value" required></td><td><select class="form-control">'+currency_id_dropdown+'</select></td><td hidden><input type="text" value=""></td><td class="class_del_checkbox" ><input type="checkbox" required></td></tr>';
-                    $('#id_popup_tbody').append(basic_add_new_html);
-                    $(".class_del_checkbox").prop("hidden", false);
-                    $("#id_del_ind_checkbox").prop("hidden", false);
-                    table_sort_filter('id_popup_table');
-                }
-                else {
-                      new_row_data();   // Add a new row in popup
-                }
-                CloseLoaderPopup();
-            }
+    function add_popup_row() {
+        applimval_drpdown()
+        $("#error_msg_id").css("display", "none")
+        basic_add_new_html = '';
+        var display_db_data = '';
+        $('#id_popup_table').DataTable().destroy();
+        $(".modal").on("hidden.bs.modal", function() {
+            $("#id_error_msg").html("");
         });
-}
+        if (GLOBAL_ACTION == "alv_upload") {
+            basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select class="form-control">'+company_id_dropdown+'</select></td><td><select class="form-control">'+ approval_type_dropdown +'</select></td><td><input class="form-control check_special_char" type="text" maxlength="8"  name="approver_code" style="text-transform:uppercase;" required></td><td><input class="form-control" type="number" name="upper_limit_value" required></td><td><select class="form-control">'+currency_id_dropdown+'</select></td><td hidden><input type="text" value=""></td><td class="class_del_checkbox" ><input type="checkbox" required></td></tr>';
+            $('#id_popup_tbody').append(basic_add_new_html);
+            $(".class_del_checkbox").prop("hidden", false);
+            $("#id_del_ind_checkbox").prop("hidden", false);
+            table_sort_filter('id_popup_table');
+        }
+        else {
+              new_row_data();   // Add a new row in popup
+        }
+    }
 
     
     //onclick of data Upload copy data to modal pop-up

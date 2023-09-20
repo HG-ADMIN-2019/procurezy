@@ -4,6 +4,7 @@
 {% block title %} Employee Management (Admin Tool){% endblock %}
 {% block maincontent %}
 
+
 <div class="container-fluid">
     <div class="mep-form_wrapper">
         <div class="d-flex justify-content-between">
@@ -256,7 +257,7 @@
                         <button class="btn btn-primary" type="button" onclick="add_popup_row()">
                             <i class="fa fa-plus"></i> Add New Row
                         </button>
-                        <button class="btn btn-outline-danger" onclick="application_settings_delete_Row('id_popup_table')">
+                        <button class="btn btn-outline-danger" onclick="application_settings_delete_Row('id_userpopup_table')">
                             <i class="fa fa-trash"></i> delete
                         </button>
                     </div>
@@ -273,9 +274,10 @@
                     <div id="error_msg_id" class="alert alert-danger display-none" role="alert"><span id="error_message"></span></div>
                     <div id="id_warning_msg_id" class="alert alert-warning display-none" role="alert"></div>
                     <div id="id_info_msg_id" class="alert alert-primary display-none" role="alert"></div>
-                    <div style="overflow:auto;">
-                    <table class="class_popup_table table table-bordered mt-2" id="id_popup_table" >
+
+                    <table class="class_popup_table table table-bordered mt-2" id="id_userpopup_table" >
                         <thead>
+
                         <tr>
                             <th id="header_select">Select</th>
                             <th>User Name</th>
@@ -299,11 +301,11 @@
 
                          </thead>
 
-                        <tbody id="id_popup_tbody">
+                        <tbody id="id_userpopup_tbody">
 
                         </tbody>
                     </table>
-                </div>
+
                 </div>
                 <!-- Modal footer -->
                 <div class="modal-footer">
@@ -454,6 +456,9 @@ var rendered_dropdown_language = JSON.parse(document.getElementById('dropdown_la
 var messages_list = {{dropdown_messages|safe}};
 var employee_data = new Array();
 
+$(document).ready(function() {
+    $('#id_userpopup_table').DataTable(); // Replace 'id_userpopup_table' with your table's ID or selector
+});
 
      var currency_opt = ''
      var language_opt = ''
@@ -646,7 +651,7 @@ function onclick_display_csv_data() {
         $("#id_check_error_messages").prop("hidden", true);
         $("#id_check_special_character_messages").prop("hidden", true);
         $("#error_msg_id").css("display", "none")
-        $('#id_popup_table').DataTable().destroy();
+        $('#id_userpopup_table').DataTable().destroy();
         formdata = new FormData();
         attached_file = $('#id_file_data_upload').prop('files')[0]
         if(attached_file == undefined){
@@ -662,7 +667,7 @@ function onclick_display_csv_data() {
             db_header_data = db_header_data
             formdata.append("db_header_data",db_header_data);
             $('#id_data_upload').modal('hide');
-            $('#id_popup_tbody').empty();
+            $('#id_userpopup_tbody').empty();
             OpenLoaderPopup();
             $.ajax({
                 type: 'POST',
@@ -682,7 +687,7 @@ function onclick_display_csv_data() {
                         var del_ind = '';
                         var dropdown_values = [];
                         console.log(response.valid_data_list);
-                        $("#id_popup_tbody").empty();
+                        $("#id_userpopup_tbody").empty();
                             $.each(response.valid_data_list, function (i, value) {
                                 var currency_id_value = value.currency_id
                                 var language_id_value = value.language_id
@@ -774,7 +779,7 @@ function onclick_display_csv_data() {
                                     dropdown_list_id_list = dropdown_opt + dropdown_list_list
                             })
 
-                        edit_basic_data += '<tr><td class="class_select_checkbox"><input type="checkbox" required></td>' +
+                        edit_basic_data += '<tr><tr><td class="class_select_checkbox"><input type="checkbox" required></td>' +
                         '<td><input class="form-control" type="text" value="' + value.username + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td>' +
                         '<td><input class="form-control" type="text" value="' + value.employee_id + '" maxlength="100" required></td>' +
                         '<td><select class="form-control" type="text"><option value="' + value.user_type + '"' + dropdown_list_id_list + '>' + value.user_type + '</option></select></td>' +
@@ -787,11 +792,11 @@ function onclick_display_csv_data() {
                         '<td><input class="form-control" type="tel" value="' + value.phone_num + '" maxlength="100" required></td>' +
                         '<td><select class="form-control"><option value="' + value.date_format + '"' + date_format_id_list + '>' + value.date_format + '</option></select></td>' +
                         '<td><select class="form-control"><option value="' + value.decimal_notation + '"' + decimal_opt_id_list + '>' + value.decimal_notation + '</option></select></td>' +
-                        '<td>' + del_ind + '</td></tr>';
+                        '<td>' + del_ind + '</td></tr></tr>';
                         });
-                        $('#id_popup_tbody').append(edit_basic_data);
+                        $('#id_userpopup_tbody').append(edit_basic_data);
 <!--                         var i =0;-->
-<!--                            $("#id_popup_table TBODY TR").each(function() {-->
+<!--                            $("#id_userpopup_table TBODY TR").each(function() {-->
 <!--                                var row = $(this);-->
 <!--                                var date_format_id_list = dropdown_values[i][0]-->
 <!--                                var decimal_opt_id_list = dropdown_values[i][1]-->
@@ -818,7 +823,6 @@ function onclick_display_csv_data() {
                         $('#id_check_data').modal('show');
                         $("#id_check_data").prop("hidden", false);
                         $("#save_user_basic_info").prop("hidden", true);
-                        table_sort_filter('id_popup_table');
                     }
                      CloseLoaderPopup();
                 },
@@ -843,7 +847,7 @@ function display_error_message(error_message){
  //onclick of cancel empty the popup table body and error messages
     $(".remove_upload_data").click(() => {
         $("#id_error_msg").html("");
-        $("#id_popup_tbody").empty();
+        $("#id_userpopup_tbody").empty();
         $("#id_error_msg").empty();
         $('#myModal').modal('hide');
         $("#id_error_msg").prop("hidden", true);
@@ -857,18 +861,18 @@ function display_error_message(error_message){
         $("#id_check_success_messages").prop("hidden", true);
         $("#id_check_special_character_messages").prop("hidden", true)
         $("#id_check_data").prop("hidden", true);
-        $('#id_popup_table').DataTable().destroy();
+        $('#id_userpopup_table').DataTable().destroy();
     });
 
 //check function restricting special char and diaplay the data count of csv file
 function check_data() {
     $("#id_delete_duplicate").hide()
-    $('#id_popup_table').DataTable().destroy();
     $("#id_check_success_messages").empty()
     $("#id_check_error_messages").empty()
     $("#id_check_success_messages").prop("hidden", true)
     $("#id_check_error_messages").prop("hidden", true)
     $("#id_check_special_character_messages").prop("hidden", true)
+    $('#id_userpopup_table').DataTable().destroy();
     document.getElementById("id_error_msg_email").innerHTML = "";
     document.getElementById("id_error_msg_username").innerHTML = "";
     document.getElementById("id_error_msg_first_name").innerHTML = "";
@@ -881,24 +885,26 @@ function check_data() {
     var user_list = new Array
     var user_code_check = new Array
     del_ind = ''
-    $("#id_popup_table TBODY TR").each(function() {
-        $('#id_popup_table').DataTable().destroy();
+    $("#id_userpopup_table TBODY TR").each(function() {
+        $('#id_userpopup_table').DataTable().destroy();
         $("#id_check_data").prop("hidden", false);
         var row = $(this);
          user_dic = {}
         //*************** reading data from the pop-up ***************
-        user_dic.email = row.find("TD").eq(1).find('input[type="email"]').val();
-        user_dic.username = row.find("TD").eq(2).find('input[type="text"]').val();
-        user_dic.first_name = row.find("TD").eq(3).find('input[type="text"]').val();
-        user_dic.last_name = row.find("TD").eq(4).find('input[type="text"]').val();
-        user_dic.phone_num = row.find("TD").eq(5).find('input[type="tel"]').val();
-        user_dic.date_format = row.find("TD").eq(6).find('select').val();
-        user_dic.employee_id = row.find("TD").eq(7).find('input[type="text"]').val();
-        user_dic.decimal_notation = row.find("TD").eq(8).find('select').val();
-        user_dic.user_type = row.find("TD").eq(9).find('select').val();
-        user_dic.currency_id = row.find("TD").eq(10).find('select').val();
-        user_dic.language_id = row.find("TD").eq(11).find('select').val();
-        user_dic.time_zone = row.find("TD").eq(12).find('select').val();
+
+        user_dic.username = row.find("TD").eq(1).find('input[type="text"]').val();
+        user_dic.employee_id = row.find("TD").eq(2).find('input[type="text"]').val();
+        user_dic.user_type = row.find("TD").eq(3).find('select').val();
+        user_dic.first_name = row.find("TD").eq(4).find('input[type="text"]').val();
+        user_dic.last_name = row.find("TD").eq(5).find('input[type="text"]').val();
+        user_dic.currency_id = row.find("TD").eq(6).find('select').val();
+        user_dic.language_id = row.find("TD").eq(7).find('select').val();
+        user_dic.time_zone = row.find("TD").eq(8).find('select').val();
+        user_dic.phone_num = row.find("TD").eq(9).find('input[type="tel"]').val();
+        user_dic.email = row.find("TD").eq(10).find('input[type="email"]').val();
+        user_dic.date_format = row.find("TD").eq(11).find('select').val();
+        user_dic.decimal_notation = row.find("TD").eq(12).find('select').val();
+
         checked_box = row.find("TD").eq(13).find('input[type="checkbox"]').is(':checked')
             if (checked_box){
                 user_dic.del_ind = '1'
@@ -1011,15 +1017,14 @@ function check_data() {
                 $(row).css("border", "");
                 $("#id_delete_duplicate").hide()
             }
-            table_sort_filter_popup_pagination('id_popup_table');
-
+            table_sort_filter_popup_pagination('id_userpopup_table');
         });
 
 
           //*************** shows save button if there are no errors(special characters and max length) ***************
         if(count == 0){
-            $('#id_popup_table').DataTable().destroy();
-            $("#id_popup_table").find("input,button,textarea,select").attr("disabled", "disabled");
+            $('#id_userpopup_table').DataTable().destroy();
+            $("#id_userpopup_table").find("input,button,textarea,select").attr("disabled", "disabled");
             document.getElementById("id_del_add_button").style.display = "none";
             $("#save_user_basic_info").prop("hidden", false);
             $("#id_check_data").prop("hidden", true);
@@ -1033,7 +1038,7 @@ function check_data() {
                 url: "{% url 'eProc_Configuration_Check:check_Employee' %}",
                 data: JSON.stringify(popup_data_dict),
                 success: function(response) {
-                    table_sort_filter_popup_pagination('id_popup_table')
+                     table_sort_filter_popup_pagination('id_userpopup_table')
                      $("#id_check_special_character_messages").prop("hidden", false);
                      if (count == 0) {
                         $("#id_check_special_character_messages").prop("hidden", true);
@@ -1178,37 +1183,38 @@ $('#user_tab tbody').on('click', 'input[class="emp_checkbox"]', function(e){
 function add_popup_row() {
     $("#error_msg_id").css("display", "none")
     basic_add_new_html = '';
-    $('#id_popup_table').DataTable().destroy();
+    $('#id_userpopup_table').DataTable().destroy();
     $(".modal").on("hidden.bs.modal", function () {
         $("#id_error_msg").html(" ");
     });
-   dropdown_values()
-         basic_add_new_html = '<tr><td class="class_select_checkbox"><input type="checkbox" required></td>'+
-                            '<td><input class="form-control" type="email" maxlength="40" onkeypress="return /[a-z]/i.test(event.key)" required></td>'+
-                            '<td><input class="form-control" type="text" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td>'+
-                            '<td><input class="form-control" type="text" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td>'+
-                            '<td><input class="form-control" type="text"  maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td>'+
-                            '<td><input class="form-control" type="tel"  maxlength="100" required></td>'+
-                            '<td><select class="form-control">'+date_format_opt+'</select></td>'+
-                            '<td><input class="form-control" type="text"  maxlength="100" required></td>'+
-                            '<td><select class="form-control" >'+decimal_opt+'</select></td>'+
-                            '<td><select class="form-control" >'+user_opt+'</select></td>'+
-                            '<td><select class="form-control" >'+currency_opt+'</select></td>'+
-                            '<td><select class="form-control" >'+language_opt+'</select></td>'+
-                            '<td><select class="form-control" >'+timezone_opt+'</select></td>'+
-                            '<td><input type="checkbox" required></td></tr>'
-         $('#id_popup_tbody').append(basic_add_new_html);
-         table_sort_filter('id_popup_table');
+    dropdown_values()
+    basic_add_new_html = '<tr><tr><td class="class_select_checkbox"><input type="checkbox" required></td>' +
+                        '<td><input class="form-control" type="text"  maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td>' +
+                        '<td><input class="form-control" type="text" maxlength="100" required></td>' +
+                        '<td><select class="form-control" type="text">'+user_opt+'</select></td>' +
+                        '<td><input class="form-control" type="text" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td>' +
+                        '<td><input class="form-control" type="text" maxlength="100" onkeypress="return /[a-						z ]/i.test(event.key)" required></td>' +
+                        '<td><select class="form-control" type="text">'+currency_opt+'</select></td></tr>' +
+                        '<tr><td><select class="form-control" type="text">'+language_opt+'</select></td>' +
+                        '<td><select class="form-control" type="text">'+timezone_opt+'</select></td>' +
+                        '<td><input class="form-control" type="email" maxlength="40" onkeypress="return /[a-z]/i.test(event.key)" required></td>' +
+                        '<td><input class="form-control" type="tel"  maxlength="100" required></td>' +
+                        '<td><select class="form-control">'+date_format_opt+'</select></td>' +
+                        '<td><select class="form-control">'+decimal_opt+'</select></td>' +
+                        '<td><input type="checkbox" required></td></tr></tr>';
+         $('#id_userpopup_tbody').append(basic_add_new_html);
          $(".class_del_checkbox").prop("hidden", false);
          $("#id_del_ind_checkbox").prop("hidden", false);
-
-}
+         table_sort_filter('id_userpopup_table');
+    }
 
 function ajax_update_user_basic_data(data) {
         urlLink = "{% url 'eProc_Master_Settings:create_update_master_data' %}";
         var response = AjaxCallAPIBasic(urlLink, data)
         return response
 }
+
+
 // Funtion to save basic detail data
     function save_user_basic_info() {
             var name1_val= $('#first_name1').val();
@@ -1219,8 +1225,8 @@ function ajax_update_user_basic_data(data) {
             OpenLoaderPopup();
             var user_list_data = new Array
             del_ind = ''
-            $("#id_popup_table TBODY TR").each(function() {
-                $('#id_popup_table').DataTable().destroy();
+            $("#id_userpopup_table TBODY TR").each(function() {
+                $('#id_userpopup_table').DataTable().destroy();
                 $("#id_check_data").prop("hidden", false);
                 var row = $(this);
                  user_data_dict = {}
@@ -1262,7 +1268,7 @@ function ajax_update_user_basic_data(data) {
                     user_data_dict.is_active= is_active_val;
                     user_data_dict.status = GLOBAL_ACTION ;
                     user_list_data.push(user_data_dict)
-                    table_sort_filter_popup_pagination('id_popup_table');
+                    table_sort_filter_popup_pagination('id_userpopup_table');
                 });
                 data = {'data':user_list_data,'table_name':'UserData','action':GLOBAL_ACTION}
              $.ajax({
@@ -1296,7 +1302,7 @@ function ajax_update_user_basic_data(data) {
              });
              $('#id_check_data').modal('hide');
              $("#id_check_data").prop("hidden", true);
-              table_sort_filter('id_popup_table');
+             table_sort_filter('id_userpopup_table');
     }
 
 

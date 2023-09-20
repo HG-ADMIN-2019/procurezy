@@ -304,7 +304,7 @@ def review_page(request):
                                                      global_variables.GLOBAL_USER_CURRENCY)
         if manager_detail:
             manager_details, approver_id = get_users_first_name(manager_detail)
-
+        default_cmp_code = [default_cmp_code]
         for purchase_control_call_off in purchase_control_call_off_list:
             if purchase_control_call_off in call_off_list:
                 completion_work_flow = get_completion_work_flow(client, prod_cat_list, default_cmp_code)
