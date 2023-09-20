@@ -89,79 +89,86 @@
         {% if t_count > 0 %}
 <!--    {{results}}-->
         <div class="card mt-5">
-            <table id="doc_list" class="table table_sort_filter_export_excel">
-                <thead class="thead-light">
-                    <tr>
-                        {% if inp_doc_type == 'SC' %}
-                        <th scope="col">SC Number</th>
-                        {% endif %}
-                        {% if inp_doc_type == 'PO' %}
-                        <th scope="col">PO Number</th>
-                        {% endif %}
-                        {% if inp_doc_type == 'SC' %}
-                        <th scope="col">SC Name</th>
-                        {% endif %}
-                        {% if inp_doc_type == 'PO' %}
-                        <th scope="col">PO Name</th>
-                        {% endif %}
-                        <th scope="col">Status</th>
-                        <th scope="col">Total Value</th>
-                        <th scope="col">Currency</th>
-                        <th scope="col">Requested By</th>
-                        <th scope="col">Created By</th>
-                        <th scope="col">Created At</th>
-                        <th scope="col">Ordered At</th>
-                        <th scope="col" hidden>Changed At</th>
-                        <th scope="col" hidden>Changed By</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <!-- Looping over the cart_items to get individual fields -->
-                    {% for items, encrypted_header_guid in results %}
-                    {% if items.status != 'SAVED' %}
-                    {% if inp_doc_type == 'SC' %}
-                    <tr>
-                        <td scope="row">{{ items.doc_number|default:"N/A" }}</td>
-                        <td scope="row">{{ items.description|default:"N/A" }}</td>
-                        <td scope="row">
-                            {% if items.status == 'AWAITING_APPROVAL' %}
-                                <span>WAITING FOR APPROVAL</span>
-                            {% elif items.status == 'SAVED' %}
-                                <span>SAVED</span>
-                            {% elif items.status == 'APPROVED' %}
-                                <span>APPROVED</span>
-                            {% elif items.status == 'PURCHASER_WORKLIST' %}
-                                <span>IN PURCHASER's WORK LIST</span>
-                            {% elif items.status == 'REJECTED' %}
-                                <span>REJECTED</span>
-                            {% else %}
-                                N/A
-                            {% endif %}
-                        </td>
-                        <td scope="row">{{ items.total_value|default:"N/A" }}</td>
-                        <td scope="row">{{ items.currency|default:"N/A" }}</td>
-                        <td scope="row">{{ items.requester|default:"N/A" }}</td>
-                        <td scope="row">{{ items.created_by|default:"N/A" }}</td>
-                        <td scope="row">{{ items.created_at|default:"N/A" }}</td>
-                        <td scope="row">
-                            {% if items.ordered_at %}
-                            {{ items.ordered_at|date:"F d, Y, P" }}
-                            {% else %}
-                            N/A
-                            {% endif %}
-                        </td>
-                        <td scope="row" hidden>{{ items.changed_at|default:"N/A" }}</td>
-                        <td scope="row" hidden>{{ items.changed_by|default:"N/A" }}</td>
-                    </tr>
+    <table id="doc_list" class="table table_sort_filter_export_excel">
+        <thead class="thead-light">
+            <tr>
+                {% if inp_doc_type == 'SC' or inp_doc_type == 'PO' %}
+                {% if inp_doc_type == 'SC' %}
+                <th scope="col">SC Number</th>
+                <th scope="col">SC Name</th>
+                {% endif %}
+                {% if inp_doc_type == 'PO' %}
+                <th scope="col">PO Number</th>
+                <th scope="col">PO Name</th>
+                {% endif %}
+                <th scope="col">Status</th>
+                <th scope="col">Total Value</th>
+                <th scope="col">Currency</th>
+                <th scope="col">Requested By</th>
+                <th scope="col">Created By</th>
+                <th scope="col">Created At</th>
+                <th scope="col">Ordered At</th>
+                <th scope="col" hidden>Changed At</th>
+                <th scope="col" hidden>Changed By</th>
+            </tr>
+            {% endif %}
+        </thead>
+        <tbody>
+            <!-- Looping over the cart_items to get individual fields -->
+            {% for items, encrypted_header_guid in results %}
+            {% if items.status != 'SAVED' %}
+            {% if inp_doc_type == 'SC' or inp_doc_type == 'PO' %}
+            <tr>
+                <td scope="row">{{ items.doc_number|default:"N/A" }}</td>
+                <td scope="row">{{ items.description|default:"N/A" }}</td>
+                <td scope="row">
+                    {% if items.status == 'AWAITING_APPROVAL' %}
+                        <span>WAITING FOR APPROVAL</span>
+                    {% elif items.status == 'SAVED' %}
+                        <span>SAVED</span>
+                    {% elif items.status == 'APPROVED' %}
+                        <span>APPROVED</span>
+                    {% elif items.status == 'PURCHASER_WORKLIST' %}
+                        <span>IN PURCHASER's WORK LIST</span>
+                    {% elif items.status == 'REJECTED' %}
+                        <span>REJECTED</span>
+                    {% else %}
+                        <span>Ordered</span>  <!-- Default status for 'PO' -->
                     {% endif %}
+                </td>
+                <td scope="row">{{ items.total_value|default:"N/A" }}</td>
+                <td scope="row">{{ items.currency|default:"N/A" }}</td>
+                <td scope="row">{{ items.requester|default:"N/A" }}</td>
+
+                {% if inp_doc_type == 'SC' %}
+                <td scope="row">{{ items.created_by|default:"N/A" }}</td>
+                <td scope="row">{{ items.created_at|default:"N/A" }}</td>
+                {% endif %}
+
+                {% if inp_doc_type == 'PO' %}
+                <td scope="row">{{ items.po_header_created_by|default:"N/A" }}</td>
+                <td scope="row">{{ items.po_header_created_at|default:"N/A" }}</td>
+                {% endif %}
+
+                <td scope="row">
+                    {% if items.ordered_at %}
+                    {{ items.ordered_at|date:"F d, Y, P" }}
+                    {% else %}
+                    N/A
                     {% endif %}
-                    {% endfor %}
-                </tbody>
-            </table>
-        </div>
-        {% endif %}
-    </div>
+                </td>
+                <td scope="row" hidden>{{ items.changed_at|default:"N/A" }}</td>
+                <td scope="row" hidden>{{ items.changed_by|default:"N/A" }}</td>
+            </tr>
+            {% endif %}
+            {% endif %}
+            {% endfor %}
+        </tbody>
+    </table>
 </div>
+{% endif %}
+</div>
+
 <!-- start of username popup -->
 <div class="modal fade" id="get_username_popup">
     <div class="modal-dialog modal-dialog-centered">
