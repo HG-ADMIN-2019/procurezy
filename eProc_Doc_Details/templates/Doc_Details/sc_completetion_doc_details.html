@@ -638,7 +638,6 @@
                               }
                               var display = msg_type.messages_id_desc;
                                error_messages += display ;
-
                    }
                     for (i = 0; i < sc_errors.length; i++) {
                         dict_obj = sc_errors[i]
@@ -671,7 +670,7 @@
                 } else{
                     $('#sc_error_messages').show()
                 }
-                CloseLoaderPopup();
+<!--                CloseLoaderPopup();-->
             }
         });
 
@@ -710,7 +709,6 @@
             update_date_requirements['delivery_dates'] = delivery_dates
             update_date_requirements['supplier_id'] = supplier_id_array
         }
-        
         $.ajax({
             type: "POST",
             url: "{% url 'eProc_Doc_Details:update_delivery_date' %}",
@@ -744,8 +742,6 @@
             }
         })
     }
-
-    
 
     //==================================== END ON CLICK OF EDIT ======================================================================
 
@@ -810,6 +806,7 @@
         data.append('manger_detail' , JSON.stringify(GLOBAL_MANAGER_DETAIL))
         type = 'submit' ? nochange_flag = true : nochange_flag = false
         if (nochange_flag) {
+        OpenLoaderPopup();
             $.ajax({
                 url: "{% url 'eProc_Doc_Details:update_sc' %}",
                 type: "post",
@@ -833,8 +830,8 @@
                 cache: false,
                 processData: false,
                 contentType: false,
-
             });
+<!--             CloseLoaderPopup();-->
         }
 
 
