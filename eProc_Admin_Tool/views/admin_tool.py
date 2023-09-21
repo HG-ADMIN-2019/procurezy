@@ -624,7 +624,7 @@ def approval_report(request):
 
 
 @login_required
-def doc_search_report(request):
+def m_docsearch_meth(request):
     """
     :param request:
     :return:
@@ -648,7 +648,7 @@ def doc_search_report(request):
     comp_list = get_companylist(request)
 
     if request.method == 'GET':
-        # inp_doc_type = 'SC'
+        inp_doc_type = 'SC'
         inp_doc_num = None
         inp_from_date = datetime.today()
         inp_to_date = datetime.today()

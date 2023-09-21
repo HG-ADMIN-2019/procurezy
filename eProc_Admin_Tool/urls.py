@@ -5,7 +5,6 @@ from . import views
 
 # defines the app name sets the URL's to call the respective function
 from .views import delete_user, lock_unlock_emp, get_username, delete_org_announcement
-from .views.admin_tool import doc_search_report
 
 app_name = 'eProc_Admin_Tool'
 
@@ -21,7 +20,7 @@ urlpatterns = [
     path('supplier_management/supplier_details/<str:supplier_id>/', views.sup_details, name='sup_details_page'),
     path('admin_report/users', views.user_report, name='user_report'),  # reports_main page
     path('admin_report/approvals', views.approval_report, name='approval_report'),  # approval report_main page
-    path('admin_report/documents', views.doc_search_report, name='doc_search_report'),  # Search page
+    path('admin_report/documents', views.m_docsearch_meth, name='doc_search_report'),  # Search page
     path('admin_report/account_assignment_categories', views.accnt_report, name='accnt_report'),
     # accounting report_main page
     path('org_announcements/', views.org_announcements_search, name='org_announcements_search'),
