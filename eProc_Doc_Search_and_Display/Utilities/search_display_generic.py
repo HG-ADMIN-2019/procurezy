@@ -256,10 +256,11 @@ def get_hdr_data(request, doc_type, doc_num, from_date, to_date, supplier, creat
         result = hdr_inst.get_hdr_data_by_objid(hdr_obj, doc_num, client)
     else:
         if from_date is not None and to_date is not None and from_date != '' and to_date != '':
-            args_list[f'{date_field}__gte'] = from_date
-            args_list[f'{date_field}__lte'] = to_date
+            args_list[f'{date_field}__date__gte'] = from_date
+            args_list[f'{date_field}__date__lte'] = to_date
             if search_flag:
                 args_list[user_field] = username
+
         if doc_type == 'PO' and supplier is not None and supplier != '':
             if '*' in supplier:
                 supp_list = SupplierMaster.get_suppid_by_first_name(supplier)

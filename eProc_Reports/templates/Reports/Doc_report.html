@@ -16,62 +16,70 @@
         <hr>
         <div class="card card-shadow-1">
             <div class="card-body">
-                <form method="POST" action="{% url 'eProc_Admin_Tool:doc_search_report' %}">
-                    {% csrf_token %}
-                    {% if error_messages %}
-                    <div class="alert alert-danger" id="err_msg" hidden>
-                        {% for  key, value in error_messages.items %}
-                        <span class="fieldWrapper">
-                            {{ value }}
-                        </span>
-                        {% endfor %}
-                    </div>
-                    {% endif %}
-                    <!-- {{ sform.non_field_errors }}-->
-                    <div class="row">   
-                        <div class="col-md">
-                            <label>Document Type </label>
-                            {{ sform.doc_type }}
-                        </div> 
-                        <div class="col-md">
-                            <label>Company Number</label>
-                            {{ sform.company_code }}
-                        </div>
-                        <div class="col-md">
-                            <label>From Date</label>
-                            {{ sform.from_date }}
-                        </div>
-                        <div class="col-md">
-                            <label>To Date</label>
-                            {{ sform.to_date }}
-                        </div>
-                        <div class="col-md">
-                            <label>Document Number</label>
-                            {{ sform.doc_num }}
-                        </div>
-                        <div class="col-md">
-                            <label>Created By</label>
-                            {{ sform.created_by }}
-                        </div>
-                        <div class="col-md">
-                            <label>Requested By</label>
-                            {{ sform.requester }}
-                        </div>
-                    </div>
-                    <br>
-                    <div class="elements-space-between">
-                        <div>
-                            <button class="btn btn-link" type="reset" value="Reset"> Clear filters</button>
-    
-                            <button id="hg_doc_report_search" class="btn btn-primary" onclick="search_click()" type="submit" title="Please click to get the search details!">
-                                <i class="fas fa-search"></i> search
-                            </button>
-                        </div>
-                        <div>
-                            <span class="badge help-text-badge help-text-star-search"></span>
-                        </div>
-                    </div>
-                </form>
+<form method="POST" id="requisition_form" action="{% url 'eProc_Admin_Tool:doc_search_report' %}">
+    {% csrf_token %}
+    {% if error_messages %}
+    <div class="alert alert-danger" id="err_msg" hidden>
+        {% for  key, value in error_messages.items %}
+        <span class="fieldWrapper">
+            {{ value }}
+        </span>
+        {% endfor %}
+    </div>
+    {% endif %}
+    <!-- {{ sform.non_field_errors }}-->
+    <div class="row">
+        <div class="col-md">
+            <label>Document Type</label>
+            {{ sform.doc_type }}
+        </div>
+        <!-- Display the supplier field only for PO queries -->
+        {% if sform.doc_type.value == "PO" %}
+        <div class="col-md">
+            <label>Supplier</label>
+            <input type="text" name="supplier" id="supplier" placeholder="Enter Supplier" onclick="openSupplierModal()">
+        </div>
+        {% endif %}
+        <div class="col-md">
+            <label>Company Number</label>
+            {{ sform.company_code }}
+        </div>
+        <div class="col-md">
+            <label>From Date</label>
+            {{ sform.from_date }}
+        </div>
+        <div class="col-md">
+            <label>To Date</label>
+            {{ sform.to_date }}
+        </div>
+        <div class="col-md">
+            <label>Document Number</label>
+            {{ sform.doc_num }}
+        </div>
+        <div class="col-md">
+            <label>Created By</label>
+            {{ sform.created_by }}
+        </div>
+        <div class="col-md">
+            <label>Requested By</label>
+            {{ sform.requester }}
+        </div>
+    </div>
+    <br>
+    <div class="elements-space-between">
+        <div>
+            <button class="btn btn-link" type="reset" value="Reset">Clear filters</button>
+
+            <button id="hg_doc_report_search" class="btn btn-primary" onclick="search_click()" type="submit" title="Please click to get the search details!">
+                <i class="fas fa-search"></i>Search
+            </button>
+        </div>
+        <div>
+            <span class="badge help-text-badge help-text-star-search"></span>
+        </div>
+    </div>
+</form>
+
             </div>
         </div>
         <br>
@@ -90,26 +98,26 @@
 <!--    {{results}}-->
         <div class="card mt-5">
     <table id="doc_list" class="table table_sort_filter_export_excel">
-        <thead class="thead-light">
-            <tr>
-                {% if inp_doc_type == 'SC' or inp_doc_type == 'PO' %}
-                {% if inp_doc_type == 'SC' %}
-                <th scope="col">SC Number</th>
-                <th scope="col">SC Name</th>
-                {% endif %}
-                {% if inp_doc_type == 'PO' %}
-                <th scope="col">PO Number</th>
-                <th scope="col">PO Name</th>
-                {% endif %}
-                <th scope="col">Status</th>
-                <th scope="col">Total Value</th>
-                <th scope="col">Currency</th>
-                <th scope="col">Requested By</th>
-                <th scope="col">Created By</th>
-                <th scope="col">Created At</th>
-                <th scope="col">Ordered At</th>
-                <th scope="col" hidden>Changed At</th>
-                <th scope="col" hidden>Changed By</th>
+    <thead class="thead-light">
+        <tr>
+            {% if inp_doc_type == 'SC' or inp_doc_type == 'PO' %}
+            {% if inp_doc_type == 'SC' %}
+            <th scope="col">SC Number</th>
+            <th scope="col">SC Name</th>
+            {% endif %}
+            {% if inp_doc_type == 'PO' %}
+            <th scope="col">PO Number</th>
+            <th scope="col">PO Name</th>
+            {% endif %}
+            <th scope="col">Status</th>
+            <th scope="col">Total Value</th>
+            <th scope="col">Currency</th>
+            <th scope="col">Requested By</th>
+            <th scope="col">Created By</th>
+            <th scope="col">Created At</th>
+            <th scope="col">Ordered At</th>
+            <th scope="col" hidden>Changed At</th>
+            <th scope="col" hidden>Changed By</th>
             </tr>
             {% endif %}
         </thead>
@@ -119,21 +127,30 @@
             {% if items.status != 'SAVED' %}
             {% if inp_doc_type == 'SC' or inp_doc_type == 'PO' %}
             <tr>
-                <td scope="row">{{ items.doc_number|default:"N/A" }}</td>
+                {% if inp_doc_type == 'SC' %}
+                <td scope="row">
+                    <a href="{% url 'eProc_Doc_Details:my_order_document_detail' encrypted_header_guid 'my_order' %}" class="link-blue" target="_blank">{{ items.doc_number|default:"N/A" }}</a>
+                </td>
+                {% endif %}
+                {% if inp_doc_type == 'PO' %}
+                <td scope="row">
+                    <a href="{% url 'eProc_Purchase_Order:po_doc_details' encrypted_header_guid %}" class="link-blue" target="_blank">{{ items.doc_number|default:"N/A" }}</a>
+                </td>
+                {% endif %}
                 <td scope="row">{{ items.description|default:"N/A" }}</td>
                 <td scope="row">
                     {% if items.status == 'AWAITING_APPROVAL' %}
-                        <span>WAITING FOR APPROVAL</span>
+                    <span>WAITING FOR APPROVAL</span>
                     {% elif items.status == 'SAVED' %}
-                        <span>SAVED</span>
+                    <span>SAVED</span>
                     {% elif items.status == 'APPROVED' %}
-                        <span>APPROVED</span>
+                    <span>APPROVED</span>
                     {% elif items.status == 'PURCHASER_WORKLIST' %}
-                        <span>IN PURCHASER's WORK LIST</span>
+                    <span>IN PURCHASER's WORK LIST</span>
                     {% elif items.status == 'REJECTED' %}
-                        <span>REJECTED</span>
+                    <span>REJECTED</span>
                     {% else %}
-                        <span>Ordered</span>  <!-- Default status for 'PO' -->
+                    <span>Ordered</span>  <!-- Default status for 'PO' -->
                     {% endif %}
                 </td>
                 <td scope="row">{{ items.total_value|default:"N/A" }}</td>
@@ -165,10 +182,52 @@
             {% endfor %}
         </tbody>
     </table>
+
 </div>
 {% endif %}
 </div>
+<div class="modal fade" id="select_supplier_modal">
+    <div class="modal-dialog modal-dialog-centered" style="max-width: 600px;">
+        <div class="modal-content">
 
+            <!-- Modal Header -->
+            <div class="modal-header">
+                <h4 class="modal-title">Select Supplier</h4>
+                <button type="button" class="close" data-dismiss="modal">&times;</button>
+            </div>
+
+            <!-- Modal body -->
+            <div class="modal-body">
+                <table class="table select_supplier_datatable" id="supplier_table" style="table-layout: auto">
+                    <thead class="thead-light">
+                        <tr>
+                            <th>Select</th>
+                            <th>Supplier Name</th>
+                            <th>Supplier ID</th>
+                        </tr>
+                    </thead>
+                    <tbody id="select_supplier_tbody">
+                        {% for supp_info in supplier_details %}
+                        <tr>
+                            <td><input type="radio" name="select_value"></td>
+                            <td>{{supp_info.1}} {{supp_info.2}}</td>
+                            <td>{{supp_info.0}}</td>
+                        </tr>
+                        {% endfor %}
+
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Modal footer -->
+            <div class="modal-footer">
+                <button type="button" class="btn btn-outline-primary" data-dismiss="modal"><i class="fas fa-times"></i> close</button>
+                <button class="btn btn-primary" id="select_supplier"><i class="fas fa-check"></i> select</button>
+            </div>
+
+        </div>
+    </div>
+</div>
 <!-- start of username popup -->
 <div class="modal fade" id="get_username_popup">
     <div class="modal-dialog modal-dialog-centered">
@@ -290,6 +349,33 @@ $(document).ready( function() {
                 }
             });
     });
+
+function openSupplierModal() {
+    console.log('openSupplierModal() called');
+    $('#select_supplier_modal').modal('show');
+}
+
+// Handle "Select" button click inside the modal
+$('#select_supplier_modal').on('click', '#select_supplier', function () {
+    const selectedRadio = $('input[name="select_value"]:checked');
+    if (selectedRadio.length > 0) {
+        const supplierName = selectedRadio.closest('tr').find('td:eq(1)').text();
+        const supplierID = selectedRadio.closest('tr').find('td:eq(2)').text();
+
+        // Update the visible input field with the full value
+        $('#supplier_display').val(supplierName + ' (' + supplierID + ')');
+
+        // Update the hidden input field with only the supplier ID
+        $('#supplier').val(supplierID);
+
+        $('#select_supplier_modal').modal('hide');
+    } else {
+        alert('Please select a supplier.');
+    }
+});
+
+
+
 </script>
 <script src="{% static 'scripts/doc_report.js' %}"></script>
 {% if inc_footer %}

@@ -52,6 +52,7 @@ from eProc_Reports.Report_Forms.SearchDoc_forms import DocumentSearchForm, Appli
 from eProc_Reports.Report_Forms.user_report_form import UserReportForm
 from eProc_Reports.Utilities.reports_generic import get_companylist, get_usrid_by_username, get_account_assignlist, \
     get_langlist, get_companyDetails, get_account_assignvalues
+from eProc_Shopping_Cart.Utilities.shopping_cart_generic import get_supplier_details
 from eProc_Shopping_Cart.context_processors import update_user_info
 from eProc_Shopping_Cart.models import  ScItem, ScPotentialApproval, ScApproval
 from eProc_Shopping_Cart.models.shopping_cart import ScHeader
@@ -623,7 +624,7 @@ def approval_report(request):
 
 
 @login_required
-def m_docsearch_meth(request):
+def doc_search_report(request):
     """
     :param request:
     :return:
@@ -647,7 +648,7 @@ def m_docsearch_meth(request):
     comp_list = get_companylist(request)
 
     if request.method == 'GET':
-        inp_doc_type = 'SC'
+        # inp_doc_type = 'SC'
         inp_doc_num = None
         inp_from_date = datetime.today()
         inp_to_date = datetime.today()
@@ -715,6 +716,12 @@ def m_docsearch_meth(request):
         encrypted_header_guid.append(encrypt(header_guid))
 
     result = zip(result, encrypted_header_guid)
+    # Assuming you can retrieve the 'client' and 'supp_id_up' values from your code context
+    client = getClients(request)
+    supp_id_up = []
+
+    # Call the function with the appropriate arguments
+    supplier_details = get_supplier_details(client, supp_id_up)
 
     context = {
         'inc_nav': True,
@@ -732,7 +739,8 @@ def m_docsearch_meth(request):
         'sc_completion': sc_completion,
         'sc_completion_flag': sc_completion_flag,
         'sc_header': sc_header,
-        'error_messages': error_messages
+        'error_messages': error_messages,
+        'supplier_details': supplier_details
     }
 
     return render(request, 'Reports/Doc_report.html', context)

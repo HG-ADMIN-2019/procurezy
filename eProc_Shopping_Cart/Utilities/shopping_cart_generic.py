@@ -12,6 +12,7 @@ from eProc_Calendar_Settings.Utilities.calender_settings_generic import calculat
     calculate_delivery_date_base_on_lead_time
 from eProc_Configuration.models import UnspscCategories, UnspscCategoriesCustDesc
 from eProc_Configuration.models.basic_data import Currency, UnitOfMeasures
+from eProc_Configuration.models.master_data import SupplierMaster
 from eProc_Doc_Search_and_Display.Utilities.search_display_specific import get_po_header_app, get_sc_header_app_wf, \
     get_sc_header_app, get_order_status
 from eProc_Exchange_Rates.Utilities.exchange_rates_generic import convert_currency
