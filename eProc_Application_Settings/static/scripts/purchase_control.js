@@ -228,8 +228,9 @@ function get_prod_cat_id_values(selectElement) {
     });
 }
 
-function get_company_data() {
-    main_table_data = {}; // Object to store node values for each node type
+// storing company_code associated data from main table
+function display_tb_data() {
+    main_table_data = {};
     $('#display_basic_table').DataTable().destroy();
     $("#display_basic_table TBODY TR").each(function() {
         var row = $(this);
