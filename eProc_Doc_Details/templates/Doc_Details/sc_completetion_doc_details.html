@@ -670,7 +670,7 @@
                 } else{
                     $('#sc_error_messages').show()
                 }
-<!--                CloseLoaderPopup();-->
+                CloseLoaderPopup();
             }
         });
 
@@ -749,8 +749,9 @@
 
     //========================================================= START SAVE ============================================================
     $("#id_save_sc").on("click", function () {
+        OpenLoaderPopup();
         save_my_order_doc_detail('save');
-
+        CloseLoaderPopup();
     });
 
 
@@ -820,6 +821,8 @@
                     success_message = 'Shopping cart ' + response.document_detail.sc_name + ' with number ' + response.document_detail.document_number + ' saved successfully'
                     $('#sc_success_messages').html(success_message);
                     $('#sc_success_messages').show();
+                    CloseLoaderPopup();
+                    setTimeout(function() {OpenLoaderPopup();}, 2000);
                     scroll_top()
                     url = location.href.split('/')
                     url.pop()
@@ -831,7 +834,7 @@
                 processData: false,
                 contentType: false,
             });
-<!--             CloseLoaderPopup();-->
+             CloseLoaderPopup();
         }
 
 
