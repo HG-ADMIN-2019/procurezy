@@ -148,11 +148,6 @@
     var desc_aac = '';
     function dropdown_value(){
         get_main_table_data(); //Read data from main table
-        if(rendered_aac_values.length != 0){
-            desc_aac = rendered_aac_values[0].field_type_desc; }
-        else {
-            desc_aac = "";
-        }
         aac_dropdown = '';
         var available_aac_values = rendered_aac_values.filter(function(item) {
             return !main_table_low_value.includes(item.field_type_id);
@@ -160,6 +155,12 @@
         $.each(available_aac_values, function(i, item)  {
             aac_dropdown += '<option value="' + item.field_type_id + '">' + item.field_type_id + '</option>';
         });
+
+        if(available_aac_values.length != 0){
+            desc_aac = available_aac_values[0].field_type_desc; }
+        else {
+            desc_aac = "";
+        }
     }
 
     // validate and save for add,copy,update and upload data

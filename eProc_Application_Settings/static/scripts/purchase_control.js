@@ -31,6 +31,9 @@ function display_basic_db_data() {
                 call_off_desc = rendered_call_off[j].desc;
                 break;
             }
+            else {
+                call_off_desc = item.call_off
+            }
         }
 
         edit_basic_data += '<tr><td class="class_select_checkbox"><input class="checkbox_check" onclick="valueChanged()" type="checkbox" required></td><td>' + item.company_code_id + '</td><td>' + call_off_desc + '</td><td>' + item.prod_cat_id + '</td><td>' + data + '</td><td hidden>' + item.purchase_control_guid + '</td><td hidden>' + item.del_ind_flag + '</td></tr>';
@@ -225,8 +228,9 @@ function get_prod_cat_id_values(selectElement) {
     });
 }
 
-function get_company_data() {
-    main_table_data = {}; // Object to store node values for each node type
+// storing company_code associated data from main table
+function display_tb_data() {
+    main_table_data = {};
     $('#display_basic_table').DataTable().destroy();
     $("#display_basic_table TBODY TR").each(function() {
         var row = $(this);

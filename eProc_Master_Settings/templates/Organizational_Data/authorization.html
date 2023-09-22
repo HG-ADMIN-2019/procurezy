@@ -149,15 +149,21 @@
     //**************************
     var roles_dropdown = '';
     function dropdown_value(){
-        if(rendered_roles_type_values.length != 0){
-            auth_desc = rendered_roles_type_values[0].field_type_desc; }
+        get_main_table_data(); //Read data from main table
+        roles_dropdown = '';
+        var available_roles_values = rendered_roles_type_values.filter(function(item) {
+            return !main_table_low_value.includes(item.field_type_id);
+        });
+        $.each(available_roles_values, function(i, item)  {
+            roles_dropdown += '<option value="' + item.field_type_id + '">' + item.field_type_id + '</option>';
+        });
+
+        if(available_roles_values.length != 0){
+            auth_desc = available_roles_values[0].field_type_desc;
+        }
         else {
             auth_desc = "";
         }
-        roles_dropdown = '';
-        $.each(rendered_roles_type_values, function(i, item){
-            roles_dropdown += '<option value="' + item.field_type_id + '">' + item.field_type_id +'</option>';
-        });
     }
 
     //*********************
