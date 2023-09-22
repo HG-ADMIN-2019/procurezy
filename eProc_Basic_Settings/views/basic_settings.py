@@ -440,8 +440,8 @@ def convert_SpendLimitId_to_dictionary(arr):
 def convert_SpendLimitValue_to_dictionary(arr):
     convertion_list = []
     for row in arr:
-        dictionary = {'company_id': row[0], 'spend_code_id': row[1], 'upper_limit_value': row[2],
-                      'currency_id': row[3], 'del_ind': row[4]}
+        dictionary = {'company_id': row[2], 'spend_code_id': row[0], 'upper_limit_value': row[1],
+                      'currency_id': row[4], 'del_ind': row[3]}
         convertion_list.append(dictionary)
     return convertion_list
 
@@ -484,22 +484,6 @@ def convert_OrgAddresstype_to_dictionary(arr):
     return convertion_list
 
 
-def convert_Workflowschema_to_dictionary(arr):
-    convertion_list = []
-    for row in arr:
-        dictionary = {'company_id': row[0], 'workflow_schema': row[1], 'app_types': row[3], 'del_ind': row[2]}
-        convertion_list.append(dictionary)
-    return convertion_list
-
-
-def convert_ApproverType_to_dictionary(arr):
-    convertion_list = []
-    for row in arr:
-        dictionary = {'app_types': row[0], 'appr_type_desc': row[1], 'del_ind': row[2]}
-        convertion_list.append(dictionary)
-    return convertion_list
-
-
 def convert_Payterms_desc_to_dictionary(arr):
     convertion_list = []
     for row in arr:
@@ -509,34 +493,87 @@ def convert_Payterms_desc_to_dictionary(arr):
     return convertion_list
 
 
-def convert_Incoterms_to_dictionary(arr):
-    convertion_list = []
-    for row in arr:
-        dictionary = {'incoterm_key': row[0], 'description': row[1], 'del_ind': row[2]}
-        convertion_list.append(dictionary)
-    return convertion_list
-
-
-def remove_invalid(convertion_list):
-    valid_convertion = {}  # Create an empty dictionary to store valid conversions
+def remove_invalid_spendlimitvalue(convertion_list):
+    valid_convertion = []
 
     for conversion in convertion_list:
+        # Check for existence of OrgCompanies
         if django_query_instance.django_existence_check(OrgCompanies,
                                                         {'del_ind': False,
                                                          'company_id': conversion['company_id'],
                                                          'client': global_variables.GLOBAL_CLIENT}):
-            valid_convertion['company_id'] = conversion['company_id']
+            # Check for existence of Currency
+            if django_query_instance.django_existence_check(Currency,
+                                                            {'del_ind': False,
+                                                             'currency_id': conversion['currency_id']}):
+                valid_convertion.append(conversion)
 
-        if django_query_instance.django_existence_check(Currency,
+    return valid_convertion
+
+
+def remove_invalid_spendlimitid(convertion_list):
+    valid_convertion = []
+
+    for conversion in convertion_list:
+        # Check for existence of OrgCompanies
+        if django_query_instance.django_existence_check(OrgCompanies,
                                                         {'del_ind': False,
-                                                         'currency_id': conversion['currency_id']}):
-            valid_convertion['currency_id'] = conversion['currency_id']
+                                                         'company_id': conversion['company_id'],
+                                                         'client': global_variables.GLOBAL_CLIENT}):
+            # Check for existence of Currency
+            if django_query_instance.django_existence_check(SpendLimitValue,
+                                                            {'del_ind': False,
+                                                             'spend_code_id': conversion['spend_code_id']}):
+                valid_convertion.append(conversion)
 
-            valid_convertion['spend_code_id'] = conversion['spend_code_id']
-            valid_convertion['upper_limit_value'] = conversion['upper_limit_value']
-            valid_convertion['del_ind'] = conversion['del_ind']
+    return valid_convertion
 
-    return valid_convertion  # Return the vali
+
+def remove_invalid_approvallimitvalue(convertion_list):
+    valid_convertion = []
+
+    for conversion in convertion_list:
+        # Check for existence of OrgCompanies
+        if django_query_instance.django_existence_check(OrgCompanies,
+                                                        {'del_ind': False,
+                                                         'company_id': conversion['company_id'],
+                                                         'client': global_variables.GLOBAL_CLIENT}):
+            # Check for existence of Currency
+            if django_query_instance.django_existence_check(Currency,
+                                                            {'del_ind': False,
+                                                             'currency_id': conversion['currency_id']}):
+                valid_convertion.append(conversion)
+                if django_query_instance.django_existence_check(ApproverType,
+                                                                {'del_ind': False,
+                                                                 'app_types': conversion['app_types']}):
+                    valid_convertion.append(conversion)
+
+    return valid_convertion
+
+
+def remove_invalid_approvallimitid(convertion_list):
+    valid_convertion = []
+
+    for conversion in convertion_list:
+        # Check for existence of OrgCompanies
+        if django_query_instance.django_existence_check(OrgCompanies,
+                                                        {'del_ind': False,
+                                                         'company_id': conversion['company_id'],
+                                                         'client': global_variables.GLOBAL_CLIENT}):
+            # Check for existence of Currency
+            if django_query_instance.django_existence_check(UserData,
+                                                            {'del_ind': False,
+                                                             'username': conversion['username']}):
+                valid_convertion.append(conversion)
+                # Check for existence of Currency
+                if django_query_instance.django_existence_check(ApproverLimitValue,
+                                                                {'del_ind': False,
+                                                                 'app_code_id': conversion['app_code_id']}):
+                    valid_convertion.append(conversion)
+
+    return valid_convertion
+
+
 
 
 def data_upload(request):
@@ -618,30 +655,32 @@ def data_upload(request):
             result['error_message'], result['data'] = upload_csv.csv_preview_data(header_detail, data_set_val)
             result = remove_duplicates(result['data'])
             convertion_list = convert_SpendLimitValue_to_dictionary(result)
-            valid_convertion = remove_invalid(convertion_list)
-            convertion_list = convert_SpendLimitValue_to_dictionary(valid_convertion)
-            valid_data_list, message = check_spendlimit_value_data(convertion_list, 'UPLOAD')
+            valid_convertion = remove_invalid_spendlimitvalue(convertion_list)
+            valid_data_list, message = check_spendlimit_value_data(valid_convertion, 'UPLOAD')
             context = {'valid_data_list': valid_data_list}
             return JsonResponse(context, safe=False)
         if Table_name == 'SpendLimitId':
             result['error_message'], result['data'] = upload_csv.csv_preview_data(header_detail, data_set_val)
             result = remove_duplicates(result['data'])
             convertion_list = convert_SpendLimitId_to_dictionary(result)
-            valid_data_list, message = check_spending_limit_data(convertion_list, 'UPLOAD')
-            context = {'valid_data_list': valid_data_list}
-            return JsonResponse(context, safe=False)
-        if Table_name == 'ApproverLimit':
-            result['error_message'], result['data'] = upload_csv.csv_preview_data(header_detail, data_set_val)
-            result = remove_duplicates(result['data'])
-            convertion_list = convert_ApproverLimit_to_dictionary(result)
-            valid_data_list, message = check_approv_limit_data(convertion_list, 'UPLOAD')
+            valid_convertion = remove_invalid_spendlimitid(convertion_list)
+            valid_data_list, message = check_spending_limit_data(valid_convertion, 'UPLOAD')
             context = {'valid_data_list': valid_data_list}
             return JsonResponse(context, safe=False)
         if Table_name == 'ApproverLimitValue':
             result['error_message'], result['data'] = upload_csv.csv_preview_data(header_detail, data_set_val)
             result = remove_duplicates(result['data'])
             convertion_list = convert_ApproverLimitValue_to_dictionary(result)
-            valid_data_list, message = check_approv_limit_value_data(convertion_list, 'UPLOAD')
+            valid_convertion = remove_invalid_approvallimitvalue(convertion_list)
+            valid_data_list, message = check_approv_limit_value_data(valid_convertion, 'UPLOAD')
+            context = {'valid_data_list': valid_data_list}
+            return JsonResponse(context, safe=False)
+        if Table_name == 'ApproverLimit':
+            result['error_message'], result['data'] = upload_csv.csv_preview_data(header_detail, data_set_val)
+            result = remove_duplicates(result['data'])
+            convertion_list = convert_ApproverLimit_to_dictionary(result)
+            valid_convertion = remove_invalid_approvallimitid(convertion_list)
+            valid_data_list, message = check_approv_limit_data(valid_convertion, 'UPLOAD')
             context = {'valid_data_list': valid_data_list}
             return JsonResponse(context, safe=False)
         if Table_name == 'WorkflowACC':
@@ -672,20 +711,6 @@ def data_upload(request):
             valid_data_list, message = check_acc_assign_desc_data(convertion_list, 'UPLOAD')
             context = {'valid_data_list': valid_data_list}
             return JsonResponse(context, safe=False)
-        if Table_name == 'WorkflowSchema':
-            result['error_message'], result['data'] = upload_csv.csv_preview_data(header_detail, data_set_val)
-            result = remove_duplicates(result['data'])
-            convertion_list = convert_Workflowschema_to_dictionary(result)
-            valid_data_list, message = check_workflowschema_data(convertion_list, 'UPLOAD')
-            context = {'valid_data_list': valid_data_list}
-            return JsonResponse(context, safe=False)
-        if Table_name == 'ApproverType':
-            result['error_message'], result['data'] = upload_csv.csv_preview_data(header_detail, data_set_val)
-            result = remove_duplicates(result['data'])
-            convertion_list = convert_ApproverType_to_dictionary(result)
-            valid_data_list, message = check_approvaltype_data(convertion_list, 'UPLOAD')
-            context = {'valid_data_list': valid_data_list}
-            return JsonResponse(context, safe=False)
         if Table_name == 'OrgAddressMap':
             result['error_message'], result['data'] = upload_csv.csv_preview_data(header_detail, data_set_val)
             result = remove_duplicates(result['data'])
@@ -698,13 +723,6 @@ def data_upload(request):
             result = remove_duplicate_paytermdesc(result['data'])
             convertion_list = convert_Payterms_desc_to_dictionary(result)
             valid_data_list, message = check_paymentterm_desc_data(convertion_list, 'UPLOAD')
-            context = {'valid_data_list': valid_data_list}
-            return JsonResponse(context, safe=False)
-        if Table_name == 'Incoterms':
-            result['error_message'], result['data'] = upload_csv.csv_preview_data(header_detail, data_set_val)
-            result = remove_duplicates(result['data'])
-            convertion_list = convert_Incoterms_to_dictionary(result)
-            valid_data_list, message = check_inco_terms_data(convertion_list, 'UPLOAD')
             context = {'valid_data_list': valid_data_list}
             return JsonResponse(context, safe=False)
         if Table_name == 'UnspscCategoriesCust':
@@ -774,13 +792,13 @@ def convert_UNSPSCDESC_to_dictionary(arr):
 def convert_Supplier_to_dictionary(arr):
     convertion_list = []
     for row in arr:
-        dictionary = {'supplier_id': row[0],'supp_type': row[1],'registration_number': row[16],
+        dictionary = {'supplier_id': row[0], 'supp_type': row[1], 'registration_number': row[16],
                       'name1': row[2], 'name2': row[3],
-                      'currency_id': row[19],'language_id': row[20],'country_code': row[18],
+                      'currency_id': row[19], 'language_id': row[20], 'country_code': row[18],
                       'city': row[4], 'street': row[6], 'postal_code': row[5],
-                      'email': row[10],'landline': row[7], 'mobile_num': row[8], 'fax': row[9],
-                      'search_term1': row[12],'search_term2': row[13],
-                      'delivery_days':row[15],'duns_number': row[14],'output_medium_types': row[11],
+                      'email': row[10], 'landline': row[7], 'mobile_num': row[8], 'fax': row[9],
+                      'search_term1': row[12], 'search_term2': row[13],
+                      'delivery_days': row[15], 'duns_number': row[14], 'output_medium_types': row[11],
                       'del_ind': row[17]}
         convertion_list.append(dictionary)
     return convertion_list
