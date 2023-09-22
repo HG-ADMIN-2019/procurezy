@@ -20,26 +20,23 @@
     {% csrf_token %}
     {% if error_messages %}
     <div class="alert alert-danger" id="err_msg" hidden>
-        {% for  key, value in error_messages.items %}
+        {% for key, value in error_messages.items %}
         <span class="fieldWrapper">
             {{ value }}
         </span>
         {% endfor %}
     </div>
     {% endif %}
-    <!-- {{ sform.non_field_errors }}-->
     <div class="row">
         <div class="col-md">
             <label>Document Type</label>
             {{ sform.doc_type }}
         </div>
         <!-- Display the supplier field only for PO queries -->
-        {% if sform.doc_type.value == "PO" %}
-        <div class="col-md">
+        <div class="col-md" id="supplierField" style="display: none;">
             <label>Supplier</label>
-            <input type="text" name="supplier" id="supplier" placeholder="Enter Supplier" onclick="openSupplierModal()">
+            <input type="text" name="supplier" id="supplier" placeholder="Enter Supplier" onclick="openSupplierModal()" style="padding: 6px 12px; width: 100%;">
         </div>
-        {% endif %}
         <div class="col-md">
             <label>Company Number</label>
             {{ sform.company_code }}
@@ -53,7 +50,7 @@
             {{ sform.to_date }}
         </div>
         <div class="col-md">
-            <label>Document Number</label>
+            <label>Doc Number</label>
             {{ sform.doc_num }}
         </div>
         <div class="col-md">
@@ -69,7 +66,6 @@
     <div class="elements-space-between">
         <div>
             <button class="btn btn-link" type="reset" value="Reset">Clear filters</button>
-
             <button id="hg_doc_report_search" class="btn btn-primary" onclick="search_click()" type="submit" title="Please click to get the search details!">
                 <i class="fas fa-search"></i>Search
             </button>
@@ -79,7 +75,6 @@
         </div>
     </div>
 </form>
-
             </div>
         </div>
         <br>
@@ -374,7 +369,24 @@ $('#select_supplier_modal').on('click', '#select_supplier', function () {
     }
 });
 
+function toggleSupplierField() {
+        const docTypeField = $('#id_doc_type'); // Assuming "id_doc_type" is the ID of the Document Type field.
+        const supplierField = $('#supplierField'); // The ID of the Supplier field container.
 
+        if (docTypeField.val() === "PO") {
+            supplierField.show();
+        } else {
+            supplierField.hide();
+        }
+    }
+
+    // Initialize the Supplier field visibility based on the initial value.
+    $(document).ready(function () {
+        toggleSupplierField();
+
+        // Handle the change event of the Document Type dropdown.
+        $('#id_doc_type').on('change', toggleSupplierField);
+    });
 
 </script>
 <script src="{% static 'scripts/doc_report.js' %}"></script>
