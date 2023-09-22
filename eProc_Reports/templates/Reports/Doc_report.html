@@ -17,7 +17,7 @@
     <div class="mep-form_wrapper">
 
         <div class="d-flex justify-content-between">
-            <h3>Documents Report</h3> 
+            <h3>Documents Report</h3>
             <div></div>
         </div>
         <hr>
@@ -26,7 +26,7 @@
             <div class="card-body">
                 <form method="POST" action="{% url 'eProc_Admin_Tool:doc_search_report' %}">
                     {% csrf_token %}
-    
+
                         {% if error_messages %}
                         <div class="alert alert-danger" id="err_msg" hidden>
                                 {% for  key, value in error_messages.items %}
@@ -36,14 +36,14 @@
                                 {% endfor %}
                         </div>
                     {% endif %}
-    
+
                     <!-- {{ sform.non_field_errors }}-->
-    
-                    <div class="row">   
+
+                    <div class="row">
                         <div class="col-md">
                             <label>Document Type </label>
                             {{ sform.doc_type }}
-                        </div> 
+                        </div>
                         <div class="col-md">
                             <label>Company Number</label>
                             {{ sform.company_code }}
@@ -69,22 +69,22 @@
                             {{ sform.requester }}
                         </div>
                     </div>
-                    <br>   
-    
+                    <br>
+
                     <div class="elements-space-between">
                         <div>
                             <button class="btn btn-link" type="reset" value="Reset"> Clear filters</button>
-    
+
                             <button id="hg_doc_report_search" class="btn btn-primary" onclick="search_click()" type="submit" title="Please click to get the search details!">
                                 <i class="fas fa-search"></i> search
                             </button>
                         </div>
-                        
+
                         <div>
                             <span class="badge help-text-badge help-text-star-search"></span>
                         </div>
                     </div>
-                    
+
                 </form>
             </div>
         </div>
@@ -168,7 +168,7 @@
         </div>
         {% endif %}
 
-    </div>        
+    </div>
 </div>
 <!-- start of username popup -->
 <div class="modal fade" id="get_username_popup">
