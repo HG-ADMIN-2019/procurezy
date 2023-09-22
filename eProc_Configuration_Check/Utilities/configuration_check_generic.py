@@ -2198,9 +2198,15 @@ def check_address_types_data(ui_data, status):
                         else:
                             invalid_count = invalid_count + 1
             else:
+                if django_query_instance.django_existence_check(OrgCompanies,
+                                                             {'del_ind': False,
+                                                              'client': global_variables.GLOBAL_CLIENT,
+                                                              'company_id': address_type['company_id']
+                                                              }):
+                    check_company = address_type['company_id']
                 # duplicate check
                 if django_query_instance.django_existence_check(OrgAddressMap,
-                                                                {'del_ind': False,
+                                                                {'del_ind': False,'company_id': check_company,
                                                                  'client': global_variables.GLOBAL_CLIENT,
                                                                  'address_number': address_type['address_number'],
                                                                  'address_type': address_type['address_type'],
@@ -2555,6 +2561,7 @@ def check_paymentterm_desc_data(ui_data, status):
                                                                    'client': global_variables.GLOBAL_CLIENT,
                                                                    'payment_term_key': payment_term_desc[
                                                                        'payment_term_key'],
+                                                                   'language_id': payment_term_desc['language_id']
                                                                    }):
                     update_count = update_count + 1
                     valid_data_list.append(payment_term_desc)

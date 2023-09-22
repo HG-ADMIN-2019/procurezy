@@ -157,10 +157,12 @@ AUTH_0045,TIME_SHEET,0,0,auth_obj_id
 AUTH_0046,PROJECTS,0,0,auth_obj_id
 AUTH_0047,EFFORTS,0,0,auth_obj_id
 AUTH_0048,APPLICATION_MONITOR,0,0,auth_obj_id
+AUTH_0049,SHOP_ASSIST,0,0,auth_obj_id
 AUTH_0050,SOM,0,0,auth_obj_id
 AUTH_0051,SUB_SOM,0,0,auth_obj_id
 AUTH_0052,RFQ,0,0,auth_obj_id
-AUTH_0049,SHOP_ASSIST,0,0,auth_obj_id
+AUTH_0053,SOURCING,0,0,auth_obj_id
+AUTH_0054,SC_GROUPING,0,0,auth_obj_id
 MSG100,Error,0,0,messages_id
 MSG179,Success,0,0,messages_id
 9,Payment Terms,1,0,split_type

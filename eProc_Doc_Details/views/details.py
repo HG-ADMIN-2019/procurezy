@@ -801,6 +801,7 @@ def update_sc(request):
     sc_header_instance = None
     shop_assist_status = None
     mgr_details = {}
+    temp_flag = 0
     update_user_info(request)
     if request.method == 'POST':
         update_user_info(request)
@@ -878,12 +879,11 @@ def update_sc(request):
                                                                      'sc_header_guid': sc_header_guid,
                                                                      'app_id': CONST_AUTO}):
 
-                        ScHeader.objects.update_or_create(guid=sc_header_guid,
-                                                          defaults={'status': CONST_SC_HEADER_APPROVED})
+                        # ScHeader.objects.update(guid=sc_header_guid,
+                        #                                   defaults={'status': CONST_SC_HEADER_APPROVED})
+                        temp_flag = 1
                         create_purchase_order = CreatePurchaseOrder(sc_header_instance)
                         status, error_message, output, po_doc_list = create_purchase_order.create_po()
-                        ScApproval.objects.update_or_create(header_guid=sc_header_guid,
-                                                            defaults={'proc_lvl_sts': CONST_COMPLETED, 'app_sts': CONST_SC_APPR_APPROVED})
                         # Send purchase order email to supplier
                         for po_document_number in po_doc_list:
                             email_supp_monitoring_guid = ''
@@ -969,6 +969,15 @@ def update_sc(request):
 
     document_detail = {}
     if sc_header_instance:
+        if temp_flag == 1:
+            django_query_instance.django_update_query(ScHeader,
+                                                      {'guid': sc_header_guid, 'client': global_variables.GLOBAL_CLIENT},
+                                                      {'status': CONST_SC_HEADER_APPROVED})
+            django_query_instance.django_update_query(ScApproval,
+                                                      {'client': global_variables.GLOBAL_CLIENT,
+                                                       'header_guid': sc_header_guid},
+                                                      {'proc_lvl_sts': CONST_COMPLETED,
+                                                       'app_sts': CONST_SC_APPR_APPROVED})
         sc_header_instance = django_query_instance.django_get_query(ScHeader, {'guid': sc_header_guid})
         document_detail = {'document_number': sc_header_instance.doc_number,
                            'sc_name': sc_header_instance.description,

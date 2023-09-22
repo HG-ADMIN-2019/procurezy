@@ -294,17 +294,6 @@ def extract_workflowschema_data(request):
     return response
 
 
-def extract_workflowschema_template(request):
-    response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="Work Flow Schema Template.CSV"'
-
-    writer = csv.writer(response)
-
-    writer.writerow(['WORKFLOW_SCHEMA', 'COMPANY_ID', 'APP_TYPES', 'del_ind'])
-
-    return response
-
-
 def extract_workflowaccount_data(request):
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="WORK FLOW ACCOUNTING.CSV"'
@@ -685,19 +674,19 @@ def extract_approverlimitval_data(request):
 
     writer = csv.writer(response)
 
-    writer.writerow(['APP_CODE_ID', 'COMPANY_ID', 'APP_TYPES', 'CURRENCY_ID', 'UPPER_LIMIT_VALUE', 'del_ind'])
+    writer.writerow(['COMPANY_ID','APP_TYPES','APP_CODE_ID','UPPER_LIMIT_VALUE','CURRENCY_ID', 'del_ind'])
 
     approverlimitval = django_query_instance.django_filter_query(ApproverLimitValue,
                                                                  {'del_ind': False,
                                                                   'client': global_variables.GLOBAL_CLIENT}, None,
-                                                                 ['app_code_id', 'company_id', 'app_types',
-                                                                  'currency_id', 'upper_limit_value', 'del_ind'])
+                                                                 ['company_id', 'app_types','app_code_id',
+                                                                  'upper_limit_value', 'currency_id', 'del_ind'])
     approverlim_data = query_update_del_ind(approverlimitval)
 
     for approverlimitvaldata in approverlim_data:
-        approverlimitvaldata_info = [approverlimitvaldata['app_code_id'], approverlimitvaldata['company_id'],
-                                     approverlimitvaldata['app_types'], approverlimitvaldata['currency_id'],
-                                     approverlimitvaldata['upper_limit_value'], approverlimitvaldata['del_ind']]
+        approverlimitvaldata_info = [approverlimitvaldata['company_id'], approverlimitvaldata['app_types'],
+                                     approverlimitvaldata['app_code_id'],  approverlimitvaldata['upper_limit_value'],
+                                     approverlimitvaldata['currency_id'], approverlimitvaldata['del_ind']]
         writer.writerow(approverlimitvaldata_info)
 
     return response
@@ -796,17 +785,6 @@ def extract_address_type_template(request):
     writer = csv.writer(response)
 
     writer.writerow(['ADDRESS_TYPE', 'ADDRESS_NUMBER', 'COMPANY_ID', 'VALID_FROM', 'VALID_TO', 'del_ind'])
-
-    return response
-
-
-def extract_approvertype_template(request):
-    response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="Approver Type.CSV"'
-
-    writer = csv.writer(response)
-
-    writer.writerow(['APP_TYPES', 'APPR_TYPE_DESC', 'del_ind'])
 
     return response
 
@@ -1388,17 +1366,6 @@ def extract_incoterms_data(request):
     return response
 
 
-def extract_incoterm_template(request):
-    response = HttpResponse(content_type='text/csv')
-    response['Content-Disposition'] = 'attachment; filename="Incoterm_template.CSV"'
-
-    writer = csv.writer(response)
-
-    writer.writerow(['INCOTERM_KEY', 'DESCRIPTION', 'del_ind'])
-
-    return response
-
-
 def extract_payterms_data(request):
     response = HttpResponse(content_type='text/csv')
     response['Content-Disposition'] = 'attachment; filename="Payment_terms_desc.CSV"'
@@ -1495,7 +1462,7 @@ def extract_approverlimitval_data_template(request):
 
     writer = csv.writer(response)
 
-    writer.writerow(['APP_CODE_ID', 'COMPANY_ID', 'APP_TYPES', 'CURRENCY_ID', 'UPPER_LIMIT_VALUE', 'del_ind'])
+    writer.writerow(['COMPANY_ID', 'APP_TYPES', 'APP_CODE_ID', 'UPPER_LIMIT_VALUE', 'CURRENCY_ID', 'del_ind'])
     return response
 
 
