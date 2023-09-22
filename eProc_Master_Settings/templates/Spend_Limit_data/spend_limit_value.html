@@ -390,7 +390,9 @@
                             $(row.find("TD").eq(4).find("select option[value="+currency_id_list+"]")).attr('selected','selected');
                                 i++;
                             });
+
                             $(".class_del_checkbox").prop("hidden", false);
+                            $( "#header_select").prop( "hidden", false );
                             $("#id_del_ind_checkbox").prop("hidden", false);
                             $('#Spnd_Lim_Val_Modal').modal('show');
                             $('#id_data_upload').modal('hide');
@@ -408,12 +410,7 @@
                 });
             }
             else{
-                $("#id_error_msg_upload").prop("hidden",false)
-                get_message_details("JMSG110"); // Get message details
-                var display = msg_type.messages_id_desc;
-                document.getElementById("id_error_msg_upload").innerHTML = display;
-                document.getElementById("id_error_msg_upload").style.color = "Red";
-                $('#id_data_upload').modal('show');
+                  display_file_select_error(); // Display error message for file selection except .csv
             }
         }
     }
@@ -871,11 +868,11 @@
             var row = $(this);
             spendlimit_value_dic = {}
             //*************** reading data from the pop-up ***************
-            spendlimit_value_dic.company_id = row.find("TD").eq(1).find('select[type="text"]').val()
-            spendlimit_value_dic.spend_code_id = row.find("TD").eq(2).find('input[type="text"]').val()
-            spendlimit_value_dic.upper_limit_value = row.find("TD").eq(3).find('input[type="number"]').val()
-            spendlimit_value_dic.currency_id = row.find("TD").eq(4).find('select[type="text"]').val()
-            spend_limit_value.spend_lim_value_guid = row.find("TD").eq(5).find('input[type="text"]').val()
+            spendlimit_value_dic.company_id = row.find("TD").eq(1).find("select option:selected").val();
+            spendlimit_value_dic.spend_code_id = row.find("TD").eq(2).find('input[type="text"]').val();
+            spendlimit_value_dic.upper_limit_value = row.find("TD").eq(3).find('input[type="number"]').val();
+            spendlimit_value_dic.currency_id = row.find("TD").eq(4).find("select option:selected").val();
+            spend_limit_value.spend_lim_value_guid = row.find("TD").eq(5).find('input[type="text"]').val();
             checked_box = row.find("TD").eq(6).find('input[type="checkbox"]').is(':checked')
             if (checked_box){
                 spendlimit_value_dic.del_ind = '1'

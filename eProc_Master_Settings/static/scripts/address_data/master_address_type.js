@@ -174,6 +174,23 @@ function get_main_table_data() {
     table_sort_filter('display_basic_table');
 }
 
+
+/ Function to get main table data
+function get_main_table_data_upload() {
+    main_table_low_value = [];
+    $('#display_basic_table').DataTable().destroy();
+    $("#display_basic_table TBODY TR").each(function () {
+        var row = $(this);
+        var main_attribute = {};
+        main_attribute.address_number = row.find("TD").eq(3).html();
+        main_attribute.address_type = row.find("TD").eq(2).html();
+        main_attribute.company_id = row.find("TD").eq(1).html();
+        var address_compare_maintable = main_attribute.address_number +'-'+ main_attribute.address_type+'-'+main_attribute.company_id + '-'+ main_attribute.del_ind
+        main_table_low_value.push(address_compare_maintable);
+    });
+    table_sort_filter('display_basic_table');
+    return main_table_low_value
+}
  // Function to get the selected row data
  function get_selected_row_data() {
     $("#display_basic_table TBODY TR").each(function () {
@@ -191,11 +208,46 @@ function get_main_table_data() {
         }
     });
  }
+
+
+//**********************************
+function delete_duplicate() {
+    $('#id_popup_table').DataTable().destroy();
+    var address_type_code_check = new Array
+     var main_table_low_value = new Array
+    $("#id_popup_table TBODY TR").each(function() {
+        var row = $(this);
+        //*************** reading data from the pop-up ***************
+
+        address_guid = row.find("TD").eq(7).find('input').val();
+        address_number = row.find("TD").eq(3).find('select').val();
+        address_type = row.find("TD").eq(2).find('select').val();
+        company_id = row.find("TD").eq(1).find('select').val();
+        valid_from = row.find("TD").eq(4).find('input[type="text"]').val();
+        valid_to = row.find("TD").eq(5).find('input[type="text"]').val();
+
+        checked_box = row.find("TD").eq(6).find('input[type="checkbox"]').is(':checked')
+        if (approval_type_code_check.includes(address_number)) {
+            $(row).remove();
+        }
+        address_type_code_check.push(address_number);
+        main_table_low_value = get_main_table_data_upload(); //Read data from main table
+        if (main_table_low_value.includes(address_number)) {
+            $(row).remove();
+        }
+        main_table_low_value.push(address_number);
+    })
+    table_sort_filter_popup('id_popup_table')
+    check_data()
+}
+
+
+
 function check_date(addresstype_data) {
     var validDate = 'Y';
     var error_message = ''
     $.each(addresstype_data, function (i, item) {
-var validFromParts = item.valid_from.split('-');
+        var validFromParts = item.valid_from.split('-');
         var validToParts = item.valid_to.split('-');
         var validFrom = new Date(validFromParts[2], validFromParts[1] - 1, validFromParts[0]);
         var validTo = new Date(validToParts[2], validToParts[1] - 1, validToParts[0]);

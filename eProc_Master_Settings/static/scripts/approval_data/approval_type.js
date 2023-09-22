@@ -2,14 +2,6 @@ var approval_type_data = new Array();
 var main_table_low_value = [];
 var validate_add_attributes = [];
 
-//onclick of upload button display id_data_upload popup and set GLOBAL_ACTION button value
-function onclick_upload_button() {
-    GLOBAL_ACTION = "approval_type_upload"
-    $("#id_error_msg_upload").prop("hidden",true)
-    $("#id_popup_tbody").empty();
-    $('#id_data_upload').modal('show');
-    document.getElementById('id_file_data_upload').value = "";
-}
 
 //******************************************** 
 function display_error_message(error_message){
@@ -47,12 +39,6 @@ function new_row_data(inc_index) {
     table_sort_filter('id_popup_table');
 }
 
-// onclick of valid popup
-function valid_popup(){
-  $('#id_data_upload').modal('hide');
-  $("#valid_upload").modal('show');
-}
-
 
 //onclick of cancel display the table in display mode............
 function display_basic_db_data() {
@@ -81,7 +67,6 @@ function display_basic_db_data() {
 function delete_duplicate() {
     $('#id_popup_table').DataTable().destroy();
     var approval_type_code_check = new Array
-     var main_table_low_value = new Array
     $("#id_popup_table TBODY TR").each(function() {
         var row = $(this);
         //*************** reading data from the pop-up ***************
@@ -92,14 +77,8 @@ function delete_duplicate() {
             $(row).remove();
         }
         approval_type_code_check.push(app_types);
-        main_table_low_value = get_main_table_data_upload(); //Read data from main table
-        if (main_table_low_value.includes(app_types)) {
-            $(row).remove();
-        }
-        main_table_low_value.push(app_types);
     })
     table_sort_filter_popup('id_popup_table')
-    check_data()
 }
 
 // Functtion to hide and display save related popups
@@ -144,21 +123,6 @@ function get_main_table_data() {
     table_sort_filter('display_basic_table');
 }
 
-// Function to get main table data
-function get_main_table_data_upload() {
-    main_table_low_value = [];
-    $('#display_basic_table').DataTable().destroy();
-    $("#display_basic_table TBODY TR").each(function() {
-        var row = $(this);
-        var main_attribute = {};
-        main_attribute.app_types = row.find("TD").eq(1).html();
-        main_attribute.del_ind = row.find("TD").eq(3).find('input[type="checkbox"]').is(':checked');
-        var compare = main_attribute.app_types + '-'+ main_attribute.del_ind
-        main_table_low_value.push(compare);
-    });
-    table_sort_filter('display_basic_table');
-    return main_table_low_value
-}
 
 // Function to get the selected row data
 function get_selected_row_data() {
