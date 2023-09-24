@@ -342,6 +342,7 @@
                                         }
                                         company_id_list = company + company_list
                                     });
+
                                     var spendcode = '';
                                     var spendcode_list = '';
                                     var spendcode_id_list = '';
@@ -364,13 +365,16 @@
                                     var comp_val = spending_limit_find(spendid_type_value)
                                     $(row.find("TD").eq(1).find("select option[value="+company_id_list+"]")).attr('selected','selected');
                                     $(row.find("TD").eq(3).find("select option[value="+spendcode_id_list+"]")).attr('selected','selected');
+
+                                    row.find("TD").eq(3).find("select").empty()
+                                    company_num = row.find("TD").eq(1).find("select option:selected").val();
+                                    var assign_val = spending_limit_find(company_num)
+                                    row.find("TD").eq(3).find("select").append(assign_val.spend_code_id_dropdown)
                                     $(row.find("TD").eq(1).find("select")).change(function () {
-                                        row.find("TD").eq(3).find("select").empty()
-                                        company_num = row.find("TD").eq(1).find("select option:selected").val();
-                                        var comp_val = spending_limit_find(company_num)
-                                        row.find("TD").eq(3).find("select").append(comp_val.spend_code_id_dropdown)
-                                        })
-                                    i++;
+                                        company_dropdwn_change(row);
+                                    })
+
+                                i++;
                                 });
                                 $('#id_popup_table').append(edit_basic_data);
                                 $("#id_del_ind_checkbox").prop("hidden", false);
