@@ -2042,7 +2042,6 @@ def check_approv_limit_data(ui_data, status):
                                                                    'client': global_variables.GLOBAL_CLIENT,
                                                                    'approver_username': approv_limit[
                                                                        'approver_username'],
-                                                                   'app_code_id': approv_limit['app_code_id'],
                                                                    'company_id': approv_limit[
                                                                        'company_id']}):
                     update_count = update_count + 1

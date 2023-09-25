@@ -270,7 +270,7 @@
                             var del_ind = '';
                             $("#id_popup_tbody").empty();
                             $.each(response.valid_data_list, function(i, value) {
-                                del_ind = '<td>' + value[3] + '</td>'
+                                del_ind = '<td>' + value.del_ind + '</td>'
                                 if (value.del_ind == 1) {
                                     del_ind = ' <input type="checkbox" value="' + value.del_ind + '" checked>'
                                 } else {
@@ -285,7 +285,7 @@
                                 var user_list = '';
                                 var user_id_list = '';
                                 $.each(rendered_user_data, function(i, item){
-                                    if( value.username == item.username){
+                                    if( value.approver_username == item.username){
                                         user = '<option value="' + item.username + '">' + item.username + '</option>';
                                     }else{
                                         user_list += '<option value="' + item.username + '">' + item.username + '</option>';
@@ -322,7 +322,7 @@
                                 '<td><select class="form-control" type = "text"><option value ="' + value.app_code_id + '"'+appid_id_list+'>'+value.app_code_id+'</option></select></td>'+
                                 '<td hidden><input type="text" value=""></td><td>' + del_ind + '</td></tr>';
                             });
-                            $('#id_popup_tbody').append(edit_basic_data);
+
                             var i =0;
                             $("#id_popup_table TBODY TR").each(function() {
                                 var row = $(this);
@@ -345,6 +345,7 @@
                                 })
                                 i++;
                             });
+                            $('#id_popup_tbody').append(edit_basic_data);
                             $("#id_del_ind_checkbox").prop("hidden", false);
                             $( "#header_select").prop( "hidden", false );
                             $(".class_del_checkbox").prop("hidden", false);
@@ -365,12 +366,7 @@
                 });
             }
             else{
-                $("#id_error_msg_upload").prop("hidden",false)
-                get_message_details("JMSG110"); // Get message details
-                var display = msg_type.messages_id_desc[0];
-                document.getElementById("id_error_msg_upload").innerHTML = display;
-                document.getElementById("id_error_msg_upload").style.color = "Red";
-                $('#id_data_upload').modal('show');
+                 display_file_select_error(); // Display error message for file selection except .csv
             }
         }
     }
@@ -479,7 +475,7 @@
             approv_limit_dic.approver_username = row.find("TD").eq(2).find("select option:selected").val();
             approv_limit_dic.company_id = row.find("TD").eq(1).find("select option:selected").val();
             approv_limit_dic.app_code_id = row.find("TD").eq(3).find("select option:selected").val(); 
-            approv_limit_dic.app_guid = row.find("TD").eq(4).find('input[type="text"]').val().toUpperCase()
+            approv_limit_dic.app_guid = row.find("TD").eq(4).find('input[type="text"]').val()
             approval_limit_compare = approv_limit_dic.approver_username +'-'+ approv_limit_dic.app_code_id +'-'+ approv_limit_dic.company_id
             checked_box = row.find("TD").eq(5).find('input[type="checkbox"]').is(':checked')
             if (checked_box) {
