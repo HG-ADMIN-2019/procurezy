@@ -542,7 +542,7 @@ def remove_invalid_approvallimitvalue(convertion_list):
             if django_query_instance.django_existence_check(Currency,
                                                             {'del_ind': False,
                                                              'currency_id': conversion['currency_id']}):
-                valid_convertion.append(conversion)
+                # Check for existence of ApproverType
                 if django_query_instance.django_existence_check(ApproverType,
                                                                 {'del_ind': False,
                                                                  'app_types': conversion['app_types']}):
@@ -560,12 +560,11 @@ def remove_invalid_approvallimitid(convertion_list):
                                                         {'del_ind': False,
                                                          'company_id': conversion['company_id'],
                                                          'client': global_variables.GLOBAL_CLIENT}):
-            # Check for existence of Currency
+            # Check for existence of Username
             if django_query_instance.django_existence_check(UserData,
                                                             {'del_ind': False,
-                                                             'username': conversion['username']}):
-                valid_convertion.append(conversion)
-                # Check for existence of Currency
+                                                             'username': conversion['approver_username']}):
+                # Check for existence of App code id
                 if django_query_instance.django_existence_check(ApproverLimitValue,
                                                                 {'del_ind': False,
                                                                  'app_code_id': conversion['app_code_id']}):
@@ -574,6 +573,41 @@ def remove_invalid_approvallimitid(convertion_list):
     return valid_convertion
 
 
+def remove_invalid_workflowacc(convertion_list):
+    valid_convertion = []
+
+    for conversion in convertion_list:
+        # Check for existence of OrgCompanies
+        if django_query_instance.django_existence_check(OrgCompanies,
+                                                        {'del_ind': False,
+                                                         'company_id': conversion['company_id'],
+                                                         'client': global_variables.GLOBAL_CLIENT}):
+            if django_query_instance.django_existence_check(OrgCompanies,
+                                                            {'del_ind': False,
+                                                             'company_id': conversion['sup_company_id'],
+                                                             'client': global_variables.GLOBAL_CLIENT}):
+                # Check for existence of Username
+                if django_query_instance.django_existence_check(AccountAssignmentCategory,
+                                                                {'del_ind': False,
+                                                                 'account_assign_cat': conversion[
+                                                                     'account_assign_cat']}):
+                    # Check for existence of Username
+                    if django_query_instance.django_existence_check(AccountingData,
+                                                                    {'del_ind': False,
+                                                                     'account_assign_value': conversion[
+                                                                         'acc_value']}):
+                        # Check for existence of Username
+                        if django_query_instance.django_existence_check(AccountingData,
+                                                                        {'del_ind': False,
+                                                                         'account_assign_value': conversion[
+                                                                             'sup_acc_value']}):
+                            # Check for existence of Username
+                            if django_query_instance.django_existence_check(UserData,
+                                                                            {'del_ind': False,
+                                                                             'username': conversion['app_username']}):
+                                valid_convertion.append(conversion)
+
+    return valid_convertion
 
 
 def data_upload(request):
@@ -687,6 +721,7 @@ def data_upload(request):
             result['error_message'], result['data'] = upload_csv.csv_preview_data(header_detail, data_set_val)
             result = remove_duplicates(result['data'])
             convertion_list = convert_WorkflowACC_to_dictionary(result)
+            valid_convertion = remove_invalid_workflowacc(convertion_list)
             valid_data_list, message = check_workflow_acc_data(convertion_list, 'UPLOAD')
             context = {'valid_data_list': valid_data_list}
             return JsonResponse(context, safe=False)
