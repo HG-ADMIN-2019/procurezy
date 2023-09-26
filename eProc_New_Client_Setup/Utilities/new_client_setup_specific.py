@@ -366,8 +366,8 @@ class InitialSetupClient(BasicSettingsSave, ApplicationSettingsSave, MasterSetti
             header = next(csvreader)  # skip header
             csv_to_db_data = []
             for csv_data in csvreader:
-                csv_to_db_data.append({'ACCOUNT_ASSIGN_CAT': csv_data[0],
-                                       'DESCRIPTION': csv_data[1],
+                csv_to_db_data.append({'account_assign_cat': csv_data[0],
+                                       'description': csv_data[1],
                                        'del_ind': csv_data[2]})
             accasscat_data = {'data': csv_to_db_data}
             self.save_acc_asg_data(accasscat_data)
