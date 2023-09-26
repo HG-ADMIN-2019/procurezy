@@ -445,8 +445,9 @@ class InitialSetupClient(BasicSettingsSave, ApplicationSettingsSave, MasterSetti
             for csv_data in csvreader:
                 csv_to_db_data.append({'company_code_id': csv_data[0],
                                        'call_off': csv_data[1],
-                                       'purchase_ctrl_flag': csv_data[2],
-                                       'del_ind': csv_data[3]})
+                                       'prod_cat_id': csv_data[2],
+                                       'purchase_ctrl_flag': csv_data[3],
+                                       'del_ind': csv_data[4]})
             purhcase_control_data = {'data': csv_to_db_data}
             self.save_purchase_control(purhcase_control_data)
 
