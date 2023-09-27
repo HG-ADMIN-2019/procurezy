@@ -122,7 +122,7 @@ class AuthorizationLevel:
         slide_menu = dict.fromkeys([CONST_WORK_OVERVIEW, CONST_USER_SETTINGS, CONST_APPL_SETTINGS, CONST_SHOPPING,
                                     CONST_SHOPPING_PLUS, CONST_GOODS_RECEIPTS, CONST_APPROVALS, CONST_PURCHASING,
                                     CONST_ADMIN_TOOL, CONST_SYSTEM_SETTINGS, CONST_CONTENT_MANAGEMENT,
-                                    CONST_TIME_SHEET, CONST_SOM, CONST_SHOPPER_ASSIST, CONST_SC_SOURCING], False)
+                                    CONST_TIME_SHEET, CONST_SOM, CONST_SHOPPER_ASSIST], False)
 
         auth_feature = self.get_auth_level_id(auth_level)
         for auth_feature_value in auth_feature:

@@ -9,12 +9,14 @@ Author:
 from django.http import JsonResponse
 from django.shortcuts import render
 
-from eProc_Basic.Utilities.constants.constants import CONST_SC_HEADER_APPROVED
+from eProc_Basic.Utilities.constants.constants import CONST_SC_HEADER_APPROVED, CONST_PO_SPLIT_SUPPLIER, \
+    CONST_PO_SPLIT_CURRENCY, CONST_PO_GROUP_COMPANY_CODE
 from eProc_Basic.Utilities.functions.django_query_set import DjangoQueries
 from eProc_Basic.Utilities.functions.get_db_query import getClients
+from eProc_Basic.Utilities.functions.remove_element_from_list import remove_element_from_list
 from eProc_Basic.Utilities.global_defination import global_variables
 from eProc_Basic_Settings.views import JsonParser_obj
-from eProc_Configuration.models import OrgCompanies
+from eProc_Configuration.models import OrgCompanies, PoGroupCriteria
 from eProc_Doc_Search_and_Display.Utilities.search_display_generic import get_hdr_data
 from eProc_Emails.Utilities.email_notif_generic import send_po_attachment_email
 from eProc_Purchase_Order.Utilities.purchase_order_generic import CreatePurchaseOrder, check_for_po_creation, check_po
@@ -128,8 +130,15 @@ def generate_po(request):
     po_creation_flag = ''
     qty = ''
     # check whether the items are same
+    po_split_list = get_po_split_group_type(sc_header_instance.co_code)
+    # po_split_list = get_po_split_group_type(self.sc_header_instance.co_code)
+    print("splitting type:", po_split_list)
+    company_id = ''
+    if po_split_list:
+        if CONST_PO_GROUP_COMPANY_CODE in po_split_list:
+            company_id = sc_item_details[0]['comp_code']
     desc = sc_item_details[0]['description']
-    company_id = sc_item_details[0]['comp_code']
+    # company_id = sc_item_details[0]['comp_code']
     for i in range(1, len(sc_item_details)):
         qty = sc_item_details[0]['quantity']
         if desc == sc_item_details[i]['description'] and company_id == sc_item_details[0]['comp_code']:
@@ -227,3 +236,43 @@ def rfq_details(request):
     }
 
     return render(request, 'Purchaser_Cockpit/display_rfq.html', context)
+
+
+def get_po_split_group_type(company_code):
+    """
+
+    """
+    po_split_active_list_cocode = []
+    po_split_list = django_query_instance.django_filter_value_list_query(PoGroupCriteria,
+                                                                         {'client': global_variables.GLOBAL_CLIENT,
+                                                                          'del_ind': False,
+                                                                          'company_code_id': '*',
+                                                                          'activate': True}, 'po_split_group_type_id')
+
+    if django_query_instance.django_existence_check(PoGroupCriteria,
+                                                    {'client': global_variables.GLOBAL_CLIENT,
+                                                     'del_ind': False,
+                                                     'company_code_id': company_code,
+                                                     'activate': False}):
+        po_split_inactive_list_cocode = django_query_instance.django_filter_value_list_query(PoGroupCriteria,
+                                                                                             {
+                                                                                                 'client': global_variables.GLOBAL_CLIENT,
+                                                                                                 'del_ind': False,
+                                                                                                 'company_code_id': company_code,
+                                                                                                 'activate': False},
+                                                                                             'po_split_group_type_id')
+        po_split_list = remove_element_from_list(po_split_list, po_split_inactive_list_cocode)
+    if django_query_instance.django_existence_check(PoGroupCriteria,
+                                                    {'client': global_variables.GLOBAL_CLIENT,
+                                                     'del_ind': False,
+                                                     'company_code_id': company_code,
+                                                     'activate': True}):
+        po_split_active_list_cocode = django_query_instance.django_filter_value_list_query(PoGroupCriteria,
+                                                                                           {
+                                                                                               'client': global_variables.GLOBAL_CLIENT,
+                                                                                               'del_ind': False,
+                                                                                               'company_code_id': company_code,
+                                                                                               'activate': True},
+                                                                                           'po_split_group_type_id')
+    po_split_list = list(set(po_split_list + po_split_active_list_cocode))
+    return po_split_list
