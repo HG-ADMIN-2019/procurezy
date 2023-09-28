@@ -7,7 +7,7 @@ from eProc_Configuration_Check.Utilities.configuration_check_generic import chec
     check_spending_limit_data, check_spendlimit_value_data, check_approv_limit_value_data, check_approv_limit_data, \
     check_address_types_data, check_workflow_acc_data, check_inco_terms_data, check_paymentterm_desc_data, \
     check_address_data, get_valid_country_data, get_valid_currency_data, get_valid_language_data, get_valid_uom_data, \
-    get_valid_timezone_data, get_valid_employee_data
+    get_valid_timezone_data, get_valid_employee_data, check_determine_gl_acc_data
 from eProc_Shopping_Cart.context_processors import update_user_info
 
 JsonParser_obj = JsonParser()
@@ -32,6 +32,17 @@ def check_cust_unspsc_category(request):
     ui_data_dictionary = JsonParser_obj.get_json_from_req(request)
     ui_data = ui_data_dictionary['data_list']
     messages = check_unspsc_category_data(ui_data, 'UPLOAD')
+    return JsonResponse({'messages': messages}, safe=False)
+
+
+def check_gl_acc_data(request):
+    """
+
+    """
+    update_user_info(request)
+    ui_data_dictionary = JsonParser_obj.get_json_from_req(request)
+    ui_data = ui_data_dictionary['data_list']
+    messages = check_determine_gl_acc_data(ui_data, 'UPLOAD')
     return JsonResponse({'messages': messages}, safe=False)
 
 

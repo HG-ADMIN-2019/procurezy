@@ -170,12 +170,13 @@
     </div>
 </div>
 {{ address_type_data|json_script:"address_type_data" }}
+
 <script>
     var rendered_address_type_data =  JSON.parse(document.getElementById('address_type_data').textContent);
     var messages_list = {{messages_list|safe}};
-    var rendered_address_data
-    var rendered_company_data
-    var rendered_address_type_values
+    var rendered_address_data = {{address_data|safe}};
+    var rendered_company_data = {{upload_data_OrgCompanies|safe}};
+    var rendered_address_type_values = {{dropdown_db_values|safe}};
     var address_type_data_array = {}
     var main_table_address_type_value = [];
     var address_type = '';
@@ -248,13 +249,12 @@
                     '<td><select class="form-control">'+company_dropdwn+'</select></td>' +
                     '<td><select class="form-control">'+address_type_dropdown+'</select></td>' +
                     '<td><select class="form-control">'+address_number_dropdwn+'</select></td>' +
-                    '<td><input  type="text" name = "valid_from" class="form-control formatDate"></td>' +
-                    '<td><input type="text" name = "valid_to"  class="form-control formatDate"></td>' +
+                    '<td><input  type="date" name = "valid_from" class="form-control formatDate"></td>' +
+                    '<td><input type="date" name = "valid_to"  class="form-control formatDate"></td>' +
                     '<td class="class_del_checkbox"><input type="checkbox" required></td>' +
                     '<td hidden><input  type="text" class="form-control"  name="guid"></td></tr>';
                     $('#id_popup_tbody').append(basic_add_new_html);
                     DatePicker();
-                    $('#id_popup_tbody').append(basic_add_new_html);
                     $(".class_del_checkbox").prop("hidden", false);
                     $("#id_del_ind_checkbox").prop("hidden", false);
                     table_sort_filter('id_popup_table');
@@ -382,9 +382,10 @@
                         dataType: "json",
                         success: function (Response) {
                             rendered_address_type_data = Response[0];
-                            rendered_address_type_values = Response[2];
+                            rendered_address_data = Response[2].address_data
+                            rendered_company_data = Response[2].upload_data_OrgCompanies
+                            rendered_address_type_values = Response[2].dropdown_db_values
                             display_basic_db_data();
-<!--                            addtype_drp();-->
                             $('#Adrs_Type_Modal').modal('hide');
                             success_response(Response);  // Function call to display response data
                             CloseLoaderPopup();
@@ -480,17 +481,25 @@
                                 else {
                                     del_ind= '<input type="checkbox" value="' + value.del_ind + '" required>'
                                 }
-                                var address_data = '';
-                                var address_data_list = '';
-                                var address_data_id_list = '';
-                                $.each(rendered_address_type_values, function(i, item){
-                                    if( value.address_type == item.field_type_id){
-                                        address_data = '<option value="' + item.field_type_id + '">' + item.field_type_id + '</option>';
-                                    }else{
-                                        address_data_list += '<option value="' + item.field_type_id + '">' + item.field_type_id + '</option>';
-                                    }
-                                    address_data_id_list = address_data + address_data_list
-                                });
+                               var address_data_set = new Set(); // Use a Set to store unique entries
+
+                            $.each(rendered_address_type_data, function(i, item) {
+                                if (value.address_type == item.address_type) {
+                                    address_data_set.add(item.address_type); // Add unique value to the Set
+                                } else {
+                                    address_data_set.add(item.address_type); // Add non-unique value to the Set
+                                }
+                            });
+
+                            // Convert the Set back to a string
+                            var address_data_id_list = Array.from(address_data_set).map(function(value) {
+                                return '<option value="' + value + '">' + value + '</option>';
+                            }).join('');
+
+                            // Now, address_data_id_list contains all unique entries
+
+
+
                                 var address_number = '';
                                 var address_number_list = '';
                                 var address_number_id_list = '';
@@ -513,7 +522,7 @@
                                     }
                                     company_id_list = company + company_list
                                 });
-                                edit_basic_data += '<tr ><td><input type="checkbox" required></td><td><select class="form-control"><option value ="' + value.company_id + '"'+company_id_list+'>'+value.company_id+'</option></select></td><td><select class = "form-control" type = "text"> <option value ="' + value.address_type + '"'+address_data_id_list+'>'+value.address_type+'</option></select></td><td><select class = "form-control" type ="text"> <option value ="' + value.address_number + '"'+address_number_id_list+'>'+value.address_number+'</option></select></td><td><input  type="date" name = "valid_from" class="form-control" value ="' + value.valid_from + '"></td><td><input  type="date" name = "valid_to" value ="' + value.valid_to + '" class="form-control"></td><td hidden></td><td>'+ del_ind +'</td></tr>';
+                                edit_basic_data += '<tr><td><input type="checkbox" required></td><td><select class="form-control"><option value ="' + value.company_id + '"'+company_id_list+'></option></select></td><td><select class = "form-control" type = "text"><option value ="' + value.address_type + '"'+address_data_id_list+'></option></select></td><td><select class = "form-control" type ="text"><option value ="' + value.address_number + '"'+address_number_id_list+'></option></select></td><td><input  type="text" name = "valid_from" class="form-control" value ="' + value.valid_from + '"></td><td><input  type="text" name = "valid_to" value ="' + value.valid_to + '" class="form-control"></td><td hidden></td><td>'+ del_ind +'</td></tr>';
                             });
                             $('#id_popup_tbody').append(edit_basic_data);
                             var i = 0;
@@ -573,11 +582,11 @@
             var row = $(this);
             address_type_dic = {}
             //*************** reading data from the pop-up ***************
-            address_type_dic.valid_to = row.find("TD").eq(5).find('input[type="date"]').val();
-            address_type_dic.valid_from = row.find("TD").eq(4).find('input[type="date"]').val();
-            address_type_dic.company_id = row.find("TD").eq(1).find('select[type="text"]').val();
-            address_type_dic.address_number = row.find("TD").eq(3).find('select[type="text"]').val();
-            address_type_dic.address_type = row.find("TD").eq(2).find('select[type="text"]').val();
+            address_type_dic.valid_to = row.find("TD").eq(5).find('input[type="text"]').val();
+            address_type_dic.valid_from = row.find("TD").eq(4).find('input[type="text"]').val();
+            address_type_dic.company_id = row.find("TD").eq(1).find('select option:selected').val();
+            address_type_dic.address_number = row.find("TD").eq(3).find('select option:selected').val();
+            address_type_dic.address_type = row.find("TD").eq(2).find('select option:selected').val();
             checked_box = row.find("TD").eq(6).find('input[type="checkbox"]').is(':checked')
             if (checked_box){
                 address_type_dic.del_ind = '1'
@@ -634,7 +643,7 @@
             OpenLoaderPopup();
             $.ajax({
                     type: 'POST',
-                    url: "{% url 'eProc_Configuration_Check:check_approvaltype' %}",
+                    url: "{% url 'eProc_Configuration_Check:check_address_types' %}",
                     data: JSON.stringify(popup_data_dict),
                     success: function(response) {
                      table_sort_filter_popup_pagination('id_popup_table')

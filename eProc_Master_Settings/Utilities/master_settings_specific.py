@@ -666,7 +666,9 @@ class MasterSettingsSave:
 
         upload_response = get_orgaddtype_data()
 
-        return upload_response, message
+        data = get_orgaddtype_dropdown()
+
+        return upload_response, message,data
 
     def save_al_acc_data(self, glaccount_data):
         glaccount_db_list = []
@@ -725,7 +727,9 @@ class MasterSettingsSave:
 
         upload_response = get_gl_acc_data()
 
-        return upload_response, message
+        data = get_gl_acc_dropdown()
+
+        return upload_response, message, data
 
     def accounting_data(self, aav_data):
         aav_db_list = []
