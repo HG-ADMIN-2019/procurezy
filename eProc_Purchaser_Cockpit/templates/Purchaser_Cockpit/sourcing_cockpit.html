@@ -92,7 +92,7 @@
                     <tbody id="add_attr_body" >
                         {% for header_item in sc_header_item_details %}
                         <tr>
-                            <td scope="row"><input type="checkbox" name="select" value="select" onclick="po_generate()"></td>
+                            <td scope="row"><input class="generate_po" type="checkbox" id="generate_po" name="select" value="select" onclick="po_generate()"></td>
                             <td scope="row">{{ header_item.0 }}</td>
                             <td scope="row" class="hg-desc">{{ header_item.1 }}</td>
                             <td scope="row">{{ header_item.2 }}</td>
@@ -214,8 +214,14 @@ function reload(){
   }
 
 function po_generate(){
-    $("#id_generate_po").prop("hidden", false);
+    if($('.generate_po').is(':checked')){
+         $("#id_generate_po").prop("hidden", false);
     $("#id_generate_po").show();
+    }
+    else{
+        $("#id_generate_po").prop("hidden", true);
+    $("#id_generate_po").hide();
+    }
 }
 // Function to delete User
 function create_po() {
