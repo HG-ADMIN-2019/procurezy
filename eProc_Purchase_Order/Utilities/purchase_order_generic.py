@@ -286,9 +286,9 @@ class CreatePurchaseOrder:
             sgst_data = sum(dictionary_key_to_list(sc_item_details, 'sgst'))
             cgst_data = sum(dictionary_key_to_list(sc_item_details, 'cgst'))
             vat_data = sum(dictionary_key_to_list(sc_item_details, 'vat'))
-            sgst_data = 0.00
-            cgst_data = 0.00
-            vat_data = 0.00
+            # sgst_data = 0.00
+            # cgst_data = 0.00
+            # vat_data = 0.00
             self.po_header_guid_generator = guid_generator()
             self.po_header_guid = self.po_header_guid_generator
             supplier_details = django_query_instance.django_get_query(SupplierMaster,

@@ -93,46 +93,6 @@ def get_po_split_type(company_code):
     return po_split_list
 
 
-def get_po_split_group_type(company_code):
-    """
-
-    """
-    po_split_active_list_cocode = []
-    po_split_list = django_query_instance.django_filter_value_list_query(PoGroupCriteria_Temp,
-                                                                         {'client': global_variables.GLOBAL_CLIENT,
-                                                                          'del_ind': False,
-                                                                          'company_code_id': '*',
-                                                                          'activate': True}, 'po_split_group_type')
-
-    if django_query_instance.django_existence_check(PoGroupCriteria_Temp,
-                                                    {'client': global_variables.GLOBAL_CLIENT,
-                                                     'del_ind': False,
-                                                     'company_code_id': company_code,
-                                                     'activate': False}):
-        po_split_inactive_list_cocode = django_query_instance.django_filter_value_list_query(PoGroupCriteria_Temp,
-                                                                                             {
-                                                                                                 'client': global_variables.GLOBAL_CLIENT,
-                                                                                                 'del_ind': False,
-                                                                                                 'company_code_id': company_code,
-                                                                                                 'activate': False},
-                                                                                             'po_split_group_type')
-        po_split_list = remove_element_from_list(po_split_list, po_split_inactive_list_cocode)
-    if django_query_instance.django_existence_check(PoGroupCriteria_Temp,
-                                                    {'client': global_variables.GLOBAL_CLIENT,
-                                                     'del_ind': False,
-                                                     'company_code_id': company_code,
-                                                     'activate': True}):
-        po_split_active_list_cocode = django_query_instance.django_filter_value_list_query(PoGroupCriteria_Temp,
-                                                                                           {
-                                                                                               'client': global_variables.GLOBAL_CLIENT,
-                                                                                               'del_ind': False,
-                                                                                               'company_code_id': company_code,
-                                                                                               'activate': True},
-                                                                                           'po_split_group_type')
-    po_split_list = list(set(po_split_list + po_split_active_list_cocode))
-    return po_split_list
-
-
 class CreatePurchaseOrder:
     def __init__(self, sc_header_instance):
         self.supplier_name = ''
