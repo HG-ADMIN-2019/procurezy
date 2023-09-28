@@ -520,7 +520,7 @@
             var row = $(this);
             detgl_code_dic = {}
             //*************** reading data from the pop-up ***************
-            detgl_code_dic.prod_cat_id = row.find("TD").eq(1).find('input[type="text"]').val();
+            detgl_code_dic.prod_cat_id = row.find("TD").eq(1).find("select option:selected").val();
             detgl_code_dic.company_id = row.find("TD").eq(2).find("select option:selected").val();
             detgl_code_dic.account_assign_cat = row.find("TD").eq(3).find("select option:selected").val();
             detgl_code_dic.gl_acc_num = row.find("TD").eq(4).find("select option:selected").val();
