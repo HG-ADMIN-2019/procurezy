@@ -31,6 +31,9 @@ function display_basic_db_data() {
                 call_off_desc = rendered_call_off[j].desc;
                 break;
             }
+            else {
+                call_off_desc = item.call_off
+            }
         }
 
         edit_basic_data += '<tr><td class="class_select_checkbox"><input class="checkbox_check" onclick="valueChanged()" type="checkbox" required></td><td>' + item.company_code_id + '</td><td>' + call_off_desc + '</td><td>' + item.prod_cat_id + '</td><td>' + data + '</td><td hidden>' + item.purchase_control_guid + '</td><td hidden>' + item.del_ind_flag + '</td></tr>';
@@ -183,50 +186,9 @@ function get_selected_row_data() {
     });
 }
 
-// Function for add a new row data
-function new_row_data(){
-    basic_add_new_html +=
-    `<tr>
-        <td><input type="checkbox" required></td>
-        <td><select class="input form-control" type="text">${pc_company_dropdown}</select></td>
-        <td><select class="input form-control" type="text">${call_off_dropdown}</select></td>
-        <td><select class="form-control">${prod_cat_dropdown}</select></td>
-        <td><select type="text" class="input form-control">${activate_dropdown}</select></td>
-        <td hidden><input  type="text" class="form-control"  name="guid"></td>
-        <td class="class_del_checkbox" hidden><input type="checkbox" required></td>
-    </tr>`
-    $('#id_popup_tbody').append(basic_add_new_html);
-    table_sort_filter('id_popup_table');
-}
-
-function get_prod_cat_id_values(selectElement) {
-    var selected_call_off = selectElement.value;
-    var company_id = $(selectElement).closest('tr').find('.form-control').eq(0).val();
-    var prod_cat_idDropdown = $(selectElement).closest('tr').find('.form-control').eq(2);
-    prod_cat_idDropdown.empty();
-
-    var call_off_values = main_table_data[company_id];
-    main_table_call_off = {};
-    call_off_values.forEach(item => {
-        var call_off = item.call_off ;
-        if (!main_table_call_off[call_off ]) {
-            main_table_call_off[call_off ] = new Set();
-        }
-        main_table_call_off[call_off ].add(item.prod_cat_id);
-    });
-
-    hidden_prod_cat_IDs = [];
-     rendered_prod_category.forEach(function (prod_cat_id) {
-        if (main_table_call_off[selected_call_off].has(prod_cat_id)) {
-            hidden_prod_cat_IDs.push(prod_cat_id);
-        } else {
-            prod_cat_idDropdown.append('<option value="' + prod_cat_id + '">' + prod_cat_id + '</option>');
-        }
-    });
-}
-
-function get_company_data() {
-    main_table_data = {}; // Object to store node values for each node type
+// storing company_code associated data from main table
+function display_tb_data() {
+    main_table_data = {};
     $('#display_basic_table').DataTable().destroy();
     $("#display_basic_table TBODY TR").each(function() {
         var row = $(this);
@@ -243,4 +205,126 @@ function get_company_data() {
         });
     });
     table_sort_filter('display_basic_table');
+}
+
+// Function for add a new row data
+function new_row_data(){
+    basic_add_new_html +=
+    `<tr>
+        <td><input type="checkbox" required></td>
+        <td><select class="input form-control" type="text" onchange="get_call_off(this)">${pc_company_dropdown}</select></td>
+        <td><select class="input form-control" type="text" onchange="get_prod_cat_id_values(this)">${call_off_dropdown}</select></td>
+        <td><select class="form-control">${prod_cat_dropdown}</select></td>
+        <td><select type="text" class="input form-control">${activate_dropdown}</select></td>
+        <td hidden><input  type="text" class="form-control"  name="guid"></td>
+        <td class="class_del_checkbox" hidden><input type="checkbox" required></td>
+    </tr>`
+    $('#id_popup_tbody').append(basic_add_new_html);
+    table_sort_filter('id_popup_table');
+}
+
+// onchange respective values for company dropdown
+function get_call_off(selectElement) {
+    var selected_call_off = selectElement.value;
+    var call_off_dropdown = $(selectElement).closest('tr').find('.form-control').eq(1);
+    var prod_cat_dropdown = $(selectElement).closest('tr').find('.form-control').eq(2);
+
+    call_off_dropdown.empty(); // Clear existing options
+    prod_cat_dropdown.empty(); // Clear existing options
+
+    var call_off_values = main_table_data[selected_call_off];
+    if (!call_off_values) {
+        call_off_dropdown.empty();
+        $.each(rendered_call_off, function (i, item) {
+            call_off_dropdown.append('<option value="' + item.value + '">' + item.desc + '</option>')
+        });
+
+        prod_cat_dropdown.empty();
+        $.each(rendered_prod_category, function (i, item) {
+            prod_cat_dropdown.append('<option value="' + item.prod_cat_id + '">' + item.prod_cat_id + '</option>')
+        });
+        return;
+    }
+
+    // Stored respective dropdown values for particular company id
+    main_table_call_off = {};
+    call_off_values.forEach(item => {
+        var call_off = item.call_off ;
+        if (!main_table_call_off[call_off ]) {
+            main_table_call_off[call_off ] = new Set();
+        }
+        main_table_call_off[call_off ].add(item.prod_cat_id);
+    });
+
+    // Filtering CALL_OFF dropdown
+    hiddenCallOffValue = [];
+    for (const item of rendered_call_off) {
+        const callOffValue = item.desc;
+
+        if (rendered_prod_category.length === main_table_call_off[callOffValue]?.size) {
+            hiddenCallOffValue.push(callOffValue);
+        } else {
+            call_off_dropdown.append('<option value="' + callOffValue + '">' + callOffValue + '</option>');
+        }
+    }
+
+    // Filtering UNSPSC values
+    hidden_prod_cat_IDs = [];
+    var callOffValuesArray = call_off_dropdown.html().match(/value="([^"]+)"/g).map(function(match) {
+        return match.match(/"([^"]+)"/)[1];
+    });
+    for (var i = 0; i < callOffValuesArray.length; i++) {
+        var callOffValue = callOffValuesArray[i];
+        if (!main_table_call_off.hasOwnProperty(callOffValue)){
+            prod_cat_dropdown.empty();
+            $.each(rendered_prod_category, function (i, item) {
+                prod_cat_dropdown.append('<option value="' + item.prod_cat_id + '">' + item.prod_cat_id + '</option>')
+            });
+            break;
+        } else if (main_table_call_off.hasOwnProperty(callOffValue)) {
+            var assignedProdCatIDs = Array.from(main_table_call_off[callOffValue]);
+            rendered_prod_category.forEach(function(item) {
+                var prod_cat_id = item.prod_cat_id;
+                if (!assignedProdCatIDs.includes(prod_cat_id)) {
+                    prod_cat_dropdown.append('<option value="' + prod_cat_id + '">' + prod_cat_id + '</option>') ;
+                }
+            });
+            break;
+        }
+    }
+}
+
+// onchange respective values for call_off dropdown
+function get_prod_cat_id_values(selectElement) {
+    var selected_call_off = selectElement.value;
+    var company_id = $(selectElement).closest('tr').find('.form-control').eq(0).val();
+    var prod_cat_dropdown = $(selectElement).closest('tr').find('.form-control').eq(2);
+    prod_cat_dropdown.empty(); // Clear existing options
+
+    var call_off_values = main_table_data[company_id];
+    main_table_call_off = {};
+    call_off_values.forEach(item => {
+        var call_off = item.call_off ;
+        if (!main_table_call_off[call_off ]) {
+            main_table_call_off[call_off ] = new Set();
+        }
+        main_table_call_off[call_off ].add(item.prod_cat_id);
+    });
+
+    if (!main_table_call_off.hasOwnProperty(selected_call_off)){
+        prod_cat_dropdown.empty();
+        $.each(rendered_prod_category, function (i, item) {
+            prod_cat_dropdown.append('<option value="' + item.prod_cat_id + '">' + item.prod_cat_id + '</option>')
+        });
+        return;
+    } else if (main_table_call_off.hasOwnProperty(selected_call_off)) {
+        var assignedProdCatIDs = Array.from(main_table_call_off[selected_call_off]);
+        rendered_prod_category.forEach(function(item) {
+            var prod_cat_id = item.prod_cat_id;
+            if (!assignedProdCatIDs.includes(prod_cat_id)) {
+                prod_cat_dropdown.append('<option value="' + prod_cat_id + '">' + prod_cat_id + '</option>')
+            }
+        });
+        return;
+    }
 }
