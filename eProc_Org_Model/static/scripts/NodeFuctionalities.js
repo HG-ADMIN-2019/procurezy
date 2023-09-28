@@ -213,9 +213,9 @@ function on_click_delete_confirmation_popup() {
 
 // add user id to the list
 function assign_unassign(assign_id) {
-
     input_id = assign_id.id
-    if ($("#" + input_id).prop("checked") == true) {
+    if(assign_id.checked == true){
+//    if ($("#" + input_id).prop("checked") == true) {
         if (!(GLOBAL_USER_ID_LIST.includes(input_id))) {
             GLOBAL_USER_ID_LIST.push(input_id)
         }

@@ -263,9 +263,9 @@ class RfqAccounting(models.Model):
     rfq_accounting_destination_system = models.CharField(db_column='RFQ_ACCOUNTING_DESTINATION_SYSTEM', max_length=20)
     del_ind = models.BooleanField(default=False, null=False)
     client = models.ForeignKey('eProc_Configuration.OrgClients', on_delete=models.PROTECT, null=False)
-    rfq_header_guid = models.ForeignKey('eProc_Shopping_Cart.RfqHeader', models.DO_NOTHING, db_column='RFQ_HEADER_GUID',
+    rfq_header_guid = models.ForeignKey('eProc_Rfq.RfqHeader', models.DO_NOTHING, db_column='RFQ_HEADER_GUID',
                                         blank=True, null=True)
-    rfq_item_guid = models.ForeignKey('eProc_Shopping_Cart.RfqItem', models.DO_NOTHING, db_column='RFQ_ITEM_GUID',
+    rfq_item_guid = models.ForeignKey('eProc_Rfq.RfqItem', models.DO_NOTHING, db_column='RFQ_ITEM_GUID',
                                       blank=True,
                                       null=True)
 

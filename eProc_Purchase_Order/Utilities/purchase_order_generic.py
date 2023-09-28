@@ -93,46 +93,6 @@ def get_po_split_type(company_code):
     return po_split_list
 
 
-def get_po_split_group_type(company_code):
-    """
-
-    """
-    po_split_active_list_cocode = []
-    po_split_list = django_query_instance.django_filter_value_list_query(PoGroupCriteria_Temp,
-                                                                         {'client': global_variables.GLOBAL_CLIENT,
-                                                                          'del_ind': False,
-                                                                          'company_code_id': '*',
-                                                                          'activate': True}, 'po_split_group_type')
-
-    if django_query_instance.django_existence_check(PoGroupCriteria_Temp,
-                                                    {'client': global_variables.GLOBAL_CLIENT,
-                                                     'del_ind': False,
-                                                     'company_code_id': company_code,
-                                                     'activate': False}):
-        po_split_inactive_list_cocode = django_query_instance.django_filter_value_list_query(PoGroupCriteria_Temp,
-                                                                                             {
-                                                                                                 'client': global_variables.GLOBAL_CLIENT,
-                                                                                                 'del_ind': False,
-                                                                                                 'company_code_id': company_code,
-                                                                                                 'activate': False},
-                                                                                             'po_split_group_type')
-        po_split_list = remove_element_from_list(po_split_list, po_split_inactive_list_cocode)
-    if django_query_instance.django_existence_check(PoGroupCriteria_Temp,
-                                                    {'client': global_variables.GLOBAL_CLIENT,
-                                                     'del_ind': False,
-                                                     'company_code_id': company_code,
-                                                     'activate': True}):
-        po_split_active_list_cocode = django_query_instance.django_filter_value_list_query(PoGroupCriteria_Temp,
-                                                                                           {
-                                                                                               'client': global_variables.GLOBAL_CLIENT,
-                                                                                               'del_ind': False,
-                                                                                               'company_code_id': company_code,
-                                                                                               'activate': True},
-                                                                                           'po_split_group_type')
-    po_split_list = list(set(po_split_list + po_split_active_list_cocode))
-    return po_split_list
-
-
 class CreatePurchaseOrder:
     def __init__(self, sc_header_instance):
         self.supplier_name = ''
@@ -326,9 +286,9 @@ class CreatePurchaseOrder:
             sgst_data = sum(dictionary_key_to_list(sc_item_details, 'sgst'))
             cgst_data = sum(dictionary_key_to_list(sc_item_details, 'cgst'))
             vat_data = sum(dictionary_key_to_list(sc_item_details, 'vat'))
-            sgst_data = 0.00
-            cgst_data = 0.00
-            vat_data = 0.00
+            # sgst_data = 0.00
+            # cgst_data = 0.00
+            # vat_data = 0.00
             self.po_header_guid_generator = guid_generator()
             self.po_header_guid = self.po_header_guid_generator
             supplier_details = django_query_instance.django_get_query(SupplierMaster,
