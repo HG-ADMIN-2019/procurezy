@@ -1,27 +1,27 @@
-email_type,email_subject,email_header,email_body,email_footer,language_id,del_ind
-1111111,REGISTRATION,Majjakaprocure- User registration successful,Hello @first_name@,"Your user has been successfully created in Majjakaprocure. Below are your logon credentials,
+object_type,subject,header,body,footer,language_id,del_ind
+REGISTRATION,Majjakaprocure- User registration successful,Hello @first_name@,Your user has been successfully created in Majjakaprocure. Below are your logon credentials,
 Email - @email@
 Password - @password@
 You can access the application from the below link,
-@login_button@","Regards,
+@login_button@,Regards,
 Majjakaprocure Support
-@majjaka_logo@",EN,0
-111133,RESET_PASSWORD,Majjakaprocure- Password Reset,Hello @first_name@,"To reset the password for your account with email - @email@ , please click on the following link
-@reset_link@","Regards,
+@majjaka_logo@,EN,0
+RESET_PASSWORD,Majjakaprocure- Password Reset,Hello @first_name@,To reset the password for your account with email - @email@ , please click on the following link
+@reset_link@,Regards,
 Majjakaprocure Support
-@majjaka_logo@",EN,0
-11113345,PASSWORD_LOCK,Majjakaprocure- Password Locked,Hello @first_name@,Your password for account @email@ is locked due to exceeded number of login attempts. Please contact your local admin.,"Regards,
+@majjaka_logo@,EN,0
+PASSWORD_LOCK,Majjakaprocure- Password Locked,Hello @first_name@,Your password for account @email@ is locked due to exceeded number of login attempts. Please contact your local admin.,Regards,
 Majjakaprocure Support
-@majjaka_logo@",EN,0
-111144,SC_REJECTED,Majjakaprocure- Shopping cart @sc_description@ rejected,Hello @first_name@,Your Shopping cart - @sc_description@ is rejected. Please contact your line manager for more details.,"Regards,
+@majjaka_logo@,EN,0
+SC_REJECTED,Majjakaprocure- Shopping cart @sc_description@ rejected,Hello @first_name@,Your Shopping cart - @sc_description@ is rejected. Please contact your line manager for more details.,Regards,
 Majjakaprocure Support
-@majjaka_logo@",EN,0
-111154,APPROVED_SC,Majjakaprocure- Shopping Cart @sc_description@ approved,Hello @first_name@,Your Shopping cart @doc_number@- @sc_description@ has been approved successfully.,"Regards,
+@majjaka_logo@,EN,0
+APPROVED_SC,Majjakaprocure- Shopping Cart @sc_description@ approved,Hello @first_name@,Your Shopping cart @doc_number@- @sc_description@ has been approved successfully.,"Regards,
 Majjakaprocure Support
-@majjaka_logo@",EN,0
+@majjaka_logo@,EN,0
 PO_SUPPLIER,Purchase Order Detail @doc_number@ from @client_name@,
 Dear @supplier_username@, Please find attached purchase order from @client_name@,
-"Regards,"
+Regards,
 Majjakaprocure Support,
 EN,0
 
