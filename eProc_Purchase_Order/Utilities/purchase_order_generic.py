@@ -380,8 +380,8 @@ class CreatePurchaseOrder:
                 sc_item_detail['value'] = convert_currency(item_value,
                                                            str(sc_item_detail['currency']),
                                                            str(self.po_header_guid.currency))
-            if sc_item_detail['description'] == desc:
-                sc_item_detail['quantity'] += 1
+            # if sc_item_detail['description'] == desc:
+                # sc_item_detail['quantity'] += 1
             po_item_guid = guid_generator()
             po_item_dictionary = {
                 'po_item_guid': po_item_guid, 'po_item_num': po_item_num,
