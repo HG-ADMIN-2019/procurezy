@@ -168,12 +168,12 @@ def generate_po(request):
                 if desc == sc_item_details[i]['description'] and company_id == sc_item_details[i]['comp_code'] \
                         and supp_id == sc_item_details[i]['supplier_id'] and del_date == sc_item_details[i]['item_del_date']:
                     po_creation_flag = 1
-                    qty = qty + sc_item_details[i]['quantity']
+                    # qty = qty + sc_item_details[i]['quantity']
             if po_creation_flag == 1:
                 sc_item_details1 = django_query_instance.django_filter_query(ScItem, {
                     'header_guid': guid_arr[0], 'client': client, 'del_ind': False
                 }, None, None)
-                sc_item_details1[0]['quantity'] = qty
+                # sc_item_details1[0]['quantity'] = qty
                 status = create_purchase_order.create_purchaser_order(sc_item_details1, sc_item_details[0]['supplier_id'])
             else:
                 status = create_purchase_order.create_purchaser_order(sc_item_details, sc_item_details[0]['supplier_id'])
