@@ -160,9 +160,9 @@ def extract_aav_data(request):
     accounting_data = query_update_del_ind(accounting)
 
     for accountingData in accounting_data:
-        accountingData_info = [ accountingData['company_id'],accountingData['account_assign_cat'],
-                                accountingData['account_assign_value'],accountingData['valid_from'],
-                                accountingData['valid_to'], accountingData['del_ind']]
+        accountingData_info = [accountingData['company_id'], accountingData['account_assign_cat'],
+                               accountingData['account_assign_value'], accountingData['valid_from'],
+                               accountingData['valid_to'], accountingData['del_ind']]
         writer.writerow(accountingData_info)
 
     return response
@@ -674,18 +674,18 @@ def extract_approverlimitval_data(request):
 
     writer = csv.writer(response)
 
-    writer.writerow(['COMPANY_ID','APP_TYPES','APP_CODE_ID','UPPER_LIMIT_VALUE','CURRENCY_ID', 'del_ind'])
+    writer.writerow(['COMPANY_ID', 'APP_TYPES', 'APP_CODE_ID', 'UPPER_LIMIT_VALUE', 'CURRENCY_ID', 'del_ind'])
 
     approverlimitval = django_query_instance.django_filter_query(ApproverLimitValue,
                                                                  {'del_ind': False,
                                                                   'client': global_variables.GLOBAL_CLIENT}, None,
-                                                                 ['company_id', 'app_types','app_code_id',
+                                                                 ['company_id', 'app_types', 'app_code_id',
                                                                   'upper_limit_value', 'currency_id', 'del_ind'])
     approverlim_data = query_update_del_ind(approverlimitval)
 
     for approverlimitvaldata in approverlim_data:
         approverlimitvaldata_info = [approverlimitvaldata['company_id'], approverlimitvaldata['app_types'],
-                                     approverlimitvaldata['app_code_id'],  approverlimitvaldata['upper_limit_value'],
+                                     approverlimitvaldata['app_code_id'], approverlimitvaldata['upper_limit_value'],
                                      approverlimitvaldata['currency_id'], approverlimitvaldata['del_ind']]
         writer.writerow(approverlimitvaldata_info)
 
@@ -709,7 +709,7 @@ def extract_spendlimit_data(request):
     spendlim_data = query_update_del_ind(spendlimitvals)
 
     for spendlimitval in spendlim_data:
-        spendlimitval_info = [spendlimitval['company_id'],spendlimitval[ 'spender_username'],
+        spendlimitval_info = [spendlimitval['company_id'], spendlimitval['spender_username'],
                               spendlimitval['spend_code_id'], spendlimitval['del_ind']]
         writer.writerow(spendlimitval_info)
 
@@ -725,7 +725,8 @@ def extract_spendlimitval_data(request):
     writer.writerow(['COMPANY_ID', 'SPEND_CODE_ID', 'UPPER_LIMIT_VALUE', 'CURRENCY_ID', 'del_ind'])
 
     spendlimitvalues = django_query_instance.django_filter_query(SpendLimitValue, {'del_ind': False,
-                                                                                   'client': global_variables.GLOBAL_CLIENT}, None,
+                                                                                   'client': global_variables.GLOBAL_CLIENT},
+                                                                 None,
                                                                  ['company_id', 'spend_code_id',
                                                                   'upper_limit_value', 'currency_id', 'del_ind'])
     spendlim_data = query_update_del_ind(spendlimitvalues)
@@ -817,7 +818,7 @@ def extract_glaccount_data(request):
 
     writer = csv.writer(response)
 
-    writer.writerow(['PROD_CAT_ID', 'COMPANY_ID','ACCOUNT_ASSIGN_CAT','GL_ACC_NUM', 'GL_ACC_DEFAULT',
+    writer.writerow(['PROD_CAT_ID', 'COMPANY_ID', 'ACCOUNT_ASSIGN_CAT', 'GL_ACC_NUM', 'GL_ACC_DEFAULT',
                      'ITEM_FROM_VALUE', 'ITEM_TO_VALUE', 'CURRENCY_ID', 'del_ind'])
 
     glaccount = django_query_instance.django_filter_query(DetermineGLAccount,
@@ -831,6 +832,10 @@ def extract_glaccount_data(request):
     glaccount_data = query_update_del_ind(glaccount)
 
     for glaccountdata in glaccount_data:
+        if glaccountdata['gl_acc_default']:
+            glaccountdata['gl_acc_default'] = 1
+        else:
+            glaccountdata['gl_acc_default'] = 0
         glaccount_info = [glaccountdata['prod_cat_id'], glaccountdata['company_id'],
                           glaccountdata['account_assign_cat'], glaccountdata['gl_acc_num'],
                           glaccountdata['gl_acc_default'],
@@ -865,7 +870,8 @@ def extract_pgrp_data(request):
     writer.writerow(['PGROUP_ID', 'DESCRIPTION', 'del_ind'])
 
     purgrp = django_query_instance.django_filter_query(OrgPGroup,
-                                                       {'client': global_variables.GLOBAL_CLIENT, 'del_ind': False}, None,
+                                                       {'client': global_variables.GLOBAL_CLIENT, 'del_ind': False},
+                                                       None,
                                                        ['pgroup_id', 'description', 'del_ind'])
 
     purgrp_data = query_update_del_ind(purgrp)
@@ -1023,7 +1029,7 @@ def extract_address_data(request):
 def upload_cust_prod_cat(request):
     update_user_info(request)
     client = global_variables.GLOBAL_CLIENT
-    upload_cust_prod_catogories, product_cat_list,data = get_unspsc_cat_cust_data()
+    upload_cust_prod_catogories, product_cat_list, data = get_unspsc_cat_cust_data()
     dependent_dropdown = get_unspsc_drop_down()
     messages_list = get_ui_messages(CONST_COFIG_UI_MESSAGE_LIST)
     data = {'content_managment_settings': 'content_managment_settings',
@@ -1039,7 +1045,7 @@ def upload_cust_prod_cat(request):
 
 def upload_cust_prod_cat_desc(request):
     update_user_info(request)
-    upload_cust_prod_desc_catogories, product_cat_list,data = get_unspsc_cat_custdesc_data()
+    upload_cust_prod_desc_catogories, product_cat_list, data = get_unspsc_cat_custdesc_data()
     upload_language = list(Languages.objects.filter(del_ind=False).values('language_id', 'description'))
 
     upload_ProdCat = list(UnspscCategories.objects.filter(del_ind=False).values('prod_cat_id', 'prod_cat_desc'))
@@ -1375,7 +1381,8 @@ def extract_payterms_data(request):
     writer.writerow(['LANGUAGE_ID', 'PAYMENT_TERM_KEY', 'DESCRIPTION', 'DAY_LIMIT', 'del_ind'])
 
     payment_term = django_query_instance.django_filter_query(Payterms_desc,
-                                                             {'del_ind': False,'client': global_variables.GLOBAL_CLIENT}, None,
+                                                             {'del_ind': False,
+                                                              'client': global_variables.GLOBAL_CLIENT}, None,
                                                              ['language_id', 'payment_term_key', 'description',
                                                               'day_limit', 'del_ind'])
 

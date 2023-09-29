@@ -200,7 +200,6 @@ def check_acc_assign_desc_data(ui_data, status):
         # dependent check
         if django_query_instance.django_existence_check(AccountingData,
                                                         {'del_ind': False,
-                                                         'client': global_variables.GLOBAL_CLIENT,
                                                          'account_assign_value': acc_desc['account_assign_value']}):
             # check for deletion of record
             if acc_desc['del_ind'] in ['1', True]:
@@ -2184,32 +2183,26 @@ def check_address_types_data(ui_data, status):
                                                                      'company_id': address_type['company_id']}):
                         delete_count = delete_count + 1
                         valid_data_list.append(address_type)
+                else:
+                    if django_query_instance.django_existence_check(OrgAddressMap,
+                                                                    {'del_ind': False,
+                                                                     'client': global_variables.GLOBAL_CLIENT,
+                                                                     'address_number': address_type[
+                                                                         'address_number'],
+                                                                     'address_type': address_type['address_type'],
+                                                                     'company_id': address_type['company_id']}):
+                        delete_count = delete_count + 1
+                        valid_data_list.append(address_type)
                     else:
-                        if django_query_instance.django_existence_check(OrgAddressMap,
-                                                                        {'del_ind': False,
-                                                                         'client': global_variables.GLOBAL_CLIENT,
-                                                                         'address_number': address_type[
-                                                                             'address_number'],
-                                                                         'address_type': address_type['address_type'],
-                                                                         'company_id': address_type['company_id']}):
-                            delete_count = delete_count + 1
-                            valid_data_list.append(address_type)
-                        else:
-                            invalid_count = invalid_count + 1
+                        invalid_count = invalid_count + 1
             else:
-                if django_query_instance.django_existence_check(OrgCompanies,
-                                                             {'del_ind': False,
-                                                              'client': global_variables.GLOBAL_CLIENT,
-                                                              'company_id': address_type['company_id']
-                                                              }):
-                    check_company = address_type['company_id']
                 # duplicate check
                 if django_query_instance.django_existence_check(OrgAddressMap,
-                                                                {'del_ind': False,'company_id': check_company,
+                                                                {'del_ind': False,
                                                                  'client': global_variables.GLOBAL_CLIENT,
-                                                                 'address_number': address_type['address_number'],
                                                                  'address_type': address_type['address_type'],
-                                                                 'company_id': address_type['company_id']
+                                                                 'address_number': address_type['address_number'],
+                                                                 'company_id': address_type['company_id'],
                                                                  }):
                     duplicate_count = duplicate_count + 1
                 # update check
