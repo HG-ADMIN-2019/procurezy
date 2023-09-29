@@ -140,7 +140,28 @@ def generate_po(request):
     qty = ''
     # po_split_list = get_po_split_group_type(sc_header_instance.co_code)
 
-    if po_split_list:
+    # check whether the items are same
+    desc = sc_item_details[0]['description']
+    supp_id = sc_item_details[0]['supplier_id']
+    del_date = sc_item_details[0]['item_del_date']
+    company_id = sc_item_details[0]['comp_code']
+    if len(requester) != len(set(requester)):
+        for i in range(1, len(sc_item_details)):
+            qty = sc_item_details[0]['quantity']
+            if desc == sc_item_details[i]['description'] and company_id == sc_item_details[i]['comp_code'] \
+                    and supp_id == sc_item_details[i]['supplier_id'] and del_date == sc_item_details[i]['item_del_date']:
+                po_creation_flag = 1
+                qty = qty + sc_item_details[i]['quantity']
+        if po_creation_flag == 1:
+            sc_item_details1 = django_query_instance.django_filter_query(ScItem, {
+                'header_guid': guid_arr[0], 'client': client, 'del_ind': False
+            }, None, None)
+            sc_item_details1[0]['quantity'] = qty
+            status = create_purchase_order.create_purchaser_order(sc_item_details1, sc_item_details[0]['supplier_id'])
+        else:
+            status = create_purchase_order.create_purchaser_order(sc_item_details, sc_item_details[0]['supplier_id'])
+
+    elif po_split_list:
         if CONST_PO_GROUP_COMPANY_CODE in po_split_list[0]:
             company_id = sc_item_details[0]['comp_code']
             for i in range(1, len(sc_item_details)):
@@ -156,34 +177,13 @@ def generate_po(request):
                                                                           sc_item_details[0]['supplier_id'])
                 else:
                     response['grping_error'] = "The PO cannot be grouped as Currencies are different"
-    else:
-        # check whether the items are same
-        desc = sc_item_details[0]['description']
-        supp_id = sc_item_details[0]['supplier_id']
-        del_date = sc_item_details[0]['item_del_date']
-        company_id = sc_item_details[0]['comp_code']
-        if len(requester) != len(set(requester)):
-            for i in range(1, len(sc_item_details)):
-                qty = sc_item_details[0]['quantity']
-                if desc == sc_item_details[i]['description'] and company_id == sc_item_details[i]['comp_code'] \
-                        and supp_id == sc_item_details[i]['supplier_id'] and del_date == sc_item_details[i]['item_del_date']:
-                    po_creation_flag = 1
-                    # qty = qty + sc_item_details[i]['quantity']
-            if po_creation_flag == 1:
-                sc_item_details1 = django_query_instance.django_filter_query(ScItem, {
-                    'header_guid': guid_arr[0], 'client': client, 'del_ind': False
-                }, None, None)
-                # sc_item_details1[0]['quantity'] = qty
-                status = create_purchase_order.create_purchaser_order(sc_item_details1, sc_item_details[0]['supplier_id'])
-            else:
-                status = create_purchase_order.create_purchaser_order(sc_item_details, sc_item_details[0]['supplier_id'])
-        if not status:
-            return False, create_purchase_order.error_message, create_purchase_order.output, create_purchase_order.po_doc_list
+    if not status:
+        return False, create_purchase_order.error_message, create_purchase_order.output, create_purchase_order.po_doc_list
 
-        # status, error_message, output, po_doc_list = create_purchase_order.create_po()
-        for po_document_number in create_purchase_order.po_doc_list:
-            email_supp_monitoring_guid = ''
-            send_po_attachment_email(create_purchase_order.output, po_document_number, email_supp_monitoring_guid)
+    # status, error_message, output, po_doc_list = create_purchase_order.create_po()
+    for po_document_number in create_purchase_order.po_doc_list:
+        email_supp_monitoring_guid = ''
+        send_po_attachment_email(create_purchase_order.output, po_document_number, email_supp_monitoring_guid)
 
     if create_purchase_order.error_message:
         response['message'] = "error"
