@@ -122,9 +122,9 @@ function read_popup_data() {
         addresstype = {};
         addresstype.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
         addresstype.address_guid = row.find("TD").eq(7).find('input').val();
-        addresstype.address_number = row.find("TD").eq(3).find('select').val();
-        addresstype.address_type = row.find("TD").eq(2).find('select').val();
-        addresstype.company_id = row.find("TD").eq(1).find('select').val();
+        addresstype.address_number = row.find("TD").eq(3).find('select option:selected').val();
+        addresstype.address_type = row.find("TD").eq(2).find('select option:selected').val();
+        addresstype.company_id = row.find("TD").eq(1).find('select option:selected').val();
         addresstype.valid_from = row.find("TD").eq(4).find('input[type="text"]').val();
         addresstype.valid_to = row.find("TD").eq(5).find('input[type="text"]').val();
 //        addresstype.valid_to = row.find("TD").eq(5).find('input[type="date"]').val();
@@ -175,7 +175,7 @@ function get_main_table_data() {
 }
 
 
-/ Function to get main table data
+// Function to get main table data
 function get_main_table_data_upload() {
     main_table_low_value = [];
     $('#display_basic_table').DataTable().destroy();
@@ -220,14 +220,14 @@ function delete_duplicate() {
         //*************** reading data from the pop-up ***************
 
         address_guid = row.find("TD").eq(7).find('input').val();
-        address_number = row.find("TD").eq(3).find('select').val();
-        address_type = row.find("TD").eq(2).find('select').val();
-        company_id = row.find("TD").eq(1).find('select').val();
+        address_number = row.find("TD").eq(3).find('select option:selected').val();
+        address_type = row.find("TD").eq(2).find('select option:selected').val();
+        company_id = row.find("TD").eq(1).find('select option:selected').val();
         valid_from = row.find("TD").eq(4).find('input[type="text"]').val();
         valid_to = row.find("TD").eq(5).find('input[type="text"]').val();
 
         checked_box = row.find("TD").eq(6).find('input[type="checkbox"]').is(':checked')
-        if (approval_type_code_check.includes(address_number)) {
+        if (address_type_code_check.includes(address_number)) {
             $(row).remove();
         }
         address_type_code_check.push(address_number);

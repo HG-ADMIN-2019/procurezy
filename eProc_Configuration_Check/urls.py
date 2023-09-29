@@ -9,6 +9,7 @@ urlpatterns = [
     path('check_cust_unspsc_category',views.check_cust_unspsc_category,name='check_cust_unspsc_category'),
     path('check_acc_assign_desc',views.check_acc_assign_desc,name='check_acc_assign_desc'),
     path('check_acc_assign_values',views.check_acc_assign_values,name='check_acc_assign_values'),
+    path('check_gl_acc_data',views.check_gl_acc_data,name='check_gl_acc_data'),
     path('check_company', views.check_company, name='check_company'),
     path('check_purchaseorg', views.check_purchaseorg, name='check_purchaseorg'),
     path('check_purchasegrp', views.check_purchasegrp, name='check_purchasegrp'),

@@ -24,11 +24,11 @@
                         <input type="text" class="form-control check_for_search" id="product_desc" name="product_desc">
                     </div>
                     <div class="col-md">
-                        <label for="">From Date</label>
+                        <label for="">From Delivery Date</label>
                         <input type="date" class="form-control" id="from_date" name='from_date' value="dd-mm-yyyy">
                     </div>
                     <div class="col-md">
-                        <label for="">to Date</label>
+                        <label for="">To Delivery Date</label>
                         <input type="date" class="form-control " id="to_date" name='to_date'>
                     </div>
                     <div class="col-md">
@@ -92,7 +92,7 @@
                     <tbody id="add_attr_body" >
                         {% for header_item in sc_header_item_details %}
                         <tr>
-                            <td scope="row"><input type="checkbox" name="select" value="select" onclick="po_generate()"></td>
+                            <td scope="row"><input class="generate_po" type="checkbox" id="generate_po" name="select" value="select" onclick="po_generate()"></td>
                             <td scope="row">{{ header_item.0 }}</td>
                             <td scope="row" class="hg-desc">{{ header_item.1 }}</td>
                             <td scope="row">{{ header_item.2 }}</td>
@@ -214,8 +214,14 @@ function reload(){
   }
 
 function po_generate(){
-    $("#id_generate_po").prop("hidden", false);
+    if($('.generate_po').is(':checked')){
+         $("#id_generate_po").prop("hidden", false);
     $("#id_generate_po").show();
+    }
+    else{
+        $("#id_generate_po").prop("hidden", true);
+    $("#id_generate_po").hide();
+    }
 }
 // Function to delete User
 function create_po() {
@@ -313,9 +319,14 @@ function generate_po(){
         dataType: "json",
         success: function (Response) {
             console.log(Response);
-            $('#success_msg_id').text(Response);
+            $('#success_msg_id').text(Response.message);
             $("#error_msg_div").prop("hidden",false);
+            if(Response.grping_error)
+            {
+                $('#success_msg_id').text(Response.grping_error);
+            }
             $('#poGroupModal').modal('hide');
+            CloseLoaderPopup();
         }
     });
 
