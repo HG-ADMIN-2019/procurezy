@@ -251,7 +251,7 @@ function update_check_message(messages) {
 
 // Function for add a new row data
 function new_row_data() {
-    basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><input class="input form-control check_special_char"  type="text" minlength="4" maxlength="8"  name="pgroup_id" required></td><td><input class="input form-control check_special_char"  type="text" maxlength="100"  name="description"  required></td><td hidden><select>' + object_id_dropdwn + ' </select><td hidden>pgroup_guid</td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+    basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><input class="input form-control check_special_character"  type="text" minlength="4" maxlength="8"  name="pgroup_id" required></td><td><input class="input form-control check_special_character"  type="text" maxlength="100"  name="description"  required></td><td hidden><select>' + object_id_dropdwn + ' </select><td hidden>pgroup_guid</td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
 }
 

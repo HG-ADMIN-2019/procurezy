@@ -97,8 +97,8 @@ function onclick_add_button(button) {
     $("#id_popup_tbody").empty();
     $('#Porg_Modal').modal('show');
     basic_add_new_html = '<tr><td><input type="checkbox" required></td>'+
-        '<td><input class="form-control check_special_char"  type="text"  minlength="5" maxlength="8"  name="porg_id" style="text-transform:uppercase;" required></td>'+
-        '<td><input class="input form-control check_special_char"  type="text" maxlength="100"  name="description"  required></td>'+
+        '<td><input class="form-control check_special_character"  type="text"  minlength="5" maxlength="8"  name="porg_id" style="text-transform:uppercase;" required></td>'+
+        '<td><input class="input form-control check_special_character"  type="text" maxlength="100"  name="description"  required></td>'+
         '<td hidden><input value=""></td>'+
         '<td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
