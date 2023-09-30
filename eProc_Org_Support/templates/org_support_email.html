@@ -105,6 +105,7 @@
 
 //onclick of add button display myModal popup and set GLOBAL_ACTION button value for email
     function onclick_add_button_email(button) {
+        $('#myModalEmail').modal('show');
         GLOBAL_ACTION = button.value;
         $("#id_popup_tbody_email").empty();
         $.ajax({
@@ -148,7 +149,7 @@
     }
 
     //**************************
-    function save_email_support_data() {
+function save_email_support_data() {
         var form_data = [];
         var isValid = true; // Initialize isValid as true
         $("#id_popup_table_email TBODY TR").each(function () {
