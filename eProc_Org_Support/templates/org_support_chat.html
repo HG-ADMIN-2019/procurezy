@@ -161,6 +161,7 @@
     var temp,dt;
     //onclick of add button display myModal popup and set GLOBAL_ACTION button value for Chat
     function onclick_add_button_chat(button) {
+        $('#myModalChat').modal('show');
         GLOBAL_ACTION = button.value
         $('#org_support_chat_success').hide();
         $("#id_popup_tbody_chat").empty();
