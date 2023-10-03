@@ -182,7 +182,7 @@
     var no_duplicate_entries = 'Y'
     var Tablename = uiConstants["CONST_TABLENAME_WFACCOUNTING"]
     var appname = uiConstants["CONST_APPNAME01"]
-    var db_header_data = uiConstants['ACC_VALUE', 'COMPANY_ID', 'APP_USERNAME','SUP_COMPANY_ID', 'SUP_ACC_VALUE', 'del_ind','ACCOUNT_ASSIGN_CAT', 'CURRENCY_ID', 'SUP_ACCOUNT_ASSIGN_CAT']
+    var db_header_data = uiConstants['COMPANY_ID', 'ACCOUNT_ASSIGN_CAT', 'ACC_VALUE',  'APP_USERNAME','SUP_COMPANY_ID','SUP_ACCOUNT_ASSIGN_CAT', 'SUP_ACC_VALUE', 'CURRENCY_ID',  'del_ind']
     var acc_ass_dropdwn = '';
     var user_dropdwn = '';
     var sup_acc_ass_dropdwn = '';
@@ -450,12 +450,12 @@
                                 '<td><select type="text" class="form-control"><option value ="' + value.account_assign_cat + '"'+accasscat_id_list+'>'+value.account_assign_cat+'</option></select></td>'+
                                 '<td><select type="text" class="form-control"> <option value="' + value.acc_value + '"'+accassval_id_list+'>' + value.acc_value + '</option></select></td>'+
                                 '<td><select type="text" class="form-control" ><option value ="' + value.app_username + '"'+user_id_list+'>'+value.app_username+'</option></select></td>'+
-                                '<td><select type="text" class="form-control" ><option value ="' + value.company_id + '"'+supcompany_id_list+'>'+value.company_id+'</option></select></td>'+
-                                '<td><select type="text" class="form-control"><option value ="' + value.account_assign_cat + '"'+supaccasscat_id_list+'>'+value.account_assign_cat+'</option></select></td>'+
+                                '<td><select type="text" class="form-control" ><option value ="' + value.sup_company_id + '"'+supcompany_id_list+'>'+value.company_id+'</option></select></td>'+
+                                '<td><select type="text" class="form-control"><option value ="' + value.sup_account_assign_cat + '"'+supaccasscat_id_list+'>'+value.account_assign_cat+'</option></select></td>'+
                                 '<td><select type="text" class="form-control"> <option value="' + value.sup_acc_value + '"'+supaccassval_id_list+'>' + value.sup_acc_value + '</option></select></td>'+
-                                '<td><select class="form-control" type="text"><option value ="' + value.currency_id + '"'+currency_id_list+'>'+value.currency_id+'</option></select></td>'+
-                                '<td hidden><input type="text" id="workflow_acc_guid" value ="' + value.workflow_acc_guid + '"></td>'+
-                                '<td>' + del_ind + '</td></tr>';
+                                '<td><select class="form-control" type="text"><option value ="' + value.sup_currency_id + '"'+currency_id_list+'>'+value.currency_id+'</option></select></td>'+
+                                '<td>' + del_ind + '</td>'+
+                                '<td hidden><input type="text" id="workflow_acc_guid" value ="' + value.workflow_acc_guid + '"></td></tr>';
                             });
                             $('#id_popup_tbody').append(edit_basic_data);
                             var i = 0;
@@ -850,9 +850,9 @@
             wfacc_dic.sup_account_assign_cat = row.find("TD").eq(6).find('select[type="text"]').val();
             wfacc_dic.sup_acc_value = row.find("TD").eq(7).find('select[type="text"]').val();
             wfacc_dic.sup_currency_id = row.find("TD").eq(8).find('select[type="text"]').val();
-            wfacc.workflow_acc_guid = row.find("TD").eq(9).find('input[type="text"]').val();
+            wfacc.workflow_acc_guid = row.find("TD").eq(10).find('input[type="text"]').val();
             wfacc_compare = wfacc_dic.app_username +'-'+ wfacc_dic.acc_value +'-'+ wfacc_dic.sup_acc_value +'-'+ wfacc_dic.sup_account_assign_cat +'-'+ wfacc_dic.company_id +'-'+ wfacc_dic.sup_company_id +'-'+ wfacc_dic.sup_currency_id +'-'+ wfacc_dic.sup_acc_value
-            checked_box = row.find("TD").eq(10).find('input[type="checkbox"]').is(':checked')
+            checked_box = row.find("TD").eq(9).find('input[type="checkbox"]').is(':checked')
             if (checked_box) {
                 wfacc_dic.del_ind = '1'
             } else {
