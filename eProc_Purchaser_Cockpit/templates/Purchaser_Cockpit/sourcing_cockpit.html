@@ -346,14 +346,20 @@ function generate_po(){
                     '<td> '+ sourcing_detail[1] +'</td>'+
                     '<td>'+ sourcing_detail[2] +'</td>'+
                     '<td>'+ sourcing_detail[3] +'</td>'+
-                    '<td>'+ sourcing_detail[4] +'</td>'+
+                    '<td>'+ format(sourcing_detail[4]) +'</td>'+
                     '<td> '+ sourcing_detail[5] +'</td>'+
                     '<td>'+ sourcing_detail[6] +'</td>'+
                     '<td>'+ sourcing_detail[7] +'</td>'+
                     '</tr>';
         });
         $("#add_attr_body").append(sourcing_detail_html);
+        $("#id_generate_po").prop("hidden", true);
         table_sort_filter('sc_header_item');
     }
+
+    function formatDate(dateString) {
+    var dateParts = dateString.split('-');
+    return dateParts[2] + '-' + dateParts[1] + '-' + dateParts[0];
+}
 </script>
 {% endblock %}
