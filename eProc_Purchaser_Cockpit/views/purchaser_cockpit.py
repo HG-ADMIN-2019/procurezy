@@ -10,7 +10,7 @@ from django.http import JsonResponse
 from django.shortcuts import render
 
 from eProc_Basic.Utilities.constants.constants import CONST_SC_HEADER_APPROVED, CONST_PO_SPLIT_SUPPLIER, \
-    CONST_PO_SPLIT_CURRENCY, CONST_PO_GROUP_COMPANY_CODE, CONST_PO_GROUP_CURRENCY
+    CONST_PO_SPLIT_CURRENCY, CONST_PO_GROUP_COMPANY_CODE, CONST_PO_GROUP_CURRENCY, CONST_PO_DELIVERY_DATE
 from eProc_Basic.Utilities.functions.django_query_set import DjangoQueries
 from eProc_Basic.Utilities.functions.get_db_query import getClients
 from eProc_Basic.Utilities.functions.remove_element_from_list import remove_element_from_list
@@ -170,7 +170,7 @@ def generate_po(request):
                         status = create_purchase_order.create_purchaser_order(sc_item_details, sc_item_details[0]['supplier_id'])
                     else:
                         response['grping_error'] = "The PO cannot be grouped as Company Codes are different"
-            if CONST_PO_GROUP_CURRENCY in po_split_list:
+            if CONST_PO_GROUP_CURRENCY in po_split_list[0]:
                 currency_id = sc_item_details[0]['currency']
                 for i in range(1, len(sc_item_details)):
                     if currency_id == sc_item_details[i]['currency']:
@@ -178,6 +178,14 @@ def generate_po(request):
                                                                               sc_item_details[0]['supplier_id'])
                     else:
                         response['grping_error'] = "The PO cannot be grouped as Currencies are different"
+            if CONST_PO_DELIVERY_DATE in po_split_list[0]:
+                currency_id = sc_item_details[0]['currency']
+                for i in range(1, len(sc_item_details)):
+                    if currency_id == sc_item_details[i]['currency']:
+                        status = create_purchase_order.create_purchaser_order(sc_item_details,
+                                                                              sc_item_details[0]['supplier_id'])
+                    else:
+                        response['grping_error'] = "The PO cannot be grouped as Delivery Dates are different"
     else:
         status = create_purchase_order.create_purchaser_order(sc_item_details, sc_item_details[0]['supplier_id'])
     if not status:
