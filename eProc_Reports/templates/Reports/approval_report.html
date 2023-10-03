@@ -111,13 +111,19 @@
     console.log('Selected Company Value:', selected_comp_value);
 
     $(document).ready(function () {
+        // Add a click event handler for the "clear filters" button
         $('#clear_filters_btn').click(function () {
+            // Clear the company dropdown by selecting the first option
             $('#id_comp_code_app').val($('#id_comp_code_app option:first').val());
+            // Clear the account assignment category dropdown by deselecting all options
             $('#acc_assgn_cat').selectpicker('deselectAll');
-            $('#acc_assgn_cat').selectpicker('refresh');
+            $('#acc_assgn_cat').selectpicker('refresh'); // Refresh the dropdown to update the display
+            // Hide the table container (including table and pagination)
             $('#table-container').hide();
         });
+        // Add a click event handler for the "search" button
         $('#hg_approval_report_search').click(function () {
+            // Display the table container (including table and pagination)
             $('#table-container').show();
         });
     });

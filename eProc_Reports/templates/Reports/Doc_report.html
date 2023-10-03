@@ -96,7 +96,6 @@
     {% if t_count > 0 %}
 <!--    {{results}}-->
     <div class="card mt-5">
-        <div id="tableContainer" style="display: none;">
         <table id="doc_list" class="table table_sort_filter_export_excel">
             <thead class="thead-light">
                 <tr>
@@ -179,7 +178,6 @@
                     {% endfor %}
                 </tbody>
             </table>
-        </div>
         </div>
     </div>
     {% endif %}
@@ -486,16 +484,6 @@ $(document).ready( function() {
     // Initialize the table visibility on page load
     toggleTableVisibility(true); // Show the table initially
 });
-
-function search_click() {
-    // Toggle the visibility of the table container
-    var tableContainer = document.getElementById("tableContainer");
-    if (tableContainer.style.display === "none") {
-        tableContainer.style.display = "block";
-    } else {
-        tableContainer.style.display = "none";
-    }
-}
 </script>
 <script src="{% static 'scripts/doc_report.js' %}"></script>
 {% if inc_footer %}
