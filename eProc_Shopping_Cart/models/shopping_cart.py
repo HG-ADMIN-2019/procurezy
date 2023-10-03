@@ -39,6 +39,10 @@ class DBQueries():
                                   del_ind=False,
                                   **kwargs).values().order_by('doc_number')
 
+    def get_hdr_data_by_fields1(self, client, obj, supp_query, creator_query, requester_query, **kwargs):
+        return obj.objects.filter(supp_query, creator_query, requester_query, client=client, del_ind=False,
+                                  **kwargs).order_by('doc_number')
+
 
 class ScHeader(models.Model, DBQueries):
     guid = models.CharField(db_column='GUID', primary_key=True, max_length=32)
@@ -411,11 +415,12 @@ class ScItem(models.Model):
     @staticmethod
     def get_item_data_by_fields(client, obj, prod_cat_query, **kwargs):
         return obj.objects.filter(prod_cat_query, client=client, del_ind=False,
-                                       **kwargs).values().order_by()
+                                  **kwargs).values().order_by()
 
     @staticmethod
     def get_item_data_by_fields_src(client, obj, prod_cat_query, company_query, **kwargs):
-        return list(obj.objects.filter(prod_cat_query, company_query, source_relevant_ind=True, po_doc_num=None, client=client, del_ind=False,
+        return list(obj.objects.filter(prod_cat_query, company_query, source_relevant_ind=True, po_doc_num=None,
+                                       client=client, del_ind=False,
                                        **kwargs).values().order_by())
 
 

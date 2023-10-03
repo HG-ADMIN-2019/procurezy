@@ -81,64 +81,68 @@ class InitialSetupClient(BasicSettingsSave, ApplicationSettingsSave, MasterSetti
                     csv_file.close()
 
     def initial_save_application_data(self):
-        """
-
-        """
         directory = os.path.join(str(settings.BASE_DIR), 'MajjakaScript', 'application_data')
-        # Save  OrgNodeTypes data
-        self.org_node_type_script(directory)
-        # save OrgAttributes
-        self.org_attribute_script(directory)
-        # save Roles
-        self.user_roles_script(directory)
-        #  save   auth obj
-        self.auth_obj_script(directory)
-        #     save auth
-        self.auth_script(directory)
-        #     save auth
-        self.auth_grp_script(directory)
-        #     save field type
-        self.field_desc_script(directory)
-        #     save field type
-        self.field_type_script(directory)
-        #     save message id
-        self.message_id_script(directory)
-        # save messages desc
-        self.message_id_desc_script(directory)
-        # save system settings
-        self.system_settings_script(directory)
-        # save node level attributes
-        self.node_level_attribute_script(directory)
-        # save email
-        # self.email_contents_script(directory)
-        # save UNSPC
-        self.Unspc_code_script(directory)
-        # save DOCUMENTS
-        self.document_type_script(directory)
-        # save ACC ASS CAT CUST
-        self.acc_ass_cat_cust_type_script(directory)
-        # save CALENDER
-        self.calendar_script(directory)
-        # save HOLIDAY CALENDER
-        self.holiday_calendar_script(directory)
-        # save PURCHASE SPLIT TYPE
-        self.purchase_order_split_type_script(directory)
-        # save PURCHASE ORDER SPLIT TYPE
-        self.purchase_order_split_criteria_script(directory)
-        # save PURCHASE CONTROL
-        self.purchase_control_script(directory)
-        # save FAVOURITE CART
-        self.favourite_cart_script(directory)
-        # save SHOPPING CART
-        self.shopping_cart_script(directory)
-        # save PURCHASE ORDER
-        self.purchase_order_script(directory)
-        # save FAVOURITE CART
-        self.favourite_transaction_script(directory)
-        # save SHOPPING CART
-        self.shopping_transaction_script(directory)
-        # save PURCHASE ORDER
-        self.purchase_transaction_script(directory)
+
+        def safe_call(method, name):
+            try:
+                method(directory)
+            except Exception as e:
+                print(f"Error in {name}: {str(e)}")
+
+        # Save OrgNodeTypes data
+        # safe_call(self.org_node_type_script, 'org_node_type_script')
+        # # Save OrgAttributes
+        # safe_call(self.org_attribute_script, 'org_attribute_script')
+        # # Save Roles
+        # safe_call(self.user_roles_script, 'user_roles_script')
+        # # Save auth obj
+        # safe_call(self.auth_obj_script, 'auth_obj_script')
+        # # Save auth
+        # safe_call(self.auth_script, 'auth_script')
+        # # Save auth
+        # safe_call(self.auth_grp_script, 'auth_grp_script')
+        # # Save field type
+        # safe_call(self.field_desc_script, 'field_desc_script')
+        # # Save field type
+        # safe_call(self.field_type_script, 'field_type_script')
+        # # Save message id
+        # safe_call(self.message_id_script, 'message_id_script')
+        # # Save message desc
+        # safe_call(self.message_id_desc_script, 'message_id_desc_script')
+        # # Save system settings
+        # safe_call(self.system_settings_script, 'system_settings_script')
+        # Save node level attributes
+        safe_call(self.node_level_attribute_script, 'node_level_attribute_script')
+        # Save email (uncomment this line to save email data)
+        # safe_call(self.email_contents_script, 'email_contents_script')
+        # Save UNSPC
+        # safe_call(self.Unspc_code_script, 'Unspc_code_script')
+        # # Save DOCUMENTS
+        # safe_call(self.document_type_script, 'document_type_script')
+        # # Save ACC ASS CAT CUST
+        # safe_call(self.acc_ass_cat_cust_type_script, 'acc_ass_cat_cust_type_script')
+        # # Save CALENDER
+        # safe_call(self.calendar_script, 'calendar_script')
+        # # Save HOLIDAY CALENDER
+        # safe_call(self.holiday_calendar_script, 'holiday_calendar_script')
+        # # Save PURCHASE SPLIT TYPE
+        # safe_call(self.purchase_order_split_type_script, 'purchase_order_split_type_script')
+        # # Save PURCHASE ORDER SPLIT TYPE
+        # safe_call(self.purchase_order_split_criteria_script, 'purchase_order_split_criteria_script')
+        # # Save PURCHASE CONTROL
+        # safe_call(self.purchase_control_script, 'purchase_control_script')
+        # # Save FAVOURITE CART
+        # safe_call(self.favourite_cart_script, 'favourite_cart_script')
+        # # Save SHOPPING CART
+        # safe_call(self.shopping_cart_script, 'shopping_cart_script')
+        # # Save PURCHASE ORDER
+        # safe_call(self.purchase_order_script, 'purchase_order_script')
+        # # Save FAVOURITE CART
+        # safe_call(self.favourite_transaction_script, 'favourite_transaction_script')
+        # # Save SHOPPING CART
+        # safe_call(self.shopping_transaction_script, 'shopping_transaction_script')
+        # # Save PURCHASE ORDER
+        # safe_call(self.purchase_transaction_script, 'purchase_transaction_script')
 
     def org_node_type_script(self, directory):
         file_path = os.path.join(directory, CONST_ORG_NODE_TYPES_CSV)  # create path
@@ -306,8 +310,7 @@ class InitialSetupClient(BasicSettingsSave, ApplicationSettingsSave, MasterSetti
             for csv_data in csvreader:
                 csv_to_db_data.append({'node_type': csv_data[0],
                                        'node_values': csv_data[1],
-                                       'org_model_types': csv_data[2],
-                                       'del_ind': csv_data[3]})
+                                       'del_ind': csv_data[2]})
             orgattlevel_data = {'data': csv_to_db_data}
             self.save_orgattributes_level_data(orgattlevel_data)
 
@@ -364,8 +367,8 @@ class InitialSetupClient(BasicSettingsSave, ApplicationSettingsSave, MasterSetti
             header = next(csvreader)  # skip header
             csv_to_db_data = []
             for csv_data in csvreader:
-                csv_to_db_data.append({'ACCOUNT_ASSIGN_CAT': csv_data[0],
-                                       'DESCRIPTION': csv_data[1],
+                csv_to_db_data.append({'account_assign_cat': csv_data[0],
+                                       'description': csv_data[1],
                                        'del_ind': csv_data[2]})
             accasscat_data = {'data': csv_to_db_data}
             self.save_acc_asg_data(accasscat_data)
@@ -443,8 +446,9 @@ class InitialSetupClient(BasicSettingsSave, ApplicationSettingsSave, MasterSetti
             for csv_data in csvreader:
                 csv_to_db_data.append({'company_code_id': csv_data[0],
                                        'call_off': csv_data[1],
-                                       'purchase_ctrl_flag': csv_data[2],
-                                       'del_ind': csv_data[3]})
+                                       'prod_cat_id': csv_data[2],
+                                       'purchase_ctrl_flag': csv_data[3],
+                                       'del_ind': csv_data[4]})
             purhcase_control_data = {'data': csv_to_db_data}
             self.save_purchase_control(purhcase_control_data)
 

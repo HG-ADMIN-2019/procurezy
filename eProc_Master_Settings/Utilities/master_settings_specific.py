@@ -666,7 +666,9 @@ class MasterSettingsSave:
 
         upload_response = get_orgaddtype_data()
 
-        return upload_response, message
+        data = get_orgaddtype_dropdown()
+
+        return upload_response, message,data
 
     def save_al_acc_data(self, glaccount_data):
         glaccount_db_list = []
@@ -725,7 +727,9 @@ class MasterSettingsSave:
 
         upload_response = get_gl_acc_data()
 
-        return upload_response, message
+        data = get_gl_acc_dropdown()
+
+        return upload_response, message, data
 
     def accounting_data(self, aav_data):
         aav_db_list = []
@@ -846,6 +850,7 @@ class MasterSettingsSave:
                                                                 {'app_code_id': applimval_detail['app_code_id'],
                                                                  'company_id': applimval_detail['company_id'],
                                                                  'app_types': applimval_detail['app_types'],
+                                                                 'currency_id': applimval_detail['currency_id'],
                                                                  'client': self.client}):
                 guid = guid_generator()
                 applimval_db_dictionary = {'app_lim_dec_guid': guid,
@@ -907,6 +912,7 @@ class MasterSettingsSave:
                                                                 {'spend_code_id': spend_limit_value_detail[
                                                                     'spend_code_id'],
                                                                  'company_id': spend_limit_value_detail['company_id'],
+                                                                 'currency_id': spend_limit_value_detail['currency_id'],
                                                                  'client': self.client}):
                 # Entry does not exist, create a new entry
                 guid = guid_generator()

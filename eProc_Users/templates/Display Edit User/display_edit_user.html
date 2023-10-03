@@ -382,7 +382,7 @@ var lang_id = '{{user_info.language_id | safe}}';
     });
 
     $('form').on('submit',function (e) {
-        OpenLoaderPopup();
+<!--        OpenLoaderPopup();-->
         var valid = save_user_form_validation();
         if(!valid){
             localStorage.setItem("error_flag", 1);

@@ -440,8 +440,8 @@ def convert_SpendLimitId_to_dictionary(arr):
 def convert_SpendLimitValue_to_dictionary(arr):
     convertion_list = []
     for row in arr:
-        dictionary = {'company_id': row[0], 'spend_code_id': row[2], 'upper_limit_value': row[3],
-                      'currency_id': row[1], 'del_ind': row[4]}
+        dictionary = {'company_id': row[2], 'spend_code_id': row[0], 'upper_limit_value': row[1],
+                      'currency_id': row[4], 'del_ind': row[3]}
         convertion_list.append(dictionary)
     return convertion_list
 
@@ -484,22 +484,6 @@ def convert_OrgAddresstype_to_dictionary(arr):
     return convertion_list
 
 
-def convert_Workflowschema_to_dictionary(arr):
-    convertion_list = []
-    for row in arr:
-        dictionary = {'company_id': row[0], 'workflow_schema': row[1], 'app_types': row[3], 'del_ind': row[2]}
-        convertion_list.append(dictionary)
-    return convertion_list
-
-
-def convert_ApproverType_to_dictionary(arr):
-    convertion_list = []
-    for row in arr:
-        dictionary = {'app_types': row[0], 'appr_type_desc': row[1], 'del_ind': row[2]}
-        convertion_list.append(dictionary)
-    return convertion_list
-
-
 def convert_Payterms_desc_to_dictionary(arr):
     convertion_list = []
     for row in arr:
@@ -509,34 +493,254 @@ def convert_Payterms_desc_to_dictionary(arr):
     return convertion_list
 
 
-def convert_Incoterms_to_dictionary(arr):
-    convertion_list = []
-    for row in arr:
-        dictionary = {'incoterm_key': row[0], 'description': row[1], 'del_ind': row[2]}
-        convertion_list.append(dictionary)
-    return convertion_list
-
-
-def remove_invalid(convertion_list):
-    valid_convertion = {}  # Create an empty dictionary to store valid conversions
+def remove_invalid_spendlimitvalue(convertion_list):
+    valid_convertion = []
 
     for conversion in convertion_list:
+        # Check for existence of OrgCompanies
         if django_query_instance.django_existence_check(OrgCompanies,
                                                         {'del_ind': False,
                                                          'company_id': conversion['company_id'],
                                                          'client': global_variables.GLOBAL_CLIENT}):
-            valid_convertion['company_id'] = conversion['company_id']
+            # Check for existence of Currency
+            if django_query_instance.django_existence_check(Currency,
+                                                            {'del_ind': False,
+                                                             'currency_id': conversion['currency_id']}):
+                valid_convertion.append(conversion)
 
-        if django_query_instance.django_existence_check(Currency,
+    return valid_convertion
+
+
+def remove_invalid_spendlimitid(convertion_list):
+    valid_convertion = []
+
+    for conversion in convertion_list:
+        # Check for existence of OrgCompanies
+        if django_query_instance.django_existence_check(OrgCompanies,
                                                         {'del_ind': False,
-                                                         'currency_id': conversion['currency_id']}):
-            valid_convertion['currency_id'] = conversion['currency_id']
+                                                         'company_id': conversion['company_id'],
+                                                         'client': global_variables.GLOBAL_CLIENT}):
+            # Check for existence of Currency
+            if django_query_instance.django_existence_check(SpendLimitValue,
+                                                            {'del_ind': False,
+                                                             'spend_code_id': conversion['spend_code_id']}):
+                valid_convertion.append(conversion)
 
-            valid_convertion['spend_code_id'] = conversion['spend_code_id']
-            valid_convertion['upper_limit_value'] = conversion['upper_limit_value']
-            valid_convertion['del_ind'] = conversion['del_ind']
+    return valid_convertion
 
-    return valid_convertion  # Return the vali
+
+def remove_invalid_approvallimitvalue(convertion_list):
+    valid_convertion = []
+
+    for conversion in convertion_list:
+        # Check for existence of OrgCompanies
+        if django_query_instance.django_existence_check(OrgCompanies,
+                                                        {'del_ind': False,
+                                                         'company_id': conversion['company_id'],
+                                                         'client': global_variables.GLOBAL_CLIENT}):
+            # Check for existence of Currency
+            if django_query_instance.django_existence_check(Currency,
+                                                            {'del_ind': False,
+                                                             'currency_id': conversion['currency_id']}):
+                # Check for existence of ApproverType
+                if django_query_instance.django_existence_check(ApproverType,
+                                                                {'del_ind': False,
+                                                                 'app_types': conversion['app_types']}):
+                    valid_convertion.append(conversion)
+
+    return valid_convertion
+
+
+def remove_invalid_approvallimitid(convertion_list):
+    valid_convertion = []
+
+    for conversion in convertion_list:
+        # Check for existence of OrgCompanies
+        if django_query_instance.django_existence_check(OrgCompanies,
+                                                        {'del_ind': False,
+                                                         'company_id': conversion['company_id'],
+                                                         'client': global_variables.GLOBAL_CLIENT}):
+            # Check for existence of Username
+            if django_query_instance.django_existence_check(UserData,
+                                                            {'del_ind': False,
+                                                             'username': conversion['approver_username']}):
+                # Check for existence of App code id
+                if django_query_instance.django_existence_check(ApproverLimitValue,
+                                                                {'del_ind': False,
+                                                                 'app_code_id': conversion['app_code_id']}):
+                    valid_convertion.append(conversion)
+
+    return valid_convertion
+
+
+def remove_invalid_workflowacc(convertion_list):
+    valid_convertion = []
+
+    for conversion in convertion_list:
+        # Check for existence of OrgCompanies
+        if django_query_instance.django_existence_check(OrgCompanies,
+                                                        {'del_ind': False,
+                                                         'company_id': conversion['company_id'],
+                                                         'client': global_variables.GLOBAL_CLIENT}):
+            if django_query_instance.django_existence_check(OrgCompanies,
+                                                            {'del_ind': False,
+                                                             'company_id': conversion['sup_company_id'],
+                                                             'client': global_variables.GLOBAL_CLIENT}):
+                # Check for existence of Username
+                if django_query_instance.django_existence_check(AccountAssignmentCategory,
+                                                                {'del_ind': False,
+                                                                 'account_assign_cat': conversion[
+                                                                     'account_assign_cat']}):
+                    # Check for existence of Username
+                    if django_query_instance.django_existence_check(AccountingData,
+                                                                    {'del_ind': False,
+                                                                     'account_assign_value': conversion[
+                                                                         'acc_value']}):
+                        # Check for existence of Username
+                        if django_query_instance.django_existence_check(AccountingData,
+                                                                        {'del_ind': False,
+                                                                         'account_assign_value': conversion[
+                                                                             'sup_acc_value']}):
+                            # Check for existence of Username
+                            if django_query_instance.django_existence_check(UserData,
+                                                                            {'del_ind': False,
+                                                                             'username': conversion['app_username']}):
+                                valid_convertion.append(conversion)
+
+    return valid_convertion
+
+
+def remove_invalid_general_ledger_account(convertion_list):
+    valid_convertion = []
+
+    for conversion in convertion_list:
+        # Check for existence of OrgCompanies
+        if django_query_instance.django_existence_check(OrgCompanies,
+                                                        {'del_ind': False,
+                                                         'company_id': conversion['company_id'],
+                                                         'client': global_variables.GLOBAL_CLIENT}):
+            # Check for existence of Username
+            if django_query_instance.django_existence_check(AccountingData,
+                                                            {'del_ind': False,
+                                                             'account_assign_value': conversion[
+                                                                 'gl_acc_num']}):
+                # Check for existence of App code id
+                if django_query_instance.django_existence_check(AccountAssignmentCategory,
+                                                                {'del_ind': False,
+                                                                 'account_assign_cat': conversion[
+                                                                     'account_assign_cat']}):
+                    if django_query_instance.django_existence_check(UnspscCategoriesCust,
+                                                                    {'del_ind': False,
+                                                                     'prod_cat_id': conversion['prod_cat_id'],
+                                                                     'client': global_variables.GLOBAL_CLIENT}):
+                        # Check for existence of Currency
+                        if django_query_instance.django_existence_check(Currency,
+                                                                        {'del_ind': False,
+                                                                         'currency_id': conversion['currency_id']}):
+                            valid_convertion.append(conversion)
+
+    return valid_convertion
+
+
+def remove_invalid_account_assignment_value(convertion_list):
+    valid_convertion = []
+
+    for conversion in convertion_list:
+        # Check for existence of OrgCompanies
+        if django_query_instance.django_existence_check(OrgCompanies,
+                                                        {'del_ind': False,
+                                                         'company_id': conversion['company_id'],
+                                                         'client': global_variables.GLOBAL_CLIENT}):
+            # Check for existence of App code id
+            if django_query_instance.django_existence_check(AccountAssignmentCategory,
+                                                            {'del_ind': False,
+                                                             'account_assign_cat': conversion['account_assign_cat']}):
+                valid_convertion.append(conversion)
+
+    return valid_convertion
+
+
+def remove_invalid_account_assignment_description(convertion_list):
+    valid_convertion = []
+
+    for conversion in convertion_list:
+        # Check for existence of OrgCompanies
+        if django_query_instance.django_existence_check(OrgCompanies,
+                                                        {'del_ind': False,
+                                                         'company_id': conversion['company_id'],
+                                                         'client': global_variables.GLOBAL_CLIENT}):
+            # Check for existence of Username
+            if django_query_instance.django_existence_check(AccountingData,
+                                                            {'del_ind': False,
+                                                             'account_assign_value': conversion[
+                                                                 'account_assign_value']}):
+                # Check for existence of App code id
+                if django_query_instance.django_existence_check(AccountAssignmentCategory,
+                                                                {'del_ind': False,
+                                                                 'account_assign_cat': conversion[
+                                                                     'account_assign_cat']}):
+                    if django_query_instance.django_existence_check(Languages,
+                                                                    {'del_ind': False,
+                                                                     'language_id': conversion[
+                                                                         'language_id']}):
+                        valid_convertion.append(conversion)
+
+    return valid_convertion
+
+
+def remove_invalid_address_type(convertion_list):
+    valid_convertion = []
+
+    for conversion in convertion_list:
+        # Check for existence of OrgCompanies
+        if django_query_instance.django_existence_check(OrgCompanies,
+                                                        {'del_ind': False,
+                                                         'company_id': conversion['company_id'],
+                                                         'client': global_variables.GLOBAL_CLIENT}):
+            # Check for existence of Username
+            if django_query_instance.django_existence_check(OrgAddressMap,
+                                                            {'del_ind': False,
+                                                             'address_type': conversion[
+                                                                 'address_type']}):
+                # Check for existence of App code id
+                if django_query_instance.django_existence_check(OrgAddress,
+                                                                {'del_ind': False,
+                                                                 'address_number': conversion[
+                                                                     'address_number']}):
+                    valid_convertion.append(conversion)
+
+    return valid_convertion
+
+
+def remove_invalid_unspsc_cust(convertion_list):
+    valid_convertion = []
+
+    for conversion in convertion_list:
+        # Check for existence of OrgCompanies
+        if django_query_instance.django_existence_check(UnspscCategories,
+                                                        {'del_ind': False,
+                                                         'prod_cat_id': conversion['prod_cat_id'] }):
+                valid_convertion.append(conversion)
+
+    return valid_convertion
+
+
+def remove_invalid_unspsc_custdesc(convertion_list):
+    valid_convertion = []
+
+    for conversion in convertion_list:
+        # Check for existence of OrgCompanies
+        if django_query_instance.django_existence_check(UnspscCategories,
+                                                        {'del_ind': False,
+                                                         'prod_cat_id': conversion['prod_cat_id']}):
+
+            # Check for existence of App code id
+            if django_query_instance.django_existence_check(Languages,
+                                                            {'del_ind': False,
+                                                             'language_id': conversion['language_id']}):
+                valid_convertion.append(conversion)
+
+    return valid_convertion
 
 
 def data_upload(request):
@@ -618,79 +822,72 @@ def data_upload(request):
             result['error_message'], result['data'] = upload_csv.csv_preview_data(header_detail, data_set_val)
             result = remove_duplicates(result['data'])
             convertion_list = convert_SpendLimitValue_to_dictionary(result)
-            valid_convertion = remove_invalid(convertion_list)
-            convertion_list = convert_SpendLimitValue_to_dictionary(valid_convertion)
-            valid_data_list, message = check_spendlimit_value_data(convertion_list, 'UPLOAD')
+            valid_convertion = remove_invalid_spendlimitvalue(convertion_list)
+            valid_data_list, message = check_spendlimit_value_data(valid_convertion, 'UPLOAD')
             context = {'valid_data_list': valid_data_list}
             return JsonResponse(context, safe=False)
         if Table_name == 'SpendLimitId':
             result['error_message'], result['data'] = upload_csv.csv_preview_data(header_detail, data_set_val)
             result = remove_duplicates(result['data'])
             convertion_list = convert_SpendLimitId_to_dictionary(result)
-            valid_data_list, message = check_spending_limit_data(convertion_list, 'UPLOAD')
-            context = {'valid_data_list': valid_data_list}
-            return JsonResponse(context, safe=False)
-        if Table_name == 'ApproverLimit':
-            result['error_message'], result['data'] = upload_csv.csv_preview_data(header_detail, data_set_val)
-            result = remove_duplicates(result['data'])
-            convertion_list = convert_ApproverLimit_to_dictionary(result)
-            valid_data_list, message = check_approv_limit_data(convertion_list, 'UPLOAD')
+            valid_convertion = remove_invalid_spendlimitid(convertion_list)
+            valid_data_list, message = check_spending_limit_data(valid_convertion, 'UPLOAD')
             context = {'valid_data_list': valid_data_list}
             return JsonResponse(context, safe=False)
         if Table_name == 'ApproverLimitValue':
             result['error_message'], result['data'] = upload_csv.csv_preview_data(header_detail, data_set_val)
             result = remove_duplicates(result['data'])
             convertion_list = convert_ApproverLimitValue_to_dictionary(result)
-            valid_data_list, message = check_approv_limit_value_data(convertion_list, 'UPLOAD')
+            valid_convertion = remove_invalid_approvallimitvalue(convertion_list)
+            valid_data_list, message = check_approv_limit_value_data(valid_convertion, 'UPLOAD')
+            context = {'valid_data_list': valid_data_list}
+            return JsonResponse(context, safe=False)
+        if Table_name == 'ApproverLimit':
+            result['error_message'], result['data'] = upload_csv.csv_preview_data(header_detail, data_set_val)
+            result = remove_duplicates(result['data'])
+            convertion_list = convert_ApproverLimit_to_dictionary(result)
+            valid_convertion = remove_invalid_approvallimitid(convertion_list)
+            valid_data_list, message = check_approv_limit_data(valid_convertion, 'UPLOAD')
             context = {'valid_data_list': valid_data_list}
             return JsonResponse(context, safe=False)
         if Table_name == 'WorkflowACC':
             result['error_message'], result['data'] = upload_csv.csv_preview_data(header_detail, data_set_val)
             result = remove_duplicates(result['data'])
             convertion_list = convert_WorkflowACC_to_dictionary(result)
-            valid_data_list, message = check_workflow_acc_data(convertion_list, 'UPLOAD')
+            valid_convertion = remove_invalid_workflowacc(convertion_list)
+            valid_data_list, message = check_workflow_acc_data(valid_convertion, 'UPLOAD')
             context = {'valid_data_list': valid_data_list}
             return JsonResponse(context, safe=False)
         if Table_name == 'DetermineGLAccount':
             result['error_message'], result['data'] = upload_csv.csv_preview_data(header_detail, data_set_val)
             result = remove_duplicates(result['data'])
             convertion_list = convert_DetermineGLAccount_to_dictionary(result)
-            valid_data_list, message = check_determine_gl_acc_data(convertion_list, 'UPLOAD')
+            valid_convertion = remove_invalid_general_ledger_account(convertion_list)
+            valid_data_list, message = check_determine_gl_acc_data(valid_convertion, 'UPLOAD')
             context = {'valid_data_list': valid_data_list}
             return JsonResponse(context, safe=False)
         if Table_name == 'AccountingData':
             result['error_message'], result['data'] = upload_csv.csv_preview_data(header_detail, data_set_val)
             result = remove_duplicates(result['data'])
             convertion_list = convert_AccountingData_to_dictionary(result)
-            valid_data_list, message = check_acc_assign_values_data(convertion_list, 'UPLOAD')
+            valid_convertion = remove_invalid_account_assignment_value(convertion_list)
+            valid_data_list, message = check_acc_assign_values_data(valid_convertion, 'UPLOAD')
             context = {'valid_data_list': valid_data_list}
             return JsonResponse(context, safe=False)
         if Table_name == 'AccountingDataDesc':
             result['error_message'], result['data'] = upload_csv.csv_preview_data(header_detail, data_set_val)
             result = remove_duplicates(result['data'])
             convertion_list = convert_AccountingDataDesc_to_dictionary(result)
-            valid_data_list, message = check_acc_assign_desc_data(convertion_list, 'UPLOAD')
-            context = {'valid_data_list': valid_data_list}
-            return JsonResponse(context, safe=False)
-        if Table_name == 'WorkflowSchema':
-            result['error_message'], result['data'] = upload_csv.csv_preview_data(header_detail, data_set_val)
-            result = remove_duplicates(result['data'])
-            convertion_list = convert_Workflowschema_to_dictionary(result)
-            valid_data_list, message = check_workflowschema_data(convertion_list, 'UPLOAD')
-            context = {'valid_data_list': valid_data_list}
-            return JsonResponse(context, safe=False)
-        if Table_name == 'ApproverType':
-            result['error_message'], result['data'] = upload_csv.csv_preview_data(header_detail, data_set_val)
-            result = remove_duplicates(result['data'])
-            convertion_list = convert_ApproverType_to_dictionary(result)
-            valid_data_list, message = check_approvaltype_data(convertion_list, 'UPLOAD')
+            valid_convertion = remove_invalid_account_assignment_description(convertion_list)
+            valid_data_list, message = check_acc_assign_desc_data(valid_convertion, 'UPLOAD')
             context = {'valid_data_list': valid_data_list}
             return JsonResponse(context, safe=False)
         if Table_name == 'OrgAddressMap':
             result['error_message'], result['data'] = upload_csv.csv_preview_data(header_detail, data_set_val)
             result = remove_duplicates(result['data'])
             convertion_list = convert_OrgAddresstype_to_dictionary(result)
-            valid_data_list, message = check_address_types_data(convertion_list, 'UPLOAD')
+            valid_convertion = remove_invalid_address_type(convertion_list)
+            valid_data_list, message = check_address_types_data(valid_convertion, 'UPLOAD')
             context = {'valid_data_list': valid_data_list}
             return JsonResponse(context, safe=False)
         if Table_name == 'Payterms_desc':
@@ -700,18 +897,12 @@ def data_upload(request):
             valid_data_list, message = check_paymentterm_desc_data(convertion_list, 'UPLOAD')
             context = {'valid_data_list': valid_data_list}
             return JsonResponse(context, safe=False)
-        if Table_name == 'Incoterms':
-            result['error_message'], result['data'] = upload_csv.csv_preview_data(header_detail, data_set_val)
-            result = remove_duplicates(result['data'])
-            convertion_list = convert_Incoterms_to_dictionary(result)
-            valid_data_list, message = check_inco_terms_data(convertion_list, 'UPLOAD')
-            context = {'valid_data_list': valid_data_list}
-            return JsonResponse(context, safe=False)
         if Table_name == 'UnspscCategoriesCust':
             result['error_message'], result['data'] = upload_csv.csv_preview_data(header_detail, data_set_val)
             result = remove_duplicates(result['data'])
             convertion_list = convert_UNSPSC_to_dictionary(result)
-            valid_data_list, message = check_unspsc_category_data(convertion_list, 'UPLOAD')
+            valid_convertion = remove_invalid_unspsc_cust(convertion_list)
+            valid_data_list, message = check_unspsc_category_data(valid_convertion, 'UPLOAD')
             context = {'valid_data_list': valid_data_list}
             # retrieving correct ordered data from csv_data_arrangement() - basic_settings_specific.py
             # correct_order_list = csv_data_arrangement(db_header, data_set_val)
@@ -720,7 +911,8 @@ def data_upload(request):
             result['error_message'], result['data'] = upload_csv.csv_preview_data(header_detail, data_set_val)
             result = remove_duplicates(result['data'])
             convertion_list = convert_UNSPSCDESC_to_dictionary(result)
-            valid_data_list, message = check_unspsc_category_desc_data(convertion_list, 'UPLOAD')
+            valid_convertion = remove_invalid_unspsc_custdesc(convertion_list)
+            valid_data_list, message = check_unspsc_category_desc_data(valid_convertion, 'UPLOAD')
             context = {'valid_data_list': valid_data_list}
             return JsonResponse(context, safe=False)
         if Table_name == 'UserData':
@@ -728,6 +920,13 @@ def data_upload(request):
             result = remove_duplicates(result['data'])
             convertion_list = convert_UserData_to_dictionary(result)
             valid_data_list, message = get_valid_employee_data(convertion_list, 'UPLOAD')
+            context = {'valid_data_list': valid_data_list}
+            return JsonResponse(context, safe=False)
+        if Table_name == 'SupplierMaster':
+            result['error_message'], result['data'] = upload_csv.csv_preview_data(header_detail, data_set_val)
+            result = remove_duplicates(result['data'])
+            convertion_list = convert_Supplier_to_dictionary(result)
+            valid_data_list, message = get_valid_supplier_data(convertion_list, 'UPLOAD')
             context = {'valid_data_list': valid_data_list}
             return JsonResponse(context, safe=False)
 
@@ -760,6 +959,21 @@ def convert_UNSPSCDESC_to_dictionary(arr):
     convertion_list = []
     for row in arr:
         dictionary = {'description': row[0], 'del_ind': row[1], 'language_id': row[2], 'prod_cat_id': row[3]}
+        convertion_list.append(dictionary)
+    return convertion_list
+
+
+def convert_Supplier_to_dictionary(arr):
+    convertion_list = []
+    for row in arr:
+        dictionary = {'supplier_id': row[0], 'supp_type': row[1], 'registration_number': row[16],
+                      'name1': row[2], 'name2': row[3],
+                      'currency_id': row[19], 'language_id': row[20], 'country_code': row[18],
+                      'city': row[4], 'street': row[6], 'postal_code': row[5],
+                      'email': row[10], 'landline': row[7], 'mobile_num': row[8], 'fax': row[9],
+                      'search_term1': row[12], 'search_term2': row[13],
+                      'delivery_days': row[15], 'duns_number': row[14], 'output_medium_types': row[11],
+                      'del_ind': row[17]}
         convertion_list.append(dictionary)
     return convertion_list
 

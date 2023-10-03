@@ -325,7 +325,7 @@ function new_row_data() {
                                 var assignment_value_list = '';
                                 var assignment_value_id_list = '';
                                 $.each(rendered_accasscat_values, function (i, item) {
-                                   if( value.company_type_value == item.company_id) {
+                                   if( value.account_assign_value == item.account_assign_value) {
                                         assignment_value = '<option value="' + item.account_assign_value + '">' + item.account_assign_value + '</option>';
                                     } else {
                                         assignment_value_list += '<option value="' + item.account_assign_value + '">' + item.account_assign_value + '</option>';

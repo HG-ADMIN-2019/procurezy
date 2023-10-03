@@ -394,9 +394,9 @@
                                 }
                                 currency_id_list = currency + currency_list
                                 });
-                                edit_basic_data += '<tr><td><input type="checkbox" required></td><td><select class="form-control" type = "text">value ="' + value.company_id + '"'+company_id_list+'</select></td><td><select class="form-control" type = "text">value ="' + value.app_types + '"'+approval_id_list+'</select></td><td><input class="form-control"  type="text" value="'+value.app_code_id+'" maxlength="8" onkeypress="return /[a-z0-9]/i.test(event.key)" name="approver_code-id" style="text-transform:uppercase;" required></td><td><input class="form-control" type="number" value="'+value.upper_limit_value+'" name="upper_limit_value" required></td><td><select class="form-control" type = "text">value ="' + value.currency_id + '"'+currency_id_list+'</select></td><td hidden><input type="text" value=""></td><td>' + del_ind + '</td></tr>';
+                                edit_basic_data += '<tr><td><input type="checkbox" required></td><td><select class="form-control" type = "text"><option value ="' + value.company_id + '"'+company_id_list+'></option></select></td><td><select class="form-control" type = "text"><option value ="' + value.app_types + '"'+approval_id_list+'></option></select></td><td><input class="form-control"  type="text" value="'+value.app_code_id+'" maxlength="8" onkeypress="return /[a-z0-9]/i.test(event.key)" name="approver_code-id" style="text-transform:uppercase;" required></td><td><input class="form-control" type="number" value="'+value.upper_limit_value+'" name="upper_limit_value" required></td><td><select class="form-control" type = "text"><option value ="' + value.currency_id + '"'+currency_id_list+'></option>></select></td><td hidden><input type="text" value=""></td><td>' + del_ind + '</td></tr>';
                             });
-                            $('#id_popup_tbody').append(edit_basic_data);
+                             $('#id_popup_tbody').append(edit_basic_data);
                             var i =0;
                             $("#id_popup_table TBODY TR").each(function() {
                                 var row = $(this);
@@ -409,12 +409,14 @@
 
                                 i++;
                             });
+
                             $("#id_del_ind_checkbox").prop("hidden", false);
+                            $( "#header_select").prop( "hidden", false );
                             $(".class_del_checkbox").prop("hidden", false);
                             $('#applimit_value_Modal').modal('show');
                             $('#id_data_upload').modal('hide')
                             document.getElementById("id_del_add_button").style.display = "block";
-                            document.getElementById("id_check_data").style.display = "block";
+                            $('#id_check_data').show();
                             $("#id_check_data").prop("hidden", false);
                             $("#save_id").prop("hidden", true);
                             table_sort_filter_popup_pagination('id_popup_table')
@@ -427,12 +429,7 @@
                 });
             }
             else {
-                $("#id_error_msg_upload").prop("hidden",false)
-                get_message_details("JMSG110"); // Get message details
-                var display = msg_type.messages_id_desc;
-                document.getElementById("id_error_msg_upload").innerHTML = display;
-                document.getElementById("id_error_msg_upload").style.color = "Red";
-                $('#id_data_upload').modal('show');
+                   display_file_select_error(); // Display error message for file selection except .csv
             }
         }
     }

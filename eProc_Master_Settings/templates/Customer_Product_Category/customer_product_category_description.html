@@ -297,7 +297,7 @@
                                     }
                                     language_id_list = language + language_list
                                 });
-                                edit_basic_data += '<tr ><td><input type="checkbox" required></td><td><select type="text" class="input form-control prodid"  name="prodid" onchange="GetSelectedTextValue(this)"><option value ="' + value.prod_cat_id + '"'+prod_cat_id_list+'>'+value.prod_cat_id+'</option></select></td><td><select class="form-control" type="text"><option value ="' + value.language_id + '"'+language_id_list+'>'+value.language_id+'</option></select></td><td><input class="form-control description" type="text"  name="description"   value ="' + value.description + '" maxlength="200" onkeypress="return /[a-z ]/i.test(event.key)" required></td><td hidden></td><td>'+ del_ind +'</td></tr>';
+                                edit_basic_data += '<tr ><td><input type="checkbox" required></td><td><select type="text" class="input form-control prodid"  name="prodid" onchange="GetSelectedTextValue(this)"><option value ="' + value.prod_cat_id + '"'+prod_cat_id_list+'></option></select></td><td><select class="form-control" type="text"><option value ="' + value.language_id + '"'+language_id_list+'></option></select></td><td><input class="form-control description" type="text"  name="description"   value ="' + value.description + '" maxlength="200" onkeypress="return /[a-z ]/i.test(event.key)" required></td><td hidden></td><td>'+ del_ind +'</td></tr>';
                             });
                             $('#id_popup_table').append(edit_basic_data);
                             var i =0;
@@ -476,6 +476,9 @@
 
     function check_unspsc_desc(item){
         language_exists_flag = false
+        if (rendered_cust_prod_cat_desc_data.length == 0){
+          language_exists_flag = true
+        }
         $.each(rendered_cust_prod_cat_desc_data, function(j, item1){
                 if(item.language_id == "EN"){
                         language_exists_flag = true

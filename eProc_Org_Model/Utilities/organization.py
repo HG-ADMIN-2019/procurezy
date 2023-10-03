@@ -9,11 +9,11 @@ from eProc_Org_Model.Utilities.orgUtils import OrgUtils
 from eProc_Org_Model.Utilities.validators import Validators
 
 
-
 class Organization(OrgUtils, Validators):
     """
     Handles Organization
     """
+
     def __init__(self, client_id, pk):
         """
         Initialize a organization
@@ -34,17 +34,17 @@ class Organization(OrgUtils, Validators):
         #     return
         # else:
         # end deepika
-            # Action is create
-            for k, v in kwargs.items():
-                if k == 'name':
-                    self.set_base_props(k, self.get_org_name(v))
-                elif k == 'root_node':
-                    self.set_base_props(k, v)
-                elif k == 'object_id':
-                    object_id = OrgModel.objects.get(object_id=v)
-                    self.set_base_props(k, object_id)
-                if 'del_ind' in kwargs:
-                    self.base.del_ind = kwargs.get('del_ind')
+        # Action is create
+        for k, v in kwargs.items():
+            if k == 'name':
+                self.set_base_props(k, self.get_org_name(v))
+            elif k == 'root_node':
+                self.set_base_props(k, v)
+            elif k == 'object_id':
+                object_id = OrgModel.objects.get(object_id=v)
+                self.set_base_props(k, object_id)
+            if 'del_ind' in kwargs:
+                self.base.del_ind = kwargs.get('del_ind')
 
     # To get a Org name
     def get_org_name(self, name):
@@ -90,7 +90,7 @@ class Organization(OrgUtils, Validators):
         """
         Save the organization
         """
-        if not(self.base.name is None or self.base.root_node is None or self.error):
+        if not (self.base.name is None or self.base.root_node is None or self.error):
             self.base.save()
             return True
         return False
