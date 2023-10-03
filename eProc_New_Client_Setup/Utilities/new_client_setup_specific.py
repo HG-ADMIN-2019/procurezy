@@ -308,8 +308,7 @@ class InitialSetupClient(BasicSettingsSave, ApplicationSettingsSave, MasterSetti
             for csv_data in csvreader:
                 csv_to_db_data.append({'node_type': csv_data[0],
                                        'node_values': csv_data[1],
-                                       'org_model_types': csv_data[2],
-                                       'del_ind': csv_data[3]})
+                                       'del_ind': csv_data[2]})
             orgattlevel_data = {'data': csv_to_db_data}
             self.save_orgattributes_level_data(orgattlevel_data)
 

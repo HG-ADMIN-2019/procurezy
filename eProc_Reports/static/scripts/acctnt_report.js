@@ -18,7 +18,7 @@
         sessionStorage.setItem("LANG", $('#id_language').val());
     }
 
-    
+
     //*******************************************
     $('#hg_accnt_report_search').click(function () {
         OpenLoaderPopup();
