@@ -319,6 +319,7 @@ function generate_po(){
         dataType: "json",
         success: function (Response) {
             console.log(Response);
+            display_sourcing_data(Response.sourcing_data);
             $('#success_msg_id').text(Response.message);
             $("#error_msg_div").prop("hidden",false);
             if(Response.grping_error)
@@ -329,7 +330,29 @@ function generate_po(){
             CloseLoaderPopup();
         }
     });
-
 }
+
+    function display_sourcing_data(sourcing_data){
+        var sourcing_detail_html = '';
+        var is_active = '';
+        var block_input = '';
+        $('#sc_header_item').DataTable().destroy();
+        $("#add_attr_body").empty();
+        $.each(sourcing_data, function (i, sourcing_detail) {
+            sourcing_detail_html += '<tr id="'+sourcing_detail.doc_number+'">'+
+                    '<td><input type="checkbox" class="supplier_checkbox" onclick="valueChanged();"></td>'+
+                    '<td>'+ sourcing_detail.doc_number +'</td>'+
+                    '<td> '+ sourcing_detail.description +'</td>'+
+                    '<td>'+ sourcing_detail.supplier_id +'</td>'+
+                    '<td>'+ sourcing_detail.comp_code +'</td>'+
+                    '<td>'+ sourcing_detail.item_del_date +'</td>'+
+                    '<td> '+ sourcing_detail.unit +'</td>'+
+                    '<td>'+ sourcing_detail.quantity +'</td>'+
+                    '<td>'+ sourcing_detail.prod_cat_id +'</td>'+
+                    '</tr>';
+        });
+        $("#add_attr_body").append(sourcing_detail_html);
+        table_sort_filter('sc_header_item');
+    }
 </script>
 {% endblock %}
