@@ -50,6 +50,7 @@
                     </form>
                 </div>
             </div>
+            <div id="table-container">
             <!-- <br>
             <div class="search_result_count_card card">
                 {% if t_count > 0 %}
@@ -107,10 +108,11 @@
             {% endif %}
         </div>
     </div>
+        </div>
 <div class="hg_spacer2"> &nbsp; </div>
 <script src="{% static 'scripts/user_report.js' %}"></script>
 <script>
-    
+
     // Funtion to get username
     $(document).ready(function () {
         nav_bar_admin();
@@ -143,6 +145,21 @@
         $('#id_user_status').val(formData.userStatus); // Assuming this is the correct ID for the dropdown
     }
 });
+
+function hideTableAndPagination() {
+        document.getElementById("table-container").style.display = "none";
+    }
+
+    // Function to show the table and pagination controls
+    function showTableAndPagination() {
+        document.getElementById("table-container").style.display = "block";
+    }
+
+    // Add event listeners to the buttons
+    document.addEventListener("DOMContentLoaded", function () {
+        document.getElementById("hg_user_report_search").addEventListener("click", showTableAndPagination);
+        document.querySelector("button[type='reset']").addEventListener("click", hideTableAndPagination);
+    });
 </script>
 {% if inc_footer %}
 {% include 'root/footer.html' %}

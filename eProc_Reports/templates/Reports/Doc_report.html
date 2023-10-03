@@ -16,185 +16,180 @@
         <hr>
         <div class="card card-shadow-1">
             <div class="card-body">
-<form method="POST" id="requisition_form" action="{% url 'eProc_Admin_Tool:doc_search_report' %}">
-    {% csrf_token %}
-    {% if error_messages %}
-    <div class="alert alert-danger" id="err_msg" hidden>
-        {% for key, value in error_messages.items %}
-        <span class="fieldWrapper">
-            {{ value }}
-        </span>
-        {% endfor %}
-    </div>
-    {% endif %}
-    <div class="row">
-        <div class="col-md">
-            <label>Document Type</label>
-            {{ sform.doc_type }}
-        </div>
-        <div class="col-md" id="supplierField" style="display: none;">
-            <label>Supplier</label>
-            <input type="text" name="supplier" id="supplier" placeholder="Enter Supplier" onclick="openSupplierModal()" style="padding: 6px 12px; width: 100%;">
-        </div>
-        <!-- Add an element to display the supplier name -->
-        <div class="col-md" id="supplierNameElement" style="display: none;">
-            <label>Supplier Name</label>
-            <span id="supplierName"></span>
-        </div>
-        <div class="col-md">
-            <label>Company Number</label>
-            {{ sform.company_code }}
-        </div>
-        <div class="col-md">
-            <label>From Date</label>
-            {{ sform.from_date }}
-        </div>
-        <div class="col-md">
-            <label>To Date</label>
-            {{ sform.to_date }}
-        </div>
-        <div class="col-md">
-            <label>Doc Number</label>
-            {{ sform.doc_num }}
-        </div>
-        <div class="col-md">
-            <label>Created By</label>
-            {{ sform.created_by }}
-        </div>
-        <div class="col-md">
-            <label>Requested By</label>
-            {{ sform.requester }}
-        </div>
-    </div>
-    <br>
-    <div class="elements-space-between">
-        <div>
-            <button class="btn btn-link" type="button" onclick="clearFilters()">Clear filters</button>
-            <button id="hg_doc_report_search" class="btn btn-primary" onclick="search_click()" type="submit" title="Please click to get the search details!">
-                <i class="fas fa-search"></i>Search
-            </button>
-        </div>
-        <div>
-            <span class="badge help-text-badge help-text-star-search"></span>
-        </div>
-    </div>
-</form>
+                <form method="POST" id="requisition_form" action="{% url 'eProc_Admin_Tool:doc_search_report' %}">
+                    {% csrf_token %}
+                    {% if error_messages %}
+                    <div class="alert alert-danger" id="err_msg" hidden>
+                        {% for key, value in error_messages.items %}
+                        <span class="fieldWrapper">
+                            {{ value }}
+                        </span>
+                        {% endfor %}
+                    </div>
+                    {% endif %}
+                    <div class="row">
+                        <div class="col-md">
+                            <label>Document Type</label>
+                            {{ sform.doc_type }}
+                        </div>
+                        <div class="col-md" id="supplierField" style="display: none;">
+                            <label>Supplier</label>
+                            <input type="text" name="supplier" id="supplier" placeholder="Enter Supplier" onclick="openSupplierModal()" style="padding: 6px 12px; width: 100%;">
+                        </div>
+                        <!-- Add an element to display the supplier name -->
+                        <div class="col-md" id="supplierNameElement" style="display: none;">
+                            <label>Supplier Name</label>
+                            <span id="supplierName"></span>
+                        </div>
+                        <div class="col-md">
+                            <label>Company Number</label>
+                            {{ sform.company_code }}
+                        </div>
+                        <div class="col-md">
+                            <label>From Date</label>
+                            {{ sform.from_date }}
+                        </div>
+                        <div class="col-md">
+                            <label>To Date</label>
+                            {{ sform.to_date }}
+                        </div>
+                        <div class="col-md">
+                            <label>Doc Number</label>
+                            {{ sform.doc_num }}
+                        </div>
+                        <div class="col-md">
+                            <label>Created By</label>
+                            {{ sform.created_by }}
+                        </div>
+                        <div class="col-md">
+                            <label>Requested By</label>
+                            {{ sform.requester }}
+                        </div>
+                    </div>
+                    <br>
+                    <div class="elements-space-between">
+                        <div>
+                            <button class="btn btn-link" type="button" onclick="clearFilters()">Clear filters</button>
+                            <button id="hg_doc_report_search" class="btn btn-primary" onclick="search_click()" type="submit" title="Please click to get the search details!">
+                                <i class="fas fa-search"></i>Search
+                            </button>
+                        </div>
+                        <div>
+                            <span class="badge help-text-badge help-text-star-search"></span>
+                        </div>
+                    </div>
+                </form>
             </div>
         </div>
         <br>
         <div class="search_result_count_card card">
             {% if t_count > 0 %}
-<!--            <div class="card-body" ><h6 class="card-title"> Total number of results found :{{t_count}}</h6>-->
-            </div>
-            {% endif %}
-            {% if t_count == 0 %}
-            <div class="card-body" ><h6 class="card-title"> No Results Found</h6>
-            </div>
-            {% endif %}
+        <!--            <div class="card-body" ><h6 class="card-title"> Total number of results found :{{t_count}}</h6>-->
         </div>
-        <!--    To Display Header Details only if there are any results-->
-        {% if t_count > 0 %}
+        {% endif %}
+        {% if t_count == 0 %}
+        <div class="card-body" ><h6 class="card-title"> No Results Found</h6>
+        </div>
+        {% endif %}
+    </div>
+    <!--    To Display Header Details only if there are any results-->
+    {% if t_count > 0 %}
 <!--    {{results}}-->
-        <div class="card mt-5">
-    <table id="doc_list" class="table table_sort_filter_export_excel">
-    <thead class="thead-light">
-        <tr>
-            {% if inp_doc_type == 'SC' or inp_doc_type == 'PO' %}
-            {% if inp_doc_type == 'SC' %}
-            <th scope="col">SC Number</th>
-            <th scope="col">SC Name</th>
-            {% endif %}
-            {% if inp_doc_type == 'PO' %}
-            <th scope="col">PO Number</th>
-            <th scope="col">PO Name</th>
-            {% endif %}
-            <th scope="col">Status</th>
-            <th scope="col">Total Value</th>
-            <th scope="col">Currency</th>
-            <th scope="col">Requested By</th>
-            <th scope="col">Created By</th>
-            <th scope="col">Created At</th>
-            <th scope="col">Ordered At</th>
-            <th scope="col" hidden>Changed At</th>
-            <th scope="col" hidden>Changed By</th>
-            </tr>
-            {% endif %}
-        </thead>
-        <tbody>
-            <!-- Looping over the cart_items to get individual fields -->
-            {% for items, encrypted_header_guid in results %}
-            {% if items.status != 'SAVED' %}
-            {% if inp_doc_type == 'SC' or inp_doc_type == 'PO' %}
-            <tr>
-                {% if inp_doc_type == 'SC' %}
-                <td scope="row">
-                    <a href="{% url 'eProc_Doc_Details:my_order_document_detail' encrypted_header_guid 'my_order' %}" class="link-blue" target="_blank">{{ items.doc_number|default:"N/A" }}</a>
-                </td>
-                {% endif %}
-                {% if inp_doc_type == 'PO' %}
-                <td scope="row">
-                    <a href="{% url 'eProc_Purchase_Order:po_doc_details' encrypted_header_guid %}" class="link-blue" target="_blank">{{ items.doc_number|default:"N/A" }}</a>
-                </td>
-                {% endif %}
-                <td scope="row">{{ items.description|default:"N/A" }}</td>
-                <td scope="row">
-                    {% if items.status == 'AWAITING_APPROVAL' %}
-                    <span>WAITING FOR APPROVAL</span>
-                    {% elif items.status == 'SAVED' %}
-                    <span>SAVED</span>
-                    {% elif items.status == 'APPROVED' %}
-                    <span>APPROVED</span>
-                    {% elif items.status == 'PURCHASER_WORKLIST' %}
-                    <span>IN PURCHASER's WORK LIST</span>
-                    {% elif items.status == 'REJECTED' %}
-                    <span>REJECTED</span>
-                    {% else %}
-                    <span>Ordered</span>  <!-- Default status for 'PO' -->
+    <div class="card mt-5">
+        <table id="doc_list" class="table table_sort_filter_export_excel">
+            <thead class="thead-light">
+                <tr>
+                    {% if inp_doc_type == 'SC' or inp_doc_type == 'PO' %}
+                    {% if inp_doc_type == 'SC' %}
+                    <th scope="col">SC Number</th>
+                    <th scope="col">SC Name</th>
                     {% endif %}
-                </td>
-                <td scope="row">{{ items.total_value|default:"N/A" }}</td>
-                <td scope="row">{{ items.currency|default:"N/A" }}</td>
-                <td scope="row">{{ items.requester|default:"N/A" }}</td>
-
-                {% if inp_doc_type == 'SC' %}
-                <td scope="row">{{ items.created_by|default:"N/A" }}</td>
-                <td scope="row">{{ items.created_at|default:"N/A" }}</td>
-                {% endif %}
-
-                {% if inp_doc_type == 'PO' %}
-                <td scope="row">{{ items.po_header_created_by|default:"N/A" }}</td>
-                <td scope="row">{{ items.po_header_created_at|default:"N/A" }}</td>
-                {% endif %}
-
-                <td scope="row">
-                    {% if items.ordered_at %}
-                    {{ items.ordered_at|date:"F d, Y, P" }}
-                    {% else %}
-                    N/A
+                    {% if inp_doc_type == 'PO' %}
+                    <th scope="col">PO Number</th>
+                    <th scope="col">PO Name</th>
                     {% endif %}
-                </td>
-                <td scope="row" hidden>{{ items.changed_at|default:"N/A" }}</td>
-                <td scope="row" hidden>{{ items.changed_by|default:"N/A" }}</td>
-            </tr>
-            {% endif %}
-            {% endif %}
-            {% endfor %}
-        </tbody>
-    </table>
-
-</div>
-{% endif %}
+                    <th scope="col">Status</th>
+                    <th scope="col">Total Value</th>
+                    <th scope="col">Currency</th>
+                    <th scope="col">Requested By</th>
+                    <th scope="col">Created By</th>
+                    <th scope="col">Created At</th>
+                    <th scope="col">Ordered At</th>
+                    <th scope="col" hidden>Changed At</th>
+                    <th scope="col" hidden>Changed By</th>
+                    </tr>
+                    {% endif %}
+                </thead>
+                <tbody>
+                    <!-- Looping over the cart_items to get individual fields -->
+                    {% for items, encrypted_header_guid in results %}
+                    {% if items.status != 'SAVED' %}
+                    {% if inp_doc_type == 'SC' or inp_doc_type == 'PO' %}
+                    <tr>
+                        {% if inp_doc_type == 'SC' %}
+                        <td scope="row">
+                            <a href="{% url 'eProc_Doc_Details:my_order_document_detail' encrypted_header_guid 'my_order' %}" class="link-blue" target="_blank">{{ items.doc_number|default:"N/A" }}</a>
+                        </td>
+                        {% endif %}
+                        {% if inp_doc_type == 'PO' %}
+                        <td scope="row">
+                            <a href="{% url 'eProc_Purchase_Order:po_doc_details' encrypted_header_guid %}" class="link-blue" target="_blank">{{ items.doc_number|default:"N/A" }}</a>
+                        </td>
+                        {% endif %}
+                        <td scope="row">{{ items.description|default:"N/A" }}</td>
+                        <td scope="row">
+                            {% if items.status == 'AWAITING_APPROVAL' %}
+                            <span>WAITING FOR APPROVAL</span>
+                            {% elif items.status == 'SAVED' %}
+                            <span>SAVED</span>
+                            {% elif items.status == 'APPROVED' %}
+                            <span>APPROVED</span>
+                            {% elif items.status == 'PURCHASER_WORKLIST' %}
+                            <span>IN PURCHASER's WORK LIST</span>
+                            {% elif items.status == 'REJECTED' %}
+                            <span>REJECTED</span>
+                            {% else %}
+                            <span>Ordered</span>  <!-- Default status for 'PO' -->
+                            {% endif %}
+                        </td>
+                        <td scope="row">{{ items.total_value|default:"N/A" }}</td>
+                        <td scope="row">{{ items.currency|default:"N/A" }}</td>
+                        <td scope="row">{{ items.requester|default:"N/A" }}</td>
+                        {% if inp_doc_type == 'SC' %}
+                        <td scope="row">{{ items.created_by|default:"N/A" }}</td>
+                        <td scope="row">{{ items.created_at|default:"N/A" }}</td>
+                        {% endif %}
+                        {% if inp_doc_type == 'PO' %}
+                        <td scope="row">{{ items.po_header_created_by|default:"N/A" }}</td>
+                        <td scope="row">{{ items.po_header_created_at|default:"N/A" }}</td>
+                        {% endif %}
+                        <td scope="row">
+                            {% if items.ordered_at %}
+                            {{ items.ordered_at|date:"F d, Y, P" }}
+                            {% else %}
+                            N/A
+                            {% endif %}
+                        </td>
+                        <td scope="row" hidden>{{ items.changed_at|default:"N/A" }}</td>
+                        <td scope="row" hidden>{{ items.changed_by|default:"N/A" }}</td>
+                    </tr>
+                    {% endif %}
+                    {% endif %}
+                    {% endfor %}
+                </tbody>
+            </table>
+        </div>
+    </div>
+    {% endif %}
 </div>
 <div class="modal fade" id="select_supplier_modal">
     <div class="modal-dialog modal-dialog-centered" style="max-width: 600px;">
         <div class="modal-content">
-
             <!-- Modal Header -->
             <div class="modal-header">
                 <h4 class="modal-title">Select Supplier</h4>
                 <button type="button" class="close" data-dismiss="modal">&times;</button>
             </div>
-
             <!-- Modal body -->
             <div class="modal-body">
                 <table class="table select_supplier_datatable" id="supplier_table" style="table-layout: auto">
@@ -217,13 +212,11 @@
                     </tbody>
                 </table>
             </div>
-
             <!-- Modal footer -->
             <div class="modal-footer">
                 <button type="button" class="btn btn-outline-primary" data-dismiss="modal"><i class="fas fa-times"></i> close</button>
                 <button class="btn btn-primary" id="select_supplier"><i class="fas fa-check"></i> select</button>
             </div>
-
         </div>
     </div>
 </div>
@@ -262,22 +255,14 @@
 <script>
 <!-- var len = {{results|safe}};-->
 $(document).ready( function() {
-    // display admin role submenu
     nav_bar_admin()
-    // Script to generate sort and filter feature for tables
     table_sort_filter_export_excel();
-    // Loader implementation on search button
-<!--    $('#hg_doc_report_search').click(function() {-->
-<!--        $('#hg_loader').modal('show');-->
-<!--    });-->
-
-<!--    $('select option:first-child').attr("selected", "selected");-->
 
     // user search autocomplete
     $("#created_by, #id_requester").autocomplete({
         source: function(request, response) {
             $.ajax({
-            url  : "{% url 'eProc_Doc_Details:auto_complete_goods_receiver' %}",
+                url  : "{% url 'eProc_Doc_Details:auto_complete_goods_receiver' %}",
                 dataType: "json",
                 data: {
                     term : request.term,
@@ -291,38 +276,41 @@ $(document).ready( function() {
     });
 });
 
- $("#created_by").on('input',function(e) {
-     res = document.getElementById("created_by").value;
-     user_auto(res);
+    //***********************************
+    $("#created_by").on('input',function(e) {
+        res = document.getElementById("created_by").value;
+        user_auto(res);
     });
 
-   function user_auto(res) {
-   $.ajax({
+    //***********************
+    function user_auto(res) {
+        $.ajax({
             url  : "{% url 'eProc_Doc_Details:auto_complete_goods_receiver' %}",
-                dataType: "json",
-                type: "GET",
-                data: {term : res },
-                success: function(data) {
-                        console.log(data);
-                        $("#created_by, #id_requester").autocomplete({
-                        source: data
-                       });
+            dataType: "json",
+            type: "GET",
+            data: {term : res },
+            success: function(data) {
+                    console.log(data);
+                    $("#created_by, #id_requester").autocomplete({
+                    source: data
+                   });
                 }
             });
          }
-    var requested_by , created_by;
-   $('#id_created_by').click(function () {
-    $("#get_username_popup").modal('show');
-        created_by = true;
-    });
-    $("#id_requester").click(function(){
+        var requested_by , created_by;
+        $('#id_created_by').click(function () {
         $("#get_username_popup").modal('show');
-        requested_by = true;
-    });
+            created_by = true;
+        });
+        $("#id_requester").click(function(){
+            $("#get_username_popup").modal('show');
+            requested_by = true;
+        });
 
-  $("#select_username").click(function(){
+    //************************************
+    $("#select_username").click(function(){
         $("#get_username_popup").modal('hide');
-      //  $('#hg_loader').modal('show');
+        //  $('#hg_loader').modal('show');
         var flag =  $(this);
         var username_value = document.getElementById('created_by').value;
         console.log(flag.id);
@@ -331,52 +319,48 @@ $(document).ready( function() {
         var email_id = split_name.pop();
         console.log(email_id);
         $.ajax({
-                url  : "{% url 'eProc_Admin_Tool:get_username' %}",
-                type: 'POST',
-                data: JSON.stringify(email_id),
-                dataType: "json",
-                success: function(response) {
-                        console.log(response);
-                        if(created_by){
-                            document.getElementById('id_created_by').value = response;
-                            created_by = false;
-                       }
-                       if(requested_by){
-                            document.getElementById('id_requester').value = response;
-                            requested_by = false;
-                       }
-                }
-            });
+            url  : "{% url 'eProc_Admin_Tool:get_username' %}",
+            type: 'POST',
+            data: JSON.stringify(email_id),
+            dataType: "json",
+            success: function(response) {
+            console.log(response);
+                if(created_by){
+                    document.getElementById('id_created_by').value = response;
+                    created_by = false;
+               }
+               if(requested_by){
+                    document.getElementById('id_requester').value = response;
+                    requested_by = false;
+               }
+            }
+        });
     });
 
-function openSupplierModal() {
-    console.log('openSupplierModal() called');
-    $('#select_supplier_modal').modal('show');
-}
-
-// Handle "Select" button click inside the modal
-$('#select_supplier_modal').on('click', '#select_supplier', function () {
-    const selectedRadio = $('input[name="select_value"]:checked');
-    if (selectedRadio.length > 0) {
-        const supplierName = selectedRadio.closest('tr').find('td:eq(1)').text();
-        const supplierID = selectedRadio.closest('tr').find('td:eq(2)').text();
-
-        // Update the visible input field with the full value
-        $('#supplier_display').val(supplierName + ' (' + supplierID + ')');
-
-        // Update the hidden input field with only the supplier ID
-        $('#supplier').val(supplierID);
-
-        $('#select_supplier_modal').modal('hide');
-    } else {
-        alert('Please select a supplier.');
+    //***************************
+    function openSupplierModal() {
+        console.log('openSupplierModal() called');
+        $('#select_supplier_modal').modal('show');
     }
-});
 
-function toggleSupplierField() {
+    // Handle "Select" button click inside the modal
+    $('#select_supplier_modal').on('click', '#select_supplier', function () {
+        const selectedRadio = $('input[name="select_value"]:checked');
+        if (selectedRadio.length > 0) {
+            const supplierName = selectedRadio.closest('tr').find('td:eq(1)').text();
+            const supplierID = selectedRadio.closest('tr').find('td:eq(2)').text();
+            $('#supplier_display').val(supplierName + ' (' + supplierID + ')');
+            $('#supplier').val(supplierID);
+            $('#select_supplier_modal').modal('hide');
+        } else {
+            alert('Please select a supplier.');
+        }
+    });
+
+    //****************************
+    function toggleSupplierField() {
         const docTypeField = $('#id_doc_type'); // Assuming "id_doc_type" is the ID of the Document Type field.
         const supplierField = $('#supplierField'); // The ID of the Supplier field container.
-
         if (docTypeField.val() === "PO") {
             supplierField.show();
         } else {
@@ -387,61 +371,87 @@ function toggleSupplierField() {
     // Initialize the Supplier field visibility based on the initial value.
     $(document).ready(function () {
         toggleSupplierField();
-
-        // Handle the change event of the Document Type dropdown.
         $('#id_doc_type').on('change', toggleSupplierField);
     });
 
-document.addEventListener("DOMContentLoaded", function() {
-    function formatDate(date) {
-        // Format date as yyyy-MM-dd
-        const year = date.getFullYear();
-        const month = String(date.getMonth() + 1).padStart(2, "0");
-        const day = String(date.getDate()).padStart(2, "0");
-        return `${year}-${month}-${day}`;
+    //*******************************************************
+    document.addEventListener("DOMContentLoaded", function() {
+        function formatDate(date) {
+            const year = date.getFullYear();
+            const month = String(date.getMonth() + 1).padStart(2, "0");
+            const day = String(date.getDate()).padStart(2, "0");
+            return `${year}-${month}-${day}`;
+        }
+
+    // Function to toggle the visibility of the table and associated elements
+    function toggleTableVisibility(showTable) {
+        const docListTable = document.getElementById('doc_list');
+        if (docListTable) {
+            const pagination = docListTable.nextElementSibling; // Assuming pagination is a sibling element
+            const searchResultCard = document.querySelector('.search_result_count_card');
+            const headerDetailsCard = document.querySelector('.card.mt-5');
+            if (showTable) {
+                docListTable.style.display = 'table'; // Show the table
+                if (pagination) {
+                    pagination.style.display = 'block'; // Show the pagination
+                }
+                if (searchResultCard) {
+                    searchResultCard.style.display = 'block'; // Show the result count card
+                }
+                if (headerDetailsCard) {
+                    headerDetailsCard.style.display = 'block'; // Show the header details card
+                }
+            } else {
+                docListTable.style.display = 'none'; // Hide the table
+                if (pagination) {
+                    pagination.style.display = 'none'; // Hide the pagination
+                }
+                if (searchResultCard) {
+                    searchResultCard.style.display = 'none'; // Hide the result count card
+                }
+                if (headerDetailsCard) {
+                    headerDetailsCard.style.display = 'none'; // Hide the header details card
+                }
+            }
+        }
     }
 
+
+    // Function to clear filters
     function clearFilters() {
         // Reset Document Type to the first option (assuming it's a dropdown/select)
         const docTypeField = document.querySelector('select[name="doc_type"]');
         if (docTypeField) {
             docTypeField.selectedIndex = 0;
         }
-
         // Reset Company Number to the first option (assuming it's a dropdown/select)
         const companyCodeField = document.querySelector('select[name="company_code"]');
         if (companyCodeField) {
-            companyCodeField.selectedIndex = 0;
+            companyCodeField.selectedIndex = 1;
         }
-
         // Reset From Date and To Date to the current date
         const today = new Date();
         const fromDateField = document.querySelector('input[name="from_date"]');
         if (fromDateField) {
             fromDateField.value = formatDate(today);
         }
-
         const toDateField = document.querySelector('input[name="to_date"]');
         if (toDateField) {
             toDateField.value = formatDate(today);
         }
-
         // Clear the values of the Doc Number, Created By, and Requested By fields
         const docNumField = document.querySelector('input[name="doc_num"]');
         if (docNumField) {
             docNumField.value = '';
         }
-
         const createdByField = document.querySelector('input[name="created_by"]');
         if (createdByField) {
             createdByField.value = '';
         }
-
         const requesterField = document.querySelector('input[name="requester"]');
         if (requesterField) {
             requesterField.value = '';
         }
-
         // Hide both Supplier field and Supplier Name
         const supplierField = document.getElementById('supplierField');
         const supplierNameElement = document.getElementById('supplierNameElement');
@@ -449,6 +459,8 @@ document.addEventListener("DOMContentLoaded", function() {
             supplierField.style.display = 'none';
             supplierNameElement.style.display = 'none';
         }
+        // Hide the table
+        toggleTableVisibility(false);
     }
 
     // Add an event listener to the Document Type field to toggle Supplier field visibility
@@ -467,12 +479,11 @@ document.addEventListener("DOMContentLoaded", function() {
             }
         });
     }
-
     // Make the clearFilters function accessible in the global scope
     window.clearFilters = clearFilters;
+    // Initialize the table visibility on page load
+    toggleTableVisibility(true); // Show the table initially
 });
-
-
 </script>
 <script src="{% static 'scripts/doc_report.js' %}"></script>
 {% if inc_footer %}

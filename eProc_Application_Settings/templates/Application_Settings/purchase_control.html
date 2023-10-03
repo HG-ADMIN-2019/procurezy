@@ -241,28 +241,28 @@
                  });
                  Not_used = true;
                  break;
-            } else if (!hiddenCompanyIDs.includes(company_code)) {
+            }else if (!hiddenCompanyIDs.includes(company_code)) {
                 if (areAllValuesUsed(company_code)) {
+                    if (rendered_call_off.length === hiddenCallOffValue.length) {
+                        hiddenCompanyIDs.push(company_code)
+                        Not_used = true;
+                        continue;
+                    }
                     for (var j = 0; j < rendered_pc_company_data.length; j++) {
                         var company_code = rendered_pc_company_data[j].company_id;
-                        if (!hiddenCompanyIDs.includes(company_code)) {
+                         if (hiddenCompanyIDs.indexOf(company_code) === -1) {
                             pc_company_dropdown += '<option value="' + company_code + '">' + company_code + '</option>';
-                        }
+                         }
                     }
-                    Not_used = true;
                 }
+                Not_used = true;
+                break;
             }
             $.each(hiddenCompanyIDs, function (i, hiddenCompanyIDs) {
                 pc_company_dropdown = pc_company_dropdown.replace(new RegExp('<option value="' + hiddenCompanyIDs + '">.*<\/option>'), '');
             });
 
-            if (call_off_dropdown === '') {
-                return false;
-            } else {
-                return true;
-            }
-
-            // Function to check if all callOff and prodCatID values for a specific company are used in the main table
+            // Function to check if all callOff and prodCatID value for a specific company are used in the main table
             function areAllValuesUsed(company_code) {
                 main_table_callOffValues = {};
                 var callOff
@@ -284,6 +284,10 @@
                     } else {
                         call_off_dropdown += '<option value="' + callOffValue + '">' + callOffValue + '</option>';
                     }
+                }
+
+                if (call_off_dropdown === '') {
+                   return true; // Exit the function
                 }
 
                 prod_cat_dropdown = '';
@@ -324,7 +328,7 @@
         }
     }
 
-        //onclick of add button display purchase_ctrl_Modal popup and set GLOBAL_ACTION button value
+    //onclick of add button display purchase_ctrl_Modal popup and set GLOBAL_ACTION button value
     function onclick_add_button(button) {
         OpenLoaderPopup();
         var data = {'table_name':'PurchaseControl'}
@@ -504,7 +508,7 @@
 
     // on click add icon display the row in to add the new entries
     function add_popup_row() {
-        dropdown();
+        on_page_load_dropdown;
         basic_add_new_html = '';
         var display_db_data = '';
         $('#id_popup_table').DataTable().destroy();

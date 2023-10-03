@@ -65,51 +65,51 @@
                 {% endif %}
             </div> -->
             <!--    To Display Header Details only if there are any results-->
-            {% if t_count > 0 %}
-            {% if final_list %}
-            <div class="card mt-5">
-                <table id="accounting_report_table" class="table table_sort_filter_export_excel">
-                    <thead class="thead-light">
-                        <tr>
-                            <th> company number </th>
-                            <th> account assignment category </th>
-                            <th> account assignment value </th>
-                            <th> description </th>
-                            <th> language </th>
-                            <th> valid from </th>
-                            <th> valid to</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for acc in final_list %}
-                        <tr>
-                            <td>{{acc.0}}</td>
-                             {% if acc.1.pk == 'AS' %}
-                                <td scope="row">Asset</td>
-                             {% elif acc.1.pk == 'CC' %}
-                                <td scope="row">Cost Center</td>
-                             {% elif acc.1.pk == 'GLACC' %}
-                                <td scope="row">General Ledger Account</td>
-                             {% elif acc.1.pk == 'OR' %}
-                                <td scope="row">Internal Order</td>
-                             {% elif acc.1.pk == 'WBS' %}
-                                <td scope="row">Project</td>
-                             {% endif %}
-<!--                            <td>{{acc.1.pk}}</td>-->
-                            <td>{{acc.2}}</td>
-                            <td>{{acc.3}}</td>
-                            <td>{{acc.4}}</td>
-                            <td>{{acc.5}}</td>
-                            <td>{{acc.6}}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-            {% endif %}
-            {% endif %}
-        </div>
+<div id="table-container">
+    {% if t_count > 0 %}
+    {% if final_list %}
+    <div class="card mt-5">
+        <table id="accounting_report_table" class="table table_sort_filter_export_excel">
+            <thead class="thead-light">
+                <tr>
+                    <th> company number </th>
+                    <th> account assignment category </th>
+                    <th> account assignment value </th>
+                    <th> description </th>
+                    <th> language </th>
+                    <th> valid from </th>
+                    <th> valid to</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for acc in final_list %}
+                <tr>
+                    <td>{{acc.0}}</td>
+                     {% if acc.1.pk == 'AS' %}
+                        <td scope="row">Asset</td>
+                     {% elif acc.1.pk == 'CC' %}
+                        <td scope="row">Cost Center</td>
+                     {% elif acc.1.pk == 'GLACC' %}
+                        <td scope="row">General Ledger Account</td>
+                     {% elif acc.1.pk == 'OR' %}
+                        <td scope="row">Internal Order</td>
+                     {% elif acc.1.pk == 'WBS' %}
+                        <td scope="row">Project</td>
+                     {% endif %}
+                    <td>{{acc.2}}</td>
+                    <td>{{acc.3}}</td>
+                    <td>{{acc.4}}</td>
+                    <td>{{acc.5}}</td>
+                    <td>{{acc.6}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
+    {% endif %}
+    {% endif %}
+</div>
+
 <div class="spacer2"> &nbsp; </div>
 
 <script>
@@ -153,6 +153,38 @@
     $('#hg_accnt_report_search').click(function () {
         $('#hg_loader').modal('show');
     });
+
+$(document).ready(function () {
+    // ... Other JavaScript code ...
+
+    // Function to reset the dropdowns to their first values
+    $('#clear_filters_button').click(function () {
+        // Reset the "Company Number" dropdown to its first option
+        $('#id_comp_code_app').val($('#id_comp_code_app option:first').val());
+
+        // Reset the "Language" dropdown to its first option
+        $('#id_language').val($('#id_language option:first').val());
+
+        // Clear the local storage values
+        localStorage.removeItem("COMP_CODE");
+        localStorage.removeItem("LANG");
+
+        // Refresh the selectpicker to reflect the changes
+        $('.multiple_select').selectpicker('refresh');
+
+        // Hide the entire table container
+        $('#table-container').hide();
+    });
+
+    // Loader implementation on search button
+    $('#hg_accnt_report_search').click(function () {
+        $('#hg_loader').modal('show');
+
+        // Show the entire table container
+        $('#table-container').show();
+    });
+});
+
 </script>
 <script src="{% static 'scripts/acctnt_report.js' %}"></script>
 
