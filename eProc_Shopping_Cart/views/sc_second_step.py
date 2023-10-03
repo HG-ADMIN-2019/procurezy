@@ -657,6 +657,9 @@ def order_shopping_cart(request):
                 sc_header_instance = django_query_instance.django_get_query(ScHeader,
                                                                             {'client': global_variables.GLOBAL_CLIENT,
                                                                              'doc_number': sc_details[0]})
+                ScApproval.objects.update_or_create(header_guid=sc_header_instance.guid,
+                                                    defaults={'proc_lvl_sts': CONST_COMPLETED,
+                                                              'app_sts': CONST_SC_APPR_APPROVED})
                 create_purchase_order = CreatePurchaseOrder(sc_header_instance)
                 status, error_message, output, po_doc_list = create_purchase_order.create_po()
                 # Send purchase order email to supplier
