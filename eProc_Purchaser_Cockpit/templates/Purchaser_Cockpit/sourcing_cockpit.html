@@ -326,6 +326,7 @@ function generate_po(){
             {
                 $('#success_msg_id').text(Response.grping_error);
             }
+            setTimeout(function() {$("#error_msg_div").prop("hidden",true);}, 4000);
             $('#poGroupModal').modal('hide');
             CloseLoaderPopup();
         }
@@ -341,14 +342,14 @@ function generate_po(){
         $.each(sourcing_data, function (i, sourcing_detail) {
             sourcing_detail_html += '<tr id="'+sourcing_detail.doc_number+'">'+
                     '<td><input type="checkbox" class="supplier_checkbox" onclick="valueChanged();"></td>'+
-                    '<td>'+ sourcing_detail.doc_number +'</td>'+
-                    '<td> '+ sourcing_detail.description +'</td>'+
-                    '<td>'+ sourcing_detail.supplier_id +'</td>'+
-                    '<td>'+ sourcing_detail.comp_code +'</td>'+
-                    '<td>'+ sourcing_detail.item_del_date +'</td>'+
-                    '<td> '+ sourcing_detail.unit +'</td>'+
-                    '<td>'+ sourcing_detail.quantity +'</td>'+
-                    '<td>'+ sourcing_detail.prod_cat_id +'</td>'+
+                    '<td>'+ sourcing_detail[0] +'</td>'+
+                    '<td> '+ sourcing_detail[1] +'</td>'+
+                    '<td>'+ sourcing_detail[2] +'</td>'+
+                    '<td>'+ sourcing_detail[3] +'</td>'+
+                    '<td>'+ sourcing_detail[4] +'</td>'+
+                    '<td> '+ sourcing_detail[5] +'</td>'+
+                    '<td>'+ sourcing_detail[6] +'</td>'+
+                    '<td>'+ sourcing_detail[7] +'</td>'+
                     '</tr>';
         });
         $("#add_attr_body").append(sourcing_detail_html);
