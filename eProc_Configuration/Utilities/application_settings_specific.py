@@ -764,14 +764,14 @@ class ApplicationSettingsSave:
         used_flag_reset = []
         acct_assmt_field = ''
         for po_split_type in po_split_types['data']:
-            acct_assmt_field = po_split_type['po_split_type']
+            # acct_assmt_field = po_split_type['po_split_type']
             # if entry is not exists in db
             if not django_query_instance.django_existence_check(PoSplitType,
                                                                 {'po_split_type': po_split_type[
                                                                     'po_split_type']}):
                 accasscat_db_dictionary = {'po_split_type': (po_split_type['po_split_type']).upper(),
                                            'po_split_type_desc': convert_to_camel_case(
-                                               po_split_type['description']),
+                                               po_split_type['po_split_type_desc']),
                                            'del_ind': False,
                                            'po_split_type_created_at': self.current_date_time,
                                            'po_split_type_created_by': self.username,

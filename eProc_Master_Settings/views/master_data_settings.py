@@ -301,25 +301,26 @@ def extract_workflowaccount_data(request):
     writer = csv.writer(response)
 
     writer.writerow(
-        ['APP_USERNAME', 'ACCOUNT_ASSIGN_CAT', 'ACC_VALUE', 'COMPANY_ID', 'SUP_ACCOUNT_ASSIGN_CAT', 'SUP_ACC_VALUE',
-         'SUP_COMPANY_ID', 'CURRENCY_ID', 'del_ind'])
+        [ 'COMPANY_ID','ACCOUNT_ASSIGN_CAT', 'ACC_VALUE','APP_USERNAME', 'SUP_COMPANY_ID',  'SUP_ACCOUNT_ASSIGN_CAT',
+          'SUP_ACC_VALUE', 'CURRENCY_ID', 'del_ind'])
 
     # get only active records
     workflow_acct = django_query_instance.django_filter_query(WorkflowACC,
                                                               {'del_ind': False,
                                                                'client': global_variables.GLOBAL_CLIENT}, None,
-                                                              ['app_username', 'account_assign_cat',
-                                                               'acc_value', 'company_id', 'sup_account_assign_cat',
-                                                               'sup_acc_value', 'sup_company_id', 'currency_id',
+                                                              ['company_id', 'account_assign_cat',
+                                                               'acc_value', 'app_username',
+                                                               'sup_company_id', 'sup_account_assign_cat',
+                                                               'sup_acc_value', 'currency_id',
                                                                'del_ind'])
 
     workflow_acct_data = query_update_del_ind(workflow_acct)
 
     for workflowacct in workflow_acct_data:
-        workflowacct_info = [workflowacct['app_username'], workflowacct['account_assign_cat'],
-                             workflowacct['acc_value'], workflowacct['company_id'],
-                             workflowacct['sup_account_assign_cat'],
-                             workflowacct['sup_acc_value'], workflowacct['sup_company_id'], workflowacct['currency_id'],
+        workflowacct_info = [workflowacct['company_id'],workflowacct['account_assign_cat'],
+                             workflowacct['acc_value'],workflowacct['app_username'],
+                             workflowacct['sup_company_id'],workflowacct['sup_account_assign_cat'],
+                             workflowacct['sup_acc_value'], workflowacct['currency_id'],
                              workflowacct['del_ind']
                              ]
 
@@ -335,8 +336,8 @@ def extract_workflowacct_template(request):
     writer = csv.writer(response)
 
     writer.writerow(
-        ['APP_USERNAME', 'ACCOUNT_ASSIGN_CAT', 'ACC_VALUE', 'COMPANY_ID', 'SUP_ACCOUNT_ASSIGN_CAT', 'SUP_ACC_VALUE',
-         'SUP_COMPANY_ID', 'CURRENCY_ID', 'del_ind'])
+        ['COMPANY_ID','ACCOUNT_ASSIGN_CAT', 'ACC_VALUE', 'APP_USERNAME',  'SUP_COMPANY_ID', 'SUP_ACCOUNT_ASSIGN_CAT',
+         'SUP_ACC_VALUE','CURRENCY_ID', 'del_ind'])
 
     return response
 

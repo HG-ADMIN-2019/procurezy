@@ -469,8 +469,8 @@ def convert_WorkflowACC_to_dictionary(arr):
     convertion_list = []
     for row in arr:
         dictionary = {'company_id': row[1], 'account_assign_cat': row[6], 'acc_value': row[0],
-                      'app_username': row[2], 'sup_company_id': row[3], 'account_assign_cat': row[8],
-                      'sup_acc_value': row[4], 'currency_id': row[7], 'del_ind': row[5]}
+                      'app_username': row[2], 'sup_company_id': row[3], 'sup_account_assign_cat': row[8],
+                      'sup_acc_value': row[4], 'sup_currency_id': row[7], 'del_ind': row[5]}
         convertion_list.append(dictionary)
     return convertion_list
 
@@ -586,26 +586,37 @@ def remove_invalid_workflowacc(convertion_list):
                                                             {'del_ind': False,
                                                              'company_id': conversion['sup_company_id'],
                                                              'client': global_variables.GLOBAL_CLIENT}):
+
                 # Check for existence of Username
                 if django_query_instance.django_existence_check(AccountAssignmentCategory,
                                                                 {'del_ind': False,
                                                                  'account_assign_cat': conversion[
                                                                      'account_assign_cat']}):
                     # Check for existence of Username
-                    if django_query_instance.django_existence_check(AccountingData,
+                    if django_query_instance.django_existence_check(AccountAssignmentCategory,
                                                                     {'del_ind': False,
-                                                                     'account_assign_value': conversion[
-                                                                         'acc_value']}):
-                        # Check for existence of Username
-                        if django_query_instance.django_existence_check(AccountingData,
-                                                                        {'del_ind': False,
-                                                                         'account_assign_value': conversion[
-                                                                             'sup_acc_value']}):
+                                                                     'account_assign_cat': conversion[
+                                                                         'sup_account_assign_cat']}):
                             # Check for existence of Username
-                            if django_query_instance.django_existence_check(UserData,
+                            if django_query_instance.django_existence_check(AccountingData,
                                                                             {'del_ind': False,
-                                                                             'username': conversion['app_username']}):
-                                valid_convertion.append(conversion)
+                                                                             'account_assign_value': conversion[
+                                                                                 'acc_value']}):
+                                # Check for existence of Username
+                                if django_query_instance.django_existence_check(AccountingData,
+                                                                                {'del_ind': False,
+                                                                                 'account_assign_value': conversion[
+                                                                                     'sup_acc_value']}):
+                                    # Check for existence of Username
+                                    if django_query_instance.django_existence_check(UserData,
+                                                                                    {'del_ind': False,
+                                                                                     'username': conversion['app_username']}):
+                                        # Check for existence of Currency
+                                        if django_query_instance.django_existence_check(Currency,
+                                                                                        {'del_ind': False,
+                                                                                         'currency_id': conversion[
+                                                                                             'sup_currency_id']}):
+                                            valid_convertion.append(conversion)
 
     return valid_convertion
 

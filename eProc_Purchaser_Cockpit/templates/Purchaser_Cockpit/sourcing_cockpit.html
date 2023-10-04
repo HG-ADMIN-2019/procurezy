@@ -319,17 +319,47 @@ function generate_po(){
         dataType: "json",
         success: function (Response) {
             console.log(Response);
+            display_sourcing_data(Response.sourcing_data);
             $('#success_msg_id').text(Response.message);
             $("#error_msg_div").prop("hidden",false);
             if(Response.grping_error)
             {
                 $('#success_msg_id').text(Response.grping_error);
             }
+            setTimeout(function() {$("#error_msg_div").prop("hidden",true);}, 4000);
             $('#poGroupModal').modal('hide');
             CloseLoaderPopup();
         }
     });
+}
 
+    function display_sourcing_data(sourcing_data){
+        var sourcing_detail_html = '';
+        var is_active = '';
+        var block_input = '';
+        $('#sc_header_item').DataTable().destroy();
+        $("#add_attr_body").empty();
+        $.each(sourcing_data, function (i, sourcing_detail) {
+            sourcing_detail_html += '<tr id="'+sourcing_detail.doc_number+'">'+
+                    '<td><input type="checkbox" class="supplier_checkbox" onclick="valueChanged();"></td>'+
+                    '<td>'+ sourcing_detail[0] +'</td>'+
+                    '<td> '+ sourcing_detail[1] +'</td>'+
+                    '<td>'+ sourcing_detail[2] +'</td>'+
+                    '<td>'+ sourcing_detail[3] +'</td>'+
+                    '<td>'+ format(sourcing_detail[4]) +'</td>'+
+                    '<td> '+ sourcing_detail[5] +'</td>'+
+                    '<td>'+ sourcing_detail[6] +'</td>'+
+                    '<td>'+ sourcing_detail[7] +'</td>'+
+                    '</tr>';
+        });
+        $("#add_attr_body").append(sourcing_detail_html);
+        $("#id_generate_po").prop("hidden", true);
+        table_sort_filter('sc_header_item');
+    }
+
+    function formatDate(dateString) {
+    var dateParts = dateString.split('-');
+    return dateParts[2] + '-' + dateParts[1] + '-' + dateParts[0];
 }
 </script>
 {% endblock %}

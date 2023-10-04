@@ -10,7 +10,7 @@ from django.http import JsonResponse
 from django.shortcuts import render
 
 from eProc_Basic.Utilities.constants.constants import CONST_SC_HEADER_APPROVED, CONST_PO_SPLIT_SUPPLIER, \
-    CONST_PO_SPLIT_CURRENCY, CONST_PO_GROUP_COMPANY_CODE, CONST_PO_GROUP_CURRENCY
+    CONST_PO_SPLIT_CURRENCY, CONST_PO_GROUP_COMPANY_CODE, CONST_PO_GROUP_CURRENCY, CONST_PO_DELIVERY_DATE
 from eProc_Basic.Utilities.functions.django_query_set import DjangoQueries
 from eProc_Basic.Utilities.functions.get_db_query import getClients
 from eProc_Basic.Utilities.functions.remove_element_from_list import remove_element_from_list
@@ -145,38 +145,49 @@ def generate_po(request):
     supp_id = sc_item_details[0]['supplier_id']
     del_date = sc_item_details[0]['item_del_date']
     company_id = sc_item_details[0]['comp_code']
-    if len(requester) != len(set(requester)):
-        for i in range(1, len(sc_item_details)):
-            qty = sc_item_details[0]['quantity']
-            if desc == sc_item_details[i]['description'] and company_id == sc_item_details[i]['comp_code'] \
-                    and supp_id == sc_item_details[i]['supplier_id'] and del_date == sc_item_details[i]['item_del_date']:
-                po_creation_flag = 1
-                qty = qty + sc_item_details[i]['quantity']
-        if po_creation_flag == 1:
-            sc_item_details1 = django_query_instance.django_filter_query(ScItem, {
-                'header_guid': guid_arr[0], 'client': client, 'del_ind': False
-            }, None, None)
-            sc_item_details1[0]['quantity'] = qty
-            status = create_purchase_order.create_purchaser_order(sc_item_details1, sc_item_details[0]['supplier_id'])
-        else:
-            status = create_purchase_order.create_purchaser_order(sc_item_details, sc_item_details[0]['supplier_id'])
-
-    elif po_split_list:
-        if CONST_PO_GROUP_COMPANY_CODE in po_split_list[0]:
-            company_id = sc_item_details[0]['comp_code']
+    if len(sc_item_details) > 1:
+        if len(requester) != len(set(requester)):
             for i in range(1, len(sc_item_details)):
-                if company_id == sc_item_details[i]['comp_code']:
-                    status = create_purchase_order.create_purchaser_order(sc_item_details, sc_item_details[0]['supplier_id'])
-                else:
-                    response['grping_error'] = "The PO cannot be grouped as Company Codes are different"
-        if CONST_PO_GROUP_CURRENCY in po_split_list:
-            currency_id = sc_item_details[0]['currency']
-            for i in range(1, len(sc_item_details)):
-                if currency_id == sc_item_details[i]['currency']:
-                    status = create_purchase_order.create_purchaser_order(sc_item_details,
-                                                                          sc_item_details[0]['supplier_id'])
-                else:
-                    response['grping_error'] = "The PO cannot be grouped as Currencies are different"
+                qty = sc_item_details[0]['quantity']
+                if desc == sc_item_details[i]['description'] and company_id == sc_item_details[i]['comp_code'] \
+                        and supp_id == sc_item_details[i]['supplier_id'] and del_date == sc_item_details[i]['item_del_date']:
+                    po_creation_flag = 1
+                    qty = qty + sc_item_details[i]['quantity']
+            if po_creation_flag == 1:
+                sc_item_details1 = django_query_instance.django_filter_query(ScItem, {
+                    'header_guid': guid_arr[0], 'client': client, 'del_ind': False
+                }, None, None)
+                sc_item_details1[0]['quantity'] = qty
+                status = create_purchase_order.create_purchaser_order(sc_item_details1, sc_item_details[0]['supplier_id'])
+            else:
+                status = create_purchase_order.create_purchaser_order(sc_item_details,
+                                                                      sc_item_details[0]['supplier_id'])
+        elif po_split_list:
+            if CONST_PO_GROUP_COMPANY_CODE in po_split_list[0]:
+                company_id = sc_item_details[0]['comp_code']
+                for i in range(1, len(sc_item_details)):
+                    if company_id == sc_item_details[i]['comp_code']:
+                        status = create_purchase_order.create_purchaser_order(sc_item_details, sc_item_details[0]['supplier_id'])
+                    else:
+                        response['grping_error'] = "The PO cannot be grouped as Company Codes are different"
+            if CONST_PO_GROUP_CURRENCY in po_split_list[0]:
+                currency_id = sc_item_details[0]['currency']
+                for i in range(1, len(sc_item_details)):
+                    if currency_id == sc_item_details[i]['currency']:
+                        status = create_purchase_order.create_purchaser_order(sc_item_details,
+                                                                              sc_item_details[0]['supplier_id'])
+                    else:
+                        response['grping_error'] = "The PO cannot be grouped as Currencies are different"
+            if CONST_PO_DELIVERY_DATE in po_split_list[0]:
+                currency_id = sc_item_details[0]['currency']
+                for i in range(1, len(sc_item_details)):
+                    if currency_id == sc_item_details[i]['currency']:
+                        status = create_purchase_order.create_purchaser_order(sc_item_details,
+                                                                              sc_item_details[0]['supplier_id'])
+                    else:
+                        response['grping_error'] = "The PO cannot be grouped as Delivery Dates are different"
+    else:
+        status = create_purchase_order.create_purchaser_order(sc_item_details, sc_item_details[0]['supplier_id'])
     if not status:
         return False, create_purchase_order.error_message, create_purchase_order.output, create_purchase_order.po_doc_list
 
@@ -185,10 +196,21 @@ def generate_po(request):
         email_supp_monitoring_guid = ''
         send_po_attachment_email(create_purchase_order.output, po_document_number, email_supp_monitoring_guid)
 
+    for data in sc_item_details:
+        django_query_instance.django_update_query(ScItem,
+                                                  {'client': global_variables.GLOBAL_CLIENT,
+                                                   'guid': data['guid'],
+                                                   'del_ind': False},
+                                                  {'po_doc_num': create_purchase_order.po_doc_list[0],
+                                                   })
+
     if create_purchase_order.error_message:
         response['message'] = "error"
     else:
         response['message'] = "PO generated"
+
+    order_list = []
+    response['sourcing_data'] = filter_based_on_sc_item_field(client, order_list)
 
     return JsonResponse(response, safe=False)
 
