@@ -877,6 +877,7 @@ class MasterSettingsSave:
                                                           {'app_code_id': applimval_detail['app_code_id'],
                                                            'company_id': applimval_detail['company_id'],
                                                            'app_types': applimval_detail['app_types'],
+                                                           'currency_id': applimval_detail['currency_id'],
                                                            'client': self.client},
                                                           {
                                                               'app_types': applimval_detail['app_types'],
@@ -938,6 +939,7 @@ class MasterSettingsSave:
                 django_query_instance.django_update_query(SpendLimitValue,
                                                           {'spend_code_id': spend_limit_value_detail['spend_code_id'],
                                                            'company_id': spend_limit_value_detail['company_id'],
+                                                           'currency_id': spend_limit_value_detail['currency_id'],
                                                            'client': self.client},
                                                           {'spend_code_id': spend_limit_value_detail['spend_code_id'],
                                                            'upper_limit_value': spend_limit_value_detail[
