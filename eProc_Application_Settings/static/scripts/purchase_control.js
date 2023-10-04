@@ -294,7 +294,7 @@ function get_call_off(selectElement) {
     }
 }
 
-// onchange respective values for call_off dropdown
+// onchange respective values for call_off dropdow
 function get_prod_cat_id_values(selectElement) {
     var selected_call_off = selectElement.value;
     var company_id = $(selectElement).closest('tr').find('.form-control').eq(0).val();
