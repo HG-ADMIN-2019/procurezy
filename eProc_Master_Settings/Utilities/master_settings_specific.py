@@ -1,6 +1,7 @@
 import time
 
 from django.db.models.query_utils import Q
+from requests import request
 
 from eProc_Basic.Utilities.functions.camel_case import convert_to_camel_case
 from eProc_Basic.Utilities.functions.dictionary_key_to_list import dictionary_key_to_list
@@ -28,6 +29,7 @@ from eProc_Configuration.models.development_data import AccountAssignmentCategor
 from eProc_Org_Model.models.org_model import *
 from eProc_Registration.models import *
 from eProc_Registration.models.registration_model import *
+from eProc_Shopping_Cart.context_processors import update_user_info
 
 fieldtypedesc_instance = FieldTypeDescriptionUpdate()
 
@@ -411,6 +413,87 @@ class MasterSettingsSave:
 
         return upload_response, message
 
+    def save_emp_data(self, emp_data):
+        """
+
+        """
+
+        emp_data_db_list = []
+
+        for emp_detail in emp_data['data']:
+            # if entry is not exists in db
+            if not django_query_instance.django_existence_check(UserData,
+                                                                {'email': emp_detail['email'],
+                                                                 'client': self.client}):
+
+                emp_db_dictionary = {
+                    'email': emp_detail['email'],
+                    'username': emp_detail['username'],
+                    'first_name': emp_detail['first_name'],
+                    'last_name': emp_detail['last_name'],
+                    'phone_num': emp_detail['phone_num'],
+                    'date_format': emp_detail['date_format'],
+                    'employee_id': emp_detail['employee_id'],
+                    'decimal_notation': emp_detail['decimal_notation'],
+                    'user_type': emp_detail['user_type'],
+                    'currency_id': Currency.objects.get(
+                        currency_id=emp_detail['currency_id']),
+                    'language_id': Languages.objects.get(
+                        language_id=emp_detail['language_id']),
+                    'time_zone': TimeZone.objects.get(
+                        time_zone=emp_detail['time_zone']),
+                    'del_ind': False,
+                    'client': self.client,
+                    'user_data_changed_at': self.current_date_time,
+                    'user_data_changed_by': self.username,
+                    'user_data_created_at': self.current_date_time,
+                    'user_data_created_by': self.username,
+                }
+                emp_data_db_list.append(emp_db_dictionary)
+            else:
+                if emp_detail['del_ind'] == 1:
+                    django_query_instance.django_update_query(UserData,
+                                                              {'email': emp_detail['email'],
+                                                               'client': self.client},
+                                                              {'email': emp_detail['email'],
+                                                               'user_data_changed_at': self.current_date_time,
+                                                               'user_data_changed_by': self.username,
+                                                               'client': self.client,
+                                                               'del_ind': emp_detail['del_ind']})
+                else:
+                    django_query_instance.django_update_query(UserData,
+                                                              {'email': emp_detail['email'],
+                                                               'client': self.client},
+                                                              {'email': emp_detail['email'],
+                                                               'username': emp_detail['username'],
+                                                               'first_name': emp_detail['first_name'],
+                                                               'last_name': emp_detail['last_name'],
+                                                               'phone_num': emp_detail['phone_num'],
+                                                               'date_format': emp_detail['date_format'],
+                                                               'employee_id': emp_detail['employee_id'],
+                                                               'decimal_notation': emp_detail['decimal_notation'],
+                                                               'user_type': emp_detail['user_type'],
+                                                               'currency_id': Currency.objects.get(
+                                                                   currency_id=emp_detail['currency_id']),
+                                                               'language_id': Languages.objects.get(
+                                                                   language_id=emp_detail['language_id']),
+                                                               'time_zone': TimeZone.objects.get(
+                                                                   time_zone=emp_detail['time_zone']),
+                                                               'del_ind': False,
+                                                               'client': self.client,
+                                                               'user_data_changed_at': self.current_date_time,
+                                                               'user_data_changed_by': self.username
+                                                               })
+
+        if emp_data_db_list:
+            bulk_create_entry_db(UserData, emp_data_db_list)
+
+    def save_employee_data_into_db(self, emp_data):
+        self.save_emp_data(emp_data)
+        message = get_message_detail_based_on_action(emp_data['action'])
+
+        return message
+
     def save_workflow_schema(self, workflowschema_data):
         """
 
@@ -471,7 +554,7 @@ class MasterSettingsSave:
         upload_response = get_workflowschema_data()
         data = get_workflowschema_drop_down()
 
-        return upload_response, message,data
+        return upload_response, message, data
 
     def save_spend_limit(self, spendlimit_data):
         """
@@ -522,7 +605,7 @@ class MasterSettingsSave:
         upload_response = get_spendlimitid_data()
         data = get_spendlimitid_dropdown()
 
-        return upload_response, message,data
+        return upload_response, message, data
 
     def save_org_addr_map(self, addresstype_data):
         """
@@ -583,7 +666,9 @@ class MasterSettingsSave:
 
         upload_response = get_orgaddtype_data()
 
-        return upload_response, message
+        data = get_orgaddtype_dropdown()
+
+        return upload_response, message,data
 
     def save_al_acc_data(self, glaccount_data):
         glaccount_db_list = []
@@ -596,8 +681,8 @@ class MasterSettingsSave:
                                                                  'account_assign_cat': glaccount_detail[
                                                                      'account_assign_cat'],
                                                                  'company_id': glaccount_detail['company_id'],
-                                                                 'item_from_value': glaccount_detail['from_value'],
-                                                                 'item_to_value': glaccount_detail['to_value'],
+                                                                 'item_from_value': glaccount_detail['item_from_value'],
+                                                                 'item_to_value': glaccount_detail['item_to_value'],
                                                                  'currency_id': glaccount_detail['currency_id'],
                                                                  'client': self.client}):
                 guid = guid_generator()
@@ -606,12 +691,12 @@ class MasterSettingsSave:
                                            'gl_acc_num': glaccount_detail['gl_acc_num'],
                                            'gl_acc_default': glaccount_detail['gl_acc_default'],
                                            'account_assign_cat': AccountAssignmentCategory.objects.
-                                           get(account_assign_cat=glaccount_detail['account_assign_cat']),
+                                               get(account_assign_cat=glaccount_detail['account_assign_cat']),
                                            'company_id': glaccount_detail['company_id'],
-                                           'item_from_value': glaccount_detail['from_value'],
-                                           'item_to_value': glaccount_detail['to_value'],
+                                           'item_from_value': glaccount_detail['item_from_value'],
+                                           'item_to_value': glaccount_detail['item_to_value'],
                                            'currency_id': Currency.objects.
-                                           get(currency_id=glaccount_detail['currency_id']),
+                                               get(currency_id=glaccount_detail['currency_id']),
                                            'determine_gl_account_created_at': self.current_date_time,
                                            'determine_gl_account_created_by': self.username,
                                            'determine_gl_account_changed_at': self.current_date_time,
@@ -627,8 +712,8 @@ class MasterSettingsSave:
                                                            'account_assign_cat': glaccount_detail[
                                                                'account_assign_cat'],
                                                            'company_id': glaccount_detail['company_id'],
-                                                           'item_from_value': glaccount_detail['from_value'],
-                                                           'item_to_value': glaccount_detail['to_value'],
+                                                           'item_from_value': glaccount_detail['item_from_value'],
+                                                           'item_to_value': glaccount_detail['item_to_value'],
                                                            'currency_id': glaccount_detail['currency_id'],
                                                            'client': self.client},
                                                           {'del_ind': glaccount_detail['del_ind']})
@@ -642,7 +727,9 @@ class MasterSettingsSave:
 
         upload_response = get_gl_acc_data()
 
-        return upload_response, message
+        data = get_gl_acc_dropdown()
+
+        return upload_response, message, data
 
     def accounting_data(self, aav_data):
         aav_db_list = []
@@ -704,7 +791,7 @@ class MasterSettingsSave:
         message = get_message_detail_based_on_action(aav_data['action'])
         upload_response = get_account_assignment_value()
         data = get_acc_value_dropdown()
-        return upload_response, message,data
+        return upload_response, message, data
 
     def app_limit_data(self, applim_data):
         applim_db_list = []
@@ -763,6 +850,7 @@ class MasterSettingsSave:
                                                                 {'app_code_id': applimval_detail['app_code_id'],
                                                                  'company_id': applimval_detail['company_id'],
                                                                  'app_types': applimval_detail['app_types'],
+                                                                 'currency_id': applimval_detail['currency_id'],
                                                                  'client': self.client}):
                 guid = guid_generator()
                 applimval_db_dictionary = {'app_lim_dec_guid': guid,
@@ -812,7 +900,7 @@ class MasterSettingsSave:
         upload_response = get_approvervalue_data()
         data = get_approvervalue_dropdown()
 
-        return upload_response, message,data
+        return upload_response, message, data
 
     def save_spending_limit_value_data(self, spend_limit_value_data):
         spend_limit_value_db_list = []
@@ -824,6 +912,7 @@ class MasterSettingsSave:
                                                                 {'spend_code_id': spend_limit_value_detail[
                                                                     'spend_code_id'],
                                                                  'company_id': spend_limit_value_detail['company_id'],
+                                                                 'currency_id': spend_limit_value_detail['currency_id'],
                                                                  'client': self.client}):
                 # Entry does not exist, create a new entry
                 guid = guid_generator()
@@ -881,7 +970,7 @@ class MasterSettingsSave:
 
         upload_response = get_spendlimitvalue_data()
         data = get_spendlimitvalue_dropdown()
-        return upload_response, message,data
+        return upload_response, message, data
 
     def save_address_data(self, address_data):
         address_db_list = []
@@ -969,7 +1058,7 @@ class MasterSettingsSave:
                                                                'org_address_changed_at': self.current_date_time,
                                                                'org_address_changed_by': self.username,
                                                                'client': self.client,
-                                                               'del_ind': address_detail['del_ind'] == 'True',})
+                                                               'del_ind': address_detail['del_ind'] == 'True', })
         if address_db_list:
             bulk_create_entry_db(OrgAddress, address_db_list)
 
@@ -1034,7 +1123,7 @@ class MasterSettingsSave:
         upload_response = get_approver_type_data()
         data = get_approver_type_drop_down()
 
-        return upload_response, message,data
+        return upload_response, message, data
 
     def save_field_desc(self, field_desc_data):
         """
@@ -1178,18 +1267,18 @@ class MasterSettingsSave:
             # if entry is not exists in db
             if not django_query_instance.django_existence_check(WorkflowACC,
                                                                 {
-                                                                 'acc_value': wfacc_detail['acc_value'],
-                                                                 'company_id': wfacc_detail['company_id'],
-                                                                 'app_username': wfacc_detail['app_username'],
-                                                                 'sup_company_id': wfacc_detail['sup_company_id'],
-                                                                 'sup_acc_value': wfacc_detail['sup_acc_value'],
-                                                                 'account_assign_cat': wfacc_detail[
-                                                                     'account_assign_cat'],
-                                                                 'sup_account_assign_cat': wfacc_detail[
-                                                                     'sup_account_assign_cat'],
-                                                                 'currency_id': wfacc_detail[
-                                                                     'sup_currency_id'],
-                                                                 'client': self.client}):
+                                                                    'acc_value': wfacc_detail['acc_value'],
+                                                                    'company_id': wfacc_detail['company_id'],
+                                                                    'app_username': wfacc_detail['app_username'],
+                                                                    'sup_company_id': wfacc_detail['sup_company_id'],
+                                                                    'sup_acc_value': wfacc_detail['sup_acc_value'],
+                                                                    'account_assign_cat': wfacc_detail[
+                                                                        'account_assign_cat'],
+                                                                    'sup_account_assign_cat': wfacc_detail[
+                                                                        'sup_account_assign_cat'],
+                                                                    'currency_id': wfacc_detail[
+                                                                        'sup_currency_id'],
+                                                                    'client': self.client}):
                 guid = guid_generator()
                 wfacc_db_dictionary = {'workflow_acc_guid': guid,
                                        'acc_value': wfacc_detail['acc_value'],
@@ -1255,7 +1344,7 @@ class MasterSettingsSave:
         message = get_message_detail_based_on_action(wfacc_data['action'])
         upload_response = get_workflowacc_data()
         data = get_workflowacc_dropdown()
-        return upload_response, message,data
+        return upload_response, message, data
 
     def save_payment_desc(self, payment_desc_data):
         """
@@ -1315,7 +1404,7 @@ class MasterSettingsSave:
 
         upload_response = get_paymentdesc_data()
         data = get_paymentdesc_dropdown()
-        return upload_response, message,data
+        return upload_response, message, data
 
 
 def get_unspsc_cat_cust_data():
@@ -1369,7 +1458,7 @@ def get_unspsc_cat_cust_data():
 
     data = {'upload_ProdCat': upload_ProdCat}
 
-    return upload_cust_prod_catogories, product_cat_list,data
+    return upload_cust_prod_catogories, product_cat_list, data
 
 
 def get_unspsc_drop_down():
@@ -1423,7 +1512,7 @@ def get_unspsc_cat_custdesc_data():
 
     data = {'upload_ProdCat': upload_ProdCat}
 
-    return upload_cust_prod_desc_catogories, product_cat_list,data
+    return upload_cust_prod_desc_catogories, product_cat_list, data
 
 
 def get_unspscdesc_drop_down():

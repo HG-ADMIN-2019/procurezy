@@ -154,7 +154,7 @@ class ApproverLimitValue(models.Model):
                                     null=True)
 
     class Meta:
-        unique_together = ('client', 'app_code_id', 'app_types', 'company_id', 'approver_limit_value_source_system')
+        unique_together = ('client', 'app_code_id', 'app_types', 'company_id', 'approver_limit_value_source_system', 'currency_id')
         db_table = "MMD_APPROVER_LIMIT_VALUE"
         managed = True
 
@@ -773,7 +773,7 @@ class SpendLimitValue(models.Model):
 
     class Meta:
         db_table = "MMD_SPENDER_LIMIT_VALUE"
-        unique_together = ('spend_code_id', 'client', 'company_id', 'spend_limit_value_source_system')
+        unique_together = ('spend_code_id', 'client', 'company_id', 'spend_limit_value_source_system', 'currency_id')
         managed = True
 
 

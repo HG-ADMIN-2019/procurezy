@@ -122,7 +122,7 @@ class AuthorizationLevel:
         slide_menu = dict.fromkeys([CONST_WORK_OVERVIEW, CONST_USER_SETTINGS, CONST_APPL_SETTINGS, CONST_SHOPPING,
                                     CONST_SHOPPING_PLUS, CONST_GOODS_RECEIPTS, CONST_APPROVALS, CONST_PURCHASING,
                                     CONST_ADMIN_TOOL, CONST_SYSTEM_SETTINGS, CONST_CONTENT_MANAGEMENT,
-                                    CONST_TIME_SHEET, CONST_SOM,CONST_SHOPPER_ASSIST], False)
+                                    CONST_TIME_SHEET, CONST_SOM, CONST_SHOPPER_ASSIST, CONST_SC_SOURCING], False)
 
         auth_feature = self.get_auth_level_id(auth_level)
         for auth_feature_value in auth_feature:
@@ -137,7 +137,9 @@ class AuthorizationLevel:
              CONST_GROUP_CATEGORY, CONST_CHANGE_PO, CONST_PERSONAL_SETTINGS, CONST_PURCHASE_SETTINGS,
              CONST_FORM_BUILDER, CONST_ORG_MODEL, CONST_CONFIRMATION, CONST_CANCELLATION, CONST_RETURN_DELIVERY,
              CONST_WORK_FLOW_ITEMS, CONST_PRODUCT_AND_SERVICE_CONFIG, CONST_CATALOG_CONFIG, CONST_BASIC_SETTINGS,
-             CONST_CONFIG_HOME, CONST_APPLICATION_MONITOR, CONST_PROJECTS, CONST_EFFORTS, CONST_SUB_SOM,CONST_RFQ], False)
+             CONST_CONFIG_HOME, CONST_APPLICATION_MONITOR, CONST_PROJECTS, CONST_EFFORTS, CONST_SUB_SOM,
+             CONST_SC_GROUPING, CONST_RFQ],
+            False)
         auth_feature = self.get_auth_level_id(auth_level)
         for auth_feature_value in auth_feature:
             sub_menu[auth_feature_value] = True
@@ -864,7 +866,7 @@ def get_completion_work_flow(client, prod_cat_list, default_cmp_code):
     }, 'object_id')
 
     orgattr_porg_object_id = django_query_instance.django_filter_value_list_query(OrgAttributesLevel, {
-        'attribute_id': CONST_CO_CODE, 'low': default_cmp_code, 'object_id__in': org_porg_object_id,
+        'attribute_id': CONST_CO_CODE, 'low__in': default_cmp_code, 'object_id__in': org_porg_object_id,
         'client': client, 'del_ind': False
     }, 'object_id')
 
@@ -876,7 +878,8 @@ def get_completion_work_flow(client, prod_cat_list, default_cmp_code):
         'porg_id__in': porg_id, 'client': client, 'del_ind': False
     }, 'object_id')
 
-    company_code_list = [default_cmp_code, 'ALL']
+    default_cmp_code.append("ALL")
+    company_code_list = default_cmp_code
 
     prod_cat_range = django_query_instance.django_filter_only_query(OrgAttributesLevel, {
         'object_id__in': pgrp_object_id, 'attribute_id': CONST_RESP_PROD_CAT, 'extended_value__in': company_code_list,

@@ -27,7 +27,7 @@ JMSG025,Please Remove To Date Before Removing From Date,F,EN,0
 JMSG026,You Have Maintained Multiple Delivery Addresses,F,EN,0
 JMSG027,Account Assignment Category Is Not Maintained. Please Contact Admin,F,EN,0
 JMSG028,Item Name Must Contain At Least 3 Characters,F,EN,0
-JMSG029,"Please Use , To Specify The Options",F,EN,0
+JMSG029,"Please Select Default Language English For New Product Id",F,EN,0
 JMSG030,To Date Cannot Be Less Than From Date,F,EN,0
 JMSG031,Expected Value Cannot Be Greater Than Overall Limi,F,EN,0
 JMSG032,"Please Attach Jpg, Jpeg, Png, Bmp, Tif, Tiff Or Gif",F,EN,0

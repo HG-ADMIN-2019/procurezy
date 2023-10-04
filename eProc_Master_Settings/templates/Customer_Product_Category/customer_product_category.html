@@ -221,6 +221,7 @@
     //Drop dropdown function
     var prod_cat_id_dropdown = '';
     var usedProdCatIds = [];
+
     function unspsc_dropdown() {
       prod_cat_id_dropdown = '';
       var usedProdCatIds = [];
@@ -666,48 +667,34 @@
 
     // on click add icon display the row in to add the new entries
     function add_popup_row() {
-     OpenLoaderPopup();
-        var data = {'table_name':'UnspscCategoriesCust'}
-        $.ajax({
-            type: 'POST',
-            url: "{% url 'eProc_Configuration:get_dropdown_data' %}",
-            data: JSON.stringify(data),
-            success: function(response) {
-                rendered_UNSPC_data = response.upload_ProdCat
-                unspsc_dropdown();
-                $("#error_msg_id").css("display", "none")
-                basic_add_new_html = '';
-                var display_db_data = '';
-                $('#id_popup_table').DataTable().destroy();
-                $(".modal").on("hidden.bs.modal", function () {
-                    $("#id_error_msg").html(" ");
-                });
-                if (GLOBAL_ACTION == "cusprodcat_upload") {
-                    basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select type="text" class="input form-control prodid"  name="prodid" onchange="GetSelectedTextValue(this)">'+prod_cat_id_dropdown+'</select></td><td hidden><input class="form-control description" type="text"  name="description"  value="'+prod_catid_desc+'" disabled></td><td hidden><guid></td><td class="class_del_checkbox"><input type="checkbox" required></td></tr>';
-                    $('#id_popup_tbody').append(basic_add_new_html);
-                    $("#desc_upload").prop("hidden", true);
-                    $(".class_del_checkbox").prop("hidden", false);
-                    $("#id_del_ind_checkbox").prop("hidden", false);
-                    table_sort_filter('id_popup_table');
-                }
-                 else{
-                       basic_add_new_html =
-                        '<tr>'+
-                            '<td><input type="checkbox" required></td>'+
-                            '<td><select type="text" class="input form-control prodid"  name="prodid" onchange="GetSelectedTextValue(this)">'+prod_cat_id_dropdown+'</select></td>'+
-                            '<td><input class="form-control description" type="text"  name="description"  value="'+prod_catid_desc+'" disabled></td>'+
-                            '<td hidden><guid></td><td hidden><del_ind></td>'+
-                        '</tr>';
-                    $('#id_popup_tbody').append(basic_add_new_html);   // Add a new row in popup
-                    table_sort_filter('id_popup_table');
-                }
-                $('#delete_data').hide()
-                CloseLoaderPopup();
-<!--                $('.prodid').each(function() {-->
-<!--                GetSelectedTextValue(this);-->
-<!--                });-->
-            }
+        unspsc_dropdown();
+        $("#error_msg_id").css("display", "none")
+        basic_add_new_html = '';
+        var display_db_data = '';
+        $('#id_popup_table').DataTable().destroy();
+        $(".modal").on("hidden.bs.modal", function () {
+            $("#id_error_msg").html(" ");
         });
+        if (GLOBAL_ACTION == "cusprodcat_upload") {
+            basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select type="text" class="input form-control prodid"  name="prodid" onchange="GetSelectedTextValue(this)">'+prod_cat_id_dropdown+'</select></td><td hidden><input class="form-control description" type="text"  name="description"  value="'+prod_catid_desc+'" disabled></td><td hidden><guid></td><td class="class_del_checkbox"><input type="checkbox" required></td></tr>';
+            $('#id_popup_tbody').append(basic_add_new_html);
+            $("#desc_upload").prop("hidden", true);
+            $(".class_del_checkbox").prop("hidden", false);
+            $("#id_del_ind_checkbox").prop("hidden", false);
+            table_sort_filter('id_popup_table');
+        }
+         else{
+               basic_add_new_html =
+                '<tr>'+
+                    '<td><input type="checkbox" required></td>'+
+                    '<td><select type="text" class="input form-control prodid"  name="prodid" onchange="GetSelectedTextValue(this)">'+prod_cat_id_dropdown+'</select></td>'+
+                    '<td><input class="form-control description" type="text"  name="description"  value="'+prod_catid_desc+'" disabled></td>'+
+                    '<td hidden><guid></td><td hidden><del_ind></td>'+
+                '</tr>';
+            $('#id_popup_tbody').append(basic_add_new_html);   // Add a new row in popup
+            table_sort_filter('id_popup_table');
+        }
+        $('#delete_data').hide()
     }
 
     //onclick of add button display cusprodcat_Modal popup and set GLOBAL_ACTION button value

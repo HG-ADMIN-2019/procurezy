@@ -156,14 +156,6 @@
     function dropdown_value(){
         get_main_table_data(); //Read data from main table
         node_type_dropdown = '';
-        if(rendered_dropdown_values.length != 0){
-            desc_nodetype = rendered_dropdown_values[0].field_type_desc;
-        }
-        else {
-            desc_nodetype = "";
-        }
-
-        node_type_dropdown = '';
         var available_node_type_values = rendered_dropdown_values.filter(function(item) {
             return !main_table_low_value.includes(item.field_type_id);
         });
@@ -171,6 +163,13 @@
         $.each(available_node_type_values, function(i, item){
             node_type_dropdown += '<option value="' + item.field_type_id + '">' + item.field_type_id +'</option>';
         });
+
+        if(available_node_type_values.length != 0){
+            desc_nodetype = available_node_type_values[0].field_type_desc;
+        }
+        else {
+            desc_nodetype = "";
+        }
     }
 
     // validate and save for add,copy,update and upload data

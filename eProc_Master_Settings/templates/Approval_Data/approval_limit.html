@@ -270,7 +270,7 @@
                             var del_ind = '';
                             $("#id_popup_tbody").empty();
                             $.each(response.valid_data_list, function(i, value) {
-                                del_ind = '<td>' + value[3] + '</td>'
+                                del_ind = '<td>' + value.del_ind + '</td>'
                                 if (value.del_ind == 1) {
                                     del_ind = ' <input type="checkbox" value="' + value.del_ind + '" checked>'
                                 } else {
@@ -285,7 +285,7 @@
                                 var user_list = '';
                                 var user_id_list = '';
                                 $.each(rendered_user_data, function(i, item){
-                                    if( value.username == item.username){
+                                    if( value.approver_username == item.username){
                                         user = '<option value="' + item.username + '">' + item.username + '</option>';
                                     }else{
                                         user_list += '<option value="' + item.username + '">' + item.username + '</option>';
@@ -322,7 +322,7 @@
                                 '<td><select class="form-control" type = "text"><option value ="' + value.app_code_id + '"'+appid_id_list+'>'+value.app_code_id+'</option></select></td>'+
                                 '<td hidden><input type="text" value=""></td><td>' + del_ind + '</td></tr>';
                             });
-                            $('#id_popup_tbody').append(edit_basic_data);
+
                             var i =0;
                             $("#id_popup_table TBODY TR").each(function() {
                                 var row = $(this);
@@ -345,6 +345,7 @@
                                 })
                                 i++;
                             });
+                            $('#id_popup_tbody').append(edit_basic_data);
                             $("#id_del_ind_checkbox").prop("hidden", false);
                             $( "#header_select").prop( "hidden", false );
                             $(".class_del_checkbox").prop("hidden", false);
@@ -365,12 +366,7 @@
                 });
             }
             else{
-                $("#id_error_msg_upload").prop("hidden",false)
-                get_message_details("JMSG110"); // Get message details
-                var display = msg_type.messages_id_desc[0];
-                document.getElementById("id_error_msg_upload").innerHTML = display;
-                document.getElementById("id_error_msg_upload").style.color = "Red";
-                $('#id_data_upload').modal('show');
+                 display_file_select_error(); // Display error message for file selection except .csv
             }
         }
     }
@@ -479,7 +475,7 @@
             approv_limit_dic.approver_username = row.find("TD").eq(2).find("select option:selected").val();
             approv_limit_dic.company_id = row.find("TD").eq(1).find("select option:selected").val();
             approv_limit_dic.app_code_id = row.find("TD").eq(3).find("select option:selected").val(); 
-            approv_limit_dic.app_guid = row.find("TD").eq(4).find('input[type="text"]').val().toUpperCase()
+            approv_limit_dic.app_guid = row.find("TD").eq(4).find('input[type="text"]').val()
             approval_limit_compare = approv_limit_dic.approver_username +'-'+ approv_limit_dic.app_code_id +'-'+ approv_limit_dic.company_id
             checked_box = row.find("TD").eq(5).find('input[type="checkbox"]').is(':checked')
             if (checked_box) {
@@ -618,56 +614,43 @@
     }
 
     // on click add icon display the row in to add the new entries
-function add_popup_row() {
-        OpenLoaderPopup();
-        var data = {'table_name':'ApproverLimit'}
-        $.ajax({
-            type: 'POST',
-            url: "{% url 'eProc_Configuration:get_dropdown_data' %}",
-            data: JSON.stringify(data),
-            success: function(response) {
-                rendered_user_data = response.user_details
-                rendered_company_data = response.upload_data_company
-                rendered_app_code_id_data = response.upload_data_app_code_id
-                applim_dropdown()
-                $("#error_msg_id").css("display", "none");
-                basic_add_new_html = '';
-                var display_db_data = '';
-                $('#id_popup_table').DataTable().destroy();
-                $(".modal").on("hidden.bs.modal", function() {
-                    $("#id_error_msg").html("");
-                });
-                if (GLOBAL_ACTION == "approval_limit_upload") {
-                    basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select class="form-control" name="company_dropdown" type="text">'+company_id_dropdown+'</select></td><td><select class="form-control" type="text">'+user_name_dropdown+'</select></td><td><select class="form-control" type="text">'+app_code_id_dropdown+'</select></td><td hidden><input type="text" value=""></td><td class="class_del_checkbox" ><input type="checkbox" required></td></tr>';
-                    var table = $('#id_popup_table').DataTable();
-                    table.row.add($(basic_add_new_html)).draw();
-                    $(".class_del_checkbox").prop("hidden", false);
-                    $("#id_del_ind_checkbox").prop("hidden", false);
-                    table_sort_filter('id_popup_table');
-                }
-                else {
-                      new_row_data();   // Add a new row in popup
-                }
-
-
-                var company_num = '';
-                $("#id_popup_table").on("change", "select[name='company_dropdown']", function() {
-                    var row = $(this).closest("tr");
-                    company_dropdwn_change(row);
-                });
-                $("#id_popup_table").on("draw.dt", function () {
-                    $("#id_popup_table TBODY TR").each(function () {
-                        var row = $(this);
-                        row.find("TD").eq(3).find("select").empty();
-                        company_num = row.find("TD").eq(1).find("select option:selected").val();
-                        var assign_val = approval_limit_find(company_num);
-                        row.find("TD").eq(3).find("select").append(assign_val.app_code_id_dropdown);
-                    });
-                });
-                CloseLoaderPopup();
-            }
+    function add_popup_row() {
+        applim_dropdown()
+        $("#error_msg_id").css("display", "none");
+        basic_add_new_html = '';
+        var display_db_data = '';
+        $('#id_popup_table').DataTable().destroy();
+        $(".modal").on("hidden.bs.modal", function() {
+            $("#id_error_msg").html("");
         });
-}
+        if (GLOBAL_ACTION == "approval_limit_upload") {
+            basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select class="form-control" name="company_dropdown" type="text">'+company_id_dropdown+'</select></td><td><select class="form-control" type="text">'+user_name_dropdown+'</select></td><td><select class="form-control" type="text">'+app_code_id_dropdown+'</select></td><td hidden><input type="text" value=""></td><td class="class_del_checkbox" ><input type="checkbox" required></td></tr>';
+            var table = $('#id_popup_table').DataTable();
+            table.row.add($(basic_add_new_html)).draw();
+            $(".class_del_checkbox").prop("hidden", false);
+            $("#id_del_ind_checkbox").prop("hidden", false);
+            table_sort_filter('id_popup_table');
+        }
+        else {
+              new_row_data();   // Add a new row in popup
+        }
+
+
+        var company_num = '';
+        $("#id_popup_table").on("change", "select[name='company_dropdown']", function() {
+            var row = $(this).closest("tr");
+            company_dropdwn_change(row);
+        });
+        $("#id_popup_table").on("draw.dt", function () {
+            $("#id_popup_table TBODY TR").each(function () {
+                var row = $(this);
+                row.find("TD").eq(3).find("select").empty();
+                company_num = row.find("TD").eq(1).find("select option:selected").val();
+                var assign_val = approval_limit_find(company_num);
+                row.find("TD").eq(3).find("select").append(assign_val.app_code_id_dropdown);
+            });
+        });
+    }
 
     // validating the  popup table for duplicate entries
     function compare_table_for_duplicate_entries(validate_add_attributes, approval_limit) {

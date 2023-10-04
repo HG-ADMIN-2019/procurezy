@@ -43,16 +43,18 @@ def save_sc_approval(manager_detail, header_guid, button_status, sc_completion_f
         })
         for approver_id in approver_id_list:
             django_query_instance.django_create_query(ScPotentialApproval,
-                                                      {'sc_potential_approval_guid':guid_generator(),
-                                                       'app_id':approver_id,
-                                                       'step_num':step_num,
-                                                       'app_sts':app_status,
-                                                       'proc_lvl_sts':proc_status,
-                                                       'client':global_variables.GLOBAL_CLIENT,
-                                                       'sc_approval_guid': django_query_instance.django_get_query(ScApproval, {
-                                                           'guid': sc_approver_guid}),
-                                                       'sc_header_guid': django_query_instance.django_get_query(ScHeader, {
-                                                           'guid': header_guid})
+                                                      {'sc_potential_approval_guid': guid_generator(),
+                                                       'app_id': approver_id,
+                                                       'step_num': step_num,
+                                                       'app_sts': app_status,
+                                                       'proc_lvl_sts': proc_status,
+                                                       'client': global_variables.GLOBAL_CLIENT,
+                                                       'sc_approval_guid': django_query_instance.django_get_query(
+                                                           ScApproval, {
+                                                               'guid': sc_approver_guid}),
+                                                       'sc_header_guid': django_query_instance.django_get_query(
+                                                           ScHeader, {
+                                                               'guid': header_guid})
                                                        })
         step_num = step_num + 1
 

@@ -31,6 +31,7 @@ from eProc_Purchase_Order.Utilities.purchase_order_generic import *
 from eProc_Purchase_Order.Utilities.purchase_order_generic import CreatePurchaseOrder
 # from eProc_Purchase_Order.Utilities.purchase_order_generic import CreatePurchaseOrder
 # from eProc_Purchase_Order.Utilities.purchase_order_generic import CreatePurchaseOrder
+from eProc_Registration.models.registration_model import UserData
 from eProc_Ship_To_Bill_To_Address.Utilites.ship_to_bill_to_generic import ShipToBillToAddress, \
     get_shipping_address_detail
 from eProc_Shopping_Cart.Shopping_Cart_Forms.call_off_forms.limit_form import UpdateLimitItem
@@ -303,7 +304,7 @@ def review_page(request):
                                                      global_variables.GLOBAL_USER_CURRENCY)
         if manager_detail:
             manager_details, approver_id = get_users_first_name(manager_detail)
-
+        default_cmp_code = [default_cmp_code]
         for purchase_control_call_off in purchase_control_call_off_list:
             if purchase_control_call_off in call_off_list:
                 completion_work_flow = get_completion_work_flow(client, prod_cat_list, default_cmp_code)
@@ -500,6 +501,7 @@ def sc_second_step(request):
     request.session['total_value'] = total_item_value
     request.session['company_code'] = company_code
     system_settings_data = get_system_settings_data()
+    print("completion_work_flow ", completion_work_flow)
 
     context = {
         'shopping_cart_errors': shopping_cart_errors,

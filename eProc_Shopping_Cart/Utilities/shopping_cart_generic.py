@@ -12,6 +12,7 @@ from eProc_Calendar_Settings.Utilities.calender_settings_generic import calculat
     calculate_delivery_date_base_on_lead_time
 from eProc_Configuration.models import UnspscCategories, UnspscCategoriesCustDesc
 from eProc_Configuration.models.basic_data import Currency, UnitOfMeasures
+from eProc_Configuration.models.master_data import SupplierMaster
 from eProc_Doc_Search_and_Display.Utilities.search_display_specific import get_po_header_app, get_sc_header_app_wf, \
     get_sc_header_app, get_order_status
 from eProc_Exchange_Rates.Utilities.exchange_rates_generic import convert_currency
@@ -577,13 +578,14 @@ def get_manger_and_purchasing_details(company_code, default_acc_ass_cat, total_v
     manager_details = []
     sc_completion_flag = False
     approver_id = []
+    company_code = [company_code]
     purchase_control_call_off_list = get_order_status(company_code, prod_cat_list, global_variables.GLOBAL_CLIENT)
     if company_code:
         manager_detail, error_msg = get_manger_detail(global_variables.GLOBAL_CLIENT,
                                                       global_variables.GLOBAL_LOGIN_USERNAME,
                                                       default_acc_ass_cat,
                                                       total_value,
-                                                      company_code, default_acc,
+                                                      company_code[0], default_acc,
                                                       global_variables.GLOBAL_USER_CURRENCY)
         if manager_detail:
             manager_details, approver_id = get_users_first_name(manager_detail)

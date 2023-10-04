@@ -170,19 +170,15 @@
         })
 
         if(available_auth_obj_id.length != 0){
-            authobj_desc = rendered_auth_obj_id[0].field_type_desc; }
+            authobj_desc = available_auth_obj_id[0].field_type_desc; }
         else {
             authobj_desc = "";
         }
 
         auth_type_dropdown = '';
-        if(available_auth_obj_id.length != 0){
-            $.each(rendered_auth_type, function(i, item){
-               auth_type_dropdown += '<option value="' + item.field_type_id + '">' + item.field_type_id +'</option>';
-            })
-        } else {
-            auth_type_dropdown = "";
-        }
+        $.each(rendered_auth_type, function(i, item){
+           auth_type_dropdown += '<option value="' + item.field_type_id + '">' + item.field_type_id +'</option>';
+        })
     }
 
     // validate and save for add,copy,update and upload data
@@ -304,7 +300,6 @@
             data: JSON.stringify(data),
             success: function(response) {
                 rendered_auth_obj_id = response.auth_obj_id_db_values
-                rendered_auth_obj_data_onload = response.auth_obj_id_db_values_onload
                 rendered_auth_type = response.auth_type_db_values
                 dropdown_value();
                 $("#error_msg_id").css("display", "none")
@@ -353,7 +348,6 @@
             data: JSON.stringify(data),
             success: function(response) {
                 rendered_auth_obj_id = response.auth_obj_id_db_values
-                rendered_auth_obj_data_onload = response.auth_obj_id_db_values_onload
                 rendered_auth_type = response.auth_type_db_values
                 dropdown_value();
                 $("#error_msg_id").css("display", "none")

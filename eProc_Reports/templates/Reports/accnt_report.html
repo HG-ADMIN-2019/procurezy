@@ -1,26 +1,20 @@
 {% extends 'root/base.html' %}
 {% load static %}
-
 {% block title %} Account Assignments Report (Admin Tool) {% endblock %}
-
 {% block maincontent %}
 {% include 'root/loader.html' %}
 
     <div class="container-fluid">
         <div class="mep-form_wrapper">
-
             <div class="d-flex justify-content-between">
                 <h3>Account Assignments Report</h3>
                 <div></div>
             </div>
-
             <hr>
-
             <div class="card card-shadow-1">
                 <div class="card-body">
                     <form id="acct_form" method="post" action="{% url 'eProc_Admin_Tool:accnt_report' %}">
                         {% csrf_token %}
-    
                         <div class="row">
                             <div class="col-md">
                                 <label>Company Number</label><br>
@@ -29,7 +23,6 @@
                                     {% for comp in comp_list %}<option value="{{ comp.company_id }}"> {{ comp.company_id }} </option>{% endfor %}
                                 </select>
                             </div>
-    
                             <div class="col-md">
                                 <label>Account Assignment Category</label><br>
                                 <select name="acc_assgn_cat" id="id_acc_assgn_cat" class="multiple_select form-control" multiple data-selected-text-format="count" data-actions-box="true" title="Select..">
@@ -38,7 +31,6 @@
                                     </option>{% endfor %}
                                 </select>
                             </div>
-    
                             <div class="col-md">
                                 <label>Language</label><br>
                                 <select name="language" id="id_language" class="form-control">
@@ -46,7 +38,6 @@
                                     {% for lang in lang_list %}<option value="{{ lang.language_id }}"> {{ lang.language_id }} - {{lang.description}} </option>{% endfor %}
                                 </select>
                             </div>
-
                             <div class="col-auto my-1">
                                 <button id="hg_accnt_report_search" class="btn btn-primary button-search-users" type="submit"
                                     title="Please click to get the search details!"><i class="fas fa-search"></i> search
@@ -54,17 +45,13 @@
                             </div>
                         </div>
                         <br>
-    
                         <div>
-                            <button class="btn btn-link" type="reset" value="Reset">Clear filters</button>
+                            <button id="clear_filters_button" class="btn btn-link" type="button">Clear filters</button>
                         </div>
                     </form>
-
                 </div>
-                
             </div>
             <br>
-
             <!-- <div class="search_result_count_card card">
                 {% if t_count > 0 %}
                 <div class="card-body">
@@ -77,98 +64,127 @@
                 </div>
                 {% endif %}
             </div> -->
-
             <!--    To Display Header Details only if there are any results-->
-
-            {% if t_count > 0 %}
-            {% if final_list %}
-            <div class="card mt-5">
-                <table id="accounting_report_table" class="table table_sort_filter_export_excel">
-                    <thead class="thead-light">
-                        <tr>
-                            <th> company number </th>
-                            <th> account assignment category </th>
-                            <th> account assignment value </th>
-                            <th> description </th>
-                            <th> language </th>
-                            <th> valid from </th>
-                            <th> valid to</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for acc in final_list %}
-                        <tr>
-                            <td>{{acc.0}}</td>
-                             {% if acc.1.pk == 'AS' %}
-                                <td scope="row">Asset</td>
-                             {% elif acc.1.pk == 'CC' %}
-                                <td scope="row">Cost Center</td>
-                             {% elif acc.1.pk == 'GLACC' %}
-                                <td scope="row">General Ledger Account</td>
-                             {% elif acc.1.pk == 'OR' %}
-                                <td scope="row">Internal Order</td>
-                             {% elif acc.1.pk == 'WBS' %}
-                                <td scope="row">Project</td>
-                             {% endif %}
-<!--                            <td>{{acc.1.pk}}</td>-->
-                            <td>{{acc.2}}</td>
-                            <td>{{acc.3}}</td>
-                            <td>{{acc.4}}</td>
-                            <td>{{acc.5}}</td>
-                            <td>{{acc.6}}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
-
-            {% endif %}
-            {% endif %}
-
-
-        </div>
-
+<div id="table-container">
+    {% if t_count > 0 %}
+    {% if final_list %}
+    <div class="card mt-5">
+        <table id="accounting_report_table" class="table table_sort_filter_export_excel">
+            <thead class="thead-light">
+                <tr>
+                    <th> company number </th>
+                    <th> account assignment category </th>
+                    <th> account assignment value </th>
+                    <th> description </th>
+                    <th> language </th>
+                    <th> valid from </th>
+                    <th> valid to</th>
+                </tr>
+            </thead>
+            <tbody>
+                {% for acc in final_list %}
+                <tr>
+                    <td>{{acc.0}}</td>
+                     {% if acc.1.pk == 'AS' %}
+                        <td scope="row">Asset</td>
+                     {% elif acc.1.pk == 'CC' %}
+                        <td scope="row">Cost Center</td>
+                     {% elif acc.1.pk == 'GLACC' %}
+                        <td scope="row">General Ledger Account</td>
+                     {% elif acc.1.pk == 'OR' %}
+                        <td scope="row">Internal Order</td>
+                     {% elif acc.1.pk == 'WBS' %}
+                        <td scope="row">Project</td>
+                     {% endif %}
+                    <td>{{acc.2}}</td>
+                    <td>{{acc.3}}</td>
+                    <td>{{acc.4}}</td>
+                    <td>{{acc.5}}</td>
+                    <td>{{acc.6}}</td>
+                </tr>
+                {% endfor %}
+            </tbody>
+        </table>
     </div>
-
+    {% endif %}
+    {% endif %}
+</div>
 
 <div class="spacer2"> &nbsp; </div>
 
 <script>
-    var selected_status_value = '';
-    selected_status_value = '{{inp_account_assgn_cat | safe}}';
-    var selected_comp_value = '{{inp_comp_code | safe}}';
-    var selected_lang_value = '{{inp_lang | safe}}';
-    $('.multiple_select').selectpicker();
-    $('.multiple_select').selectpicker('val', selected_status_value);
-    // Function to retrieve data from session storage
-    window.onload = function () {
-        comp_code = selected_comp_value;
-        acc_assgn_cat = sessionStorage.getItem("ACC_ASSGN_CAT");
-        lang = sessionStorage.getItem("LANG");
+    // Function to retrieve data from local storage and set default values
+    $(document).ready(function () {
+        var comp_code = localStorage.getItem("COMP_CODE");
+        var acc_assgn_cat = localStorage.getItem("ACC_ASSGN_CAT");
+        var lang = localStorage.getItem("LANG");
+        // Set default values if not found in local storage
+        if (comp_code !== null) {
+            $('#id_comp_code_app').val(comp_code);
+        }
+        if (lang !== null) {
+            $('#id_language').val(lang);
+        }
+        // Initialize selectpicker for multi-select
+        $('.multiple_select').selectpicker();
+        // Initialize event handler for "Account Assignment Category" selectpicker
+        $('#id_acc_assgn_cat').on('changed.bs.select', function () {
+            var selectedValues = $(this).val();
+            localStorage.setItem("ACC_ASSGN_CAT", JSON.stringify(selectedValues));
+        });
 
-        $('#id_comp_code_app').val(comp_code).attr('selected', 'selected');
-        $('#id_acc_assgn_cat').val(selected_status_value).attr('selected', 'selected');
-        $('#id_language').val(selected_lang_value).attr('selected', 'selected');
-    }
+        // Retrieve and set selected values for "Account Assignment Category"
+        var acc_assgn_cat = localStorage.getItem("ACC_ASSGN_CAT");
+        if (acc_assgn_cat !== null) {
+            acc_assgn_cat = JSON.parse(acc_assgn_cat);
+            $('#id_acc_assgn_cat').selectpicker('val', acc_assgn_cat);
+        }
+    });
 
-<!--    $("#hg_accnt_report_search").click(function(){-->
-<!--        var selected_acct_assmt =  $('#id_acc_assgn_cat').val();-->
-<!--        var comp_code  =  $('#id_comp_code_app').val();-->
-<!--        var lang  =  $('#id_language').val();-->
-<!--        var values = {};-->
-<!--        values = {'selected_acct_assmt':selected_acct_assmt, 'comp_code':comp_code, 'lang':lang};-->
-<!--        console.log(selected_acct_assmt);-->
-<!--        $.ajax({-->
-<!--                url  : "{% url 'eProc_Admin_Tool:get_acct_report' %}",-->
-<!--                type: 'POST',-->
-<!--                data: JSON.stringify(values),-->
-<!--                dataType: "json",-->
-<!--                success: function(response) {-->
-<!--                        alert("response");-->
-<!--                        console.log(response);-->
-<!--                }-->
-<!--            });-->
-<!--    });-->
+    // Function to store the data into local storage when the form is submitted
+    $('#acct_form').submit(function () {
+        var comp_code = $('#id_comp_code_app').val();
+        var lang = $('#id_language').val();
+        localStorage.setItem("COMP_CODE", comp_code);
+        localStorage.setItem("LANG", lang);
+    });
+
+    // Loader implementation on search button
+    $('#hg_accnt_report_search').click(function () {
+        $('#hg_loader').modal('show');
+    });
+
+$(document).ready(function () {
+    // ... Other JavaScript code ...
+
+    // Function to reset the dropdowns to their first values
+    $('#clear_filters_button').click(function () {
+        // Reset the "Company Number" dropdown to its first option
+        $('#id_comp_code_app').val($('#id_comp_code_app option:first').val());
+
+        // Reset the "Language" dropdown to its first option
+        $('#id_language').val($('#id_language option:first').val());
+
+        // Clear the local storage values
+        localStorage.removeItem("COMP_CODE");
+        localStorage.removeItem("LANG");
+
+        // Refresh the selectpicker to reflect the changes
+        $('.multiple_select').selectpicker('refresh');
+
+        // Hide the entire table container
+        $('#table-container').hide();
+    });
+
+    // Loader implementation on search button
+    $('#hg_accnt_report_search').click(function () {
+        $('#hg_loader').modal('show');
+
+        // Show the entire table container
+        $('#table-container').show();
+    });
+});
+
 </script>
 <script src="{% static 'scripts/acctnt_report.js' %}"></script>
 

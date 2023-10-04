@@ -13,6 +13,7 @@ import json
 import shutil
 from django.contrib.auth.decorators import login_required
 from django.db import transaction
+from django.db.models.query_utils import Q
 from django.http.response import HttpResponseRedirect
 
 from eProc_Account_Assignment.Utilities.account_assignment_generic import AccountAssignment, get_header_level_gl_acc, \
@@ -32,6 +33,7 @@ from eProc_Emails.Utilities.email_notif_generic import appr_notify, send_po_atta
 from eProc_Form_Builder.models.form_builder import EformFieldData
 # from eProc_Purchase_Order.Utilities.purchase_order_generic import CreatePurchaseOrder
 from eProc_Purchase_Order.Utilities.purchase_order_generic import CreatePurchaseOrder
+from eProc_Registration.models.registration_model import UserData
 from eProc_Related_Documents.Utilities.related_documents_generic import get_item_level_related_documents
 from eProc_Shopping_Cart.models.add_to_cart import CartItemDetails
 from eProc_Shopping_Cart.models.shopping_cart import *
@@ -799,6 +801,7 @@ def update_sc(request):
     sc_header_instance = None
     shop_assist_status = None
     mgr_details = {}
+    temp_flag = 0
     update_user_info(request)
     if request.method == 'POST':
         update_user_info(request)
@@ -876,8 +879,9 @@ def update_sc(request):
                                                                      'sc_header_guid': sc_header_guid,
                                                                      'app_id': CONST_AUTO}):
 
-                        ScHeader.objects.update_or_create(guid=sc_header_guid,
-                                                          defaults={'status': CONST_SC_HEADER_APPROVED})
+                        # ScHeader.objects.update(guid=sc_header_guid,
+                        #                                   defaults={'status': CONST_SC_HEADER_APPROVED})
+                        temp_flag = 1
                         create_purchase_order = CreatePurchaseOrder(sc_header_instance)
                         status, error_message, output, po_doc_list = create_purchase_order.create_po()
                         # Send purchase order email to supplier
@@ -965,6 +969,15 @@ def update_sc(request):
 
     document_detail = {}
     if sc_header_instance:
+        if temp_flag == 1:
+            django_query_instance.django_update_query(ScHeader,
+                                                      {'guid': sc_header_guid, 'client': global_variables.GLOBAL_CLIENT},
+                                                      {'status': CONST_SC_HEADER_APPROVED})
+            django_query_instance.django_update_query(ScApproval,
+                                                      {'client': global_variables.GLOBAL_CLIENT,
+                                                       'header_guid': sc_header_guid},
+                                                      {'proc_lvl_sts': CONST_COMPLETED,
+                                                       'app_sts': CONST_SC_APPR_APPROVED})
         sc_header_instance = django_query_instance.django_get_query(ScHeader, {'guid': sc_header_guid})
         document_detail = {'document_number': sc_header_instance.doc_number,
                            'sc_name': sc_header_instance.description,

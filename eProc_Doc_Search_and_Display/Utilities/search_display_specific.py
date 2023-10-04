@@ -507,7 +507,7 @@ def get_order_status(company_code, prod_cat_list, client):
         if django_query_instance.django_existence_check(PurchaseControl,
                                                         {'client': client,
                                                          'del_ind': False,
-                                                         'company_code_id': company_code,
+                                                         'company_code_id__in': company_code,
                                                          'purchase_ctrl_flag': False,
                                                          'prod_cat_id': prod_cat}):
             purchase_control_inactive_list_cocode = django_query_instance.django_filter_value_list_query(PurchaseControl,
@@ -522,14 +522,14 @@ def get_order_status(company_code, prod_cat_list, client):
         if django_query_instance.django_existence_check(PurchaseControl,
                                                         {'client': client,
                                                          'del_ind': False,
-                                                         'company_code_id': company_code,
+                                                         'company_code_id__in': company_code,
                                                          'purchase_ctrl_flag': True,
                                                          'prod_cat_id': prod_cat}):
             po_split_active_list_cocode = django_query_instance.django_filter_value_list_query(PurchaseControl,
                                                                                                {
                                                                                                    'client': client,
                                                                                                    'del_ind': False,
-                                                                                                   'company_code_id': company_code,
+                                                                                                   'company_code_id__in': company_code,
                                                                                                    'purchase_ctrl_flag': True,
                                                                                                'prod_cat_id': prod_cat},
                                                                                                'call_off')
