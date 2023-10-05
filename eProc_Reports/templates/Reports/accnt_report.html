@@ -32,10 +32,11 @@
                                 </select>
                             </div>
                             <div class="col-md">
-                                <label>Language</label><br>
-                                <select name="language" id="id_language" class="form-control">
-                                    <option value="null" selected="true" disabled="disabled">Select </option>
-                                    {% for lang in lang_list %}<option value="{{ lang.language_id }}"> {{ lang.language_id }} - {{lang.description}} </option>{% endfor %}
+                                <label>Language</label>
+                                <select name="language" class="form-control">
+                                    {% for lang in lang_list %}
+                                    <option value="{{ lang.language_id }}">{{ lang.description }}</option>
+                                    {% endfor %}
                                 </select>
                             </div>
                             <div class="col-auto my-1">

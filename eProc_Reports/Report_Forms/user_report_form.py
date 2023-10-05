@@ -28,7 +28,7 @@ class UserReportForm(forms.Form):
 
     # Users in Company search fields
     company_code = forms.ModelChoiceField(label='Company Code', required=False,
-                                          queryset=OrgCompanies.objects.filter(del_ind=False), empty_label="Select",
+                                          queryset=OrgCompanies.objects.filter(del_ind=False), empty_label=None,
                                           widget=forms.Select(attrs={'class': 'form-control'}))
 
     username = forms.CharField(label='Username', required=False, widget=forms.TextInput(attrs={
