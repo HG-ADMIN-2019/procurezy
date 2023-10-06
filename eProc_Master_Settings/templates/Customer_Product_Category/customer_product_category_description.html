@@ -185,6 +185,7 @@
     var prod_cat_id_dropdown = '';
     var prod_cat_id_dropdown1 = '';
     var description_dropdown = '';
+    var prod_cat_id_dropdown = '';
     var prod_cat_array = [];
     prod_cat_val_list = [];
     var product_assign_array = [];
@@ -192,27 +193,20 @@
     var validate_add_attributes = [];
     var cusprodcatdesc_data = new Array();
     var main_table_low_value = [];
-    var main_table_value = [];
     var prod_val_list ;
 
     var desc_prod_cat = '';
     //Dropdown function
     function unspcdesc_dropdown(){
-        get_main_table_data(); //Read data from main table
         if(rendered_UNSPC_data.length != 0){
             desc_prod_cat = rendered_UNSPC_data[0].prod_cat_desc; }
         else {
             desc_prod_cat = "";
         }
-
-        var available_prod_cat_id_values = rendered_UNSPC_data.filter(function(item) {
-            return !main_table_value.includes(item.prod_cat_id);
-        });
         prod_cat_id_dropdown = '';
-        $.each(available_prod_cat_id_values, function(i, item){
+        $.each(rendered_UNSPC_data, function(i, item){
             prod_cat_id_dropdown += '<option value="' + item.prod_cat_id + '">' + item.prod_cat_id + '</option>';
         })
-
         language_id_dropdown = ' ';
         $.each(render_language_data, function(i, item){
             language_id_dropdown += '<option value="' + item.language_id + '">' + item.description + '</option>';
@@ -297,7 +291,7 @@
                                     }
                                     language_id_list = language + language_list
                                 });
-                                edit_basic_data += '<tr ><td><input type="checkbox" required></td><td><select type="text" class="input form-control prodid"  name="prodid" onchange="GetSelectedTextValue(this)"><option value ="' + value.prod_cat_id + '"'+prod_cat_id_list+'></option></select></td><td><select class="form-control" type="text"><option value ="' + value.language_id + '"'+language_id_list+'></option></select></td><td><input class="form-control description" type="text"  name="description"   value ="' + value.description + '" maxlength="200" onkeypress="return /[a-z ]/i.test(event.key)" required></td><td hidden></td><td>'+ del_ind +'</td></tr>';
+                                edit_basic_data += '<tr ><td><input type="checkbox" required></td><td><select type="text" class="input form-control prodid"  name="prodid" onchange="GetSelectedTextValue(this)"><option value ="' + value.prod_cat_id + '"'+prod_cat_id_list+'>'+value.prod_cat_id+'</option></select></td><td><select class="form-control" type="text"><option value ="' + value.language_id + '"'+language_id_list+'>'+value.language_id+'</option></select></td><td><input class="form-control description" type="text"  name="description"   value ="' + value.description + '" maxlength="200" onkeypress="return /[a-z ]/i.test(event.key)" required></td><td hidden></td><td>'+ del_ind +'</td></tr>';
                             });
                             $('#id_popup_table').append(edit_basic_data);
                             var i =0;
@@ -476,9 +470,6 @@
 
     function check_unspsc_desc(item){
         language_exists_flag = false
-        if (rendered_cust_prod_cat_desc_data.length == 0){
-          language_exists_flag = true
-        }
         $.each(rendered_cust_prod_cat_desc_data, function(j, item1){
                 if(item.language_id == "EN"){
                         language_exists_flag = true
@@ -578,26 +569,38 @@
 
     // onclick add icon display the row in to add the new entries
     function add_popup_row() {
-        unspcdesc_dropdown();
-        $("#error_msg_id").css("display", "none")
-        basic_add_new_html = '';
-        var display_db_data = '';
-        $('#id_popup_table').DataTable().destroy();
-        $(".modal").on("hidden.bs.modal", function () {
-            $("#id_error_msg").html(" ");
+<!--        OpenLoaderPopup();-->
+        var data = {'table_name':'UnspscCategoriesCustDesc'}
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'eProc_Configuration:get_dropdown_data' %}",
+            data: JSON.stringify(data),
+            success: function(response) {
+                rendered_UNSPC_data = response.upload_ProdCat
+                render_language_data = response.upload_language
+                unspcdesc_dropdown();
+                $("#error_msg_id").css("display", "none")
+                basic_add_new_html = '';
+                var display_db_data = '';
+                $('#id_popup_table').DataTable().destroy();
+                $(".modal").on("hidden.bs.modal", function () {
+                    $("#id_error_msg").html(" ");
+                });
+                if (GLOBAL_ACTION == "cusprodcatdesc_upload") {
+                    basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select type="text" class="input form-control prodid"  name="prodid" onchange="GetSelectedTextValue(this)">'+prod_cat_id_dropdown+'</select></td><td><select class="form-control">'+language_id_dropdown+'</select></td><td><input class="form-control description" type="text"  name="description" value="'+desc_prod_cat+'" ></td><td hidden><guid></td><td class="class_del_checkbox"><input type="checkbox" required></td></tr>';
+                    $('#id_popup_tbody').append(basic_add_new_html);
+                    $(".class_del_checkbox").prop("hidden", false);
+                    $("#id_del_ind_checkbox").prop("hidden", false);
+                    table_sort_filter('id_popup_table');
+                }
+                else {
+                      new_row_data();   // Add a new row in popup
+                      table_sort_filter('id_popup_table');
+                }
+                 $('#delete_data').hide()
+                 CloseLoaderPopup();
+            }
         });
-        if (GLOBAL_ACTION == "cusprodcatdesc_upload") {
-            basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select type="text" class="input form-control prodid"  name="prodid" onchange="GetSelectedTextValue(this)">'+prod_cat_id_dropdown+'</select></td><td><select class="form-control">'+language_id_dropdown+'</select></td><td><input class="form-control description" type="text"  name="description" value="'+desc_prod_cat+'" ></td><td hidden><guid></td><td class="class_del_checkbox"><input type="checkbox" required></td></tr>';
-            $('#id_popup_tbody').append(basic_add_new_html);
-            $(".class_del_checkbox").prop("hidden", false);
-            $("#id_del_ind_checkbox").prop("hidden", false);
-            table_sort_filter('id_popup_table');
-        }
-        else {
-              new_row_data();   // Add a new row in popup
-              table_sort_filter('id_popup_table');
-        }
-         $('#delete_data').hide()
     }
 
     //onclick of cancel display the table in display mode............
@@ -1100,7 +1103,6 @@ function onclick_copy_update_button(data){
             main_attribute.prod_cat_id = row.find("TD").eq(1).html();
             main_attribute.language_id = row.find("TD").eq(2).html();
             var cusprodcatdesc_compare =  main_attribute.prod_cat_id +'-'+ main_attribute.language_id
-            main_table_value.push(main_attribute.prod_cat_id); // to filter dropdown values
             main_table_low_value.push(cusprodcatdesc_compare);
         });
         table_sort_filter('display_basic_table');
