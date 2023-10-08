@@ -108,7 +108,7 @@ function delete_duplicate() {
         valid_to = row.find("TD").eq(5).find('input[type="text"]').val()
         account_assign_cat = row.find("TD").eq(2).find('Select').val()
         company_id = row.find("TD").eq(1).find('Select').val()
-         var compare = account_assign_value + '-' + account_assign_cat + '-' + company_id
+         var compare = account_assign_value + '-' + account_assign_cat + '-' + company_id+ '-' + valid_from+ '-' + valid_to
          if (aav_code_check.includes(compare)) {
             $(row).remove();
         }
@@ -120,6 +120,7 @@ function delete_duplicate() {
         main_table_low_value.push(compare);
     })
     table_sort_filter_popup_pagination('id_popup_table')
+    $("#save_id").prop("hidden", true);
     check_data()
 }
 
@@ -232,15 +233,19 @@ function get_main_table_data() {
         main_attribute.company_id = row.find("TD").eq(1).html();
         main_attribute.account_assign_cat = row.find("TD").eq(2).html();
         main_attribute.account_assign_value = row.find("TD").eq(3).html();
-        compare_maintable = main_attribute.company_id + '-' + main_attribute.account_assign_cat + '-' + main_attribute.account_assign_value;
+        main_attribute.valid_from = row.find("TD").eq(4).find('input[type="text"]').val()
+        main_attribute.valid_to = row.find("TD").eq(5).find('input[type="text"]').val()
+        compare_maintable = main_attribute.company_id + '-' + main_attribute.account_assign_cat + '-' + main_attribute.account_assign_value +
+        '-' + main_attribute.valid_from +'-' + main_attribute.valid_to +'-'+ main_attribute.del_ind;
         main_table_low_value.push(compare_maintable);
     });
     table_sort_filter('display_basic_table');
 }
 
 // Function to get main table data
+
 function get_main_table_data_upload() {
-    main_table_low_value = [];
+        main_table_low_value = [];
     $('#display_basic_table').DataTable().destroy();
     $("#display_basic_table TBODY TR").each(function() {
         var row = $(this);
@@ -248,11 +253,15 @@ function get_main_table_data_upload() {
         main_attribute.company_id = row.find("TD").eq(1).html();
         main_attribute.account_assign_cat = row.find("TD").eq(2).html();
         main_attribute.account_assign_value = row.find("TD").eq(3).html();
+        main_attribute.valid_from = row.find("TD").eq(4).find('input[type="text"]').val()
+        main_attribute.valid_to = row.find("TD").eq(5).find('input[type="text"]').val()
         main_attribute.del_ind = row.find("TD").eq(6).find('input[type="checkbox"]').is(':checked');
-        compare_maintable = main_attribute.company_id + '-' + main_attribute.account_assign_cat + '-' + main_attribute.account_assign_value+ '-'+ main_attribute.del_ind;
+        compare_maintable = main_attribute.company_id + '-' + main_attribute.account_assign_cat + '-' + main_attribute.account_assign_value +
+        '-' + main_attribute.valid_from + '-' + main_attribute.valid_to + '-'+ main_attribute.del_ind;
         main_table_low_value.push(compare_maintable);
     });
     table_sort_filter('display_basic_table');
+    return main_table_low_value
 }
 
 // Function to get the selected row data
