@@ -347,10 +347,6 @@ def sup_details(req, supplier_id):
 
 @login_required
 def user_report(request):
-    """
-        :param request:
-        :return:
-        """
     user_rep_form = UserReportForm()
     final_list = []
     client = getClients(request)
@@ -367,7 +363,7 @@ def user_report(request):
                                                                       {'del_ind': False, 'is_active': True, },
                                                                       None, None)
         comp_details = django_query_instance.django_get_query(OrgCompanies, {'client': client, 'del_ind': False,
-                                                                             'company_guid': default_comp_id})
+                                                                             'company_id': default_comp_id})
 
         # ---------------------------------------------------------------------
         user_list_star = django_query_instance.django_filter_only_query(UserData, {'is_active': True})
@@ -450,8 +446,16 @@ def user_report(request):
                 user_list_star = django_query_instance.django_filter_only_query(UserData, {'is_active': active})
             ####################################################################################
             if inp_comp_code is not None:
-                # UserData
-                company_details = OrgCompanies.objects.filter(client=client, del_ind=False, company_guid=inp_comp_code)
+                # Check if inp_comp_code is '*'
+                if inp_comp_code == '*':
+                    # Retrieve data for all companies
+                    company_details = OrgCompanies.objects.filter(client=client, del_ind=False)
+                else:
+                    # Retrieve data for the selected company code
+                    company_details = OrgCompanies.objects.filter(client=client, del_ind=False,
+                                                                  company_id=inp_comp_code)
+
+                # Continue processing as before...
                 # Using the company code number and CCODE node type get the company details from Org Model table
                 for comp_det in company_details:
                     comp_obj_id_info = OrgModel.objects.filter(Q(object_id=comp_det.object_id_id, node_type='CCODE',
@@ -500,27 +504,27 @@ def user_report(request):
                                         final_array.append(user.email)
                                         final_array.append(user.user_locked)
                                         final_list.append(final_array)
-        else:
-            print(user_rep_form.errors)
+            else:
+                print(user_rep_form.errors)
 
-        # Company code, Company name, Username, Last name, First name, Email address, Ship to address, user lock status
-        user_rep_form = UserReportForm()
-        t_count = len(final_list)
+            # Company code, Company name, Username, Last name, First name, Email address, Ship to address, user lock status
+            user_rep_form = UserReportForm()
+            t_count = len(final_list)
 
-        context = {
-            'inc_nav': True,
-            'inc_footer': True,
-            'user_rep_form': user_rep_form,
-            'final_list': final_list,
-            'default_comp_id': default_comp_id,
-            'page_range': page_range,
-            't_count': t_count,
-            'company_list': company_list,
-            'is_slide_menu': True,
-            'is_admin_active': True
-        }
+            context = {
+                'inc_nav': True,
+                'inc_footer': True,
+                'user_rep_form': user_rep_form,
+                'final_list': final_list,
+                'default_comp_id': default_comp_id,
+                'page_range': page_range,
+                't_count': t_count,
+                'company_list': company_list,
+                'is_slide_menu': True,
+                'is_admin_active': True
+            }
 
-        return render(request, 'Reports/user_report.html', context)
+            return render(request, 'Reports/user_report.html', context)
 
 
 @login_required

@@ -27,9 +27,14 @@ class UserReportForm(forms.Form):
                                          attrs={'class': 'form-control', "onchange": 'getSubReport(this.value)'}))
 
     # Users in Company search fields
-    company_code = forms.ModelChoiceField(label='Company Code', required=False,
-                                          queryset=OrgCompanies.objects.filter(del_ind=False), empty_label=None,
-                                          widget=forms.Select(attrs={'class': 'form-control'}))
+    company_code = forms.ModelChoiceField(
+        label='Company Code',
+        required=False,
+        queryset=OrgCompanies.objects.filter(del_ind=False),
+        empty_label=None,
+        widget=forms.Select(attrs={'class': 'form-control'}),
+        to_field_name='company_id'  # Use the 'company_id' field as the value for the form field
+    )
 
     username = forms.CharField(label='Username', required=False, widget=forms.TextInput(attrs={
         'class': 'form-control check_for_search'}))
