@@ -12,7 +12,6 @@
         max-width: 500px; /* Adjust the width as needed */
     }
 </style>
-
 <div class="container-fluid">
     <div class="mep-form_wrapper">
         <div class="d-flex justify-content-between">
@@ -63,7 +62,6 @@
                 </form>
             </div>
         </div>
-
         <div style="margin-top:25px" id="error_msg_div" class="alert alert-success" hidden><span id="success_msg_id"></span></div>
         {% if announcement_result1 %}
         <div class="card mt-5">
@@ -145,78 +143,78 @@
 <div>
     <!-- Custom Modal Popup for Save Confirmation -->
     <form id="address_clear">
-    <div class="modal fade" id="saveConfirmationModal" tabindex="-1" role="dialog" aria-labelledby="saveConfirmationModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-dialog-centered" role="document">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="saveConfirmationModalLabel">Organizational Announcement</h5>
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
-                </div>
-                <div class="modal-body">
-                    <div class="card card-shadow-1">
-                        <div class="card-body">
-                            <div class="alert alert-success display-none" id="org_announcement_update_success" role="alert"> </div>
-                            <div class="row">
-                                <input value="{{announcement_details.unique_announcement_id}}" id="announcement_guid" hidden>
-                                <input type="text" id="announcement_id" value="{{announcement_details.announcement_id}}" hidden>
-                                <div class="form-group col-md">
-                                    <label> Title</label><span class="hg_required"></span><br>
-                                    <input type="text" class="form-control hg_edit_display_mode check_special_char" id="modal_announcement_subject" value="{{announcement_details.announcement_subject}}" required>
-                                    <small class="form-text text-muted">Valid characters are A-Z a-z 0-9</small>
+        <div class="modal fade" id="saveConfirmationModal" tabindex="-1" role="dialog" aria-labelledby="saveConfirmationModalLabel" aria-hidden="true">
+            <div class="modal-dialog modal-dialog-centered" role="document">
+                <div class="modal-content">
+                    <div class="modal-header">
+                        <h5 class="modal-title" id="saveConfirmationModalLabel">Organizational Announcement</h5>
+                        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                    </div>
+                    <div class="modal-body">
+                        <div class="card card-shadow-1">
+                            <div class="card-body">
+                                <div class="alert alert-success display-none" id="org_announcement_update_success" role="alert"> </div>
+                                <div class="row">
+                                    <input value="{{announcement_details.unique_announcement_id}}" id="announcement_guid" hidden>
+                                    <input type="text" id="announcement_id" value="{{announcement_details.announcement_id}}" hidden>
+                                    <div class="form-group col-md">
+                                        <label> Title</label><span class="hg_required"></span><br>
+                                        <input type="text" class="form-control hg_edit_display_mode check_special_char" id="modal_announcement_subject" value="{{announcement_details.announcement_subject}}" required>
+                                        <small class="form-text text-muted">Valid characters are A-Z a-z 0-9</small>
+                                    </div>
+                                    <div class="form-group col-md">
+                                        <label> Description</label><span class="hg_required"></span><br>
+                                        <input type="text" name="announcement_desc" id="announcement_desc" class="form-control hg_edit_display_mode check_special_char" value="{{announcement_details.announcement_description}}" required>
+                                        <small class="form-text text-muted">Valid characters are A-Z a-z 0-9</small>
+                                    </div>
                                 </div>
-                                <div class="form-group col-md">
-                                    <label> Description</label><span class="hg_required"></span><br>
-                                    <input type="text" name="announcement_desc" id="announcement_desc" class="form-control hg_edit_display_mode check_special_char" value="{{announcement_details.announcement_description}}" required>
-                                    <small class="form-text text-muted">Valid characters are A-Z a-z 0-9</small>
-                                </div>
-                            </div>
-                            <div class="row">
-                                <div class="form-group col-md">
-                                    <label> Status</label><br>
-                                    <select type="text" class="form-control" id="announcement_status_" name="status">
-                                        {% for status in status_dropdown_values %}
+                                <div class="row">
+                                    <div class="form-group col-md">
+                                        <label> Status</label><br>
+                                        <select type="text" class="form-control" id="announcement_status_" name="status">
+                                            {% for status in status_dropdown_values %}
                                             <option value="{{ status }}">{{ status }}</option>
-                                        {% endfor %}
-                                    </select>
-                                </div>
-                                <div class="form-group col-md">
-                                    <label> Priority</label><br>
-                                    <select type="text" class="form-control" id="priority_" name='priority'>
-                                        {% for priority in priority_dropdown_values %}
+                                            {% endfor %}
+                                        </select>
+                                    </div>
+                                    <div class="form-group col-md">
+                                        <label> Priority</label><br>
+                                        <select type="text" class="form-control" id="priority_" name='priority'>
+                                            {% for priority in priority_dropdown_values %}
                                             <option value="{{ priority }}">{{ priority }}</option>
-                                        {% endfor %}
-                                    </select>
+                                            {% endfor %}
+                                        </select>
+                                    </div>
                                 </div>
-                            </div>
-                            <div class="row">
-                                <div class="form-group col-md">
-                                    <label> From Date</label><span class="hg_required"></span><br>
-                                    <input type="date" class="form-control hg_edit_display_mode" name="from_date" id="from_date" value="{{from_date}}" required>
-                                </div>
-                                <div class="form-group col-md">
-                                    <label> To Date</label><span class="hg_required"></span><br>
-                                    <input type="date" class="form-control hg_edit_display_mode" name="to_date" id="to_date" value="{{to_date}}" required>
+                                <div class="row">
+                                    <div class="form-group col-md">
+                                        <label> From Date</label><span class="hg_required"></span><br>
+                                        <input type="date" class="form-control hg_edit_display_mode" name="from_date" id="from_date" value="{{from_date}}" required>
+                                    </div>
+                                    <div class="form-group col-md">
+                                        <label> To Date</label><span class="hg_required"></span><br>
+                                        <input type="date" class="form-control hg_edit_display_mode" name="to_date" id="to_date" value="{{to_date}}" required>
+                                    </div>
                                 </div>
                             </div>
                         </div>
                     </div>
-                </div>
-                <div class="modal-footer">
-                    <div id="save_button">
-                        <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
-                        <button class="btn btn-primary" type="button" title="Click here to Register" onclick="save_announcement_data();">
-                            <i class="fas fa-check"></i> Save
-                        </button>
+                    <div class="modal-footer">
+                        <div id="save_button">
+                            <button type="button" class="btn btn-secondary" data-dismiss="modal">Cancel</button>
+                            <button class="btn btn-primary" type="button" title="Click here to Register" onclick="save_announcement_data();">
+                                <i class="fas fa-check"></i> Save
+                            </button>
+                        </div>
+                        <div id="edit_button" class="display-none">
+                            <button type="button" class="btn btn-primary" onclick="edit_org_announcement_data();">
+                                <i class="far fa-edit"></i> Edit
+                            </button>
+                        </div>
                     </div>
-                    <div id="edit_button" class="display-none">
-                        <button type="button" class="btn btn-primary" onclick="edit_org_announcement_data();">
-                            <i class="far fa-edit"></i> Edit
-                        </button>
-                    </div>
                 </div>
-            </div>
             </form>
         </div>
     </div>
@@ -297,7 +295,7 @@
 <script>
     var GLOBAL_ACTION = '';
 
-
+    //******************************
     $(document).ready(function () {
         nav_bar_admin();
         console.log(document.getElementById("input_announcement_subject").value);
@@ -324,7 +322,7 @@
             statusElement.value = "Active"; // Set default value
         }
 
-    // Set default value for Priority if not available in localStorage
+    //Set default value for Priority if not available in localStorage
     const priorityElement = document.getElementById("select_priority");
     const savedPriority = localStorage.getItem("priority");
     if (savedPriority) {
@@ -360,6 +358,7 @@
 <!--    })-->
 
 
+    //***********************************************
     function get_annsmt_detail_to_delete(element) {
         data_delete = element;
 <!--        document.getElementById("form_id_del").innerHTML = data_delete;-->
@@ -390,55 +389,53 @@
     }
 
     // Onclick of edit button
-function edit_org_announcement_data(clickedElement) {
-    $('#save_button').show();
-    $('#edit_button').hide();
+    function edit_org_announcement_data(clickedElement) {
+        $('#save_button').show();
+        $('#edit_button').hide();
+        // Get the row that contains the clicked element (Edit button)
+        const row = $(clickedElement).closest('tr');
+        // Get the announcement details
+        const announcementDetails = {
+            announcement_id: row.find('td:nth-child(3)').text(),
+            announcement_subject: row.find('td:nth-child(4)').text(),
+            announcement_description: row.find('td:nth-child(5)').text(),
+            status: row.find('.toggle-block').prop('checked') ? 'Active' : 'Inactive',
+            priority: row.find('td:nth-child(7)').text(),
+            announcement_from_date: parseFormattedDate(row.find('td:nth-child(8)').text()),
+            announcement_to_date: parseFormattedDate(row.find('td:nth-child(9)').text()),
+            announcement_guid: row.find('td:nth-child(2)').text(),
+        };
+        // Update the modal content with the announcement details
+        $("#announcement_id").val(announcementDetails.announcement_id);
+        $("#modal_announcement_subject").val(announcementDetails.announcement_subject);
+        $("#announcement_desc").val(announcementDetails.announcement_description);
+        $("#announcement_status_").val(announcementDetails.status);
+        $("#priority_").val(announcementDetails.priority);
+        $("#from_date").val(formatDateForInput(announcementDetails.announcement_from_date));
+        $("#to_date").val(formatDateForInput(announcementDetails.announcement_to_date));
+        $("#announcement_guid").val(announcementDetails.announcement_guid);
+        // Enable specific fields for editing
+        $("#modal_announcement_subject, #announcement_desc, #announcement_status_, #priority_, #from_date, #to_date").prop("disabled", false);
+        // Show the modal
+        $("#saveConfirmationModal").modal("show");
+        $("#org_announcement_update_success").css("display", "none");
+    }
 
-    // Get the row that contains the clicked element (Edit button)
-    const row = $(clickedElement).closest('tr');
+    //*************************************
+    function parseFormattedDate(dateString) {
+        const parts = dateString.split("-");
+        return new Date(parts[2], parts[1] - 1, parts[0]);
+    }
 
-    // Get the announcement details
-    const announcementDetails = {
-        announcement_id: row.find('td:nth-child(3)').text(),
-        announcement_subject: row.find('td:nth-child(4)').text(),
-        announcement_description: row.find('td:nth-child(5)').text(),
-        status: row.find('.toggle-block').prop('checked') ? 'Active' : 'Inactive',
-        priority: row.find('td:nth-child(7)').text(),
-        announcement_from_date: parseFormattedDate(row.find('td:nth-child(8)').text()),
-        announcement_to_date: parseFormattedDate(row.find('td:nth-child(9)').text()),
-        announcement_guid: row.find('td:nth-child(2)').text(),
-    };
+    //*************************************
+    function formatDateForInput(date) {
+        const year = date.getFullYear();
+        const month = ("0" + (date.getMonth() + 1)).slice(-2);
+        const day = ("0" + date.getDate()).slice(-2);
+        return `${year}-${month}-${day}`;
+    }
 
-    // Update the modal content with the announcement details
-    $("#announcement_id").val(announcementDetails.announcement_id);
-    $("#modal_announcement_subject").val(announcementDetails.announcement_subject);
-    $("#announcement_desc").val(announcementDetails.announcement_description);
-    $("#announcement_status_").val(announcementDetails.status);
-    $("#priority_").val(announcementDetails.priority);
-    $("#from_date").val(formatDateForInput(announcementDetails.announcement_from_date));
-    $("#to_date").val(formatDateForInput(announcementDetails.announcement_to_date));
-    $("#announcement_guid").val(announcementDetails.announcement_guid);
-
-    // Enable specific fields for editing
-    $("#modal_announcement_subject, #announcement_desc, #announcement_status_, #priority_, #from_date, #to_date").prop("disabled", false);
-
-    // Show the modal
-    $("#saveConfirmationModal").modal("show");
-    $("#org_announcement_update_success").css("display", "none");
-}
-
-function parseFormattedDate(dateString) {
-    const parts = dateString.split("-");
-    return new Date(parts[2], parts[1] - 1, parts[0]);
-}
-
-function formatDateForInput(date) {
-    const year = date.getFullYear();
-    const month = ("0" + (date.getMonth() + 1)).slice(-2);
-    const day = ("0" + date.getDate()).slice(-2);
-    return `${year}-${month}-${day}`;
-}
-
+    //*************************************
     function view_org_announcement_data(clickedElement) {
         $('#save_button').hide();
         $('#edit_button').hide();
@@ -474,6 +471,7 @@ function formatDateForInput(date) {
         $("#saveConfirmationModal").modal("show");
     }
 
+    //*************************************
     function display_annsmt_data(announcement_result1) {
         var org_annsmt_html = '';
         var lock_id = '';
@@ -486,29 +484,29 @@ function formatDateForInput(date) {
                 checkbox_input = '<input type="checkbox" class="annsmt_checkbox" onclick="valueChanged()" >';
             }
             if (annsmt.status.toLowerCase() === 'active') {
-            console.log('Status is true (active)');
-            lock_id = '<input type="checkbox" id="'+annsmt.announcement_id.concat("-Active")+'" class="toggle-block" checked><span class="control"></span>';
+                console.log('Status is true (active)');
+                lock_id = '<input type="checkbox" id="'+annsmt.announcement_id.concat("-Active")+'" class="toggle-block" checked><span class="control"></span>';
+                }
+            else {
+                console.log('Status is false (inactive)');
+                lock_id = '<input type="checkbox" id="'+annsmt.announcement_id.concat("-Inactive")+'" class="toggle-block"> <span class="control"></span>';
             }
-        else {
-         console.log('Status is false (inactive)');
-            lock_id = '<input type="checkbox" id="'+annsmt.announcement_id.concat("-Inactive")+'" class="toggle-block"> <span class="control"></span>';
-        }
             const date1 = new Date(annsmt.announcement_from_date);
             const date2 = new Date(annsmt.announcement_to_date);
             // get the date as a string in the format dd-mm-yyyy
             const from_date = ("0" + date1.getDate()).slice(-2) + "-" + ("0" + (date1.getMonth() + 1)).slice(-2) + "-" + date1.getFullYear();
             const to_date = ("0" + date2.getDate()).slice(-2) + "-" + ("0" + (date2.getMonth() + 1)).slice(-2) + "-" + date2.getFullYear();
-    org_annsmt_html += '<tr id="' + annsmt.announcement_id + '"> ' +
-                    '<td class="class_select_checkbox">' + checkbox_input + '</td>' +
-                    '<td hidden>' + annsmt.unique_announcement_id + '</td>' +
-                    '<td>' +
-                    '<a href="#" data-toggle="modal" data-target="#saveConfirmationModal" onclick="view_org_announcement_data(this);">' +
-                    annsmt.announcement_id +
-                    '</a>' +
-                    '</td>' +
-                    '<td>' + annsmt.announcement_subject + '</td>' +
-                    '<td>' + annsmt.announcement_description + '</td>' +
-         '<td><label class="switch"><label class="toggle-control">' + lock_id + '</label></label></td>'+
+            org_annsmt_html += '<tr id="' + annsmt.announcement_id + '"> ' +
+                '<td class="class_select_checkbox">' + checkbox_input + '</td>' +
+                '<td hidden>' + annsmt.unique_announcement_id + '</td>' +
+                '<td>' +
+                '<a href="#" data-toggle="modal" data-target="#saveConfirmationModal" onclick="view_org_announcement_data(this);">' +
+                annsmt.announcement_id +
+                '</a>' +
+                '</td>' +
+                '<td>' + annsmt.announcement_subject + '</td>' +
+                '<td>' + annsmt.announcement_description + '</td>' +
+                    '<td><label class="switch"><label class="toggle-control">' + lock_id + '</label></label></td>'+
                     '<td>' + annsmt.priority + '</td>' +
                     '<td>' + from_date + '</td>' +
                     '<td>' + to_date + '</td>' +
@@ -536,6 +534,7 @@ function formatDateForInput(date) {
 <!--    }, 5000); // Hide after 5 seconds (adjust as needed)-->
 <!--}-->
 
+    //**************************
     function main_table_delete() {
         main_table_annsmt_checked = [];
         $("#sup_tab TBODY TR").each(function () {
@@ -573,7 +572,7 @@ function formatDateForInput(date) {
     }
 
 
-
+    //**********************
     function valueChanged() {
         if ($('.annsmt_checkbox').is(":checked")) {
             $("#id_delete_annsmt").show();
@@ -583,26 +582,26 @@ function formatDateForInput(date) {
     }
 
         //onclick of select all checkbox
-    function checkAll(ele) {
-        if (ele.checked) {
-            $('.annsmt_checkbox').each(function() {
-                var disable_check = this.disabled
-                if(disable_check == false){
-                    this.checked = true;
-                    $("#id_delete_annsmt").show();
-                }
-            });
+        function checkAll(ele) {
+            if (ele.checked) {
+                $('.annsmt_checkbox').each(function() {
+                    var disable_check = this.disabled
+                    if(disable_check == false){
+                        this.checked = true;
+                        $("#id_delete_annsmt").show();
+                    }
+                });
+            }
+            else{
+                $('.annsmt_checkbox').each(function() {
+                    var disable_check = this.disabled
+                    if(disable_check == false){
+                        this.checked = false;
+                        $("#id_delete_annsmt").hide();
+                    }
+                });
+            }
         }
-        else{
-            $('.annsmt_checkbox').each(function() {
-                var disable_check = this.disabled
-                if(disable_check == false){
-                    this.checked = false;
-                    $("#id_delete_annsmt").hide();
-                }
-            });
-        }
-    }
 
     <!--Check All -->
     <!-- ----------------------------------------------------   -->
@@ -655,7 +654,8 @@ function formatDateForInput(date) {
        // e.stopPropagation();
     });
 
-    
+
+    //*****************************************
     function updateDataTableSelectAllCtrl(table) {
        var $table = table.table().node();
        var $chkbox_all = $('tbody input[class="annsmt_checkbox"]', $table);
@@ -681,64 +681,59 @@ function formatDateForInput(date) {
        }
     }
 
-function save_announcement_data() {
-    var sub_val = $('#modal_announcement_subject').val();
-    var desc_val = $('#announcement_desc').val();
-    var from_date_val = $('#from_date').val();
-    var to_date_val = $('#to_date').val();
-
-    // Check if From Date is greater than To Date
-if (from_date_val > to_date_val) {
-        // Display an error message and prevent further processing
-        $('#org_announcement_update_success').removeClass('display-none').addClass('alert-danger');
-        $('#org_announcement_update_success').html("From Date cannot be greater than To Date.");
-        return;
-    }
-
-    // Validate the rest of the form
-    is_save_form_valid = save_announcement_form_validation(sub_val, desc_val, from_date_val, to_date_val);
-    if (action === "ADD" || action === "edit") {
-        if (is_save_form_valid != '') {
-            $('#save_error_div').html(is_save_form_valid);
-            $('#save_error_div').show();
-            scroll_top();
+    //***************************
+    function save_announcement_data() {
+        var sub_val = $('#modal_announcement_subject').val();
+        var desc_val = $('#announcement_desc').val();
+        var from_date_val = $('#from_date').val();
+        var to_date_val = $('#to_date').val();
+        // Check if From Date is greater than To Date
+        if (from_date_val > to_date_val) {
+            // Display an error message and prevent further processing
+            $('#org_announcement_update_success').removeClass('display-none').addClass('alert-danger');
+            $('#org_announcement_update_success').html("From Date cannot be greater than To Date.");
             return;
         }
-    }
-
-    // Continue with saving the announcement data using AJAX
-    var form_data = {
-        announcement_id: document.getElementById('announcement_id').value,
-        announcement_subject: document.getElementById('modal_announcement_subject').value,
-        announcement_description: document.getElementById('announcement_desc').value,
-        status: document.getElementById('announcement_status_').value,
-        priority: document.getElementById('priority_').value,
-        announcement_from_date: document.getElementById('from_date').value,
-        announcement_to_date: document.getElementById('to_date').value,
-        announcement_guid: document.getElementById('announcement_guid').value,
-    };
-
-    OpenLoaderPopup();
-
-    $.ajax({
-        type: 'POST',
-        url: "{% url 'eProc_Org_Support:org_announcement_save' %}",
-        data: JSON.stringify(form_data),
-        success: function(response) {
-            display_annsmt_data(response.announcement_result1);
-            document.getElementById('org_announcement_update_success').innerHTML = response.message;
-            $('#save_error_div').hide();
-            $('#org_announcement_update_success').show();
-            $('html, body').animate({ scrollTop: 0 }, 'slow');
-            document.getElementById('announcement_guid').value = response.updated_guid;
-
-            setTimeout(function() {
-                $('#saveConfirmationModal').modal('hide');
-            }, 5000); // Delay the modal closing for 2 seconds (adjust as needed)
-            CloseLoaderPopup();
+        // Validate the rest of the form
+        is_save_form_valid = save_announcement_form_validation(sub_val, desc_val, from_date_val, to_date_val);
+        if (action === "ADD" || action === "edit") {
+            if (is_save_form_valid != '') {
+                $('#save_error_div').html(is_save_form_valid);
+                $('#save_error_div').show();
+                scroll_top();
+                return;
+            }
         }
-    });
-}
+        // Continue with saving the announcement data using AJAX
+        var form_data = {
+            announcement_id: document.getElementById('announcement_id').value,
+            announcement_subject: document.getElementById('modal_announcement_subject').value,
+            announcement_description: document.getElementById('announcement_desc').value,
+            status: document.getElementById('announcement_status_').value,
+            priority: document.getElementById('priority_').value,
+            announcement_from_date: document.getElementById('from_date').value,
+            announcement_to_date: document.getElementById('to_date').value,
+            announcement_guid: document.getElementById('announcement_guid').value,
+        };
+        OpenLoaderPopup();
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'eProc_Org_Support:org_announcement_save' %}",
+            data: JSON.stringify(form_data),
+            success: function(response) {
+                display_annsmt_data(response.announcement_result1);
+                document.getElementById('org_announcement_update_success').innerHTML = response.message;
+                $('#save_error_div').hide();
+                $('#org_announcement_update_success').show();
+                $('html, body').animate({ scrollTop: 0 }, 'slow');
+                document.getElementById('announcement_guid').value = response.updated_guid;
+                setTimeout(function() {
+                    $('#saveConfirmationModal').modal('hide');
+                }, 5000); // Delay the modal closing for 2 seconds (adjust as needed)
+                CloseLoaderPopup();
+            }
+        });
+    }
 
 
 
@@ -770,47 +765,47 @@ if (from_date_val > to_date_val) {
         return is_valid, save_form_errors;
     }
 
-        //***********************************
-function add_new_org_announcement(button) {
-        $('#save_button').show();
-    $('#edit_button').hide();
-    // Clear the modal content
-    $("#announcement_id").val("");
-    $("#modal_announcement_subject").val("");
-    $("#announcement_desc").val("");
-    $("#announcement_status_").val("");
-    $("#priority_").val("");
-    $("#from_date").val("");
-    $("#to_date").val("");
-    $("#announcement_guid").val("");
+    //***********************************
+    function add_new_org_announcement(button) {
+            $('#save_button').show();
+        $('#edit_button').hide();
+        // Clear the modal content
+        $("#announcement_id").val("");
+        $("#modal_announcement_subject").val("");
+        $("#announcement_desc").val("");
+        $("#announcement_status_").val("");
+        $("#priority_").val("");
+        $("#from_date").val("");
+        $("#to_date").val("");
+        $("#announcement_guid").val("");
 
-    // Reset any disabled fields
-    $("#modal_announcement_subject").prop("disabled", false);
-    $("#announcement_desc").prop("disabled", false);
-    $("#announcement_status_").prop("disabled", false);
-    $("#priority_").prop("disabled", false);
-    $("#from_date").prop("disabled", false);
-    $("#to_date").prop("disabled", false);
+        // Reset any disabled fields
+        $("#modal_announcement_subject").prop("disabled", false);
+        $("#announcement_desc").prop("disabled", false);
+        $("#announcement_status_").prop("disabled", false);
+        $("#priority_").prop("disabled", false);
+        $("#from_date").prop("disabled", false);
+        $("#to_date").prop("disabled", false);
 
-    // Trigger form reset and hide error messages
-    $("#address_clear").trigger('reset');
-    $("#error_msg_id").css("display", "none");
+        // Trigger form reset and hide error messages
+        $("#address_clear").trigger('reset');
+        $("#error_msg_id").css("display", "none");
 
-    // Set the global action and enable specific fields
-    GLOBAL_ACTION = button.value;
-    $("#id_add_addresses_address_number").prop("disabled", false);
+        // Set the global action and enable specific fields
+        GLOBAL_ACTION = button.value;
+        $("#id_add_addresses_address_number").prop("disabled", false);
 
-    // Hide the success message
-    $("#org_announcement_update_success").css("display", "none");
+        // Hide the success message
+        $("#org_announcement_update_success").css("display", "none");
 
-    // Show the modal for adding a new announcement
-    $('#saveConfirmationModal').modal('show');
-}
+        // Show the modal for adding a new announcement
+        $('#saveConfirmationModal').modal('show');
+    }
 
 
 
       var previous_state;
-function lock_active_change(){
+    function lock_active_change(){
         OpenLoaderPopup();
         jQuery.ajax({
        type: 'POST',
@@ -833,6 +828,7 @@ function lock_active_change(){
         });
     }
 
+    //*************
    function toggle(){
         var abc = $('#'+block_id)
         if($('#'+block_id).is(':checked')) {
@@ -843,9 +839,10 @@ function lock_active_change(){
         }
     }
 
+    //********
     var data = {};
-var block_id = '';
- $('.toggle-block').change(function() {
+    var block_id = '';
+    $('.toggle-block').change(function() {
         $('#id_confirm_popup').modal('show')
         if($(this).is(':checked')) {
             $('.toggle-off').removeClass('active');
@@ -862,9 +859,6 @@ var block_id = '';
         block_id = id
 <!--        data.announcement_id = id.split('-')[0]-->
   });
-
-
-
 </script>
 
 {% endblock %}
