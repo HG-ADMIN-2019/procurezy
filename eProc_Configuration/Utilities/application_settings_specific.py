@@ -458,6 +458,26 @@ class ApplicationSettingsSave:
 
         return data
 
+    def generate_prod_cat_Cust_delete_flags(self, prod_cat_Cust_data):
+        delete_flags = []  # List to store delete_flag for each value
+
+        for prod_cat_Cust_detail in prod_cat_Cust_data['data']:
+            delete_flag = True
+
+            # Check if value is present in the MessagesIdDesc table
+            if django_query_instance.django_existence_check(UnspscCategoriesCust,
+                                                            {'prod_cat_id': prod_cat_Cust_detail['prod_cat_id'],
+                                                             'client': self.client,
+                                                             'del_ind': False}):
+                delete_flag = False
+
+            delete_flags.append(delete_flag)  # Store delete_flag value for each iteration
+            data = {
+                'delete_flags': delete_flags  # Include the delete_flags list in the response data
+            }
+
+        return data
+
     def save_document_type_data(self, documenttype_data):
         documenttype_db_list = []
         used_flag_set = []
