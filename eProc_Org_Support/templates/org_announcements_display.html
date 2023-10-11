@@ -138,7 +138,6 @@
         {% endif %}
     </div>
 </div>
-</div>
 
 <div>
     <!-- Custom Modal Popup for Save Confirmation -->
@@ -299,7 +298,7 @@
     $(document).ready(function () {
         nav_bar_admin();
         console.log(document.getElementById("input_announcement_subject").value);
-        document.getElementById("input_announcement_subject").value = "";
+<!--        document.getElementById("input_announcement_subject").value = "";-->
         table_sort_filter_basic("qwsqwsqws")
     });
 
@@ -564,9 +563,8 @@
                 $("#error_msg_div").prop("hidden", false)
 <!--                setTimeout(function () { $("#error_msg_div").prop("hidden", true); }, 5000)-->
                 message_display_time();
-
-<!--                window.location.reload(5000);-->
                 CloseLoaderPopup();
+                window.location.reload(5000);
             }
         });
     }
@@ -731,6 +729,7 @@
                     $('#saveConfirmationModal').modal('hide');
                 }, 5000); // Delay the modal closing for 2 seconds (adjust as needed)
                 CloseLoaderPopup();
+                location.reload();
             }
         });
     }
