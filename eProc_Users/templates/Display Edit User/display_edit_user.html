@@ -66,12 +66,12 @@
                                 <div class="row">
                                     <div class="form-group col-md">
                                         <label>User Name</label><span class="hg_required"></span><br>
-                                        <input type="text" class="form-control mandatory_fields check_special_char" id="username" value="{{user_info.username}}" disabled>
+                                        <input type="text" class="form-control mandatory_fields check_special_character" id="username" value="{{user_info.username}}" disabled>
                                         <span id="err_username" class="error_message" hidden></span>
                                     </div>
                                     <div class="form-group col-md">
                                         <label>Employee Number</label><span class="hg_required"></span><br>
-                                        <input type="text" class="form-control mandatory_fields check_special_char" id="employee_id" value="{{user_info.employee_id}}" disabled>
+                                        <input type="text" class="form-control mandatory_fields check_special_character" id="employee_id" value="{{user_info.employee_id}}" disabled>
                                         <span id="err_employee_id" class="error_message" hidden></span>
                                     </div>
                                     
@@ -89,13 +89,13 @@
                                 <div class="row">
                                     <div class="form-group col-md">
                                         <label>First Name</label><span class="hg_required"></span><br>
-                                        <input type="text" class="form-control hg_edit_display_mode mandatory_fields check_special_char" id="first_name" name="first_name" value="{{user_info.first_name}}" disabled>
+                                        <input type="text" class="form-control hg_edit_display_mode mandatory_fields check_special_character" id="first_name" name="first_name" value="{{user_info.first_name}}" disabled>
                                         <span id="err_first_name" class="error_message" hidden></span>
                                     </div>
                                     
                                     <div class="form-group col-md">
                                         <label>Last Name</label><br>
-                                        <input type="text" class="form-control hg_edit_display_mode check_special_char" id="last_name" value="{{user_info.last_name}}" disabled>
+                                        <input type="text" class="form-control hg_edit_display_mode check_special_character" id="last_name" value="{{user_info.last_name}}" disabled>
                                     </div>
                                 </div>
 
@@ -281,6 +281,7 @@ var lang_id = '{{user_info.language_id | safe}}';
             $('#user_type').prop("disabled", false);
             $('#email').prop("disabled", false);
 <!--            $('#login_attempts').prop("disabled", false);            -->
+            $("#save_user_info_btn").prop("hidden", false);
         }
         else{
             $("#edit_user_info_btn").prop("hidden", false);
@@ -329,6 +330,7 @@ var lang_id = '{{user_info.language_id | safe}}';
     }
 
     function ajax_update_user_basic_data(data) {
+        OpenLoaderPopup();
         urlLink = "{% url 'eProc_Users:update_user_basic_details' %}";
         var response = AjaxCallAPIBasic(urlLink, data)
         return response
@@ -382,7 +384,7 @@ var lang_id = '{{user_info.language_id | safe}}';
     });
 
     $('form').on('submit',function (e) {
-<!--        OpenLoaderPopup();-->
+        OpenLoaderPopup();
         var valid = save_user_form_validation();
         if(!valid){
             localStorage.setItem("error_flag", 1);
@@ -399,6 +401,7 @@ var lang_id = '{{user_info.language_id | safe}}';
                        CloseLoaderPopup();
          }, 20000);
          $(".hg_edit_display_mode").prop("disabled", false);
+
         }
     });
 
@@ -409,7 +412,7 @@ var lang_id = '{{user_info.language_id | safe}}';
         var email_val = $('#email').val();
         var err_flag, super_user_val = 0, user_locked_val = 0, pwd_locked_val = 0, is_active_val = 0 ;
         set_value();
-        OpenLoaderPopup();
+<!--        OpenLoaderPopup();-->
         is_save_form_valid = save_user_form_validation()
         if (is_save_form_valid) {
             var user_data_dict = {}
@@ -455,8 +458,8 @@ var lang_id = '{{user_info.language_id | safe}}';
                 $('html, body').animate({ scrollTop: 0 }, 'slow');
                 cancel_user_basic_info();
                 if(GLOBAL_ACTION == 'CREATE'){
-                    $("#user_registration_form")[0].reset();
                     $(".hg_edit_display_mode").prop("disabled", false);
+                    document.getElementById("save_user_info_btn").style.display = "block";
                 }
                 setTimeout(function() {
                            CloseLoaderPopup();

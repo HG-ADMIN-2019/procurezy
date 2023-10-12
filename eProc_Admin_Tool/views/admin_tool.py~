@@ -183,10 +183,8 @@ def user_search(request):
         search_fields['email'] = request.POST.get('email')
         search_fields['user_type'] = request.POST.get('user_type')
         search_fields['employee_id'] = request.POST.get('employee_id')
-        if search_fields['username'] == '*':
-            employee_results = get_emp_data()
-        else:
-            employee_results = emp_search_data(search_fields)
+
+        employee_results = emp_search_data(search_fields)
         count = len(employee_results)
         context['count'] = count
         context['form_method'] = 'POST'
