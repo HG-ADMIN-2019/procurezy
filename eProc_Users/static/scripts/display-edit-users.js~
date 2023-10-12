@@ -75,7 +75,7 @@ function save_user_form_validation(){
                     $('#'+temp[i].id).prop("disabled", false);
                    is_valid = false;
                 }
-                if(temp[i].id == 'email'){
+                if(temp[i].id == 'email_id'){
                     var mailformat = /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/;
                      if (!(temp[i].value).match(mailformat)) {
                             valid_data = false

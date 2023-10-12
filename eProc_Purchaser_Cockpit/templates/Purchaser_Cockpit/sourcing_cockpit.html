@@ -1,7 +1,7 @@
 {% extends 'root/base.html' %}
 {% load static %}
 
-{% block title %} Purchase Orders (SOM) {% endblock %}
+{% block title %} Purchaser Cockpit {% endblock %}
 {% block maincontent %}
 
 <div class="container-fluid">
@@ -17,11 +17,11 @@
                  <div class="row">
                     <div class="col-md">
                         <label for="">SC Number</label>
-                        <input type="text" class="form-control check_for_search" id="sc_number" name="sc_number" >
+                        <input type="text" class="form-control check_for_search reset_field" id="sc_number" name="sc_number" >
                     </div>
                     <div class="col-md">
                         <label for="">Product Description</label>
-                        <input type="text" class="form-control check_for_search" id="product_desc" name="product_desc">
+                        <input type="text" class="form-control check_for_search reset_field" id="product_desc" name="product_desc">
                     </div>
                     <div class="col-md">
                         <label for="">From Delivery Date</label>
@@ -32,8 +32,11 @@
                         <input type="date" class="form-control " id="to_date" name='to_date'>
                     </div>
                     <div class="col-md">
-                        <label for="">Company Code</label>
-                        <input type="text" class="form-control check_for_search" id="company_code" name="company_code" value="3000">
+                        <label for="">Company Number</label>
+<!--                        <input type="text" class="form-control check_for_search" id="company_code" name="company_code" value="3000">-->
+                         <select name="company_code" id="company_code" class="form-control reset_field">
+                                {% for comp in comp_list %}<option value="{{ comp.company_id }}"> {{ comp.company_id}} - {{comp.name1 }} </option>{% endfor %}
+                        </select>
                     </div>
                     <div class="col-auto my-1">
                         <button class="button-search-users btn btn-primary" type="submit" name="sc_search"
@@ -68,12 +71,12 @@
      <div style="margin-top:25px" id="error_msg_div" class="alert alert-success" hidden><span id="success_msg_id"></span></div>
     {% if sc_header_item_details %}
         <div class="card">
-            <div>
+            <div style="margin: 10px;">
                  <button class="btn btn-primary  btn-sm mt-2 ml-2"  title="Generate PO" id="id_generate_po" value="generate_po" onclick="create_po()" style="display:none;" >
                     <i></i> Generate PO
                 </button>
             <div>
-            <div style="margin-top: 17px;margin-left: 10px;">
+<!--            <div style="margin-top: 17px;margin-left: 10px;margin-bottom: 6px;">-->
                 <table id="sc_header_item" class="table table_sort_filter_export_excel">
                     <thead class="thead-light">
                         <tr>
@@ -81,7 +84,7 @@
                             <th scope="col">SC Number</th>
                             <th scope="col">Description</th>
                             <th scope="col">Supplier ID</th>
-                            <th scope="col">Company Code</th>
+                            <th scope="col">Company Number</th>
                             <th scope="col">Delivery Date</th>
                             <th scope="col">Unit</th>
                             <th scope="col">Quantity</th>
@@ -110,7 +113,7 @@
     {% endif %}
     </div>
 </div>
-    </div>
+<!--    </div>-->
     <div class="modal fade" id="confirm_po_pop_up" tabindex="-1" role="dialog"
         aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
         <div class="modal-dialog modal-dialog-centered" role="document">
@@ -167,7 +170,7 @@
                                     <th>SC Number</th>
                                     <th>Description</th>
                                     <th>Supplier Id</th>
-                                    <th>Company Code</th>
+                                    <th>Company Number</th>
                                     <th>Delivery Date</th>
                                     <th>Unit</th>
                                     <th>Quantity</th>
@@ -293,7 +296,6 @@ function generate_po(){
     $("#id_popup_table TBODY TR").each(function () {
         var row = $(this);
         po={};
-<!--        po.del_ind = row.find("TD").eq(3).find('input[type="checkbox"]').is(':checked');-->
         po.doc_number = row.find("TD").eq(0).find('input[type="number"]').val();
         po.description = row.find("TD").eq(1).find('input[type="text"]').val();
         po.supplier_id = row.find("TD").eq(2).find('input[type="text"]').val();
@@ -305,7 +307,6 @@ function generate_po(){
         if (po == undefined){
             po.doc_number = row.find("TD").eq(0).find('input[type="text"]').val();
         }
-<!--        validate_add_attributes.push(po.country_code);-->
         po_data.push(po);
     });
     table_sort_filter('id_popup_table');
@@ -341,7 +342,7 @@ function generate_po(){
         $("#add_attr_body").empty();
         $.each(sourcing_data, function (i, sourcing_detail) {
             sourcing_detail_html += '<tr id="'+sourcing_detail.doc_number+'">'+
-                    '<td><input type="checkbox" class="supplier_checkbox" onclick="valueChanged();"></td>'+
+                    '<td><input class="generate_po" type="checkbox" id="generate_po" name="select" value="select" onclick="po_generate()"></td>'+
                     '<td>'+ sourcing_detail[0] +'</td>'+
                     '<td> '+ sourcing_detail[1] +'</td>'+
                     '<td>'+ sourcing_detail[2] +'</td>'+
@@ -357,9 +358,22 @@ function generate_po(){
         table_sort_filter('sc_header_item');
     }
 
-    function formatDate(dateString) {
-    var dateParts = dateString.split('-');
-    return dateParts[2] + '-' + dateParts[1] + '-' + dateParts[0];
-}
+   $(document).on("click", "input[type='reset']", function(e){
+         e.preventDefault();
+         var temp = document.getElementsByClassName('reset_field');
+         for (var i = 0; i<temp.length; i++) {
+            if(temp[i].nodeName == "INPUT"){
+                temp[i].value = '';
+            }
+            else{
+                if(temp[i].nodeName == "SELECT"){
+                    temp[i].selectedIndex = 0;
+                }
+            }
+
+         }
+         document.getElementById('from_date').value = new Date().toISOString().substring(0, 10);
+        document.getElementById('to_date').value = new Date().toISOString().substring(0, 10);
+    });
 </script>
 {% endblock %}
