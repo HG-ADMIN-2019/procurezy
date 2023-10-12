@@ -158,6 +158,7 @@ def user_search(request):
     }
 
     if request.method == 'GET':
+        encrypted_email = []
         employee_results = get_emp_data()
         context['employee_results'] = employee_results
         count = len(employee_results)
