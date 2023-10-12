@@ -131,8 +131,18 @@
        return false;
         }
     });
+  // Allows only characters
     $("body").on("keypress", ".check_only_character", function (event) {
     var regex = new RegExp("^[ a-zA-Z]+$");
+    var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+    if (!regex.test(key)) {
+       event.preventDefault();
+       return false;
+        }
+    });
+    // Allows only Upper case characters
+    $("body").on("keypress", ".check_uppercase_character", function (event) {
+    var regex = new RegExp("^[ A-Z]+$");
     var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
     if (!regex.test(key)) {
        event.preventDefault();
