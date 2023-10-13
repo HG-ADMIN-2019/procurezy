@@ -3,9 +3,8 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="email-support-title"> Email Support</h5>
-                    <button type="button" class="close remove_upload_data" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+<button type="button" class="btn btn-outline-secondary remove_upload_data" data-dismiss="modal"><i
+                            class="fas fa-times"></i> close</button>
                 </div>
                 <div class="modal-body scrollbox">
                     <div class="alert alert-success " id="org_support_email_success" role="alert" hidden> <span id="success_msg_id"></span></div>
@@ -150,49 +149,57 @@
 
     //**************************
 function save_email_support_data() {
-        var form_data = [];
-        var isValid = true; // Initialize isValid as true
-        $("#id_popup_table_email TBODY TR").each(function () {
-            var row = $(this);
-            var support_data = {};
-            support_data.support_type = 'EMAIL';
-            support_data.support_email = row.find("TD").eq(0).find('input[type="text"]').val();
-            support_data.support_number = '';
-            support_data.username = '';
-            support_data.org_support_guid = row.find("TD").eq(1).find('input[type="text"]').val();
-            isValid = email(support_data.support_email);
-            if (isValid) {
-                // Check for additional condition: presence of "." after "@" in the email
-                isValid = support_data.support_email.indexOf('@') !== -1 && support_data.support_email.indexOf('.', support_data.support_email.indexOf('@')) !== -1;
-            }
-            if (!isValid) {
-                console.log("Invalid email:", support_data.support_email);
-                $('#org_support_email_success').text("Invalid email: " + support_data.support_email);
-                $('#org_support_email_success').prop('hidden', false);
-            } else {
-                form_data.push(support_data);
-            }
-        });
-        if (!isValid) {
-            // If any email is invalid, don't proceed to save
-            return;
+    var form_data = [];
+    var isValid = true; // Initialize isValid as true
+    $("#id_popup_table_email TBODY TR").each(function () {
+        var row = $(this);
+        var support_data = {};
+        support_data.support_type = 'EMAIL';
+        support_data.support_email = row.find("TD").eq(0).find('input[type="text"]').val();
+        support_data.support_number = '';
+        support_data.username = '';
+        support_data.org_support_guid = row.find("TD").eq(1).find('input[type="text"]').val();
+        isValid = email(support_data.support_email);
+        if (isValid) {
+            // Check for additional condition: presence of "." after "@" in the email
+            isValid = support_data.support_email.indexOf('@') !== -1 && support_data.support_email.indexOf('.', support_data.support_email.indexOf('@')) !== -1;
         }
-        $.ajax({
-            type: 'POST',
-            url: "{% url 'eProc_Org_Support:org_support_save' %}",
-            data: JSON.stringify(form_data),
-            success: function(response) {
-                document.getElementById('org_support_email_success').innerHTML = response.message;
-                $('#org_support_email_success').prop('hidden', false);
-                $("#org_support_guid").val(response.updated_guid);
-                // Close the modal after a delay
-                setTimeout(function() {
-                    $('#org_support_email_success').prop('hidden', true);
-                    $('#myModalEmail').modal('hide');
-                }, 5000); // Close after 5 seconds (adjust the delay as needed)
-            }
-        });
+        if (!isValid) {
+            console.log("Invalid email:", support_data.support_email);
+            $('#org_support_email_success').text("Invalid email: " + support_data.support_email);
+            $('#org_support_email_success').prop('hidden', false);
+        } else {
+            form_data.push(support_data);
+        }
+    });
+    if (!isValid) {
+        // If any email is invalid, don't proceed to save
+        return;
     }
+    $.ajax({
+        type: 'POST',
+        url: "{% url 'eProc_Org_Support:org_support_save' %}",
+        data: JSON.stringify(form_data),
+        success: function(response) {
+            document.getElementById('org_support_email_success').innerHTML = response.message;
+            $('#org_support_email_success').prop('hidden', false);
+            $("#org_support_guid").val(response.updated_guid);
+
+            // Hide the "Save" and "Cancel" buttons
+            $("#save_cancel_btn_email").hide();
+
+            // Show the "Edit" button
+            $("#edit_id_email").show();
+            $(".hg_edit_display_mode").prop("disabled", true);
+            // Close the modal after a delay
+            setTimeout(function() {
+                $('#org_support_email_success').prop('hidden', true);
+                $('#myModalEmail').modal('hide');
+            }, 5000); // Close after 5 seconds (adjust the delay as needed)
+        }
+    });
+}
+
 
     // Email validation function
     function email(inputtxt) {

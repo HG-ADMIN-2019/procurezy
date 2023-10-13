@@ -714,6 +714,8 @@
             announcement_guid: document.getElementById('announcement_guid').value,
         };
         OpenLoaderPopup();
+        $('#save_button').hide();
+        $('#edit_button').hide();
         $.ajax({
             type: 'POST',
             url: "{% url 'eProc_Org_Support:org_announcement_save' %}",
