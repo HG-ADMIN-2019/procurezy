@@ -184,6 +184,7 @@
     var prod_cat_id_dropdown = '';
     var prod_cat_id_dropdown1 = '';
     var description_dropdown = '';
+    var prod_cat_id_dropdown = '';
     var prod_cat_array = [];
     prod_cat_val_list = [];
     var product_assign_array = [];
@@ -191,7 +192,6 @@
     var validate_add_attributes = [];
     var cusprodcatdesc_data = new Array();
     var main_table_low_value = [];
-    var main_table_value = [];
     var prod_val_list ;
     var desc_prod_cat = '';
     var hidden_unspsc_value = [];
@@ -410,9 +410,6 @@
 
     function check_unspsc_desc(item){
         language_exists_flag = false
-        if (rendered_cust_prod_cat_desc_data.length == 0){
-          language_exists_flag = true
-        }
         $.each(rendered_cust_prod_cat_desc_data, function(j, item1){
                 if(item.language_id == "EN"){
                         language_exists_flag = true

@@ -358,10 +358,6 @@ def sup_details(req, supplier_id):
 
 @login_required
 def user_report(request):
-    """
-        :param request:
-        :return:
-        """
     user_rep_form = UserReportForm()
     final_list = []
     client = getClients(request)
@@ -378,7 +374,7 @@ def user_report(request):
                                                                       {'del_ind': False, 'is_active': True, },
                                                                       None, None)
         comp_details = django_query_instance.django_get_query(OrgCompanies, {'client': client, 'del_ind': False,
-                                                                             'company_guid': default_comp_id})
+                                                                             'company_id': default_comp_id})
 
         # ---------------------------------------------------------------------
         user_list_star = django_query_instance.django_filter_only_query(UserData, {'is_active': True})
@@ -461,8 +457,16 @@ def user_report(request):
                 user_list_star = django_query_instance.django_filter_only_query(UserData, {'is_active': active})
             ####################################################################################
             if inp_comp_code is not None:
-                # UserData
-                company_details = OrgCompanies.objects.filter(client=client, del_ind=False, company_guid=inp_comp_code)
+                # Check if inp_comp_code is '*'
+                if inp_comp_code == '*':
+                    # Retrieve data for all companies
+                    company_details = OrgCompanies.objects.filter(client=client, del_ind=False)
+                else:
+                    # Retrieve data for the selected company code
+                    company_details = OrgCompanies.objects.filter(client=client, del_ind=False,
+                                                                  company_id=inp_comp_code)
+
+                # Continue processing as before...
                 # Using the company code number and CCODE node type get the company details from Org Model table
                 for comp_det in company_details:
                     comp_obj_id_info = OrgModel.objects.filter(Q(object_id=comp_det.object_id_id, node_type='CCODE',
@@ -511,111 +515,106 @@ def user_report(request):
                                         final_array.append(user.email)
                                         final_array.append(user.user_locked)
                                         final_list.append(final_array)
-        else:
-            print(user_rep_form.errors)
+            else:
+                print(user_rep_form.errors)
 
-        # Company code, Company name, Username, Last name, First name, Email address, Ship to address, user lock status
-        user_rep_form = UserReportForm()
-        t_count = len(final_list)
+            # Company code, Company name, Username, Last name, First name, Email address, Ship to address, user lock status
+            user_rep_form = UserReportForm()
+            t_count = len(final_list)
 
-        context = {
-            'inc_nav': True,
-            'inc_footer': True,
-            'user_rep_form': user_rep_form,
-            'final_list': final_list,
-            'default_comp_id': default_comp_id,
-            'page_range': page_range,
-            't_count': t_count,
-            'company_list': company_list,
-            'is_slide_menu': True,
-            'is_admin_active': True
-        }
+            context = {
+                'inc_nav': True,
+                'inc_footer': True,
+                'user_rep_form': user_rep_form,
+                'final_list': final_list,
+                'default_comp_id': default_comp_id,
+                'page_range': page_range,
+                't_count': t_count,
+                'company_list': company_list,
+                'is_slide_menu': True,
+                'is_admin_active': True
+            }
 
-        return render(request, 'Reports/user_report.html', context)
+            return render(request, 'Reports/user_report.html', context)
 
 
 @login_required
 def approval_report(request):
-    """
-        :param request:
-        :return:
-        """
-
     workflow_acc_list = {}
     client = getClients(request)
     page_range = 0
     final_list = []
-
+    inp_acc_assgn_cat = []
+    inp_comp_code = []
     company_array = get_companyDetails(request)
     acc_value_array = get_account_assignvalues(request)
-    # for val in acc_value_array:
-    acct_values = get_account_assignlist(request)
-    # print(company_array[0])
-
-    if request.method == 'GET':
-        inp_comp_code = company_array[1]
-        inp_acc_assgn_cat = acct_values[0]
-        workflow_schema = list(WorkflowSchema.objects.filter(Q(client=client,
-                                                               company_id=inp_comp_code)).values_list('app_types',
-                                                                                                      flat=True))
-        if workflow_schema:
-            for schema_step_type in workflow_schema:
-                # MMD_WF_ACC check this table model and read the data from here
-                workflow_acc_list = WorkflowACC.objects.filter(Q(account_assign_cat=inp_acc_assgn_cat,
-                                                                 company_id=inp_comp_code, client=client))
-
-    if not request.method == 'POST':
-        if 'final_list' in request.session:
-            request.POST = request.session['final_list']
-            # request.method = 'POST'
 
     if request.method == 'POST':
-        request.session['final_list'] = request.POST
         inp_acc_assgn_cat = request.POST.getlist('acc_assgn_cat', default=None)
         inp_comp_code = request.POST.get('comp_code_app')
 
-        if inp_comp_code is not None and inp_acc_assgn_cat is not None:
-            workflow_schema = list(WorkflowSchema.objects.filter(Q(client=client,
-                                                                   company_id=inp_comp_code)).values_list('app_types',
-                                                                                                          flat=True))
+        # Check if '*' (All Companies) is selected
+        if inp_comp_code == '*':
+            # Instead of fetching a specific company, fetch data for all companies
+            for company_info in company_array:
+                company_code = company_info.company_id
+                workflow_schema = list(WorkflowSchema.objects.filter(Q(client=client, company_id=company_code)).values_list('app_types', flat=True))
+                if workflow_schema:
+                    for schema_step_type in workflow_schema:
+                        workflow_acc_list = WorkflowACC.objects.filter(Q(account_assign_cat__in=inp_acc_assgn_cat, company_id=company_code, client=client))
+
+                if workflow_acc_list:
+                    for w_acc_list in workflow_acc_list:
+                        app_code_id = ApproverLimit.objects.filter(Q(company_id=company_code, approver_username=w_acc_list.app_username, del_ind=False, client=client)).values_list('app_code_id', flat=True)
+
+                        if app_code_id:
+                            app_val_list = ApproverLimitValue.objects.filter(Q(company_id=company_code, app_code_id__in=app_code_id, del_ind=False, app_types=schema_step_type, client=client))
+                            final_array = []
+                            for app_val in app_val_list:
+                                final_array.append(w_acc_list.company_id)
+                                final_array.append(w_acc_list.account_assign_cat_id)
+                                final_array.append(w_acc_list.acc_value)
+                                final_array.append(w_acc_list.app_username)
+                                final_array.append(w_acc_list.currency_id)
+                                final_array.append(w_acc_list.sup_company_id)
+                                final_array.append(w_acc_list.sup_acc_value)
+                                final_array.append(app_val.upper_limit_value)
+                                final_array.append(app_val.currency_id)
+                                final_array.append(app_val.app_code_id)
+                                final_array.append(w_acc_list.sup_account_assign_cat_id)
+                                final_array.append(app_val.app_code_id)
+                                final_list.append(final_array)
+        elif inp_comp_code is not None:
+            # Fetch data for the selected company (existing behavior)
+            workflow_schema = list(WorkflowSchema.objects.filter(Q(client=client, company_id=inp_comp_code)).values_list('app_types', flat=True))
             if workflow_schema:
                 for schema_step_type in workflow_schema:
-                    # MMD_WF_ACC check this table model and read the data from here
-                    workflow_acc_list = WorkflowACC.objects.filter(Q(account_assign_cat__in=inp_acc_assgn_cat,
-                                                                     company_id=inp_comp_code, client=client))
+                    workflow_acc_list = WorkflowACC.objects.filter(Q(account_assign_cat__in=inp_acc_assgn_cat, company_id=inp_comp_code, client=client))
 
-    if workflow_acc_list:
-        for w_acc_list in workflow_acc_list:
+            if workflow_acc_list:
+                for w_acc_list in workflow_acc_list:
+                    app_code_id = ApproverLimit.objects.filter(Q(company_id=inp_comp_code, approver_username=w_acc_list.app_username, del_ind=False, client=client)).values_list('app_code_id', flat=True)
 
-            app_code_id = ApproverLimit.objects.filter(Q(company_id=inp_comp_code,
-                                                         approver_username=w_acc_list.app_username,
-                                                         del_ind=False,
-                                                         client=client)).values_list('app_code_id',
-                                                                                     flat=True)
-
-            if app_code_id:
-                app_val_list = ApproverLimitValue.objects.filter(Q(company_id=inp_comp_code,
-                                                                   app_code_id__in=app_code_id,
-                                                                   del_ind=False,
-                                                                   app_types=schema_step_type,
-                                                                   client=client))
-                final_array = []
-                for app_val in app_val_list:
-                    final_array.append(w_acc_list.company_id)
-                    final_array.append(w_acc_list.account_assign_cat_id)
-                    final_array.append(w_acc_list.acc_value)
-                    final_array.append(w_acc_list.app_username)
-                    final_array.append(w_acc_list.currency_id)
-                    final_array.append(w_acc_list.sup_company_id)
-                    final_array.append(w_acc_list.sup_acc_value)
-                    final_array.append(app_val.upper_limit_value)
-                    final_array.append(app_val.currency_id)
-                    final_array.append(app_val.app_code_id)
-                    final_array.append(w_acc_list.sup_account_assign_cat_id)
-                    final_array.append(app_val.app_code_id)
-                    final_list.append(final_array)
+                    if app_code_id:
+                        app_val_list = ApproverLimitValue.objects.filter(Q(company_id=inp_comp_code, app_code_id__in=app_code_id, del_ind=False, app_types=schema_step_type, client=client))
+                        final_array = []
+                        for app_val in app_val_list:
+                            final_array.append(w_acc_list.company_id)
+                            final_array.append(w_acc_list.account_assign_cat_id)
+                            final_array.append(w_acc_list.acc_value)
+                            final_array.append(w_acc_list.app_username)
+                            final_array.append(w_acc_list.currency_id)
+                            final_array.append(w_acc_list.sup_company_id)
+                            final_array.append(w_acc_list.sup_acc_value)
+                            final_array.append(app_val.upper_limit_value)
+                            final_array.append(app_val.currency_id)
+                            final_array.append(app_val.app_code_id)
+                            final_array.append(w_acc_list.sup_account_assign_cat_id)
+                            final_array.append(app_val.app_code_id)
+                            final_list.append(final_array)
 
     t_count = len(final_list)
+
     # Context to display in Doc_report.html
     context = {
         'inc_nav': True,
@@ -636,10 +635,6 @@ def approval_report(request):
 
 @login_required
 def m_docsearch_meth(request):
-    """
-    :param request:
-    :return:
-    """
     inp_doc_type = ''
     result = ''
     page_range = 0
@@ -654,8 +649,6 @@ def m_docsearch_meth(request):
     page_type_flag = 'Doc_reports'
     rep_search_form = {}
     error_messages = ''
-    # company code list- client n del indicator
-    # users in selected company - client n del indicator
     comp_list = get_companylist(request)
 
     if request.method == 'GET':
@@ -667,21 +660,8 @@ def m_docsearch_meth(request):
         inp_created_by = ''
         inp_requester = ''
 
-        result = get_hdr_data(request,
-                              inp_doc_type,
-                              inp_doc_num,
-                              inp_from_date,
-                              inp_to_date,
-                              inp_supl,
-                              inp_created_by,
-                              inp_requester, report_search)
-
-        company_details = OrgCompanies.objects.filter(client=client, del_ind=False, company_guid=1000)
-        for comp in company_details:
-            if inp_doc_type == 'PO':
-                result = result.filter(company_code_id=comp.company_id)
-            else:  # For ScHeader queries
-                result = result.filter(co_code=comp.company_id)
+        # Assuming result is a list of dictionaries
+        result = get_hdr_data(request, inp_doc_type, inp_doc_num, inp_from_date, inp_to_date, inp_supl, inp_created_by, inp_requester, report_search)
 
     if not request.method == 'POST':
         if 'results' in request.session:
@@ -704,68 +684,61 @@ def m_docsearch_meth(request):
             inp_created_by = request.POST.get('created_by')
             inp_requester = request.POST.get('requester')
 
-            result = get_hdr_data(request, inp_doc_type,
-                                  inp_doc_num,
-                                  inp_from_date,
-                                  inp_to_date,
-                                  inp_supl,
-                                  inp_created_by,
-                                  inp_requester, report_search)
-            company_details = OrgCompanies.objects.filter(client=client, del_ind=False, company_guid=inp_comp_code)
-            for comp in company_details:
-                if inp_doc_type == 'PO':
-                    result = result.filter(company_code_id=comp.company_id)
-                else:  # For ScHeader queries
-                    result = result.filter(co_code=comp.company_id)
-    else:
-        rep_search_form = DocumentSearchForm()
+            filtered_results = []
 
-    error_messages = rep_search_form.errors
-    t_count = len(result)
+            # Check if '*' (All Companies) is selected
+            if inp_comp_code == '*':
+                # Fetch data for all companies
+                for item in result:
+                    company_code = item.get('co_code')  # Assuming 'co_code' is the key in the dictionary
+                    filtered_result = get_hdr_data(request, inp_doc_type, inp_doc_num, inp_from_date, inp_to_date, inp_supl, inp_created_by, inp_requester, report_search).filter(co_code=company_code)
+                    filtered_results.extend(filtered_result)
+            else:
+                # Fetch data for the selected company
+                filtered_results = get_hdr_data(request, inp_doc_type, inp_doc_num, inp_from_date, inp_to_date, inp_supl, inp_created_by, inp_requester, report_search)
 
-    for header_guid in result:
-        encrypted_header_guid.append(encrypt(header_guid))
+            error_messages = rep_search_form.errors
+            t_count = len(filtered_results)
 
-    result = zip(result, encrypted_header_guid)
-    # Assuming you can retrieve the 'client' and 'supp_id_up' values from your code context
-    client = getClients(request)
-    supp_id_up = []
+            for header_guid in filtered_results:
+                encrypted_header_guid.append(encrypt(header_guid))
 
-    # Call the function with the appropriate arguments
-    supplier_details = get_supplier_details(client, supp_id_up)
+            filtered_results = zip(filtered_results, encrypted_header_guid)
 
-    context = {
-        'inc_nav': True,
-        'inc_footer': True,
-        'nav_title': 'Search for document',
-        'sform': rep_search_form,
-        'results': result,
-        'page_range': page_range,
-        't_count': t_count,
-        'inp_doc_type': inp_doc_type,
-        'comp_list': comp_list,
-        'is_slide_menu': True,
-        'is_admin_active': True,
-        'encrypted_header_guid': encrypted_header_guid,
-        'sc_completion': sc_completion,
-        'sc_completion_flag': sc_completion_flag,
-        'sc_header': sc_header,
-        'error_messages': error_messages,
-        'supplier_details': supplier_details
-    }
+            # Assuming you can retrieve the 'client' and 'supp_id_up' values from your code context
+            client = getClients(request)
+            supp_id_up = []
 
-    return render(request, 'Reports/Doc_report.html', context)
+            # Call the function with the appropriate arguments
+            supplier_details = get_supplier_details(client, supp_id_up)
+
+            context = {
+                'inc_nav': True,
+                'inc_footer': True,
+                'nav_title': 'Search for document',
+                'sform': rep_search_form,
+                'results': filtered_results,
+                'page_range': page_range,
+                't_count': t_count,
+                'inp_doc_type': inp_doc_type,
+                'comp_list': comp_list,
+                'is_slide_menu': True,
+                'is_admin_active': True,
+                'encrypted_header_guid': encrypted_header_guid,
+                'sc_completion': sc_completion,
+                'sc_completion_flag': sc_completion_flag,
+                'sc_header': sc_header,
+                'error_messages': error_messages,
+                'supplier_details': supplier_details
+            }
+
+            return render(request, 'Reports/Doc_report.html', context)
 
 
 
 
 @login_required
 def accnt_report(request):
-    """
-        :param request:
-        :return:
-        """
-
     client = getClients(request)
     final_list = []
     page_range = 0
@@ -799,20 +772,18 @@ def accnt_report(request):
     }
 
     if request.method == 'GET':
-        # if 'final_list' in request.session:
-        #     request.POST = request.session['final_list']
-        if company_array[0]['company_id'] != '*':
-            inp_comp_code = int(company_array[0]['company_id'])
         inp_acc_assgn_cat = acc_cat_array[0]
         inp_lang = 'EN'
 
         if inp_comp_code is not None and inp_acc_assgn_cat is not None:
-            account_list = AccountingData.objects.filter(client=client, company_id=inp_comp_code,
-                                                         account_assign_cat=inp_acc_assgn_cat, del_ind=False)
-        # print("account_list", account_list)
+            if inp_comp_code == '*':
+                # Fetch data for all companies
+                account_list = AccountingData.objects.filter(client=client, account_assign_cat=inp_acc_assgn_cat, del_ind=False)
+            else:
+                account_list = AccountingData.objects.filter(client=client, company_id=inp_comp_code, account_assign_cat=inp_acc_assgn_cat, del_ind=False)
+
         result_array = []
         for account_data in account_list:
-            # print("account_data", account_data)
             account_desc_data_list = AccountingDataDesc.objects.filter(client=client,
                                                                        company_id=account_data.company_id,
                                                                        del_ind=False,
@@ -835,17 +806,17 @@ def accnt_report(request):
         context['final_list'] = final_list
         return render(request, 'Reports/accnt_report.html', context)
 
-    # If method is post get the form values and get header details accordingly
     if request.method == 'POST' or request.is_ajax():
-        # request.method = 'POST'
-        # data = JsonParser().get_json_from_req(request)
         inp_comp_code = request.POST.get('comp_code_app')
         inp_account_assgn_cat = request.POST.getlist('acc_assgn_cat')
         inp_lang = request.POST.get('language')
 
         if inp_comp_code is not None and inp_account_assgn_cat is not None:
-            account_list = AccountingData.objects.filter(client=client, company_id=inp_comp_code,
-                                                         account_assign_cat__in=inp_account_assgn_cat, del_ind=False)
+            if inp_comp_code == '*':
+                # Fetch data for all companies
+                account_list = AccountingData.objects.filter(client=client, account_assign_cat__in=inp_account_assgn_cat, del_ind=False)
+            else:
+                account_list = AccountingData.objects.filter(client=client, company_id=inp_comp_code, account_assign_cat__in=inp_account_assgn_cat, del_ind=False)
 
         for account_data in account_list:
             account_desc_data_list = AccountingDataDesc.objects.filter(client=client,
@@ -862,7 +833,6 @@ def accnt_report(request):
                 result_array.append(data.description)
                 lang_id = data.language_id
                 for lang in lang_array:
-                    print(lang['language_id'])
                     if lang['language_id'] == str(lang_id):
                         lang_desc = lang['description']
                 result_array.append(lang_desc)
@@ -872,7 +842,7 @@ def accnt_report(request):
         context['final_list'] = final_list
         t_count = len(final_list)
 
-        # Context to display in Doc_report.html
+        # Context to display in accnt_report.html
         context = {
             'inc_nav': True,
             'inc_footer': True,
@@ -880,7 +850,6 @@ def accnt_report(request):
             'comp_list': company_array,
             'lang_list': lang_array,
             'acct_val_list': acc_cat_array,
-            # 'acct_rep_form' : acct_rep_form,
             'final_list': final_list,
             'page_range': page_range,
             't_count': t_count,
@@ -892,6 +861,7 @@ def accnt_report(request):
         }
 
     return render(request, 'Reports/accnt_report.html', context)
+
 
 
 def get_acct_report(request):

@@ -114,7 +114,7 @@ class InitialSetupClient(BasicSettingsSave, ApplicationSettingsSave, MasterSetti
         # Save node level attributes
         safe_call(self.node_level_attribute_script, 'node_level_attribute_script')
         # Save email (uncomment this line to save email data)
-        # safe_call(self.email_contents_script, 'email_contents_script')
+        safe_call(self.email_contents_script, 'email_contents_script')
         # Save UNSPC
         safe_call(self.Unspc_code_script, 'Unspc_code_script')
         # Save DOCUMENTS
@@ -322,11 +322,11 @@ class InitialSetupClient(BasicSettingsSave, ApplicationSettingsSave, MasterSetti
             header = next(csvreader)  # skip header
             csv_to_db_data = []
             for csv_data in csvreader:
-                csv_to_db_data.append({'object_type': csv_data[0],
-                                       'subject': csv_data[1],
-                                       'header': csv_data[2],
-                                       'body': csv_data[3],
-                                       'footer': csv_data[4],
+                csv_to_db_data.append({'email_type': csv_data[0],
+                                       'email_subject': csv_data[1],
+                                       'email_header': csv_data[2],
+                                       'email_body': csv_data[3],
+                                       'email_footer': csv_data[4],
                                        'language_id': csv_data[5],
                                        'del_ind': csv_data[6]})
             self.save_email_settings(csv_to_db_data)

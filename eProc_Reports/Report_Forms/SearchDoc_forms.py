@@ -19,7 +19,7 @@ class DocumentSearchForm(forms.Form):
                                  widget=forms.Select(
                                      attrs={'class': "form-control", "onchange": 'docchanged(this.value)'}))
 
-    company_code = forms.ModelChoiceField(label='Company Code', required=False, empty_label="Select",
+    company_code = forms.ModelChoiceField(label='Company Code', required=False, empty_label=None,
                                           queryset=OrgCompanies.objects.filter(del_ind=False),
                                           widget=forms.Select(attrs={'class': "form-control"}),
                                           )
