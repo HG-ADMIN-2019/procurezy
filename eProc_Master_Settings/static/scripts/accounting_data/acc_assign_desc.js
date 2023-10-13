@@ -313,6 +313,23 @@ function read_popup_data() {
     });
 }
 
+// Function to get the selected row data
+function get_row_data(tableSelector) {
+    main_table_checked = [];
+    $(tableSelector).DataTable().$('input[type="checkbox"]').each(function () {
+        var checkbox = $(this);
+        var row = checkbox.closest("tr");
+        var aad_arr_obj = {};
+        aad.del_ind = checkbox.is(':checked');
+        if(aad.del_ind) {
+            aad.company_id = row.find("TD").eq(1).find("select option:selected").val() || row.find("TD").eq(1).html()
+            aad.account_assign_cat = ow.find("TD").eq(2).find("select option:selected").val() || row.find("TD").eq(2).html();
+            aad.account_assign_value = row.find("TD").eq(3).find("select option:selected").val() || row.find("TD").eq(3).html();
+            main_table_checked.push(aad);
+        }
+    });
+}
+
 // onclick of valid popup
 function valid_popup(){
   $('#id_data_upload').modal('hide');

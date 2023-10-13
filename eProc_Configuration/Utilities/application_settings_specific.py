@@ -458,6 +458,58 @@ class ApplicationSettingsSave:
 
         return data
 
+    def generate_prod_cat_Cust_delete_flags(self, prod_cat_Cust_data):
+        delete_flags = []  # List to store delete_flag for each value
+
+        for prod_cat_Cust_detail in prod_cat_Cust_data['data']:
+            delete_flag = True
+
+            # Check if value is present in the MessagesIdDesc table
+            if django_query_instance.django_existence_check(UnspscCategoriesCust,
+                                                            {'prod_cat_id': prod_cat_Cust_detail['prod_cat_id'],
+                                                             'client': self.client,
+                                                             'del_ind': False}):
+                delete_flag = False
+
+            delete_flags.append(delete_flag)  # Store delete_flag value for each iteration
+            data = {
+                'delete_flags': delete_flags  # Include the delete_flags list in the response data
+            }
+
+        return data
+
+    def generate_aav_delete_flags(self, aav_data):
+        delete_flags = []
+        field_name_mapping = {
+            AccountingDataDesc: 'account_assign_value',
+            WorkflowACC: 'acc_value',
+            DetermineGLAccount: 'gl_acc_num',
+        }
+
+        for aav_detail in aav_data['data']:
+            delete_flag = True
+            tables_to_check = [AccountingDataDesc, DetermineGLAccount, WorkflowACC]
+
+            # Check if value is present in the table
+            for table_name in tables_to_check:
+                field_name = field_name_mapping.get(table_name, 'account_assign_value')
+                if django_query_instance.django_existence_check(table_name,
+                                                                {'company_id': aav_detail['company_id'],
+                                                                 'account_assign_cat': aav_detail[
+                                                                     'account_assign_cat'],
+                                                                 field_name: aav_detail['account_assign_value'],
+                                                                 'client': self.client,
+                                                                 'del_ind': False}):
+                    delete_flag = False
+                    break
+
+            delete_flags.append(delete_flag)
+            data = {
+                'delete_flags': delete_flags
+            }
+
+        return data
+
     def save_document_type_data(self, documenttype_data):
         documenttype_db_list = []
         used_flag_set = []
