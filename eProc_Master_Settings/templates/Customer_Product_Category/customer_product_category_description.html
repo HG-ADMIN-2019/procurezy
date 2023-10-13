@@ -1265,6 +1265,10 @@ function onclick_copy_update_button(data){
                 prodcat_arr_obj.prod_cat_id = row.find("TD").eq(1).find('input[type="text"]').val() || row.find("TD").eq(1).html();
                 prodcat_arr_obj.language_id = row.find("TD").eq(2).find('input[type="text"]').val() || row.find("TD").eq(2).html();
                 prodcat_arr_obj.description = row.find("TD").eq(3).find('input[type="text"]').val() || row.find("TD").eq(3).html();
+                for (i = 0; i < render_language_data.length; i++) {
+                if (prodcat_arr_obj.language_id == render_language_data[i].description)
+                    prodcat_arr_obj.language_id = render_language_data[i].language_id;
+            }
                 main_table_prodcat_checked.push(prodcat_arr_obj);
             }
         });
