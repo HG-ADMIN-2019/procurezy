@@ -497,18 +497,6 @@
         table_sort_filter('id_popup_table');
     }
 
-   function display_button(){
-        if(GLOBAL_ACTION == "DELETE"){
-            $('#delete_data').show();
-            $('#save_id').hide();
-        }
-        else{
-            $('#save_id').show();
-            document.getElementById('save_id').style.visibility = 'visible';
-            $('#delete_data').hide();
-        }
-   }
-
     // onclick of valid popup
     function valid_popup(){
       $('#id_data_upload').modal('hide');
