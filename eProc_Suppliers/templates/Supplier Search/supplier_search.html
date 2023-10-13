@@ -457,16 +457,16 @@ var form_method = '{{form_method|safe}}';
     setTimeout(function() {
                        OpenLoaderPopup();
          }, 500);
-    localStorage.removeItem("username");
-    localStorage.removeItem("first_name");
-    localStorage.removeItem("last_name");
-    localStorage.removeItem("email");
-    localStorage.removeItem("user_type");
-    localStorage.removeItem("employee_id");
-    localStorage.removeItem("user_locked");
-    localStorage.removeItem("pwd_locked");
-    localStorage.removeItem("is_active");
-    localStorage.setItem("username", "");
+
+    localStorage.removeItem("fname");
+    localStorage.removeItem("supp_id");
+    localStorage.removeItem("supp_email");
+    localStorage.removeItem("supp_type");
+    localStorage.removeItem("city_code");
+    localStorage.removeItem("country_id");
+    localStorage.removeItem("supp_porg");
+    localStorage.removeItem("supp_purchase_block");
+    $(".error_message").prop("hidden", true);
     form_method = 'GET';
         display_supplier_data(supplier_data_onload);
         localStorage.setItem("username", "");
