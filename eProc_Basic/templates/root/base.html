@@ -140,6 +140,15 @@
        return false;
         }
     });
+    // Allows only characters without space
+    $("body").on("keypress", ".check_character_no_space", function (event) {
+    var regex = new RegExp("^[a-zA-Z]+$");
+    var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+    if (!regex.test(key)) {
+       event.preventDefault();
+       return false;
+        }
+    });
     // Allows only Upper case characters
     $("body").on("keypress", ".check_uppercase_character", function (event) {
     var regex = new RegExp("^[ A-Z]+$");

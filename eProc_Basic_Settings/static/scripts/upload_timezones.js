@@ -274,10 +274,10 @@ function get_selected_data(){
 // Function for add a new row data
 function new_row_data() {
     basic_add_new_html = '<tr ><td><input type="checkbox" required></td>'+
-    '<td><input class="input form-control check_only_character" type="text"  title="Minimum length is 3" minlength="1" maxlength="5"  name="timezonecode" style="text-transform:uppercase;" required></td>'+
+    '<td><input class="input form-control check_only_character" type="text"  title="Minimum length is 3" minlength="3" maxlength="5"  name="timezonecode" style="text-transform:uppercase;" required></td>'+
     '<td><input class="input form-control check_uppercase_character" type="text" maxlength="255"  name="timezonename"  required></td>'+
     '<td><input class="input form-control check_UTC_Difference" type="text" title="Minimum length is 15" minlength="15" maxlength="15"  name="utcdifference"  style="text-transform:uppercase;" required></td>'+
-    '<td><input class="input form-control check_only_character" type="text" maxlength="10"  name="daylightsave"   style="text-transform:uppercase;" required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+    '<td><input class="input form-control check_character_no_space" type="text" maxlength="10"  name="daylightsave"   style="text-transform:uppercase;" required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
 }
 

@@ -210,7 +210,7 @@ function read_popup_data(){
 
 // Function for add a new row data
 function new_row_data(){
-    basic_add_new_html = '<tr ><td><input type="checkbox" required></td><td><input class="form-control check_only_character" type="text"  title="Minimum length is 2" minlength="2" maxlength="2"  name="languageid" style="text-transform:uppercase;" required></td><td><input class="form-control check_only_character" type="text" maxlength="100"  name="description"  required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+    basic_add_new_html = '<tr ><td><input type="checkbox" required></td><td><input class="form-control check_character_no_space" type="text"  title="Minimum length is 2" minlength="2" maxlength="2"  name="languageid" style="text-transform:uppercase;" required></td><td><input class="form-control check_character_no_space" type="text" maxlength="100"  name="description"  required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
 }
 
