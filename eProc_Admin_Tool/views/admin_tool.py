@@ -60,7 +60,7 @@ from eProc_Suppliers.Utilities.supplier_generic import supplier_detail_search
 from eProc_Suppliers.Utilities.supplier_specific import get_supplier_data, update_country_encrypt
 from eProc_Suppliers.models import OrgSuppliers
 from eProc_Users.Utilities.user_generic import user_detail_search, get_usertype_values, \
-    get_emp_data, emp_search_data, set_search_data, get_supplier_type_values
+    get_emp_data, emp_search_data, set_search_data, get_supplier_type_values, get_output_medium_values
 from django.http import QueryDict
 import sys
 from datetime import datetime
@@ -138,7 +138,7 @@ def user_search(request):
     dropdown_language = user_language_list()
     dropdown_messages = user_messages_list()
     employee_results_onload = get_emp_data()
-    form_method = 'post'
+    form_method = 'POST'
 
     context = {
         'inc_nav': True,
@@ -205,6 +205,7 @@ def supplier_search(request):
     client = global_variables.GLOBAL_CLIENT
     country_dictionary_list = django_query_instance.django_filter_query(Country,
                                                                         None, None, ['country_code', 'country_name'])
+    supp_data_onload = get_supplier_data()
     context = {
         'inc_nav': True,
         'inc_footer': True,
@@ -215,12 +216,13 @@ def supplier_search(request):
             'del_ind': False}, 'porg_id'),
         'is_admin_active': True,
         'dropdown_suptype_values': get_supplier_type_values(),
+        'supp_data_onload': supp_data_onload,
     }
 
     if request.method == 'GET':
         supplier_id_encrypted = []
         supplier_results = get_supplier_data()
-
+        context['form_method'] = 'GET'
         context['supplier_results'] = supplier_results
 
     if request.method == 'POST':
@@ -346,7 +348,9 @@ def sup_details(req, supplier_id):
                                                                   ['country_code', 'country_name']),
         'language_list': django_query_instance.django_filter_query(Languages, {'del_ind': False}, None,
                                                                    ['language_id', 'description']),
-        'supp_img_info': supp_img_info
+        'supp_img_info': supp_img_info,
+        'dropdown_suptype_values': get_supplier_type_values(),
+        'dropdown_output_med_values': get_output_medium_values(),
     }
 
     return render(req, 'Display Edit Supplier/display_edit_supplier.html', context)

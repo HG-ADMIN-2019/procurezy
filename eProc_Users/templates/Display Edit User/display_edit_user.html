@@ -384,7 +384,6 @@ var lang_id = '{{user_info.language_id | safe}}';
     });
 
     $('form').on('submit',function (e) {
-        OpenLoaderPopup();
         var valid = save_user_form_validation();
         if(!valid){
             localStorage.setItem("error_flag", 1);
@@ -412,7 +411,6 @@ var lang_id = '{{user_info.language_id | safe}}';
         var email_val = $('#email').val();
         var err_flag, super_user_val = 0, user_locked_val = 0, pwd_locked_val = 0, is_active_val = 0 ;
         set_value();
-<!--        OpenLoaderPopup();-->
         is_save_form_valid = save_user_form_validation()
         if (is_save_form_valid) {
             var user_data_dict = {}
@@ -479,7 +477,7 @@ var lang_id = '{{user_info.language_id | safe}}';
                 localStorage.setItem("error_flag", 1);
                    setTimeout(function() {
                    $('#save_error_div').hide();
-            }, msg_display_interval*2500);
+            }, msg_display_interval*2000);
                 return false;
             }
         }
