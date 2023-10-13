@@ -510,6 +510,38 @@ class ApplicationSettingsSave:
 
         return data
 
+    def generate_aad_delete_flags(self, aad_data):
+        delete_flags = []
+        field_name_mapping = {
+            DetermineGLAccount: 'gl_acc_num',
+            WorkflowACC: 'acc_value',
+
+        }
+
+        for aad_detail in aad_data['data']:
+            delete_flag = True
+            tables_to_check = [DetermineGLAccount, WorkflowACC]
+
+            # Check if value is present in the table
+            for table_name in tables_to_check:
+                field_name = field_name_mapping.get(table_name, 'account_assign_value')
+                if django_query_instance.django_existence_check(table_name,
+                                                                {'company_id': aad_detail['company_id'],
+                                                                 'account_assign_cat': aad_detail[
+                                                                     'account_assign_cat'],
+                                                                 field_name: aad_detail['account_assign_value'],
+                                                                 'client': self.client,
+                                                                 'del_ind': False}):
+                    delete_flag = False
+                    break
+
+            delete_flags.append(delete_flag)
+            data = {
+                'delete_flags': delete_flags
+            }
+
+        return data
+
     def save_document_type_data(self, documenttype_data):
         documenttype_db_list = []
         used_flag_set = []

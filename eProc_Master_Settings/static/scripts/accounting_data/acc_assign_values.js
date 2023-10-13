@@ -328,7 +328,7 @@ function display_tb_data() {
     '<td><input class="form-control formatDate" type="text"  name="Valid To Date" required></td>'+
     '<td hidden><input value=""></td>'+
     '<td class="class_del_checkbox" hidden><input type="checkbox" required></td>'+
-    '<td class="class_del_checkbox1" hidden><input type="checkbox" required></td></tr>';
+    '</tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
     DatePicker();
     table_sort_filter("id_popup_table");

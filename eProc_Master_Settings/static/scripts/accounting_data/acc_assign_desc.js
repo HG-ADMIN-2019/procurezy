@@ -4,6 +4,11 @@ var main_table_low_value = [];
 var aad={};
 var corresponding_values = {};
 
+//hide the myModal popup: Implemented Dependency delete purpose
+function hideModal() {
+    $('#Acc_desc_Modal').modal('hide');
+}
+
 //*********************************************************
 function account_assignment_value_find(company_num) {
     corresponding_values = {};
@@ -319,12 +324,15 @@ function get_row_data(tableSelector) {
     $(tableSelector).DataTable().$('input[type="checkbox"]').each(function () {
         var checkbox = $(this);
         var row = checkbox.closest("tr");
-        var aad_arr_obj = {};
+        var aad = {};
         aad.del_ind = checkbox.is(':checked');
         if(aad.del_ind) {
-            aad.company_id = row.find("TD").eq(1).find("select option:selected").val() || row.find("TD").eq(1).html()
-            aad.account_assign_cat = ow.find("TD").eq(2).find("select option:selected").val() || row.find("TD").eq(2).html();
-            aad.account_assign_value = row.find("TD").eq(3).find("select option:selected").val() || row.find("TD").eq(3).html();
+            aad.company_id = row.find("TD").eq(1).find('input[type="text"]').val() || row.find("TD").eq(1).html()
+            aad.account_assign_cat = row.find("TD").eq(2).find('input[type="text"]').val() || row.find("TD").eq(2).html();
+            aad.account_assign_value = row.find("TD").eq(3).find('input[type="number"]').val() || row.find("TD").eq(3).html();
+            aad.description = row.find("TD").eq(4).find('input[type="text"]').val() || row.find("TD").eq(4).html();
+            aad.language_id = row.find("TD").eq(5).find('input[type="text"]').val() || row.find("TD").eq(5).html();
+            aad.acc_desc_guid = row.find("TD").eq(6).find('input[type="text"]').val() || row.find("TD").eq(6).html();
             main_table_checked.push(aad);
         }
     });

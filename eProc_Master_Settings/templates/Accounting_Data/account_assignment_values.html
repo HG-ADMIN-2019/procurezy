@@ -127,7 +127,6 @@
                                     <th>Valid To Date</th>
                                     <th hidden>Guid</th>
                                     <th id="id_del_ind_checkbox" hidden>Del Indicator</th>
-<!--                                    <th id="id_del_ind_checkbox1" hidden>Del Indicator Flag</th>-->
                                 </tr>
                             </thead>
                             <tbody id="id_popup_tbody">
@@ -316,7 +315,6 @@
                     }
                 }
                 if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')&& (dateValid == 'Y')   ) {
-<!--                    var add_basic_data = '';-->
                     $('#id_save_confirm_popup').modal('hide');
                     data = {'data':aav_data,'table_name':'AccountingData','action':GLOBAL_ACTION}
                     OpenLoaderPopup();
@@ -389,15 +387,16 @@
                                 <td><input class="form-control formatDate" type="text" value=${row.cells[4].innerHTML}  name="Valid From Date" disabled></td>
                                 <td><input class="form-control" type="text" value=${row.cells[5].innerHTML}  name="Valid To Date" disabled></td>
                                 <td hidden><input required></td>
-                                <td class="class_del_checkbox" hidden><input type="checkbox" required></td>'+
+                                <td class="class_del_checkbox" hidden><input type="checkbox" required></td>
                             </tr>`;
                     }
                 }
-                CloseLoaderPopup();
                 $('#id_popup_tbody').append(edit_basic_data);
+                $("#header_select").prop( "hidden", false );
                 $("#id_del_ind_checkbox").prop("hidden", true);
                 $('#aav_Modal').modal('show');
                 table_sort_filter('id_popup_table');
+                CloseLoaderPopup();
             },
         });
     }
@@ -410,38 +409,23 @@
         main_table_checked = [];
         $('#display_basic_table').DataTable().destroy();
         get_row_data("#id_popup_table");
-<!--        get_selected_row_data(); // Function call to get the selected row data-->
-<!--        if(disable_check) {-->
-<!--            $('#delete_data').prop('disabled', true);-->
-<!--            get_message_details("JMSG112"); // Get message details-->
-<!--            var display4 = msg_type.messages_id_desc;-->
-<!--            document.getElementById("id_error_msg_checkbox").innerHTML = display4+ "Checkbox";-->
-<!--            $('#id_delete_confirm_popup').modal('hide');-->
-<!--        }-->
-<!--        else if (main_table_aav_checked.length == "0") {-->
-<!--            get_message_details("JMSG005"); // Get message details-->
-<!--            document.getElementById("id_error_msg_checkbox").innerHTML = display4+ "Checkbox";-->
-<!--            $('#id_delete_confirm_popup').modal('hide');-->
-<!--        }-->
-<!--        else {-->
-            $('#id_delete_confirm_popup').modal('hide');
-            data = {'data':main_table_checked,'table_name':'AccountingData','action':GLOBAL_ACTION}
-            OpenLoaderPopup();
-            $.ajax({
-                type: 'POST',
-                url: "{% url 'eProc_Master_Settings:create_update_master_data' %}",
-                data: JSON.stringify(data),
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                success: function(Response) {
-                    rendered_account_assignment_value = Response[0];
-                    display_basic_db_data();
-                    $('#aav_Modal').modal('hide');
-                    success_response(Response);
-                    CloseLoaderPopup();
-                }
-            });
-<!--        }-->
+        $('#id_delete_confirm_popup').modal('hide');
+        data = {'data':main_table_checked,'table_name':'AccountingData','action':GLOBAL_ACTION}
+        OpenLoaderPopup();
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'eProc_Master_Settings:create_update_master_data' %}",
+            data: JSON.stringify(data),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function(Response) {
+                rendered_account_assignment_value = Response[0];
+                display_basic_db_data();
+                $('#aav_Modal').modal('hide');
+                success_response(Response);
+                CloseLoaderPopup();
+            }
+        });
     }
 
     //onclick of data Upload copy data to modal pop-up
@@ -783,29 +767,13 @@
                             guid = 'GUID';
                             unique_input = '<select class="form-control" id="company_dropdw">' + company_dropdwn + '</select>'
                             edit_basic_data += '<tr><td><input type="checkbox" required></td><td>' + unique_input + ' </td><td><select id="acc_dropdwn" class="form-control" id="acc_ass_val_dropdw">' + acc_ass_dropdwn + ' </select></td> <td><input class="form-control check_number" type="number" value="' + row.cells[3].innerHTML + '" name="Account Assignment Value" maxlength="40" required> </td> <td><input class="form-control formatDate" type="text" value="' + row.cells[4].innerHTML + '"  name="Valid From Date" required></td> <td><input class="form-control formatDate" type="text" value="' + row.cells[5].innerHTML + '"  name="Valid To Date" required></td> <td hidden><input value="' + guid + '"></td> <td class="class_del_checkbox" hidden><input type="checkbox" required></td>'+
-                            '<td class="class_del_checkbox1" hidden><input type="checkbox" required></td></tr>';
+                            '</tr>';
                             $("#header_select").prop("hidden",false);
-                        }
-                        else if (GLOBAL_ACTION == "DELETE"){
-                            $("#delete_data").prop("hidden", false);
-                            if ((row.cells[7].innerHTML=="False") || (row.cells[7].innerHTML=="false")){
-                                check = '<input type="checkbox" disabled>'
-                                $('#delete_data').prop('disabled', true);
-                            }
-                            else {
-                                check = '<input type="checkbox">'
-                                $('#delete_data').prop('disabled', false);
-                            }
-                            unique_input = '<select class="form-control" id="company_dropdw">' + company_dropdwn + '</select>'
-                            edit_basic_data += '<tr> <td>'+check+'</td> <td>'+unique_input+'</td><td><select id="acc_dropdwn" class="form-control" id="acc_ass_val_dropdw">' + acc_ass_dropdwn + ' </select></td> <td><input class="form-control check_number" type="number" value="' + row.cells[3].innerHTML + '" name="Account Assignment Value" maxlength="40" required> </td> <td><input class="form-control formatDate" type="text" value="' + row.cells[4].innerHTML + '"  name="Valid From Date" required></td> <td><input class="form-control" type="text" value="' + row.cells[5].innerHTML + '"  name="Valid To Date" required></td> <td hidden><input value="' + guid + '"></td> <td class="class_del_checkbox" hidden><input type="checkbox" required></td>'+
-                            '<td class="id_del_ind_checkbox1" hidden><input type="text" name = "del_ind_flag" value="' + row.cells[7].innerHTML + '"></td></tr>';
-                            $("#header_select").prop("hidden", false);
-                        }
-                        else {
+                        } else {
                             guid = row.cells[6].innerHTML;
                             unique_input = '<select class="form-control" id="company_dropdw" disabled>' + company_dropdwn + '</select>'
                             edit_basic_data += '<tr><td hidden><input type="checkbox"></td><td>' + unique_input + ' </td><td><select id="acc_dropdwn" class="form-control" id="acc_ass_val_dropdw" disabled>' + acc_ass_dropdwn + ' </select></td> <td><input class="form-control check_number" type="number" value="' + row.cells[3].innerHTML + '" name="Account Assignment Value" maxlength="40" disabled> </td> <td><input class="form-control formatDate" type="text" value="' + row.cells[4].innerHTML + '"  name="Valid From Date" required></td> <td><input class="form-control formatDate" type="text" value="' + row.cells[5].innerHTML + '"  name="Valid To Date" required></td> <td hidden><input value="' + guid + '"></td> <td class="class_del_checkbox" hidden><input type="checkbox" required></td>'+
-                            '<td class="class_del_checkbox1" hidden><input type="checkbox" required></td></tr>';
+                            '</tr>';
                             $("#header_select").prop("hidden",true);
                         }
                         var account_assign_cat = row.cells[2].innerHTML
@@ -833,22 +801,12 @@
             }
         });
     }
+
     function DatePicker() {
-     $(".formatDate").datepicker({
-            format: "dd-mm-yyyy",
-            autoclose:true
+         $(".formatDate").datepicker({
+                format: "dd-mm-yyyy",
+                autoclose:true
         });
-        }
-    //***************************
-    function display_button(){
-        if(GLOBAL_ACTION == "DELETE"){
-            $('#delete_data').show();
-            $('#save_id').hide();
-        }
-        else{
-            $('#delete_data').hide();
-            $('#save_id').show();
-        }
     }
 
     //Function to highlight duplicate records
