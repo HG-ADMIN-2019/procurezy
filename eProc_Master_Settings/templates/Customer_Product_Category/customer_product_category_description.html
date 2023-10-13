@@ -196,28 +196,28 @@
     var desc_prod_cat = '';
     var hidden_unspsc_value = [];
 
-    //Dropdown function
-    function unspcdesc_dropdown(){
-        get_main_table_data(); //Read data from main table
-        if(rendered_UNSPC_data.length != 0){
-            desc_prod_cat = rendered_UNSPC_data[0].prod_cat_desc; }
-        else {
-            desc_prod_cat = "";
-        }
+<!--    //Dropdown function-->
+<!--    function unspcdesc_dropdown(){-->
+<!--        get_main_table_data(); //Read data from main table-->
+<!--        if(rendered_UNSPC_data.length != 0){-->
+<!--            desc_prod_cat = rendered_UNSPC_data[0].prod_cat_desc; }-->
+<!--        else {-->
+<!--            desc_prod_cat = "";-->
+<!--        }-->
 
-        var available_prod_cat_id_values = rendered_UNSPC_data.filter(function(item) {
-            return !main_table_low_value.includes(item.prod_cat_id);
-        });
-        prod_cat_id_dropdown = '';
-        $.each(available_prod_cat_id_values, function(i, item){
-            prod_cat_id_dropdown += '<option value="' + item.prod_cat_id + '">' + item.prod_cat_id + '</option>';
-        })
+<!--        var available_prod_cat_id_values = rendered_UNSPC_data.filter(function(item) {-->
+<!--            return !main_table_low_value.includes(item.prod_cat_id);-->
+<!--        });-->
+<!--        prod_cat_id_dropdown = '';-->
+<!--        $.each(available_prod_cat_id_values, function(i, item){-->
+<!--            prod_cat_id_dropdown += '<option value="' + item.prod_cat_id + '">' + item.prod_cat_id + '</option>';-->
+<!--        })-->
 
-        language_id_dropdown = ' ';
-        $.each(render_language_data, function(i, item){
-            language_id_dropdown += '<option value="' + item.language_id + '">' + item.description + '</option>';
-        })
-    }
+<!--        language_id_dropdown = ' ';-->
+<!--        $.each(render_language_data, function(i, item){-->
+<!--            language_id_dropdown += '<option value="' + item.language_id + '">' + item.description + '</option>';-->
+<!--        })-->
+<!--    }-->
 
     var available_unspsc_data = [];
     var used_languages = [];
@@ -326,124 +326,6 @@
         });
     }
 
-    //onclick of data Upload copy data to modal pop-up
-    function onclick_display_csv_data() {
-        $("#valid_upload").modal('hide');
-        document.getElementById('delete_data').style.visibility='hidden';
-        $("#id_check_success_messages").empty();
-        $("#id_check_error_messages").empty();
-        $("#id_check_success_messages").prop("hidden", true);
-        $("#id_check_error_messages").prop("hidden", true);
-        $("#id_check_special_character_messages").prop("hidden", true);
-        $("#error_msg_id").css("display", "none")
-        $('#id_popup_table').DataTable().destroy();
-        formdata = new FormData();
-        attached_file = $('#id_file_data_upload').prop('files')[0]
-        if(attached_file == undefined){
-           display_file_select_error(); // Display error message if no file is selected
-        }
-        else {
-            file_extension = (attached_file.name).split(".")[1]
-            file_extension = file_extension.toUpperCase();
-            if(file_extension == 'CSV'){
-                formdata.append("file_attach", attached_file);
-                formdata.append("Tablename",Tablename);
-                formdata.append("appname",appname);
-                $('#id_data_upload').modal('hide');
-                $('#id_popup_tbody').empty();
-                OpenLoaderPopup();
-                $.ajax({
-                    type: 'POST',
-                    url: "{% url 'eProc_Basic_Settings:data_upload' %}",
-                    data: formdata,
-                    contentType: "application/json; charset=utf-8",
-                    success: function(response) {
-                        if(response.error_message){
-                            $("#id_error_msg_upload").prop("hidden",false)
-                            document.getElementById("id_error_msg_upload").innerHTML = response.error_message;
-                            document.getElementById("id_error_msg_upload").style.color = "Red";
-                            $('#id_data_upload').modal('show');
-                        }
-                        else {
-                            cusprodcatdesc_data_array = response.valid_data_list;
-                            var edit_basic_data = '';
-                            var del_ind = '';
-                            var dropdown_values = [];
-                            var inc_index=0;
-                            $("#id_popup_tbody").empty();
-                            $.each(response.valid_data_list, function (i, value) {
-                                var prod_cat_id_value = value.prod_cat_id
-                                var language_id_value = value.language_id
-                                dropdown_values.push([prod_cat_id_value, language_id_value])
-                                del_ind = '<td>' + value.del_ind + '</td>'
-                                if (value.del_ind == 1) {
-                                    del_ind=' <input type="checkbox" value="' + value.del_ind  + '" checked>'
-                                }
-                                else {
-                                    del_ind= '<input type="checkbox" value="' + value.del_ind + '" required>'
-                                }
-                                var prod_cat = '';
-                                var prod_cat_list = '';
-                                var prod_cat_id_list = '';
-                                $.each(rendered_UNSPC_data, function(i, item){
-                                    if( value.prod_cat_id == item.prod_cat_id){
-                                        prod_cat = '<option value="' + item.prod_cat_id + '">' + item.prod_cat_id + '</option>';
-                                    }else{
-                                        prod_cat_list += '<option value="' + item.prod_cat_id + '">' + item.prod_cat_id + '</option>';
-                                    }
-                                    prod_cat_id_list = prod_cat + prod_cat_list
-                                });
-                                var language = '';
-                                var language_list = '';
-                                var language_id_list = '';
-                                $.each(render_language_data, function(i, item){
-                                    if( value.language_id == item.language_id){
-                                        language = '<option value="' + item.language_id + '">' + item.description + '</option>';
-                                    }else{
-                                        language_list += '<option value="' + item.language_id + '">' + item.description + '</option>';
-                                    }
-                                    language_id_list = language + language_list
-                                });
-                                edit_basic_data += '<tr ><td><input type="checkbox" required></td><td><select type="text" class="input form-control prodid"  name="prodid" onchange="GetSelectedTextValue(this)"><option value ="' + value.prod_cat_id + '"'+prod_cat_id_list+'></option></select></td><td><select class="form-control" type="text"><option value ="' + value.language_id + '"'+language_id_list+'></option></select></td><td><input class="form-control description" type="text"  name="description"   value ="' + value.description + '" maxlength="200" onkeypress="return /[a-z ]/i.test(event.key)" required></td><td hidden></td><td>'+ del_ind +'</td></tr>';
-                            });
-                            $('#id_popup_table').append(edit_basic_data);
-                            var i =0;
-                            $("#id_popup_table TBODY TR").each(function() {
-                                var row = $(this);
-                                var prod_cat_id_list = dropdown_values[i][0]
-                                var language_id_list = dropdown_values[i][1]
-                                $(row.find("TD").eq(1).find("select option[value="+prod_cat_id_list+"]")).attr('selected','selected');
-                                $(row.find("TD").eq(2).find("select option[value="+language_id_list+"]")).attr('selected','selected');
-                                i++;
-                            });
-                            $( "#id_del_ind_checkbox").prop( "hidden", false );
-                            $( "#header_select").prop( "hidden", false );
-                            $( ".class_del_checkbox").prop( "hidden", false );
-                            $('#custproddescModal').modal('show');
-                            $('#id_data_upload').modal('hide');
-                            document.getElementById("id_del_add_button").style.display = "block";
-                            $('#id_check_data').show();
-                            $("#id_check_data").prop("hidden", false);
-                            $("#save_id").prop("hidden", true);
-                            table_sort_filter('id_popup_table')
-                        }
-                        CloseLoaderPopup();
-                    },
-                    cache: false,
-                    processData: false,
-                    contentType: false,
-                });
-            }
-            else{
-                $("#id_error_msg_upload").prop("hidden",false)
-                get_message_details("JMSG110"); // Get message details
-                var display = msg_type.messages_id_desc;
-                document.getElementById("id_error_msg_upload").innerHTML = display;
-                document.getElementById("id_error_msg_upload").style.color = "Red";
-                $('#id_data_upload').modal('show');
-            }
-        }
-    }
 
 
     // validate and save for add,copy,update and upload data
@@ -841,6 +723,126 @@ function get_main_table_data_upload() {
                     CloseLoaderPopup();
                 }
             });
+        }
+    }
+
+
+    //onclick of data Upload copy data to modal pop-up
+    function onclick_display_csv_data() {
+        $("#valid_upload").modal('hide');
+        document.getElementById('delete_data').style.visibility='hidden';
+        $("#id_check_success_messages").empty();
+        $("#id_check_error_messages").empty();
+        $("#id_check_success_messages").prop("hidden", true);
+        $("#id_check_error_messages").prop("hidden", true);
+        $("#id_check_special_character_messages").prop("hidden", true);
+        $("#error_msg_id").css("display", "none")
+        $('#id_popup_table').DataTable().destroy();
+        formdata = new FormData();
+        attached_file = $('#id_file_data_upload').prop('files')[0]
+        if(attached_file == undefined){
+           display_file_select_error(); // Display error message if no file is selected
+        }
+        else {
+            file_extension = (attached_file.name).split(".")[1]
+            file_extension = file_extension.toUpperCase();
+            if(file_extension == 'CSV'){
+                formdata.append("file_attach", attached_file);
+                formdata.append("Tablename",Tablename);
+                formdata.append("appname",appname);
+                $('#id_data_upload').modal('hide');
+                $('#id_popup_tbody').empty();
+                OpenLoaderPopup();
+                $.ajax({
+                    type: 'POST',
+                    url: "{% url 'eProc_Basic_Settings:data_upload' %}",
+                    data: formdata,
+                    contentType: "application/json; charset=utf-8",
+                    success: function(response) {
+                        if(response.error_message){
+                            $("#id_error_msg_upload").prop("hidden",false)
+                            document.getElementById("id_error_msg_upload").innerHTML = response.error_message;
+                            document.getElementById("id_error_msg_upload").style.color = "Red";
+                            $('#id_data_upload').modal('show');
+                        }
+                        else {
+                            cusprodcatdesc_data_array = response.valid_data_list;
+                            var edit_basic_data = '';
+                            var del_ind = '';
+                            var dropdown_values = [];
+                            var inc_index=0;
+                            $("#id_popup_tbody").empty();
+                            $.each(response.valid_data_list, function (i, value) {
+                                var prod_cat_id_value = value.prod_cat_id
+                                var language_id_value = value.language_id
+                                dropdown_values.push([prod_cat_id_value, language_id_value])
+                                del_ind = '<td>' + value.del_ind + '</td>'
+                                if (value.del_ind == 1) {
+                                    del_ind=' <input type="checkbox" value="' + value.del_ind  + '" checked>'
+                                }
+                                else {
+                                    del_ind= '<input type="checkbox" value="' + value.del_ind + '" required>'
+                                }
+                                var prod_cat = '';
+                                var prod_cat_list = '';
+                                var prod_cat_id_list = '';
+                                $.each(rendered_UNSPC_data, function(i, item){
+                                    if( value.prod_cat_id == item.prod_cat_id){
+                                        prod_cat = '<option value="' + item.prod_cat_id + '">' + item.prod_cat_id + '</option>';
+                                    }else{
+                                        prod_cat_list += '<option value="' + item.prod_cat_id + '">' + item.prod_cat_id + '</option>';
+                                    }
+                                    prod_cat_id_list = prod_cat + prod_cat_list
+                                });
+                                var language = '';
+                                var language_list = '';
+                                var language_id_list = '';
+                                $.each(render_language_data, function(i, item){
+                                    if( value.language_id == item.language_id){
+                                        language = '<option value="' + item.language_id + '">' + item.description + '</option>';
+                                    }else{
+                                        language_list += '<option value="' + item.language_id + '">' + item.description + '</option>';
+                                    }
+                                    language_id_list = language + language_list
+                                });
+                                edit_basic_data += '<tr ><td><input type="checkbox" required></td><td><select type="text" class="input form-control prodid"  name="prodid" onchange="GetSelectedTextValue(this)"><option value ="' + value.prod_cat_id + '"'+prod_cat_id_list+'></option></select></td><td><select class="form-control" type="text"><option value ="' + value.language_id + '"'+language_id_list+'></option></select></td><td><input class="form-control description" type="text"  name="description"   value ="' + value.description + '" maxlength="200" onkeypress="return /[a-z ]/i.test(event.key)" required></td><td hidden></td><td>'+ del_ind +'</td></tr>';
+                            });
+                            $('#id_popup_table').append(edit_basic_data);
+                            var i =0;
+                            $("#id_popup_table TBODY TR").each(function() {
+                                var row = $(this);
+                                var prod_cat_id_list = dropdown_values[i][0]
+                                var language_id_list = dropdown_values[i][1]
+                                $(row.find("TD").eq(1).find("select option[value="+prod_cat_id_list+"]")).attr('selected','selected');
+                                $(row.find("TD").eq(2).find("select option[value="+language_id_list+"]")).attr('selected','selected');
+                                i++;
+                            });
+                            $( "#id_del_ind_checkbox").prop( "hidden", false );
+                            $( "#header_select").prop( "hidden", false );
+                            $( ".class_del_checkbox").prop( "hidden", false );
+                            $('#custproddescModal').modal('show');
+                            $('#id_data_upload').modal('hide');
+                            document.getElementById("id_del_add_button").style.display = "block";
+                            $('#id_check_data').show();
+                            $("#id_check_data").prop("hidden", false);
+                            $("#save_id").prop("hidden", true);
+                            table_sort_filter('id_popup_table')
+                        }
+                        CloseLoaderPopup();
+                    },
+                    cache: false,
+                    processData: false,
+                    contentType: false,
+                });
+            }
+            else{
+                $("#id_error_msg_upload").prop("hidden",false)
+                get_message_details("JMSG110"); // Get message details
+                var display = msg_type.messages_id_desc;
+                document.getElementById("id_error_msg_upload").innerHTML = display;
+                document.getElementById("id_error_msg_upload").style.color = "Red";
+                $('#id_data_upload').modal('show');
+            }
         }
     }
 
