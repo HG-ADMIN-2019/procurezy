@@ -451,6 +451,9 @@ def create_update_delete_flags(request):
     if app_data['table_name'] == 'UnspscCategoriesCustDesc':
         display_data = application_settings_save_instance.generate_prod_cat_Cust_delete_flags(app_data)
         return JsonResponse(display_data, safe=False)
+    if app_data['table_name'] == 'AccountingData':
+        display_data = application_settings_save_instance.generate_aav_delete_flags(app_data)
+        return JsonResponse(display_data, safe=False)
 
 
 def get_dropdown_data(request):
