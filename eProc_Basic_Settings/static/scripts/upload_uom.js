@@ -269,7 +269,7 @@ function get_msg_desc_check_data(msg){
 
 // Function for add a new row data
 function new_row_data() {
-    basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><input class="form-control check_special_char" type="text"  title="Minimum length is 1" minlength="1" maxlength="3"  name="uomcode" style="text-transform:uppercase;" required></td><td><input class="form-control check_special_char" type="text" maxlength="100"  name="uomdescription" required></td><td><input class="form-control check_special_char" type="text" title="Minimum length is 1"  minlength="1" maxlength="3"  name="isocodeid"  style="text-transform:uppercase;" required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+    basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><input class="form-control check_character_no_space" type="text"  title="Minimum length is 1" minlength="1" maxlength="3"  name="uomcode" style="text-transform:uppercase;" required></td><td><input class="form-control check_uppercase_character" type="text" maxlength="100"  name="uomdescription" required></td><td><input class="form-control check_uppercase_character" type="text" title="Minimum length is 1"  minlength="1" maxlength="3"  name="isocodeid"  style="text-transform:uppercase;" required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
     table_sort_filter('id_popup_table');
 }

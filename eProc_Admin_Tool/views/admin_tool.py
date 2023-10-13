@@ -137,6 +137,9 @@ def user_search(request):
     dropdown_time_zones = user_time_zones()
     dropdown_language = user_language_list()
     dropdown_messages = user_messages_list()
+    employee_results_onload = get_emp_data()
+    form_method = 'post'
+
     context = {
         'inc_nav': True,
         'inc_footer': True,
@@ -150,8 +153,8 @@ def user_search(request):
         'dropdown_currency_id': dropdown_currency_id,
         'dropdown_time_zones': dropdown_time_zones,
         'dropdown_language': dropdown_language,
-        'dropdown_messages': dropdown_messages
-
+        'dropdown_messages': dropdown_messages,
+        'employee_results_onload': employee_results_onload,
     }
 
     if request.method == 'GET':
@@ -160,6 +163,7 @@ def user_search(request):
         context['employee_results'] = employee_results
         count = len(employee_results)
         context['count'] = count
+        context['form_method'] = 'GET'
     if request.method == 'POST':
         search_fields = {}
         for data in request.POST:
@@ -180,10 +184,13 @@ def user_search(request):
         search_fields['email'] = request.POST.get('email')
         search_fields['user_type'] = request.POST.get('user_type')
         search_fields['employee_id'] = request.POST.get('employee_id')
-
-        employee_results = emp_search_data(search_fields)
+        if search_fields['username'] == '*':
+            employee_results = get_emp_data()
+        else:
+            employee_results = emp_search_data(search_fields)
         count = len(employee_results)
         context['count'] = count
+        context['form_method'] = 'POST'
         context['employee_results'] = employee_results
 
     return render(request, 'User Search/user_search.html', context)

@@ -375,11 +375,11 @@
                     $("#id_check_special_character_messages").prop("hidden",false);
                     count = count +1;
             }
-            else {
-                 $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "none");
-                 row_color_no_highlight(row);
-                 $(row).css("border", "");
-                 $("#id_delete_duplicate").hide()
+            else{
+                $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "none");
+                row_color_no_highlight(row);
+                $(row).css("border", "");
+                $("#id_delete_duplicate").hide()
             }
             //*************** checking for empty records for currency name (max length = 2) ***************
             if(currency_dic.description.length == 0){
@@ -403,7 +403,7 @@
                     $("#id_check_special_character_messages").prop("hidden",false);
                     count = count +1;
             }
-            else if(currency_id_check.includes((currency_dic.currency_id)&&(currency_dic.del_ind))){
+             else if(currency_id_check.includes((currency_dic.currency_id)&&(currency_dic.del_ind))){
                  $(row).css("border", "#f8d7da");
                  row_color_highlight(row);
                  $("#id_check_error_messages").prop("hidden",false);

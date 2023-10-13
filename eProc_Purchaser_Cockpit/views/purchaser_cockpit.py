@@ -10,7 +10,7 @@ from django.http import JsonResponse
 from django.shortcuts import render
 
 from eProc_Basic.Utilities.constants.constants import CONST_SC_HEADER_APPROVED, CONST_PO_SPLIT_SUPPLIER, \
-    CONST_PO_SPLIT_CURRENCY, CONST_PO_GROUP_COMPANY_CODE, CONST_PO_GROUP_CURRENCY
+    CONST_PO_SPLIT_CURRENCY, CONST_PO_GROUP_COMPANY_CODE, CONST_PO_GROUP_CURRENCY, CONST_PO_DELIVERY_DATE
 from eProc_Basic.Utilities.functions.django_query_set import DjangoQueries
 from eProc_Basic.Utilities.functions.get_db_query import getClients
 from eProc_Basic.Utilities.functions.remove_element_from_list import remove_element_from_list
@@ -24,6 +24,7 @@ from eProc_Purchaser_Cockpit.Utilities.purchaser_cockpit_specific import filter_
     get_sourcing_data, filter_rfq
 
 # purchaser_cockpit_search
+from eProc_Reports.Utilities.reports_generic import get_companylist, get_companyDetails
 from eProc_Shopping_Cart.context_processors import update_user_info
 from eProc_Shopping_Cart.models import ScItem, ScHeader
 
@@ -55,6 +56,7 @@ def sc_item_field_filter(request):
     search_fields = {}
     # sc_header_item_details = ''
     sc_header_item = []
+    comp_list = get_companyDetails(request)
     sc_header_item_details = filter_based_on_sc_item_field(client, order_list)
     count = len(sc_header_item_details)
     if request.method == 'POST':
@@ -85,6 +87,7 @@ def sc_item_field_filter(request):
         'prod_cat': prod_cat,
         'supplier_id': supplier_id,
         'comp_code': comp_code,
+        'comp_list': comp_list,
         'inc_nav': True,
         'shopping': True,
         'is_slide_menu': True
@@ -105,13 +108,6 @@ def generate_po(request):
     po_split_list = []
     status = ''
     po_data = JsonParser_obj.get_json_from_req(request)
-    # sc_header_details = django_query_instance.django_filter_query(ScHeader,
-    #                                                               {'doc_number__in': doc_num_list,
-    #                                                                'client': global_variables.GLOBAL_CLIENT,
-    #                                                                'del_ind': False},
-    #                                                               None,
-    #                                                               None)
-
     for doc in po_data:
         sc_header_list.append(django_query_instance.django_filter_value_list_query(ScHeader,
                                                                                    {
@@ -127,13 +123,10 @@ def generate_po(request):
         po_split_list1 = get_po_split_group_type(sc_header_instance.co_code)
         if po_split_list1:
             po_split_list.append(po_split_list1)
-    # result = check_po(sc_header_list)
+
     sc_item_details = django_query_instance.django_filter_query(ScItem, {
         'header_guid__in': guid_arr, 'client': client, 'del_ind': False
     }, None, None)
-
-    if len(requester) != len(set(requester)):
-        print("has deuplicate")
 
     create_purchase_order = CreatePurchaseOrder(sc_header_instance)
     po_creation_flag = ''
@@ -170,7 +163,7 @@ def generate_po(request):
                         status = create_purchase_order.create_purchaser_order(sc_item_details, sc_item_details[0]['supplier_id'])
                     else:
                         response['grping_error'] = "The PO cannot be grouped as Company Codes are different"
-            if CONST_PO_GROUP_CURRENCY in po_split_list:
+            if CONST_PO_GROUP_CURRENCY in po_split_list[0]:
                 currency_id = sc_item_details[0]['currency']
                 for i in range(1, len(sc_item_details)):
                     if currency_id == sc_item_details[i]['currency']:
@@ -178,6 +171,14 @@ def generate_po(request):
                                                                               sc_item_details[0]['supplier_id'])
                     else:
                         response['grping_error'] = "The PO cannot be grouped as Currencies are different"
+            if CONST_PO_DELIVERY_DATE in po_split_list[0]:
+                currency_id = sc_item_details[0]['currency']
+                for i in range(1, len(sc_item_details)):
+                    if currency_id == sc_item_details[i]['currency']:
+                        status = create_purchase_order.create_purchaser_order(sc_item_details,
+                                                                              sc_item_details[0]['supplier_id'])
+                    else:
+                        response['grping_error'] = "The PO cannot be grouped as Delivery Dates are different"
     else:
         status = create_purchase_order.create_purchaser_order(sc_item_details, sc_item_details[0]['supplier_id'])
     if not status:
