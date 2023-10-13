@@ -64,7 +64,9 @@ def update_supplier_purch_details(request):
 
 def create_or_update_supp_org(supp_org_data, client_id):
     org_sup_db_list = []
+    supp_id = ''
     for org_data in supp_org_data['data']:
+        supp_id = org_data['supp_id']
         if not django_query_instance.django_existence_check(OrgSuppliers,
                                                             {'porg_id': org_data['porg_id'],
                                                              'supplier_id': org_data['supp_id'],
@@ -113,13 +115,16 @@ def create_or_update_supp_org(supp_org_data, client_id):
                                                        'client_id': client_id,
                                                        'del_ind': org_data['del_ind']
                                                        })
-        if org_sup_db_list:
-            bulk_create_entry_db(OrgSuppliers, org_sup_db_list)
-        if supp_org_data['action'] == CONST_ACTION_DELETE:
-            msgid = 'MSG113'
-        else:
-            msgid = 'MSG112'
-        supp_org_data = get_data(org_data['supp_id'], client_id, msgid)
+    if org_sup_db_list:
+        bulk_create_entry_db(OrgSuppliers, org_sup_db_list)
+
+    if supp_org_data['action'] == CONST_ACTION_DELETE:
+        msgid = 'MSG113'
+    else:
+        msgid = 'MSG112'
+
+    supp_org_data = get_data(supp_id, client_id, msgid)
+
     return supp_org_data
 
 

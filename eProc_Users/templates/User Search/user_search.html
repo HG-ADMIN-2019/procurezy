@@ -36,11 +36,13 @@
                         </div>
                         <div class="col-md">
                             <label for="">First Name</label>
-                            <input type="text" class="form-control check_for_search " id="first_name" name="first_name" >
+                            <input type="text" class="form-control check_for_search mandatory_fields" id="first_name" name="first_name" >
+                            <span id="err_firstname" class="error_message" hidden></span>
                         </div>
                         <div class="col-md">
                             <label for="">Last Name</label>
-                            <input type="text" class="form-control check_for_search" id="last_name" name='last_name' >
+                            <input type="text" class="form-control check_for_search mandatory_fields" id="last_name" name='last_name' >
+                            <span id="err_lastname" class="error_message" hidden></span>
                         </div>
                         <div class="col-auto">
                             <button id="id_search" class="button-search-users btn btn-primary" type="submit"
@@ -57,7 +59,8 @@
                         <div class="row">
                             <div class="col-md-3">
                                 <label for="">Email</label>
-                                <input type="text" class="form-control" id="email" name="email">
+                                <input type="text" class="form-control mandatory_fields" id="email" name="email">
+                                <span id="err_email" class="error_message" hidden></span>
                             </div>
                             <div class="col-md-3">
                                 <label for="">User Type</label>
@@ -69,7 +72,8 @@
                             </div>
                             <div class="col-md-2">
                                 <label for="">Employee Number</label>
-                                <input type="text" class="form-control check_for_search" id="employee_id" name="employee_id">
+                                <input type="text" class="form-control check_for_search mandatory_fields" id="employee_id" name="employee_id">
+                                <span id="err_empnum" class="error_message" hidden></span>
                             </div>
                             <div class="col-md">
                                 <div class="form-check">
@@ -463,7 +467,7 @@ var employee_data = new Array();
 $(document).ready(function() {
     $('#id_userpopup_table').DataTable(); // Replace 'id_userpopup_table' with your table's ID or selector
     if(form_method == 'GET'){
-    display_emp_data(emp_data_onload);
+<!--    display_emp_data(emp_data_onload);-->
     document.getElementById("username").value = '';
     document.getElementById("first_name").value = '';
     document.getElementById("last_name").value = '';
@@ -544,36 +548,43 @@ function reload()
 $('form').on('submit',function (e) {
         OpenLoaderPopup();
         var valid = true;
-        var uname = document.getElementById("username").value;
-        var count = uname.split('**').length - 1;
-        if(count >= 1){
-            valid = false;
+        var temp = document.getElementsByClassName('mandatory_fields');
+        for (var i = 0; i<temp.length; i++) {
+            if(!(temp[i].value == '') || !(temp[i].value == null)){
+                data = temp[i].value;
+                var count = data.split('**').length - 1;
+                if((count >= 1) || (data == '*')){
+                    var display_id = temp[i].nextElementSibling.id;
+                    $('#'+display_id).prop('hidden', false);
+                    document.getElementById(temp[i].nextElementSibling.id).innerHTML = "Please enter valid value";
+                    valid = false;
+                }
+            }
         }
         if(!valid){
             localStorage.setItem("error_flag", 1);
             e.preventDefault();
             $("#err_username").prop("hidden", false);
-            document.getElementById("err_username").innerHTML = "Please enter valid value";
                 setTimeout(function() {
                        CloseLoaderPopup();
          }, 500);
         }
     });
 
-    $("body").on("keypress keyup blur change", ".mandatory_fields", function (event) {
-         var uname = document.getElementById("username").value;
-        var count = uname.split('**').length - 1;
-        if(count>=1)
-        {
-        var display_id = event.currentTarget.nextElementSibling.id;
-        $('#'+display_id).prop('hidden', false);
-        document.getElementById(display_id).style.display = "block";
-        event.currentTarget.nextElementSibling.innerHTML = "Please enter valid value";
-        }
-        else{
-            $(".error_message").prop("hidden", true);
-            document.getElementById(event.currentTarget.nextElementSibling.id).style.display = "true";
-        }
+    $("body").on("keypress blur change", ".mandatory_fields", function (event) {
+         var get_value = event.currentTarget.value;
+            var count = get_value.split('**').length - 1;
+            if((count>=1)|| (get_value == '*'))
+            {
+            var display_id = event.currentTarget.nextElementSibling.id;
+            $('#'+display_id).prop('hidden', false);
+            document.getElementById(display_id).style.display = "block";
+            event.currentTarget.nextElementSibling.innerHTML = "Please enter valid value";
+            }
+            else{
+                $(".error_message").prop("hidden", true);
+                document.getElementById(event.currentTarget.nextElementSibling.id).style.display = "true";
+            }
     });
 
 // Function to delete User

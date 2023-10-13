@@ -40,15 +40,18 @@
                     <div class="row">
                         <div class="col-md">
                             <label for="">First Name</label>
-                            <input type="text" class="form-control check_for_search" id="name1" name="name1" >
+                            <input type="text" class="form-control check_for_search mandatory_fields" id="name1" name="name1" >
+                            <span id="err_firstname" class="error_message" hidden></span>
                         </div>
                         <div class="col-md">
                             <label for="">Last Name</label>
-                            <input type="text" class="form-control check_for_search" id="name2" name="name2">
+                            <input type="text" class="form-control check_for_search mandatory_fields" id="name2" name="name2">
+                            <span id="err_lastname" class="error_message" hidden></span>
                         </div>
                         <div class="col-md">
                             <label for="">Supplier Number</label>
-                            <input type="text" class="form-control check_for_search" id="supplier_id" name='supplier_id'>
+                            <input type="text" class="form-control check_for_search mandatory_fields" id="supplier_id" name='supplier_id'>
+                            <span id="err_supnumber" class="error_message" hidden></span>
                         </div>
                         <div class="col-auto my-1">
                             <button class="button-search-users btn btn-primary" type="submit"
@@ -65,7 +68,8 @@
                         <div class="row">
                             <div class="col-md">
                               <label for="">Email</label>
-                                <input type="text" class="form-control" id="email" name="email">
+                                <input type="text" class="form-control mandatory_fields" id="email" name="email">
+                                <span id="err_email" class="error_message" hidden></span>
                             </div>
                             <div class="col-md">
                                 <label for="">Supplier Type</label>
@@ -87,7 +91,8 @@
                             </div>
                             <div class="col-md">
                                 <label for="">City</label>
-                                <input type="text" class="form-control check_for_search" id="city" name="city">
+                                <input type="text" class="form-control check_for_search mandatory_fields" id="city" name="city">
+                                <span id="err_city" class="error_message" hidden></span>
                             </div>
                             <div class="col-md">
                                 <label for="">Purchasing Organization</label>
@@ -425,12 +430,15 @@
         {% endif %}
     </div>
 
+{{ supp_data_onload|json_script:"supp_data_onload" }}
 <script src="{% static 'scripts/supplier-search.js' %}"> </script>
 <script>
 var Tablename = uiConstants["CONST_TABLENAME_SUPPLIERMASTER"]
 var appname = uiConstants["CONST_APPNAME01"]
 var db_header_data = uiConstants["CONST_HEADER_DATA_SUPPLIERMASTER"]
 var GLOBAL_SUPPLIER_GUID = '';
+var supplier_data_onload = JSON.parse(document.getElementById('supp_data_onload').textContent);
+var form_method = '{{form_method|safe}}';
 
     function reload(){
         localStorage.setItem("fname", document.getElementById("name1").value);
@@ -444,6 +452,71 @@ var GLOBAL_SUPPLIER_GUID = '';
         localStorage.setItem("supp_purchase_block", document.getElementById("purchase_block").checked);
         OpenLoaderPopup();
     }
+
+    $('form').on('reset',function (e) {
+    setTimeout(function() {
+                       OpenLoaderPopup();
+         }, 500);
+    localStorage.removeItem("username");
+    localStorage.removeItem("first_name");
+    localStorage.removeItem("last_name");
+    localStorage.removeItem("email");
+    localStorage.removeItem("user_type");
+    localStorage.removeItem("employee_id");
+    localStorage.removeItem("user_locked");
+    localStorage.removeItem("pwd_locked");
+    localStorage.removeItem("is_active");
+    localStorage.setItem("username", "");
+    form_method = 'GET';
+        display_supplier_data(supplier_data_onload);
+        localStorage.setItem("username", "");
+        setTimeout(function() {
+                       CloseLoaderPopup();
+         }, 500);
+});
+
+    $('form').on('submit',function (e) {
+        OpenLoaderPopup();
+        var valid = true;
+        var temp = document.getElementsByClassName('mandatory_fields');
+        for (var i = 0; i<temp.length; i++) {
+            if(!(temp[i].value == '') || !(temp[i].value == null)){
+                data = temp[i].value;
+                var count = data.split('**').length - 1;
+                if((count >= 1) || (data == '*')){
+                    var display_id = temp[i].nextElementSibling.id;
+                    $('#'+display_id).prop('hidden', false);
+                    document.getElementById(temp[i].nextElementSibling.id).innerHTML = "Please enter valid value";
+                    valid = false;
+                }
+            }
+        }
+        if(!valid){
+            localStorage.setItem("error_flag", 1);
+            e.preventDefault();
+<!--            $("#err_username").prop("hidden", false);-->
+                setTimeout(function() {
+                       CloseLoaderPopup();
+         }, 500);
+        }
+    });
+
+
+    $("body").on("keypress keyup blur change", ".mandatory_fields", function (event) {
+         var get_value = event.currentTarget.value;
+            var count = get_value.split('**').length - 1;
+            if((count>=1)|| (get_value == '*'))
+            {
+            var display_id = event.currentTarget.nextElementSibling.id;
+            $('#'+display_id).prop('hidden', false);
+            document.getElementById(display_id).style.display = "block";
+            event.currentTarget.nextElementSibling.innerHTML = "Please enter valid value";
+            }
+            else{
+                $(".error_message").prop("hidden", true);
+                document.getElementById(event.currentTarget.nextElementSibling.id).style.display = "true";
+            }
+    });
 
 //onclick of data Upload copy data to modal pop-up
 
@@ -816,6 +889,9 @@ function check_data() {
             $('#success_msg_id').text(Response.success_message);
             $("#error_msg_div").prop("hidden",false);
 <!--            message_display_time();-->
+            setTimeout(function() {
+                                $("#error_msg_div").prop("hidden",true);
+     }, msg_display_interval*1500);
             CloseLoaderPopup();
             }
         });
