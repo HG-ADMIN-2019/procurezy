@@ -351,7 +351,7 @@
                                 var company = '';
                                 var company_list = '';
                                 var company_id_list = '';
-                                $.each(rendered_company_data, function(i, item) {
+                                $.each(rendered_company_data, function(j, item) {
                                     if( value.company_type_value == item.company_id) {
                                         company = '<option value="' + item.company_id + '">' + item.company_id + '</option>';
                                     } else {
@@ -363,7 +363,7 @@
                                 var aac_data_list = '';
                                 var aac_data_id_list = '';
                                 $.each(rendered_aac_data, function(K, item1) {
-                                    if( value.approval_type_value == item1.account_assign_cat) {
+                                    if( value.account_assign_cat == item1.account_assign_cat) {
                                             aac_data += '<option value="' + item1.account_assign_cat + '">' + item1.account_assign_cat + '</option>';
                                     }else {
                                         aac_data_list += '<option value="' + item1.account_assign_cat + '">' + item1.account_assign_cat + '</option>';
@@ -468,7 +468,7 @@
             }
             //*************** checking for max length for aav code (max length = 2) ***************
             if (accval_dic.account_assign_value < 0) {
-                 $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
+                $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
                 row_color_highlight_empty(row);
                 $("#id_error_msg_country_length").prop("hidden",false);
                 error_message = ui_messeges("JMSG002")// Get message details
@@ -533,7 +533,7 @@
             $("#save_id").prop("hidden", false);
             $("#id_check_data").prop("hidden", true);
             if (aav_list == 0) {
-                $("#save_id").prop("hidden", true);
+              $("#save_id").prop("hidden", true);
             }
             popup_data_dict = {'data_list': aav_list}
             OpenLoaderPopup();
