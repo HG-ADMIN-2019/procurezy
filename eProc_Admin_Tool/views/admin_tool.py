@@ -639,6 +639,7 @@ def m_docsearch_meth(request):
     rep_search_form = {}
     error_messages = ''
     comp_list = get_companylist(request)
+    supplier_details = []  # Define supplier_details initially
 
     if request.method == 'GET':
         inp_doc_type = 'SC'
@@ -653,14 +654,33 @@ def m_docsearch_meth(request):
         result = get_hdr_data(request, inp_doc_type, inp_doc_num, inp_from_date, inp_to_date, inp_supl, inp_created_by, inp_requester, report_search)
 
     if not request.method == 'POST':
-        if 'results' in request.session:
-            request.POST = request.session['results']
-            request.method = 'POST'
+        # Handle GET requests, rendering the initial form
+        rep_search_form = DocumentSearchForm()
+
+        context = {
+            'inc_nav': True,
+            'inc_footer': True,
+            'nav_title': 'Search for document',
+            'sform': rep_search_form,
+            'results': None,  # Set results to None or an empty list as appropriate
+            'page_range': page_range,
+            't_count': 0,  # Set t_count to 0
+            'inp_doc_type': inp_doc_type,
+            'comp_list': comp_list,
+            'is_slide_menu': True,
+            'is_admin_active': True,
+            'encrypted_header_guid': encrypted_header_guid,
+            'sc_completion': sc_completion,
+            'sc_completion_flag': sc_completion_flag,
+            'sc_header': sc_header,
+            'error_messages': error_messages,
+            'supplier_details': supplier_details
+        }
+
+        return render(request, 'Reports/Doc_report.html', context)
 
     if request.method == 'POST':
         request.session['results'] = request.POST
-
-    if request.method == 'POST':
         rep_search_form = DocumentSearchForm(request.POST)
 
         if rep_search_form.is_valid():
@@ -722,6 +742,9 @@ def m_docsearch_meth(request):
             }
 
             return render(request, 'Reports/Doc_report.html', context)
+
+    # If neither GET nor POST request, you should handle this case or return an appropriate response
+    return HttpResponse("Unsupported HTTP method")
 
 
 
