@@ -505,7 +505,7 @@
                                     }
                                     aac_data_id_list = aac_data + aac_data_list
                                 });
-                                edit_basic_data += '<tr><td><input type="checkbox" required></td><td ><select class="form-control">value ="' + value.company_id + '"'+company_id_list+'</select></td><td><select class="form-control">value ="' + value.account_assign_cat + '"' + aac_data_id_list + ' </select></td><td><input class="form-control" type="number" value="' + value.account_assign_value + '" maxlength="40" name="Account Assignment Value" required></td><td><input class="input" type="text" value="' + value.valid_from + '" name="Valid From Date" required></td><td><input class="input" type="text" value="' + value.valid_to + '" name="Valid To Date" required></td><td hidden><input value="" type="hidden"></td><td>' + del_ind + '</td><td hidden><input value="" type="hidden"></td></tr>';
+                                edit_basic_data += '<tr><td><input type="checkbox" required></td><td ><select class="form-control">value ="' + value.company_id + '"'+company_id_list+'</select></td><td><select class="form-control">value ="' + value.account_assign_cat + '"' + aac_data_id_list + ' </select></td><td><input class="form-control" type="number" value="' + value.account_assign_value + '" maxlength="40" name="Account Assignment Value" required></td><td><input class="input" type="text" value="' + value.valid_from + '" name="Valid From Date" required></td><td><input class="input" type="text" value="' + value.valid_to + '" name="Valid To Date" required></td><td hidden><input value="" type="hidden"></td><td>' + del_ind + '</td></tr>';
                             });
                             $('#id_popup_tbody').append(edit_basic_data);
                             var j =0;
@@ -720,7 +720,6 @@
                 display_duplicate_entry(common);  //Function to highlight the rows in popup
                 error_message = ui_messeges("JMSG001")// Get message details
                 no_duplicate_value = 'N'
-                $("#id_delete_duplicate").show()
                 return [no_duplicate_value,error_message]
             }
         }

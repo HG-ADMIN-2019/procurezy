@@ -415,7 +415,7 @@
                 $("#id_check_special_character_messages").prop("hidden",false);
                 count = count +1;
             }
-            else if(country_code_check.includes((country_dic.country_code)&&(country_dic.del_ind))){
+            else if(country_code_check.includes((country_dic.country_code))){
                  $(row).css("border", "#f8d7da");
                  row_color_highlight(row);
                  $("#id_check_error_messages").prop("hidden",false);
@@ -426,7 +426,7 @@
                  $("#id_check_data").prop("hidden", false);
                  count = count +1;
             }
-            else if(main_table_low_value.includes((country_dic.country_code)&&(country_dic.del_ind))){
+            else if(main_table_low_value.includes((country_dic.country_code))){
                  $(row).css("border", "#f8d7da");
                  row_color_highlight(row);
                  $("#id_check_error_messages").prop("hidden",false);
