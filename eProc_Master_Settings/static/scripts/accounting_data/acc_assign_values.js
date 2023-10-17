@@ -248,9 +248,8 @@ function get_main_table_data() {
 }
 
 // Function to get main table data
-
 function get_main_table_data_upload() {
-        main_table_low_value = [];
+    main_table_low_value = [];
     $('#display_basic_table').DataTable().destroy();
     $("#display_basic_table TBODY TR").each(function() {
         var row = $(this);

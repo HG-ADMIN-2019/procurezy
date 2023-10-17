@@ -542,6 +542,75 @@ class ApplicationSettingsSave:
 
         return data
 
+    def generate_detgl_delete_flags(self, detgl_data):
+        delete_flags = []  # List to store delete_flag for each value
+
+        for detgl_detail in detgl_data['data']:
+            delete_flag = True
+
+            # Check if value is present in the MessagesIdDesc table
+            if django_query_instance.django_existence_check(WorkflowACC,
+                                                            {'company_id': detgl_detail['company_id'],
+                                                             'account_assign_cat': detgl_detail[
+                                                                 'account_assign_cat'],
+                                                             'acc_value': detgl_detail['gl_acc_num'],
+                                                             'client': self.client,
+                                                             'del_ind': False}):
+                delete_flag = False
+
+            delete_flags.append(delete_flag)  # Store delete_flag value for each iteration
+            data = {
+                'delete_flags': delete_flags  # Include the delete_flags list in the response data
+            }
+
+        return data
+
+    def generate_approval_type_delete_flags(self, approval_type_data):
+        delete_flags = []  # List to store delete_flag for each value
+
+        for approval_type_detail in approval_type_data['data']:
+            delete_flag = True
+
+            # Tables to check for existence
+            tables_to_check = [WorkflowSchema, ApproverLimitValue]
+
+            for table_name in tables_to_check:
+                if django_query_instance.django_existence_check(table_name,
+                                                                {'app_types': approval_type_detail[
+                                                                    'app_types'],
+                                                                 'client': self.client,
+                                                                 'del_ind': False}):
+                    delete_flag = False
+                    break
+
+            delete_flags.append(delete_flag)  # Store delete_flag value for each iteration
+        data = {
+            'delete_flags': delete_flags  # Include the delete_flags list in the response data
+        }
+
+        return data
+
+    def generate_wf_schema_delete_flags(self, wf_schema_data):
+        delete_flags = []  # List to store delete_flag for each value
+
+        for wf_schema_detail in wf_schema_data['data']:
+            delete_flag = True
+
+            # Check if value is present in the MessagesIdDesc table
+            if django_query_instance.django_existence_check(ApproverLimitValue,
+                                                            {'app_types': wf_schema_detail[
+                                                                'app_types'],
+                                                             'client': self.client,
+                                                             'del_ind': False}):
+                delete_flag = False
+
+            delete_flags.append(delete_flag)  # Store delete_flag value for each iteration
+            data = {
+                'delete_flags': delete_flags  # Include the delete_flags list in the response data
+            }
+
+        return data
+
     def save_document_type_data(self, documenttype_data):
         documenttype_db_list = []
         used_flag_set = []
@@ -741,7 +810,7 @@ class ApplicationSettingsSave:
             if not django_query_instance.django_existence_check(CalenderHolidays,
                                                                 {'calender_holiday_guid': calendar_detail[
                                                                     'calender_holiday_guid'],
-                                                                 'client': self.client,}):
+                                                                 'client': self.client, }):
                 guid = guid_generator()
                 calendar_db_dictionary = {'calender_holiday_guid': guid,
                                           'calender_id': calendar_detail['calender_id'],

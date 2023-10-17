@@ -35,8 +35,8 @@
                     <button class="btn btn-secondary btn-sm" title="Edit" id="id_edit_data" onclick="onclick_edit_button()"><i
                             class="fas fa-edit" id="edit" title="Edit"></i> edit
                     </button>
-                    <button id="id_delete_data" value="detgl_delete" title="Delete" style="display:none;" data-toggle="modal" data-target="#id_delete_confirm_popup"
-                            class="btn btn-outline-danger btn-sm"><i class="fa fa-trash"></i> Delete
+                    <button class="btn btn-outline-danger btn-sm" id="id_delete_data" title= "DELETE" value="Delete" style="display:none;" onclick="onclick_delete_button()">
+                        <i class="fa fa-trash"></i> delete
                     </button>
                     <button id="id_copy_data" style="display:none;" title="Copy"  value="COPY" class="btn btn-primary  btn-sm"
                             type="button" onclick="onclick_copy_button()"> <i class="fa fa-copy"></i> Copy
@@ -150,6 +150,9 @@
                     <button type="button" class="btn btn-outline-primary remove_upload_data" title="Cancel" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
                     <button id="id_delete_duplicate" class="btn btn-primary" title="Delete" style="display:none;" type="button" onclick="delete_duplicate()"><i class="fa fa-trash"></i> delete duplicates</button>
                     <button id="id_check_data" style="display:none;" class="btn btn-primary" title="Check" type="button" onclick="check_data()"><i class="fas fa-check"></i> check</button>
+                    <button class="btn btn-primary btn-sm" title="Delete" id="delete_data" value="DELETE" data-toggle="modal" data-target="#id_delete_confirm_popup" onclick="hideModal()">
+                        <i class="fa fa-trash"></i> Delete
+                    </button>
                     <button class="btn btn-primary" title="Save" id="save_id"><i class="fas fa-save"></i> save</button>
                 </div>
             </div>
@@ -308,16 +311,92 @@
         table_sort_filter('id_popup_table');
     }
 
+    // Onclick delete Button
+    function onclick_delete_button() {
+        $("#error_msg_id").css("display", "none");
+        $('#id_popup_table').DataTable().destroy();
+        $("#id_popup_tbody").empty();
+        GLOBAL_ACTION = "DELETE";
+        var edit_basic_data = "";
+        var guid = '';
+        var dropdown_values = [];
+        main_table_checked = [];
+        get_row_data("#display_basic_table"); // Function call to get the selected row data
+        display_button(); // Call the display_button function to show/hide the buttons
+        var data = {'data': main_table_checked, 'table_name': 'DetermineGLAccount', 'action': GLOBAL_ACTION };
+        OpenLoaderPopup();
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'eProc_Configuration:create_update_delete_flags' %}",
+            data: JSON.stringify(data),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function(Response) {
+                var docTypeArray = Response.delete_flags; // Get the delete_flags array from the response
+                var res = get_all_checkboxes(); // Function to get all the checkboxes
+                var $chkbox_all = $('td .checkbox_check', res)
+                var j = 0; // Index for docTypeArray
+                for (var i = 0; i < $chkbox_all.length; i++) {
+                    if ($chkbox_all[i].checked) {
+                        var row = $chkbox_all[i].parentNode.parentNode;
+                        if (j < docTypeArray.length && docTypeArray[j] === false) {
+                            check = '<input type="checkbox" class="checkbox_check" disabled>';
+                            $('#delete_data').prop('disabled', true);
+                        } else {
+                            check = '<input type="checkbox" class="checkbox_check" onclick="enableDeleteButton()">';
+                            $('#delete_data').prop('disabled', true);
+                        }
+                        j++; // Move to the next index in docTypeArray
+                        edit_basic_data +=
+                            `<tr>
+                                <td>${check}</td>
+                                <td><input class="form-control" type="text" value=${row.cells[1].innerHTML} disabled></td>
+                                <td><input class="form-control" type="text" id="company_dropdw" value=${row.cells[2].innerHTML} disabled></td>
+                                <td><input id="acc_dropdwn" type="text" class="form-control" value=${row.cells[3].innerHTML} disabled></td>
+                                <td><input class="form-control check_number" type="number" value=${row.cells[4].innerHTML} disabled> </td>
+                                <td><input type="checkbox" name="gl_acc_default" disabled> </td>
+                                <td><input class="form-control" type="number" value=${row.cells[6].innerHTML} disabled> </td>
+                                <td><input class="form-control" type="number" value=${row.cells[7].innerHTML} disabled> </td>
+                                <td><input type="text" class="form-control" value=${row.cells[8].innerHTML} disabled></td>
+                                <td hidden><input required></td>
+                                <td class="class_del_checkbox" hidden><input type="checkbox" required></td>
+                            </tr>`;
+                        var gl_acc_default = row.cells[5].children.gl_acc_default.checked
+                        dropdown_values.push([gl_acc_default])
+                    }
+                }
+                $('#id_popup_tbody').append(edit_basic_data);
+                var i = 0;
+                $("#id_popup_table TBODY TR").each(function () {
+                    var row = $(this);
+                    var gl_acc_default = dropdown_values[i][0];
+                    var checkbox = row.find("TD").eq(5).find('input[name="gl_acc_default"]');
+                    if (gl_acc_default) {
+                        checkbox.prop('checked', true);
+                    } else {
+                        checkbox.prop('checked', false);
+                    }
+                    i++;
+                });
+                $("#header_select").prop( "hidden", false );
+                $("#id_del_ind_checkbox").prop("hidden", true);
+                $('#Detgl_Modal').modal('show');
+                table_sort_filter('id_popup_table');
+                CloseLoaderPopup();
+            },
+        });
+    }
+
     //delete the selected row in db................
-    var main_table_detgl_checked = [];
+    var main_table_checked = [];
     function main_table_delete() {
         $('#success_msg_id').empty()
         GLOBAL_ACTION = 'DELETE'
-        main_table_glaccount_checked = [];
+        main_table_checked = [];
         $('#display_basic_table').DataTable().destroy();
-        get_selected_row_data(); // Function call to get the selected row data
+        get_row_data("#id_popup_table"); // Function call to get the selected row data
         $('#id_delete_confirm_popup').modal('hide');
-        data = {'data':main_table_detgl_checked,'table_name':'DetermineGLAccount','action':GLOBAL_ACTION}
+        data = {'data':main_table_checked,'table_name':'DetermineGLAccount','action':GLOBAL_ACTION}
         OpenLoaderPopup();
         $.ajax({
             type: 'POST',
@@ -679,6 +758,7 @@
                 $("#error_msg_id").css("display", "none")
                 $( "#header_select").prop( "hidden", false );
                 GLOBAL_ACTION = button.value
+                display_button(); // Call the display_button function to show/hide the buttons
                 $('#id_popup_table').DataTable().destroy();
                 $("#id_popup_tbody").empty();
                 $('#Detgl_Modal').modal('show');
@@ -698,7 +778,6 @@
                 })
                 $("#id_del_ind_checkbox").prop("hidden", true);
                 document.getElementById("id_del_add_button").style.display = "block";
-                $("#save_id").prop("hidden", false);
                 CloseLoaderPopup();
             }
         });

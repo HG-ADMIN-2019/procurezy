@@ -3,6 +3,11 @@ var main_table_low_value = [];
 var validate_add_attributes = [];
 var detgl={};
 
+//hide the myModal popup: Implemented Dependency delete purpose
+function hideModal() {
+    $('#Detgl_Modal').modal('hide');
+}
+
 //onclick of upload button display id_data_upload popup and set GLOBAL_ACTION button value
 function onclick_upload_button() {
     GLOBAL_ACTION = "detgl_upload"
@@ -23,9 +28,20 @@ function update_check_message(messages) {
 // on click copy icon display the selected checkbox data
 function onclick_copy_button() {
     GLOBAL_ACTION = "COPY"
+    display_button();
     onclick_copy_update_button('copy')
     document.getElementById("id_del_add_button").style.display = "block";
     $("#save_id").prop("hidden", false);
+}
+
+//onclick of checkbox enable delete button in popup -> Dependency delete
+function enableDeleteButton() {
+    var $popupCheckboxes = $('#id_popup_table td .checkbox_check');
+    var $deleteButton = $('#delete_data');
+    // Check if any checkbox is checked in the popup
+    var anyCheckboxChecked = $popupCheckboxes.is(":checked");
+    // Enable or disable the delete button based on whether any checkbox is checked
+    $deleteButton.prop('disabled', !anyCheckboxChecked || $popupCheckboxes.length === 0);
 }
 
 // on click add icon display the row in to add the new entries
@@ -250,22 +266,45 @@ function get_main_table_data_upload() {
 }
 
 // Function to get the selected row data
-function get_selected_row_data() {
-    $("#display_basic_table TBODY TR").each(function () {
-        var row = $(this);
+//function get_selected_row_data() {
+//    $("#display_basic_table TBODY TR").each(function () {
+//        var row = $(this);
+//        var detgl_arr_obj = {};
+//        detgl_arr_obj.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
+//        if( detgl_arr_obj.del_ind){
+//            detgl_arr_obj.prod_cat_id = row.find("TD").eq(1).html();
+//            detgl_arr_obj.company_id = row.find("TD").eq(2).html();
+//            detgl_arr_obj.account_assign_cat = row.find("TD").eq(3).html();
+//            detgl_arr_obj.gl_acc_num = row.find("TD").eq(4).html();
+//            detgl_arr_obj.gl_acc_default = row.find("TD").eq(5).find('input[type="checkbox"]').is(':checked');
+//            detgl_arr_obj.item_from_value = row.find("TD").eq(6).html();
+//            detgl_arr_obj.item_to_value = row.find("TD").eq(7).html();
+//            detgl_arr_obj.currency_id = row.find("TD").eq(8).html();
+//            detgl_arr_obj.det_gl_acc_guid = row.find("TD").eq(9).html();
+//            main_table_detgl_checked.push(detgl_arr_obj);
+//        }
+//    });
+//}
+
+// Function to get the selected row data
+function get_row_data(tableSelector) {
+    main_table_checked = [];
+    $(tableSelector).DataTable().$('td .checkbox_check').each(function () {
+        var checkbox = $(this);
+        var row = checkbox.closest("tr");
         var detgl_arr_obj = {};
-        detgl_arr_obj.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
-        if( detgl_arr_obj.del_ind){
-            detgl_arr_obj.prod_cat_id = row.find("TD").eq(1).html();
-            detgl_arr_obj.gl_acc_num= row.find("TD").eq(4).html();
-            detgl_arr_obj.gl_acc_default = row.find("TD").eq(5).find('input[type="checkbox"]').is(':checked');
-            detgl_arr_obj.account_assign_cat = row.find("TD").eq(3).html();
-            detgl_arr_obj.company_id = row.find("TD").eq(2).html();
-            detgl_arr_obj.item_from_value = row.find("TD").eq(6).html();
-            detgl_arr_obj.item_to_value = row.find("TD").eq(7).html();
-            detgl_arr_obj.currency_id = row.find("TD").eq(8).html();
-            detgl_arr_obj.det_gl_acc_guid = row.find("TD").eq(9).html();
-            main_table_detgl_checked.push(detgl_arr_obj);
+        detgl_arr_obj.del_ind = checkbox.is(':checked');
+        if(detgl_arr_obj.del_ind) {
+            detgl_arr_obj.prod_cat_id = row.find("TD").eq(1).find('input[type="text"]').val() || row.find("TD").eq(1).html();
+            detgl_arr_obj.company_id = row.find("TD").eq(2).find('input[type="text"]').val() || row.find("TD").eq(2).html();
+            detgl_arr_obj.account_assign_cat = row.find("TD").eq(3).find('input[type="text"]').val() || row.find("TD").eq(3).html();
+            detgl_arr_obj.gl_acc_num = row.find("TD").eq(4).find('input[type="number"]').val() || row.find("TD").eq(4).html();
+            detgl_arr_obj.gl_acc_default = row.find("TD").eq(5).find('input[name="gl_acc_default"]').is(':checked');
+            detgl_arr_obj.item_from_value = row.find("TD").eq(6).find('input[type="number"]').val() || row.find("TD").eq(6).html();
+            detgl_arr_obj.item_to_value = row.find("TD").eq(7).find('input[type="number"]').val() || row.find("TD").eq(7).html();
+            detgl_arr_obj.currency_id = row.find("TD").eq(8).find('input[type="text"]').val() || row.find("TD").eq(8).html();
+            detgl_arr_obj.det_gl_acc_guid = row.find("TD").eq(9).find('input[type="text"]').val() || row.find("TD").eq(9).html();
+            main_table_checked.push(detgl_arr_obj);
         }
     });
 }
