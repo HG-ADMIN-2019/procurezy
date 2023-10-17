@@ -175,16 +175,21 @@ function delete_duplicate() {
         utc_difference = row.find("TD").eq(3).find('input[type="text"]').val().toUpperCase();
         daylight_save_rule = row.find("TD").eq(4);
         checked_box = row.find("TD").eq(5).find('input[type="checkbox"]').is(':checked')
-
-        if (time_zone_check.includes(time_zone)) {
-            $(row).remove();
-        }
-        time_zone_check.push(time_zone);
-        main_table_low_value = get_main_table_data_upload(); //Read data from main table
-        if (main_table_low_value.includes(time_zone)) {
-            $(row).remove();
-        }
-        main_table_low_value.push(time_zone);
+            if (checked_box){
+                del_ind = '1'
+            }
+            else{
+                del_ind = '0'
+                if (time_zone_check.includes(time_zone)) {
+                    $(row).remove();
+                }
+                time_zone_check.push(time_zone);
+                main_table_low_value = get_main_table_data_upload(); //Read data from main table
+                if (main_table_low_value.includes(time_zone)) {
+                    $(row).remove();
+                }
+                main_table_low_value.push(time_zone);
+            }
     });
     table_sort_filter_popup_pagination('id_popup_table')
     check_data();

@@ -160,7 +160,7 @@ function get_main_table_data_upload() {
             main_attribute.payment_term_key = row.find("TD").eq(2).html();            
             main_attribute.payment_term_guid = row.find("TD").eq(6).html();
             main_attribute.del_ind = row.find("TD").eq(5).find('input[type="checkbox"]').is(':checked');
-            var compare = main_attribute.payment_term_key + '-' +  main_attribute.language_id + '-' + main_attribute.del_ind
+            var compare = main_attribute.language_id +'-'+ main_attribute.payment_term_key
             main_table_low_value.push(compare);
 
     });
@@ -181,15 +181,22 @@ function get_main_table_data_upload() {
         payment_term_desc.day_limit = row.find("TD").eq(4).find('input[type="number"]').val();
         payment_term_desc.payment_term_guid = row.find("TD").eq(6).find('input[type="text"]').val();
         checked_box = row.find("TD").eq(5).find('input[type="checkbox"]').is(':checked')
-            if (paymentermdesc_code_check.includes(payment_term_key)) {
-                $(row).remove();
-            }
-            paymentermdesc_code_check.push(payment_term_key);
-            main_table_low_value = get_main_table_data_upload(); //Read data from main table
-            if (main_table_low_value.includes(payment_term_key)) {
-                $(row).remove();
-            }
-            main_table_low_value.push(payment_term_key);
+        var compare = payment_term_desc.language_id +'-'+ payment_term_desc.payment_term_key
+          if (checked_box){
+                del_ind = '1'
+          }
+          else{
+                del_ind = '0'
+                if (paymentermdesc_code_check.includes(compare)) {
+                    $(row).remove();
+                }
+                paymentermdesc_code_check.push(compare);
+                main_table_low_value = get_main_table_data_upload(); //Read data from main table
+                if (main_table_low_value.includes(compare)) {
+                    $(row).remove();
+                }
+                main_table_low_value.push(payment_term_key);
+          }
         })
         table_sort_filter_popup_pagination('id_popup_table')
         check_data()

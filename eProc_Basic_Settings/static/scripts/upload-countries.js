@@ -173,15 +173,23 @@ function delete_duplicate() {
         //*************** reading data from the pop-up ***************
         country_name = row.find("TD").eq(2).find('input[type="text"]').val().toUpperCase();
         country_code = row.find("TD").eq(1).find('input[type="text"]').val().toUpperCase();
-        if (country_code_check.includes(country_code)) {
-            $(row).remove();
-        }
-        country_code_check.push(country_code);
-        main_table_low_value = get_main_table_data_upload(); //Read data from main table
-        if (main_table_low_value.includes(country_code)) {
-            $(row).remove();
-        }
-        main_table_low_value.push(country_code);
+        checked_box = row.find("TD").eq(3).find('input[type="checkbox"]').is(':checked')
+            if (checked_box){
+                del_ind = '1'
+            }
+            else{
+                del_ind = '0'
+                if (country_code_check.includes(country_code)) {
+                    $(row).remove();
+                }
+                country_code_check.push(country_code);
+                main_table_low_value = get_main_table_data_upload(); //Read data from main table
+                if (main_table_low_value.includes(country_code)) {
+                        $(row).remove();
+                }
+                main_table_low_value.push(country_code);
+            }
+
     });
     table_sort_filter_popup_pagination('id_popup_table')
     check_data()

@@ -297,7 +297,6 @@ class MasterSettingsSave:
                 company_db_list.append(company_db_dictionary)
 
             else:
-
                 django_query_instance.django_update_query(OrgCompanies,
                                                           {'company_id': company_detail['company_id'],
                                                            'client': self.client},

@@ -173,15 +173,21 @@ function delete_duplicate() {
         uom_description = row.find("TD").eq(2).find('input[type="text"]').val().toUpperCase();
         iso_code_id = row.find("TD").eq(3).find('input[type="text"]').val().toUpperCase();
         checked_box = row.find("TD").eq(4).find('input[type="checkbox"]').is(':checked');
-        if (uom_id_check.includes(uom_id)) {
-            $(row).remove();
+        if (checked_box){
+            del_ind = '1'
         }
-        uom_id_check.push(uom_id);
-        main_table_low_value = get_main_table_data_upload(); //Read data from main table
-        if (main_table_low_value.includes(uom_id)) {
-            $(row).remove();
+        else{
+            del_ind = '0'
+            if (uom_id_check.includes(uom_id)) {
+                $(row).remove();
+            }
+            uom_id_check.push(uom_id);
+            main_table_low_value = get_main_table_data_upload(); //Read data from main table
+            if (main_table_low_value.includes(uom_id)) {
+                $(row).remove();
+            }
+            main_table_low_value.push(uom_id);
         }
-        main_table_low_value.push(uom_id);
     })
     table_sort_filter_popup_pagination('id_popup_table')
     check_data();
