@@ -329,7 +329,7 @@ var lang_id = '{{user_info.language_id | safe}}';
     }
 
     function ajax_update_user_basic_data(data) {
-<!--        OpenLoaderPopup();-->
+        OpenLoaderPopup();
         urlLink = "{% url 'eProc_Users:update_user_basic_details' %}";
         var response = AjaxCallAPIBasic(urlLink, data)
         return response
@@ -383,6 +383,7 @@ var lang_id = '{{user_info.language_id | safe}}';
     });
 
     $('form').on('submit',function (e) {
+        OpenLoaderPopup();
         var valid = save_user_form_validation();
         if(!valid){
             localStorage.setItem("error_flag", 1);
@@ -394,7 +395,6 @@ var lang_id = '{{user_info.language_id | safe}}';
             e.preventDefault();
         }
         else{
-<!--            OpenLoaderPopup();-->
             save_user_basic_info();
             setTimeout(function() {
                        CloseLoaderPopup();
@@ -406,7 +406,6 @@ var lang_id = '{{user_info.language_id | safe}}';
 
      // Funtion to save basic detail data
     function save_user_basic_info() {
-        OpenLoaderPopup();
         var name1_val= $('#first_name').val();
         var phone_num_val = $('#phone_num').val();
         var email_val = $('#email').val();
