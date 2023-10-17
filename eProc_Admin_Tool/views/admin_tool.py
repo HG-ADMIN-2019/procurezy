@@ -366,7 +366,7 @@ def user_report(request):
     default_comp_id = ''
 
     if request.method == 'GET':
-        default_comp_id = '1000'
+        default_comp_id = '2000'
         if 'final_list' in request.session:
             request.POST = request.session['final_list']
             request.method = 'POST'

@@ -1206,35 +1206,20 @@ class ApplicationSettingsSave:
         bulk_create_entry_db(MessagesIdDesc, messageIdDesc_db_list)
 
     def save_system_settings(self, systemsettings_data):
-        """
-
-        """
         systemsettings_db_list = []
         for systemsettings_detail in systemsettings_data:
-            # if entry is not exists in db
-            if not django_query_instance.django_existence_check(SystemSettingsConfig,
-                                                                {'sys_attr_type': systemsettings_detail[
-                                                                    'sys_attr_type'],
-                                                                 'sys_attr_value': systemsettings_detail[
-                                                                     'sys_attr_value'],
-                                                                 'client': self.client
-                                                                 }):
-                guid = guid_generator()
-                systemsettings_db_dictionary = {'system_settings_config_guid': guid,
-                                                'sys_attr_type': systemsettings_detail['sys_attr_type'],
-                                                'sys_attr_value': systemsettings_detail['sys_attr_value'],
-                                                'del_ind': False,
-                                                'client': self.client,
-                                                'system_settings_config_created_at': self.current_date_time,
-                                                'system_settings_config_created_by': self.username,
-                                                'system_settings_config_changed_at': self.current_date_time,
-                                                'system_settings_config_changed_by': self.username
-                                                }
-                systemsettings_db_list.append(systemsettings_db_dictionary)
-            else:
+            # Initialize guid
+            guid = guid_generator()
+
+            # Check if the entry exists in the database
+            if django_query_instance.django_existence_check(SystemSettingsConfig,
+                                                            {'sys_attr_type': systemsettings_detail['sys_attr_type'],
+                                                             'sys_attr_value': systemsettings_detail['sys_attr_value'],
+                                                             'client': self.client
+                                                             }):
+                # Update the existing record
                 django_query_instance.django_update_query(SystemSettingsConfig,
-                                                          {'sys_attr_type': systemsettings_detail[
-                                                              'sys_attr_type'],
+                                                          {'sys_attr_type': systemsettings_detail['sys_attr_type'],
                                                            'sys_attr_value': systemsettings_detail['sys_attr_value'],
                                                            'client': self.client
                                                            },
@@ -1247,6 +1232,22 @@ class ApplicationSettingsSave:
                                                            'system_settings_config_created_by': self.username,
                                                            'system_settings_config_changed_at': self.current_date_time,
                                                            'system_settings_config_changed_by': self.username})
+            else:
+                # Create a new record
+                systemsettings_db_dictionary = {
+                    'system_settings_config_guid': guid,
+                    'sys_attr_type': systemsettings_detail['sys_attr_type'],
+                    'sys_attr_value': systemsettings_detail['sys_attr_value'],
+                    'del_ind': False,
+                    'client': self.client,
+                    'system_settings_config_created_at': self.current_date_time,
+                    'system_settings_config_created_by': self.username,
+                    'system_settings_config_changed_at': self.current_date_time,
+                    'system_settings_config_changed_by': self.username
+                }
+                systemsettings_db_list.append(systemsettings_db_dictionary)
+
+        # Bulk create new entries in the database
         bulk_create_entry_db(SystemSettingsConfig, systemsettings_db_list)
 
     def save_orgnode_types_data_into_db(self, orgnode_data):
