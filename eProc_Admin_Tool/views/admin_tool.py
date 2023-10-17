@@ -54,7 +54,7 @@ from eProc_Reports.Utilities.reports_generic import get_companylist, get_usrid_b
     get_langlist, get_companyDetails, get_account_assignvalues
 from eProc_Shopping_Cart.Utilities.shopping_cart_generic import get_supplier_details
 from eProc_Shopping_Cart.context_processors import update_user_info
-from eProc_Shopping_Cart.models import  ScItem, ScPotentialApproval, ScApproval
+from eProc_Shopping_Cart.models import ScItem, ScPotentialApproval, ScApproval
 from eProc_Shopping_Cart.models.shopping_cart import ScHeader
 from eProc_Suppliers.Utilities.supplier_generic import supplier_detail_search
 from eProc_Suppliers.Utilities.supplier_specific import get_supplier_data, update_country_encrypt
@@ -558,17 +558,24 @@ def approval_report(request):
             # Instead of fetching a specific company, fetch data for all companies
             for company_info in company_array:
                 company_code = company_info.company_id
-                workflow_schema = list(WorkflowSchema.objects.filter(Q(client=client, company_id=company_code)).values_list('app_types', flat=True))
+                workflow_schema = list(
+                    WorkflowSchema.objects.filter(Q(client=client, company_id=company_code)).values_list('app_types',
+                                                                                                         flat=True))
                 if workflow_schema:
                     for schema_step_type in workflow_schema:
-                        workflow_acc_list = WorkflowACC.objects.filter(Q(account_assign_cat__in=inp_acc_assgn_cat, company_id=company_code, client=client))
+                        workflow_acc_list = WorkflowACC.objects.filter(
+                            Q(account_assign_cat__in=inp_acc_assgn_cat, company_id=company_code, client=client))
 
                 if workflow_acc_list:
                     for w_acc_list in workflow_acc_list:
-                        app_code_id = ApproverLimit.objects.filter(Q(company_id=company_code, approver_username=w_acc_list.app_username, del_ind=False, client=client)).values_list('app_code_id', flat=True)
+                        app_code_id = ApproverLimit.objects.filter(
+                            Q(company_id=company_code, approver_username=w_acc_list.app_username, del_ind=False,
+                              client=client)).values_list('app_code_id', flat=True)
 
                         if app_code_id:
-                            app_val_list = ApproverLimitValue.objects.filter(Q(company_id=company_code, app_code_id__in=app_code_id, del_ind=False, app_types=schema_step_type, client=client))
+                            app_val_list = ApproverLimitValue.objects.filter(
+                                Q(company_id=company_code, app_code_id__in=app_code_id, del_ind=False,
+                                  app_types=schema_step_type, client=client))
                             final_array = []
                             for app_val in app_val_list:
                                 final_array.append(w_acc_list.company_id)
@@ -586,17 +593,24 @@ def approval_report(request):
                                 final_list.append(final_array)
         elif inp_comp_code is not None:
             # Fetch data for the selected company (existing behavior)
-            workflow_schema = list(WorkflowSchema.objects.filter(Q(client=client, company_id=inp_comp_code)).values_list('app_types', flat=True))
+            workflow_schema = list(
+                WorkflowSchema.objects.filter(Q(client=client, company_id=inp_comp_code)).values_list('app_types',
+                                                                                                      flat=True))
             if workflow_schema:
                 for schema_step_type in workflow_schema:
-                    workflow_acc_list = WorkflowACC.objects.filter(Q(account_assign_cat__in=inp_acc_assgn_cat, company_id=inp_comp_code, client=client))
+                    workflow_acc_list = WorkflowACC.objects.filter(
+                        Q(account_assign_cat__in=inp_acc_assgn_cat, company_id=inp_comp_code, client=client))
 
             if workflow_acc_list:
                 for w_acc_list in workflow_acc_list:
-                    app_code_id = ApproverLimit.objects.filter(Q(company_id=inp_comp_code, approver_username=w_acc_list.app_username, del_ind=False, client=client)).values_list('app_code_id', flat=True)
+                    app_code_id = ApproverLimit.objects.filter(
+                        Q(company_id=inp_comp_code, approver_username=w_acc_list.app_username, del_ind=False,
+                          client=client)).values_list('app_code_id', flat=True)
 
                     if app_code_id:
-                        app_val_list = ApproverLimitValue.objects.filter(Q(company_id=inp_comp_code, app_code_id__in=app_code_id, del_ind=False, app_types=schema_step_type, client=client))
+                        app_val_list = ApproverLimitValue.objects.filter(
+                            Q(company_id=inp_comp_code, app_code_id__in=app_code_id, del_ind=False,
+                              app_types=schema_step_type, client=client))
                         final_array = []
                         for app_val in app_val_list:
                             final_array.append(w_acc_list.company_id)
@@ -662,7 +676,8 @@ def m_docsearch_meth(request):
         inp_requester = ''
 
         # Assuming result is a list of dictionaries
-        result = get_hdr_data(request, inp_doc_type, inp_doc_num, inp_from_date, inp_to_date, inp_supl, inp_created_by, inp_requester, report_search)
+        result = get_hdr_data(request, inp_doc_type, inp_doc_num, inp_from_date, inp_to_date, inp_supl, inp_created_by,
+                              inp_requester, report_search)
 
     if not request.method == 'POST':
         # Handle GET requests, rendering the initial form
@@ -711,11 +726,14 @@ def m_docsearch_meth(request):
                 # Fetch data for all companies
                 for item in result:
                     company_code = item.get('co_code')  # Assuming 'co_code' is the key in the dictionary
-                    filtered_result = get_hdr_data(request, inp_doc_type, inp_doc_num, inp_from_date, inp_to_date, inp_supl, inp_created_by, inp_requester, report_search).filter(co_code=company_code)
+                    filtered_result = get_hdr_data(request, inp_doc_type, inp_doc_num, inp_from_date, inp_to_date,
+                                                   inp_supl, inp_created_by, inp_requester, report_search).filter(
+                        co_code=company_code)
                     filtered_results.extend(filtered_result)
             else:
                 # Fetch data for the selected company
-                filtered_results = get_hdr_data(request, inp_doc_type, inp_doc_num, inp_from_date, inp_to_date, inp_supl, inp_created_by, inp_requester, report_search)
+                filtered_results = get_hdr_data(request, inp_doc_type, inp_doc_num, inp_from_date, inp_to_date,
+                                                inp_supl, inp_created_by, inp_requester, report_search)
 
             error_messages = rep_search_form.errors
             t_count = len(filtered_results)
@@ -756,8 +774,6 @@ def m_docsearch_meth(request):
 
     # If neither GET nor POST request, you should handle this case or return an appropriate response
     return HttpResponse("Unsupported HTTP method")
-
-
 
 
 @login_required
@@ -801,9 +817,11 @@ def accnt_report(request):
         if inp_comp_code is not None and inp_acc_assgn_cat is not None:
             if inp_comp_code == '*':
                 # Fetch data for all companies
-                account_list = AccountingData.objects.filter(client=client, account_assign_cat=inp_acc_assgn_cat, del_ind=False)
+                account_list = AccountingData.objects.filter(client=client, account_assign_cat=inp_acc_assgn_cat,
+                                                             del_ind=False)
             else:
-                account_list = AccountingData.objects.filter(client=client, company_id=inp_comp_code, account_assign_cat=inp_acc_assgn_cat, del_ind=False)
+                account_list = AccountingData.objects.filter(client=client, company_id=inp_comp_code,
+                                                             account_assign_cat=inp_acc_assgn_cat, del_ind=False)
 
         result_array = []
         for account_data in account_list:
@@ -837,9 +855,13 @@ def accnt_report(request):
         if inp_comp_code is not None and inp_account_assgn_cat is not None:
             if inp_comp_code == '*':
                 # Fetch data for all companies
-                account_list = AccountingData.objects.filter(client=client, account_assign_cat__in=inp_account_assgn_cat, del_ind=False)
+                account_list = AccountingData.objects.filter(client=client,
+                                                             account_assign_cat__in=inp_account_assgn_cat,
+                                                             del_ind=False)
             else:
-                account_list = AccountingData.objects.filter(client=client, company_id=inp_comp_code, account_assign_cat__in=inp_account_assgn_cat, del_ind=False)
+                account_list = AccountingData.objects.filter(client=client, company_id=inp_comp_code,
+                                                             account_assign_cat__in=inp_account_assgn_cat,
+                                                             del_ind=False)
 
         for account_data in account_list:
             account_desc_data_list = AccountingDataDesc.objects.filter(client=client,
@@ -884,7 +906,6 @@ def accnt_report(request):
         }
 
     return render(request, 'Reports/accnt_report.html', context)
-
 
 
 def get_acct_report(request):
@@ -1092,6 +1113,10 @@ def delete_user(request):
     employee_results = django_query_instance.django_filter_query(UserData, {
         'client': global_variables.GLOBAL_CLIENT, 'del_ind': False
     }, None, None)
+
+    for emails in employee_results:
+        encrypted_email1 = encrypt(emails['email'])
+        emails['encrypted_email'] = encrypted_email1
 
     response = {'employee_results': employee_results, 'success_message': success_message}
     return JsonResponse(response, safe=False)
@@ -1617,3 +1642,15 @@ def check_resend(request):
     print(email_data)
     return JsonParser_obj.get_json_from_obj(context)
     # return render(request, 'ApplicationMonitoring/Email_user_monitoring.html', context)
+
+
+def clear_filter_data(req):
+    update_user_info(req)
+    table_data = JsonParser_obj.get_json_from_req(req)
+    if table_data['table_name'] == 'employee':
+        data = get_emp_data()
+        return JsonResponse(data, safe=False)
+    if table_data['table_name'] == 'supplier':
+        supplier_results = get_supplier_data()
+        response = {'supplier_results': supplier_results}
+        return JsonResponse(response, safe=False)

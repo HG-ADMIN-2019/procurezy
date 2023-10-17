@@ -517,7 +517,8 @@ $(document).ready(function(){
         $("#country_code_id").val(country_id).attr('selected', 'selected');
         $("#language_id").val(lang_id).attr('selected', 'selected');
         $("#currency_id").val(curr_id).attr('selected', 'selected');
-        $("#working_days").prop("hidden", true);
+        $("#working_days").prop("hidden", false);
+        $("#working_days_id").prop("hidden", true);
         var wday_array = [];
         wday_array = w_days.split(",");
         var num = w_days.match(/\d/g);
@@ -743,6 +744,7 @@ function save_basic_details() {
 
 function MultipleSelect() {
      $('#working_days_id').selectpicker();
+     $('#working_days').selectpicker();
     $('.multiple_select').selectpicker();
 }
 function get_days(workingday){
