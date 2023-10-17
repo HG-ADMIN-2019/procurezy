@@ -793,7 +793,7 @@
             main_attribute.spend_code_id = row.find("TD").eq(2).html();
             main_attribute.currency_id = row.find("TD").eq(4).html();
             main_attribute.del_ind = row.find("TD").eq(6).find('input[type="checkbox"]').is(':checked');
-            var compare_maintable =main_attribute.company_id +'-'+ main_attribute.spend_code_id +'-'+ main_attribute.currency_id +'-'+ main_attribute.del_ind
+            var compare_maintable =main_attribute.company_id +'-'+ main_attribute.spend_code_id +'-'+ main_attribute.currency_id
             main_table_low_value.push(compare_maintable);
         });
         table_sort_filter('display_basic_table');
@@ -814,15 +814,21 @@
             spendlimit_value_dic.currency_id = row.find("TD").eq(4).find('select[type="text"]').val()
             checked_box = row.find("TD").eq(6).find('input[type="checkbox"]').is(':checked')
             var compare_maintable =spendlimit_value_dic.company_id +'-'+ spendlimit_value_dic.spend_code_id +'-'+ spendlimit_value_dic.currency_id +'-'+ spendlimit_value_dic.del_ind
-            if (cusprodcatdesc_code_check.includes(compare_maintable)) {
-                $(row).remove();
+             if (checked_box){
+                del_ind = '1'
             }
-            spendlimit_value_code_check.push(compare_maintable);
-            main_table_low_value = get_main_table_data_upload(); //Read data from main table
-            if (main_table_low_value.includes(compare_maintable)) {
-                $(row).remove();
+            else{
+                del_ind = '0'
+                if (cusprodcatdesc_code_check.includes(compare_maintable)) {
+                    $(row).remove();
+                }
+                spendlimit_value_code_check.push(compare_maintable);
+                main_table_low_value = get_main_table_data_upload(); //Read data from main table
+                if (main_table_low_value.includes(compare_maintable)) {
+                    $(row).remove();
+                }
+                main_table_low_value.push(compare_maintable);
             }
-            main_table_low_value.push(compare_maintable);
         })
         table_sort_filter_popup_pagination('id_popup_table')
         check_data()
@@ -880,63 +886,72 @@
             else{
                 spendlimit_value_dic.del_ind = '0'
             }
+            var compare_maintable =spend_limit_value.company_id +'-'+ spend_limit_value.spend_code_id +'-'+ spend_limit_value.currency_id
             spendlimit_value_list.push(spendlimit_value_dic)
 
             get_main_table_data();
             var format = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
-           //*************** checking for empty records for product id name (max length = 2) ***************
-            if(spendlimit_value_dic.spend_code_id.length == 0){
-                $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
-                row_color_highlight_empty(row);
-                $("#id_error_msg_prod_cat_desc").prop("hidden",false);
-                error_message = ui_messeges("JMSG002")// Get message details
-                var display8 = error_message;
-                document.getElementById("id_error_msg_spendlimitval_code").innerHTML = display8+ "spend limit value";
-                $("#id_check_special_character_messages").prop("hidden",false);
-                count = count +1;
+            if(spendlimit_value_dic.del_ind == '0'){
+               //*************** checking for empty records for product id name (max length = 2) ***************
+                if(spendlimit_value_dic.spend_code_id.length == 0){
+                    $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
+                    row_color_highlight_empty(row);
+                    $("#id_error_msg_prod_cat_desc").prop("hidden",false);
+                    error_message = ui_messeges("JMSG002")// Get message details
+                    var display8 = error_message;
+                    document.getElementById("id_error_msg_spendlimitval_code").innerHTML = display8+ "spend limit value";
+                    $("#id_check_special_character_messages").prop("hidden",false);
+                    count = count +1;
+                }
+                //*************** checking for special characters for country name ***************
+                else if(format.test(spendlimit_value_dic.spend_code_id)){
+                    $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "1px solid #FF0000");
+                    row_color_highlight_special(row);
+                    $("#id_error_msg_language_id").prop("hidden",false);
+                    error_message = ui_messeges("JMSG003")// Get message details
+                    var display3 = error_message;
+                    document.getElementById("id_error_msg_spendlimitval_code").innerHTML = display3+ "spend limit value";
+                    $("#id_check_special_character_messages").prop("hidden",false);
+                    count = count +1;
+                }
+                else if(spendlimit_value_code_check.includes((spendlimit_value_dic.spend_code_id))){
+                     $(row).css("border", "#f8d7da");
+                     row_color_highlight(row);
+                     $("#id_check_error_messages").prop("hidden",false);
+                     var display7 = ui_messeges("JMSG001");
+                     document.getElementById("id_check_error_messages").innerHTML = display7;
+                     $("#save_id").prop("hidden", true);
+                     $("#id_delete_duplicate").show()
+                     $("#id_check_data").prop("hidden", false);
+                     count = count +1;
+                }
+                else if(main_table_low_value.includes((spendlimit_value_dic.spend_code_id))){
+                     $(row).css("border", "#f8d7da");
+                     row_color_highlight(row);
+                     $("#id_check_error_messages").prop("hidden",false);
+                     var display7 = ui_messeges("JMSG001");
+                     document.getElementById("id_check_error_messages").innerHTML = display7;
+                     $("#save_id").prop("hidden", true);
+                     $("#id_delete_duplicate").show()
+                     $("#id_check_data").prop("hidden", false);
+                     count = count +1;
+                }
+                else{
+                    $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "none");
+                    row_color_no_highlight(row);
+                    $(row).css("border", "");
+                    $("#id_delete_duplicate").hide()
+                }
+                spendlimit_value_code_check.push(compare_maintable)
+                main_table_low_value.push(compare_maintable)
+                table_sort_filter_popup_pagination('id_popup_table');
             }
-            //*************** checking for special characters for country name ***************
-            else if(format.test(spendlimit_value_dic.spend_code_id)){
-                $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "1px solid #FF0000");
-                row_color_highlight_special(row);
-                $("#id_error_msg_language_id").prop("hidden",false);
-                error_message = ui_messeges("JMSG003")// Get message details
-                var display3 = error_message;
-                document.getElementById("id_error_msg_spendlimitval_code").innerHTML = display3+ "spend limit value";
-                $("#id_check_special_character_messages").prop("hidden",false);
-                count = count +1;
-            }
-            else if(spendlimit_value_code_check.includes((spendlimit_value_dic.spend_code_id)&&(spendlimit_value_dic.del_ind))){
-                 $(row).css("border", "#f8d7da");
-                 row_color_highlight(row);
-                 $("#id_check_error_messages").prop("hidden",false);
-                 var display7 = ui_messeges("JMSG001");
-                 document.getElementById("id_check_error_messages").innerHTML = display7;
-                 $("#save_id").prop("hidden", true);
-                 $("#id_delete_duplicate").show()
-                 $("#id_check_data").prop("hidden", false);
-                 count = count +1;
-            }
-            else if(main_table_low_value.includes((spendlimit_value_dic.spend_code_id)&&(spendlimit_value_dic.del_ind))){
-                 $(row).css("border", "#f8d7da");
-                 row_color_highlight(row);
-                 $("#id_check_error_messages").prop("hidden",false);
-                 var display7 = ui_messeges("JMSG001");
-                 document.getElementById("id_check_error_messages").innerHTML = display7;
-                 $("#save_id").prop("hidden", true);
-                 $("#id_delete_duplicate").show()
-                 $("#id_check_data").prop("hidden", false);
-                 count = count +1;
-            }
-            else{
-                $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "none");
+            if(count == 0){
+                $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "none");
                 row_color_no_highlight(row);
                 $(row).css("border", "");
                 $("#id_delete_duplicate").hide()
             }
-            spendlimit_value_code_check.push(spendlimit_value_dic.spend_code_id)
-            main_table_low_value.push(spendlimit_value_dic.spend_code_id)
-            table_sort_filter_popup_pagination('id_popup_table');
         });
 
         //*************** shows save button if there are no errors(special characters and max length) ***************

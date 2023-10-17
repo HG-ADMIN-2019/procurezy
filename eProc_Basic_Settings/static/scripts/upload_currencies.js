@@ -178,15 +178,21 @@ function delete_duplicate(){
         description = row.find("TD").eq(2).find('input[type="text"]').val().toUpperCase();
         currency_id = row.find("TD").eq(1).find('input[type="text"]').val().toUpperCase();
         checked_box = row.find("TD").eq(3).find('input[type="checkbox"]').is(':checked')
-        if(currency_id_check.includes(currency_id)){
-            $(row).remove();
-        }
-       currency_id_check.push(currency_id);
-        main_table_low_value = get_main_table_data_upload(); //Read data from main table
-        if (main_table_low_value.includes(currency_id)) {
-            $(row).remove();
-        }
-        main_table_low_value.push(currency_id);
+            if (checked_box){
+                del_ind = '1'
+            }
+            else{
+                del_ind = '0'
+                if(currency_id_check.includes(currency_id)){
+                    $(row).remove();
+                }
+               currency_id_check.push(currency_id);
+                main_table_low_value = get_main_table_data_upload(); //Read data from main table
+                if (main_table_low_value.includes(currency_id)) {
+                    $(row).remove();
+                }
+                main_table_low_value.push(currency_id);
+            }
     })
     table_sort_filter_popup_pagination('id_popup_table')
     check_data()

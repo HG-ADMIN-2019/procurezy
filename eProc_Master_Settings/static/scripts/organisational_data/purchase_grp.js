@@ -185,15 +185,21 @@ function delete_duplicate() {
         description = row.find("TD").eq(2).find('input[type="text"]').val();
         object_id = row.find("TD").eq(3).find('select').val();
         checked_box = row.find("TD").eq(4).find('input[type="checkbox"]').is(':checked')
-        if (pgroup_code_check.includes(pgroup_id)) {
-            $(row).remove();
-        }
-        pgroup_code_check.push(pgroup_id);
-         main_table_low_value = get_main_table_data_upload(); //Read data from main table
-        if (main_table_low_value.includes(pgroup_id)) {
-            $(row).remove();
-        }
-        main_table_low_value.push(pgroup_id);
+          if (checked_box){
+                del_ind = '1'
+          }
+          else{
+                del_ind = '0'
+                if (pgroup_code_check.includes(pgroup_id)) {
+                    $(row).remove();
+                }
+                pgroup_code_check.push(pgroup_id);
+                 main_table_low_value = get_main_table_data_upload(); //Read data from main table
+                if (main_table_low_value.includes(pgroup_id)) {
+                    $(row).remove();
+                }
+                main_table_low_value.push(pgroup_id);
+          }
     });
     table_sort_filter_popup_pagination('id_popup_table')
     check_data()
@@ -277,7 +283,7 @@ function get_main_table_data_upload() {
         var main_attribute = {};
         main_attribute.pgroup_id = row.find("TD").eq(1).html();
          main_attribute.del_ind = row.find("TD").eq(4).find('input[type="checkbox"]').is(':checked');
-        var compare = main_attribute.pgroup_id + '-'+ main_attribute.del_ind
+        var compare = main_attribute.pgroup_id
         main_table_low_value.push(compare);
     });
     table_sort_filter('display_basic_table');
