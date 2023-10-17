@@ -153,10 +153,13 @@
                     <div class="row">
                         <div class="form-group col-md">
                             {% if acct_assignment_category.0 == '1' %}
-                            <input type="checkbox" class="toggle_field" id="acct_assignment_category"
+                                <input type="checkbox" class="toggle_field" id="acct_assignment_category"
                                 name="acct_assignment_category" value="1" class="toggle_field" checked disabled>
                             {% elif acct_assignment_category.0 == '0' %}
-                            <input type="checkbox" class="toggle_field" id="acct_assignment_category"
+                                <input type="checkbox" class="toggle_field" id="acct_assignment_category"
+                                name="acct_assignment_category" value="0" class="toggle_field" disabled>
+                            {% else %}
+                                <input type="checkbox" class="toggle_field" id="acct_assignment_category"
                                 name="acct_assignment_category" value="0" class="toggle_field" disabled>
                             {% endif %}
                             <label class="custom-checkbox-label"> Mix Account Assignment Category</label>
@@ -170,6 +173,9 @@
                             {% elif purchase_group.0 == '0' %}
                             <input type="checkbox" class="toggle_field" id="purchase_group" name="purchase_group"
                                 value="0" class="toggle_field" disabled>
+                            {% else %}
+                                <input type="checkbox" class="toggle_field" id="purchase_group" name="purchase_group"
+                                value="0" class="toggle_field" disabled>
                             {% endif %}
                             <label class="custom-checkbox-label"> Mix Purchase Groups</label>
                             <span class="custom-checkbox-label-subtext"> Can have multiple purchasing groups in shopping
@@ -177,10 +183,13 @@
                         </div>
                         <div class="form-group col-md">
                             {% if edit_address.0 == '1' %}
-                            <input type="checkbox" class="toggle_field" id="edit_address" name="edit_address" value="1"
+                                <input type="checkbox" class="toggle_field" id="edit_address" name="edit_address" value="1"
                                 class="toggle_field" checked disabled>
                             {% elif edit_address.0 == '0' %}
-                            <input type="checkbox" class="toggle_field" id="edit_address" name="edit_address" value="0"
+                                <input type="checkbox" class="toggle_field" id="edit_address" name="edit_address" value="0"
+                                class="toggle_field" disabled>
+                            {% else %}
+                                <input type="checkbox" class="toggle_field" id="edit_address" name="edit_address" value="0"
                                 class="toggle_field" disabled>
                             {% endif %}
                             <label class="custom-checkbox-label"> Enable Edit Address</label>
@@ -189,10 +198,13 @@
                         </div>
                         <div class="form-group col-md">
                             {% if recently_viewed_items.0 == '1' %}
-                            <input type="checkbox" class="toggle_field" id="recently_viewed_items"
+                                <input type="checkbox" class="toggle_field" id="recently_viewed_items"
                                 name="recently_viewed_items" value="1" checked disabled>
                             {% elif recently_viewed_items.0 == '0' %}
-                            <input type="checkbox" class="toggle_field" id="recently_viewed_items"
+                                <input type="checkbox" class="toggle_field" id="recently_viewed_items"
+                                name="recently_viewed_items" value="0" disabled>
+                            {% else %}
+                                <input type="checkbox" class="toggle_field" id="recently_viewed_items"
                                 name="recently_viewed_items" value="0" disabled>
                             {% endif %}
                             <label class="custom-checkbox-label"> Enable Recently Viewed Items</label>
@@ -208,6 +220,9 @@
                             {% elif frequently_purchased_items.0 == '0' %}
                             <input type="checkbox" class="toggle_field" id="frequently_purchased_items"
                                 name="frequently_purchased_items" value="0" disabled>
+                            {% else %}
+                                <input type="checkbox" class="toggle_field" id="frequently_purchased_items"
+                                name="frequently_purchased_items" value="0" disabled>
                             {% endif %}
                             <label class="custom-checkbox-label"> Enable Frequently Purchased Items</label>
                             <span class="custom-checkbox-label-subtext"> Can view frequently purchased items in home
@@ -215,10 +230,13 @@
                         </div>
                         <div class="form-group col-md">
                             {% if change_shipping_address.0 == '1' %}
-                            <input type="checkbox" class="toggle_field" id="change_shipping_address"
+                                <input type="checkbox" class="toggle_field" id="change_shipping_address"
                                 name="change_shipping_address" value="1" checked disabled>
                             {% elif change_shipping_address.0 == '0' %}
-                            <input type="checkbox" class="toggle_field" id="change_shipping_address"
+                                <input type="checkbox" class="toggle_field" id="change_shipping_address"
+                                name="change_shipping_address" value="0" disabled>
+                            {% else %}
+                                <input type="checkbox" class="toggle_field" id="change_shipping_address"
                                 name="change_shipping_address" value="0" disabled>
                             {% endif %}
                             <label class="custom-checkbox-label"> Enable Change Shipping Address</label>
@@ -226,10 +244,13 @@
                         </div>
                         <div class="form-group col-md">
                             {% if limit_item.0 %}
-                            <input type="checkbox" class="toggle_field" id="limit_item" name="limit_item" value="1"
+                                <input type="checkbox" class="toggle_field" id="limit_item" name="limit_item" value="1"
                                 checked disabled>
                             {% elif limit_item.0 == 0 %}
-                            <input type="checkbox" class="toggle_field" id="limit_item" name="limit_item" value="0"
+                                <input type="checkbox" class="toggle_field" id="limit_item" name="limit_item" value="0"
+                                disabled>
+                            {% else %}
+                                <input type="checkbox" class="toggle_field" id="limit_item" name="limit_item" value="0"
                                 disabled>
                             {% endif %}
                             <label class="custom-checkbox-label"> Enable Limit Order Item</label>
@@ -237,10 +258,13 @@
                         </div>
                         <div class="form-group col-md">
                             {% if add_favourites.0 == '1' %}
-                            <input type="checkbox" class="toggle_field" id="add_favourites" name="add_favourites"
+                                <input type="checkbox" class="toggle_field" id="add_favourites" name="add_favourites"
                                 value="1" checked disabled>
                             {% elif add_favourites.0 == '0' %}
-                            <input type="checkbox" class="toggle_field" id="add_favourites" name="add_favourites"
+                                <input type="checkbox" class="toggle_field" id="add_favourites" name="add_favourites"
+                                value="0" disabled>
+                            {% else %}
+                                <input type="checkbox" class="toggle_field" id="add_favourites" name="add_favourites"
                                 value="0" disabled>
                             {% endif %}
                             <label class="custom-checkbox-label"> Add to Favourites</label>
@@ -310,6 +334,7 @@
                 message_display_time();
                 $("#edit_sys_settings").prop("hidden", false);
                 $("#save_sys_settings").prop("hidden", true);
+                $("#cancel_sys_settings").prop("hidden", true);
                 $('.toggle_field').prop('disabled', true);
                 CloseLoaderPopup();
             }

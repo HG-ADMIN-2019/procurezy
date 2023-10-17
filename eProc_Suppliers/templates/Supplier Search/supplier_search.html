@@ -20,10 +20,10 @@
                     <i class="fas fa-cloud-upload-alt"></i> upload data
                 </button>
                 <button class="btn btn-primary" onclick="window.open(href = '{% url 'eProc_Admin_Tool:sup_details_page' None %}')">
-                    <i class="fas fa-user-plus"></i> 
+                    <i class="fas fa-user-plus"></i>
                     Create Supplier
                 </button>
-                
+
             </div>
         </div>
 
@@ -131,7 +131,7 @@
             </div>
         </div>
         {% elif supplier_results.count == 0  %}
-        <div class="search_result_count_card card">
+        <div class="search_result_count_card card" id="result_id">
             <div class="card-body">
                 <h6 class="card-title">No Results Found</h6>
             </div>
@@ -140,8 +140,8 @@
 
         <div id="error_msg_div" class="alert alert-success" hidden><span id="success_msg_id"></span></div>
 
-        {% if supplier_results %}
-        
+
+
         <div class="card mt-5">
             <div>
                 <button class="btn btn-primary btn-sm mt-2 ml-2" title="Delete" id="id_delete_supplier" value="product_delete" data-toggle="modal" data-target="#id_delete_confirm_popup" style="display:none;">
@@ -210,7 +210,7 @@
                 </div>
             </div>
         </div>
-        {% endif %}
+
     </div>
 </div>
 
@@ -454,10 +454,6 @@ var form_method = '{{form_method|safe}}';
     }
 
     $('form').on('reset',function (e) {
-    setTimeout(function() {
-                       OpenLoaderPopup();
-         }, 500);
-
     localStorage.removeItem("fname");
     localStorage.removeItem("supp_id");
     localStorage.removeItem("supp_email");
@@ -467,12 +463,26 @@ var form_method = '{{form_method|safe}}';
     localStorage.removeItem("supp_porg");
     localStorage.removeItem("supp_purchase_block");
     $(".error_message").prop("hidden", true);
-    form_method = 'GET';
-        display_supplier_data(supplier_data_onload);
-        localStorage.setItem("username", "");
-        setTimeout(function() {
-                       CloseLoaderPopup();
-         }, 500);
+    $("#result_id").prop("hidden", true);
+<!--    form_method = 'GET';-->
+<!--        display_supplier_data(supplier_data_onload);-->
+<!--        localStorage.setItem("username", "");-->
+<!--        setTimeout(function() {-->
+<!--                       CloseLoaderPopup();-->
+<!--         }, 500);-->
+        OpenLoaderPopup();
+        var data = {'table_name':'supplier'}
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'eProc_Admin_Tool:clear_filter' %}",
+            data: JSON.stringify(data),
+            success: function(response) {
+                console.log(response);
+                supplier_results = response.supplier_results;
+                display_supplier_data(response.supplier_results);
+                CloseLoaderPopup();
+            }
+        });
 });
 
     $('form').on('submit',function (e) {

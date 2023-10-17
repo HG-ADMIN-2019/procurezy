@@ -112,14 +112,14 @@
             </div>
         </div>
         {% if count == 0  %}
-        <div class="search_result_count_card card">
+        <div class="search_result_count_card card" id="result_id">
             <div class="card-body">
                 <h6 class="card-title">No Results Found</h6>
             </div>
         </div>
         {% endif %}
         <div style="margin-top:25px" id="error_msg_div" class="alert alert-success" hidden><span id="success_msg_id"></span></div>
-        {% if employee_results %}
+
         <div class="card mt-5">
             <div>
                  <button class="btn btn-primary  btn-sm mt-2 ml-2"  title="Delete" id="id_delete_emp" value="emp_delete" data-toggle="modal" data-target="#id_delete_confirm_popup" style="display:none;" >
@@ -197,7 +197,7 @@
                 </div>
             </div>
         </div>
-        {% endif %}
+
     </div>
 </div>
 
@@ -487,6 +487,8 @@ $('form').on('reset',function (e) {
     localStorage.removeItem("pwd_locked");
     localStorage.removeItem("is_active");
     localStorage.setItem("username", "");
+    $(".error_message").prop("hidden", true);
+    $("#result_id").prop("hidden", true);
     form_method = 'GET';
         display_emp_data(emp_data_onload);
         localStorage.setItem("username", "");
@@ -651,10 +653,10 @@ function display_emp_data(emp_data){
         checkbox_input = '<input type="checkbox" class="emp_checkbox" onclick="valueChanged();" >'
         var lock_id, pwd_lock;
         if(emp.user_locked){
-            lock_id = '<input type="checkbox" id="'+emp.employee_id.concat("-LOCKED")+'" class="toggle-block" checked><span class="control"></span>';
+            lock_id = '<input type="checkbox" id="'+emp.employee_id.concat("-LOCKED")+'" class="toggle-block dummy_emp_block" checked><span class="control"></span>';
             }
         else {
-            lock_id = '<input type="checkbox" id="'+emp.employee_id.concat("-UNLOCKED")+'" class="toggle-block"> <span class="control"></span>';
+            lock_id = '<input type="checkbox" id="'+emp.employee_id.concat("-UNLOCKED")+'" class="toggle-block dummy_emp_block"> <span class="control"></span>';
         }
         if(emp.pwd_locked){
             pwd_lock = '<input type="checkbox" id="'+emp.employee_id.concat("-PWDLOCKED")+'" class="toggle-block" checked><span class="control"></span>';
@@ -663,7 +665,7 @@ function display_emp_data(emp_data){
             pwd_lock = '<input type="checkbox" id="'+emp.employee_id.concat("-PWDUNLOCKED")+'" class="toggle-block"><span class="control"></span>';
             }
         emp_detail_html += '<tr id="tr_'+emp.email+'"><td class="class_select_checkbox">'+checkbox_input+'</td> '+
-        '<td><a href="#" id="'+ emp.employee_id +'" class="deletepop" target="_blank">'+ emp.employee_id +'</a></td>'+
+        '<td><a href="#" id="'+emp.encrypted_email+'" class="deletepop dummy_emp_detail"  target="_blank">'+emp.employee_id+'</a></td>'+
          '<td>'+ emp.username +'</td>'+
          '<td>'+ emp.first_name +'</td>'+
          '<td>'+ emp.last_name +'</td>'+
@@ -678,6 +680,18 @@ function display_emp_data(emp_data){
     $("#user_tab_tbody").append(emp_detail_html);
     table_sort_filter('user_tab');
 }
+$(document).on('click', '.dummy_emp_detail', function () {
+        var url = "{% url 'eProc_Admin_Tool:user_details_page' 123 %}";
+        var id = $(this).attr('id');
+        var href_link = url.replace('123', id)
+        window.open(href_link,'_blank');
+    });
+    $(document).on('click', '.dummy_emp_block', function () {
+        var id = this.id
+        block_id = id
+        data.employee_id = id.split('-')[0];
+        $('#id_confirm_popup').modal('show');
+    });
 
 function main_table_delete(){
     main_table_emp_checked = [];

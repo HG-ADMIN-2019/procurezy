@@ -236,7 +236,7 @@ function get_main_table_data_upload() {
         var main_attribute = {};
         main_attribute.language_id = row.find("TD").eq(1).html();
         main_attribute.del_ind = row.find("TD").eq(3).find('input[type="checkbox"]').is(':checked');
-        var compare = main_attribute.language_id + '-'+ main_attribute.del_ind
+        var compare = main_attribute.language_id
         main_table_low_value.push(compare);
     });
     table_sort_filter('display_basic_table');
