@@ -149,12 +149,7 @@ def save_user_data(request):
             # }
             # email_notify(email_data, variant_name, global_variables.GLOBAL_CLIENT)
             # ----- create user and send email
-            user_data = {
-                'username': user_details['username'],
-                'first_name': user_details['first_name'],
-                'email': user_details['email']
-            }
-            is_created = RegFncts.create_user(user, new_user, global_variables.GLOBAL_CLIENT, password)
+            is_created = RegFncts.create_user(request, new_user, global_variables.GLOBAL_CLIENT, password)
             if is_created:
                 msgid = 'MSG183'
                 error_msg = get_message_desc(msgid)[1]
