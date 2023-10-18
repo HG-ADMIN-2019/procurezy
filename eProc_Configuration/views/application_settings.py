@@ -457,6 +457,16 @@ def create_update_delete_flags(request):
     if app_data['table_name'] == 'AccountingDataDesc':
         display_data = application_settings_save_instance.generate_aad_delete_flags(app_data)
         return JsonResponse(display_data, safe=False)
+    if app_data['table_name'] == 'DetermineGLAccount':
+        display_data = application_settings_save_instance.generate_detgl_delete_flags(app_data)
+        return JsonResponse(display_data, safe=False)
+    if app_data['table_name'] == 'ApproverType':
+        display_data = application_settings_save_instance.generate_approval_type_delete_flags(app_data)
+        return JsonResponse(display_data, safe=False)
+    if app_data['table_name'] == 'WorkflowSchema':
+        display_data = application_settings_save_instance.generate_wf_schema_delete_flags(app_data)
+        return JsonResponse(display_data, safe=False)
+
 
 
 def get_dropdown_data(request):

@@ -2,6 +2,10 @@ var approval_type_data = new Array();
 var main_table_low_value = [];
 var validate_add_attributes = [];
 
+//hide the myModal popup: Implemented Dependency delete purpose
+function hideModal() {
+    $('#App_Type_Modal').modal('hide');
+}
 
 //******************************************** 
 function display_error_message(error_message){
@@ -134,6 +138,22 @@ function get_selected_row_data() {
         approval_type_arr_obj.app_types = row.find("TD").eq(1).html();
         approval_type_arr_obj.appr_type_desc = row.find("TD").eq(2).html();
         main_table_approval_type_checked.push(approval_type_arr_obj);
+        }
+    });
+}
+
+// Function to get the selected row data
+function get_row_data(tableSelector) {
+    main_table_checked = [];
+    $(tableSelector).DataTable().$('input[type="checkbox"]').each(function () {
+        var checkbox = $(this);
+        var row = checkbox.closest("tr");
+        var approval_type_arr_obj = {};
+        approval_type_arr_obj.del_ind = checkbox.is(':checked');
+        if(approval_type_arr_obj.del_ind) {
+            approval_type_arr_obj.app_types = row.find("TD").eq(1).find('input[type="text"]').val() || row.find("TD").eq(1).html();
+            approval_type_arr_obj.appr_type_desc = row.find("TD").eq(2).find('input[type="text"]').val() || row.find("TD").eq(2).html();
+            main_table_checked.push(approval_type_arr_obj);
         }
     });
 }

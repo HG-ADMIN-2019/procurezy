@@ -264,7 +264,7 @@ function get_main_table_data_upload() {
         var main_attribute = {};
         main_attribute.company_id = row.find("TD").eq(1).html();
         main_attribute.del_ind = row.find("TD").eq(6).find('input[type="checkbox"]').is(':checked');
-        var compare = main_attribute.company_id + '-'+ main_attribute.del_ind
+        var compare = main_attribute.company_id
         main_table_low_value.push(compare);
     });
     table_sort_filter('display_basic_table');
@@ -290,16 +290,22 @@ function delete_duplicate() {
         name2 = row.find("TD").eq(3).find('input[type="text"]').val();
         name1 = row.find("TD").eq(2).find('input[type="text"]').val();
         company_id = row.find("TD").eq(1).find('input[type="text"]').val().toUpperCase();
-        checked_box = row.find("TD").eq(5).find('input[type="checkbox"]').is(':checked')
-        if (company_check.includes(company_id)) {
-            $(row).remove();
-        }
-        company_check.push(company_id);
-         main_table_low_value = get_main_table_data_upload(); //Read data from main table
-        if (main_table_low_value.includes(company_id)) {
-            $(row).remove();
-        }
-        main_table_low_value.push(company_id);
+        checked_box = row.find("TD").eq(6).find('input[type="checkbox"]').is(':checked')
+         if (checked_box){
+                del_ind = '1'
+         }
+         else{
+             del_ind = '0'
+             if (company_check.includes(company_id)) {
+                $(row).remove();
+             }
+             company_check.push(company_id);
+             main_table_low_value = get_main_table_data_upload(); //Read data from main table
+             if (main_table_low_value.includes(company_id)) {
+                $(row).remove();
+             }
+             main_table_low_value.push(company_id);
+         }
     });
     table_sort_filter_popup_pagination('id_popup_table')
     check_data()

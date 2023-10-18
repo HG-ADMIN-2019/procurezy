@@ -51,7 +51,7 @@
                 </div>
             </div>
             <div id="table-container">
-            <!-- <br>
+             <br>
             <div class="search_result_count_card card">
                 {% if t_count > 0 %}
                 <div class="card-body">
@@ -64,8 +64,8 @@
                     <h6 class="card-title">No Results Found</h6>
                 </div>
                 {% endif %}
-            </div> -->
-            <!--    To Display Header Details only if there are any results-->
+            </div>
+<!--                To Display Header Details only if there are any results-->
             {% if t_count > 0 %}
             {% if final_list %}
             <div class="card mt-5">
@@ -114,24 +114,37 @@
 <script>
 
     // Funtion to get username
-    $(document).ready(function () {
-        nav_bar_admin();
-        $('#id_username').attr('type', 'search');
-        // Script to generate sort and filter feature for tables
-        table_sort_filter_export_excel();
-        // Loader implementation on search button
-        $('#hg_user_report_search').click(function () {
-            // Store the form data in local storage
-            var formData = {
-                companyCode: $('#id_company_code').val(),
-                userRepType: $('#id_userrep_type').val(),
-                username: $('#id_username').val(),
-                userStatus: $('#id_user_status').val() // Assuming this is the correct ID for the dropdown
-            };
-            localStorage.setItem('formData', JSON.stringify(formData));
+$(document).ready(function () {
+    nav_bar_admin();
+    $('#id_username').attr('type', 'search');
+    // Script to generate sort and filter feature for tables
+    table_sort_filter_export_excel();
 
-            $('#hg_loader').modal('show');
-        });
+    // Function to set the default value of the company dropdown
+    function setDefaultCompanyValue() {
+        var companyCodeDropdown = $("label:contains('Company Number')").next("select");
+        companyCodeDropdown.val(companyCodeDropdown.find("option:first").val());
+    }
+
+    // Check if the page was refreshed or initially loaded
+    if (performance.navigation.type === 1) {
+        // Page was refreshed, set default company value
+        setDefaultCompanyValue();
+    }
+
+    // Loader implementation on search button
+    $('#hg_user_report_search').click(function () {
+        // Store the form data in local storage
+        var formData = {
+            companyCode: $('#id_company_code').val(),
+            userRepType: $('#id_userrep_type').val(),
+            username: $('#id_username').val(),
+            userStatus: $('#id_user_status').val() // Assuming this is the correct ID for the dropdown
+        };
+        localStorage.setItem('formData', JSON.stringify(formData));
+
+        $('#hg_loader').modal('show');
+    });
 
     // Check if there is stored form data and populate the form fields
     var storedFormData = localStorage.getItem('formData');
@@ -144,6 +157,9 @@
         // Set the selected option for userStatus based on the stored value
         $('#id_user_status').val(formData.userStatus); // Assuming this is the correct ID for the dropdown
     }
+
+    // Set the default company value on page load
+    setDefaultCompanyValue();
 });
 
 function hideTableAndPagination() {
