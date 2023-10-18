@@ -55,13 +55,13 @@ function onclick_copy_update_button(data) {
             var row = $chkbox_all[i].parentNode.parentNode;
             if(GLOBAL_ACTION == "UPDATE") {
                 pgroup_guid = row.cells[4].innerHTML
-                unique_input = '<input class="form-control check_special_char" value="' + row.cells[1].innerHTML + '" type="text" name="pgroup_id"  maxlength="8"  disabled>'
-                edit_basic_data += '<tr><td hidden><input type="checkbox"></td><td>'+unique_input+' </td><td><input class="form-control check_special_char" value="' + row.cells[2].innerHTML + '" type="text" name="description"  maxlength="100"  required></td><td hidden><select class="form-control" disabled>' +object_id_dropdwn + ' </select></td><td hidden><input value="' + pgroup_guid + '"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+                unique_input = '<input class="form-control check_character_no_space" value="' + row.cells[1].innerHTML + '" type="text" name="pgroup_id"  maxlength="8"  disabled>'
+                edit_basic_data += '<tr><td hidden><input type="checkbox"></td><td>'+unique_input+' </td><td><input class="form-control check_only_character" value="' + row.cells[2].innerHTML + '" type="text" name="description"  maxlength="100"  required></td><td hidden><select class="form-control" disabled>' +object_id_dropdwn + ' </select></td><td hidden><input value="' + pgroup_guid + '"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
                 $("#header_select").prop("hidden", true);
             } else {
                 pgroup_guid = 'GUID';
-                unique_input = '<input class="form-control check_special_char" value="' + row.cells[1].innerHTML + '" type="text" name="pgroup_id"  maxlength="8"  required>'
-                edit_basic_data += '<tr><td><input type="checkbox" required></td><td>'+unique_input+'</td><td><input class="form-control check_special_char" value="' + row.cells[2].innerHTML + '" type="text"  name="description"  maxlength="100"  required></td><td hidden><select class="form-control">' +object_id_dropdwn + ' </select></td><td hidden><input value="' + pgroup_guid + '"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+                unique_input = '<input class="form-control check_character_no_space" value="' + row.cells[1].innerHTML + '" type="text" name="pgroup_id"  maxlength="8"  required>'
+                edit_basic_data += '<tr><td><input type="checkbox" required></td><td>'+unique_input+'</td><td><input class="form-control check_only_character" value="' + row.cells[2].innerHTML + '" type="text"  name="description"  maxlength="100"  required></td><td hidden><select class="form-control">' +object_id_dropdwn + ' </select></td><td hidden><input value="' + pgroup_guid + '"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
                 $("#header_select").prop("hidden", false);
             }
             var row = $chkbox_all[i].parentNode.parentNode;
@@ -119,7 +119,7 @@ function add_popup_row() {
         $("#id_error_msg").html(" ");
     });
     if (GLOBAL_ACTION == "purchase_grp_upload") {
-        basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><input class="input form-control check_special_char"  type="text" minlength="4" maxlength="8"  name="pgroup_id" required></td><td><input class="input form-control check_special_char"  type="text" maxlength="100"  name="description"  required></td><td hidden><select>' + object_id_dropdwn + ' </select><td hidden>pgroup_guid</td><td class="class_del_checkbox"><input type="checkbox" required></td></tr>';
+        basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><input class="input form-control check_character_no_space"  type="text" minlength="4" maxlength="8"  name="pgroup_id" required></td><td><input class="input form-control check_only_character"  type="text" maxlength="100"  name="description"  required></td><td hidden><select>' + object_id_dropdwn + ' </select><td hidden>pgroup_guid</td><td class="class_del_checkbox"><input type="checkbox" required></td></tr>';
         $('#id_popup_tbody').append(basic_add_new_html);
         table_sort_filter('id_popup_table');
         $(".class_del_checkbox").prop("hidden", false);
@@ -257,7 +257,7 @@ function update_check_message(messages) {
 
 // Function for add a new row data
 function new_row_data() {
-    basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><input class="input form-control check_special_character"  type="text" minlength="4" maxlength="8"  name="pgroup_id" required></td><td><input class="input form-control check_special_character"  type="text" maxlength="100"  name="description"  required></td><td hidden><select>' + object_id_dropdwn + ' </select><td hidden>pgroup_guid</td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+    basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><input class="input form-control check_character_no_space"  type="text" minlength="4" maxlength="8"  name="pgroup_id" required></td><td><input class="input form-control check_only_character"  type="text" maxlength="100"  name="description"  required></td><td hidden><select>' + object_id_dropdwn + ' </select><td hidden>pgroup_guid</td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
 }
 
