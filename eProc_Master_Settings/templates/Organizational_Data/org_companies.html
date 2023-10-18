@@ -484,7 +484,12 @@
                     $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "none");
                     row_color_no_highlight(row);
                     $(row).css("border", "");
-                    $("#id_delete_duplicate").hide()
+                    if(company_check.includes((company_dic.company_id))|| (main_table_low_value.includes((company_dic.company_id)))){
+                        $("#id_delete_duplicate").show()
+                    }
+                    else{
+                        $("#id_delete_duplicate").hide()
+                    }
                 }
                 company_check.push(company_dic.company_id)
                 main_table_low_value.push(company_dic)
@@ -494,7 +499,6 @@
                 $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "none");
                 row_color_no_highlight(row);
                 $(row).css("border", "");
-                $("#id_delete_duplicate").hide()
             }
         });
 

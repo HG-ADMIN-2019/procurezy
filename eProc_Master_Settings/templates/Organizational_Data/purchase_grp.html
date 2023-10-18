@@ -496,7 +496,12 @@
                     $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "none");
                     row_color_no_highlight(row);
                     $(row).css("border", "");
-                    $("#id_delete_duplicate").hide()
+                     if(purchasegrp_code_check.includes((purchasegrp_dic.pgroup_id)) || (main_table_low_value.includes((purchasegrp_dic.pgroup_id)))){
+                        $("#id_delete_duplicate").show()
+                    }
+                    else{
+                        $("#id_delete_duplicate").hide()
+                    }
                 }
                 purchasegrp_code_check.push(purchasegrp_dic.pgroup_id)
                  main_table_low_value.push(purchasegrp_dic)
@@ -506,7 +511,6 @@
                 $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "none");
                 row_color_no_highlight(row);
                 $(row).css("border", "");
-                $("#id_delete_duplicate").hide()
             }
         });
         //*************** shows save button if there are no errors(special characters and max length) ***************
