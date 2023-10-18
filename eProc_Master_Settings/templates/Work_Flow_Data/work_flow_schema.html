@@ -200,7 +200,7 @@
             if (!wf_schema) {
                 company_id_dropdown = '';
                 $.each(available_company_data, function(i, item){
-                    company_id_dropdown += '<option value="' + item.company_id + '">' + item.company_id + '</option>';
+                    company_id_dropdown += '<option value="' + item + '">' + item + '</option>';
                 })
 
                 wrksch_types_dropdown_onload = '';
@@ -273,7 +273,6 @@
                 rendered_company_data = response.upload_data_company
                 rendered_approvartype_data = response.upload_data_apptypes
                 dropdown_db_values = response.dropdown_db_values
-<!--                workflow_dropdown()-->
                 display_tb_data() // Read data from the main table
                 on_page_load_dropdown();
                 $("#error_msg_id").css("display", "none")

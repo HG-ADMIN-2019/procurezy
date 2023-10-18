@@ -123,7 +123,7 @@ function add_popup_row() {
         $("#id_error_msg").html(" ");
     });
     if (GLOBAL_ACTION == "country_upload") {
-         basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><input class="form-control check_special_char"  type="text"   maxlength="2" minlength="2"  name="countrycode" style="text-transform:uppercase;" required></td><td><input class="form-control check_special_char" type="text" maxlength="100"  name="countryname" required></td><td class="class_del_checkbox"><input type="checkbox" required></td></tr>';
+         basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><input class="form-control check_character_no_space"  type="text"   maxlength="2" minlength="2"  name="countrycode" style="text-transform:uppercase;" required></td><td><input class="form-control check_only_character" type="text" maxlength="100"  name="countryname" required></td><td class="class_del_checkbox"><input type="checkbox" required></td></tr>';
          $('#id_popup_tbody').append(basic_add_new_html);
          table_sort_filter('id_popup_table');
          $(".class_del_checkbox").prop("hidden", false);

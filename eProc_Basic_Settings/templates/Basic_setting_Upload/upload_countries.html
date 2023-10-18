@@ -215,7 +215,7 @@
                                     del_ind= '<input type="checkbox" value="' + value.del_ind+ '" required>'
                                 }
                                      edit_basic_data += '<tr><td class="class_select_checkbox"><input type="checkbox" required></td>'+
-                                    '<td><input class="form-control" type="text" value="' + value.country_code + '" maxlength="2" onkeypress="return /[a-z]/i.test(event.key)" required></td>'+
+                                    '<td><input class="form-control" type="text" value="' + value.country_code + '" maxlength="2" onkeypress="return /[a-z]/i.test(event.key)"  style="text-transform:uppercase;" required></td>'+
                                     '<td><input class="form-control" type="text" value="' + value.country_name + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td>'+
                                     '<td>'+ del_ind +'</td></tr>';
                             });
@@ -442,7 +442,12 @@
                     $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "none");
                     row_color_no_highlight(row);
                     $(row).css("border", "");
-                    $("#id_delete_duplicate").hide()
+                     if(country_code_check.includes((country_dic.country_code))|| (main_table_low_value.includes((country_dic.country_code)))){
+                        $("#id_delete_duplicate").show()
+                     }
+                     else{
+                        $("#id_delete_duplicate").hide()
+                     }
                 }
                 country_code_check.push(country_dic.country_code)
                 main_table_low_value.push(country_dic)
@@ -452,7 +457,6 @@
                 $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "none");
                 row_color_no_highlight(row);
                 $(row).css("border", "");
-                $("#id_delete_duplicate").hide()
             }
         });
     //*************** shows save button if there are no errors(special characters and max length) ***************
