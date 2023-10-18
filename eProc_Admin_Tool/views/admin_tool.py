@@ -325,6 +325,7 @@ def sup_details(req, supplier_id):
     for img in supp_img_info:
         img_url.append(img.image_url)
 
+    messages_list = get_ui_messages(CONST_COFIG_UI_MESSAGE_LIST)
     context = {
         'inc_nav': True,
         'inc_footer': True,
@@ -351,6 +352,7 @@ def sup_details(req, supplier_id):
         'supp_img_info': supp_img_info,
         'dropdown_suptype_values': get_supplier_type_values(),
         'dropdown_output_med_values': get_output_medium_values(),
+        'messages_list': messages_list,
     }
 
     return render(req, 'Display Edit Supplier/display_edit_supplier.html', context)
