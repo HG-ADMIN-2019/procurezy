@@ -149,6 +149,14 @@
        return false;
         }
     });
+ // Allows only characters without space for currency
+    $("body").on("keypress", ".check_character_no_space_currency", function (event) {
+    var input = this.value + String.fromCharCode(!event.charCode ? event.which : event.charCode);
+    if (input.length >= 3 || /\s/.test(input)) {
+        event.preventDefault();
+        return false;
+    }
+  });
     // Allows only Upper case characters
     $("body").on("keypress", ".check_uppercase_character", function (event) {
     var regex = new RegExp("^[ A-Z]+$");
