@@ -365,10 +365,11 @@ def user_report(request):
     client = getClients(request)
     page_range = 0
     company_list = get_companylist(request)
+    company_list.reverse()
     default_comp_id = ''
 
     if request.method == 'GET':
-        default_comp_id = company_list[4]['company_id'] if company_list else '2000'
+        default_comp_id = company_list[0]['company_id'] if company_list else ''
 
         if 'final_list' in request.session:
             request.POST = request.session['final_list']
@@ -543,100 +544,57 @@ def user_report(request):
 
 @login_required
 def approval_report(request):
-    workflow_acc_list = {}
     client = getClients(request)
-    page_range = 0
     final_list = []
     inp_acc_assgn_cat = []
-    inp_comp_code = None  # Initialize inp_comp_code to None
     company_array = get_companyDetails(request)
     acc_value_array = get_account_assignvalues(request)
 
-    # If the request method is GET, this is the initial page load
-    if request.method == 'POST':
-        inp_acc_assgn_cat = request.POST.getlist('acc_assgn_cat', default=None)
-        inp_comp_code = request.POST.get('comp_code_app')
+    # Fetch initial selections from the form
+    inp_acc_assgn_cat = request.POST.getlist('acc_assgn_cat', default=None)
+    inp_comp_code = request.POST.get('comp_code_app')
 
-        # Check if '*' (All Companies) is selected
-        if inp_comp_code == '*':
-            # Instead of fetching a specific company, fetch data for all companies
-            for company_info in company_array:
-                company_code = company_info.company_id
-                workflow_schema = list(
-                    WorkflowSchema.objects.filter(Q(client=client, company_id=company_code)).values_list('app_types',
-                                                                                                         flat=True))
-                if workflow_schema:
-                    for schema_step_type in workflow_schema:
-                        workflow_acc_list = WorkflowACC.objects.filter(
-                            Q(account_assign_cat__in=inp_acc_assgn_cat, company_id=company_code, client=client))
+    # If inp_comp_code and inp_acc_assgn_cat are not provided, set default values
+    if not inp_comp_code:
+        inp_comp_code = company_array.first().company_id
+    if not inp_acc_assgn_cat:
+        inp_acc_assgn_cat = [acc['account_assign_cat'] for acc in acc_value_array]
 
-                if workflow_acc_list:
-                    for w_acc_list in workflow_acc_list:
-                        app_code_id = ApproverLimit.objects.filter(
-                            Q(company_id=company_code, approver_username=w_acc_list.app_username, del_ind=False,
-                              client=client)).values_list('app_code_id', flat=True)
+    # Fetch data based on initial selections
+    workflow_schema = list(
+        WorkflowSchema.objects.filter(Q(client=client, company_id=inp_comp_code)).values_list('app_types', flat=True))
+    if workflow_schema:
+        for schema_step_type in workflow_schema:
+            workflow_acc_list = WorkflowACC.objects.filter(
+                Q(account_assign_cat__in=inp_acc_assgn_cat, company_id=inp_comp_code, client=client))
 
-                        if app_code_id:
-                            app_val_list = ApproverLimitValue.objects.filter(
-                                Q(company_id=company_code, app_code_id__in=app_code_id, del_ind=False,
-                                  app_types=schema_step_type, client=client))
-                            final_array = []
-                            for app_val in app_val_list:
-                                final_array.append(w_acc_list.company_id)
-                                final_array.append(w_acc_list.account_assign_cat_id)
-                                final_array.append(w_acc_list.acc_value)
-                                final_array.append(w_acc_list.app_username)
-                                final_array.append(w_acc_list.currency_id)
-                                final_array.append(w_acc_list.sup_company_id)
-                                final_array.append(w_acc_list.sup_acc_value)
-                                final_array.append(app_val.upper_limit_value)
-                                final_array.append(app_val.currency_id)
-                                final_array.append(app_val.app_code_id)
-                                final_array.append(w_acc_list.sup_account_assign_cat_id)
-                                final_array.append(app_val.app_code_id)
-                                final_list.append(final_array)
-        elif inp_comp_code is not None:
-            # Fetch data for the selected company (existing behavior)
-            workflow_schema = list(
-                WorkflowSchema.objects.filter(Q(client=client, company_id=inp_comp_code)).values_list('app_types',
-                                                                                                      flat=True))
-            if workflow_schema:
-                for schema_step_type in workflow_schema:
-                    workflow_acc_list = WorkflowACC.objects.filter(
-                        Q(account_assign_cat__in=inp_acc_assgn_cat, company_id=inp_comp_code, client=client))
+        if workflow_acc_list:
+            for w_acc_list in workflow_acc_list:
+                app_code_id = ApproverLimit.objects.filter(
+                    Q(company_id=inp_comp_code, approver_username=w_acc_list.app_username, del_ind=False,
+                      client=client)).values_list('app_code_id', flat=True)
 
-            if workflow_acc_list:
-                for w_acc_list in workflow_acc_list:
-                    app_code_id = ApproverLimit.objects.filter(
-                        Q(company_id=inp_comp_code, approver_username=w_acc_list.app_username, del_ind=False,
-                          client=client)).values_list('app_code_id', flat=True)
-
-                    if app_code_id:
-                        app_val_list = ApproverLimitValue.objects.filter(
-                            Q(company_id=inp_comp_code, app_code_id__in=app_code_id, del_ind=False,
-                              app_types=schema_step_type, client=client))
-                        final_array = []
-                        for app_val in app_val_list:
-                            final_array.append(w_acc_list.company_id)
-                            final_array.append(w_acc_list.account_assign_cat_id)
-                            final_array.append(w_acc_list.acc_value)
-                            final_array.append(w_acc_list.app_username)
-                            final_array.append(w_acc_list.currency_id)
-                            final_array.append(w_acc_list.sup_company_id)
-                            final_array.append(w_acc_list.sup_acc_value)
-                            final_array.append(app_val.upper_limit_value)
-                            final_array.append(app_val.currency_id)
-                            final_array.append(app_val.app_code_id)
-                            final_array.append(w_acc_list.sup_account_assign_cat_id)
-                            final_array.append(app_val.app_code_id)
-                            final_list.append(final_array)
+                if app_code_id:
+                    app_val_list = ApproverLimitValue.objects.filter(
+                        Q(company_id=inp_comp_code, app_code_id__in=app_code_id, del_ind=False,
+                          app_types=schema_step_type, client=client))
+                    final_array = []
+                    for app_val in app_val_list:
+                        final_array.append(w_acc_list.company_id)
+                        final_array.append(w_acc_list.account_assign_cat_id)
+                        final_array.append(w_acc_list.acc_value)
+                        final_array.append(w_acc_list.app_username)
+                        final_array.append(w_acc_list.currency_id)
+                        final_array.append(w_acc_list.sup_company_id)
+                        final_array.append(w_acc_list.sup_acc_value)
+                        final_array.append(app_val.upper_limit_value)
+                        final_array.append(app_val.currency_id)
+                        final_array.append(app_val.app_code_id)
+                        final_array.append(w_acc_list.sup_account_assign_cat_id)
+                        final_array.append(app_val.app_code_id)
+                        final_list.append(final_array)
 
     t_count = len(final_list)
-    all_acc_assgn_cat_values = [acc_cat['account_assign_cat'] for acc_cat in acc_value_array]
-
-    # Set inp_acc_assgn_cat to all possible values as a list
-    inp_acc_assgn_cat = all_acc_assgn_cat_values
-
     # Context to display in Doc_report.html
     context = {
         'inc_nav': True,
@@ -644,17 +602,16 @@ def approval_report(request):
         'comp_list': company_array,
         'acct_val_list': acc_value_array,
         'final_list': final_list,
-        'page_range': page_range,
+        'page_range': 0,
         't_count': t_count,
-        'inp_acc_assgn_cat': inp_acc_assgn_cat,
-        'inp_comp_code': inp_comp_code,
-        'all_acc_assgn_cat_values': all_acc_assgn_cat_values,  # Include all possible values
+        'inp_acc_assgn_cat': [acc['account_assign_cat'] for acc in acc_value_array],
+        'inp_comp_code': json.dumps(
+            [{'company_id': company.company_id, 'name1': company.name1} for company in company_array]),
         'is_slide_menu': True,
         'is_admin_active': True
     }
 
     return render(request, 'Reports/approval_report.html', context)
-
 
 
 @login_required
