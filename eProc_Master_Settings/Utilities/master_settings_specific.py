@@ -843,6 +843,8 @@ class MasterSettingsSave:
 
     def save_app_limit_value_data(self, applimval_data):
         applimval_db_list = []
+        delete_app_code_ids = []
+
         for applimval_detail in applimval_data['data']:
             # if entry is not exists in db
             if not django_query_instance.django_existence_check(ApproverLimitValue,
@@ -871,6 +873,8 @@ class MasterSettingsSave:
                 applimval_db_list.append(applimval_db_dictionary)
 
             else:
+                if applimval_detail['del_ind']:
+                    delete_app_code_ids.append(applimval_detail['app_code_id'])
 
                 django_query_instance.django_update_query(ApproverLimitValue,
                                                           {'app_code_id': applimval_detail['app_code_id'],
@@ -890,6 +894,16 @@ class MasterSettingsSave:
                                                               'approver_limit_value_changed_at': self.current_date_time,
                                                               'approver_limit_value_changed_by': self.username,
                                                           })
+
+        # Delete entries from SpendLimitValue and SpendLimitId tables
+        if delete_app_code_ids:
+            # Delete corresponding records in SpendLimitId table
+            for app_code_id in delete_app_code_ids:
+                ApproverLimit.objects.filter(app_code_id=app_code_id).delete()
+
+            # Delete entries from SpendLimitValue table
+            ApproverLimitValue.objects.filter(app_code_id__in=delete_app_code_ids).delete()
+
         if applimval_db_list:
             bulk_create_entry_db(ApproverLimitValue, applimval_db_list)
 
