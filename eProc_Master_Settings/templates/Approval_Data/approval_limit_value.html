@@ -35,7 +35,7 @@
                     <button class="btn btn-secondary btn-sm" title="Edit" id="id_edit_data" onclick="onclick_edit_button()">
                         <i class="fas fa-edit"></i> edit
                     </button>
-                    <button class="btn btn-outline-danger btn-sm" title="Delete" id="id_delete_data" value="alv_delete" style="display:none;" data-toggle="modal" data-target="#id_delete_confirm_popup">
+                    <button class="btn btn-outline-danger  btn-sm"  title="Delete" id="id_delete_data" value="spendlimitval_delete" data-toggle="modal" data-target="#dependency_delete" style="display:none;">
                         <i class="fa fa-trash"></i> Delete
                     </button>
                     <button class="btn btn-primary btn-sm" title="Copy" id="id_copy_data" style="display:none;" value="COPY"  type="button" onclick="onclick_copy_button()">
@@ -59,8 +59,8 @@
                         </th>
                         <th>Company Number</th>
                         <th>Approval Type</th>
-                        <th>Approver Limit</th>
-                        <th>Upper Limit Value</th>
+                        <th>Approver Limit Code</th>
+                        <th>Approver Limit Value</th>
                         <th>Currency</th>
                         <th hidden>guid</th>
                     </tr>
@@ -121,8 +121,8 @@
                                 <th id="header_select">Select</th>
                                 <th>Company Number</th>
                                 <th>Approval Type</th>
-                                <th>Approver Limit</th>
-                                <th>Upper Limit Value</th>
+                                <th>Approver Limit Code</th>
+                                <th>Approver Limit Value</th>
                                 <th>Currency</th>
                                 <th hidden>guid</th>
                                 <th id="id_del_ind_checkbox" hidden>Del Indicator</th>
@@ -490,12 +490,12 @@
     //delete the selected row in db................
     var main_table_alv_checked = [];
     function main_table_delete() {
-     $('#success_msg_id').empty()
-    GLOBAL_ACTION = 'DELETE'
-    main_table_alv_checked=[];
+        $('#success_msg_id').empty()
+        GLOBAL_ACTION = 'DELETE'
+        main_table_alv_checked=[];
         $('#display_basic_table').DataTable().destroy();
         get_selected_row_data(); // Function call to get the selected row data
-        $('#id_delete_confirm_popup').modal('hide');
+        $('#dependency_delete').modal('hide');
         data = {'data':main_table_alv_checked,'table_name':'ApproverLimitValue','action':GLOBAL_ACTION}
         OpenLoaderPopup();
         $.ajax({
