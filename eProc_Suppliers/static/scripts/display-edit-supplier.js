@@ -41,16 +41,14 @@ function edit_basic_supp_data(){
             document.getElementById('sbd_save_cancel_button').style.display = 'block';
             $("#working_days").show();
             $("#working_days").prop("hidden", false);
-//            $("#working_days_id").prop("hidden", true);
+            $("#working_days_id").prop("hidden", true);
     }
-    $("#display_mode").show();
-    document.getElementById('display_mode').style.display = 'block' ;
-    document.getElementById('working_days').style.display = 'block' ;
-    $("#working_days").prop("hidden", false);
-    $("#working_days").prop("disabled",false );
-//     $("#edit_mode").prop("hidden", false);
+    $("#edit_mode").show();
+    document.getElementById('display_mode').style.display = 'none' ;
+    $("#working_days_id").prop("hidden", false);
+     $("#edit_mode").prop("hidden", false);
      var num = w_days.match(/\d/g);
-     $("select[id=working_days]").val(num);
+     $("select[id=working_days_id]").val(num);
     document.getElementById('sbd_edit_button').style.display = 'none' ;
      $("#cancel_button").prop("hidden", false);
     $("#sbd_edit_button").prop("hidden", true);
@@ -65,11 +63,10 @@ function cancel_basic_details(){
     document.getElementById('cancel_button').style.display = 'none'
     document.getElementById('sbd_edit_button').style.display = 'block'
     document.getElementById('display_mode').style.display = 'block';
-//    document.getElementById('edit_mode').style.display = 'none';
+    document.getElementById('edit_mode').style.display = 'none';
     var result = get_working_day_val();
-    $("#working_days").val(result);
-    $("#working_days").prop("disabled", true);
-//    $("#edit_mode").prop("disabled", true);
+    $("#working_days_id").val(result);
+    $("#edit_mode").prop("disabled", true);
     $("#sbd_edit_button").prop("hidden", false);
     $('#image-preview').hide();
     $('#image-preview3').show();
@@ -77,7 +74,6 @@ function cancel_basic_details(){
     if(!(img_url == '')){
         output.src = img_url;
     }
-
 }
 
 function get_working_day_val(){

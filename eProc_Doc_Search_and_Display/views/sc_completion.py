@@ -22,7 +22,8 @@ def sc_completion_doc_search(request):
     if request.method == 'GET':
         encrypted_header_guid = []
         search_fields = {}
-        from_date = date.today() - timedelta(days=7)
+        # from_date = date.today() - timedelta(days=7)
+        from_date = date.today()
         min = datetime.datetime.combine(from_date, datetime.time.min)
         to_date = date.today()
         today_max = datetime.datetime.combine(datetime.date.today(), datetime.time.max)
@@ -33,7 +34,7 @@ def sc_completion_doc_search(request):
         for header_guid in sc_header_details:
             created_at_date = header_guid['created_at']
             header_guid['created_at'] = created_at_date.strftime("%d %B %Y ")
-            header_guid['first_name']= requester_field_info(header_guid['created_by'], 'first_name')
+            header_guid['first_name'] = requester_field_info(header_guid['created_by'], 'first_name')
 
             encrypted_header_guid.append(encrypt(header_guid['guid']))
         doc_type = 'SC'
@@ -62,14 +63,18 @@ def sc_completion_doc_search(request):
 
         for header_guid in sc_header_details:
             created_at_date = header_guid['created_at']
+            createdby = header_guid['created_by']
             header_guid['created_at'] = created_at_date.strftime("%d %B %Y")
+            header_guid['created_by'] = createdby
             encrypted_header_guid.append(encrypt(header_guid['guid']))
         doc_type = 'SC'
         sc_completion_flag = True
+        count = len(sc_header_details)
         sc_header_details = zip(sc_header_details, encrypted_header_guid)
 
         context['sc_header_details'] = sc_header_details
         context['doc_type'] = doc_type
         context['sc_completion_flag'] = sc_completion_flag
+        context['count'] = count
 
     return render(request, 'Doc Search and Display/sc_completion.html', context)
