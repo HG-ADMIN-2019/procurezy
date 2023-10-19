@@ -58,15 +58,21 @@ function edit_basic_supp_data(){
 
 // onclick of cancel button functionality
 function cancel_basic_details(){
-    $(".hg_edit_display_mode").prop( "disabled", true );
+    $(".hg_edit_display_mode").prop("disabled", true);
     document.getElementById('sbd_save_cancel_button').style.display = 'none'
     document.getElementById('cancel_button').style.display = 'none'
     document.getElementById('sbd_edit_button').style.display = 'block'
+    document.getElementById('display_mode').style.display = 'block';
+    document.getElementById('edit_mode').style.display = 'none';
+    $("#edit_mode").prop("disabled", true);
     $("#sbd_edit_button").prop("hidden", false);
     $('#image-preview').hide();
     $('#image-preview3').show();
     var output = document.getElementById('image-preview3');
-    output.src = img_url;
+    if(!(img_url == '')){
+        output.src = img_url;
+    }
+
 }
 
 // Function to edit supplier purchasing details data
