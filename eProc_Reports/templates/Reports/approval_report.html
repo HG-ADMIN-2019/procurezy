@@ -111,28 +111,60 @@
 <!--    console.log('Selected Company Value:', selected_comp_value);-->
 
 $(document).ready(function () {
-    // Add a click event handler for the "clear filters" button
-    $('#clear_filters_btn').click(function () {
-        // Clear the company dropdown by selecting the first option
-        $('#id_comp_code_app').val($('#id_comp_code_app option:first').val());
-        // Clear the account assignment category dropdown by deselecting all options
-        $('#acc_assgn_cat').selectpicker('deselectAll');
-        $('#acc_assgn_cat').selectpicker('refresh'); // Refresh the dropdown to update the display
-        // Hide the table container (including table and pagination)
-        $('#table-container').hide();
-    });
+    // Initialize selectpicker
+    $('.multiple_select').selectpicker();
 
-    // Add a click event handler for the "search" button
+    // Event handler for the "search" button
     $('#hg_approval_report_search').click(function () {
         // Display the table container (including table and pagination)
         $('#table-container').show();
+
+        // Optional: Open a loader modal
+        OpenLoaderPopup();
+
+        // Store the selected values in local storage
+        var selectedCompany = $('#id_comp_code_app').val();
+        var selectedCategories = $('#acc_assgn_cat').val();
+
+        // Create an object to hold the selected values
+        var selectedData = {
+            company: selectedCompany,
+            categories: selectedCategories
+        };
+
+        // Store the selected data as a JSON string in local storage
+        localStorage.setItem("selectedData", JSON.stringify(selectedData));
     });
 
-    // Set the selected option of the company dropdown to the first option on page load
-    $('#id_comp_code_app').val($('#id_comp_code_app option:first').val());
+    // Event handler for the "clear filters" button
+    $('#clear_filters_btn').click(function () {
+        // Clear the local storage data
+        localStorage.removeItem("selectedData");
 
-    // Optionally, you can trigger the change event to ensure any associated actions are executed
-    $('#id_comp_code_app').trigger('change');
+        // Reset the form to its initial state
+        document.getElementById("id_comp_code_app").selectedIndex = 0;
+        $('#acc_assgn_cat').selectpicker('deselectAll');
+        $('#acc_assgn_cat').selectpicker('refresh');
+
+        // Submit the form to reload the page
+        $('form').submit();
+    });
+
+    // Retrieve and set the selected data from local storage on page load
+    var selectedDataJSON = localStorage.getItem("selectedData");
+    if (selectedDataJSON) {
+        var selectedData = JSON.parse(selectedDataJSON);
+
+        if (selectedData.company) {
+            $('#id_comp_code_app').val(selectedData.company);
+        }
+
+        if (selectedData.categories) {
+            $('#acc_assgn_cat').selectpicker('val', selectedData.categories);
+        }
+    }
+
+    // Rest of your code...
 });
 
 </script>
