@@ -65,6 +65,7 @@
                             <div class="col-md-3">
                                 <label for="">User Type</label>
                                 <select type="text" class="form-control" id="user_type" name="user_type">
+                                    <option value="All">All</option>
                                     {% for usertype in dropdown_usertype_values %}
                                         <option value="{{usertype.field_type_id}}">{{usertype.field_type_desc}}</option>
                                     {% endfor %}
@@ -474,9 +475,6 @@ $(document).ready(function() {
     }
 });
 $('form').on('reset',function (e) {
-    setTimeout(function() {
-                       OpenLoaderPopup();
-         }, 500);
     localStorage.removeItem("username");
     localStorage.removeItem("first_name");
     localStorage.removeItem("last_name");
@@ -486,15 +484,13 @@ $('form').on('reset',function (e) {
     localStorage.removeItem("user_locked");
     localStorage.removeItem("pwd_locked");
     localStorage.removeItem("is_active");
-    localStorage.setItem("username", "");
+    localStorage.setItem("user_type", "All");
     $(".error_message").prop("hidden", true);
     $("#result_id").prop("hidden", true);
     form_method = 'GET';
         display_emp_data(emp_data_onload);
         localStorage.setItem("username", "");
-        setTimeout(function() {
-                       CloseLoaderPopup();
-         }, 500);
+        document.getElementById("user_type").value = "All";
 });
      var currency_opt = ''
      var language_opt = ''
