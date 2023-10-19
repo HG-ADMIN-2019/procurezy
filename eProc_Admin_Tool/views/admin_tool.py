@@ -368,7 +368,8 @@ def user_report(request):
     default_comp_id = ''
 
     if request.method == 'GET':
-        default_comp_id = '2000'
+        default_comp_id = company_list[4]['company_id'] if company_list else '2000'
+
         if 'final_list' in request.session:
             request.POST = request.session['final_list']
             request.method = 'POST'
@@ -547,10 +548,11 @@ def approval_report(request):
     page_range = 0
     final_list = []
     inp_acc_assgn_cat = []
-    inp_comp_code = []
+    inp_comp_code = None  # Initialize inp_comp_code to None
     company_array = get_companyDetails(request)
     acc_value_array = get_account_assignvalues(request)
 
+    # If the request method is GET, this is the initial page load
     if request.method == 'POST':
         inp_acc_assgn_cat = request.POST.getlist('acc_assgn_cat', default=None)
         inp_comp_code = request.POST.get('comp_code_app')
@@ -630,6 +632,10 @@ def approval_report(request):
                             final_list.append(final_array)
 
     t_count = len(final_list)
+    all_acc_assgn_cat_values = [acc_cat['account_assign_cat'] for acc_cat in acc_value_array]
+
+    # Set inp_acc_assgn_cat to all possible values as a list
+    inp_acc_assgn_cat = all_acc_assgn_cat_values
 
     # Context to display in Doc_report.html
     context = {
@@ -642,11 +648,13 @@ def approval_report(request):
         't_count': t_count,
         'inp_acc_assgn_cat': inp_acc_assgn_cat,
         'inp_comp_code': inp_comp_code,
+        'all_acc_assgn_cat_values': all_acc_assgn_cat_values,  # Include all possible values
         'is_slide_menu': True,
         'is_admin_active': True
     }
 
     return render(request, 'Reports/approval_report.html', context)
+
 
 
 @login_required

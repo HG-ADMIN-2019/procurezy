@@ -66,16 +66,16 @@ function onclick_copy_update_button(data) {
             var row = $chkbox_all[i].parentNode.parentNode;
             $("#hg_select_checkbox").prop("hidden", false);
             if(GLOBAL_ACTION == "UPDATE"){
-                unique_input = '<input class="form-control check_special_char" type="text" value="' + row.cells[1].innerHTML + '" name="currency code"  maxlength="3" style="text-transform:uppercase" disabled>'
+                unique_input = '<input class="form-control check_character_no_space" type="text" value="' + row.cells[1].innerHTML + '" name="currency code"  maxlength="3" style="text-transform:uppercase" disabled>'
                 edit_basic_data += '<tr><td hidden><input type="checkbox" required></td>'+
                     '<td>'+ unique_input +'</td>'+
-                    '<td><input value="' + row.cells[2].innerHTML + '" type="text" class="form-control check_special_char"  name="currency description"  maxlength="100"  required></td>'+
+                    '<td><input value="' + row.cells[2].innerHTML + '" type="text" class="form-control check_only_character"  name="currency description"  maxlength="100"  required></td>'+
                     '<td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
                 $("#header_select").prop("hidden", true);
             }
             else{
-                unique_input = '<input class="form-control check_special_char" type="text" value="' + row.cells[1].innerHTML + '" name="currency code"  maxlength="3" style="text-transform:uppercase" required>'
-                edit_basic_data += '<tr ><td><input type="checkbox" required></td><td>'+ unique_input +'</td><td><input value="' + row.cells[2].innerHTML + '" type="text" class="form-control check_special_char"  name="currency description"  maxlength="100"  required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+                unique_input = '<input class="form-control check_character_no_space" type="text" value="' + row.cells[1].innerHTML + '" name="currency code"  maxlength="3" style="text-transform:uppercase" required>'
+                edit_basic_data += '<tr ><td><input type="checkbox" required></td><td>'+ unique_input +'</td><td><input value="' + row.cells[2].innerHTML + '" type="text" class="form-control check_only_character"  name="currency description"  maxlength="100"  required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
                 $("#header_select").prop("hidden", false);
             }
         }

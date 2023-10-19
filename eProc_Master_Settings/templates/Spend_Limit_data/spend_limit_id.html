@@ -245,66 +245,6 @@
         });
     }
 
-    // Add button page load dropdown values
-    function on_page_load_dropdown() {
-        hide_company_values() // function call to filter unspsc values
-        used_spend_code = [];
-        if (available_company_data.length > 0) {
-            var company_value = available_company_data[0];
-            var spend_code_value = main_table_data[company_value];
-            if (!currency_id) {
-                company_dropdwn = "" ;
-                $.each(available_company_data, function (i, item) {
-                    company_dropdwn += '<option  value="' + item + '">' + item + '</option>'
-                });
-
-                spendcodeid_dropdwn = "";
-                $.each(rendered_spndlimval_data, function (i, item) {
-                    spendcodeid_dropdwn += '<option  value="' + item.spend_code_id + '">' + item.spend_code_id + '</option>'
-                });
-                return;
-            }else {
-                spendcodeid_dropdwn = '';
-                rendered_spndlimval_data.forEach(item => {
-                    var found = spend_code_value.some(spend_code => spend_code.spend_code_id === item.spend_code_id);
-                    if (found) {
-                        used_spend_code.push(item.spend_code_id)
-                    } else {
-                        spendcodeid_dropdwn += '<option value="' + item.spend_code_id + '">' + item.spend_code_id + '</option>';
-                    }
-                })
-
-                company_dropdwn = "" ;
-                $.each(available_company_data, function (i, item) {
-                    company_dropdwn += '<option  value="' + item + '">' + item + '</option>'
-                });
-            }
-        }
-    }
-
-    // function to filter used unspsc values
-    function hide_company_values() {
-        available_company_data = [];
-        hidden_company_value = [];
-        var  spend_code_id = rendered_spndlimval_data.spend_code_id
-        for(i = 0; i < rendered_company_data.length; i++) {
-            var item = rendered_company_data[i];
-            var company_value = item.company_id
-            var company = main_table_data[company_value];
-
-            if (company === undefined) {
-                available_company_data.push(company_value);
-                continue;
-            }
-
-            if (spend_code_id.length === company.length) {
-                hidden_company_value.push(company_value);
-            } else {
-                available_company_data.push(company_value);
-            }
-        }
-    }
-
     //onclick of add button display Spend_id_Modal popup and set GLOBAL_ACTION button value
     function onclick_add_button(button) {
         $('#id_popup_table').DataTable().destroy();
@@ -319,8 +259,6 @@
                 rendered_spndlimval_data = response.upload_spndlimval
                 rendered_company_data = response.upload_data_company
                 spend_limlt_id_drp()
-<!--                display_tb_data() // Read data from the main table-->
-<!--                on_page_load_dropdown()-->
                 $("#error_msg_id").css("display", "none")
                 $( "#header_select").prop( "hidden", false );
                 GLOBAL_ACTION = button.value
@@ -328,7 +266,6 @@
                 $("#id_popup_tbody").empty();
                 $('#Spend_id_Modal').modal('show');
                 new_row_data();  // Add a new row in popup
-                var account_assign = '';
                 $("#id_popup_table TBODY TR").each(function () {
                     var row = $(this);
                     row.find("TD").eq(3).find("select").empty()
@@ -770,30 +707,11 @@
         $("#display_basic_table TBODY TR").each(function() {
             var row = $(this);
             var main_attribute = {};
-            main_attribute.company_id = row.find("TD").eq(1).html();  
+            main_attribute.company_id = row.find("TD").eq(1).html();
             main_attribute.spender_username = row.find("TD").eq(2).html();
             main_attribute.spend_code_id = row.find("TD").eq(3).html();
             compare_maintable = main_attribute.company_id + '-' + main_attribute.spender_username + '-' + main_attribute.spend_code_id;
             main_table_low_value.push(compare_maintable);
-        });
-        table_sort_filter('display_basic_table');
-    }
-
-    // storing company_code associated data from main table
-    function display_tb_data() {
-        main_table_data = {};
-        $('#display_basic_table').DataTable().destroy();
-        $("#display_basic_table TBODY TR").each(function() {
-            var row = $(this);
-            var main_attribute = {};
-            main_attribute.company_id = row.find("TD").eq(1).html();
-            main_attribute.spend_code_id = row.find("TD").eq(3).html();
-            if (!main_table_data.hasOwnProperty(main_attribute.company_id)) {
-                main_table_data[main_attribute.company_id] = [];
-            }
-            main_table_data[main_attribute.company_id].push({
-                spend_code_id: main_attribute.spend_code_id
-            });
         });
         table_sort_filter('display_basic_table');
     }
@@ -1058,51 +976,40 @@
         $("#id_check_success_messages").prop("hidden",false)
     }
 
-    // Function for add a new row data
    function add_popup_row() {
-        OpenLoaderPopup();
-        var data = {'table_name':'SpendLimitId'}
-        $.ajax({
-            type: 'POST',
-            url: "{% url 'eProc_Configuration:get_dropdown_data' %}",
-            data: JSON.stringify(data),
-            success: function(response) {
-                rendered_spndlimval_data = response.upload_spndlimval
-                rendered_company_data = response.upload_data_company
-                spend_limlt_id_drp()
-                $("#error_msg_id").css("display", "none")
-                basic_add_new_html = '';
-                var display_db_data = '';
-                $('#id_popup_table').DataTable().destroy();
-                $(".modal").on("hidden.bs.modal", function() {
-                    $("#id_error_msg").html("");
-                });
-
-                if (GLOBAL_ACTION === "spendlimitid_upload") {
-                    basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select class="input form-control" name="company_dropdown" type="text">' + company_dropdwn + '</select></td><td><input class="input form-control check_special_char" type="text" maxlength="16" style="text-transform:uppercase"></td><td><select class="form-control" type="text">' + spendcodeid_dropdwn + '</select></td><td hidden><input type="text" class="form-control" name="guid"></td><td class="class_del_checkbox"><input type="checkbox" required></td></tr>';
-                    $('#id_popup_tbody').append(basic_add_new_html);
-                    $(".class_del_checkbox").prop("hidden", false);
-                    $("#id_del_ind_checkbox").prop("hidden", false);
-                    table_sort_filter('id_popup_table');
-                }
-                else{
-                     new_row_data();   // Add a new row in popup
-                }
-                 var company_num = '';
-                $("#id_popup_table TBODY").on("change", "select[name='company_dropdown']", function() {
-                    var row = $(this).closest("tr");
-                    company_dropdwn_change(row);
-                });
-                $("#id_popup_table TBODY TR").each(function() {
-                    var row = $(this);
-                    row.find("TD").eq(3).find("select").empty();
-                    company_num = row.find("TD").eq(1).find("select option:selected").val();
-                    var assign_val = spending_limit_find(company_num);
-                    row.find("TD").eq(3).find("select").append(assign_val.spend_code_id_dropdown);
-                });
-                CloseLoaderPopup();
-            }
+        spend_limlt_id_drp()
+        $("#error_msg_id").css("display", "none")
+        basic_add_new_html = '';
+        var display_db_data = '';
+        $('#id_popup_table').DataTable().destroy();
+        $(".modal").on("hidden.bs.modal", function() {
+            $("#id_error_msg").html("");
         });
+        if (GLOBAL_ACTION === "spendlimitid_upload") {
+            basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select class="input form-control" name="company_dropdown" type="text">' + company_dropdwn + '</select></td><td><input class="input form-control check_special_char" type="text" maxlength="16" style="text-transform:uppercase"></td><td><select class="form-control" type="text">' + spendcodeid_dropdwn + '</select></td><td hidden><input type="text" class="form-control" name="guid"></td><td class="class_del_checkbox"><input type="checkbox" required></td></tr>';
+            $('#id_popup_tbody').append(basic_add_new_html);
+            $(".class_del_checkbox").prop("hidden", false);
+            $("#id_del_ind_checkbox").prop("hidden", false);
+            table_sort_filter('id_popup_table');
+        }
+        else{
+             new_row_data();   // Add a new row in popup
+        }
+        var company_num = '';
+        $("#id_popup_table TBODY TR").each(function () {
+            var row = $(this);
+            row.find("TD").eq(3).find("select").empty()
+            company_num = row.find("TD").eq(1).find("select option:selected").val();
+            var assign_val = spending_limit_find(company_num)
+            row.find("TD").eq(3).find("select").append(assign_val.spend_code_id_dropdown)
+            $(row.find("TD").eq(1).find("select")).change(function () {
+                company_dropdwn_change(row);
+            })
+            $("#id_popup_table TBODY").on("change", "select[name='company_dropdown']", function() {
+                var row = $(this).closest("tr");
+                company_dropdwn_change(row);
+            });
+        })
    }
 
     function new_row_data() {
