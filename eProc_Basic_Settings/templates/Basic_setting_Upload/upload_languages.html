@@ -208,7 +208,7 @@
                                 } else {
                                     del_ind = '<input type="checkbox" value="' + value.del_ind + '" required>'
                                 }
-                               edit_basic_data += '<tr ><td class="class_select_checkbox"><input type="checkbox" required></td><td><input class="form-control" type="text" value="' + value.language_id + '" maxlength="2" onkeypress="return /[a-z]/i.test(event.key)" required></td><td><input type="text" class="form-control" value="' + value.description + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td><td>' + del_ind + '</td></tr>';
+                               edit_basic_data += '<tr ><td class="class_select_checkbox"><input type="checkbox" required></td><td><input class="form-control" type="text" value="' + value.language_id + '" maxlength="2" onkeypress="return /[a-z]/i.test(event.key)" style="text-transform:uppercase;" required></td><td><input type="text" class="form-control" value="' + value.description + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td><td>' + del_ind + '</td></tr>';
 
                             });
                             $('#id_popup_tbody').append(edit_basic_data);
@@ -435,7 +435,12 @@
                     $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "none");
                     row_color_no_highlight(row);
                     $(row).css("border", "");
-                    $("#id_delete_duplicate").hide()
+                    if(language_id_check.includes((language_dic.language_id))|| (main_table_low_value.includes((language_dic.language_id)))){
+                        $("#id_delete_duplicate").show()
+                    }
+                    else{
+                        $("#id_delete_duplicate").hide()
+                    }
                 }
                 language_id_check.push(language_dic.language_id)
                 main_table_low_value.push(language_dic)
@@ -445,7 +450,6 @@
                 $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "none");
                 row_color_no_highlight(row);
                 $(row).css("border", "");
-                $("#id_delete_duplicate").hide()
             }
         });
         //*************** shows save button if there are no errors(special characters and max length) ***************

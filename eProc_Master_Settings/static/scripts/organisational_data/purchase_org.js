@@ -47,14 +47,14 @@ function onclick_copy_update_button(data) {
             var row = $chkbox_all[i].parentNode.parentNode;
             if(GLOBAL_ACTION == "UPDATE"){
                 porg_guid = row.cells[5].innerHTML
-                unique_input = '<input class="input form-control check_special_char"  value="' + row.cells[1].innerHTML + '" type="text" maxlength="8"  name="porg_id" disabled>'
-                edit_basic_data += '<tr><td hidden><input type="checkbox"></td><td>'+unique_input+' </td><td><input class="form-control check_special_char" value="' + row.cells[2].innerHTML + '" type="text" name="description"  maxlength="100"  required></td><td hidden><input value="' + porg_guid + '"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+                unique_input = '<input class="input form-control check_character_no_space"  value="' + row.cells[1].innerHTML + '" type="text" maxlength="8"  name="porg_id" disabled>'
+                edit_basic_data += '<tr><td hidden><input type="checkbox"></td><td>'+unique_input+' </td><td><input class="form-control check_only_character" value="' + row.cells[2].innerHTML + '" type="text" name="description"  maxlength="100"  required></td><td hidden><input value="' + porg_guid + '"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
                 $("#header_select").prop("hidden", true); 
             }
             else{
                 porg_guid = 'GUID';
-                unique_input = '<input class="input form-control check_special_char" value="' + row.cells[1].innerHTML + '"  type="text" maxlength="8"  name="porg_id"required>'
-                edit_basic_data += '<tr><td><input type="checkbox" required></td><td>'+unique_input+'</td><td><input class="form-control check_special_char" value="' + row.cells[2].innerHTML + '" type="text"  name="description"  maxlength="100"  required></td><td hidden><input value="' + porg_guid + '"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+                unique_input = '<input class="input form-control check_character_no_space" value="' + row.cells[1].innerHTML + '"  type="text" maxlength="8"  name="porg_id"required>'
+                edit_basic_data += '<tr><td><input type="checkbox" required></td><td>'+unique_input+'</td><td><input class="form-control check_only_character" value="' + row.cells[2].innerHTML + '" type="text"  name="description"  maxlength="100"  required></td><td hidden><input value="' + porg_guid + '"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
                 $("#header_select").prop("hidden", false);
             }
             var row = $chkbox_all[i].parentNode.parentNode;
@@ -97,8 +97,8 @@ function onclick_add_button(button) {
     $("#id_popup_tbody").empty();
     $('#Porg_Modal').modal('show');
     basic_add_new_html = '<tr><td><input type="checkbox" required></td>'+
-        '<td><input class="form-control check_special_character"  type="text"  minlength="5" maxlength="8"  name="porg_id" style="text-transform:uppercase;" required></td>'+
-        '<td><input class="input form-control check_special_character"  type="text" maxlength="100"  name="description"  required></td>'+
+        '<td><input class="form-control check_character_no_space"  type="text"  minlength="5" maxlength="8"  name="porg_id" style="text-transform:uppercase;" required></td>'+
+        '<td><input class="input form-control check_only_character"  type="text" maxlength="100"  name="description"  required></td>'+
         '<td hidden><input value=""></td>'+
         '<td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
@@ -119,8 +119,8 @@ function add_popup_row() {
     });
      if (GLOBAL_ACTION == "purchase_org_upload") {
          basic_add_new_html = '<tr><td><input type="checkbox" required></td>'+
-        '<td><input class="form-control check_special_char"  type="text"  minlength="5" maxlength="8"  name="porg_id" style="text-transform:uppercase;" required></td>'+
-        '<td><input class="input form-control check_special_char"  type="text" maxlength="100"  name="description"  required></td>'+
+        '<td><input class="form-control check_character_no_space"  type="text"  minlength="5" maxlength="8"  name="porg_id" style="text-transform:uppercase;" required></td>'+
+        '<td><input class="input form-control check_only_character"  type="text" maxlength="100"  name="description"  required></td>'+
         '<td hidden><input value=""></td>'+
         '<td class="class_del_checkbox"><input type="checkbox" required></td></tr>';
         $('#id_popup_tbody').append(basic_add_new_html);
@@ -130,8 +130,8 @@ function add_popup_row() {
     }
     else{
        basic_add_new_html = '<tr><td><input type="checkbox" required></td>'+
-        '<td><input class="form-control check_special_char"  type="text"  minlength="5" maxlength="8"  name="porg_id" style="text-transform:uppercase;" required></td>'+
-        '<td><input class="input form-control check_special_char"  type="text" maxlength="100"  name="description"  required></td>'+
+        '<td><input class="form-control check_character_no_space"  type="text"  minlength="5" maxlength="8"  name="porg_id" style="text-transform:uppercase;" required></td>'+
+        '<td><input class="input form-control check_only_character"  type="text" maxlength="100"  name="description"  required></td>'+
         '<td hidden><input value=""></td>'+
         '<td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
         $('#id_popup_tbody').append(basic_add_new_html);
@@ -267,8 +267,8 @@ function update_check_message(messages){
 // Function for add a new row data
 function new_row_data(){
     basic_add_new_html = '<tr><td><input type="checkbox" required></td>'+
-        '<td><input class="form-control check_special_char"  type="text"  minlength="5" maxlength="8"  name="porg_id" style="text-transform:uppercase;" required></td>'+
-        '<td><input class="input form-control check_special_char"  type="text" maxlength="100"  name="description"  required></td>'+
+        '<td><input class="form-control check_character_no_space"  type="text"  minlength="5" maxlength="8"  name="porg_id" style="text-transform:uppercase;" required></td>'+
+        '<td><input class="input form-control check_only_character"  type="text" maxlength="100"  name="description"  required></td>'+
         '<td hidden><input value=""></td>'+
         '<td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);

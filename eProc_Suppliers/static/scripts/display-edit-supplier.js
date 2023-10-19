@@ -1,4 +1,4 @@
-
+var main_table_low_value = [];
 var encrypted_supplier
 
 // Global variable - supplier id
@@ -473,4 +473,23 @@ function get_values_onerror(){
    $('#duns_number_id').val(localStorage.getItem("duns_number_id"));
    $('#output_medium_id').val(localStorage.getItem("output_medium_id"));
    return false;
+}
+// Function to get main table data
+function get_main_table_data() {
+    main_table_low_value = [];
+    $('#display_basic_org_table').DataTable().destroy();
+    $("#display_basic_org_table TBODY TR").each(function() {
+        var row = $(this);
+        var main_attribute = {};
+        main_attribute.porg_id = row.find("TD").eq(2).html();
+        main_table_low_value.push(main_attribute.porg_id);
+    });
+    table_sort_filter('display_basic_org_table');
+}
+function display_error_message(error_message){
+    $('#error_message').text(error_message);
+    document.getElementById("error_message").style.color = "Red";
+    $("#error_msg_id").css("display", "block")
+//    $('#id_save_confirm_popup').modal('hide');
+    $('#supplierOrgModal').modal('show');
 }

@@ -464,12 +464,6 @@ var form_method = '{{form_method|safe}}';
     localStorage.removeItem("supp_purchase_block");
     $(".error_message").prop("hidden", true);
     $("#result_id").prop("hidden", true);
-<!--    form_method = 'GET';-->
-<!--        display_supplier_data(supplier_data_onload);-->
-<!--        localStorage.setItem("username", "");-->
-<!--        setTimeout(function() {-->
-<!--                       CloseLoaderPopup();-->
-<!--         }, 500);-->
         OpenLoaderPopup();
         var data = {'table_name':'supplier'}
         $.ajax({
@@ -512,7 +506,7 @@ var form_method = '{{form_method|safe}}';
     });
 
 
-    $("body").on("keypress keyup blur change", ".mandatory_fields", function (event) {
+    $("body").on("keypress  blur change", ".mandatory_fields", function (event) {
          var get_value = event.currentTarget.value;
             var count = get_value.split('**').length - 1;
             if((count>=1)|| (get_value == '*'))

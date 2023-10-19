@@ -495,17 +495,21 @@
                     $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "none");
                     row_color_no_highlight(row);
                     $(row).css("border", "");
-                    $("#id_delete_duplicate").hide()
+                     if(purchaseorg_check.includes((purchaseorg_dic.porg_id)) || (main_table_low_value.includes((purchaseorg_dic.porg_id)))){
+                        $("#id_delete_duplicate").show()
+                    }
+                    else{
+                        $("#id_delete_duplicate").hide()
+                    }
                 }
-                purchaseorg_check.push(purchaseorg_dic.porg_id)
+                 purchaseorg_check.push(purchaseorg_dic.porg_id)
                  main_table_low_value.push(purchaseorg_dic)
-                table_sort_filter_popup_pagination('id_popup_table');
+                 table_sort_filter_popup_pagination('id_popup_table');
             }
             if(count == 0){
                 $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "none");
                 row_color_no_highlight(row);
                 $(row).css("border", "");
-                $("#id_delete_duplicate").hide()
             }
         });
         //*************** shows save button if there are no errors(special characters and max length) ***************
