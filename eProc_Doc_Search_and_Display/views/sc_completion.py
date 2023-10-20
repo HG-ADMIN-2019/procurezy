@@ -22,14 +22,17 @@ def sc_completion_doc_search(request):
     if request.method == 'GET':
         encrypted_header_guid = []
         search_fields = {}
-        # from_date = date.today() - timedelta(days=7)
-        from_date = date.today()
-        min = datetime.datetime.combine(from_date, datetime.time.min)
-        to_date = date.today()
-        today_max = datetime.datetime.combine(datetime.date.today(), datetime.time.max)
-        search_fields['created_at__gte'] = min
-        search_fields['created_at__lte'] = today_max
-        sc_header_details = get_header_based_on_calloff(search_fields)
+        from_date = date.today() - timedelta(days=0)
+        # from_date = date.today()
+        timeframe = 'Today'
+        search_fields['timeframe'] = timeframe
+        search_fields['document_number'] = ''
+        search_fields['sc_name'] = ''
+        search_fields['document_type'] = CONST_DOC_TYPE_SC
+
+        search_criteria = document_search_instance.define_search_criteria(search_fields, 'sc_completion')
+        sc_header_details = get_header_based_on_calloff(search_criteria)
+        # sc_header_details = get_header_based_on_calloff(search_fields)
 
         for header_guid in sc_header_details:
             created_at_date = header_guid['created_at']

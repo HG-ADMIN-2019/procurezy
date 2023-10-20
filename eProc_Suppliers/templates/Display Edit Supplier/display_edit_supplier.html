@@ -524,13 +524,15 @@ $(document).ready(function(){
         var wday_array = [];
         wday_array = w_days.split(",");
         var num = w_days.match(/\d/g);
-        $("select[id=working_days]").val(num);
-        var working_days_values = [];
-        for(j=0; j<num.length; j++)
-        {
-              working_days_values[j] = get_days(num[j]);
+        if(!(num == null)){
+            $("select[id=working_days]").val(num);
+            var working_days_values = [];
+            for(j=0; j<num.length; j++)
+            {
+                  working_days_values[j] = get_days(num[j]);
+            }
+            $("#working_days_id").val(num);
         }
-        $("#working_days_id").val(num);
     }
     MultipleSelect();
 });

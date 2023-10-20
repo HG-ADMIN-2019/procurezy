@@ -23,17 +23,45 @@ function cancel_user_basic_info() {
     document.getElementById("edit_user_info_btn").style.display = "block"
     document.getElementById("save_user_info_btn").style.display = "none";
     document.getElementById("cancel_button").style.display = "none";
+    $(".error_message").prop("hidden", true);
+    get_values();
 }
 
 function set_value(){
+     localStorage.setItem("username", document.getElementById("username").value);
+     localStorage.setItem("employee_id", document.getElementById("employee_id").value);
+     localStorage.setItem("user_type", document.getElementById("user_type").value);
+     localStorage.setItem("first_name", document.getElementById("first_name").value);
+     localStorage.setItem("last_name", document.getElementById("last_name").value);
+     localStorage.setItem("email", document.getElementById("email").value);
+     localStorage.setItem("phone_num", document.getElementById("phone_num").value);
+     localStorage.setItem("date_format", document.getElementById("date_format").value);
+     localStorage.setItem("decimal_notation", document.getElementById("decimal_notation").value);
+     localStorage.setItem("super_user", document.getElementById("super_user").value);
+     localStorage.setItem("user_status", document.getElementById("user_status").value);
+     localStorage.setItem("user_locked", document.getElementById("user_locked").value);
+     localStorage.setItem("pwd_locked", document.getElementById("pwd_locked").value);
      localStorage.setItem("currency_id", document.getElementById("id_currency_id").value);
      localStorage.setItem("language_id", document.getElementById("id_language_id").value);
      localStorage.setItem("time_zone", document.getElementById("id_time_zone").value);
 }
 function get_values(){
-    $('#id_currency_id').val(localStorage.getItem("currency_id"));
+     $('#username').val(localStorage.getItem("username"));
+     $('#employee_id').val(localStorage.getItem("employee_id"));
+     $('#user_type').val(localStorage.getItem("user_type"));
+     $('#first_name').val(localStorage.getItem("first_name"));
+     $('#last_name').val(localStorage.getItem("last_name"));
+     $('#email').val(localStorage.getItem("email"));
+     $('#phone_num').val(localStorage.getItem("phone_num"));
+     $('#date_format').val(localStorage.getItem("date_format"));
+     $('#decimal_notation').val(localStorage.getItem("decimal_notation"));
+     $('#super_user').val(localStorage.getItem("super_user"));
+     $('#user_status').val(localStorage.getItem("user_status"));
+     $('#user_locked').val(localStorage.getItem("user_status"));
+     $('#pwd_locked').val(localStorage.getItem("pwd_locked"));
+   $('#id_currency_id').val(localStorage.getItem("currency_id"));
    $('#id_language_id').val(localStorage.getItem("language_id"));
-    $('#id_time_zone').val(localStorage.getItem("time_zone"));
+   $('#id_time_zone').val(localStorage.getItem("time_zone"));
 }
 
 
