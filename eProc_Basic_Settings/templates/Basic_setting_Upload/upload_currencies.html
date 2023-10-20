@@ -203,7 +203,7 @@
                                 } else {
                                     del_ind = '<input type="checkbox" value="' + value.del_ind + '" required>'
                                 }
-                               edit_basic_data += '<tr><td class="class_select_checkbox"><input type="checkbox" required></td><td><input class="form-control" type="text" value="' + value.currency_id + '" maxlength="3" onkeypress="return /[a-z]/i.test(event.key)" style="text-transform:uppercase;" required></td><td><input class="form-control" type="text" value="' + value.description + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td><td>' + del_ind + '</td></tr>';
+                               edit_basic_data += '<tr><td class="class_select_checkbox"><input type="checkbox" required></td><td><input class="form-control check_character_no_space" type="text" value="' + value.currency_id + '" maxlength="3" onkeypress="return /[a-z]/i.test(event.key)" style="text-transform:uppercase;" required></td><td><input class="form-control check_only_character" type="text" value="' + value.description + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td><td>' + del_ind + '</td></tr>';
 
                             });
                             $('#id_popup_tbody').append(edit_basic_data);
@@ -321,6 +321,7 @@
         document.getElementById("id_error_msg_description").innerHTML = "";
         document.getElementById("id_error_msg_currency_length").innerHTML = "";
         count = 0;
+        flag = 0;
         var currency_array = new Array
         var DB_array = new Array
         var currency_list = new Array
@@ -341,10 +342,11 @@
             }               
             currency_list.push(currency_dic)
             get_main_table_data(); //Read data from main table
-            var format = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
+            var format = /[`!@#$%^&*()_+\-=\[\]{};':"\\ 0-9|,.<>\/?~]/;
+            var format1 = /^[A-Za-z0-9]{2,}$/;
             if (currency_dic.del_ind == '0'){
                 //*************** checking for max length for currency code ***************
-                if (currency_dic.currency_id.length == 0) {
+                if (currency_dic.currency_id.length == 0 || /\s/.test(currency_dic.currency_id)) {
                     $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
                     row_color_highlight_empty(row);
                     $("#id_error_msg_currency_length").prop("hidden",false);
@@ -414,6 +416,7 @@
                      $("#id_delete_duplicate").show()
                      $("#id_check_data").prop("hidden", false);
                      count = count +1;
+                     flag = flag + 1;
                 }
                 else if(main_table_low_value.includes((currency_dic.currency_id))){
                      $(row).css("border", "#f8d7da");
@@ -425,21 +428,23 @@
                      $("#id_delete_duplicate").show()
                      $("#id_check_data").prop("hidden", false);
                      count = count +1;
+                     flag = flag + 1;
                 }
                 else{
                     $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "none");
                     row_color_no_highlight(row);
                     $(row).css("border", "");
-                     if(currency_id_check.includes((currency_dic.currency_id))|| (main_table_low_value.includes((currency_dic.currency_id)))){
-                        $("#id_delete_duplicate").show()
-                     }
-                     else{
-                        $("#id_delete_duplicate").hide()
-                     }
+                    $("#id_delete_duplicate").hide()
                 }
                 currency_id_check.push(currency_dic.currency_id);
                 main_table_low_value.push(currency_dic)
                 table_sort_filter_popup_pagination('id_popup_table');
+            }
+             if(flag == 0){
+                $("#id_delete_duplicate").hide()
+            }
+            else{
+                $("#id_delete_duplicate").show()
             }
             if(count == 0){
                 $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "none");
@@ -449,6 +454,7 @@
         });
         //*************** shows save button if there are no errors(special characters and max length) ***************
         if (count == 0) {
+            $("#id_delete_duplicate").hide()
             $('#id_popup_table').DataTable().destroy();
             $("#id_popup_table").find("input,button,textarea,select").attr("disabled", "disabled");
             document.getElementById("id_del_add_button").style.display = "none";
@@ -539,6 +545,7 @@
 
         });
     }
+
 
 </script>
 <script src="{% static 'scripts/upload_currencies.js' %}"></script>

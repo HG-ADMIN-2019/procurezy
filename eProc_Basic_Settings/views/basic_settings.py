@@ -597,26 +597,27 @@ def remove_invalid_workflowacc(convertion_list):
                                                                     {'del_ind': False,
                                                                      'account_assign_cat': conversion[
                                                                          'sup_account_assign_cat']}):
+                        # Check for existence of Username
+                        if django_query_instance.django_existence_check(AccountingData,
+                                                                        {'del_ind': False,
+                                                                         'account_assign_value': conversion[
+                                                                             'acc_value']}):
                             # Check for existence of Username
                             if django_query_instance.django_existence_check(AccountingData,
                                                                             {'del_ind': False,
                                                                              'account_assign_value': conversion[
-                                                                                 'acc_value']}):
+                                                                                 'sup_acc_value']}):
                                 # Check for existence of Username
-                                if django_query_instance.django_existence_check(AccountingData,
+                                if django_query_instance.django_existence_check(UserData,
                                                                                 {'del_ind': False,
-                                                                                 'account_assign_value': conversion[
-                                                                                     'sup_acc_value']}):
-                                    # Check for existence of Username
-                                    if django_query_instance.django_existence_check(UserData,
+                                                                                 'username': conversion[
+                                                                                     'app_username']}):
+                                    # Check for existence of Currency
+                                    if django_query_instance.django_existence_check(Currency,
                                                                                     {'del_ind': False,
-                                                                                     'username': conversion['app_username']}):
-                                        # Check for existence of Currency
-                                        if django_query_instance.django_existence_check(Currency,
-                                                                                        {'del_ind': False,
-                                                                                         'currency_id': conversion[
-                                                                                             'sup_currency_id']}):
-                                            valid_convertion.append(conversion)
+                                                                                     'currency_id': conversion[
+                                                                                         'sup_currency_id']}):
+                                        valid_convertion.append(conversion)
 
     return valid_convertion
 
@@ -730,8 +731,8 @@ def remove_invalid_unspsc_cust(convertion_list):
         # Check for existence of OrgCompanies
         if django_query_instance.django_existence_check(UnspscCategories,
                                                         {'del_ind': False,
-                                                         'prod_cat_id': conversion['prod_cat_id'] }):
-                valid_convertion.append(conversion)
+                                                         'prod_cat_id': conversion['prod_cat_id']}):
+            valid_convertion.append(conversion)
 
     return valid_convertion
 

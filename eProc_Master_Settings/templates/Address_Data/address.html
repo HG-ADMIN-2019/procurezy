@@ -868,8 +868,7 @@
         $.ajax({
             type: 'POST',
             url: "{% url 'eProc_Master_Settings:create_update_master_data' %}",
-            data:
-                JSON.stringify(data),
+            data: JSON.stringify(data),
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             success: function (Response) {
