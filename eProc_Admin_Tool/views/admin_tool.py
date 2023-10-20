@@ -369,7 +369,7 @@ def user_report(request):
     default_comp_id = ''
 
     if request.method == 'GET':
-        default_comp_id = company_list[0]['company_id'] if company_list else ''
+        default_comp_id = '2000'
 
         if 'final_list' in request.session:
             request.POST = request.session['final_list']
@@ -616,6 +616,10 @@ def approval_report(request):
 
 @login_required
 def m_docsearch_meth(request):
+    """
+    :param request:
+    :return:
+    """
     inp_doc_type = ''
     result = ''
     page_range = 0
@@ -630,10 +634,12 @@ def m_docsearch_meth(request):
     page_type_flag = 'Doc_reports'
     rep_search_form = {}
     error_messages = ''
+    # company code list- client n del indicator
+    # users in selected company - client n del indicator
     comp_list = get_companylist(request)
-    supplier_details = []  # Define supplier_details initially
 
     if request.method == 'GET':
+        # inp_comp_code = request.GET('company_code')
         inp_doc_type = 'SC'
         inp_doc_num = None
         inp_from_date = datetime.today()
@@ -642,38 +648,31 @@ def m_docsearch_meth(request):
         inp_created_by = ''
         inp_requester = ''
 
-        # Assuming result is a list of dictionaries
-        result = get_hdr_data(request, inp_doc_type, inp_doc_num, inp_from_date, inp_to_date, inp_supl, inp_created_by,
+        # result
+        result = get_hdr_data(request,
+                              inp_doc_type,
+                              inp_doc_num,
+                              inp_from_date,
+                              inp_to_date,
+                              inp_supl,
+                              inp_created_by,
                               inp_requester, report_search)
 
+        company_details = OrgCompanies.objects.filter(client=client, del_ind=False, company_guid=1000)
+        for comp in company_details:
+            result = result.filter(co_code=comp.company_id)
+
     if not request.method == 'POST':
-        # Handle GET requests, rendering the initial form
-        rep_search_form = DocumentSearchForm()
-
-        context = {
-            'inc_nav': True,
-            'inc_footer': True,
-            'nav_title': 'Search for document',
-            'sform': rep_search_form,
-            'results': None,  # Set results to None or an empty list as appropriate
-            'page_range': page_range,
-            't_count': 0,  # Set t_count to 0
-            'inp_doc_type': inp_doc_type,
-            'comp_list': comp_list,
-            'is_slide_menu': True,
-            'is_admin_active': True,
-            'encrypted_header_guid': encrypted_header_guid,
-            'sc_completion': sc_completion,
-            'sc_completion_flag': sc_completion_flag,
-            'sc_header': sc_header,
-            'error_messages': error_messages,
-            'supplier_details': supplier_details
-        }
-
-        return render(request, 'Reports/Doc_report.html', context)
+        if 'results' in request.session:
+            request.POST = request.session['results']
+            request.method = 'POST'
 
     if request.method == 'POST':
         request.session['results'] = request.POST
+
+    # rep_search_form = DocumentSearchForm()
+    # If method is post get the form values and get header details accordingly
+    if request.method == 'POST':
         rep_search_form = DocumentSearchForm(request.POST)
 
         if rep_search_form.is_valid():
@@ -686,61 +685,51 @@ def m_docsearch_meth(request):
             inp_created_by = request.POST.get('created_by')
             inp_requester = request.POST.get('requester')
 
-            filtered_results = []
+            # results
+            result = get_hdr_data(request, inp_doc_type,
+                                  inp_doc_num,
+                                  inp_from_date,
+                                  inp_to_date,
+                                  inp_supl,
+                                  inp_created_by,
+                                  inp_requester, report_search)
+            company_details = OrgCompanies.objects.filter(client=client, del_ind=False, company_guid=inp_comp_code)
+            for comp in company_details:
+                result = result.filter(co_code=comp.company_id)
+    else:
+        rep_search_form = DocumentSearchForm()
 
-            # Check if '*' (All Companies) is selected
-            if inp_comp_code == '*':
-                # Fetch data for all companies
-                for item in result:
-                    company_code = item.get('co_code')  # Assuming 'co_code' is the key in the dictionary
-                    filtered_result = get_hdr_data(request, inp_doc_type, inp_doc_num, inp_from_date, inp_to_date,
-                                                   inp_supl, inp_created_by, inp_requester, report_search).filter(
-                        co_code=company_code)
-                    filtered_results.extend(filtered_result)
-            else:
-                # Fetch data for the selected company
-                filtered_results = get_hdr_data(request, inp_doc_type, inp_doc_num, inp_from_date, inp_to_date,
-                                                inp_supl, inp_created_by, inp_requester, report_search)
+    error_messages = rep_search_form.errors
+    t_count = len(result)
+    # t_count = 0
 
-            error_messages = rep_search_form.errors
-            t_count = len(filtered_results)
+    for header_guid in result:
+        encrypted_header_guid.append(encrypt(header_guid))
 
-            for header_guid in filtered_results:
-                encrypted_header_guid.append(encrypt(header_guid))
+    # print(result)
+    result = zip(result, encrypted_header_guid)
 
-            filtered_results = zip(filtered_results, encrypted_header_guid)
+    # Context to display in Doc_report.html
+    context = {
+        'inc_nav': True,
+        'inc_footer': True,
+        'nav_title': 'Search for document',
+        'sform': rep_search_form,
+        'results': result,
+        'page_range': page_range,
+        't_count': t_count,
+        'inp_doc_type': inp_doc_type,
+        'comp_list': comp_list,
+        'is_slide_menu': True,
+        'is_admin_active': True,
+        'encrypted_header_guid': encrypted_header_guid,
+        'sc_completion': sc_completion,
+        'sc_completion_flag': sc_completion_flag,
+        'sc_header': sc_header,
+        'error_messages': error_messages
+    }
 
-            # Assuming you can retrieve the 'client' and 'supp_id_up' values from your code context
-            client = getClients(request)
-            supp_id_up = []
-
-            # Call the function with the appropriate arguments
-            supplier_details = get_supplier_details(client, supp_id_up)
-
-            context = {
-                'inc_nav': True,
-                'inc_footer': True,
-                'nav_title': 'Search for document',
-                'sform': rep_search_form,
-                'results': filtered_results,
-                'page_range': page_range,
-                't_count': t_count,
-                'inp_doc_type': inp_doc_type,
-                'comp_list': comp_list,
-                'is_slide_menu': True,
-                'is_admin_active': True,
-                'encrypted_header_guid': encrypted_header_guid,
-                'sc_completion': sc_completion,
-                'sc_completion_flag': sc_completion_flag,
-                'sc_header': sc_header,
-                'error_messages': error_messages,
-                'supplier_details': supplier_details
-            }
-
-            return render(request, 'Reports/Doc_report.html', context)
-
-    # If neither GET nor POST request, you should handle this case or return an appropriate response
-    return HttpResponse("Unsupported HTTP method")
+    return render(request, 'Reports/Doc_report.html', context)
 
 
 @login_required
