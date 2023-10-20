@@ -8,7 +8,7 @@
         });
         $('.multiple_select').selectpicker();
         $('.multiple_select').selectpicker('val', selected_status_value);
-        $('#id_comp_code_app').val(selected_comp_value).attr('selected', 'selected');
+//        $('#id_comp_code_app').val(selected_comp_value).attr('selected', 'selected');
         $('#acc_assgn_cat').val(selected_status_value).attr('selected', 'selected');
     });
 
@@ -30,3 +30,46 @@
     $('#hg_approval_report_search').click(function () {
         OpenLoaderPopup();
     })
+
+    $(document).ready(function () {
+    // Initialize selectpicker
+    $('.multiple_select').selectpicker();
+
+    // Event handler for the "search" button
+    $('#hg_approval_report_search').click(function () {
+        // Display the table container (including table and pagination)
+        $('#table-container').show();
+
+        // Optional: Open a loader modal
+        OpenLoaderPopup();
+
+        // Store the selected values in local storage
+        var selectedCompany = $('#id_comp_code_app').val();
+        var selectedCategories = $('#acc_assgn_cat').val();
+
+        // Create an object to hold the selected values
+        var selectedData = {
+            company: selectedCompany,
+            categories: selectedCategories
+        };
+
+        // Store the selected data as a JSON string in local storage
+        localStorage.setItem("selectedData", JSON.stringify(selectedData));
+    });
+
+    // Retrieve and set the selected data from local storage on page load
+    var selectedDataJSON = localStorage.getItem("selectedData");
+    if (selectedDataJSON) {
+        var selectedData = JSON.parse(selectedDataJSON);
+
+        if (selectedData.company) {
+            $('#id_comp_code_app').val(selectedData.company);
+        }
+
+        if (selectedData.categories) {
+            $('#acc_assgn_cat').selectpicker('val', selectedData.categories);
+        }
+    }
+
+    // Rest of your code...
+});

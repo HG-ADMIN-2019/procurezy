@@ -41,18 +41,19 @@
                             </div>
                         </div>
                         <br>
-                        <div class="elements-space-between">
-                            <button class="btn btn-link" type="reset" value="Reset">clear filters</button>
-                            <div>
-                                <span class="badge help-text-badge help-text-star-search"></span>
-                            </div>
-                        </div>
+<div class="elements-space-between">
+    <button class="btn btn-link" type="reset" value="Reset" id="reset-filters">clear filters</button>
+    <div>
+        <span class="badge help-text-badge help-text-star-search"></span>
+    </div>
+</div>
+
                     </form>
                 </div>
             </div>
             <div id="table-container">
-             <br>
-            <div class="search_result_count_card card">
+<!--             <br>-->
+            <div class="search_result_count_card card" class="mt-3">
                 {% if t_count > 0 %}
                 <div class="card-body">
                     <h6 class="card-title">Total number of results found
@@ -65,12 +66,9 @@
                 </div>
                 {% endif %}
             </div>
-<!--                To Display Header Details only if there are any results-->
             {% if t_count > 0 %}
             {% if final_list %}
-            <div class="card mt-5">
-            <!--Company code, Company name, Username, Last name, First name,
-                Email address, Ship to address, user lock status -->
+            <div class="card mt-3">
                 <table id="user_report_table" class="table table_sort_filter_export_excel">
                     <thead class="thead-light">
                         <tr>
@@ -132,6 +130,23 @@ $(document).ready(function () {
         setDefaultCompanyValue();
     }
 
+    // Check if there is stored form data and populate the form fields
+    var storedFormData = localStorage.getItem('formData');
+    if (storedFormData) {
+        var formData = JSON.parse(storedFormData);
+
+        // Set the "Company Number" field first
+        $('#id_company_code').val(formData.companyCode);
+
+        // Set other fields
+        $('#id_userrep_type').val(formData.userRepType);
+        $('#id_username').val(formData.username);
+        $('#id_user_status').val(formData.userStatus);
+    } else {
+        // If no stored data, set the default company value
+        setDefaultCompanyValue();
+    }
+
     // Loader implementation on search button
     $('#hg_user_report_search').click(function () {
         // Store the form data in local storage
@@ -139,30 +154,16 @@ $(document).ready(function () {
             companyCode: $('#id_company_code').val(),
             userRepType: $('#id_userrep_type').val(),
             username: $('#id_username').val(),
-            userStatus: $('#id_user_status').val() // Assuming this is the correct ID for the dropdown
+            userStatus: $('#id_user_status').val()
         };
         localStorage.setItem('formData', JSON.stringify(formData));
 
         $('#hg_loader').modal('show');
     });
+    });
 
-    // Check if there is stored form data and populate the form fields
-    var storedFormData = localStorage.getItem('formData');
-    if (storedFormData) {
-        var formData = JSON.parse(storedFormData);
-        $('#id_company_code').val(formData.companyCode);
-        $('#id_userrep_type').val(formData.userRepType);
-        $('#id_username').val(formData.username);
-
-        // Set the selected option for userStatus based on the stored value
-        $('#id_user_status').val(formData.userStatus); // Assuming this is the correct ID for the dropdown
-    }
-
-    // Set the default company value on page load
-    setDefaultCompanyValue();
-});
-
-function hideTableAndPagination() {
+// Function to hide the table and pagination controls
+    function hideTableAndPagination() {
         document.getElementById("table-container").style.display = "none";
     }
 
@@ -174,7 +175,30 @@ function hideTableAndPagination() {
     // Add event listeners to the buttons
     document.addEventListener("DOMContentLoaded", function () {
         document.getElementById("hg_user_report_search").addEventListener("click", showTableAndPagination);
-        document.querySelector("button[type='reset']").addEventListener("click", hideTableAndPagination);
+        document.querySelector("button[type='reset']").addEventListener("click", showTableAndPagination);
+    });
+
+    function resetFilters() {
+        // Clear form fields
+        $('#id_company_code').val('');
+        $('#id_username').val('');
+        $('#id_user_status').val('');
+
+        // You can set the default value for company code here
+        var companyCodeDropdown = $("label:contains('Company Number')").next("select");
+        companyCodeDropdown.val(companyCodeDropdown.find("option:first").val());
+
+        // Remove stored form data from localStorage
+        localStorage.removeItem('formData');
+
+        // Trigger form submission to retrieve default data
+        $('form').submit();
+    }
+
+    // Listen for the "Clear Filters" button click
+    $('#reset-filters').click(function (e) {
+        e.preventDefault();
+        resetFilters();
     });
 </script>
 {% if inc_footer %}

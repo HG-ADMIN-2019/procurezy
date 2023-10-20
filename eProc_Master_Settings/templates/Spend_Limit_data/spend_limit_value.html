@@ -58,8 +58,8 @@
                         </div>
                     </th>
                     <th>Company Number</th>
-                    <th>Spending limit</th>
-                    <th>Upper Limit Value</th>
+                    <th>Spending limit code</th>
+                    <th>Spending Limit Value</th>
                     <th>Currency</th>
                     <th hidden>guid</th>
                     <th hidden>del_ind</th>
@@ -114,8 +114,8 @@
                         <tr>
                             <th id="header_select">Select</th>
                             <th>Company Number</th>
-                            <th>Spending limit </th>
-                            <th>Upper Limit Value</th>
+                            <th>Spending limit code</th>
+                            <th>Spending Limit Value</th>
                             <th>Currency</th>
                             <th hidden>guid</th>
                             <th id="id_del_ind_checkbox" hidden>Del Indicator</th>
@@ -174,6 +174,9 @@
     var no_duplicate_entries = 'Y'
     var company_dropdwn = ""
     var currency_dropdwn = ""
+    var available_company_data = [];
+    var used_currency = [];
+    var hidden_company_value = [];
 
     function spend_limit_value_drp(){
         company_dropdwn = "" ;
@@ -184,6 +187,95 @@
         currency_dropdwn = "";
         $.each(rendered_currency_data, function (i, item) {
             currency_dropdwn += '<option  value="' + item.currency_id + '">' + item.currency_id + '</option>'
+        });
+    }
+
+    // Add button page load dropdown values
+    function on_page_load_dropdown() {
+        hide_company_values() // function call to filter unspsc values
+        used_currency = [];
+        if (available_company_data.length > 0) {
+            var company_value = available_company_data[0];
+            var currency_id = main_table_data[company_value];
+            if (!currency_id) {
+                company_dropdwn = "" ;
+                $.each(available_company_data, function (i, item) {
+                    company_dropdwn += '<option  value="' + item + '">' + item + '</option>'
+                });
+
+                currency_dropdwn = "";
+                $.each(rendered_currency_data, function (i, item) {
+                    currency_dropdwn += '<option  value="' + item.currency_id + '">' + item.currency_id + '</option>'
+                });
+                return;
+            }else {
+                currency_dropdwn = '';
+                rendered_currency_data.forEach(item => {
+                    var found = currency_id.some(currency => currency.currency_id === item.currency_id);
+                    if (found) {
+                        used_currency.push(item.currency_id)
+                    } else {
+                        currency_dropdwn += '<option value="' + item.currency_id + '">' + item.currency_id + '</option>';
+                    }
+                })
+
+                company_dropdwn = "" ;
+                $.each(available_company_data, function (i, item) {
+                    company_dropdwn += '<option  value="' + item + '">' + item + '</option>'
+                });
+            }
+        }
+    }
+
+    // function to filter used unspsc values
+    function hide_company_values() {
+        available_company_data = [];
+        hidden_company_value = [];
+        for(i = 0; i < rendered_company_data.length; i++) {
+            var item = rendered_company_data[i];
+            var company_value = item.company_id
+            var company = main_table_data[company_value];
+
+            if (company === undefined) {
+                available_company_data.push(company_value);
+                continue;
+            }
+
+            if (rendered_currency_data.length === company.length) {
+                hidden_company_value.push(company_value);
+            } else {
+                available_company_data.push(company_value);
+            }
+        }
+    }
+
+    //onclick of add button display Spnd_Lim_Val_Modal popup and set GLOBAL_ACTION button value
+    function onclick_add_button(button) {
+        $('#id_popup_table').DataTable().destroy();
+        $("#id_popup_tbody").empty();
+        OpenLoaderPopup();
+        var data = {'table_name':'SpendLimitValue'}
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'eProc_Configuration:get_dropdown_data' %}",
+            data: JSON.stringify(data),
+            success: function(response) {
+                rendered_company_data = response.upload_data_company
+                rendered_currency_data = response.upload_data_currency
+                spend_limit_value_drp()
+                $("#error_msg_id").css("display", "none")
+                $( "#header_select").prop( "hidden", false );
+                GLOBAL_ACTION = button.value
+                display_button();
+                $('#id_popup_table').DataTable().destroy();
+                $("#id_popup_tbody").empty();
+                $('#Spnd_Lim_Val_Modal').modal('show');
+                new_row_data();   // Add a new row in popup
+                $("#id_del_ind_checkbox").prop("hidden", true);
+                document.getElementById("id_del_add_button").style.display = "block";
+                $("#save_id").prop("hidden", false);
+                CloseLoaderPopup();
+            }
         });
     }
 
@@ -531,35 +623,6 @@
     var main_table_low_value = [];
     var spend_limit_value={};
 
-    //onclick of add button display Spnd_Lim_Val_Modal popup and set GLOBAL_ACTION button value
-    function onclick_add_button(button) {
-        $('#id_popup_table').DataTable().destroy();
-        $("#id_popup_tbody").empty();
-        OpenLoaderPopup();
-        var data = {'table_name':'SpendLimitValue'}
-        $.ajax({
-            type: 'POST',
-            url: "{% url 'eProc_Configuration:get_dropdown_data' %}",
-            data: JSON.stringify(data),
-            success: function(response) {
-                rendered_company_data = response.upload_data_company
-                rendered_currency_data = response.upload_data_currency
-                spend_limit_value_drp()
-                $("#error_msg_id").css("display", "none")
-                $( "#header_select").prop( "hidden", false );
-                GLOBAL_ACTION = button.value
-                $('#id_popup_table').DataTable().destroy();
-                $("#id_popup_tbody").empty();
-                $('#Spnd_Lim_Val_Modal').modal('show');
-                new_row_data();   // Add a new row in popup
-                $("#id_del_ind_checkbox").prop("hidden", true);
-                document.getElementById("id_del_add_button").style.display = "block";
-                $("#save_id").prop("hidden", false);
-                CloseLoaderPopup();
-            }
-        });
-    }
-
      // onclick of valid popup
     function valid_popup(){
       $('#id_data_upload').modal('hide');
@@ -707,6 +770,7 @@
               new_row_data();   // Add a new row in popup
         }
     }
+
     //onclick of cancel display the table in display mode............
     function display_basic_db_data() {
         $('#display_basic_table').DataTable().destroy();
@@ -751,7 +815,7 @@
             if(spend_limit_value.spend_lim_value_guid == undefined) {
                 spend_limit_value.spend_lim_value_guid = ''
             }
-            var spend_limit_value_compare = spend_limit_value.company_id +'-'+ spend_limit_value.spend_code_id+'-'+ spend_limit_value.currency_id
+            var spend_limit_value_compare = spend_limit_value.company_id +'-'+ spend_limit_value.spend_code_id +'-'+ spend_limit_value.currency_id
             validate_add_attributes.push(spend_limit_value_compare);
             spend_limit_value_data.push(spend_limit_value);
         });
@@ -761,9 +825,37 @@
 
     // Function for add a new row data
     function new_row_data() {
-        basic_add_new_html = '<tr><td><input type="checkbox" required></td><td ><select class="input form-control"> ' + company_dropdwn + '</select></td><td><input class="form-control check_special_char" type="text"  maxlength="8" style="text-transform:uppercase" </td><td><input class="form-control" type="number" name="upper_limit_value" required></td><td><select class="input form-control"> ' + currency_dropdwn + '</select></td><td hidden><input type="text" value=""></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+        basic_add_new_html = '<tr><td><input type="checkbox" required></td><td ><select class="input form-control" onchange="GetUnusedCurrency(this)"> ' + company_dropdwn + '</select></td><td><input class="form-control check_special_char" type="text"  maxlength="8" style="text-transform:uppercase" </td><td><input class="form-control" type="number" name="upper_limit_value" required></td><td><select class="input form-control"> ' + currency_dropdwn + '</select></td><td hidden><input type="text" value=""></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
         $('#id_popup_tbody').append(basic_add_new_html);
         table_sort_filter('id_popup_table');
+    }
+
+    //Onchange function when click on UNSPSC dropdown value
+    function GetUnusedCurrency(comp_id){
+        var comp_val = comp_id.value;
+        var company_value = $(comp_id).closest('tr').find('.form-control').eq(0);
+        var currency_dropdwn = $(comp_id).closest('tr').find('.form-control').eq(3);
+
+        var currency = main_table_data[comp_val];
+        if(!currency){
+            currency_dropdwn.empty();
+            $.each(rendered_currency_data, function(i, item){
+                currency_dropdwn.append('<option value="' + item.currency_id + '">' + item.currency_id + '</option>')
+            })
+
+        } else {
+            currency_dropdwn.empty();
+            var options = [];
+            rendered_currency_data.forEach(item => {
+                var found = currency.some(cur_id => cur_id.currency_id === item.currency_id);
+                if (found) {
+                    used_currency.push(item.currency_id)
+                } else {
+                    options.push('<option value="' + item.currency_id + '">' + item.currency_id + '</option>');
+                }
+            })
+            currency_dropdwn.append(options.join(''));
+        }
     }
 
     // Function to get main table data
@@ -778,6 +870,25 @@
             main_attribute.currency_id = row.find("TD").eq(4).html();
             var compare_maintable =main_attribute.company_id +'-'+ main_attribute.spend_code_id +'-'+ main_attribute.currency_id
             main_table_low_value.push(compare_maintable);
+        });
+        table_sort_filter('display_basic_table');
+    }
+
+    // storing company_code associated data from main table
+    function display_tb_data() {
+        main_table_data = {};
+        $('#display_basic_table').DataTable().destroy();
+        $("#display_basic_table TBODY TR").each(function() {
+            var row = $(this);
+            var main_attribute = {};
+            main_attribute.company_id = row.find("TD").eq(1).html();
+            main_attribute.currency_id = row.find("TD").eq(4).html();
+            if (!main_table_data.hasOwnProperty(main_attribute.company_id)) {
+                main_table_data[main_attribute.company_id] = [];
+            }
+            main_table_data[main_attribute.company_id].push({
+                currency_id: main_attribute.currency_id
+            });
         });
         table_sort_filter('display_basic_table');
     }

@@ -67,16 +67,16 @@ function onclick_copy_update_button(data) {
         if ( $chkbox_all[i].checked) {
             var row =  $chkbox_all[i].parentNode.parentNode;
             if(GLOBAL_ACTION == "UPDATE"){
-                unique_input = '<input class="form-control check_special_char" type="text" value="' + row.cells[1].innerHTML + '" name=""  maxlength="2" style="text-transform:uppercase" disabled>'
+                unique_input = '<input class="form-control check_character_no_space" type="text" value="' + row.cells[1].innerHTML + '" name=""  maxlength="2" style="text-transform:uppercase" disabled>'
                 edit_basic_data += '<tr ><td hidden><input type="checkbox" required></td>'+
                     '<td>'+unique_input+'</td>'+
-                    '<td><input class="form-control check_special_char" value="' + row.cells[2].innerHTML + '" type="text"  name="country description"  maxlength="100"  required></td>'+
+                    '<td><input class="form-control check_only_character" value="' + row.cells[2].innerHTML + '" type="text"  name="country description"  maxlength="100"  required></td>'+
                     '<td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
-                $("#header_select").prop("hidden", true);
+                    $("#header_select").prop("hidden", true);
             }
             else{
-                unique_input = '<input class="form-control check_special_char" type="text" value="' + row.cells[1].innerHTML + '" name="country code"  maxlength="2" style="text-transform:uppercase" required>'
-                edit_basic_data += '<tr ><td><input type="checkbox" required></td><td>'+unique_input+'</td><td><input class="form-control check_special_char"  value="' + row.cells[2].innerHTML + '" type="text"  name="country description"  maxlength="100"  required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+                unique_input = '<input class="form-control check_character_no_space" type="text" value="' + row.cells[1].innerHTML + '" name="country code"  maxlength="2" style="text-transform:uppercase" required>'
+                edit_basic_data += '<tr ><td><input type="checkbox" required></td><td>'+unique_input+'</td><td><input class="form-control check_only_character"  value="' + row.cells[2].innerHTML + '" type="text"  name="country description"  maxlength="100"  required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
                 $("#header_select").prop("hidden", false);
             }      
         }

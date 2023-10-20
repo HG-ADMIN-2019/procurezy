@@ -3,7 +3,7 @@ import time
 from django.db.models.query_utils import Q
 from requests import request
 
-from eProc_Basic.Utilities.functions.camel_case import convert_to_camel_case
+from eProc_Basic.Utilities.functions.camel_case import convert_to_camel_case, convert_to_camel_case_v2
 from eProc_Basic.Utilities.functions.dictionary_key_to_list import dictionary_key_to_list
 
 from eProc_Basic.Utilities.functions.distinct_list import *
@@ -667,7 +667,7 @@ class MasterSettingsSave:
 
         data = get_orgaddtype_dropdown()
 
-        return upload_response, message,data
+        return upload_response, message, data
 
     def save_al_acc_data(self, glaccount_data):
         glaccount_db_list = []
@@ -690,12 +690,12 @@ class MasterSettingsSave:
                                            'gl_acc_num': glaccount_detail['gl_acc_num'],
                                            'gl_acc_default': glaccount_detail['gl_acc_default'],
                                            'account_assign_cat': AccountAssignmentCategory.objects.
-                                               get(account_assign_cat=glaccount_detail['account_assign_cat']),
+                                           get(account_assign_cat=glaccount_detail['account_assign_cat']),
                                            'company_id': glaccount_detail['company_id'],
                                            'item_from_value': glaccount_detail['item_from_value'],
                                            'item_to_value': glaccount_detail['item_to_value'],
                                            'currency_id': Currency.objects.
-                                               get(currency_id=glaccount_detail['currency_id']),
+                                           get(currency_id=glaccount_detail['currency_id']),
                                            'determine_gl_account_created_at': self.current_date_time,
                                            'determine_gl_account_created_by': self.username,
                                            'determine_gl_account_changed_at': self.current_date_time,
@@ -843,6 +843,8 @@ class MasterSettingsSave:
 
     def save_app_limit_value_data(self, applimval_data):
         applimval_db_list = []
+        delete_app_code_ids = []
+
         for applimval_detail in applimval_data['data']:
             # if entry is not exists in db
             if not django_query_instance.django_existence_check(ApproverLimitValue,
@@ -871,6 +873,9 @@ class MasterSettingsSave:
                 applimval_db_list.append(applimval_db_dictionary)
 
             else:
+                if applimval_detail['del_ind']:
+                    delete_app_code_ids.extend([applimval_detail['company_id'],
+                                                applimval_detail['app_code_id']])
 
                 django_query_instance.django_update_query(ApproverLimitValue,
                                                           {'app_code_id': applimval_detail['app_code_id'],
@@ -890,6 +895,14 @@ class MasterSettingsSave:
                                                               'approver_limit_value_changed_at': self.current_date_time,
                                                               'approver_limit_value_changed_by': self.username,
                                                           })
+
+        if delete_app_code_ids:
+            ApproverLimit.objects.filter(company_id__in=delete_app_code_ids,
+                                         app_code_id__in=delete_app_code_ids).delete()
+
+            ApproverLimitValue.objects.filter(company_id__in=delete_app_code_ids,
+                                              app_code_id__in=delete_app_code_ids).delete()
+
         if applimval_db_list:
             bulk_create_entry_db(ApproverLimitValue, applimval_db_list)
 
@@ -933,7 +946,8 @@ class MasterSettingsSave:
             else:
                 # Entry exists, update the existing entry
                 if spend_limit_value_detail['del_ind']:
-                    delete_spend_code_ids.append(spend_limit_value_detail['spend_code_id'])
+                    delete_spend_code_ids.extend([spend_limit_value_detail['company_id'],
+                                                  spend_limit_value_detail['spend_code_id']])
 
                 django_query_instance.django_update_query(SpendLimitValue,
                                                           {'spend_code_id': spend_limit_value_detail['spend_code_id'],
@@ -953,11 +967,14 @@ class MasterSettingsSave:
         # Delete entries from SpendLimitValue and SpendLimitId tables
         if delete_spend_code_ids:
             # Delete corresponding records in SpendLimitId table
-            for spend_code_id in delete_spend_code_ids:
-                SpendLimitId.objects.filter(spend_code_id=spend_code_id).delete()
+            # for delete_data in delete_spend_code_ids:
+            # SpendLimitId.objects.filter(company_id=delete_data).delete()
+            SpendLimitId.objects.filter(company_id__in=delete_spend_code_ids,
+                                        spend_code_id__in=delete_spend_code_ids).delete()
 
             # Delete entries from SpendLimitValue table
-            SpendLimitValue.objects.filter(spend_code_id__in=delete_spend_code_ids).delete()
+            SpendLimitValue.objects.filter(company_id__in=delete_spend_code_ids,
+                                           spend_code_id__in=delete_spend_code_ids).delete()
 
         if spend_limit_value_db_list:
             bulk_create_entry_db(SpendLimitValue, spend_limit_value_db_list)
@@ -983,19 +1000,19 @@ class MasterSettingsSave:
                 guid = guid_generator()
                 address_db_dictionary = {'address_guid': guid,
                                          'address_number': address_detail['address_number'],
-                                         'title': convert_to_camel_case(address_detail['title']),
-                                         'name1': convert_to_camel_case(address_detail['name1']),
-                                         'name2': convert_to_camel_case(address_detail['name2']),
-                                         'street': convert_to_camel_case(address_detail['street']),
-                                         'area': convert_to_camel_case(address_detail['area']),
-                                         'landmark': convert_to_camel_case(address_detail['landmark']),
-                                         'city': convert_to_camel_case(address_detail['city']),
+                                         'title': convert_to_camel_case_v2(address_detail['title']),
+                                         'name1': convert_to_camel_case_v2(address_detail['name1']),
+                                         'name2': convert_to_camel_case_v2(address_detail['name2']),
+                                         'street': convert_to_camel_case_v2(address_detail['street']),
+                                         'area': convert_to_camel_case_v2(address_detail['area']),
+                                         'landmark': convert_to_camel_case_v2(address_detail['landmark']),
+                                         'city': convert_to_camel_case_v2(address_detail['city']),
                                          'address_partner_type': AddressPartnerType.objects.get(
                                              address_partner_type=address_detail['address_partner_type']),
-                                         'org_address_source_system': convert_to_camel_case
+                                         'org_address_source_system': convert_to_camel_case_v2
                                          (address_detail['org_address_source_system']),
                                          'postal_code': address_detail['postal_code'],
-                                         'region': convert_to_camel_case(address_detail['region']),
+                                         'region': convert_to_camel_case_v2(address_detail['region']),
                                          'mobile_number': address_detail['mobile_number'],
                                          'telephone_number': address_detail['telephone_number'],
                                          'fax_number': address_detail['fax_number'],
@@ -1030,21 +1047,21 @@ class MasterSettingsSave:
                                                                'client': self.client},
                                                               {'address_number': address_detail['address_number'],
                                                                'title': address_detail['title'],
-                                                               'name1': convert_to_camel_case(address_detail['name1']),
-                                                               'name2': convert_to_camel_case(address_detail['name2']),
-                                                               'street': convert_to_camel_case(
+                                                               'name1': convert_to_camel_case_v2(address_detail['name1']),
+                                                               'name2': convert_to_camel_case_v2(address_detail['name2']),
+                                                               'street': convert_to_camel_case_v2(
                                                                    address_detail['street']),
-                                                               'area': convert_to_camel_case(address_detail['area']),
-                                                               'landmark': convert_to_camel_case(
+                                                               'area': convert_to_camel_case_v2(address_detail['area']),
+                                                               'landmark': convert_to_camel_case_v2(
                                                                    address_detail['landmark']),
-                                                               'city': convert_to_camel_case(address_detail['city']),
+                                                               'city': convert_to_camel_case_v2(address_detail['city']),
                                                                'address_partner_type': AddressPartnerType.objects.get
                                                                (address_partner_type=address_detail[
                                                                    'address_partner_type']),
-                                                               'org_address_source_system': convert_to_camel_case
+                                                               'org_address_source_system': convert_to_camel_case_v2
                                                                (address_detail['org_address_source_system']),
                                                                'postal_code': address_detail['postal_code'],
-                                                               'region': convert_to_camel_case(
+                                                               'region': convert_to_camel_case_v2(
                                                                    address_detail['region']),
                                                                'mobile_number': address_detail['mobile_number'],
                                                                'telephone_number': address_detail['telephone_number'],
