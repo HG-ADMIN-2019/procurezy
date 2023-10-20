@@ -3,7 +3,7 @@ import time
 from django.db.models.query_utils import Q
 from requests import request
 
-from eProc_Basic.Utilities.functions.camel_case import convert_to_camel_case
+from eProc_Basic.Utilities.functions.camel_case import convert_to_camel_case, convert_to_camel_case_v2
 from eProc_Basic.Utilities.functions.dictionary_key_to_list import dictionary_key_to_list
 
 from eProc_Basic.Utilities.functions.distinct_list import *
@@ -997,19 +997,19 @@ class MasterSettingsSave:
                 guid = guid_generator()
                 address_db_dictionary = {'address_guid': guid,
                                          'address_number': address_detail['address_number'],
-                                         'title': convert_to_camel_case(address_detail['title']),
-                                         'name1': convert_to_camel_case(address_detail['name1']),
-                                         'name2': convert_to_camel_case(address_detail['name2']),
-                                         'street': convert_to_camel_case(address_detail['street']),
-                                         'area': convert_to_camel_case(address_detail['area']),
-                                         'landmark': convert_to_camel_case(address_detail['landmark']),
-                                         'city': convert_to_camel_case(address_detail['city']),
+                                         'title': convert_to_camel_case_v2(address_detail['title']),
+                                         'name1': convert_to_camel_case_v2(address_detail['name1']),
+                                         'name2': convert_to_camel_case_v2(address_detail['name2']),
+                                         'street': convert_to_camel_case_v2(address_detail['street']),
+                                         'area': convert_to_camel_case_v2(address_detail['area']),
+                                         'landmark': convert_to_camel_case_v2(address_detail['landmark']),
+                                         'city': convert_to_camel_case_v2(address_detail['city']),
                                          'address_partner_type': AddressPartnerType.objects.get(
                                              address_partner_type=address_detail['address_partner_type']),
-                                         'org_address_source_system': convert_to_camel_case
+                                         'org_address_source_system': convert_to_camel_case_v2
                                          (address_detail['org_address_source_system']),
                                          'postal_code': address_detail['postal_code'],
-                                         'region': convert_to_camel_case(address_detail['region']),
+                                         'region': convert_to_camel_case_v2(address_detail['region']),
                                          'mobile_number': address_detail['mobile_number'],
                                          'telephone_number': address_detail['telephone_number'],
                                          'fax_number': address_detail['fax_number'],
@@ -1044,21 +1044,21 @@ class MasterSettingsSave:
                                                                'client': self.client},
                                                               {'address_number': address_detail['address_number'],
                                                                'title': address_detail['title'],
-                                                               'name1': convert_to_camel_case(address_detail['name1']),
-                                                               'name2': convert_to_camel_case(address_detail['name2']),
-                                                               'street': convert_to_camel_case(
+                                                               'name1': convert_to_camel_case_v2(address_detail['name1']),
+                                                               'name2': convert_to_camel_case_v2(address_detail['name2']),
+                                                               'street': convert_to_camel_case_v2(
                                                                    address_detail['street']),
-                                                               'area': convert_to_camel_case(address_detail['area']),
-                                                               'landmark': convert_to_camel_case(
+                                                               'area': convert_to_camel_case_v2(address_detail['area']),
+                                                               'landmark': convert_to_camel_case_v2(
                                                                    address_detail['landmark']),
-                                                               'city': convert_to_camel_case(address_detail['city']),
+                                                               'city': convert_to_camel_case_v2(address_detail['city']),
                                                                'address_partner_type': AddressPartnerType.objects.get
                                                                (address_partner_type=address_detail[
                                                                    'address_partner_type']),
-                                                               'org_address_source_system': convert_to_camel_case
+                                                               'org_address_source_system': convert_to_camel_case_v2
                                                                (address_detail['org_address_source_system']),
                                                                'postal_code': address_detail['postal_code'],
-                                                               'region': convert_to_camel_case(
+                                                               'region': convert_to_camel_case_v2(
                                                                    address_detail['region']),
                                                                'mobile_number': address_detail['mobile_number'],
                                                                'telephone_number': address_detail['telephone_number'],
