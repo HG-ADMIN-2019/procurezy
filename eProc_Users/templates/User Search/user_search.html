@@ -472,6 +472,12 @@ $(document).ready(function() {
     document.getElementById("username").value = '';
     document.getElementById("first_name").value = '';
     document.getElementById("last_name").value = '';
+     document.getElementById("email").value = '';
+    document.getElementById("employee_id").value = '';
+    document.getElementById("user_type").value = 'All';
+    $('#user_locked_id').prop('checked', false);
+    $('#pwd_locked_id').prop('checked', false);
+    $('#is_active_id').prop('checked', false);
     }
 });
 $('form').on('reset',function (e) {

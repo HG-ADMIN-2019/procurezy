@@ -25,7 +25,17 @@
         $('#id_comp_code_app').val(comp_code).attr('selected', 'selected');
         $('#acc_assgn_cat').val(acc_assgn_cat).attr('selected', 'selected');
     }
+function resetCompanyCodeDropdown() {
+        var companyCodeDropdown = document.getElementById('id_comp_code_app');
+        if (companyCodeDropdown) {
+            companyCodeDropdown.selectedIndex = 0;
+        }
+    }
 
+    // Call the function on page load to reset the dropdown
+    window.onload = function () {
+        resetCompanyCodeDropdown();
+    }
     //*********************************************
     $('#hg_approval_report_search').click(function () {
         OpenLoaderPopup();
