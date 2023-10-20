@@ -45,7 +45,7 @@ class RegForm(ModelForm):
         required=False,
         disabled=False,
         widget=forms.widgets.CheckboxInput(
-            attrs={}),
+            attrs={'class': 'form-control mandatory_fields'}),
         help_text="Super user",
     )
 
@@ -104,7 +104,7 @@ class UserRegForm(ModelForm):
         model = UserData
         fields = ['username', 'first_name', 'last_name', 'email', 'phone_num', 'employee_id', 'language_id',
                   'time_zone',
-                  'date_format', 'decimal_notation', 'currency_id', 'user_type']
+                  'date_format', 'decimal_notation', 'currency_id', 'user_type', 'is_superuser']
 
         DATE_FORMAT_CHOICES = (
             ('DD.MM.YYYY', 'DD.MM.YYYY'),

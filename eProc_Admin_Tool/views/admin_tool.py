@@ -275,6 +275,9 @@ def user_details(request, email):
     user_info = django_query_instance.django_get_query(UserData,
                                                        {'email': email, 'client': getClients(request),
                                                         'del_ind': False})
+    user_info1 = django_query_instance.django_filter_only_query(UserData,
+                                                       {'email': email, 'client': getClients(request),
+                                                        'del_ind': False})
 
     context = {
         'inc_nav': True,

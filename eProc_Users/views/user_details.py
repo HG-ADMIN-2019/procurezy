@@ -149,10 +149,16 @@ def save_user_data(request):
             # }
             # email_notify(email_data, variant_name, global_variables.GLOBAL_CLIENT)
             # ----- create user and send email
+            super_user = user_details['is_superuser']
+            user_val = {'is_superuser', super_user}
             is_created = RegFncts.create_user(request, new_user, global_variables.GLOBAL_CLIENT, password)
             if is_created:
                 msgid = 'MSG183'
                 error_msg = get_message_desc(msgid)[1]
                 message['type'] = 'success'
+            # django_query_instance.django_update_query(UserData, {'email': user_details['email'],
+            #                                                      'del_ind': False,
+            #                                                      'client': global_variables.GLOBAL_CLIENT},
+            #                                           user_val)
 
     return error_msg, encrypted_user, message
