@@ -113,7 +113,7 @@
                                     </div>
                                     <div class="form-group col-md">
                                         <label>Language</label><span class="hg_required"></span><br>
-                                        <select name="" id="id_language_id" class="form-control hg_edit_display_mode mandatory_fields"  disabled>
+                                        <select name="" id="id_language_id" class="form-control hg_edit_display_mode "  disabled>
                                             <option value="" selected>Select</option>
                                             {% for items in language_list %}
                                                 <option value="{{items.language_id}}">{{items.language_id}}-{{items.description}}</option>
