@@ -237,7 +237,7 @@
                                 del_ind= '<input type="checkbox" value="' + value.del_ind + '" required>'
                             }
 
-                             edit_basic_data += '<tr ><td class="class_select_checkbox"><input type="checkbox" required></td><td><input type="text" class="form-control check_alpha_no_space" value="' + value.pgroup_id + '" maxlength="8" onkeypress="return /[a-z]/i.test(event.key)" required></td><td><input type="text" class="form-control check_only_character" value="' + value.description + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td><td hidden><input type="text" value=""></td><td hidden><input type="text" value=""></td><td>' + del_ind + '</td></tr>';
+                             edit_basic_data += '<tr ><td class="class_select_checkbox"><input type="checkbox" required></td><td><input type="text" class="form-control check_alpha_no_space" value="' + value.pgroup_id + '" maxlength="8" onkeypress="return /[a-z 0-9]/i.test(event.key)" required></td><td><input type="text" class="form-control check_only_character" value="' + value.description + '" maxlength="100" onkeypress="return /[a-z ]/i.test(event.key)" required></td><td hidden><input type="text" value=""></td><td hidden><input type="text" value=""></td><td>' + del_ind + '</td></tr>';
 
                         });
                         $('#id_popup_tbody').append(edit_basic_data);
