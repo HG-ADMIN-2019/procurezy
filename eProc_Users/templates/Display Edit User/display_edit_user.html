@@ -48,7 +48,7 @@
 
                         <div class="d-flex justify-content-end">
                             <div id="save_user_info_btn">
-                                <button type="button" class="btn btn-primary" onclick="save_user_basic_info()"><i class="fas fa-save"></i> save</button>
+                                <button id="" type="button" class="btn btn-primary" onclick="save_user_basic_info();"><i class="fas fa-save"></i> save</button>
                             </div>
                             <div id="cancel_button" hidden style="padding-left: 5px;">
                                 <button type="button" class="btn btn-primary" onclick="cancel_user_basic_info()"><i class="fas fa-times"></i> cancel</button>
@@ -113,7 +113,11 @@
                                     </div>
                                     <div class="form-group col-md">
                                         <label>Language</label><span class="hg_required"></span><br>
+<<<<<<< HEAD
                                         <select name="" id="id_language_id" class="form-control hg_edit_display_mode"  disabled>
+=======
+                                        <select name="" id="id_language_id" class="form-control hg_edit_display_mode "  disabled>
+>>>>>>> shilpa_ilkal
                                             <option value="" selected>Select</option>
                                             {% for items in language_list %}
                                                 <option value="{{items.language_id}}">{{items.language_id}}-{{items.description}}</option>
@@ -187,9 +191,9 @@
                                     <div class="form-group col-md hg-mt-2rem" >
                                         <label>Super User</label>&nbsp;
                                         {% if user_info.is_superuser %}
-                                        <input type="checkbox" id="super_user" name="super_user" value="1" class="hg_edit_display_mode" checked disabled>
+                                        <input type="checkbox" id="is_superuser" name="is_superuser" value="1" class="hg_edit_display_mode" checked disabled>
                                         {% else %}
-                                        <input type="checkbox" id="super_user" name="super_user" value="0" class="hg_edit_display_mode" value="" disabled>
+                                        <input type="checkbox" id="is_superuser" name="is_superuser" value="0" class="hg_edit_display_mode" disabled>
                                         {% endif %}
                                     </div>
 
@@ -334,7 +338,6 @@ var msg_display_interval = {{msg_display_time_value|safe}};
     }
 
     function ajax_update_user_basic_data(data) {
-        OpenLoaderPopup();
         urlLink = "{% url 'eProc_Users:update_user_basic_details' %}";
         var response = AjaxCallAPIBasic(urlLink, data)
         return response
@@ -409,19 +412,19 @@ var msg_display_interval = {{msg_display_time_value|safe}};
             localStorage.setItem("error_flag", 1);
             set_value();
             get_values();
-             setTimeout(function() {
-                       CloseLoaderPopup();
-         }, 500);
             e.preventDefault();
         }
         else{
             save_user_basic_info();
-            setTimeout(function() {
-                       CloseLoaderPopup();
-         }, 20000);
          $(".hg_edit_display_mode").prop("disabled", false);
 
         }
+    });
+    $('#save_id').on('click',function (e) {
+        setTimeout(function() {
+                       OpenLoaderPopup();
+         }, 500);
+        save_user_basic_info();
     });
 
      // Funtion to save basic detail data
@@ -447,10 +450,10 @@ var msg_display_interval = {{msg_display_time_value|safe}};
             user_data_dict.date_format= $('#date_format').val();
             user_data_dict.decimal_notation= $('#decimal_notation').val();
             user_data_dict.login_attempts= 0;
-            if($("#super_user").is(":checked")){
+            if($("#is_superuser").is(":checked")){
                 super_user_val = 1;
             }
-            user_data_dict.super_user= super_user_val;
+            user_data_dict.is_superuser= super_user_val;
             if($("#user_locked").is(":checked")){
                 user_locked_val = 1;
             }
@@ -464,7 +467,6 @@ var msg_display_interval = {{msg_display_time_value|safe}};
             }
             user_data_dict.is_active= is_active_val;
             user_data_dict.status = GLOBAL_ACTION ;
-<!--            OpenLoaderPopup();-->
             var response = ajax_update_user_basic_data(user_data_dict)
             message = response.message
             msg_type = response.msg_type
@@ -475,7 +477,7 @@ var msg_display_interval = {{msg_display_time_value|safe}};
                 $('#user_basic_update_success').show();
                 message_display_time_specific();
                 $('html, body').animate({ scrollTop: 0 }, 'slow');
-                cancel_user_basic_info();
+                check();
                 if(GLOBAL_ACTION == 'CREATE'){
                     $(".hg_edit_display_mode").prop("disabled", false);
                     document.getElementById("save_user_info_btn").style.display = "block";

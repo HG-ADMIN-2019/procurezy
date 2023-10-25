@@ -1,3 +1,4 @@
+var sup_user = '';
 
 // Function to make user basic data field editable
 function edit_user_basic_info() {
@@ -15,6 +16,11 @@ function edit_user_basic_info() {
     document.getElementById("edit_user_info_btn").style.display = "none";
     document.getElementById("save_user_info_btn").style.display = "block";
     document.getElementById("cancel_button").style.display = "block";
+    sup_user = document.getElementById("is_superuser").value;
+    user_status = document.getElementById("user_status").value;
+    user_locked = document.getElementById("user_locked").value;
+    pwd_locked = document.getElementById("pwd_locked").value;
+    set_value();
 }
 
 // Onlick cancel edit user-basic data 
@@ -27,6 +33,14 @@ function cancel_user_basic_info() {
     get_values();
 }
 
+function check(){
+    $(".hg_edit_display_mode").prop("disabled", true);
+    document.getElementById("edit_user_info_btn").style.display = "block"
+    document.getElementById("save_user_info_btn").style.display = "none";
+    document.getElementById("cancel_button").style.display = "none";
+    $(".error_message").prop("hidden", true);
+}
+
 function set_value(){
      localStorage.setItem("username", document.getElementById("username").value);
      localStorage.setItem("employee_id", document.getElementById("employee_id").value);
@@ -37,7 +51,7 @@ function set_value(){
      localStorage.setItem("phone_num", document.getElementById("phone_num").value);
      localStorage.setItem("date_format", document.getElementById("date_format").value);
      localStorage.setItem("decimal_notation", document.getElementById("decimal_notation").value);
-     localStorage.setItem("super_user", document.getElementById("super_user").value);
+     localStorage.setItem("is_superuser", document.getElementById("is_superuser").value);
      localStorage.setItem("user_status", document.getElementById("user_status").value);
      localStorage.setItem("user_locked", document.getElementById("user_locked").value);
      localStorage.setItem("pwd_locked", document.getElementById("pwd_locked").value);
@@ -55,10 +69,27 @@ function get_values(){
      $('#phone_num').val(localStorage.getItem("phone_num"));
      $('#date_format').val(localStorage.getItem("date_format"));
      $('#decimal_notation').val(localStorage.getItem("decimal_notation"));
-     $('#super_user').val(localStorage.getItem("super_user"));
-     $('#user_status').val(localStorage.getItem("user_status"));
-     $('#user_locked').val(localStorage.getItem("user_status"));
-     $('#pwd_locked').val(localStorage.getItem("pwd_locked"));
+     if(sup_user == "1"){
+//        $('#is_superuser').val(1);
+        $("#is_superuser").prop("checked", true)
+     }
+     else{
+//        $('#is_superuser').val(0);
+        $("#is_superuser").prop("checked", false)
+    }
+    if(user_status == "1"){
+        $("#user_status").prop("checked", true)
+    }
+    else{
+        $("#user_status").prop("checked", false)
+    }
+    if(user_locked == "1"){ $("#user_locked").prop("checked", true) }
+    else{ $("#user_locked").prop("checked", false) }
+    if(pwd_locked == "1"){ $("#pwd_locked").prop("checked", true) }
+    else{ $("#pwd_locked").prop("checked", false) }
+//     $('#user_status').val(localStorage.getItem("user_status"));
+//     $('#user_locked').val(localStorage.getItem("user_status"));
+//     $('#pwd_locked').val(localStorage.getItem("pwd_locked"));
    $('#id_currency_id').val(localStorage.getItem("currency_id"));
    $('#id_language_id').val(localStorage.getItem("language_id"));
    $('#id_time_zone').val(localStorage.getItem("time_zone"));

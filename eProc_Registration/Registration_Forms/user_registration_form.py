@@ -20,7 +20,8 @@ from eProc_Registration.models import UserData
 
 class RegForm(ModelForm):
     username = forms.CharField(label='User Name',
-                               widget=forms.TextInput(attrs={'class': 'form-control check_special_char mandatory_fields'}),
+                               widget=forms.TextInput(
+                                   attrs={'class': 'form-control check_special_char mandatory_fields'}),
                                )
     first_name = forms.CharField(label='First Name',
                                  widget=forms.TextInput(attrs={'class': 'form-control check_special_char '
@@ -81,15 +82,22 @@ class RegForm(ModelForm):
             'employee_id': forms.TextInput(attrs={'class': 'form-control check_special_char mandatory_fields'}),
         }
 
+    # def clean(self):
+    #     data = self.cleaned_data['is_superuser']
+    #     return data
+
 
 class UserRegForm(ModelForm):
-    username = forms.CharField(label='User Name', widget=forms.TextInput(attrs={'class': 'form-control mandatory_fields'}),
+    username = forms.CharField(label='User Name',
+                               widget=forms.TextInput(attrs={'class': 'form-control mandatory_fields'}),
                                )
-    first_name = forms.CharField(label='First Name', widget=forms.TextInput(attrs={'class': 'form-control mandatory_fields'}),
+    first_name = forms.CharField(label='First Name',
+                                 widget=forms.TextInput(attrs={'class': 'form-control mandatory_fields'}),
                                  )
     last_name = forms.CharField(label='Last Name', widget=forms.TextInput(attrs={'class': 'form-control'}),
                                 required=False)
-    phone_num = forms.CharField(label='Phone Number', widget=forms.TextInput(attrs={'class': 'form-control mandatory_fields'}),
+    phone_num = forms.CharField(label='Phone Number',
+                                widget=forms.TextInput(attrs={'class': 'form-control mandatory_fields'}),
                                 )
     language_id = forms.ModelChoiceField(queryset=Languages.objects.all(), empty_label="None", widget=forms.Select(
         attrs={'class': 'form-control mandatory_fields'}), label='Language', )
