@@ -416,15 +416,12 @@ var msg_display_interval = {{msg_display_time_value|safe}};
 
         }
     });
-    $('#save_id').on('click',function (e) {
-        setTimeout(function() {
-                       OpenLoaderPopup();
-         }, 500);
-        save_user_basic_info();
-    });
 
      // Funtion to save basic detail data
     function save_user_basic_info() {
+     setTimeout(function() {
+                       OpenLoaderPopup();
+         }, 500);
         var name1_val= $('#first_name').val();
         var phone_num_val = $('#phone_num').val();
         var email_val = $('#email').val();
