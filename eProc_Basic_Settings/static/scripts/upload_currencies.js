@@ -66,16 +66,16 @@ function onclick_copy_update_button(data) {
             var row = $chkbox_all[i].parentNode.parentNode;
             $("#hg_select_checkbox").prop("hidden", false);
             if(GLOBAL_ACTION == "UPDATE"){
-                unique_input = '<input class="form-control check_special_char" type="text" value="' + row.cells[1].innerHTML + '" name="currency code"  maxlength="3" style="text-transform:uppercase" disabled>'
+                unique_input = '<input class="form-control check_character_no_space" type="text" value="' + row.cells[1].innerHTML + '" name="currency code"  maxlength="3" style="text-transform:uppercase" disabled>'
                 edit_basic_data += '<tr><td hidden><input type="checkbox" required></td>'+
                     '<td>'+ unique_input +'</td>'+
-                    '<td><input value="' + row.cells[2].innerHTML + '" type="text" class="form-control check_special_char"  name="currency description"  maxlength="100"  required></td>'+
+                    '<td><input value="' + row.cells[2].innerHTML + '" type="text" class="form-control check_only_character"  name="currency description"  maxlength="100"  required></td>'+
                     '<td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
                 $("#header_select").prop("hidden", true);
             }
             else{
-                unique_input = '<input class="form-control check_special_char" type="text" value="' + row.cells[1].innerHTML + '" name="currency code"  maxlength="3" style="text-transform:uppercase" required>'
-                edit_basic_data += '<tr ><td><input type="checkbox" required></td><td>'+ unique_input +'</td><td><input value="' + row.cells[2].innerHTML + '" type="text" class="form-control check_special_char"  name="currency description"  maxlength="100"  required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+                unique_input = '<input class="form-control check_character_no_space" type="text" value="' + row.cells[1].innerHTML + '" name="currency code"  maxlength="3" style="text-transform:uppercase" required>'
+                edit_basic_data += '<tr ><td><input type="checkbox" required></td><td>'+ unique_input +'</td><td><input value="' + row.cells[2].innerHTML + '" type="text" class="form-control check_only_character"  name="currency description"  maxlength="100"  required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
                 $("#header_select").prop("hidden", false);
             }
         }
@@ -123,7 +123,7 @@ function add_popup_row() {
         $("#id_error_msg").html(" ");
     });
     if (GLOBAL_ACTION == "currency_upload") {
-        basic_add_new_html = '<tr ><td><input type="checkbox" required></td><td><input class="input form-control check_special_char" type="text"  title="Minimum length is 3" minlength="3"  maxlength="3"  name="currencycode" style="text-transform:uppercase;" required></td><td><input class="input form-control check_special_char" type="text" maxlength="100"  name="currencyname"  required></td><td class="class_del_checkbox"><input type="checkbox" required></td></tr>';
+        basic_add_new_html = '<tr ><td><input type="checkbox" required></td><td><input class="input form-control check_character_no_space" type="text"  title="Minimum length is 3" minlength="3"  maxlength="3"  name="currencycode" style="text-transform:uppercase;" required></td><td><input class="input form-control check_only_character" type="text" maxlength="100"  name="currencyname"  required></td><td class="class_del_checkbox"><input type="checkbox" required></td></tr>';
         $('#id_popup_tbody').append(basic_add_new_html);
         table_sort_filter('id_popup_table');
         $(".class_del_checkbox").prop("hidden", false);
@@ -178,15 +178,21 @@ function delete_duplicate(){
         description = row.find("TD").eq(2).find('input[type="text"]').val().toUpperCase();
         currency_id = row.find("TD").eq(1).find('input[type="text"]').val().toUpperCase();
         checked_box = row.find("TD").eq(3).find('input[type="checkbox"]').is(':checked')
-        if(currency_id_check.includes(currency_id)){
-            $(row).remove();
-        }
-       currency_id_check.push(currency_id);
-        main_table_low_value = get_main_table_data_upload(); //Read data from main table
-        if (main_table_low_value.includes(currency_id)) {
-            $(row).remove();
-        }
-        main_table_low_value.push(currency_id);
+            if (checked_box){
+                del_ind = '1'
+            }
+            else{
+                del_ind = '0'
+                if(currency_id_check.includes(currency_id)){
+                    $(row).remove();
+                }
+               currency_id_check.push(currency_id);
+                main_table_low_value = get_main_table_data_upload(); //Read data from main table
+                if (main_table_low_value.includes(currency_id)) {
+                    $(row).remove();
+                }
+                main_table_low_value.push(currency_id);
+            }
     })
     table_sort_filter_popup_pagination('id_popup_table')
     check_data()
@@ -242,7 +248,7 @@ function get_main_table_data_upload() {
         var main_attribute = {};
         main_attribute.currency_id = row.find("TD").eq(1).html();
         main_attribute.del_ind = row.find("TD").eq(3).find('input[type="checkbox"]').is(':checked');
-        var compare = main_attribute.currency_id + '-'+ main_attribute.del_ind
+        var compare = main_attribute.currency_id
         main_table_low_value.push(compare);
     });
     table_sort_filter('display_basic_table');
@@ -265,7 +271,7 @@ function get_selected_row_data(){
 
 // Function for add a new row data
 function new_row_data(){
-    basic_add_new_html = '<tr ><td><input type="checkbox" required></td><td><input class="input form-control check_special_char" type="text"  title="Minimum length is 3" minlength="3"  maxlength="3"  name="currencycode" style="text-transform:uppercase;" required></td><td><input class="input form-control check_special_char" type="text" maxlength="100"  name="currencyname"  required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+    basic_add_new_html = '<tr ><td><input type="checkbox" required></td><td><input class="input form-control check_character_no_space" type="text"  title="Minimum length is 3" minlength="3"  maxlength="3"  name="currencycode" style="text-transform:uppercase;" required></td><td><input class="input form-control check_only_character" type="text" maxlength="100"  name="currencyname"  required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
 }
 

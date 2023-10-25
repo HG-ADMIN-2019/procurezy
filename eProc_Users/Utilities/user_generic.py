@@ -130,3 +130,12 @@ def get_supplier_type_values():
                                                                                           'field_type_desc'
                                                                                           ))
     return dropdown_suptype_values
+
+
+def get_output_medium_values():
+    dropdown_output_med_values = list(
+        FieldTypeDescription.objects.filter(field_name='output_medium', del_ind=False,
+                                            client=global_variables.GLOBAL_CLIENT).values('field_type_id',
+                                                                                          'field_type_desc'
+                                                                                          ))
+    return dropdown_output_med_values

@@ -61,7 +61,7 @@ function add_popup_row() {
         $("#id_error_msg").html("");
     });
     if (GLOBAL_ACTION == "orgcompany_upload") {
-        basic_add_new_html = '<tr> <td><input class="input" type="checkbox" required></td><td><input class="form-control check_special_char color_change" type="text"  name= "company_id"  minlength="4" maxlength="8"></td><td><input class="form-control check_special_char" type="text" name="name1"  maxlength="100"></td><td><input class="form-control check_special_char" type="text" name="name2" maxlength="100"></td><td hidden></td><td hidden><input value="GUID" hidden></td><td class="class_del_checkbox"><input type="checkbox" required></td></tr>';
+        basic_add_new_html = '<tr> <td><input class="input" type="checkbox" required></td><td><input class="form-control check_special_character color_change" type="text"  name= "company_id"  minlength="4" maxlength="8"></td><td><input class="form-control check_only_character" type="text" name="name1"  maxlength="100"></td><td><input class="form-control check_only_character" type="text" name="name2" maxlength="100"></td><td hidden></td><td hidden><input value="GUID" hidden></td><td class="class_del_checkbox"><input type="checkbox" required></td></tr>';
         $('#id_popup_tbody').append(basic_add_new_html);
         table_sort_filter('id_popup_table');
         $(".class_del_checkbox").prop("hidden", false);
@@ -91,13 +91,13 @@ function onclick_copy_update_button() {
         var row = $chkbox_all[i].parentNode.parentNode;
             if(GLOBAL_ACTION == "COPY"){
                 guid = 'GUID';
-                edit_basic_data += '<tr><td><input type="checkbox"></td><td><input class="form-control check_special_char" type="text" value="' + row.cells[1].innerHTML + '" minlength="4" maxlength="08" name="company_id" required></td><td><input class="form-control check_special_char" type="text" value="' + row.cells[2].innerHTML + '" maxlength="100" name="name1" required></td><td><input class="form-control check_special_char" type="text" value="' + row.cells[3].innerHTML + '" maxlength="100" name="name2" required></td><td hidden></td><td hidden><input value="' + guid + '"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';;
+                edit_basic_data += '<tr><td><input type="checkbox"></td><td><input class="form-control check_special_character" type="text" value="' + row.cells[1].innerHTML + '" minlength="4" maxlength="08" name="company_id" required></td><td><input class="form-control check_only_character" type="text" value="' + row.cells[2].innerHTML + '" maxlength="100" name="name1" required></td><td><input class="form-control check_only_character" type="text" value="' + row.cells[3].innerHTML + '" maxlength="100" name="name2" required></td><td hidden></td><td hidden><input value="' + guid + '"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';;
                 $("#header_select").prop("hidden",false);
             }
             else{
                 guid = row.cells[5].innerHTML;
 
-                edit_basic_data += '<tr><td hidden><input type="checkbox"></td><td><input class="form-control check_special_char" type="text" value="' + row.cells[1].innerHTML + '" minlength="4" maxlength="08" name="company_id" disabled></td><td><input class="form-control" type="text" value="' + row.cells[2].innerHTML + '" maxlength="100" name="name1" required></td><td><input class="form-control" type="text" value="' + row.cells[3].innerHTML + '" maxlength="100" name="name2" required><td hidden></td><td hidden><input value="' + guid + '"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+                edit_basic_data += '<tr><td hidden><input type="checkbox"></td><td><input class="form-control check_special_character" type="text" value="' + row.cells[1].innerHTML + '" minlength="4" maxlength="08" name="company_id" disabled></td><td><input class="form-control check_only_character" type="text" value="' + row.cells[2].innerHTML + '" maxlength="100" name="name1" required></td><td><input class="form-control check_only_character" type="text" value="' + row.cells[3].innerHTML + '" maxlength="100" name="name2" required><td hidden></td><td hidden><input value="' + guid + '"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
 
                 $("#header_select").prop("hidden",true);
             }
@@ -221,7 +221,7 @@ function update_check_message(messages) {
 
 // Function for add a new row data
 function new_row_data(){
-    basic_add_new_html = '<tr> <td><input class="input" type="checkbox" required></td><td><input class="form-control check_special_char color_change" type="text"  name= "company_id"  minlength="4" maxlength="8"></td><td><input class="form-control check_special_character" type="text" name="name1"  maxlength="100"></td><td><input class="form-control check_special_character" type="text" name="name2" maxlength="100"></td><td hidden></td><td hidden><input value="GUID" hidden></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+    basic_add_new_html = '<tr> <td><input class="input" type="checkbox" required></td><td><input class="form-control check_special_character color_change" type="text"  name= "company_id"  minlength="4" maxlength="8"></td><td><input class="form-control check_only_character" type="text" name="name1"  maxlength="100"></td><td><input class="form-control check_only_character" type="text" name="name2" maxlength="100"></td><td hidden></td><td hidden><input value="GUID" hidden></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
 }
 
@@ -264,7 +264,7 @@ function get_main_table_data_upload() {
         var main_attribute = {};
         main_attribute.company_id = row.find("TD").eq(1).html();
         main_attribute.del_ind = row.find("TD").eq(6).find('input[type="checkbox"]').is(':checked');
-        var compare = main_attribute.company_id + '-'+ main_attribute.del_ind
+        var compare = main_attribute.company_id
         main_table_low_value.push(compare);
     });
     table_sort_filter('display_basic_table');
@@ -290,16 +290,22 @@ function delete_duplicate() {
         name2 = row.find("TD").eq(3).find('input[type="text"]').val();
         name1 = row.find("TD").eq(2).find('input[type="text"]').val();
         company_id = row.find("TD").eq(1).find('input[type="text"]').val().toUpperCase();
-        checked_box = row.find("TD").eq(5).find('input[type="checkbox"]').is(':checked')
-        if (company_check.includes(company_id)) {
-            $(row).remove();
-        }
-        company_check.push(company_id);
-         main_table_low_value = get_main_table_data_upload(); //Read data from main table
-        if (main_table_low_value.includes(company_id)) {
-            $(row).remove();
-        }
-        main_table_low_value.push(company_id);
+        checked_box = row.find("TD").eq(6).find('input[type="checkbox"]').is(':checked')
+         if (checked_box){
+                del_ind = '1'
+         }
+         else{
+             del_ind = '0'
+             if (company_check.includes(company_id)) {
+                $(row).remove();
+             }
+             company_check.push(company_id);
+             main_table_low_value = get_main_table_data_upload(); //Read data from main table
+             if (main_table_low_value.includes(company_id)) {
+                $(row).remove();
+             }
+             main_table_low_value.push(company_id);
+         }
     });
     table_sort_filter_popup_pagination('id_popup_table')
     check_data()

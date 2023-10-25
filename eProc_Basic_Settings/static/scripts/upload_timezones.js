@@ -59,21 +59,21 @@ function onclick_copy_update_button(data) {
         if ( $chkbox_all[i].checked) {
             var row =  $chkbox_all[i].parentNode.parentNode;
             if(GLOBAL_ACTION == "UPDATE"){
-                unique_input = '<input class="form-control check_special_char" type="text" value="' + row.cells[1].innerHTML + '" name="time_zone"  maxlength="6" style="text-transform:uppercase" disabled>'
+                unique_input = '<input class="form-control check_character_no_space" type="text" value="' + row.cells[1].innerHTML + '" name="time_zone"  maxlength="6" style="text-transform:uppercase" disabled>'
                 edit_basic_data += '<tr><td hidden><input type="checkbox" required></td>'+
                  '<td>'+ unique_input +'</td>'+
-                 '<td><input class="form-control check_special_char" value="' + row.cells[2].innerHTML + '" type="text"  name="description"  maxlength="255" required></td>'+
+                 '<td><input class="form-control check_uppercase_character" value="' + row.cells[2].innerHTML + '" type="text"  name="description"  maxlength="255" required></td>'+
                  '<td><input class="form-control check_UTC_Difference" value="' + row.cells[3].innerHTML + '" type="text"  name="utcdifference"  maxlength="15" style="text-transform:uppercase" required></td>'+
-                 '<td><input class="form-control check_special_char" value="' + row.cells[4].innerHTML + '" type="text"  name="daylightsave"  maxlength="10" style="text-transform:uppercase"</td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+                 '<td><input class="form-control check_character_no_space" value="' + row.cells[4].innerHTML + '" type="text"  name="daylightsave"  maxlength="10" style="text-transform:uppercase"</td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
                 $("#header_select").prop("hidden", true);
             }
             else{
-                unique_input = '<input class="form-control check_special_char" type="text" value="' + row.cells[1].innerHTML + '" name="time_zone"  maxlength="6" style="text-transform:uppercase" required>'
+                unique_input = '<input class="form-control check_character_no_space" type="text" value="' + row.cells[1].innerHTML + '" name="time_zone"  maxlength="6" style="text-transform:uppercase" required>'
                 edit_basic_data += '<tr><td><input type="checkbox" required></td>'+
                 '<td>'+ unique_input +'</td>'+
-                '<td><input class="form-control check_special_char" value="' + row.cells[2].innerHTML + '" type="text"  name="description"  maxlength="255" required></td>'+
+                '<td><input class="form-control check_uppercase_character" value="' + row.cells[2].innerHTML + '" type="text"  name="description"  maxlength="255" required></td>'+
                 '<td><input class="form-control check_UTC_Difference" value="' + row.cells[3].innerHTML + '" type="text"  name="utcdifference"  maxlength="15" style="text-transform:uppercase" required></td>'+
-                '<td><input class="form-control check_special_char" value="' + row.cells[4].innerHTML + '" type="text"  name="daylightsave"  maxlength="10" style="text-transform:uppercase"</td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+                '<td><input class="form-control check_character_no_space" value="' + row.cells[4].innerHTML + '" type="text"  name="daylightsave"  maxlength="10" style="text-transform:uppercase"</td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
                 $("#header_select").prop("hidden", false);
             }
         }
@@ -122,10 +122,10 @@ function add_popup_row() {
     });
     if (GLOBAL_ACTION == "timezone_upload") {
             basic_add_new_html = '<tr ><td><input type="checkbox" required></td>'+
-        '<td><input class="input form-control check_special_char" type="text"  title="Minimum length is 3" minlength="1" maxlength="5"  name="timezonecode" style="text-transform:uppercase;" required></td>'+
-        '<td><input class="input form-control check_special_char" type="text" maxlength="255"  name="timezonename"  required></td>'+
+        '<td><input class="input form-control check_character_no_space" type="text"  title="Minimum length is 3" minlength="1" maxlength="5"  name="timezonecode" style="text-transform:uppercase;" required></td>'+
+        '<td><input class="input form-control check_uppercase_character" type="text" maxlength="255"  name="timezonename"  required></td>'+
         '<td><input class="input form-control check_UTC_Difference" type="text" title="Minimum length is 15" minlength="15" maxlength="15"  name="utcdifference"  style="text-transform:uppercase;" required></td>'+
-        '<td><input class="input form-control check_special_char" type="text" maxlength="10"  name="daylightsave"   style="text-transform:uppercase;" required></td><td class="class_del_checkbox"><input type="checkbox" required></td></tr>';
+        '<td><input class="input form-control check_character_no_space" type="text" maxlength="10"  name="daylightsave"   style="text-transform:uppercase;" required></td><td class="class_del_checkbox"><input type="checkbox" required></td></tr>';
         $('#id_popup_tbody').append(basic_add_new_html);
         table_sort_filter('id_popup_table');
         $(".class_del_checkbox").prop("hidden", false);
@@ -175,16 +175,21 @@ function delete_duplicate() {
         utc_difference = row.find("TD").eq(3).find('input[type="text"]').val().toUpperCase();
         daylight_save_rule = row.find("TD").eq(4);
         checked_box = row.find("TD").eq(5).find('input[type="checkbox"]').is(':checked')
-
-        if (time_zone_check.includes(time_zone)) {
-            $(row).remove();
-        }
-        time_zone_check.push(time_zone);
-        main_table_low_value = get_main_table_data_upload(); //Read data from main table
-        if (main_table_low_value.includes(time_zone)) {
-            $(row).remove();
-        }
-        main_table_low_value.push(time_zone);
+            if (checked_box){
+                del_ind = '1'
+            }
+            else{
+                del_ind = '0'
+                if (time_zone_check.includes(time_zone)) {
+                    $(row).remove();
+                }
+                time_zone_check.push(time_zone);
+                main_table_low_value = get_main_table_data_upload(); //Read data from main table
+                if (main_table_low_value.includes(time_zone)) {
+                    $(row).remove();
+                }
+                main_table_low_value.push(time_zone);
+            }
     });
     table_sort_filter_popup_pagination('id_popup_table')
     check_data();
@@ -249,7 +254,7 @@ function get_main_table_data_upload() {
         var main_attribute = {};
         main_attribute.time_zone = row.find("TD").eq(1).html();
         main_attribute.del_ind = row.find("TD").eq(5).find('input[type="checkbox"]').is(':checked');
-        var compare = main_attribute.time_zone + '-'+ main_attribute.del_ind
+        var compare = main_attribute.time_zone
         main_table_low_value.push(compare);
     });
     table_sort_filter('display_basic_table');
@@ -274,10 +279,10 @@ function get_selected_data(){
 // Function for add a new row data
 function new_row_data() {
     basic_add_new_html = '<tr ><td><input type="checkbox" required></td>'+
-    '<td><input class="input form-control check_special_char" type="text"  title="Minimum length is 3" minlength="1" maxlength="5"  name="timezonecode" style="text-transform:uppercase;" required></td>'+
-    '<td><input class="input form-control check_special_char" type="text" maxlength="255"  name="timezonename"  required></td>'+
+    '<td><input class="input form-control check_character_no_space" type="text"  title="Minimum length is 3" minlength="3" maxlength="5"  name="timezonecode" style="text-transform:uppercase;" required></td>'+
+    '<td><input class="input form-control check_uppercase_character" type="text" maxlength="255"  name="timezonename"  required></td>'+
     '<td><input class="input form-control check_UTC_Difference" type="text" title="Minimum length is 15" minlength="15" maxlength="15"  name="utcdifference"  style="text-transform:uppercase;" required></td>'+
-    '<td><input class="input form-control check_special_char" type="text" maxlength="10"  name="daylightsave"   style="text-transform:uppercase;" required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+    '<td><input class="input form-control check_character_no_space" type="text" maxlength="10"  name="daylightsave"   style="text-transform:uppercase;" required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
 }
 

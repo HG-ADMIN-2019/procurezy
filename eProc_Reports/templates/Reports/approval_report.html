@@ -40,7 +40,7 @@
                 </form>
             </div>
         </div>
-        <!-- <div class="search_result_count_card card">
+         <div class="search_result_count_card card">
             {% if t_count > 0 %}
             <div class="card-body">
                 <h6 class="card-title">Total number of results found :{{t_count}}</h6>
@@ -51,12 +51,12 @@
                 <h6 class="card-title">No Results Found</h6>
             </div>
             {% endif %}
-        </div> -->
+        </div>
         <!--    To Display Header Details only if there are any results-->
             <div id="table-container">
             {% if t_count > 0 %}
             {% if final_list %}
-            <div class="card mt-5">
+            <div class="card mt-3">
                 <table id="approval_report_table" class="table table_sort_filter_export_excel">
                     <thead class="thead-light">
                         <tr>
@@ -107,26 +107,66 @@
 <script>
     var selected_status_value = {{ inp_acc_assgn_cat | safe }};
     console.log('Selected Status Value:', selected_status_value);
-    var selected_comp_value = {{ inp_comp_code | safe }};
-    console.log('Selected Company Value:', selected_comp_value);
+<!--    var selected_comp_value = {{ inp_comp_code | safe }};-->
+<!--    console.log('Selected Company Value:', selected_comp_value);-->
 
-    $(document).ready(function () {
-        // Add a click event handler for the "clear filters" button
-        $('#clear_filters_btn').click(function () {
-            // Clear the company dropdown by selecting the first option
-            $('#id_comp_code_app').val($('#id_comp_code_app option:first').val());
-            // Clear the account assignment category dropdown by deselecting all options
-            $('#acc_assgn_cat').selectpicker('deselectAll');
-            $('#acc_assgn_cat').selectpicker('refresh'); // Refresh the dropdown to update the display
-            // Hide the table container (including table and pagination)
-            $('#table-container').hide();
-        });
-        // Add a click event handler for the "search" button
-        $('#hg_approval_report_search').click(function () {
-            // Display the table container (including table and pagination)
-            $('#table-container').show();
-        });
+$(document).ready(function () {
+    // Initialize selectpicker
+    $('.multiple_select').selectpicker();
+
+    // Event handler for the "search" button
+    $('#hg_approval_report_search').click(function () {
+        // Display the table container (including table and pagination)
+        $('#table-container').show();
+
+        // Optional: Open a loader modal
+        OpenLoaderPopup();
+
+        // Store the selected values in local storage
+        var selectedCompany = $('#id_comp_code_app').val();
+        var selectedCategories = $('#acc_assgn_cat').val();
+
+        // Create an object to hold the selected values
+        var selectedData = {
+            company: selectedCompany,
+            categories: selectedCategories
+        };
+
+        // Store the selected data as a JSON string in local storage
+        localStorage.setItem("selectedData", JSON.stringify(selectedData));
     });
+
+    // Event handler for the "clear filters" button
+    $('#clear_filters_btn').click(function () {
+        // Clear the local storage data
+        localStorage.removeItem("selectedData");
+
+        // Reset the form to its initial state
+        document.getElementById("id_comp_code_app").selectedIndex = 0;
+        $('#acc_assgn_cat').selectpicker('deselectAll');
+        $('#acc_assgn_cat').selectpicker('refresh');
+
+        // Submit the form to reload the page
+        $('form').submit();
+    });
+
+    // Retrieve and set the selected data from local storage on page load
+    var selectedDataJSON = localStorage.getItem("selectedData");
+    if (selectedDataJSON) {
+        var selectedData = JSON.parse(selectedDataJSON);
+
+        if (selectedData.company) {
+            $('#id_comp_code_app').val(selectedData.company);
+        }
+
+        if (selectedData.categories) {
+            $('#acc_assgn_cat').selectpicker('val', selectedData.categories);
+        }
+    }
+
+    // Rest of your code...
+});
+
 </script>
 <script src="{% static 'scripts/approval_report.js'%}"> </script>
 {% if inc_footer %}

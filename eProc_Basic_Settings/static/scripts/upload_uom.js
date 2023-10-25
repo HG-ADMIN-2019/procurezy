@@ -64,13 +64,13 @@ function onclick_copy_update_button(data) {
         if ($chkbox_all[i].checked) {
             var row = $chkbox_all[i].parentNode.parentNode;
             if(GLOBAL_ACTION == "UPDATE"){
-                unique_input = '<input class="form-control check_special_char" type="text" value="' + row.cells[1].innerHTML + '" name="uom_id"  maxlength="2" style="text-transform:uppercase" disabled>'
-                 edit_basic_data += '<tr><td hidden><input type="checkbox" required></td><td><input class="form-control check_special_char" type="text" value="' + row.cells[1].innerHTML + '" name="uom_id"  maxlength="3" style="text-transform:uppercase" disabled></td><td><input class="form-control check_special_char" value="' + row.cells[2].innerHTML + '" type="text"  name="uomdescription"  maxlength="100" required></td><td><input class="form-control check_special_char" value="' + row.cells[3].innerHTML + '" type="text"  name="isocodeid"  maxlength="15" style="text-transform:uppercase" required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+                unique_input = '<input class="form-control check_character_no_space" type="text" value="' + row.cells[1].innerHTML + '" name="uom_id"  maxlength="2" style="text-transform:uppercase" disabled>'
+                 edit_basic_data += '<tr><td hidden><input type="checkbox" required></td><td><input class="form-control check_character_no_space" type="text" value="' + row.cells[1].innerHTML + '" name="uom_id"  maxlength="3" style="text-transform:uppercase" disabled></td><td><input class="form-control check_uppercase_character" value="' + row.cells[2].innerHTML + '" type="text"  name="uomdescription"  maxlength="100" required></td><td><input class="form-control check_uppercase_character" value="' + row.cells[3].innerHTML + '" type="text"  name="isocodeid"  maxlength="15" style="text-transform:uppercase" required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
                   $("#header_select").prop("hidden", true);
             }
             else{
-                unique_input = '<input class="form-control check_special_char" type="text" value="' + row.cells[1].innerHTML + '" name="uom_id"  maxlength="2" style="text-transform:uppercase" required>'
-                 edit_basic_data += '<tr><td><input type="checkbox" required></td><td><input class="form-control check_special_char" type="text" value="' + row.cells[1].innerHTML + '" name="uom_id"  maxlength="3" style="text-transform:uppercase" required></td><td><input class="form-control check_special_char" value="' + row.cells[2].innerHTML + '" type="text"  name="uomdescription"  maxlength="100" required></td><td><input class="form-control check_special_char" value="' + row.cells[3].innerHTML + '" type="text"  name="isocodeid"  maxlength="3" style="text-transform:uppercase" required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+                unique_input = '<input class="form-control check_character_no_space" type="text" value="' + row.cells[1].innerHTML + '" name="uom_id"  maxlength="2" style="text-transform:uppercase" required>'
+                 edit_basic_data += '<tr><td><input type="checkbox" required></td><td><input class="form-control check_character_no_space" type="text" value="' + row.cells[1].innerHTML + '" name="uom_id"  maxlength="3" style="text-transform:uppercase" required></td><td><input class="form-control check_uppercase_character" value="' + row.cells[2].innerHTML + '" type="text"  name="uomdescription"  maxlength="100" required></td><td><input class="form-control check_uppercase_character" value="' + row.cells[3].innerHTML + '" type="text"  name="isocodeid"  maxlength="3" style="text-transform:uppercase" required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
                   $("#header_select").prop("hidden", false);
             }
         }
@@ -119,7 +119,7 @@ function add_popup_row() {
         $("#id_error_msg").html("");
     });
     if (GLOBAL_ACTION == "uom_upload") {
-        basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><input class="form-control check_special_char" type="text"  title="Minimum length is 1" minlength="1" maxlength="3"  name="uomcode" style="text-transform:uppercase;" required></td><td><input class="form-control check_special_char" type="text" maxlength="100"  name="uomdescription" required></td><td><input class="form-control check_special_char" type="text" title="Minimum length is 1"  minlength="1" maxlength="3"  name="isocodeid"  style="text-transform:uppercase;" required></td><td class="class_del_checkbox"><input type="checkbox" required></td></tr>';
+        basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><input class="form-control check_character_no_space" type="text"  title="Minimum length is 1" minlength="1" maxlength="3"  name="uomcode" style="text-transform:uppercase;" required></td><td><input class="form-control check_uppercase_character" type="text" maxlength="100"  name="uomdescription" required></td><td><input class="form-control check_uppercase_character" type="text" title="Minimum length is 1"  minlength="1" maxlength="3"  name="isocodeid"  style="text-transform:uppercase;" required></td><td class="class_del_checkbox"><input type="checkbox" required></td></tr>';
         $('#id_popup_tbody').append(basic_add_new_html);
         table_sort_filter('id_popup_table');
         $(".class_del_checkbox").prop("hidden", false);
@@ -173,15 +173,21 @@ function delete_duplicate() {
         uom_description = row.find("TD").eq(2).find('input[type="text"]').val().toUpperCase();
         iso_code_id = row.find("TD").eq(3).find('input[type="text"]').val().toUpperCase();
         checked_box = row.find("TD").eq(4).find('input[type="checkbox"]').is(':checked');
-        if (uom_id_check.includes(uom_id)) {
-            $(row).remove();
+        if (checked_box){
+            del_ind = '1'
         }
-        uom_id_check.push(uom_id);
-        main_table_low_value = get_main_table_data_upload(); //Read data from main table
-        if (main_table_low_value.includes(uom_id)) {
-            $(row).remove();
+        else{
+            del_ind = '0'
+            if (uom_id_check.includes(uom_id)) {
+                $(row).remove();
+            }
+            uom_id_check.push(uom_id);
+            main_table_low_value = get_main_table_data_upload(); //Read data from main table
+            if (main_table_low_value.includes(uom_id)) {
+                $(row).remove();
+            }
+            main_table_low_value.push(uom_id);
         }
-        main_table_low_value.push(uom_id);
     })
     table_sort_filter_popup_pagination('id_popup_table')
     check_data();
@@ -237,7 +243,7 @@ function get_main_table_data_upload() {
         var main_attribute = {};
         main_attribute.uom_id = row.find("TD").eq(1).html();
         main_attribute.del_ind = row.find("TD").eq(4).find('input[type="checkbox"]').is(':checked');
-        var compare = main_attribute.uom_id + '-'+ main_attribute.del_ind
+        var compare = main_attribute.uom_id
         main_table_low_value.push(compare);
     });
     table_sort_filter('display_basic_table');
@@ -269,7 +275,7 @@ function get_msg_desc_check_data(msg){
 
 // Function for add a new row data
 function new_row_data() {
-    basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><input class="form-control check_special_char" type="text"  title="Minimum length is 1" minlength="1" maxlength="3"  name="uomcode" style="text-transform:uppercase;" required></td><td><input class="form-control check_special_char" type="text" maxlength="100"  name="uomdescription" required></td><td><input class="form-control check_special_char" type="text" title="Minimum length is 1"  minlength="1" maxlength="3"  name="isocodeid"  style="text-transform:uppercase;" required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+    basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><input class="form-control check_character_no_space" type="text"  title="Minimum length is 1" minlength="1" maxlength="3"  name="uomcode" style="text-transform:uppercase;" required></td><td><input class="form-control check_uppercase_character" type="text" maxlength="100"  name="uomdescription" required></td><td><input class="form-control check_uppercase_character" type="text" title="Minimum length is 1"  minlength="1" maxlength="3"  name="isocodeid"  style="text-transform:uppercase;" required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
     table_sort_filter('id_popup_table');
 }

@@ -82,6 +82,32 @@ def create_supplier_history_data(supplier_id):
     supplier_info = django_query_instance.django_filter_query(SupplierMaster,
                                                               {'supplier_id': supplier_id,
                                                                'del_ind': False}, None, None)
+    # supplier_db_dictionary = {'supp_guid': '706BCF6B3053410CA78A555C1CB6D5B7', 'supplier_id': '186678',
+    # 'supp_type': 'one_time ', 'name1': 'test', 'name2': 'test', 'supplier_username': None, 'city': 'Bangalore',
+    # 'postal_code': '560041', 'street': '24th main 38th cross, jayanagar 4th T block', 'landline': '07406661881',
+    # 'mobile_num': '9844067292', 'fax': '', 'email': 'chaitrakiran04@gmail.com', 'email1': None, 'email2': None,
+    # 'email3': None, 'email4': None, 'email5': None, 'output_medium': 'email', 'search_term1': 'demo',
+    # 'search_term2': 'demo', 'duns_number': '', 'block_date': None, 'block': False, 'delivery_days': '5,6',
+    # 'is_active': True, 'registration_number': 'hu77789', 'company_id': '', 'supplier_master_created_by': None,
+    # 'supplier_master_created_at': None, 'supplier_master_changed_by': None, 'supplier_master_changed_at': None,
+    # 'supplier_master_source_system': '', 'pref_routing': None, 'lock_date': None, 'global_duns': None,
+    # 'domestic_duns': None, 'ics_code': None, 'internal_ind': False, 'sba_code': None, 'ethnicity': None,
+    # 'hubzone': None, 'no_vend_text': False, 'agr_reg_no': None, 'no_mult_addr': False, 'del_ind': False,
+    # 'client_id': '100', 'country_code_id': 'IN', 'currency_id_id': 'INR', 'language_id_id': 'EN'} }
+    client_val = supplier_info[0]['client_id']
+    country_val = supplier_info[0]['country_code_id']
+    currency_val = supplier_info[0]['currency_id_id']
+    language_val = supplier_info[0]['language_id_id']
+    if 'client_id'  in supplier_info[0]:
+        del supplier_info[0]['client_id']
+    if 'country_code_id' in supplier_info[0]:
+        del supplier_info[0]['country_code_id']
+    if 'currency_id_id' in supplier_info[0]:
+        del supplier_info[0]['currency_id_id']
+    if 'language_id_id' in supplier_info[0]:
+        del supplier_info[0]['language_id_id']
+    supplier_info.append({'client': client_val, 'country_code': country_val, 'currency_id': currency_val, 'language_id': language_val})
+
     django_query_instance.django_create_query(SupplierMasterHistory, supplier_info[0])
 
 

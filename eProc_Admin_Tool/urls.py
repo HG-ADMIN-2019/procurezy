@@ -31,4 +31,5 @@ urlpatterns = [
     path('application_monitoring/documents', views.application_monitoring, name='application_monitoring'),
     path('application_monitoring/emails', views.email_user_monitoring, name='email_user_monitoring'),
     path('check_resend', views.check_resend, name='check_resend'),
+    path('clear_filter', views.clear_filter_data, name='clear_filter'),
 ]

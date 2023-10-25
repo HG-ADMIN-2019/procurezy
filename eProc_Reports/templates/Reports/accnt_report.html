@@ -27,15 +27,18 @@
                                 <label>Account Assignment Category</label><br>
                                 <select name="acc_assgn_cat" id="id_acc_assgn_cat" class="multiple_select form-control" multiple data-selected-text-format="count" data-actions-box="true" title="Select..">
                                     <!-- <option value="null" selected="true" disabled="disabled">Select </option>-->
-                                    {% for acc_cat in acc_value_array %}<option value="{{ acc_cat.account_assign_cat }}"> {{ acc_cat.account_assign_cat }}-{{acc_cat.description}}
-                                    </option>{% endfor %}
+                                    {% for acc_cat in acc_value_array %}
+                                        <option value="{{ acc_cat.account_assign_cat }}" selected="selected">{{ acc_cat.account_assign_cat }}-{{ acc_cat.description }}</option>
+                                    {% endfor %}
                                 </select>
                             </div>
+
                             <div class="col-md">
-                                <label>Language</label><br>
-                                <select name="language" id="id_language" class="form-control">
-                                    <option value="null" selected="true" disabled="disabled">Select </option>
-                                    {% for lang in lang_list %}<option value="{{ lang.language_id }}"> {{ lang.language_id }} - {{lang.description}} </option>{% endfor %}
+                                <label>Language</label>
+                                <select name="language" class="form-control">
+                                    {% for lang in lang_list %}
+                                    <option value="{{ lang.language_id }}">{{ lang.description }}</option>
+                                    {% endfor %}
                                 </select>
                             </div>
                             <div class="col-auto my-1">
@@ -51,8 +54,8 @@
                     </form>
                 </div>
             </div>
-            <br>
-            <!-- <div class="search_result_count_card card">
+<!--            <br>-->
+              <div class="search_result_count_card card">
                 {% if t_count > 0 %}
                 <div class="card-body">
                     <h6 class="card-title"> Total number of results found :{{t_count}}</h6>
@@ -63,12 +66,12 @@
                     <h6 class="card-title"> No Results Found</h6>
                 </div>
                 {% endif %}
-            </div> -->
+            </div>
             <!--    To Display Header Details only if there are any results-->
 <div id="table-container">
     {% if t_count > 0 %}
     {% if final_list %}
-    <div class="card mt-5">
+    <div class="card mt-3">
         <table id="accounting_report_table" class="table table_sort_filter_export_excel">
             <thead class="thead-light">
                 <tr>
@@ -157,24 +160,31 @@
 $(document).ready(function () {
     // ... Other JavaScript code ...
 
-    // Function to reset the dropdowns to their first values
-    $('#clear_filters_button').click(function () {
-        // Reset the "Company Number" dropdown to its first option
-        $('#id_comp_code_app').val($('#id_comp_code_app option:first').val());
+function resetCompanyCodeDropdown() {
+    var companyCodeDropdown = document.getElementById('id_comp_code_app');
+    if (companyCodeDropdown) {
+        companyCodeDropdown.selectedIndex = 0;
+    }
+}
 
-        // Reset the "Language" dropdown to its first option
-        $('#id_language').val($('#id_language option:first').val());
+// Function to reset the dropdowns to their first values
+$('#clear_filters_button').click(function () {
+    // Reset the "Company Code" dropdown to its first option
+    resetCompanyCodeDropdown();
 
-        // Clear the local storage values
-        localStorage.removeItem("COMP_CODE");
-        localStorage.removeItem("LANG");
+    // Reset the "Language" dropdown to its first option
+    $('#id_language').val($('#id_language option:first').val());
 
-        // Refresh the selectpicker to reflect the changes
-        $('.multiple_select').selectpicker('refresh');
+    // Clear the local storage values
+    localStorage.removeItem("COMP_CODE");
+    localStorage.removeItem("LANG");
 
-        // Hide the entire table container
-        $('#table-container').hide();
-    });
+    // Refresh the selectpicker for "Language" to reflect the changes
+    $('#id_language').selectpicker('refresh');
+
+    // Hide the entire table container
+    $('#table-container').hide();
+});
 
     // Loader implementation on search button
     $('#hg_accnt_report_search').click(function () {

@@ -69,7 +69,7 @@
                     <br>
                     <div class="elements-space-between">
                         <div>
-                            <button class="btn btn-link" type="button" onclick="clearFilters()">Clear filters</button>
+<button id="clearFiltersButton" class="btn btn-link" type="button" onclick="clearFilters()">Clear filters</button>
                             <button id="hg_doc_report_search" class="btn btn-primary" onclick="search_click()" type="submit" title="Please click to get the search details!">
                                 <i class="fas fa-search"></i>Search
                             </button>
@@ -81,10 +81,10 @@
                 </form>
             </div>
         </div>
-        <br>
+<!--        <br>-->
         <div class="search_result_count_card card">
             {% if t_count > 0 %}
-        <!--            <div class="card-body" ><h6 class="card-title"> Total number of results found :{{t_count}}</h6>-->
+                    <div class="card-body" ><h6 class="card-title"> Total number of results found :{{t_count}}</h6>
         </div>
         {% endif %}
         {% if t_count == 0 %}
@@ -415,6 +415,14 @@ $(document).ready( function() {
             }
         }
     }
+// Event listener for the "Clear filters" button
+$('#clearFiltersButton').click(function () {
+    // Clear the filters and restore the initial data
+    clearFilters();
+
+    // Submit the form to apply the cleared filters
+    $('#requisition_form').submit();
+});
 
 
     // Function to clear filters
@@ -427,7 +435,7 @@ $(document).ready( function() {
         // Reset Company Number to the first option (assuming it's a dropdown/select)
         const companyCodeField = document.querySelector('select[name="company_code"]');
         if (companyCodeField) {
-            companyCodeField.selectedIndex = 1;
+            companyCodeField.selectedIndex = 0;
         }
         // Reset From Date and To Date to the current date
         const today = new Date();
@@ -460,7 +468,7 @@ $(document).ready( function() {
             supplierNameElement.style.display = 'none';
         }
         // Hide the table
-        toggleTableVisibility(false);
+        toggleTableVisibility(true);
     }
 
     // Add an event listener to the Document Type field to toggle Supplier field visibility

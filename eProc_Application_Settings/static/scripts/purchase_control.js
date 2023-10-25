@@ -303,6 +303,14 @@ function get_prod_cat_id_values(selectElement) {
 
     var call_off_values = main_table_data[company_id];
     main_table_call_off = {};
+    if (!call_off_values) {
+        prod_cat_dropdown.empty();
+        $.each(rendered_prod_category, function (i, item) {
+            prod_cat_dropdown.append('<option value="' + item.prod_cat_id + '">' + item.prod_cat_id + '</option>')
+        });
+        return;
+    }
+
     call_off_values.forEach(item => {
         var call_off = item.call_off ;
         if (!main_table_call_off[call_off ]) {
@@ -312,7 +320,6 @@ function get_prod_cat_id_values(selectElement) {
     });
 
     if (!main_table_call_off.hasOwnProperty(selected_call_off)){
-        prod_cat_dropdown.empty();
         $.each(rendered_prod_category, function (i, item) {
             prod_cat_dropdown.append('<option value="' + item.prod_cat_id + '">' + item.prod_cat_id + '</option>')
         });

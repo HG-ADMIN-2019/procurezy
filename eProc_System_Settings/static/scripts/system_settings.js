@@ -25,7 +25,6 @@ function cancel_mode()
 function onclick_edit()
 {
     edit_mode();
-    //document.getElementById("edit_sys_settings").style.display = "none";
     $( "#edit_sys_settings").prop( "hidden", true );
     $( "#save_sys_settings").prop( "hidden", false );
     $( "#cancel_sys_settings").prop( "hidden", false );

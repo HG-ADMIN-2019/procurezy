@@ -1,8 +1,8 @@
 po_split_type,company_code_id,activate,del_ind
-2,1000,True,0
-6,1000,True,0
-7,1000,True,0
-5,1000,True,0
-4,1000,True,0
-1,1000,False,0
-3,1000,True,0
+2,*,True,0
+6,*,True,0
+7,*,True,0
+5,*,True,0
+4,*,True,0
+1,*,False,0
+3,*,True,0

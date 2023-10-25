@@ -85,14 +85,9 @@
                                     <div class="form-group col-md">
                                         <label> Supplier Type</label><span class="hg_required"></span><br>
                                         <select name="supplier_type" id="supplier_type" class="form-control hg_edit_display_mode mandatory_fields">
-                                            {% if supplier_info.supp_type %}
-                                            <option value="{{supplier_info.supp_type}}">{{supplier_info.supp_type}}</option>
-                                            {% else %}
-                                            <option value="">Select</option>
-                                            {% endif %}
-                                            <option value="One Time">One Time</option>
-                                            <option value="Preferred">Preferred</option>
-                                            <option value="Fixed">Fixed</option>
+                                                 {% for suptype in dropdown_suptype_values %}
+                                                    <option value="{{suptype.field_type_id}}" {% if supplier_info.supp_type == suptype.field_type_id %}selected{% endif %}>{{suptype.field_type_desc}}</option>
+                                                {% endfor %}
                                         </select>
                                         <span id="err_supp_type" class="error_message" hidden> </span>
                                     </div>
@@ -203,7 +198,7 @@
                                 <div class="row">
                                     <div class="form-group col-md">
                                         <label> E-mail</label><span class="hg_required"></span><br>
-                                        <input type="text" class="form-control hg_edit_display_mode mandatory_fields" id="email_id" name="email_id" value="{{supplier_info.email}}" onblur="validate_email(event);">
+                                        <input type="text" class="form-control hg_edit_display_mode mandatory_fields" id="email_id" name="email_id" value="{{supplier_info.email}}" >
                                         <span id="err_email" class="error_message" hidden></span>
                                     </div>
 
@@ -249,7 +244,7 @@
                                         <label> Working Days</label><span class=""></span><br>
 <!--                                        <input type="text" class="form-control hg_edit_display_mode" id="working_days" value="{{supplier_info.delivery_days}}">-->
                                          <div  id="display_mode" >
-                                        <select type="text" class="multiple_select form-control dropdown_required"  id="working_days" name="working_days" multiple data-selected-text-format="count" data-actions-box="true" title='Select...' >
+                                        <select type="text" class="multiple_select form-control dropdown_required"  id="working_days" name="working_days" multiple data-selected-text-format="count" disabled>
                                             <option value="1">Sunday</option> <option value="2">Monday</option> <option value="3">Tuesday</option> <option value="4">Wednesday</option> <option value="5">Thursday</option> <option value="6">Friday</option> <option value="7">Saturday</option>
                                         </select>
                                          <span id="err_working_days_disp" class="wday_err_msg" hidden></span>
@@ -270,14 +265,9 @@
                                     <div class="form-group col-md">
                                         <label> Output Medium </label><span class="hg_required"></span><br>
                                         <select name="" id="output_medium_id" class="form-control hg_edit_display_mode mandatory_fields">
-                                            {% if supplier_info.output_medium %}
-                                            <option value="{{supplier_info.output_medium}}">{{supplier_info.output_medium}}</option>
-                                            {% else %}
-                                            <option value="">Select</option>
-                                            {% endif %}
-                                            <option value="Email">Email</option>
-                                            <option value="XML">XML</option>
-                                            <option value="Integrated">Integrated</option>
+                                                 {% for output in dropdown_output_med_values %}
+                                                    <option value="{{output.field_type_id}}" {% if supplier_info.output_medium == output.field_type_id %}selected{% endif %}>{{output.field_type_desc}}</option>
+                                                {% endfor %}
                                         </select>
                                         <span id="err_output_med" class="error_message" hidden></span>
                                     </div>
@@ -498,6 +488,8 @@ var lang_id = '{{supplier_info.language_id | safe}}';
 var img_url = '{{img_url.url | safe}}';
 var error_flag;
 var is_valid = true;
+var validate_add_attributes = [];
+var messages_list = {{messages_list|safe}};
 
 $(document).ready(function(){
     $('#nav_menu_items').remove();
@@ -527,18 +519,20 @@ $(document).ready(function(){
         $("#country_code_id").val(country_id).attr('selected', 'selected');
         $("#language_id").val(lang_id).attr('selected', 'selected');
         $("#currency_id").val(curr_id).attr('selected', 'selected');
-        $("#working_days").prop("hidden", true);
+        $("#working_days").prop("hidden", false);
+        $("#working_days_id").prop("hidden", true);
         var wday_array = [];
         wday_array = w_days.split(",");
         var num = w_days.match(/\d/g);
-        $("select[id=working_days]").val(num);
-        var working_days_values = [];
-        for(j=0; j<num.length; j++)
-        {
-              working_days_values[j] = get_days(num[j]);
+        if(!(num == null)){
+            $("select[id=working_days]").val(num);
+            var working_days_values = [];
+            for(j=0; j<num.length; j++)
+            {
+                  working_days_values[j] = get_days(num[j]);
+            }
+            $("#working_days_id").val(num);
         }
-        $("#working_days_id").prop("hidden", false);
-        $("#working_days_id").val(working_days_values);
     }
     MultipleSelect();
 });
@@ -586,12 +580,6 @@ $('#mobile_num_id').on('blur',function (event) {
                is_valid = false;
          }
 });
-
-<!--$('#working_days').on('click',function (event) {-->
-<!--    if((event.currentTarget.value == "") || (event.currentTarget.value == null)){-->
-<!--        $('.wday_err_msg').prop("hidden", false);-->
-<!--    }-->
-<!--});-->
 
  $('form').on('submit',function (e) {
     OpenLoaderPopup();
@@ -666,6 +654,7 @@ function get_dropdown(){
 }
 
 function ajax_update_supplier_basic_details(data) {
+    OpenLoaderPopup();
     let urlLink = "{% url 'eProc_Suppliers:update_suppliers_basic_details' %}"
     var response = FormAjaxCallAPI(urlLink,data)
     return response
@@ -710,9 +699,6 @@ function save_basic_details() {
     else
     { working_days = $('#working_days_id').val(); }
     formdata.append("working_days_id",working_days);
-     setTimeout(function() {
-                   OpenLoaderPopup();
-     }, 200);
      if(is_valid){
         response = ajax_update_supplier_basic_details(formdata)
         encrypted_supplier = response.encrypted_supplier
@@ -739,10 +725,10 @@ function save_basic_details() {
             $('#supplier_basic_update_success').hide();
             localStorage.setItem("error_flag", 1);
             values_reload();
+            get_values_onerror();
             setTimeout(function() {
                    $('#save_error_div').hide();
             }, msg_display_interval*2500);
-            get_values_onerror();
             return false;
         }
      }
@@ -755,6 +741,7 @@ function save_basic_details() {
 
 function MultipleSelect() {
      $('#working_days_id').selectpicker();
+     $('#working_days').selectpicker();
     $('.multiple_select').selectpicker();
 }
 function get_days(workingday){
@@ -983,9 +970,10 @@ function onclick_copy_update_button(data) {
                 $('#supplierOrgModal').modal('show');
                 table_sort_filter('id_popup_table');
 }
+
 // Function to save edited or updated supplier organizational details data
 function supp_org_data_save(){
-    OpenLoaderPopup();
+    validate_add_attributes = [];
     var save_supplier_purch_details = new Array();
     $('#success_msg_id').empty()
     $('#id_popup_table').DataTable().destroy();
@@ -1006,9 +994,31 @@ function supp_org_data_save(){
         get_supp_purch_data.po_resp = row.find("TD").eq(9).find('input[type="checkbox"]').is(':checked');
         get_supp_purch_data.ship_notif_exp = row.find("TD").eq(10).find('input[type="checkbox"]').is(':checked');
         get_supp_purch_data.purch_block = row.find("TD").eq(11).find('input[type="checkbox"]').is(':checked');
+        var compare = get_supp_purch_data.porg_id;
+        validate_add_attributes.push(get_supp_purch_data.porg_id);
         save_supplier_purch_details.push(get_supp_purch_data)
     })
+
+    var no_duplicate_entries = 'Y';
+    var no_duplicate_value = 'Y';
+    var error_message = '';
+    get_main_table_data(); //Read data from main table
+    // compare for duplicates in popup
+    [no_duplicate_value,error_message] = compare_table_for_duplicate_entries(validate_add_attributes, save_supplier_purch_details)
+    if (error_message){
+        display_error_message(error_message)
+    }
+    else {
+        if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
+            // compare main table and pop up for duplicate values
+            [no_duplicate_entries,error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
+            if(no_duplicate_entries == 'N'){
+                $('#countriesModal').modal('show');
+            }
+        }
+    if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
     data = {'data':save_supplier_purch_details,'table_name':'OrgSuppliers','action':GLOBAL_ACTION}
+    OpenLoaderPopup();
     $.ajax({
         type: 'POST',
         url: "{% url 'eProc_Suppliers:update_supplier_purch_details' %}",
@@ -1016,17 +1026,85 @@ function supp_org_data_save(){
         contentType: "application/json; charset=utf-8",
         dataType: 'json',
         success: function (response) {
-            success_response(response); // Function call to display response data
             rendered_supp_org_data = response[0];
             edit_supp_org();
             $('#supplierOrgModal').modal('hide');
+            success_response(response);
             CloseLoaderPopup();
         },
         error: function (error) {
             console.log(error);
         }
     })
+    }
+    }
 }
+
+// validating the  popup table for duplicate entries
+    function compare_table_for_duplicate_entries(validate_add_attributes, supplier_purch_details) {
+        add_attr_duplicates = false;
+        var error_message = ''
+        var common = [];
+        var add_attr_unique_list = [];
+        var no_duplicate_value = 'Y'
+        var format = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
+        $.each(supplier_purch_details, function (i, item) {
+            if (item.porg_id == null)  {
+                $('#supplierOrgModal').modal('show');
+                error_message = ui_messeges("JMSG002")// Get message details
+                no_duplicate_value = 'N'
+                return [no_duplicate_value,error_message]
+            }
+            if(format.test(item.porg_id)){
+                $('#supplierOrgModal').modal('show');
+                error_message = ui_messeges("JMSG113")// Get message details
+                no_duplicate_value = 'N'
+                return [no_duplicate_value,error_message]
+            }
+        });
+        if (no_duplicate_value == 'Y') {
+            $.each(validate_add_attributes, function (index, value) {
+                if ($.inArray(value, add_attr_unique_list) == -1) {
+                    add_attr_unique_list.push(value);
+                }
+                else {
+                    if ($.inArray(value, common) == -1) {
+                        common.push(value);
+                    }
+                }
+            });
+            if (common.length != 0) {
+                $('#supplierOrgModal').modal('show');
+                display_duplicate_entry(common);  //Function to highlight the rows in popup
+                error_message = ui_messeges("JMSG001")// Get message details
+                no_duplicate_value = 'N'
+                return [no_duplicate_value,error_message]
+            }
+        }
+        return [no_duplicate_value,error_message]
+    }
+
+    //Function to highlight duplicate records
+    function display_duplicate_entry(common) {
+        var supplier_check = new Array;
+        $("#id_popup_table TBODY TR").each(function() {
+            var row = $(this);
+            country_dic = {}
+            country_dic.country_code = row.find("TD").eq(1).find('input[type="text"]').val().toUpperCase();
+            var compare = country_dic.country_code
+            supplier_check.push(compare);
+            jQuery.grep(supplier_check, function(el) {
+                if (jQuery.inArray(el, common) != -1) {
+                    row_color_highlight(row);
+                }
+                else {
+                    row_color_no_highlight(row);
+                }
+            });
+
+        });
+    }
+
 //onclick of select all checkbox
     function checkAll(ele) {
         if (ele.checked) {

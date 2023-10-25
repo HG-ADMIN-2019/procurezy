@@ -25,6 +25,7 @@ from eProc_Emails.Utilities.email_notif_generic import email_notify, appr_notify
 from eProc_Emails.models import EmailUserMonitoring, EmailDocumentMonitoring, EmailSupplierMonitoring
 from eProc_Registration.models import UserData
 from eProc_Shopping_Cart.Utilities.shopping_cart_generic import get_SC_details_email
+from eProc_Shopping_Cart.context_processors import update_user_info
 from eProc_Shopping_Cart.models import ScHeader, ScPotentialApproval, ScApproval
 
 django_query_instance = DjangoQueries()
@@ -37,7 +38,7 @@ def email_notification_form(req):
     :param req: request data from UI
     :return: renders emailnotif.html
     """
-    update_user_info(request)
+    update_user_info(req)
     client = global_variables.GLOBAL_CLIENT
     variant_list = []
     keyword_list = []
