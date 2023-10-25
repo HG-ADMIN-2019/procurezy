@@ -844,10 +844,24 @@
 
     //*********************************************
     function get_address_detail_to_delete(element) {
+        GLOBAL_ACTION = "DELETE";
+        var address_number = [];
         $("#error_msg_id").css("display", "none")
         var getindex = element.split("-")[1]
         var address_number = parseInt(getindex)
-        GLOBAL_ADDRESS_NO = address_number
+        address_number = getindex
+        var data = {'data': address_number, 'table_name': 'OrgAddress', 'action': GLOBAL_ACTION };
+        OpenLoaderPopup();
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'eProc_Configuration:create_update_delete_flags' %}",
+            data: JSON.stringify(data),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function(Response) {
+
+            }
+        });
         $('#id_delete_confirm_popup').modal('show')
     }
 
