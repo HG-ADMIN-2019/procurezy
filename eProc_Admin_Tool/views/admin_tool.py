@@ -642,7 +642,6 @@ def m_docsearch_meth(request):
     comp_list = get_companylist(request)
 
     if request.method == 'GET':
-        # inp_comp_code = request.GET('company_code')
         inp_doc_type = 'SC'
         inp_doc_num = None
         inp_from_date = datetime.today()
@@ -651,7 +650,6 @@ def m_docsearch_meth(request):
         inp_created_by = ''
         inp_requester = ''
 
-        # result
         result = get_hdr_data(request,
                               inp_doc_type,
                               inp_doc_num,
@@ -663,7 +661,10 @@ def m_docsearch_meth(request):
 
         company_details = OrgCompanies.objects.filter(client=client, del_ind=False, company_guid=1000)
         for comp in company_details:
-            result = result.filter(co_code=comp.company_id)
+            if inp_doc_type == 'PO':
+                result = result.filter(company_code_id=comp.company_id)
+            else:  # For ScHeader queries
+                result = result.filter(co_code=comp.company_id)
 
     if not request.method == 'POST':
         if 'results' in request.session:
@@ -673,8 +674,6 @@ def m_docsearch_meth(request):
     if request.method == 'POST':
         request.session['results'] = request.POST
 
-    # rep_search_form = DocumentSearchForm()
-    # If method is post get the form values and get header details accordingly
     if request.method == 'POST':
         rep_search_form = DocumentSearchForm(request.POST)
 
@@ -688,7 +687,6 @@ def m_docsearch_meth(request):
             inp_created_by = request.POST.get('created_by')
             inp_requester = request.POST.get('requester')
 
-            # results
             result = get_hdr_data(request, inp_doc_type,
                                   inp_doc_num,
                                   inp_from_date,
@@ -698,21 +696,27 @@ def m_docsearch_meth(request):
                                   inp_requester, report_search)
             company_details = OrgCompanies.objects.filter(client=client, del_ind=False, company_guid=inp_comp_code)
             for comp in company_details:
-                result = result.filter(co_code=comp.company_id)
+                if inp_doc_type == 'PO':
+                    result = result.filter(company_code_id=comp.company_id)
+                else:  # For ScHeader queries
+                    result = result.filter(co_code=comp.company_id)
     else:
         rep_search_form = DocumentSearchForm()
 
     error_messages = rep_search_form.errors
     t_count = len(result)
-    # t_count = 0
 
     for header_guid in result:
         encrypted_header_guid.append(encrypt(header_guid))
 
-    # print(result)
     result = zip(result, encrypted_header_guid)
+    # Assuming you can retrieve the 'client' and 'supp_id_up' values from your code context
+    client = getClients(request)
+    supp_id_up = []
 
-    # Context to display in Doc_report.html
+    # Call the function with the appropriate arguments
+    supplier_details = get_supplier_details(client, supp_id_up)
+
     context = {
         'inc_nav': True,
         'inc_footer': True,
@@ -729,10 +733,12 @@ def m_docsearch_meth(request):
         'sc_completion': sc_completion,
         'sc_completion_flag': sc_completion_flag,
         'sc_header': sc_header,
-        'error_messages': error_messages
+        'error_messages': error_messages,
+        'supplier_details': supplier_details
     }
 
     return render(request, 'Reports/Doc_report.html', context)
+
 
 
 @login_required

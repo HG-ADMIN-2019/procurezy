@@ -69,7 +69,7 @@
                     <br>
                     <div class="elements-space-between">
                         <div>
-                            <button class="btn btn-link" type="button" onclick="clearFilters()">Clear filters</button>
+<button id="clearFiltersButton" class="btn btn-link" type="button" onclick="clearFilters()">Clear filters</button>
                             <button id="hg_doc_report_search" class="btn btn-primary" onclick="search_click()" type="submit" title="Please click to get the search details!">
                                 <i class="fas fa-search"></i>Search
                             </button>
@@ -415,6 +415,14 @@ $(document).ready( function() {
             }
         }
     }
+// Event listener for the "Clear filters" button
+$('#clearFiltersButton').click(function () {
+    // Clear the filters and restore the initial data
+    clearFilters();
+
+    // Submit the form to apply the cleared filters
+    $('#requisition_form').submit();
+});
 
 
     // Function to clear filters
@@ -460,7 +468,7 @@ $(document).ready( function() {
             supplierNameElement.style.display = 'none';
         }
         // Hide the table
-        toggleTableVisibility(false);
+        toggleTableVisibility(true);
     }
 
     // Add an event listener to the Document Type field to toggle Supplier field visibility
