@@ -27,10 +27,12 @@
                                 <label>Account Assignment Category</label><br>
                                 <select name="acc_assgn_cat" id="id_acc_assgn_cat" class="multiple_select form-control" multiple data-selected-text-format="count" data-actions-box="true" title="Select..">
                                     <!-- <option value="null" selected="true" disabled="disabled">Select </option>-->
-                                    {% for acc_cat in acc_value_array %}<option value="{{ acc_cat.account_assign_cat }}"> {{ acc_cat.account_assign_cat }}-{{acc_cat.description}}
-                                    </option>{% endfor %}
+                                    {% for acc_cat in acc_value_array %}
+                                        <option value="{{ acc_cat.account_assign_cat }}" selected="selected">{{ acc_cat.account_assign_cat }}-{{ acc_cat.description }}</option>
+                                    {% endfor %}
                                 </select>
                             </div>
+
                             <div class="col-md">
                                 <label>Language</label>
                                 <select name="language" class="form-control">
