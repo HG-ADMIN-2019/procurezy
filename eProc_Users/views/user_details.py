@@ -65,7 +65,7 @@ def save_user_data(request):
     user_details['date_format'] = request.POST.get('date_format')
     user_details['decimal_notation'] = request.POST.get('decimal_notation')
     user_details['login_attempts'] = request.POST.get('login_attempts')
-    user_details['is_superuser'] = request.POST.get('super_user')
+    user_details['is_superuser'] = request.POST.get('is_superuser')
     user_details['user_locked'] = request.POST.get('user_locked')
     user_details['pwd_locked'] = request.POST.get('pwd_locked')
     user_details['is_active'] = request.POST.get('is_active')
@@ -129,6 +129,8 @@ def save_user_data(request):
             user_details['password'] = password
 
             reg_form = RegForm(request.POST or None)
+            # if reg_form.is_valid():
+            #     sup_user = reg_form.cleaned_data
             new_user = reg_form.save(commit=False)
             password = random_alpha_numeric(8)
             new_user.password = make_password(password)
