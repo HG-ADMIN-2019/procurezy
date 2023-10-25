@@ -149,6 +149,26 @@
        return false;
         }
     });
+
+     // Allows only characters without space
+    $("body").on("keypress", ".check_alpha_no_space", function (event) {
+    var regex = new RegExp("^[ a-zA-Z0-9]+$");
+    var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+    if (!regex.test(key)) {
+       event.preventDefault();
+       return false;
+        }
+    });
+
+      // Allows only characters without space
+    $("body").on("keypress", ".check_alphastar_no_space", function (event) {
+    var regex = new RegExp("^[ a-zA-Z0-9*]+$");
+    var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+    if (!regex.test(key)) {
+       event.preventDefault();
+       return false;
+        }
+    });
  // Allows only characters without space for currency
     $("body").on("keypress", ".check_character_no_space_currency", function (event) {
     var input = this.value + String.fromCharCode(!event.charCode ? event.which : event.charCode);
