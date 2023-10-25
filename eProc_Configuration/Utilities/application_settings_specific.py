@@ -613,22 +613,20 @@ class ApplicationSettingsSave:
 
     def generate_OrgAddress_delete_flags(self, address_data):
         delete_flags = []  # List to store delete_flag for each value
+        address_number = address_data['data']
+        delete_flag = True
 
-        for address_detail in address_data['data']:
-            delete_flag = True
+        if django_query_instance.django_existence_check(OrgAddressMap,
+                                                        {'address_number': address_number,
+                                                         'client': self.client,
+                                                         'del_ind': False}):
+            delete_flag = False
 
-            # Check if value is present in the MessagesIdDesc table
-            if django_query_instance.django_existence_check(OrgAddressMap,
-                                                            {'address_number': address_detail[
-                                                                'GLOBAL_ADDRESS_NO'],
-                                                             'client': self.client,
-                                                             'del_ind': False}):
-                delete_flag = False
+        delete_flags.append(delete_flag)
 
-            delete_flags.append(delete_flag)  # Store delete_flag value for each iteration
-            data = {
-                'delete_flags': delete_flags  # Include the delete_flags list in the response data
-            }
+        data = {
+            'delete_flags': delete_flags
+        }
 
         return data
 
