@@ -368,7 +368,7 @@ def user_report(request):
     client = getClients(request)
     page_range = 0
     company_list = get_companylist(request)
-    company_list.reverse()
+    # company_list.reverse()
     default_comp_id = ''
 
     if request.method == 'GET':
