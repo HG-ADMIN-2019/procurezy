@@ -611,6 +611,25 @@ class ApplicationSettingsSave:
 
         return data
 
+    def generate_OrgAddress_delete_flags(self, address_data):
+        delete_flags = []  # List to store delete_flag for each value
+        address_number = address_data['data']
+        delete_flag = True
+
+        if django_query_instance.django_existence_check(OrgAddressMap,
+                                                        {'address_number': address_number,
+                                                         'client': self.client,
+                                                         'del_ind': False}):
+            delete_flag = False
+
+        delete_flags.append(delete_flag)
+
+        data = {
+            'delete_flags': delete_flags
+        }
+
+        return data
+
     def save_document_type_data(self, documenttype_data):
         documenttype_db_list = []
         used_flag_set = []
