@@ -69,8 +69,7 @@
             </div>
             <!--    To Display Header Details only if there are any results-->
 <div id="table-container">
-    {% if t_count > 0 %}
-    {% if final_list %}
+    {% if t_count > 0 and final_list %}
     <div class="card mt-3">
         <table id="accounting_report_table" class="table table_sort_filter_export_excel">
             <thead class="thead-light">
@@ -86,32 +85,36 @@
             </thead>
             <tbody>
                 {% for acc in final_list %}
+                {% if acc.1 != "Unknown" %}
                 <tr>
-                    <td>{{acc.0}}</td>
-                     {% if acc.1.pk == 'AS' %}
-                        <td scope="row">Asset</td>
-                     {% elif acc.1.pk == 'CC' %}
-                        <td scope="row">Cost Center</td>
-                     {% elif acc.1.pk == 'GLACC' %}
-                        <td scope="row">General Ledger Account</td>
-                     {% elif acc.1.pk == 'OR' %}
-                        <td scope="row">Internal Order</td>
-                     {% elif acc.1.pk == 'WBS' %}
-                        <td scope="row">Project</td>
-                     {% endif %}
-                    <td>{{acc.2}}</td>
-                    <td>{{acc.3}}</td>
-                    <td>{{acc.4}}</td>
-                    <td>{{acc.5}}</td>
-                    <td>{{acc.6}}</td>
+                    <td>{{ acc.0 }}</td>
+                    <td scope="row">
+                        {% if acc.1.pk == 'AS' %}
+                            Asset
+                        {% elif acc.1.pk == 'CC' %}
+                            Cost Center
+                        {% elif acc.1.pk == 'GLACC' %}
+                            General Ledger Account
+                        {% elif acc.1.pk == 'OR' %}
+                            Internal Order
+                        {% elif acc.1.pk == 'WBS' %}
+                            Project
+                        {% endif %}
+                    </td>
+                    <td>{{ acc.2 }}</td>
+                    <td>{{ acc.3 }}</td>
+                    <td>{{ acc.4 }}</td>
+                    <td>{{ acc.5 }}</td>
+                    <td>{{ acc.6 }}</td>
                 </tr>
+                {% endif %}
                 {% endfor %}
             </tbody>
         </table>
     </div>
     {% endif %}
-    {% endif %}
 </div>
+
 
 <div class="spacer2"> &nbsp; </div>
 
