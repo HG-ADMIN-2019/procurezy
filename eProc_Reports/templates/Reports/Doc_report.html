@@ -69,7 +69,7 @@
                     <br>
                     <div class="elements-space-between">
                         <div>
-<button id="clearFiltersButton" class="btn btn-link" type="button" onclick="clearFilters()">Clear filters</button>
+                            <button id="clearFiltersButton" class="btn btn-link" type="button" onclick="clearFilters()">Clear filters</button>
                             <button id="hg_doc_report_search" class="btn btn-primary" onclick="search_click()" type="submit" title="Please click to get the search details!">
                                 <i class="fas fa-search"></i>Search
                             </button>
@@ -81,7 +81,6 @@
                 </form>
             </div>
         </div>
-<!--        <br>-->
         <div class="search_result_count_card card">
             {% if t_count > 0 %}
                     <div class="card-body" ><h6 class="card-title"> Total number of results found :{{t_count}}</h6>
@@ -121,7 +120,6 @@
                     {% endif %}
                 </thead>
                 <tbody>
-                    <!-- Looping over the cart_items to get individual fields -->
                     {% for items, encrypted_header_guid in results %}
                     {% if items.status != 'SAVED' %}
                     {% if inp_doc_type == 'SC' or inp_doc_type == 'PO' %}
@@ -149,7 +147,7 @@
                             {% elif items.status == 'REJECTED' %}
                             <span>REJECTED</span>
                             {% else %}
-                            <span>Ordered</span>  <!-- Default status for 'PO' -->
+                            <span>Ordered</span>
                             {% endif %}
                         </td>
                         <td scope="row">{{ items.total_value|default:"N/A" }}</td>
@@ -253,12 +251,9 @@
 <!-- end of username popup -->
 <div class="hg_spacer2"> &nbsp;</div>
 <script>
-<!-- var len = {{results|safe}};-->
 $(document).ready( function() {
     nav_bar_admin()
     table_sort_filter_export_excel();
-
-    // user search autocomplete
     $("#created_by, #id_requester").autocomplete({
         source: function(request, response) {
             $.ajax({
@@ -391,53 +386,58 @@ $(document).ready( function() {
             const searchResultCard = document.querySelector('.search_result_count_card');
             const headerDetailsCard = document.querySelector('.card.mt-5');
             if (showTable) {
-                docListTable.style.display = 'table'; // Show the table
+                docListTable.style.display = 'table';
                 if (pagination) {
-                    pagination.style.display = 'block'; // Show the pagination
+                    pagination.style.display = 'block';
                 }
                 if (searchResultCard) {
-                    searchResultCard.style.display = 'block'; // Show the result count card
+                    searchResultCard.style.display = 'block';
                 }
                 if (headerDetailsCard) {
-                    headerDetailsCard.style.display = 'block'; // Show the header details card
+                    headerDetailsCard.style.display = 'block';
                 }
             } else {
-                docListTable.style.display = 'none'; // Hide the table
+                docListTable.style.display = 'none';
                 if (pagination) {
-                    pagination.style.display = 'none'; // Hide the pagination
+                    pagination.style.display = 'none';
                 }
                 if (searchResultCard) {
-                    searchResultCard.style.display = 'none'; // Hide the result count card
+                    searchResultCard.style.display = 'none';
                 }
                 if (headerDetailsCard) {
-                    headerDetailsCard.style.display = 'none'; // Hide the header details card
+                    headerDetailsCard.style.display = 'none';
                 }
             }
         }
     }
-// Event listener for the "Clear filters" button
-$('#clearFiltersButton').click(function () {
-    // Clear the filters and restore the initial data
-    clearFilters();
 
-    // Submit the form to apply the cleared filters
-    $('#requisition_form').submit();
-});
+    // Event listener for the "Clear filters" button
+    $('#clearFiltersButton').click(function () {
+        clearFilters();
+        $('#requisition_form').submit();
+    });
 
 
     // Function to clear filters
     function clearFilters() {
-        // Reset Document Type to the first option (assuming it's a dropdown/select)
         const docTypeField = document.querySelector('select[name="doc_type"]');
         if (docTypeField) {
-            docTypeField.selectedIndex = 0;
+            docTypeField.selectedIndex = 0; // Reset to the first option
+            sessionStorage.setItem("DOC_TYPE", docTypeField.value);
         }
-        // Reset Company Number to the first option (assuming it's a dropdown/select)
+        var storedDocType = sessionStorage.getItem("DOC_TYPE");
+        if (storedDocType) {
+            $('#id_doc_type').val(storedDocType);
+        }
         const companyCodeField = document.querySelector('select[name="company_code"]');
         if (companyCodeField) {
-            companyCodeField.selectedIndex = 0;
+            companyCodeField.selectedIndex = 0; // Reset to the first option
+            sessionStorage.setItem("COMPANY", companyCodeField.value);
         }
-        // Reset From Date and To Date to the current date
+        var storedCompany = sessionStorage.getItem("COMPANY");
+        if (storedCompany) {
+            $('#id_company_code').val(storedCompany);
+        }
         const today = new Date();
         const fromDateField = document.querySelector('input[name="from_date"]');
         if (fromDateField) {
@@ -447,7 +447,6 @@ $('#clearFiltersButton').click(function () {
         if (toDateField) {
             toDateField.value = formatDate(today);
         }
-        // Clear the values of the Doc Number, Created By, and Requested By fields
         const docNumField = document.querySelector('input[name="doc_num"]');
         if (docNumField) {
             docNumField.value = '';
@@ -460,14 +459,11 @@ $('#clearFiltersButton').click(function () {
         if (requesterField) {
             requesterField.value = '';
         }
-        // Hide both Supplier field and Supplier Name
-        const supplierField = document.getElementById('supplierField');
-        const supplierNameElement = document.getElementById('supplierNameElement');
-        if (supplierField && supplierNameElement) {
-            supplierField.style.display = 'none';
-            supplierNameElement.style.display = 'none';
+        const supplierField = document.getElementById('supplier');
+        if (supplierField) {
+            supplierField.value = '';
+            sessionStorage.removeItem("SUPPLIER");
         }
-        // Hide the table
         toggleTableVisibility(true);
     }
 
@@ -487,11 +483,11 @@ $('#clearFiltersButton').click(function () {
             }
         });
     }
+
     // Make the clearFilters function accessible in the global scope
     window.clearFilters = clearFilters;
-    // Initialize the table visibility on page load
-    toggleTableVisibility(true); // Show the table initially
-});
+        toggleTableVisibility(true); // Show the table initially
+    });
 </script>
 <script src="{% static 'scripts/doc_report.js' %}"></script>
 {% if inc_footer %}
