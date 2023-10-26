@@ -76,7 +76,7 @@
                                     <i class="fas fa-edit item-action-icons"> edit</i>
                                 </span>
                                 <span title="Delete Address" id="delete-{{data.address_number}}"
-                                    onclick="get_address_detail_to_delete(this.id)">
+                                    onclick="get_address_detail_to_delete(this.id)" data-target="#delete_restricted_confirm_popup">
                                     <i class="material-icons item-action-icons">delete</i>
                                 </span>
                             </td>
@@ -564,6 +564,25 @@
             </div>
         </div>
     </div>
+
+    <div class="modal fade" id="delete_restricted_confirm_popup">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content">
+                <div class="modal-header" >
+                    <h5 class="modal-title">Deletion Restricted</h5>
+                    <button type="button" class="close" data-dismiss="modal">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                </div>
+                <div class="modal-body">
+                    <p>Deletion of the address number is restricted as it is referenced in a dependent table.</p>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-outline-primary" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
+                </div>
+            </div>
+        </div>
+    </div>
     <!--end of modal popup for Add,copy,update and upload-->
     {% include 'configuration_common_pop_up.html' %}
     <div>
@@ -844,11 +863,30 @@
 
     //*********************************************
     function get_address_detail_to_delete(element) {
+        GLOBAL_ACTION = "DELETE";
+        var address_number = [];
         $("#error_msg_id").css("display", "none")
         var getindex = element.split("-")[1]
         var address_number = parseInt(getindex)
         GLOBAL_ADDRESS_NO = address_number
-        $('#id_delete_confirm_popup').modal('show')
+        var data = {'data': address_number, 'table_name': 'OrgAddress', 'action': GLOBAL_ACTION };
+        OpenLoaderPopup();
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'eProc_Configuration:create_update_delete_flags' %}",
+            data: JSON.stringify(data),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function(Response) {
+                var docTypeArray = Response.delete_flags[0];
+                if (docTypeArray === false) {
+                    $('#delete_restricted_confirm_popup').modal('show')
+                } else {
+                    $('#id_delete_confirm_popup').modal('show')
+                }
+                CloseLoaderPopup();
+            }
+        });
     }
 
     //delete the selected row in db................

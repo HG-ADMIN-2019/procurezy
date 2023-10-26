@@ -513,6 +513,7 @@
         document.getElementById("id_error_msg_company_id").innerHTML = "";
         document.getElementById("id_error_msg_spendlimitid_length").innerHTML = "";
         count = 0;
+        flag = 0;
         var spendlimitid_array = new Array
         var DB_array = new Array
         var spendlimitid_list = new Array
@@ -525,7 +526,7 @@
             spending_limit_dic = {}
             //*************** reading data from the pop-up ***************
             spending_limit_dic.company_id = row.find("TD").eq(1).find("select option:selected").val();
-            spending_limit_dic.spender_username = row.find("TD").eq(2).find('input[type="text"]').val();
+            spending_limit_dic.spender_username = row.find("TD").eq(2).find('input[type="text"]').val().toUpperCase();
             spending_limit_dic.spend_code_id = row.find("TD").eq(3).find("select option:selected").val();
             checked_box = row.find("TD").eq(5).find('input[type="checkbox"]').is(':checked')
             if (checked_box){
@@ -534,61 +535,80 @@
             else{
             spending_limit_dic.del_ind = '0'
             }
+            var compare = spending_limit_dic.company_id + '-' + spending_limit_dic.spender_username + '-' + spending_limit_dic.spend_code_id
             spendlimitid_list.push(spending_limit_dic)
             get_main_table_data();
-            var format = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
-            //*************** checking for empty records for spendlimit id  (max length = 2) ***************
-            if(spending_limit_dic.spender_username.length == 0){
-                $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
-                row_color_highlight_empty(row);
-                $("#id_error_msg_prod_cat_desc").prop("hidden",false);
-                error_message = ui_messeges("JMSG002")// Get message details
-                var display8 = error_message;
-                document.getElementById("id_error_msg_spender_username").innerHTML = display8+ "spender_username";
-                $("#id_check_special_character_messages").prop("hidden",false);
-                count = count +1;
+             var format = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
+            var format1 = /[`!@#$%^&*()_+\-=\[\]{};':"\\A-Z \\a-z|,.<>\/?~]/;
+            if(spending_limit_dic.del_ind == '0'){
+                //*************** checking for empty records for spendlimit id  (max length = 2) ***************
+                if(spending_limit_dic.spender_username.length == 0 || /\s/.test(spending_limit_dic.spender_username)) {
+                    $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
+                    row_color_highlight_empty(row);
+                    $("#id_error_msg_prod_cat_desc").prop("hidden",false);
+                    error_message = ui_messeges("JMSG002")// Get message details
+                    var display8 = error_message;
+                    document.getElementById("id_error_msg_spender_username").innerHTML = display8+ "spender_username";
+                    $("#id_check_special_character_messages").prop("hidden",false);
+                    count = count +1;
+                }
+                //*************** checking for special characters for spendlimitid ***************
+                else if(format.test(spending_limit_dic.spender_username)){
+                    $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "1px solid #FF0000");
+                    row_color_highlight_special(row);
+                    $("#id_error_msg_language_id").prop("hidden",false);
+                    error_message = ui_messeges("JMSG003")// Get message details
+                    var display3 = error_message;
+                    document.getElementById("id_error_msg_spender_username").innerHTML = display3+ "spender_username";
+                    $("#id_check_special_character_messages").prop("hidden",false);
+                    count = count +1;
+                }
+                else if(spendlimitid_code_check.includes((compare))){
+                     $(row).css("border", "#f8d7da");
+                     row_color_highlight(row);
+                     $("#id_check_error_messages").prop("hidden",false);
+                     var display7 = ui_messeges("JMSG001");
+                     document.getElementById("id_check_error_messages").innerHTML = display7;
+                     $("#save_id").prop("hidden", true);
+                     $("#id_delete_duplicate").show()
+                     $("#id_check_data").prop("hidden", false);
+                     count = count +1;
+                     flag = flag + 1;
+                }
+                else if(main_table_low_value.includes((compare))){
+                     $(row).css("border", "#f8d7da");
+                     row_color_highlight(row);
+                     $("#id_check_error_messages").prop("hidden",false);
+                     var display7 = ui_messeges("JMSG001");
+                     document.getElementById("id_check_error_messages").innerHTML = display7;
+                     $("#save_id").prop("hidden", true);
+                     $("#id_delete_duplicate").show()
+                     $("#id_check_data").prop("hidden", false);
+                     count = count +1;
+                     flag = flag +1;
+                }
+                 else{
+                    $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "none");
+                    row_color_no_highlight(row);
+                    $(row).css("border", "");
+                    $("#id_delete_duplicate").hide()
+                }
+                spendlimitid_code_check.push(compare)
+                main_table_low_value.push(compare)
+                table_sort_filter_popup_pagination('id_popup_table');
             }
-            //*************** checking for special characters for spendlimitid ***************
-            else if(format.test(spending_limit_dic.spender_username)){
-                $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "1px solid #FF0000");
-                row_color_highlight_special(row);
-                $("#id_error_msg_language_id").prop("hidden",false);
-                error_message = ui_messeges("JMSG003")// Get message details
-                var display3 = error_message;
-                document.getElementById("id_error_msg_spender_username").innerHTML = display3+ "spender_username";
-                $("#id_check_special_character_messages").prop("hidden",false);
-                count = count +1;
-            }
-            else if(spendlimitid_code_check.includes((spending_limit_dic.spender_username)&&(spending_limit_dic.del_ind))){
-                 $(row).css("border", "#f8d7da");
-                 row_color_highlight(row);
-                 $("#id_check_error_messages").prop("hidden",false);
-                 var display7 = ui_messeges("JMSG001");
-                 document.getElementById("id_check_error_messages").innerHTML = display7;
-                 $("#save_id").prop("hidden", true);
-                 $("#id_delete_duplicate").show()
-                 $("#id_check_data").prop("hidden", false);
-                 count = count +1;
-            }
-            else if(main_table_low_value.includes((spending_limit_dic.spender_username)&&(spending_limit_dic.del_ind))){
-                 $(row).css("border", "#f8d7da");
-                 row_color_highlight(row);
-                 $("#id_check_error_messages").prop("hidden",false);
-                 var display7 = ui_messeges("JMSG001");
-                 document.getElementById("id_check_error_messages").innerHTML = display7;
-                 $("#save_id").prop("hidden", true);
-                 $("#id_delete_duplicate").show()
-                 $("#id_check_data").prop("hidden", false);
-                 count = count +1;
+
+            if(flag == 0){
+                $("#id_delete_duplicate").hide()
             }
             else{
-                $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "none");
+                $("#id_delete_duplicate").show()
+            }
+            if(count == 0){
+                $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "none");
                 row_color_no_highlight(row);
                 $(row).css("border", "");
             }
-            spendlimitid_code_check.push(spending_limit_dic.spender_username)
-            main_table_low_value.push(spending_limit_dic.spender_username)
-            table_sort_filter_popup_pagination('id_popup_table');
         });
 
           //*************** shows save button if there are no errors(special characters and max length) ***************
@@ -727,7 +747,7 @@
             main_attribute.spender_username = row.find("TD").eq(2).html();
             main_attribute.spend_code_id = row.find("TD").eq(3).html();
             main_attribute.del_ind = row.find("TD").eq(5).find('input[type="checkbox"]').is(':checked');
-            compare_maintable = main_attribute.company_id + '-' + main_attribute.spender_username + '-' + main_attribute.spend_code_id +'-'+ main_attribute.del_ind;
+            compare_maintable = main_attribute.company_id + '-' + main_attribute.spender_username + '-' + main_attribute.spend_code_id;
             main_table_low_value.push(compare_maintable);
         });
         table_sort_filter('display_basic_table');
@@ -926,15 +946,21 @@
             spend_code_id = row.find("TD").eq(3).find('input[type="text"]').val().toUpperCase();
             spendlimid_guid = row.find("TD").eq(4).find('input[type="text"]').val().toUpperCase()
             spend_limit_compare = company_id +'-'+ spender_username +'-'+ spend_code_id
-            if (spend_limit_code_check.includes(spend_limit_compare)) {
-                $(row).remove();
+              if (checked_box){
+                del_ind = '1'
             }
-            spend_limit_code_check.push(spend_limit_compare);
-            main_table_low_value = get_main_table_data_upload(); //Read data from main table
-            if (main_table_low_value.includes(spend_limit_compare)) {
-                $(row).remove();
+            else{
+                del_ind = '0'
+                if (spend_limit_code_check.includes(spend_limit_compare)) {
+                    $(row).remove();
+                }
+                spend_limit_code_check.push(spend_limit_compare);
+                main_table_low_value = get_main_table_data_upload(); //Read data from main table
+                if (main_table_low_value.includes(spend_limit_compare)) {
+                    $(row).remove();
+                }
+                main_table_low_value.push(spend_limit_compare);
             }
-            main_table_low_value.push(spend_limit_compare);
         })
         table_sort_filter_popup_pagination('id_popup_table')
         check_data()
