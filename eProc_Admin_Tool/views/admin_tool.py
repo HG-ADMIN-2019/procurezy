@@ -750,7 +750,7 @@ def accnt_report(request):
     company_array = get_companylist(request)
 
     inp_acc_assgn_cat = [item['account_assign_cat'] for item in acc_value_array]
-    inp_comp_code = company_array[0]['company_id'] if company_array and company_array[0]['company_id'] != '*' else None
+    inp_comp_code = company_array[0]['company_id'] if company_array else None
     inp_lang = lang_array[0]['language_id'] if lang_array else 'EN'
 
     if request.method == 'GET':
