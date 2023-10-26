@@ -3,6 +3,11 @@ var validate_add_attributes = [];
 var main_table_low_value = [];
 var orgcompany={};
 
+//hide the myModal popup: Implemented Dependency delete purpose
+function hideModal() {
+    $('#companyModal').modal('hide');
+}
+
 //onclick of upload button display id_data_upload popup and set GLOBAL_ACTION button value
 function onclick_upload_button() {
     GLOBAL_ACTION = "orgcompany_upload"
@@ -23,6 +28,7 @@ function valid_popup(){
 // on click copy icon display the selected checkbox data
 function onclick_copy_button() {
     GLOBAL_ACTION = "COPY"
+    display_button();
     onclick_copy_update_button("copy")
     document.getElementById("id_del_add_button").style.display = "block";
      $("#save_id").prop("hidden", false);
@@ -31,6 +37,7 @@ function onclick_copy_button() {
 // on click update icon display the selected checkbox data to update
 function onclick_update_button() {
     GLOBAL_ACTION = "UPDATE"
+    display_button();
     onclick_copy_update_button("update")
     document.getElementById("id_del_add_button").style.display = "none";
      $("#save_id").prop("hidden", false);
@@ -41,6 +48,7 @@ function onclick_add_button(button) {
     $("#error_msg_id").css("display", "none")
     $("#header_select").prop( "hidden", false );
     GLOBAL_ACTION = button.value
+    display_button();
     $('#id_popup_table').DataTable().destroy();
     $("#id_popup_tbody").empty();
     $('#companyModal').modal('show');
@@ -251,6 +259,24 @@ function get_selected_row_data() {
         orgcompany_arr_obj.company_id = row.find("TD").eq(1).html();
         orgcompany_arr_obj.company_guid = row.find("TD").eq(5).html();
         main_table_orgcompany_checked.push(orgcompany_arr_obj);
+        }
+    });
+}
+
+// Function to get the selected row data
+function get_row_data(tableSelector) {
+    main_table_checked = [];
+    $(tableSelector).DataTable().$('input[type="checkbox"]').each(function () {
+        var checkbox = $(this);
+        var row = checkbox.closest("tr");
+        var orgcompany_arr_obj = {};
+        orgcompany_arr_obj.del_ind = checkbox.is(':checked');
+        if(orgcompany_arr_obj.del_ind) {
+            orgcompany_arr_obj.company_id = row.find("TD").eq(1).find('input[type="text"]').val() || row.find("TD").eq(1).html();
+            orgcompany_arr_obj.name1 = row.find("TD").eq(2).find('input[type="text"]').val() || row.find("TD").eq(2).html();
+            orgcompany_arr_obj.name2 = row.find("TD").eq(3).find('input[type="text"]').val() || row.find("TD").eq(3).html();
+            orgcompany_arr_obj.object_id = row.find("TD").eq(4).find('input').val() || row.find("TD").eq(4).html();
+            main_table_checked.push(orgcompany_arr_obj);
         }
     });
 }
