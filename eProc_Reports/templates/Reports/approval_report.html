@@ -4,7 +4,7 @@
 {% block maincontent %}
 {% include 'root/loader.html' %}
 
-<div class="container-fluid" >
+<div class="container-fluid">
     <div class="mep-form_wrapper">
         <div class="d-flex justify-content-between">
             <h3>Approvals Report</h3>
@@ -17,136 +17,123 @@
                     {% csrf_token %}
                     <div class="row">
                         <div class="col-md">
-                            <label>Company Number </label>
+                            <label>Company Number</label>
                             <select name="comp_code_app" id="id_comp_code_app" class="form-control">
-                                {% for comp in comp_list %}<option value="{{ comp.company_id }}"> {{ comp.company_id}} - {{comp.name1 }} </option>{% endfor %}
+                                {% for comp in comp_list %}
+                                    <option value="{{ comp.company_id }}"> {{ comp.company_id }} - {{ comp.name1 }} </option>
+                                {% endfor %}
                             </select>
                         </div>
                         <div class="col-md">
                             <label>Account Assignment Category</label>
-                            <select name="acc_assgn_cat" id="acc_assgn_cat" class="multiple_select form-control"  data-selected-text-format="count" multiple data-actions-box="true" title="Select..">
-                                {% for acc_cat in acct_val_list %}<option value="{{ acc_cat.account_assign_cat }}"> {{acc_cat.account_assign_cat}}-{{acc_cat.description}} </option>
+                            <select name="acc_assgn_cat" id="acc_assgn_cat" class="multiple_select form-control" data-selected-text-format="count" multiple data-actions-box="true" title="Select..">
+                                {% for acc_cat in acct_val_list %}
+                                    <option value="{{ acc_cat.account_assign_cat }}"> {{ acc_cat.account_assign_cat }}-{{ acc_cat.description }} </option>
                                 {% endfor %}
                             </select>
                         </div>
                         <div class="col-auto my-1">
-                            <button id="hg_approval_report_search" class="btn btn-primary button-search-users" type="submit"
-                                title="Please click to get the search details!"><i class="fas fa-search"></i> search
+                            <button id="hg_approval_report_search" class="btn btn-primary button-search-users" type="submit" title="Please click to get the search details!">
+                                <i class="fas fa-search"></i> Search
                             </button>
                         </div>
                     </div>
                     <br>
-                    <button id="clear_filters_btn" class="btn btn-link" type="reset" value="Reset">clear filters</button>
+                    <button id="clear_filters_btn" class="btn btn-link" type="reset" value="Reset">Clear filters</button>
                 </form>
             </div>
         </div>
-         <div class="search_result_count_card card">
+        <div class="search_result_count_card card">
             {% if t_count > 0 %}
-            <div class="card-body">
-                <h6 class="card-title">Total number of results found :{{t_count}}</h6>
-            </div>
+                <div class="card-body">
+                    <h6 class="card-title">Total number of results found: {{ t_count }}</h6>
+                </div>
             {% endif %}
             {% if t_count == 0 %}
-            <div class="card-body">
-                <h6 class="card-title">No Results Found</h6>
-            </div>
+                <div class="card-body">
+                    <h6 class="card-title">No Results Found</h6>
+                </div>
             {% endif %}
         </div>
-        <!--    To Display Header Details only if there are any results-->
-            <div id="table-container">
+        <!-- To Display Header Details only if there are any results -->
+        <div id="table-container">
             {% if t_count > 0 %}
-            {% if final_list %}
-            <div class="card mt-3">
-                <table id="approval_report_table" class="table table_sort_filter_export_excel">
-                    <thead class="thead-light">
-                        <tr>
-                            <th scope="col"> company code </th>
-                            <th scope="col"> account assignment category </th>
-                            <th scope="col"> account assignment value </th>
-                            <th scope="col"> approver </th>
-                            <th scope="col"> approver code</th>
-                            <th scope="col"> approval limit </th>
-                            <th scope="col"> approver currency key </th>
-                            <th scope="col"> superior company code</th>
-                            <th scope="col"> superior account assignment value</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for acc in final_list %}
-                        <tr>
-                            <td scope="row">{{ acc.0 }}</td>
-                            {% if acc.1 == 'AS' %}
-                                <td scope="row">Asset</td>
-                            {% elif acc.1 == 'CC' %}
-                                <td scope="row">Cost Center</td>
-                            {% elif acc.1 == 'GLACC' %}
-                                <td scope="row">General Ledger Account</td>
-                            {% elif acc.1 == 'OR' %}
-                                <td scope="row">Internal Order</td>
-                            {% elif acc.1 == 'WBS' %}
-                                <td scope="row">Project</td>
-                            {% endif %}
-                            <td scope="row">{{ acc.2 }}</td>
-                            <td scope="row">{{ acc.3 }}</td>
-                            <td scope="row"> {{acc.9}} </td>
-                            <td scope="row"> {{acc.7}} </td>
-                            <td scope="row"> {{ acc.8}} </td>
-                            <td scope="row">{{ acc.5 }}</td>
-                            <td scope="row">{{acc.6 }}</td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
-            </div>
+                {% if final_list %}
+                    <div class="card mt-3">
+                        <table id="approval_report_table" class="table table_sort_filter_export_excel">
+                            <thead class="thead-light">
+                                <tr>
+                                    <th scope="col">Company Code</th>
+                                    <th scope="col">Account Assignment Category</th>
+                                    <th scope="col">Account Assignment Value</th>
+                                    <th scope="col">Approver</th>
+                                    <th scope="col">Approver Code</th>
+                                    <th scope="col">Approval Limit</th>
+                                    <th scope="col">Approver Currency Key</th>
+                                    <th scope="col">Superior Company Code</th>
+                                    <th scope="col">Superior Account Assignment Value</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                {% for acc in final_list %}
+                                    <tr>
+                                        <td scope="row">{{ acc.0 }}</td>
+                                        {% if acc.1 == 'AS' %}
+                                            <td scope="row">Asset</td>
+                                        {% elif acc.1 == 'CC' %}
+                                            <td scope="row">Cost Center</td>
+                                        {% elif acc.1 == 'GLACC' %}
+                                            <td scope="row">General Ledger Account</td>
+                                        {% elif acc.1 == 'OR' %}
+                                            <td scope="row">Internal Order</td>
+                                        {% elif acc.1 == 'WBS' %}
+                                            <td scope="row">Project</td>
+                                        {% endif %}
+                                        <td scope="row">{{ acc.2 }}</td>
+                                        <td scope="row">{{ acc.3 }}</td>
+                                        <td scope="row"> {{ acc.9 }} </td>
+                                        <td scope="row"> {{ acc.7 }} </td>
+                                        <td scope="row"> {{ acc.8 }} </td>
+                                        <td scope="row">{{ acc.5 }}</td>
+                                        <td scope="row">{{ acc.6 }}</td>
+                                    </tr>
+                                {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                {% endif %}
             {% endif %}
-            {% endif %}
-                </div>
         </div>
     </div>
+</div>
 <div class="hg_spacer2"> &nbsp; </div>
+
 <script>
     var selected_status_value = {{ inp_acc_assgn_cat | safe }};
     console.log('Selected Status Value:', selected_status_value);
 <!--    var selected_comp_value = {{ inp_comp_code | safe }};-->
 <!--    console.log('Selected Company Value:', selected_comp_value);-->
 
-$(document).ready(function () {
-    // Initialize selectpicker
-    $('.multiple_select').selectpicker();
-
-    // Event handler for the "search" button
-    $('#hg_approval_report_search').click(function () {
-        // Display the table container (including table and pagination)
-        $('#table-container').show();
-
-        // Optional: Open a loader modal
-        OpenLoaderPopup();
-
-        // Store the selected values in local storage
-        var selectedCompany = $('#id_comp_code_app').val();
-        var selectedCategories = $('#acc_assgn_cat').val();
-
-        // Create an object to hold the selected values
-        var selectedData = {
+    $(document).ready(function () {
+        $('.multiple_select').selectpicker();
+        $('#hg_approval_report_search').click(function () {
+            $('#table-container').show();
+            OpenLoaderPopup();
+            var selectedCompany = $('#id_comp_code_app').val();
+            var selectedCategories = $('#acc_assgn_cat').val();
+            var selectedData = {
             company: selectedCompany,
             categories: selectedCategories
         };
-
-        // Store the selected data as a JSON string in local storage
         localStorage.setItem("selectedData", JSON.stringify(selectedData));
     });
 
     // Event handler for the "clear filters" button
     $('#clear_filters_btn').click(function () {
-        // Clear the local storage data
         localStorage.removeItem("selectedData");
-
-        // Reset the form to its initial state
         document.getElementById("id_comp_code_app").selectedIndex = 0;
         $('#acc_assgn_cat').selectpicker('deselectAll');
         $('#acc_assgn_cat').selectpicker('refresh');
-
-        // Submit the form to reload the page
         $('form').submit();
     });
 
@@ -154,19 +141,14 @@ $(document).ready(function () {
     var selectedDataJSON = localStorage.getItem("selectedData");
     if (selectedDataJSON) {
         var selectedData = JSON.parse(selectedDataJSON);
-
         if (selectedData.company) {
             $('#id_comp_code_app').val(selectedData.company);
         }
-
         if (selectedData.categories) {
             $('#acc_assgn_cat').selectpicker('val', selectedData.categories);
         }
     }
-
-    // Rest of your code...
 });
-
 </script>
 <script src="{% static 'scripts/approval_report.js'%}"> </script>
 {% if inc_footer %}
