@@ -85,7 +85,7 @@
             </thead>
             <tbody>
                 {% for acc in final_list %}
-                {% if acc.1 != "Unknown" %}
+                {% if acc.1 != "Unknown" and acc.1 is not None and acc.1 != "" %}
                 <tr>
                     <td>{{ acc.0 }}</td>
                     <td scope="row">
@@ -114,6 +114,7 @@
     </div>
     {% endif %}
 </div>
+
 
 
 <div class="spacer2"> &nbsp; </div>
