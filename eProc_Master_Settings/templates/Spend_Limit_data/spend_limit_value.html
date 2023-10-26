@@ -1010,7 +1010,7 @@
                  if(spendlimit_value_dic.upper_limit_value.length == 0 || /\s/.test(spendlimit_value_dic.upper_limit_value)) {
                     $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
                     row_color_highlight_empty(row);
-                    $("#id_error_msg_prod_cat_desc").prop("hidden",false);
+                    $("#id_error_msg_spendlimitval_upperlimit").prop("hidden",false);
                     error_message = ui_messeges("JMSG002")// Get message details
                     var display8 = error_message;
                     document.getElementById("id_error_msg_spendlimitval_upperlimit").innerHTML = display8+ "Upper Limit Value";
@@ -1020,7 +1020,7 @@
                  else if(format1.test(spendlimit_value_dic.upper_limit_value)){
                     $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
                     row_color_highlight_empty(row);
-                    $("#id_error_msg_prod_cat_desc").prop("hidden",false);
+                    $("#id_error_msg_spendlimitval_upperlimit").prop("hidden",false);
                     error_message = ui_messeges("JMSG003")// Get message details
                     var display8 = error_message;
                     document.getElementById("id_error_msg_spendlimitval_upperlimit").innerHTML = display8+ "Upper Limit Value";

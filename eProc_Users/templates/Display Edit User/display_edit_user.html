@@ -475,6 +475,7 @@ var msg_display_interval = {{msg_display_time_value|safe}};
                     $(".hg_edit_display_mode").prop("disabled", false);
                     document.getElementById("save_user_info_btn").style.display = "block";
                     $("#user_registration_form")[0].reset();
+                    localStorage.clear();
                 }
                 setTimeout(function() {
                            CloseLoaderPopup();

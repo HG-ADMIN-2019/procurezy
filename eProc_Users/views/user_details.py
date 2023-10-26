@@ -129,38 +129,16 @@ def save_user_data(request):
             user_details['password'] = password
 
             reg_form = RegForm(request.POST or None)
-            # if reg_form.is_valid():
-            #     sup_user = reg_form.cleaned_data
             new_user = reg_form.save(commit=False)
             password = random_alpha_numeric(8)
             new_user.password = make_password(password)
             new_user.password2 = make_password(password)
 
-            # django_query_instance.django_create_query(UserData,
-            #                                           user_details)
-            # variant_name = CONST_USER_REG
-            # username = user_details['username']
-            # email = user_details['email']
-            # first_name = user_details['first_name']
-            # email_data = {
-            #     'username': username,
-            #     'email': email,
-            #     'first_name': first_name,
-            #     'email_user_monitoring_guid': '',
-            #     'password': password
-            # }
-            # email_notify(email_data, variant_name, global_variables.GLOBAL_CLIENT)
             # ----- create user and send email
-            super_user = user_details['is_superuser']
-            user_val = {'is_superuser', super_user}
             is_created = RegFncts.create_user(request, new_user, global_variables.GLOBAL_CLIENT, password)
             if is_created:
                 msgid = 'MSG183'
                 error_msg = get_message_desc(msgid)[1]
                 message['type'] = 'success'
-            # django_query_instance.django_update_query(UserData, {'email': user_details['email'],
-            #                                                      'del_ind': False,
-            #                                                      'client': global_variables.GLOBAL_CLIENT},
-            #                                           user_val)
 
     return error_msg, encrypted_user, message

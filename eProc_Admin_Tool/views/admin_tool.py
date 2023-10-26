@@ -137,7 +137,7 @@ def user_search(request):
     dropdown_time_zones = user_time_zones()
     dropdown_language = user_language_list()
     dropdown_messages = user_messages_list()
-    employee_results_onload = get_emp_data()
+    # employee_results_onload = get_emp_data()
     form_method = 'POST'
 
     context = {
@@ -154,7 +154,7 @@ def user_search(request):
         'dropdown_time_zones': dropdown_time_zones,
         'dropdown_language': dropdown_language,
         'dropdown_messages': dropdown_messages,
-        'employee_results_onload': employee_results_onload,
+        # 'employee_results_onload': employee_results_onload,
     }
 
     if request.method == 'GET':
