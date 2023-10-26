@@ -132,7 +132,7 @@
             <div class="modal-footer">
                 <button type="button" class="btn btn-outline-primary remove_upload_data" title="Cancel" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
                 <button id="id_delete_duplicate" class="btn btn-primary" title="Delete" style="display:none;" type="button" onclick="delete_duplicate()"><i class="fas fa-check"></i> Delete Duplicates</button>
-                <button id="id_check_data" style="display:none;" class="btn btn-primary" title="Check" type="button" onclick="check_data()"><i class="fas fa-check"></i> check</button>
+                <button id="id_check_data" style="display:none;" class="btn btn-primary" title="Check" type="button" onclick="check_data()"><i class="fas fa-check"></i> Check</button>
                 <button class="btn btn-primary" title="Save" id="save_id" ><i class="fas fa-save"></i> save</button>
             </div>
         </div>
@@ -538,14 +538,14 @@
             var compare = spending_limit_dic.company_id + '-' + spending_limit_dic.spender_username + '-' + spending_limit_dic.spend_code_id
             spendlimitid_list.push(spending_limit_dic)
             get_main_table_data();
-             var format = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
+            var format = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
             var format1 = /[`!@#$%^&*()_+\-=\[\]{};':"\\A-Z \\a-z|,.<>\/?~]/;
             if(spending_limit_dic.del_ind == '0'){
                 //*************** checking for empty records for spendlimit id  (max length = 2) ***************
                 if(spending_limit_dic.spender_username.length == 0 || /\s/.test(spending_limit_dic.spender_username)) {
                     $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
                     row_color_highlight_empty(row);
-                    $("#id_error_msg_prod_cat_desc").prop("hidden",false);
+                    $("#id_error_msg_spender_username").prop("hidden",false);
                     error_message = ui_messeges("JMSG002")// Get message details
                     var display8 = error_message;
                     document.getElementById("id_error_msg_spender_username").innerHTML = display8+ "spender_username";
@@ -556,7 +556,7 @@
                 else if(format.test(spending_limit_dic.spender_username)){
                     $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "1px solid #FF0000");
                     row_color_highlight_special(row);
-                    $("#id_error_msg_language_id").prop("hidden",false);
+                    $("#id_error_msg_spender_username").prop("hidden",false);
                     error_message = ui_messeges("JMSG003")// Get message details
                     var display3 = error_message;
                     document.getElementById("id_error_msg_spender_username").innerHTML = display3+ "spender_username";
@@ -587,7 +587,7 @@
                      count = count +1;
                      flag = flag +1;
                 }
-                 else{
+                else{
                     $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "none");
                     row_color_no_highlight(row);
                     $(row).css("border", "");
@@ -612,7 +612,7 @@
         });
 
           //*************** shows save button if there are no errors(special characters and max length) ***************
-         if(count == 0){
+        if(count == 0){
             $('#id_popup_table').DataTable().destroy();
             $("#id_popup_table").find("input,button,textarea,select").attr("disabled", "disabled");
             document.getElementById("id_del_add_button").style.display = "none";
@@ -942,9 +942,9 @@
             var row = $(this);
             //*************** reading data from the pop-up ***************
             company_id = row.find("TD").eq(1).find("select option:selected").val();
-            spender_username = row.find("TD").eq(2).find("select option:selected").val();
-            spend_code_id = row.find("TD").eq(3).find('input[type="text"]').val().toUpperCase();
-            spendlimid_guid = row.find("TD").eq(4).find('input[type="text"]').val().toUpperCase()
+            spender_username = row.find("TD").eq(2).find('input[type="text"]').val().toUpperCase();
+            spend_code_id = row.find("TD").eq(3).find('select option:selected').val();
+            spendlimid_guid = row.find("TD").eq(4).find('input[type="text"]').val();
             spend_limit_compare = company_id +'-'+ spender_username +'-'+ spend_code_id
               if (checked_box){
                 del_ind = '1'
@@ -1003,7 +1003,6 @@
     }
 
    function add_popup_row() {
-        spend_limlt_id_drp()
         $("#error_msg_id").css("display", "none")
         basic_add_new_html = '';
         var display_db_data = '';
@@ -1012,11 +1011,24 @@
             $("#id_error_msg").html("");
         });
         if (GLOBAL_ACTION === "spendlimitid_upload") {
-            basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select class="input form-control" name="company_dropdown" type="text">' + company_dropdwn + '</select></td><td><input class="input form-control check_special_char" type="text" maxlength="16" style="text-transform:uppercase"></td><td><select class="form-control" type="text">' + spendcodeid_dropdwn + '</select></td><td hidden><input type="text" class="form-control" name="guid"></td><td class="class_del_checkbox"><input type="checkbox" required></td></tr>';
-            $('#id_popup_tbody').append(basic_add_new_html);
-            $(".class_del_checkbox").prop("hidden", false);
-            $("#id_del_ind_checkbox").prop("hidden", false);
-            table_sort_filter('id_popup_table');
+             OpenLoaderPopup();
+             var data = {'table_name':'SpendLimitId'}
+            $.ajax({
+            type: 'POST',
+            url: "{% url 'eProc_Configuration:get_dropdown_data' %}",
+            data: JSON.stringify(data),
+            success: function(response) {
+                rendered_spndlimval_data = response.upload_spndlimval
+                rendered_company_data = response.upload_data_company
+                spend_limlt_id_drp()
+                basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><select class="input form-control" name="company_dropdown" type="text">' + company_dropdwn + '</select></td><td><input class="input form-control check_special_char" type="text" maxlength="16" style="text-transform:uppercase"></td><td><select class="form-control" type="text">' + spendcodeid_dropdwn + '</select></td><td hidden><input type="text" class="form-control" name="guid"></td><td class="class_del_checkbox"><input type="checkbox" required></td></tr>';
+                $('#id_popup_tbody').append(basic_add_new_html);
+                $(".class_del_checkbox").prop("hidden", false);
+                $("#id_del_ind_checkbox").prop("hidden", false);
+                table_sort_filter('id_popup_table');
+                 CloseLoaderPopup();
+                }
+            });
         }
         else{
              new_row_data();   // Add a new row in popup
