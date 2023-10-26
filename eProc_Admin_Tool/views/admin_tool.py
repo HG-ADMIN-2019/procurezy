@@ -795,7 +795,7 @@ def accnt_report(request):
             'page_range': 0,
             't_count': t_count,
             'inp_account_assgn_cat': inp_acc_assgn_cat,
-            # 'acc_value_array': acc_value_array,
+            'acc_value_array': acc_value_array,
             'inp_comp_code': inp_comp_code,
             'inp_lang': inp_lang,
         }
