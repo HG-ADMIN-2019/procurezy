@@ -10,14 +10,12 @@
 //        sel.selectedIndex = 1;
     });
 
-
     // Function to store the data into the session
     window.onbeforeunload = function () {
         sessionStorage.setItem("COMP_CODE", $('#id_comp_code_app').val());
         sessionStorage.setItem("ACC_ASSGN_CAT", $('#id_acc_assgn_cat').val());
         sessionStorage.setItem("LANG", $('#id_language').val());
     }
-
 
     //*******************************************
     $('#hg_accnt_report_search').click(function () {
@@ -26,16 +24,30 @@
 
     //clear filters
     $(document).ready(function () {
-    $('#clear_filters_button').click(function () {
-        // Clear the selected values in the dropdowns
-        $('#id_comp_code_app').val(null);
-        $('#id_acc_assgn_cat').val(null);
-        $('#id_language').val(null);
-        // Clear the local storage values
-        localStorage.removeItem("COMP_CODE");
-        localStorage.removeItem("ACC_ASSGN_CAT");
-        localStorage.removeItem("LANG");
-        // Refresh the selectpicker to reflect the changes
-        $('.multiple_select').selectpicker('refresh');
+        $('#clear_filters_button').click(function () {
+            // Clear the selected values in the dropdowns
+            $('#id_comp_code_app').val(null);
+            $('#id_acc_assgn_cat').val(null);
+            $('#id_language').val(null);
+            // Clear the local storage values
+            localStorage.removeItem("COMP_CODE");
+            localStorage.removeItem("ACC_ASSGN_CAT");
+            localStorage.removeItem("LANG");
+            // Refresh the selectpicker to reflect the changes
+            $('.multiple_select').selectpicker('refresh');
+        });
     });
-});
+
+    // Initialize event handler for "Language" selectpicker
+    $('#id_language').on('change', function () {
+        var selectedValue = $(this).val();
+        localStorage.setItem("LANG", selectedValue);
+    });
+
+    // Function to retrieve and set the selected language value
+    $(document).ready(function () {
+        var lang = localStorage.getItem("LANG");
+        if (lang !== null) {
+            $('#id_language').val(lang);
+        }
+    });

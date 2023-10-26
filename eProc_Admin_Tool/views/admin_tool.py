@@ -750,22 +750,22 @@ def accnt_report(request):
     company_array = get_companylist(request)
 
     inp_acc_assgn_cat = [item['account_assign_cat'] for item in acc_value_array]
-    inp_comp_code = company_array[0]['company_id'] if company_array and company_array[0][
-        'company_id'] != '*' else None
+    inp_comp_code = company_array[0]['company_id'] if company_array and company_array[0]['company_id'] != '*' else None
     inp_lang = lang_array[0]['language_id'] if lang_array else 'EN'
 
     if request.method == 'GET':
-        account_list = AccountingData.objects.filter(client=client, account_assign_cat__in=inp_acc_assgn_cat,
-                                                     del_ind=False)
+        account_list = AccountingData.objects.filter(client=client, account_assign_cat__in=inp_acc_assgn_cat, del_ind=False)
 
         final_list = []
         for account_data in account_list:
-            account_desc_data_list = AccountingDataDesc.objects.filter(client=client,
-                                                                       company_id=account_data.company_id,
-                                                                       del_ind=False,
-                                                                       language_id=inp_lang,
-                                                                       account_assign_value=account_data.account_assign_value,
-                                                                       account_assign_cat=account_data.account_assign_cat)
+            account_desc_data_list = AccountingDataDesc.objects.filter(
+                client=client,
+                company_id=account_data.company_id,
+                del_ind=False,
+                language_id=inp_lang,
+                account_assign_value=account_data.account_assign_value,
+                account_assign_cat=account_data.account_assign_cat
+            )
             result_array = []
             for data in account_desc_data_list:
                 result_array.append(account_data.company_id)
@@ -779,7 +779,8 @@ def accnt_report(request):
                 result_array.append(lang_desc)
                 result_array.append(account_data.valid_from)
                 result_array.append(account_data.valid_to)
-            final_list.append(result_array)
+            if result_array:
+                final_list.append(result_array)  # Only add non-empty records
 
         t_count = len(final_list)
 
@@ -812,22 +813,29 @@ def accnt_report(request):
         if inp_comp_code is not None and inp_account_assgn_cat is not None:
             if inp_comp_code == '*':
                 # Fetch data for all companies
-                account_list = AccountingData.objects.filter(client=client,
-                                                             account_assign_cat__in=inp_account_assgn_cat,
-                                                             del_ind=False)
+                account_list = AccountingData.objects.filter(
+                    client=client,
+                    account_assign_cat__in=inp_account_assgn_cat,
+                    del_ind=False
+                )
             else:
-                account_list = AccountingData.objects.filter(client=client, company_id=inp_comp_code,
-                                                             account_assign_cat__in=inp_account_assgn_cat,
-                                                             del_ind=False)
+                account_list = AccountingData.objects.filter(
+                    client=client,
+                    company_id=inp_comp_code,
+                    account_assign_cat__in=inp_account_assgn_cat,
+                    del_ind=False
+                )
 
         final_list = []
         for account_data in account_list:
-            account_desc_data_list = AccountingDataDesc.objects.filter(client=client,
-                                                                       company_id=account_data.company_id,
-                                                                       del_ind=False,
-                                                                       language_id=inp_lang,
-                                                                       account_assign_value=account_data.account_assign_value,
-                                                                       account_assign_cat=account_data.account_assign_cat)
+            account_desc_data_list = AccountingDataDesc.objects.filter(
+                client=client,
+                company_id=account_data.company_id,
+                del_ind=False,
+                language_id=inp_lang,
+                account_assign_value=account_data.account_assign_value,
+                account_assign_cat=account_data.account_assign_cat
+            )
             result_array = []
             for data in account_desc_data_list:
                 result_array.append(account_data.company_id)
@@ -841,7 +849,8 @@ def accnt_report(request):
                 result_array.append(lang_desc)
                 result_array.append(account_data.valid_from)
                 result_array.append(account_data.valid_to)
-            final_list.append(result_array)
+            if result_array:
+                final_list.append(result_array)  # Only add non-empty records
 
         t_count = len(final_list)
 
