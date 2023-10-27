@@ -137,7 +137,7 @@ def user_search(request):
     dropdown_time_zones = user_time_zones()
     dropdown_language = user_language_list()
     dropdown_messages = user_messages_list()
-    employee_results_onload = get_emp_data()
+    # employee_results_onload = get_emp_data()
     form_method = 'POST'
 
     context = {
@@ -154,7 +154,7 @@ def user_search(request):
         'dropdown_time_zones': dropdown_time_zones,
         'dropdown_language': dropdown_language,
         'dropdown_messages': dropdown_messages,
-        'employee_results_onload': employee_results_onload,
+        # 'employee_results_onload': employee_results_onload,
     }
 
     if request.method == 'GET':
@@ -275,6 +275,9 @@ def user_details(request, email):
     user_info = django_query_instance.django_get_query(UserData,
                                                        {'email': email, 'client': getClients(request),
                                                         'del_ind': False})
+    user_info1 = django_query_instance.django_filter_only_query(UserData,
+                                                       {'email': email, 'client': getClients(request),
+                                                        'del_ind': False})
 
     context = {
         'inc_nav': True,
@@ -365,11 +368,11 @@ def user_report(request):
     client = getClients(request)
     page_range = 0
     company_list = get_companylist(request)
-    company_list.reverse()
+    # company_list.reverse()
     default_comp_id = ''
 
     if request.method == 'GET':
-        default_comp_id = company_list[0]['company_id'] if company_list else ''
+        default_comp_id = '2000'
 
         if 'final_list' in request.session:
             request.POST = request.session['final_list']
@@ -616,6 +619,10 @@ def approval_report(request):
 
 @login_required
 def m_docsearch_meth(request):
+    """
+    :param request:
+    :return:
+    """
     inp_doc_type = ''
     result = ''
     page_range = 0
@@ -630,8 +637,9 @@ def m_docsearch_meth(request):
     page_type_flag = 'Doc_reports'
     rep_search_form = {}
     error_messages = ''
+    # company code list- client n del indicator
+    # users in selected company - client n del indicator
     comp_list = get_companylist(request)
-    supplier_details = []  # Define supplier_details initially
 
     if request.method == 'GET':
         inp_doc_type = 'SC'
@@ -642,38 +650,31 @@ def m_docsearch_meth(request):
         inp_created_by = ''
         inp_requester = ''
 
-        # Assuming result is a list of dictionaries
-        result = get_hdr_data(request, inp_doc_type, inp_doc_num, inp_from_date, inp_to_date, inp_supl, inp_created_by,
+        result = get_hdr_data(request,
+                              inp_doc_type,
+                              inp_doc_num,
+                              inp_from_date,
+                              inp_to_date,
+                              inp_supl,
+                              inp_created_by,
                               inp_requester, report_search)
 
+        company_details = OrgCompanies.objects.filter(client=client, del_ind=False, company_guid=1000)
+        for comp in company_details:
+            if inp_doc_type == 'PO':
+                result = result.filter(company_code_id=comp.company_id)
+            else:  # For ScHeader queries
+                result = result.filter(co_code=comp.company_id)
+
     if not request.method == 'POST':
-        # Handle GET requests, rendering the initial form
-        rep_search_form = DocumentSearchForm()
-
-        context = {
-            'inc_nav': True,
-            'inc_footer': True,
-            'nav_title': 'Search for document',
-            'sform': rep_search_form,
-            'results': None,  # Set results to None or an empty list as appropriate
-            'page_range': page_range,
-            't_count': 0,  # Set t_count to 0
-            'inp_doc_type': inp_doc_type,
-            'comp_list': comp_list,
-            'is_slide_menu': True,
-            'is_admin_active': True,
-            'encrypted_header_guid': encrypted_header_guid,
-            'sc_completion': sc_completion,
-            'sc_completion_flag': sc_completion_flag,
-            'sc_header': sc_header,
-            'error_messages': error_messages,
-            'supplier_details': supplier_details
-        }
-
-        return render(request, 'Reports/Doc_report.html', context)
+        if 'results' in request.session:
+            request.POST = request.session['results']
+            request.method = 'POST'
 
     if request.method == 'POST':
         request.session['results'] = request.POST
+
+    if request.method == 'POST':
         rep_search_form = DocumentSearchForm(request.POST)
 
         if rep_search_form.is_valid():
@@ -686,157 +687,85 @@ def m_docsearch_meth(request):
             inp_created_by = request.POST.get('created_by')
             inp_requester = request.POST.get('requester')
 
-            filtered_results = []
+            result = get_hdr_data(request, inp_doc_type,
+                                  inp_doc_num,
+                                  inp_from_date,
+                                  inp_to_date,
+                                  inp_supl,
+                                  inp_created_by,
+                                  inp_requester, report_search)
+            company_details = OrgCompanies.objects.filter(client=client, del_ind=False, company_guid=inp_comp_code)
+            for comp in company_details:
+                if inp_doc_type == 'PO':
+                    result = result.filter(company_code_id=comp.company_id)
+                else:  # For ScHeader queries
+                    result = result.filter(co_code=comp.company_id)
+    else:
+        rep_search_form = DocumentSearchForm()
 
-            # Check if '*' (All Companies) is selected
-            if inp_comp_code == '*':
-                # Fetch data for all companies
-                for item in result:
-                    company_code = item.get('co_code')  # Assuming 'co_code' is the key in the dictionary
-                    filtered_result = get_hdr_data(request, inp_doc_type, inp_doc_num, inp_from_date, inp_to_date,
-                                                   inp_supl, inp_created_by, inp_requester, report_search).filter(
-                        co_code=company_code)
-                    filtered_results.extend(filtered_result)
-            else:
-                # Fetch data for the selected company
-                filtered_results = get_hdr_data(request, inp_doc_type, inp_doc_num, inp_from_date, inp_to_date,
-                                                inp_supl, inp_created_by, inp_requester, report_search)
+    error_messages = rep_search_form.errors
+    t_count = len(result)
 
-            error_messages = rep_search_form.errors
-            t_count = len(filtered_results)
+    for header_guid in result:
+        encrypted_header_guid.append(encrypt(header_guid))
 
-            for header_guid in filtered_results:
-                encrypted_header_guid.append(encrypt(header_guid))
+    result = zip(result, encrypted_header_guid)
+    # Assuming you can retrieve the 'client' and 'supp_id_up' values from your code context
+    client = getClients(request)
+    supp_id_up = []
 
-            filtered_results = zip(filtered_results, encrypted_header_guid)
+    # Call the function with the appropriate arguments
+    supplier_details = get_supplier_details(client, supp_id_up)
 
-            # Assuming you can retrieve the 'client' and 'supp_id_up' values from your code context
-            client = getClients(request)
-            supp_id_up = []
+    context = {
+        'inc_nav': True,
+        'inc_footer': True,
+        'nav_title': 'Search for document',
+        'sform': rep_search_form,
+        'results': result,
+        'page_range': page_range,
+        't_count': t_count,
+        'inp_doc_type': inp_doc_type,
+        'comp_list': comp_list,
+        'is_slide_menu': True,
+        'is_admin_active': True,
+        'encrypted_header_guid': encrypted_header_guid,
+        'sc_completion': sc_completion,
+        'sc_completion_flag': sc_completion_flag,
+        'sc_header': sc_header,
+        'error_messages': error_messages,
+        'supplier_details': supplier_details
+    }
 
-            # Call the function with the appropriate arguments
-            supplier_details = get_supplier_details(client, supp_id_up)
+    return render(request, 'Reports/Doc_report.html', context)
 
-            context = {
-                'inc_nav': True,
-                'inc_footer': True,
-                'nav_title': 'Search for document',
-                'sform': rep_search_form,
-                'results': filtered_results,
-                'page_range': page_range,
-                't_count': t_count,
-                'inp_doc_type': inp_doc_type,
-                'comp_list': comp_list,
-                'is_slide_menu': True,
-                'is_admin_active': True,
-                'encrypted_header_guid': encrypted_header_guid,
-                'sc_completion': sc_completion,
-                'sc_completion_flag': sc_completion_flag,
-                'sc_header': sc_header,
-                'error_messages': error_messages,
-                'supplier_details': supplier_details
-            }
-
-            return render(request, 'Reports/Doc_report.html', context)
-
-    # If neither GET nor POST request, you should handle this case or return an appropriate response
-    return HttpResponse("Unsupported HTTP method")
 
 
 @login_required
 def accnt_report(request):
     client = getClients(request)
-    final_list = []
-    page_range = 0
+    lang_array = get_langlist(request)
     acc_value_array = get_account_assignvalues(request)
-    account_desc_data_list = ''
-    inp_comp_code = ''
-
     acc_cat_array = get_account_assignlist(request)
     company_array = get_companylist(request)
-    lang_array = get_langlist(request)
-    inp_acc_assgn_cat = acc_cat_array[0]
-    if company_array[0]['company_id'] != '*':
-        inp_comp_code = int(company_array[0]['company_id'])
-    inp_lang = 'EN'
-    account_list = ''
-    lang_desc = ''
-    lang_id = ''
-    context = {
-        'inc_nav': True,
-        'inc_footer': True,
-        'is_slide_menu': True,
-        'is_admin_active': True,
-        'comp_list': company_array,
-        'lang_list': lang_array,
-        'acct_val_list': acc_cat_array,
-        'page_range': page_range,
-        'inp_account_assgn_cat': acc_cat_array[0],
-        'acc_value_array': acc_value_array,
-        'inp_comp_code': inp_comp_code,
-        'inp_lang': inp_lang,
-    }
+
+    inp_acc_assgn_cat = [item['account_assign_cat'] for item in acc_value_array]
+    inp_comp_code = company_array[0]['company_id'] if company_array else None
+    inp_lang = lang_array[0]['language_id'] if lang_array else 'EN'
 
     if request.method == 'GET':
-        inp_acc_assgn_cat = acc_cat_array[0]
-        inp_lang = 'EN'
+        account_list = AccountingData.objects.filter(client=client, account_assign_cat__in=inp_acc_assgn_cat, del_ind=False)
 
-        if inp_comp_code is not None and inp_acc_assgn_cat is not None:
-            if inp_comp_code == '*':
-                # Fetch data for all companies
-                account_list = AccountingData.objects.filter(client=client, account_assign_cat=inp_acc_assgn_cat,
-                                                             del_ind=False)
-            else:
-                account_list = AccountingData.objects.filter(client=client, company_id=inp_comp_code,
-                                                             account_assign_cat=inp_acc_assgn_cat, del_ind=False)
-
-        result_array = []
+        final_list = []
         for account_data in account_list:
-            account_desc_data_list = AccountingDataDesc.objects.filter(client=client,
-                                                                       company_id=account_data.company_id,
-                                                                       del_ind=False,
-                                                                       language_id=inp_lang,
-                                                                       account_assign_value=account_data.account_assign_value,
-                                                                       account_assign_cat=account_data.account_assign_cat)
-            for data_acct_desc in account_desc_data_list:
-                result_array.append(data_acct_desc.company_id)
-                result_array.append(data_acct_desc.account_assign_cat)
-                result_array.append(data_acct_desc.account_assign_value)
-                result_array.append(data_acct_desc.description)
-                lang_id = data_acct_desc.language_id
-                for lang in lang_array:
-                    if lang['language_id'] == str(lang_id):
-                        lang_desc = lang['description']
-                result_array.append(lang_desc)
-                result_array.append(account_data.valid_from)
-                result_array.append(account_data.valid_to)
-                final_list.append(result_array)
-        context['final_list'] = final_list
-        return render(request, 'Reports/accnt_report.html', context)
-
-    if request.method == 'POST' or request.is_ajax():
-        inp_comp_code = request.POST.get('comp_code_app')
-        inp_account_assgn_cat = request.POST.getlist('acc_assgn_cat')
-        inp_lang = request.POST.get('language')
-
-        if inp_comp_code is not None and inp_account_assgn_cat is not None:
-            if inp_comp_code == '*':
-                # Fetch data for all companies
-                account_list = AccountingData.objects.filter(client=client,
-                                                             account_assign_cat__in=inp_account_assgn_cat,
-                                                             del_ind=False)
-            else:
-                account_list = AccountingData.objects.filter(client=client, company_id=inp_comp_code,
-                                                             account_assign_cat__in=inp_account_assgn_cat,
-                                                             del_ind=False)
-
-        for account_data in account_list:
-            account_desc_data_list = AccountingDataDesc.objects.filter(client=client,
-                                                                       company_id=account_data.company_id,
-                                                                       del_ind=False,
-                                                                       language_id=inp_lang,
-                                                                       account_assign_value=account_data.account_assign_value,
-                                                                       account_assign_cat=account_data.account_assign_cat)
+            account_desc_data_list = AccountingDataDesc.objects.filter(
+                client=client,
+                company_id=account_data.company_id,
+                del_ind=False,
+                language_id=inp_lang,
+                account_assign_value=account_data.account_assign_value,
+                account_assign_cat=account_data.account_assign_cat
+            )
             result_array = []
             for data in account_desc_data_list:
                 result_array.append(account_data.company_id)
@@ -850,11 +779,81 @@ def accnt_report(request):
                 result_array.append(lang_desc)
                 result_array.append(account_data.valid_from)
                 result_array.append(account_data.valid_to)
-                final_list.append(result_array)
-        context['final_list'] = final_list
+            if result_array:
+                final_list.append(result_array)  # Only add non-empty records
+
         t_count = len(final_list)
 
-        # Context to display in accnt_report.html
+        context = {
+            'inc_nav': True,
+            'inc_footer': True,
+            'is_slide_menu': True,
+            'is_admin_active': True,
+            'comp_list': company_array,
+            'lang_list': lang_array,
+            'acct_val_list': acc_value_array,
+            'final_list': final_list,
+            'page_range': 0,
+            't_count': t_count,
+            'inp_account_assgn_cat': inp_acc_assgn_cat,
+            'acc_value_array': acc_value_array,
+            'inp_comp_code': inp_comp_code,
+            'inp_lang': inp_lang,
+        }
+
+        return render(request, 'Reports/accnt_report.html', context)
+
+    if request.method == 'POST' or request.is_ajax():
+        inp_comp_code = request.POST.get('comp_code_app')
+        inp_account_assgn_cat = request.POST.getlist('acc_assgn_cat')
+        inp_lang = request.POST.get('language')
+
+        account_list = []
+
+        if inp_comp_code is not None and inp_account_assgn_cat is not None:
+            if inp_comp_code == '*':
+                # Fetch data for all companies
+                account_list = AccountingData.objects.filter(
+                    client=client,
+                    account_assign_cat__in=inp_account_assgn_cat,
+                    del_ind=False
+                )
+            else:
+                account_list = AccountingData.objects.filter(
+                    client=client,
+                    company_id=inp_comp_code,
+                    account_assign_cat__in=inp_account_assgn_cat,
+                    del_ind=False
+                )
+
+        final_list = []
+        for account_data in account_list:
+            account_desc_data_list = AccountingDataDesc.objects.filter(
+                client=client,
+                company_id=account_data.company_id,
+                del_ind=False,
+                language_id=inp_lang,
+                account_assign_value=account_data.account_assign_value,
+                account_assign_cat=account_data.account_assign_cat
+            )
+            result_array = []
+            for data in account_desc_data_list:
+                result_array.append(account_data.company_id)
+                result_array.append(account_data.account_assign_cat)
+                result_array.append(account_data.account_assign_value)
+                result_array.append(data.description)
+                lang_id = data.language_id
+                for lang in lang_array:
+                    if lang['language_id'] == str(lang_id):
+                        lang_desc = lang['description']
+                result_array.append(lang_desc)
+                result_array.append(account_data.valid_from)
+                result_array.append(account_data.valid_to)
+            if result_array:
+                final_list.append(result_array)  # Only add non-empty records
+
+        t_count = len(final_list)
+
         context = {
             'inc_nav': True,
             'inc_footer': True,
@@ -863,16 +862,17 @@ def accnt_report(request):
             'lang_list': lang_array,
             'acct_val_list': acc_cat_array,
             'final_list': final_list,
-            'page_range': page_range,
+            'page_range': 0,
             't_count': t_count,
             'is_admin_active': True,
-            'inp_account_assgn_cat': acc_cat_array[0],
+            'inp_account_assgn_cat': inp_acc_assgn_cat,
             'acc_value_array': acc_value_array,
             'inp_comp_code': inp_comp_code,
             'inp_lang': inp_lang,
         }
 
-    return render(request, 'Reports/accnt_report.html', context)
+        return render(request, 'Reports/accnt_report.html', context)
+
 
 
 def get_acct_report(request):

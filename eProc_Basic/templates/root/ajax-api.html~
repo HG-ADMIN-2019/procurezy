@@ -46,7 +46,6 @@ function AjaxCallAPI(urlLink, data){
 };
 
 function AjaxCallAPIBasic(urlLink, data) {
-    OpenLoaderPopup();
     jQuery.ajax({
        async : false,
        type: 'POST',

@@ -464,6 +464,7 @@ var rendered_dropdown_language = JSON.parse(document.getElementById('dropdown_la
 var messages_list = {{dropdown_messages|safe}};
 var form_method = '{{form_method|safe}}';
 var employee_data = new Array();
+var emp_data;
 
 $(document).ready(function() {
     $('#id_userpopup_table').DataTable(); // Replace 'id_userpopup_table' with your table's ID or selector
@@ -472,6 +473,12 @@ $(document).ready(function() {
     document.getElementById("username").value = '';
     document.getElementById("first_name").value = '';
     document.getElementById("last_name").value = '';
+     document.getElementById("email").value = '';
+    document.getElementById("employee_id").value = '';
+    document.getElementById("user_type").value = 'All';
+    $('#user_locked_id').prop('checked', false);
+    $('#pwd_locked_id').prop('checked', false);
+    $('#is_active_id').prop('checked', false);
     }
 });
 $('form').on('reset',function (e) {
@@ -488,9 +495,22 @@ $('form').on('reset',function (e) {
     $(".error_message").prop("hidden", true);
     $("#result_id").prop("hidden", true);
     form_method = 'GET';
-        display_emp_data(emp_data_onload);
-        localStorage.setItem("username", "");
-        document.getElementById("user_type").value = "All";
+    OpenLoaderPopup();
+    var data = {'table_name':'UserInfo'}
+    $.ajax({
+        type: 'POST',
+        url: "{% url 'eProc_Users:get_emp_data_onload' %}",
+        data: JSON.stringify(data),
+        contentType: "application/json; charset=utf-8",
+        dataType: "json",
+        success: function(Response) {
+            emp_data = Response.emp_data;
+            display_emp_data(emp_data);
+            CloseLoaderPopup();
+            }
+         });
+            localStorage.setItem("username", "");
+            document.getElementById("user_type").value = "All";
 });
      var currency_opt = ''
      var language_opt = ''

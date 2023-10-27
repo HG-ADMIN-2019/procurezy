@@ -25,7 +25,7 @@ $(document).ready(function() {
         $('#id_company_code').val(storedCompany);
     }
 
-    // Retrieve and apply the supplier field value
+    // Retrieve and apply the "Supplier" field value
     var storedSupplier = sessionStorage.getItem("SUPPLIER");
     if (storedSupplier) {
         $('#supplier').val(storedSupplier);

@@ -47,13 +47,13 @@ function onclick_copy_update_button(data) {
             var row = $chkbox_all[i].parentNode.parentNode;
             if(GLOBAL_ACTION == "UPDATE"){
                 porg_guid = row.cells[5].innerHTML
-                unique_input = '<input class="input form-control check_character_no_space"  value="' + row.cells[1].innerHTML + '" type="text" maxlength="8"  name="porg_id" disabled>'
+                unique_input = '<input class="input form-control check_alpha_no_space"  value="' + row.cells[1].innerHTML + '" type="text" maxlength="8"  name="porg_id" disabled>'
                 edit_basic_data += '<tr><td hidden><input type="checkbox"></td><td>'+unique_input+' </td><td><input class="form-control check_only_character" value="' + row.cells[2].innerHTML + '" type="text" name="description"  maxlength="100"  required></td><td hidden><input value="' + porg_guid + '"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
                 $("#header_select").prop("hidden", true); 
             }
             else{
                 porg_guid = 'GUID';
-                unique_input = '<input class="input form-control check_character_no_space" value="' + row.cells[1].innerHTML + '"  type="text" maxlength="8"  name="porg_id"required>'
+                unique_input = '<input class="input form-control check_alpha_no_space" value="' + row.cells[1].innerHTML + '"  type="text" maxlength="8"  name="porg_id"required>'
                 edit_basic_data += '<tr><td><input type="checkbox" required></td><td>'+unique_input+'</td><td><input class="form-control check_only_character" value="' + row.cells[2].innerHTML + '" type="text"  name="description"  maxlength="100"  required></td><td hidden><input value="' + porg_guid + '"></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
                 $("#header_select").prop("hidden", false);
             }
@@ -97,7 +97,7 @@ function onclick_add_button(button) {
     $("#id_popup_tbody").empty();
     $('#Porg_Modal').modal('show');
     basic_add_new_html = '<tr><td><input type="checkbox" required></td>'+
-        '<td><input class="form-control check_character_no_space"  type="text"  minlength="5" maxlength="8"  name="porg_id" style="text-transform:uppercase;" required></td>'+
+        '<td><input class="form-control check_alpha_no_space"  type="text"  minlength="5" maxlength="8"  name="porg_id" style="text-transform:uppercase;" required></td>'+
         '<td><input class="input form-control check_only_character"  type="text" maxlength="100"  name="description"  required></td>'+
         '<td hidden><input value=""></td>'+
         '<td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
@@ -119,7 +119,7 @@ function add_popup_row() {
     });
      if (GLOBAL_ACTION == "purchase_org_upload") {
          basic_add_new_html = '<tr><td><input type="checkbox" required></td>'+
-        '<td><input class="form-control check_character_no_space"  type="text"  minlength="5" maxlength="8"  name="porg_id" style="text-transform:uppercase;" required></td>'+
+        '<td><input class="form-control check_alpha_no_space"  type="text"  minlength="5" maxlength="8"  name="porg_id" style="text-transform:uppercase;" required></td>'+
         '<td><input class="input form-control check_only_character"  type="text" maxlength="100"  name="description"  required></td>'+
         '<td hidden><input value=""></td>'+
         '<td class="class_del_checkbox"><input type="checkbox" required></td></tr>';
@@ -130,7 +130,7 @@ function add_popup_row() {
     }
     else{
        basic_add_new_html = '<tr><td><input type="checkbox" required></td>'+
-        '<td><input class="form-control check_character_no_space"  type="text"  minlength="5" maxlength="8"  name="porg_id" style="text-transform:uppercase;" required></td>'+
+        '<td><input class="form-control check_alpha_no_space"  type="text"  minlength="5" maxlength="8"  name="porg_id" style="text-transform:uppercase;" required></td>'+
         '<td><input class="input form-control check_only_character"  type="text" maxlength="100"  name="description"  required></td>'+
         '<td hidden><input value=""></td>'+
         '<td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
@@ -190,9 +190,9 @@ function delete_duplicate() {
         //*************** reading data from the pop-up ***************
         porg_id = row.find("TD").eq(1).find('input[type="text"]').val().toUpperCase();
         description = row.find("TD").eq(2).find('input[type="text"]').val();
-        company_id = row.find("TD").eq(3).find('input[type="text"]').val();
-        object_id = row.find("TD").eq(4).find('input[type="text"]').val();
-        checked_box = row.find("TD").eq(5).find('input[type="checkbox"]').is(':checked')
+        company_id = row.find("TD").eq(4).find('input[type="text"]').val();
+        object_id = row.find("TD").eq(3).find('input[type="text"]').val();
+        checked_box = row.find("TD").eq(4).find('input[type="checkbox"]').is(':checked')
           if (checked_box){
                 del_ind = '1'
           }
@@ -267,7 +267,7 @@ function update_check_message(messages){
 // Function for add a new row data
 function new_row_data(){
     basic_add_new_html = '<tr><td><input type="checkbox" required></td>'+
-        '<td><input class="form-control check_character_no_space"  type="text"  minlength="5" maxlength="8"  name="porg_id" style="text-transform:uppercase;" required></td>'+
+        '<td><input class="form-control check_alpha_no_space"  type="text"  minlength="5" maxlength="8"  name="porg_id" style="text-transform:uppercase;" required></td>'+
         '<td><input class="input form-control check_only_character"  type="text" maxlength="100"  name="description"  required></td>'+
         '<td hidden><input value=""></td>'+
         '<td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
@@ -297,7 +297,7 @@ function get_main_table_data_upload() {
         var row = $(this);
         var main_attribute = {};
         main_attribute.porg_id = row.find("TD").eq(1).html();
-        main_attribute.del_ind = row.find("TD").eq(6).find('input[type="checkbox"]').is(':checked');
+        main_attribute.del_ind = row.find("TD").eq(5).find('input[type="checkbox"]').is(':checked');
         var compare = main_attribute.porg_id
         main_table_low_value.push(compare);
     });

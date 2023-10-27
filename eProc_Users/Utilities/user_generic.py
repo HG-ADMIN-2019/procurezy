@@ -1,4 +1,6 @@
 from django.db.models import Q
+from django.http import JsonResponse
+
 from eProc_Basic.Utilities.functions.django_q_query import django_q_query
 from eProc_Basic.Utilities.functions.django_query_set import DjangoQueries
 from eProc_Basic.Utilities.functions.encryption_util import encrypt
@@ -98,9 +100,22 @@ def get_emp_data():
                                                                  None, None)
 
     for emails in employee_results:
+        encrypt_email = encrypt(emails['email'])
+        emails['encrypted_email'] = encrypt_email
+    return employee_results
+
+
+def get_emp_data_onload(request):
+    employee_results = django_query_instance.django_filter_query(UserData,
+                                                                 {'client': global_variables.GLOBAL_CLIENT,
+                                                                  'del_ind': False, 'is_active': True},
+                                                                 None, None)
+
+    for emails in employee_results:
         encrypted_email1 = encrypt(emails['email'])
         emails['encrypted_email'] = encrypted_email1
-    return employee_results
+    data = {'emp_data': employee_results}
+    return JsonResponse(data, safe=False)
 
 
 global encrypted_email

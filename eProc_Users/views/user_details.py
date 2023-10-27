@@ -65,7 +65,7 @@ def save_user_data(request):
     user_details['date_format'] = request.POST.get('date_format')
     user_details['decimal_notation'] = request.POST.get('decimal_notation')
     user_details['login_attempts'] = request.POST.get('login_attempts')
-    user_details['is_superuser'] = request.POST.get('super_user')
+    user_details['is_superuser'] = request.POST.get('is_superuser')
     user_details['user_locked'] = request.POST.get('user_locked')
     user_details['pwd_locked'] = request.POST.get('pwd_locked')
     user_details['is_active'] = request.POST.get('is_active')
@@ -134,20 +134,6 @@ def save_user_data(request):
             new_user.password = make_password(password)
             new_user.password2 = make_password(password)
 
-            # django_query_instance.django_create_query(UserData,
-            #                                           user_details)
-            # variant_name = CONST_USER_REG
-            # username = user_details['username']
-            # email = user_details['email']
-            # first_name = user_details['first_name']
-            # email_data = {
-            #     'username': username,
-            #     'email': email,
-            #     'first_name': first_name,
-            #     'email_user_monitoring_guid': '',
-            #     'password': password
-            # }
-            # email_notify(email_data, variant_name, global_variables.GLOBAL_CLIENT)
             # ----- create user and send email
             is_created = RegFncts.create_user(request, new_user, global_variables.GLOBAL_CLIENT, password)
             if is_created:

@@ -375,7 +375,7 @@
                                     del_ind = '<input type="checkbox" value="' + value.del_ind + '" required>'
                                 }
 
-                                  edit_basic_data += '<tr><td><input type="checkbox" required></td><td><input class="form-control check_special_character" type="text" value="'+value.company_id+'"  name= "company_id" minlength="4" maxlength="08"></td><td><input class="form-control check_only_character"  type="text" value="'+value.name1+'" maxlength="100" onkeypress="return /[a-z0-9]/i.test(event.key)" name="name1"  required></td><td><input class="form-control check_only_character" type="text" value="'+value.name2+'" maxlength="100" onkeypress="return /[a-z0-9]/i.test(event.key)" name="name2" required></td><td hidden></td><td hidden><input type="text" value=""></td><td>' + del_ind + '</td></tr>';
+                                  edit_basic_data += '<tr><td><input type="checkbox" required></td><td><input class="form-control check_alphastar_no_space" type="text" value="'+value.company_id+'"  name= "company_id" minlength="4" maxlength="08"></td><td><input class="form-control check_only_character"  type="text" value="'+value.name1+'" maxlength="100" onkeypress="return /[a-z0-9]/i.test(event.key)" name="name1"  required></td><td><input class="form-control check_only_character" type="text" value="'+value.name2+'" maxlength="100" onkeypress="return /[a-z0-9]/i.test(event.key)" name="name2" required></td><td hidden></td><td hidden><input type="text" value=""></td><td>' + del_ind + '</td></tr>';
 
                             });
                             $('#id_popup_tbody').append(edit_basic_data);
@@ -444,7 +444,7 @@
             }
             company_list.push(company_dic)
             get_main_table_data(); //Read data from main table
-            var format = /[`!@#$%^&*()_+\-=\[\]{};':"\\ 0-9|,.<>\/?~]/;
+            var format = /[`!@#$%^&()_+\-=\[\]{};':"\\|,.<>\/?~]/;
             var format1 = /^[A-Za-z0-9]{2,}$/;
             var formats = /[`!@#$%^&()_+\-=\[\]{};':"\\|,.<>\/?~]/;
             if(company_dic.del_ind == '0'){
