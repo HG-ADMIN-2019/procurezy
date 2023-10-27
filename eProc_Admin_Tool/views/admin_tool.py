@@ -36,7 +36,8 @@ from eProc_Configuration.models import *
 from eProc_Configuration.models.application_data import WorkflowSchema
 from eProc_Configuration.models.basic_data import Country
 from eProc_Configuration.models.development_data import FieldTypeDescription
-from eProc_Configuration.models.master_data import OrgPorg, OrgCompanies, WorkflowACC, ApproverLimit, ApproverLimitValue
+from eProc_Configuration.models.master_data import OrgPorg, OrgCompanies, WorkflowACC, ApproverLimit, \
+    ApproverLimitValue, AccountingData, AccountingDataDesc
 from eProc_Doc_Search_and_Display.Utilities.search_display_generic import get_hdr_data, get_hdr_data_app_monitoring
 from eProc_Emails.models import EmailUserMonitoring, EmailDocumentMonitoring, EmailSupplierMonitoring
 from eProc_Org_Model.Utilities import client
@@ -279,8 +280,8 @@ def user_details(request, email):
                                                        {'email': email, 'client': getClients(request),
                                                         'del_ind': False})
     user_info1 = django_query_instance.django_filter_only_query(UserData,
-                                                       {'email': email, 'client': getClients(request),
-                                                        'del_ind': False})
+                                                                {'email': email, 'client': getClients(request),
+                                                                 'del_ind': False})
 
     context = {
         'inc_nav': True,
@@ -743,7 +744,6 @@ def m_docsearch_meth(request):
     return render(request, 'Reports/Doc_report.html', context)
 
 
-
 @login_required
 def accnt_report(request):
     client = getClients(request)
@@ -751,24 +751,37 @@ def accnt_report(request):
     acc_value_array = get_account_assignvalues(request)
     acc_cat_array = get_account_assignlist(request)
     company_array = get_companylist(request)
-
+    company_array.reverse()
     inp_acc_assgn_cat = [item['account_assign_cat'] for item in acc_value_array]
-    inp_comp_code = company_array[0]['company_id'] if company_array and company_array[0][
-        'company_id'] != '*' else None
+    inp_comp_code = company_array[0]['company_id'] if company_array else None
     inp_lang = lang_array[0]['language_id'] if lang_array else 'EN'
 
     if request.method == 'GET':
-        account_list = AccountingData.objects.filter(client=client, account_assign_cat__in=inp_acc_assgn_cat,
-                                                     del_ind=False)
+        # Check if inp_comp_code is not '*'
+        if inp_comp_code and inp_comp_code != '*':
+            account_list = AccountingData.objects.filter(
+                client=client,
+                company_id=inp_comp_code,
+                account_assign_cat__in=inp_acc_assgn_cat,
+                del_ind=False
+            )
+        else:
+            account_list = AccountingData.objects.filter(
+                client=client,
+                account_assign_cat__in=inp_acc_assgn_cat,
+                del_ind=False
+            )
 
         final_list = []
         for account_data in account_list:
-            account_desc_data_list = AccountingDataDesc.objects.filter(client=client,
-                                                                       company_id=account_data.company_id,
-                                                                       del_ind=False,
-                                                                       language_id=inp_lang,
-                                                                       account_assign_value=account_data.account_assign_value,
-                                                                       account_assign_cat=account_data.account_assign_cat)
+            account_desc_data_list = AccountingDataDesc.objects.filter(
+                client=client,
+                company_id=account_data.company_id,
+                del_ind=False,
+                language_id=inp_lang,
+                account_assign_value=account_data.account_assign_value,
+                account_assign_cat=account_data.account_assign_cat
+            )
             result_array = []
             for data in account_desc_data_list:
                 result_array.append(account_data.company_id)
@@ -782,7 +795,8 @@ def accnt_report(request):
                 result_array.append(lang_desc)
                 result_array.append(account_data.valid_from)
                 result_array.append(account_data.valid_to)
-            final_list.append(result_array)
+            if result_array:
+                final_list.append(result_array)  # Only add non-empty records
 
         t_count = len(final_list)
 
@@ -815,22 +829,29 @@ def accnt_report(request):
         if inp_comp_code is not None and inp_account_assgn_cat is not None:
             if inp_comp_code == '*':
                 # Fetch data for all companies
-                account_list = AccountingData.objects.filter(client=client,
-                                                             account_assign_cat__in=inp_account_assgn_cat,
-                                                             del_ind=False)
+                account_list = AccountingData.objects.filter(
+                    client=client,
+                    account_assign_cat__in=inp_account_assgn_cat,
+                    del_ind=False
+                )
             else:
-                account_list = AccountingData.objects.filter(client=client, company_id=inp_comp_code,
-                                                             account_assign_cat__in=inp_account_assgn_cat,
-                                                             del_ind=False)
+                account_list = AccountingData.objects.filter(
+                    client=client,
+                    company_id=inp_comp_code,
+                    account_assign_cat__in=inp_account_assgn_cat,
+                    del_ind=False
+                )
 
         final_list = []
         for account_data in account_list:
-            account_desc_data_list = AccountingDataDesc.objects.filter(client=client,
-                                                                       company_id=account_data.company_id,
-                                                                       del_ind=False,
-                                                                       language_id=inp_lang,
-                                                                       account_assign_value=account_data.account_assign_value,
-                                                                       account_assign_cat=account_data.account_assign_cat)
+            account_desc_data_list = AccountingDataDesc.objects.filter(
+                client=client,
+                company_id=account_data.company_id,
+                del_ind=False,
+                language_id=inp_lang,
+                account_assign_value=account_data.account_assign_value,
+                account_assign_cat=account_data.account_assign_cat
+            )
             result_array = []
             for data in account_desc_data_list:
                 result_array.append(account_data.company_id)
@@ -844,7 +865,8 @@ def accnt_report(request):
                 result_array.append(lang_desc)
                 result_array.append(account_data.valid_from)
                 result_array.append(account_data.valid_to)
-            final_list.append(result_array)
+            if result_array:
+                final_list.append(result_array)  # Only add non-empty records
 
         t_count = len(final_list)
 
@@ -866,7 +888,6 @@ def accnt_report(request):
         }
 
         return render(request, 'Reports/accnt_report.html', context)
-
 
 
 def get_acct_report(request):
