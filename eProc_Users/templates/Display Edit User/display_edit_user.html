@@ -343,7 +343,7 @@ var msg_display_interval = {{msg_display_time_value|safe}};
         var temp = document.getElementsByClassName('mandatory_fields');
         for (var i = 0; i<temp.length; i++) {
             if(temp[i].nodeName == "INPUT"){
-                if(event.currentTarget.value == "") {
+                if((event.currentTarget.value == "") || (event.currentTarget.value.indexOf("  ") >= 0)) {
                     $('#event.currentTarget.nextElementSibling.id').prop('hidden', true);
                     document.getElementById(event.currentTarget.nextElementSibling.id).style.display = "block";
                      var display_id = event.currentTarget.nextElementSibling.id;
@@ -388,7 +388,7 @@ var msg_display_interval = {{msg_display_time_value|safe}};
          }
     });
     $('#phone_num').on('blur',function (event) {
-         if (event.currentTarget.value.length != 10 ) {
+         if ((event.currentTarget.value.length != 10 ) || (event.currentTarget.value.indexOf(" ") >= 0)) {
                  var msg = "JMSG002";
                  var msg_type ;
                  msg_type = message_config_details(msg);
