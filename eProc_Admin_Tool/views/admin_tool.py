@@ -36,7 +36,8 @@ from eProc_Configuration.models import *
 from eProc_Configuration.models.application_data import WorkflowSchema
 from eProc_Configuration.models.basic_data import Country
 from eProc_Configuration.models.development_data import FieldTypeDescription
-from eProc_Configuration.models.master_data import OrgPorg, OrgCompanies, WorkflowACC, ApproverLimit, ApproverLimitValue
+from eProc_Configuration.models.master_data import OrgPorg, OrgCompanies, WorkflowACC, ApproverLimit, \
+    ApproverLimitValue, AccountingData, AccountingDataDesc
 from eProc_Doc_Search_and_Display.Utilities.search_display_generic import get_hdr_data, get_hdr_data_app_monitoring
 from eProc_Emails.models import EmailUserMonitoring, EmailDocumentMonitoring, EmailSupplierMonitoring
 from eProc_Org_Model.Utilities import client
@@ -137,7 +138,8 @@ def user_search(request):
     dropdown_time_zones = user_time_zones()
     dropdown_language = user_language_list()
     dropdown_messages = user_messages_list()
-    # employee_results_onload = get_emp_data()
+    employee_results_onload = get_emp_data()
+    count = len(employee_results_onload)
     form_method = 'POST'
 
     context = {
@@ -154,7 +156,8 @@ def user_search(request):
         'dropdown_time_zones': dropdown_time_zones,
         'dropdown_language': dropdown_language,
         'dropdown_messages': dropdown_messages,
-        # 'employee_results_onload': employee_results_onload,
+        'employee_results_onload': employee_results_onload,
+        'count': count,
     }
 
     if request.method == 'GET':
@@ -164,6 +167,7 @@ def user_search(request):
         count = len(employee_results)
         context['count'] = count
         context['form_method'] = 'GET'
+        return render(request, 'User Search/user_search.html', context)
     if request.method == 'POST':
         search_fields = {}
         for data in request.POST:
@@ -276,8 +280,8 @@ def user_details(request, email):
                                                        {'email': email, 'client': getClients(request),
                                                         'del_ind': False})
     user_info1 = django_query_instance.django_filter_only_query(UserData,
-                                                       {'email': email, 'client': getClients(request),
-                                                        'del_ind': False})
+                                                                {'email': email, 'client': getClients(request),
+                                                                 'del_ind': False})
 
     context = {
         'inc_nav': True,
@@ -740,7 +744,6 @@ def m_docsearch_meth(request):
     return render(request, 'Reports/Doc_report.html', context)
 
 
-
 @login_required
 def accnt_report(request):
     client = getClients(request)
@@ -748,13 +751,26 @@ def accnt_report(request):
     acc_value_array = get_account_assignvalues(request)
     acc_cat_array = get_account_assignlist(request)
     company_array = get_companylist(request)
-
+    company_array.reverse()
     inp_acc_assgn_cat = [item['account_assign_cat'] for item in acc_value_array]
     inp_comp_code = company_array[0]['company_id'] if company_array else None
     inp_lang = lang_array[0]['language_id'] if lang_array else 'EN'
 
     if request.method == 'GET':
-        account_list = AccountingData.objects.filter(client=client, account_assign_cat__in=inp_acc_assgn_cat, del_ind=False)
+        # Check if inp_comp_code is not '*'
+        if inp_comp_code and inp_comp_code != '*':
+            account_list = AccountingData.objects.filter(
+                client=client,
+                company_id=inp_comp_code,
+                account_assign_cat__in=inp_acc_assgn_cat,
+                del_ind=False
+            )
+        else:
+            account_list = AccountingData.objects.filter(
+                client=client,
+                account_assign_cat__in=inp_acc_assgn_cat,
+                del_ind=False
+            )
 
         final_list = []
         for account_data in account_list:
@@ -872,7 +888,6 @@ def accnt_report(request):
         }
 
         return render(request, 'Reports/accnt_report.html', context)
-
 
 
 def get_acct_report(request):

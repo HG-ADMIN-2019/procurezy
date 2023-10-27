@@ -114,7 +114,8 @@ def get_emp_data_onload(request):
     for emails in employee_results:
         encrypted_email1 = encrypt(emails['email'])
         emails['encrypted_email'] = encrypted_email1
-    data = {'emp_data': employee_results}
+    count = len(employee_results)
+    data = {'employee_results': employee_results, 'count': count}
     return JsonResponse(data, safe=False)
 
 
