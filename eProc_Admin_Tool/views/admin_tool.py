@@ -137,7 +137,8 @@ def user_search(request):
     dropdown_time_zones = user_time_zones()
     dropdown_language = user_language_list()
     dropdown_messages = user_messages_list()
-    # employee_results_onload = get_emp_data()
+    employee_results_onload = get_emp_data()
+    count = len(employee_results_onload)
     form_method = 'POST'
 
     context = {
@@ -154,7 +155,8 @@ def user_search(request):
         'dropdown_time_zones': dropdown_time_zones,
         'dropdown_language': dropdown_language,
         'dropdown_messages': dropdown_messages,
-        # 'employee_results_onload': employee_results_onload,
+        'employee_results_onload': employee_results_onload,
+        'count': count,
     }
 
     if request.method == 'GET':
@@ -164,6 +166,7 @@ def user_search(request):
         count = len(employee_results)
         context['count'] = count
         context['form_method'] = 'GET'
+        return render(request, 'User Search/user_search.html', context)
     if request.method == 'POST':
         search_fields = {}
         for data in request.POST:

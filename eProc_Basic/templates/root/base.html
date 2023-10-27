@@ -131,6 +131,15 @@
        return false;
         }
     });
+    // Allows alpha numeric values without space, No Special Characters
+    $("body").on("keypress", ".check_special_char_nospace", function (event) {
+    var regex = new RegExp("^[a-zA-Z0-9]+$");
+    var key = String.fromCharCode(!event.charCode ? event.which : event.charCode);
+    if (!regex.test(key)) {
+       event.preventDefault();
+       return false;
+        }
+    });
   // Allows only characters with space
     $("body").on("keypress", ".check_only_character", function (event) {
     var regex = new RegExp("^[ a-zA-Z]+$");
