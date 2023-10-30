@@ -229,6 +229,26 @@ class ApplicationSettingsSave:
 
         return data, message
 
+    def generate_country_delete_flags(self, country_data):
+        delete_flags = []  # List to store delete_flag for each value
+
+        for country_detail in country_data['data']:
+            delete_flag = True
+
+            # Check if value is present in the transaction table
+            if django_query_instance.django_existence_check(CalenderConfig,
+                                                            {'country_code': country_detail['country_code'],
+                                                             'client': self.client,
+                                                             'del_ind': False}):
+                delete_flag = False
+
+            delete_flags.append(delete_flag)
+            data = {
+                'delete_flags': delete_flags
+            }
+
+        return data
+
     def generate_prod_cat_id_delete_flags(self, prod_cat_id_data):
         delete_flags = []  # List to store delete_flag for each value
 
