@@ -43,7 +43,7 @@ else {
     document.getElementById("company_code").value = "";
     document.getElementById("company_code").style.display = "none";
     document.getElementById("username").value = "";
-    document.getElementById("username").style display = "none";
+    document.getElementById("username").style.display = "none";
     document.getElementById("active").value = "";
     document.getElementById("active").style.display = "none";
 }
