@@ -155,36 +155,42 @@ function display_basic_db_data() {
     table_sort_filter('display_basic_table');
 }
 
-//deletes he duplicate data
 function delete_duplicate() {
     $('#id_popup_table').DataTable().destroy();
-    var language_id_check = new Array
-     var main_table_low_value = new Array
-    $("#id_popup_table TBODY TR").each(function() {
+    var language_id_check = new Array();
+    var main_table_low_value = new Array();
+    $("#id_popup_table TBODY TR").each(function () {
         var row = $(this);
-        //*************** reading data from the pop-up ***************
+
+        // Read data from the pop-up
         language_id = row.find("TD").eq(1).find('input[type="text"]').val().toUpperCase();
         description = row.find("TD").eq(2).find('input[type="text"]').val().toUpperCase();
-        checked_box = row.find("TD").eq(3).find('input[type="checkbox"]').is(':checked')
-            if (checked_box){
-                del_ind = '1'
-            }
-            else{
-                del_ind = '0'
+        checked_box = row.find("TD").eq(3).find('input[type="checkbox"]').is(':checked');
+
+        if (checked_box) {
+            del_ind = '1';
+        } else {
+            del_ind = '0';
+
+            // Check if both language_id and description are not empty
+            if (language_id.trim() !== '' && description.trim() !== '') {
                 if (language_id_check.includes(language_id)) {
                     $(row).remove();
                 }
                 language_id_check.push(language_id);
-                main_table_low_value = get_main_table_data_upload(); //Read data from main table
+
+                main_table_low_value = get_main_table_data_upload(); // Read data from the main table
                 if (main_table_low_value.includes(language_id)) {
                     $(row).remove();
                 }
                 main_table_low_value.push(language_id);
             }
-    })
-    table_sort_filter_popup_pagination('id_popup_table')
-    check_data()
+        }
+    });
+    table_sort_filter_popup_pagination('id_popup_table');
+    check_data();
 }
+
 
 // Function to hide and display save related popups
 $('#save_id').click(function () {

@@ -166,34 +166,42 @@ function display_basic_db_data() {
 
 function delete_duplicate() {
     $('#id_popup_table').DataTable().destroy();
-    var country_code_check = new Array
-    var main_table_low_value = new Array
+    var country_code_check = new Array();
+    var main_table_low_value = new Array();
     $("#id_popup_table TBODY TR").each(function () {
         var row = $(this);
-        //*************** reading data from the pop-up ***************
-        country_name = row.find("TD").eq(2).find('input[type="text"]').val().toUpperCase();
-        country_code = row.find("TD").eq(1).find('input[type="text"]').val().toUpperCase();
-        checked_box = row.find("TD").eq(3).find('input[type="checkbox"]').is(':checked')
-            if (checked_box){
-                del_ind = '1'
-            }
-            else{
-                del_ind = '0'
+
+        // Read data from the pop-up
+        var country_name = row.find("TD").eq(2).find('input[type="text"]').val().toUpperCase();
+        var country_code = row.find("TD").eq(1).find('input[type="text"]').val().toUpperCase();
+        var checked_box = row.find("TD").eq(3).find('input[type="checkbox"]').is(':checked');
+
+        if (checked_box) {
+            // Keep rows with the checkbox checked
+            del_ind = '1';
+        } else {
+            del_ind = '0';
+            // Only proceed if country_code and country_name are not empty
+            if (country_code && country_name) {
                 if (country_code_check.includes(country_code)) {
+                    // Remove rows with duplicate country_code
                     $(row).remove();
                 }
                 country_code_check.push(country_code);
-                main_table_low_value = get_main_table_data_upload(); //Read data from main table
+
+                main_table_low_value = get_main_table_data_upload(); // Read data from the main table
                 if (main_table_low_value.includes(country_code)) {
-                        $(row).remove();
+                    // Remove rows with duplicate country_code in the main table
+                    $(row).remove();
                 }
                 main_table_low_value.push(country_code);
             }
-
+        }
     });
-    table_sort_filter_popup_pagination('id_popup_table')
-    check_data()
+    table_sort_filter_popup_pagination('id_popup_table');
+    check_data();
 }
+
 
 // Functtion to hide and display save related popups
 $('#save_id').click(function () {
