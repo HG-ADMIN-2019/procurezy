@@ -177,7 +177,7 @@ function get_main_table_data_upload() {
         main_attribute.sup_acc_value = row.find("TD").eq(7).html();
         main_attribute.sup_currency_id = row.find("TD").eq(8).html();
         main_attribute.del_ind = row.find("TD").eq(9).find('input[type="checkbox"]').is(':checked');
-        var wfacc_compare_maintable = main_attribute.company_id+'-'+main_attribute.account_assign_cat+'-'+main_attribute.acc_value+'-'+main_attribute.app_username+'-'+main_attribute.sup_company_id+'-'+main_attribute.sup_account_assign_cat+'-'+main_attribute.sup_acc_value+'-'+main_attribute.sup_currency_id +'-'+ main_attribute.del_ind
+        var wfacc_compare_maintable = main_attribute.company_id+'-'+main_attribute.account_assign_cat+'-'+main_attribute.acc_value+'-'+main_attribute.app_username+'-'+main_attribute.sup_company_id+'-'+main_attribute.sup_account_assign_cat+'-'+main_attribute.sup_acc_value+'-'+main_attribute.sup_currency_id
         main_table_low_value.push(wfacc_compare_maintable);
     });
     table_sort_filter('display_basic_table');
