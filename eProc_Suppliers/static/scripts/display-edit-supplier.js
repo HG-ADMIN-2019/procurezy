@@ -49,11 +49,13 @@ function edit_basic_supp_data(){
      $("#edit_mode").prop("hidden", false);
      var num = w_days.match(/\d/g);
      $("select[id=working_days_id]").val(num);
+     $('#working_days_id').selectpicker('refresh');
     document.getElementById('sbd_edit_button').style.display = 'none' ;
      $("#cancel_button").prop("hidden", false);
     $("#sbd_edit_button").prop("hidden", true);
     document.getElementById('sbd_save_cancel_button').style.display = 'block';
     $("#sbd_save_cancel_button").prop("hidden", false);
+    values_reload();
 }
 
 // onclick of cancel button functionality
@@ -64,10 +66,12 @@ function cancel_basic_details(){
     document.getElementById('sbd_edit_button').style.display = 'block'
     document.getElementById('display_mode').style.display = 'block';
     document.getElementById('edit_mode').style.display = 'none';
+    $('#working_days_id').selectpicker('refresh');
     var result = get_working_day_val();
     $("#working_days_id").val(result);
     $("#edit_mode").prop("disabled", true);
     $("#sbd_edit_button").prop("hidden", false);
+    get_values_onerror();
     $('#image-preview').hide();
     $('#image-preview3').show();
     var output = document.getElementById('image-preview3');
@@ -226,7 +230,7 @@ function save_basic_form_validation(){
                     temp[i].nextElementSibling.innerHTML = err_text + " required";
                    is_valid = false;
                 }
-                else if(temp[i].value.length <= 2){
+                else if(temp[i].value.length < 3){
                     var err_text = temp[i].parentNode.children[0].innerHTML;
                     $(".error_message").prop("hidden", false);
                     var display_id = temp[i].nextElementSibling.id;
