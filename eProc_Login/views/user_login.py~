@@ -10,18 +10,27 @@ Author:
     Babu / Siddarth / Sanjay
 """
 from django.contrib import messages
+from django.core import serializers
+from django.core.exceptions import ObjectDoesNotExist
 from django.http import HttpResponse, JsonResponse
-from django.http import HttpResponseRedirect
-from django.shortcuts import render, redirect
 
-from eProc_Basic.Utilities.functions.django_query_set import DjangoQueries
+from eProc_Add_Item.views import JsonParser_obj
 from eProc_Basic.Utilities.functions.get_db_query import *
-from eProc_Basic.Utilities.functions.messages_config import get_message_desc_without_client
+from eProc_Basic.Utilities.functions.messages_config import get_msg_desc, get_message_desc_without_client, \
+    get_message_desc
 from eProc_Basic.Utilities.global_defination import global_variables
+from eProc_Basic.Utilities.messages.messages import MSG029, MSG055, MSG056, MSG057, MSG122
 from eProc_Emails.Utilities.email_notif_generic import email_notify
 from eProc_Login.Utilities.login_specific import UserFncts, login_attribute
+from django.http import HttpResponseRedirect
+from django.shortcuts import render, redirect
 from eProc_Registration.models import UserData
 from eProc_Shopping_Cart.context_processors import update_user_info
+from eProc_Basic.Utilities.functions.django_query_set import DjangoQueries
+import http.client
+import random
+from django.conf import settings
+from django.contrib.auth import authenticate, login
 
 django_query_instance = DjangoQueries()
 

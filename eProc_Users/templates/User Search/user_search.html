@@ -112,13 +112,14 @@
                 </form>
             </div>
         </div>
-        {% if count == 0  %}
+        {% if count == 0 %}
         <div class="search_result_count_card card" id="result_id">
             <div class="card-body">
                 <h6 class="card-title">No Results Found</h6>
             </div>
         </div>
         {% endif %}
+        {% if  employee_results %}
         <div style="margin-top:25px" id="error_msg_div" class="alert alert-success" hidden><span id="success_msg_id"></span></div>
 
         <div class="card mt-5">
@@ -198,7 +199,7 @@
                 </div>
             </div>
         </div>
-
+        {% endif %}
     </div>
 </div>
 
@@ -434,6 +435,7 @@
 
 
     {{ employee_results|json_script:"employee_results" }}
+    {{ count|json_script:"count" }}
     {{ employee_results_onload|json_script:"employee_results_onload" }}
     {{ dropdown_user|json_script:"dropdown_user" }}
     {{ dropdown_user_date_format|json_script:"dropdown_user_date_format" }}
@@ -454,6 +456,7 @@ var db_header_data = uiConstants["CONST_HEADER_DATA_EMP_DETAIL"]
 var data_delete = '';
 var rendered_emp_data = JSON.parse(document.getElementById('employee_results').textContent);
 var emp_data_onload = JSON.parse(document.getElementById('employee_results_onload').textContent);
+var count = JSON.parse(document.getElementById('count').textContent);
 var rendered_dropdown_user = JSON.parse(document.getElementById('dropdown_user').textContent);
 var rendered_dropdown_user_date_format = JSON.parse(document.getElementById('dropdown_user_date_format').textContent);
 var rendered_dropdown_decimal_list = JSON.parse(document.getElementById('dropdown_decimal_list').textContent);
@@ -464,11 +467,11 @@ var rendered_dropdown_language = JSON.parse(document.getElementById('dropdown_la
 var messages_list = {{dropdown_messages|safe}};
 var form_method = '{{form_method|safe}}';
 var employee_data = new Array();
+var emp_data;
 
 $(document).ready(function() {
     $('#id_userpopup_table').DataTable(); // Replace 'id_userpopup_table' with your table's ID or selector
     if(form_method == 'GET'){
-<!--    display_emp_data(emp_data_onload);-->
     document.getElementById("username").value = '';
     document.getElementById("first_name").value = '';
     document.getElementById("last_name").value = '';
@@ -481,22 +484,15 @@ $(document).ready(function() {
     }
 });
 $('form').on('reset',function (e) {
-    localStorage.removeItem("username");
-    localStorage.removeItem("first_name");
-    localStorage.removeItem("last_name");
-    localStorage.removeItem("email");
-    localStorage.removeItem("user_type");
-    localStorage.removeItem("employee_id");
-    localStorage.removeItem("user_locked");
-    localStorage.removeItem("pwd_locked");
-    localStorage.removeItem("is_active");
-    localStorage.setItem("user_type", "All");
+    e.preventDefault();
+    localStorage.clear();
     $(".error_message").prop("hidden", true);
     $("#result_id").prop("hidden", true);
-    form_method = 'GET';
-        display_emp_data(emp_data_onload);
-        localStorage.setItem("username", "");
-        document.getElementById("user_type").value = "All";
+     $("input[type=text], input[type=checkbox]").val('');
+    document.getElementById("is_active_id").value = "on";
+    $('#search_form')[0].submit();
+    localStorage.setItem("user_type", "All");
+    document.getElementById("user_type").value = "All";
 });
      var currency_opt = ''
      var language_opt = ''

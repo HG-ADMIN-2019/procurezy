@@ -414,6 +414,10 @@ def create_update_delete_flags(request):
     update_user_info(request)
     app_data = JsonParser_obj.get_json_from_req(request)
     application_settings_save_instance = ApplicationSettingsSave()
+    if app_data['table_name'] == 'Country':
+        display_data = application_settings_save_instance.generate_country_delete_flags(app_data)
+        return JsonResponse(display_data, safe=False)
+
     if app_data['table_name'] == 'UnspscCategories':
         display_data = application_settings_save_instance.generate_prod_cat_id_delete_flags(app_data)
         return JsonResponse(display_data, safe=False)
@@ -451,6 +455,9 @@ def create_update_delete_flags(request):
     if app_data['table_name'] == 'UnspscCategoriesCustDesc':
         display_data = application_settings_save_instance.generate_prod_cat_Cust_delete_flags(app_data)
         return JsonResponse(display_data, safe=False)
+    if app_data['table_name'] == 'OrgCompanies':
+        display_data = application_settings_save_instance.generate_company_delete_flags(app_data)
+        return JsonResponse(display_data, safe=False)
     if app_data['table_name'] == 'AccountingData':
         display_data = application_settings_save_instance.generate_aav_delete_flags(app_data)
         return JsonResponse(display_data, safe=False)
@@ -469,7 +476,9 @@ def create_update_delete_flags(request):
     if app_data['table_name'] == 'OrgAddress':
         display_data = application_settings_save_instance.generate_OrgAddress_delete_flags(app_data)
         return JsonResponse(display_data, safe=False)
-
+    if app_data['table_name'] == 'Payterms':
+        display_data = application_settings_save_instance.generate_payment_term_delete_flags(app_data)
+        return JsonResponse(display_data, safe=False)
 
 
 def get_dropdown_data(request):

@@ -3,6 +3,11 @@ var validate_add_attributes = [];
 var main_table_low_value = [];
 var country={};
 
+// Hide delete popup
+function hideModal() {
+    $('#countriesModal').modal('hide');
+}
+
 //onclick of add button display countriesModal popup and set GLOBAL_ACTION button value
 function onclick_add_button(button) {
     $("#error_msg_id").css("display", "none")
@@ -267,6 +272,21 @@ function get_main_table_data_upload() {
     return main_table_low_value
 }
 
+// Function to get the selected row data
+function get_row_data(tableSelector) {
+    main_table_checked = [];
+    $(tableSelector).DataTable().$('input[type="checkbox"]').each(function () {
+        var checkbox = $(this);
+        var row = checkbox.closest("tr");
+        var country_arr_obj = {};
+        country_arr_obj.del_ind = checkbox.is(':checked');
+        if(country_arr_obj.del_ind) {
+            country_arr_obj.country_code = row.find("TD").eq(1).find('input[type="text"]').val() || row.find("TD").eq(1).html();
+            country_arr_obj.country_name = row.find("TD").eq(2).find('input[type="text"]').val() || row.find("TD").eq(2).html();
+            main_table_checked.push(country_arr_obj);
+        }
+    });
+}
 
 // Function to get the selected row data
 function get_selected_row_data(){

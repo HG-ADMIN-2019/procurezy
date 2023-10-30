@@ -229,6 +229,26 @@ class ApplicationSettingsSave:
 
         return data, message
 
+    def generate_country_delete_flags(self, country_data):
+        delete_flags = []  # List to store delete_flag for each value
+
+        for country_detail in country_data['data']:
+            delete_flag = True
+
+            # Check if value is present in the transaction table
+            if django_query_instance.django_existence_check(CalenderConfig,
+                                                            {'country_code': country_detail['country_code'],
+                                                             'client': self.client,
+                                                             'del_ind': False}):
+                delete_flag = False
+
+            delete_flags.append(delete_flag)
+            data = {
+                'delete_flags': delete_flags
+            }
+
+        return data
+
     def generate_prod_cat_id_delete_flags(self, prod_cat_id_data):
         delete_flags = []  # List to store delete_flag for each value
 
@@ -478,6 +498,31 @@ class ApplicationSettingsSave:
 
         return data
 
+    def generate_company_delete_flags(self, company_data):
+        delete_flags = []  # List to store delete_flag for each value
+
+        for company_detail in company_data['data']:
+            delete_flag = True
+
+            # Tables to check for existence
+            tables_to_check = [AccountingData, AccountingDataDesc, DetermineGLAccount, WorkflowSchema, SpendLimitValue,
+                               SpendLimitId, ApproverLimitValue, ApproverLimit, WorkflowACC, OrgAddressMap]
+
+            for table_name in tables_to_check:
+                if django_query_instance.django_existence_check(table_name,
+                                                                {'company_id': company_detail['company_id'],
+                                                                 'client': self.client,
+                                                                 'del_ind': False}):
+                    delete_flag = False
+                    break
+
+            delete_flags.append(delete_flag)  # Store delete_flag value for each iteration
+        data = {
+            'delete_flags': delete_flags  # Include the delete_flags list in the response data
+        }
+
+        return data
+
     def generate_aav_delete_flags(self, aav_data):
         delete_flags = []
         field_name_mapping = {
@@ -627,6 +672,27 @@ class ApplicationSettingsSave:
         data = {
             'delete_flags': delete_flags
         }
+
+        return data
+
+    def generate_payment_term_delete_flags(self, payment_term_data):
+        delete_flags = []  # List to store delete_flag for each value
+
+        for payment_term_detail in payment_term_data['data']:
+            delete_flag = True
+
+            # Check if value is present in the MessagesIdDesc table
+            if django_query_instance.django_existence_check(Payterms_desc,
+                                                            {'payment_term_key': payment_term_detail[
+                                                                'payment_term_key'],
+                                                             'client': self.client,
+                                                             'del_ind': False}):
+                delete_flag = False
+
+            delete_flags.append(delete_flag)  # Store delete_flag value for each iteration
+            data = {
+                'delete_flags': delete_flags  # Include the delete_flags list in the response data
+            }
 
         return data
 

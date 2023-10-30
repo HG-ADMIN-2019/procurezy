@@ -118,7 +118,7 @@ function save_user_form_validation(){
                 }
             }
             else{
-                if(temp[i].value == ''){
+                if((temp[i].value == '') || (temp[i].value.indexOf("  ") >= 0)){
                     var err_text = temp[i].parentNode.children[0].innerHTML;
                     $(".error_message").prop("hidden", false);
                     temp[i].nextElementSibling.innerHTML = err_text + " required";
@@ -150,7 +150,7 @@ function save_user_form_validation(){
                            is_valid = false;
                      }
                 }
-                if(temp[i].id == 'phone_num'){
+                if((temp[i].id == 'phone_num') || (temp[i].value.indexOf(" ") >= 0)) {
                      if (temp[i].value.length != 10) {
                             valid_data = false
                              var msg = "JMSG002";
@@ -161,7 +161,7 @@ function save_user_form_validation(){
                             var display_id = temp[i].nextElementSibling.id;
                             $('#'+display_id).prop('hidden', false);
                             document.getElementById(display_id).style.display = "block";
-                            temp[i].nextElementSibling.innerHTML = display1 + " for Mobile Number";
+                            temp[i].nextElementSibling.innerHTML = display1 + "";
                            is_valid = false;
                      }
                 }

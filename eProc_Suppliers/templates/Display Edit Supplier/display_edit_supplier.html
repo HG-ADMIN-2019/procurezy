@@ -26,11 +26,6 @@
                     <i class="fas fa-sitemap"></i><span> Organizational Information</span>
                 </div>
             </li>
-<!--            <li data-tab-target="#buisness_doc_tab" class="sub-tab" id="business_doc_tab">-->
-<!--                <div class="sub-tab-link">-->
-<!--                    <i class="fas fa-file-alt"></i><span> Business Document</span>-->
-<!--                </div>-->
-<!--            </li>-->
         </ul>
 
         <div class="tab-content">
@@ -79,7 +74,7 @@
                                     <input value="{{supplier_info.supp_guid}}" id="supplier_guid" hidden>
                                     <div class="form-group col-md">
                                         <label> Supplier Number</label><span class="hg_required"></span><br>
-                                        <input type="text" class="form-control hg_edit_display_mode mandatory_fields check_special_char" name="supplier_id" id="supplier_id" value="{{supplier_info.supplier_id}}">
+                                        <input type="text" class="form-control hg_edit_display_mode mandatory_fields check_special_char_nospace" name="supplier_id" id="supplier_id" value="{{supplier_info.supplier_id}}">
                                         <span id="err_supp_id" class="error_message" hidden></span>
                                     </div>
                                     <div class="form-group col-md">
@@ -94,7 +89,7 @@
 
                                     <div class="form-group col-md">
                                         <label> Registration Number</label><span class="hg_required"></span><br>
-                                        <input type="text" class="form-control hg_edit_display_mode mandatory_fields check_special_char" id="supplier_regnum" value="{{supplier_info.registration_number}}">
+                                        <input type="text" class="form-control hg_edit_display_mode mandatory_fields check_special_char_nospace" id="supplier_regnum" value="{{supplier_info.registration_number}}">
                                         <span id="err_reg_num" class="error_message" hidden></span>
                                     </div>
                                 </div>
@@ -102,7 +97,7 @@
                                 <div class="row">
                                     <div class="form-group col-md">
                                         <label> First Name</label><span class="hg_required"></span><br>
-                                        <input type="text" class="form-control hg_edit_display_mode mandatory_fields check_special_char" id="name1" name="name1" value="{{supplier_info.name1}}" >
+                                        <input type="text" class="form-control hg_edit_display_mode mandatory_fields check_special_char_nospace" id="name1" name="name1" value="{{supplier_info.name1}}" >
                                         <span id="err_supp_name1" class="error_message" hidden></span>
                                     </div>
 
@@ -151,7 +146,7 @@
                                 <div class="row">
                                     <div class="form-group col-md">
                                         <label> City</label><span class="hg_required"></span><br>
-                                        <input type="text" class="form-control hg_edit_display_mode mandatory_fields check_special_char" id="city_id" name="city_id" value="{{supplier_info.city}}">
+                                        <input type="text" class="form-control hg_edit_display_mode mandatory_fields check_special_char_nospace" id="city_id" name="city_id" value="{{supplier_info.city}}">
                                         <span id="err_city" class="error_message" hidden></span>
                                     </div>
 
@@ -244,7 +239,7 @@
                                         <label> Working Days</label><span class=""></span><br>
 <!--                                        <input type="text" class="form-control hg_edit_display_mode" id="working_days" value="{{supplier_info.delivery_days}}">-->
                                          <div  id="display_mode" >
-                                        <select type="text" class="multiple_select form-control dropdown_required"  id="working_days" name="working_days" multiple data-selected-text-format="count" disabled>
+                                        <select type="text" class="multiple_select form-control dropdown_required"  id="working_days" name="working_days" multiple data-selected-text-format="count" data-actions-box="true" disabled>
                                             <option value="1">Sunday</option> <option value="2">Monday</option> <option value="3">Tuesday</option> <option value="4">Wednesday</option> <option value="5">Thursday</option> <option value="6">Friday</option> <option value="7">Saturday</option>
                                         </select>
                                          <span id="err_working_days_disp" class="wday_err_msg" hidden></span>
@@ -503,6 +498,7 @@ $(document).ready(function(){
       $("#sbd_edit_button").prop("hidden", true);
       document.getElementById('sbd_edit_button').style.display = 'none';
      $("#working_days").prop("hidden", false);
+     $("#working_days").prop("disabled", false);
      $("#working_days_id").prop("hidden", true);
      MultipleSelect();
      var flag = localStorage.getItem("error_flag");
@@ -539,9 +535,20 @@ $(document).ready(function(){
 
  $("body").on("keypress keyup change blur", ".mandatory_fields", function (event) {
     if((event.currentTarget.value == "") || (event.currentTarget.value == null)) {
-        document.getElementById(event.currentTarget.nextElementSibling.id).style.display = "block";
+        var display_id = event.currentTarget.nextElementSibling.id;
+        $('#'+display_id).prop('hidden', false);
+        event.currentTarget.nextElementSibling.innerHTML = "Please enter valid value";
     }
-    else if(event.currentTarget.value.length >= 2 ){
+    else if(event.currentTarget.value.length < 3 ){
+        $('#event.currentTarget.nextElementSibling.id').prop('hidden', true);
+        document.getElementById(event.currentTarget.nextElementSibling.id).style.display = "block";
+         var display_id = event.currentTarget.nextElementSibling.id;
+         $('#'+display_id).prop('hidden', false);
+        event.currentTarget.nextElementSibling.innerHTML = "Please enter min 3 chars";
+    }
+    else if(event.currentTarget.value.length >= 3 ){
+        var display_id = event.currentTarget.nextElementSibling.id;
+        $('#'+display_id).prop('hidden', true);
         document.getElementById(event.currentTarget.nextElementSibling.id).style.display = "none";
     }
     else{

@@ -11,5 +11,6 @@ def convert_currency(value, from_currency, to_currency):
     """
     try:
         return round(CurrencyConverter().convert(value, from_currency, to_currency), 2)
-    except ValueError:
-        return None
+    except ValueError as e:
+        return value
+        # return None

@@ -575,7 +575,7 @@
                     </button>
                 </div>
                 <div class="modal-body">
-                    <p>Deletion of the address number is restricted as it is referenced in a dependent table.</p>
+                    <p id="errorDeleteRestriction"></p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-primary" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
@@ -865,6 +865,7 @@
     function get_address_detail_to_delete(element) {
         GLOBAL_ACTION = "DELETE";
         var address_number = [];
+        var error_message = '';
         $("#error_msg_id").css("display", "none")
         var getindex = element.split("-")[1]
         var address_number = parseInt(getindex)
@@ -880,6 +881,8 @@
             success: function(Response) {
                 var docTypeArray = Response.delete_flags[0];
                 if (docTypeArray === false) {
+                    error_message = ui_messeges("JMSG054");
+                    document.getElementById("errorDeleteRestriction").innerHTML = error_message;
                     $('#delete_restricted_confirm_popup').modal('show')
                 } else {
                     $('#id_delete_confirm_popup').modal('show')
