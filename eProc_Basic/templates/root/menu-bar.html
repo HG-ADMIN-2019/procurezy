@@ -130,11 +130,11 @@
         </div>
         <div id="shop_assist_sub_menu" style="display:none" >
             <ul class="navbar-nav mr-auto mt-2 mt-lg-0">
-                <li class="nav-item" id="nav-item_grp_categroup">
+                <li class="nav-item active" id="nav-item_grp_categroup">
                     {% if sub_menu.SC_GROUPING %}
                     {% url 'eProc_Purchaser_Cockpit:sc_item_field_filter'  as group_cat_url %}
                     <div class="nav-link" id="grp_cat_btn">
-                        <a href="{{group_cat_url}}" {% if request.path == group_cat_url %} class="active"{% endif %} >Shopping Cart Grouping</a>
+                        <a href="{{group_cat_url}}" {% if request.path == group_cat_url %} class="active" {% endif %} >Shopping Cart Grouping</a>
                     </div>
                     {% endif %}
                 </li>

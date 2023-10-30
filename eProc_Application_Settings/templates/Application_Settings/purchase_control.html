@@ -177,6 +177,8 @@
     var db_header_data = uiConstants["CONST_HEADER_DATA_PUR_CONTROL"]
     var rendered_call_off = uiConstants["CONST_PUR_CONTROL_CALLOFF_DATA"]
     var pc_company_dropdown,call_off_dropdown,prod_cat_dropdown,activate_dropdown;
+    var hiddenCompanyIDs = [];
+    var hiddenCallOffValue = [];
 
 <!--    var call_off_dropdown = `-->
 <!--        <option value='01'>Catalog</option>-->
@@ -208,12 +210,10 @@
     }
 
     function on_page_load_dropdown() {
-        var hiddenCompanyIDs = [];
-        var hiddenCallOffValue = [];
         var hiddenProd_catIDs = [];
+        hide_company_values();
 
         pc_company_dropdown='';
-        hiddenCompanyIDs = [];
         var Not_used = false;
         for(i = 0; i < rendered_pc_company_data.length; i++) {
             var item = rendered_pc_company_data[i];
@@ -239,8 +239,9 @@
                  $.each(rendered_activate, function(i, item){
                     activate_dropdown += '<option value="' + item.field_type_id + '">' + item.field_type_id + '</option>';
                  });
-                 Not_used = true;
-                 break;
+<!--                 Not_used = true;-->
+<!--                 break;-->
+                return;
             }else if (!hiddenCompanyIDs.includes(company_code)) {
                 if (areAllValuesUsed(company_code)) {
                     if (rendered_call_off.length === hiddenCallOffValue.length) {
@@ -324,6 +325,39 @@
                   activate_dropdown += '<option value="' + item.field_type_id + '">' + item.field_type_id + '</option>';
                 });
                 return true;
+            }
+        }
+    }
+
+    function hide_company_values() {
+        for(i = 0; i < rendered_pc_company_data.length; i++) {
+            var item = rendered_pc_company_data[i];
+            var company_code = item.company_id
+            var callOffValues = main_table_data[company_code];
+            if (!callOffValues) {
+                continue;
+            }
+
+            var callOff
+            main_table_callOffValues = {};
+            callOffValues.forEach(item => {
+                callOff = item.call_off; // Assuming this property holds the auth_level
+                if (!main_table_callOffValues[callOff]) {
+                    main_table_callOffValues[callOff] = new Set();
+                }
+                main_table_callOffValues[callOff].add(item.prod_cat_id);
+            });
+
+            hiddenCallOffValue = [];
+            for (const item of rendered_call_off) {
+                const callOffValue = item.desc;
+                if (rendered_prod_category.length === main_table_callOffValues[callOffValue]?.size) {
+                    hiddenCallOffValue.push(callOffValue);
+                }
+            }
+
+            if(rendered_call_off.length==hiddenCallOffValue.length){
+                hiddenCompanyIDs.push(company_code)
             }
         }
     }

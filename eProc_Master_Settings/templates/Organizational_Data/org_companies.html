@@ -43,8 +43,8 @@
                    <button class="btn btn-secondary btn-sm" title="Edit" id="id_edit_data"  onclick="onclick_edit_button()">
                         <i class="fas fa-edit" id="edit" ></i> edit
                     </button>
-                    <button class="btn btn-outline-danger btn-sm" title="Delete" id="id_delete_data" value="auth_delete" style="display:none;" data-toggle="modal" data-target="#id_delete_confirm_popup">
-                        <i class="fa fa-trash" ></i> Delete
+                    <button class="btn btn-outline-danger btn-sm" id="id_delete_data" title= "DELETE" value="Delete" style="display:none;" onclick="onclick_delete_button()">
+                        <i class="fa fa-trash"></i> delete
                     </button>
                     <button class="btn btn-primary btn-sm" title="Copy" id="id_copy_data" style="display:none;" value="COPY"  type="button" onclick="onclick_copy_button()">
                         <i class="fa fa-copy"></i> Copy
@@ -140,6 +140,9 @@
                     <button type="button" class="btn btn-outline-primary remove_upload_data" title="Cancel" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
                     <button id="id_delete_duplicate" class="btn btn-primary" title="Delete" style="display:none;" type="button" onclick="delete_duplicate()"><i class="fa fa-trash"></i> delete duplicates</button>
                     <button id="id_check_data" title="check" style="display:none;" class="btn btn-primary" type="button" onclick="check_data()"><i class="fas fa-check"></i> check</button>
+                    <button class="btn btn-primary btn-sm" title="Delete" id="delete_data" value="DELETE" data-toggle="modal" data-target="#id_delete_confirm_popup" onclick="hideModal()">
+                        <i class="fa fa-trash"></i> Delete
+                    </button>
                     <button class="btn btn-primary" title="Save" id="save_id"><i class="fas fa-save"></i> save</button>
                 </div>
             </div>
@@ -229,16 +232,73 @@
         table_sort_filter('id_popup_table');
     }
 
+    // Onclick delete Button
+    function onclick_delete_button() {
+        $("#error_msg_id").css("display", "none");
+        $('#id_popup_table').DataTable().destroy();
+        $("#id_popup_tbody").empty();
+        GLOBAL_ACTION = "DELETE";
+        var edit_basic_data = "";
+        var guid = '';
+        main_table_checked = [];
+        get_row_data("#display_basic_table"); // Function call to get the selected row data
+        display_button(); // Call the display_button function to show/hide the buttons
+        var data = {'data': main_table_checked, 'table_name': 'OrgCompanies', 'action': GLOBAL_ACTION };
+        OpenLoaderPopup();
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'eProc_Configuration:create_update_delete_flags' %}",
+            data: JSON.stringify(data),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function(Response) {
+                var docTypeArray = Response.delete_flags; // Get the delete_flags array from the response
+                var res = get_all_checkboxes(); // Function to get all the checkboxes
+                var $chkbox_all = $('td input[type="checkbox"]', res);
+                var j = 0; // Index for docTypeArray
+                for (var i = 0; i < $chkbox_all.length; i++) {
+                    if ($chkbox_all[i].checked) {
+                        var row = $chkbox_all[i].parentNode.parentNode;
+                        if (j < docTypeArray.length && docTypeArray[j] === false) {
+                            check = '<input type="checkbox" disabled>';
+                            $('#delete_data').prop('disabled', true);
+                        } else {
+                            check = '<input type="checkbox" onclick="enableDeleteButton()">';
+                            $('#delete_data').prop('disabled', true);
+                        }
+                        j++; // Move to the next index in docTypeArray
+                        edit_basic_data +=
+                            `<tr>
+                                <td>${check}</td>
+                                <td><input class="form-control" type="text" value="${row.cells[1].innerHTML}" disabled></td>
+                                <td><input class="form-control" type="text" value="${row.cells[2].innerHTML}" disabled></td>
+                                <td><input class="form-control" type="text" value="${row.cells[3].innerHTML}" disabled></td>
+                                <td hidden><input class="form-control" value="${row.cells[4].innerHTML}" disabled></td>
+                                <td hidden><input required></td>
+                                <td class="class_del_checkbox" hidden><input type="checkbox" required></td>
+                            </tr>`;
+                    }
+                }
+                CloseLoaderPopup();
+                $('#id_popup_tbody').append(edit_basic_data);
+                $("#header_select").prop( "hidden", false );
+                $("#id_del_ind_checkbox").prop("hidden", true);
+                $('#companyModal').modal('show');
+                table_sort_filter('id_popup_table');
+            },
+        });
+    }
+
     //delete the selected row in db................
     var main_table_orgcompany_checked = [];
     function main_table_delete() {
         $('#success_msg_id').empty()
         GLOBAL_ACTION = 'DELETE'
-        main_table_orgcompany_checked = [];
+        main_table_checked = [];
         $('#display_basic_table').DataTable().destroy();
-        get_selected_row_data(); // Function call to get the selected row data
+        get_row_data("#id_popup_table");
         $('#id_delete_confirm_popup').modal('hide');
-        data = {'data':main_table_orgcompany_checked,'table_name':'OrgCompanies','action':GLOBAL_ACTION}
+        data = {'data':main_table_checked,'table_name':'OrgCompanies','action':GLOBAL_ACTION}
         OpenLoaderPopup();
         $.ajax({
             type: 'POST',
@@ -265,7 +325,7 @@
 
     //onclick of data Upload copy data to modal pop-up
     function onclick_display_csv_data() {
-       $("#valid_upload").modal('hide');
+        $("#valid_upload").modal('hide');
         $("#id_delete_duplicate").hide()
         $("#id_check_success_messages").empty();
         $("#id_check_error_messages").empty();
@@ -274,6 +334,7 @@
         $("#id_check_special_character_messages").prop("hidden", true);
         $("#error_msg_id").css("display", "none")
         $('#id_popup_table').DataTable().destroy();
+        $("#id_popup_tbody").empty();
         formdata = new FormData();
         attached_file = $('#id_file_data_upload').prop('files')[0]
         if(attached_file == undefined){
@@ -314,7 +375,7 @@
                                     del_ind = '<input type="checkbox" value="' + value.del_ind + '" required>'
                                 }
 
-                                  edit_basic_data += '<tr><td><input type="checkbox" required></td><td><input class="form-control" type="text" value="'+value.company_id+'"  name= "company_id" minlength="4" maxlength="08"></td><td><input class="form-control"  type="text" value="'+value.name1+'" maxlength="100" onkeypress="return /[a-z0-9]/i.test(event.key)" name="name1"  required></td><td><input class="form-control" type="text" value="'+value.name2+'" maxlength="100" onkeypress="return /[a-z0-9]/i.test(event.key)" name="name2" required></td><td hidden></td><td hidden><input type="text" value=""></td><td>' + del_ind + '</td></tr>';
+                                  edit_basic_data += '<tr><td><input type="checkbox" required></td><td><input class="form-control check_alphastar_no_space" type="text" value="'+value.company_id+'"  name= "company_id" minlength="4" maxlength="08"></td><td><input class="form-control check_only_character"  type="text" value="'+value.name1+'" maxlength="100" onkeypress="return /[a-z0-9]/i.test(event.key)" name="name1"  required></td><td><input class="form-control check_only_character" type="text" value="'+value.name2+'" maxlength="100" onkeypress="return /[a-z0-9]/i.test(event.key)" name="name2" required></td><td hidden></td><td hidden><input type="text" value=""></td><td>' + del_ind + '</td></tr>';
 
                             });
                             $('#id_popup_tbody').append(edit_basic_data);
@@ -361,6 +422,7 @@
             document.getElementById("id_error_msg_orgcompany_name2").innerHTML = "";
             document.getElementById("id_error_msg_orgcompany_length").innerHTML = "";
             count = 0;
+            flag = 0;
             var company_array = new Array
             var DB_array = new Array
             var company_list = new Array
@@ -382,81 +444,95 @@
             }
             company_list.push(company_dic)
             get_main_table_data(); //Read data from main table
-            var format = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
+            var format = /[`!@#$%^&()_+\-=\[\]{};':"\\|,.<>\/?~]/;
+            var format1 = /^[A-Za-z0-9]{2,}$/;
             var formats = /[`!@#$%^&()_+\-=\[\]{};':"\\|,.<>\/?~]/;
-            //*************** checking for empty records for company code ***************
-            if(company_dic.company_id.length < 4){
-                $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
-                row_color_highlight_empty(row);
-                $("#id_error_msg_orgcompany_length").prop("hidden",false);
-                error_message = ui_messeges("JMSG002")// Get message details
-                var display8 = error_message;
-                document.getElementById("id_error_msg_orgcompany_length").innerHTML = display8+ " Minimum 4 length company Code";
-                $("#id_check_special_character_messages").prop("hidden",false);
-                count = count +1;
-            }
-            //*************** checking for special characters for country code ***************
-            else if(formats.test(company_dic.company_id)){
-                $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
-                row_color_highlight_special(row);
-                $("#id_error_msg_orgcompany_code").prop("hidden",false);
-                error_message = ui_messeges("JMSG003")// Get message details
-                var display4 = error_message;
-                document.getElementById("id_error_msg_orgcompany_code").innerHTML = display4+ "company Code";
-                $("#id_check_special_character_messages").prop("hidden",false);
-                count = count +1;
-            }
-            else{
-                $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "none");
-                row_color_no_highlight(row);
-                $(row).css("border", "");
-                $("#id_delete_duplicate").hide()
-            }
-             //*************** checking for empty records for company name (max length = 2) ***************
-            if(company_dic.name1.length == 0){
-                $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
-                row_color_highlight_empty(row);
-                $("#id_error_msg_orgcompany_name1").prop("hidden",false);
-                error_message = ui_messeges("JMSG002")// Get message details
-                var display8 = error_message;
-                document.getElementById("id_error_msg_orgcompany_name1").innerHTML = display8+ "company Name 1";
-                $("#id_check_special_character_messages").prop("hidden",false);
-                count = count +1;
-            }
-            //*************** checking for special characters for company name ***************
-            else if(format.test(company_dic.name1)){
-                $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "1px solid #FF0000");
-                row_color_highlight_special(row);
-                $("#id_error_msg_orgcompany_name1").prop("hidden",false);
-                error_message = ui_messeges("JMSG003")// Get message details
-                var display3 = error_message;
-                document.getElementById("id_error_msg_orgcompany_name1").innerHTML = display3+ "company Name 1";
-                $("#id_check_special_character_messages").prop("hidden",false);
-                count = count +1;
-            }
-            //*************** checking for empty records for company name  ***************//
-            else if(company_dic.name2.length == 0){
-                $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
-                row_color_highlight_empty(row);
-                $("#id_error_msg_orgcompany_name2").prop("hidden",false);
-                error_message = ui_messeges("JMSG002")// Get message details
-                var display8 = error_message;
-                document.getElementById("id_error_msg_orgcompany_name2").innerHTML = display8+ "company Name 2";
-                $("#id_check_special_character_messages").prop("hidden",false);
-                count = count +1;
-            }
-             //*************** checking for special characters for country name ***************
-            else if(format.test(company_dic.name2)){
-                $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "1px solid #FF0000");
-                row_color_highlight_special(row);
-                $("#id_error_msg_orgcompany_name2").prop("hidden",false);
-                error_message = ui_messeges("JMSG003")// Get message details
-                var display3 = error_message;
-                document.getElementById("id_error_msg_orgcompany_name2").innerHTML = display3+ "company Name 2";
-                $("#id_check_special_character_messages").prop("hidden",false);
-                count = count +1;
-            }
-            else if(company_check.includes((company_dic.company_id)&&(company_dic.del_ind))){
+            if(company_dic.del_ind == '0'){
+                //*************** checking for empty records for company code ***************
+                if(company_dic.company_id.length < 4 || /\s/.test(company_dic.company_id)) {
+                    $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
+                    row_color_highlight_empty(row);
+                    $("#id_error_msg_orgcompany_length").prop("hidden",false);
+                    error_message = ui_messeges("JMSG002")// Get message details
+                    var display8 = error_message;
+                    document.getElementById("id_error_msg_orgcompany_length").innerHTML = display8+ " Minimum 4 length company Code";
+                    $("#id_check_special_character_messages").prop("hidden",false);
+                    count = count +1;
+                }
+                //*************** checking for special characters for country code ***************
+                else if(formats.test(company_dic.company_id)){
+                    $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
+                    row_color_highlight_special(row);
+                    $("#id_error_msg_orgcompany_code").prop("hidden",false);
+                    error_message = ui_messeges("JMSG003")// Get message details
+                    var display4 = error_message;
+                    document.getElementById("id_error_msg_orgcompany_code").innerHTML = display4+ "company Code";
+                    $("#id_check_special_character_messages").prop("hidden",false);
+                    count = count +1;
+                }
+                else{
+                    $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "none");
+                    row_color_no_highlight(row);
+                    $(row).css("border", "");
+                    $("#id_delete_duplicate").hide()
+                }
+                 //*************** checking for empty records for company name (max length = 2) ***************
+                if(company_dic.name1.length == 0){
+                    $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
+                    row_color_highlight_empty(row);
+                    $("#id_error_msg_orgcompany_name1").prop("hidden",false);
+                    error_message = ui_messeges("JMSG002")// Get message details
+                    var display8 = error_message;
+                    document.getElementById("id_error_msg_orgcompany_name1").innerHTML = display8+ "company Name 1";
+                    $("#id_check_special_character_messages").prop("hidden",false);
+                    count = count +1;
+                }
+                //*************** checking for special characters for company name ***************
+                else if(format.test(company_dic.name1)){
+                    $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "1px solid #FF0000");
+                    row_color_highlight_special(row);
+                    $("#id_error_msg_orgcompany_name1").prop("hidden",false);
+                    error_message = ui_messeges("JMSG003")// Get message details
+                    var display3 = error_message;
+                    document.getElementById("id_error_msg_orgcompany_name1").innerHTML = display3+ "company Name 1";
+                    $("#id_check_special_character_messages").prop("hidden",false);
+                    count = count +1;
+                }
+                //*************** checking for empty records for company name  ***************//
+                else if(company_dic.name2.length == 0){
+                    $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
+                    row_color_highlight_empty(row);
+                    $("#id_error_msg_orgcompany_name2").prop("hidden",false);
+                    error_message = ui_messeges("JMSG002")// Get message details
+                    var display8 = error_message;
+                    document.getElementById("id_error_msg_orgcompany_name2").innerHTML = display8+ "company Name 2";
+                    $("#id_check_special_character_messages").prop("hidden",false);
+                    count = count +1;
+                }
+                 //*************** checking for special characters for country name ***************
+                else if(format.test(company_dic.name2)){
+                    $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "1px solid #FF0000");
+                    row_color_highlight_special(row);
+                    $("#id_error_msg_orgcompany_name2").prop("hidden",false);
+                    error_message = ui_messeges("JMSG003")// Get message details
+                    var display3 = error_message;
+                    document.getElementById("id_error_msg_orgcompany_name2").innerHTML = display3+ "company Name 2";
+                    $("#id_check_special_character_messages").prop("hidden",false);
+                    count = count +1;
+                }
+                else if(company_check.includes((company_dic.company_id))){
+                         $(row).css("border", "#f8d7da");
+                         row_color_highlight(row);
+                         $("#id_check_error_messages").prop("hidden",false);
+                         var display7 = ui_messeges("JMSG001");
+                         document.getElementById("id_check_error_messages").innerHTML = display7;
+                         $("#save_id").prop("hidden", true);
+                         $("#id_delete_duplicate").show()
+                         $("#id_check_data").prop("hidden", false);
+                         count = count +1;
+                         flag = flag + 1;
+                }
+                else if(main_table_low_value.includes((company_dic.company_id))){
                      $(row).css("border", "#f8d7da");
                      row_color_highlight(row);
                      $("#id_check_error_messages").prop("hidden",false);
@@ -466,31 +542,34 @@
                      $("#id_delete_duplicate").show()
                      $("#id_check_data").prop("hidden", false);
                      count = count +1;
+                     flag = flag + 1;
+                }
+                else{
+                    $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "none");
+                    row_color_no_highlight(row);
+                    $(row).css("border", "");
+                    $("#id_delete_duplicate").hide()
+                }
+                company_check.push(company_dic.company_id)
+                main_table_low_value.push(company_dic)
+                table_sort_filter_popup_pagination('id_popup_table');
             }
-            else if(main_table_low_value.includes((company_dic.company_id)&&(company_dic.del_ind))){
-                 $(row).css("border", "#f8d7da");
-                 row_color_highlight(row);
-                 $("#id_check_error_messages").prop("hidden",false);
-                 var display7 = ui_messeges("JMSG001");
-                 document.getElementById("id_check_error_messages").innerHTML = display7;
-                 $("#save_id").prop("hidden", true);
-                 $("#id_delete_duplicate").show()
-                 $("#id_check_data").prop("hidden", false);
-                 count = count +1;
-            }
-            else{
-                $(row.find("TD").eq(2).find('input[type="text"]')).css("border", "none");
-                row_color_no_highlight(row);
-                $(row).css("border", "");
+            if(flag == 0){
                 $("#id_delete_duplicate").hide()
             }
-            company_check.push(company_dic.company_id)
-            main_table_low_value.push(company_dic.company_id)
-            table_sort_filter_popup_pagination('id_popup_table');
+            else{
+                $("#id_delete_duplicate").show()
+            }
+            if(count == 0){
+                $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "none");
+                row_color_no_highlight(row);
+                $(row).css("border", "");
+            }
         });
 
         //*************** shows save button if there are no errors(special characters and max length) ***************
         if (count == 0) {
+             $("#id_delete_duplicate").hide()
             $('#id_popup_table').DataTable().destroy();
             $("#id_popup_table").find("input,button,textarea,select").attr("disabled", "disabled");
             document.getElementById("id_del_add_button").style.display = "none";

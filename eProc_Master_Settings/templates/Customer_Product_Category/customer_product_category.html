@@ -217,32 +217,28 @@
     var appname = uiConstants["CONST_APPNAME01"]
     var db_header_data = uiConstants["CONST_HEADER_DATA_CUSTPRODCAT"]
     var prod_catid_desc = '';
-
-    //Drop dropdown function
     var prod_cat_id_dropdown = '';
     var usedProdCatIds = [];
 
+    //Drop dropdown function
     function unspsc_dropdown() {
-      prod_cat_id_dropdown = '';
-      var usedProdCatIds = [];
+        prod_cat_id_dropdown = '';
+        get_main_table_data(); //Read data from main table
 
-      // Loop through the main table dictionary and collect the used prod_cat_ids
-      $.each(rendered_cust_prod_cat_data, function(i, item) {
-        usedProdCatIds.push(item.prod_cat_id);
-      });
+        var available_aac_values = rendered_UNSPC_data.filter(function(item) {
+            return !main_table_low_value.includes(item.prod_cat_id);
+        });
+        $.each(available_aac_values, function(i, item)  {
+            prod_cat_id_dropdown += '<option value="' + item.prod_cat_id + '">' + item.prod_cat_id + '</option>';
+        });
 
-      // Loop through the dropdown dictionary and check if each prod_cat_id is unused
-      if(rendered_UNSPC_data.length != 0){
-            prod_catid_desc = rendered_UNSPC_data[0].category_desc;
-      }
-     else {
-        prod_catid_desc = "";
-     }
-      $.each(rendered_UNSPC_data, function(j, item1) {
-        if (usedProdCatIds.indexOf(item1.prod_cat_id) === -1) {
-          prod_cat_id_dropdown += '<option value="' + item1.prod_cat_id + '">' + item1.prod_cat_id + '</option>';
+        // Loop through the dropdown dictionary and check if each prod_cat_id is unused
+        if(available_aac_values.length != 0){
+            prod_catid_desc = available_aac_values[0].category_desc;
         }
-      });
+        else {
+            prod_catid_desc = "";
+        }
     }
 
 
@@ -722,10 +718,8 @@
                 $("#id_del_ind_checkbox").prop("hidden", true);
                 document.getElementById("id_del_add_button").style.display = "block";
                 $("#save_id").prop("hidden", false);
+                table_sort_filter('id_popup_table');
                 CloseLoaderPopup();
-<!--                $('.prodid').each(function() {-->
-<!--                GetSelectedTextValue(this);-->
-<!--                });-->
             }
         });
     }

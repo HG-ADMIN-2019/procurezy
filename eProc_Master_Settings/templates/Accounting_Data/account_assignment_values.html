@@ -34,8 +34,8 @@
                     <button class="btn btn-secondary btn-sm" title="Edit" id="id_edit_data" style="display: block;" onclick="onclick_edit_button()">
                         <i class="fas fa-edit"></i> edit
                     </button>
-                    <button class="btn btn-outline-danger btn-sm" title="Delete" id="id_delete_data" value="DELETE"  onclick="onclick_delete_button()" style="display:none;">
-                        <i class="fa fa-trash"></i> Delete
+                    <button class="btn btn-outline-danger btn-sm" id="id_delete_data" title= "DELETE" value="Delete" style="display:none;" onclick="onclick_delete_button()">
+                        <i class="fa fa-trash"></i> delete
                     </button>
                     <button class="btn btn-primary btn-sm" title="Copy" id="id_copy_data" style="display:none;" value="COPY" type="button" onclick="onclick_button_action('COPY')">
                         <i class="fa fa-copy"></i> Copy
@@ -127,7 +127,6 @@
                                     <th>Valid To Date</th>
                                     <th hidden>Guid</th>
                                     <th id="id_del_ind_checkbox" hidden>Del Indicator</th>
-                                    <th id="id_del_ind_checkbox1" hidden>Del Indicator Flag</th>
                                 </tr>
                             </thead>
                             <tbody id="id_popup_tbody">
@@ -142,7 +141,7 @@
                     <button type="button" class="btn btn-outline-primary remove_upload_data" title="Cancel" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
                     <button id="id_delete_duplicate" class="btn btn-primary" title="Delete" style="display:none;" type="button" onclick="delete_duplicate()"><i class="fa fa-trash"></i> delete duplicates</button>
                     <button id="id_check_data" title="Check" style="display:none;" class="btn btn-primary" type="button" onclick="check_data()"><i class="fas fa-check"></i> check</button>
-                    <button class="btn btn-primary btn-sm" title="Delete" id="delete_data" value="DELETE" data-toggle="modal" data-target="#id_delete_confirm_popup">
+                    <button class="btn btn-primary btn-sm" title="Delete" id="delete_data" value="DELETE" data-toggle="modal" data-target="#id_delete_confirm_popup" onclick="hideModal()">
                         <i class="fa fa-trash"></i> Delete
                     </button>
                     <button class="btn btn-primary" title="Save" id="save_id"><i class="fas fa-save"></i> save</button>
@@ -195,6 +194,99 @@
         });
     }
 
+    var available_company_data = [];
+    function on_page_load_dropdown() {
+        hide_company_values() // function call to filter company values
+        used_acc_ass_cat = [];
+        if (available_company_data.length > 0) {
+            var company_value = available_company_data[0];
+            var acc_ass_cat = main_table_data[company_value];
+            if (!acc_ass_cat) {
+                company_dropdwn = ''
+                $.each(available_company_data, function(i, item){
+                    company_dropdwn += '<option value ="' + item.company_id + '">' + item.company_id + '</option>'
+                })
+
+                 acc_ass_dropdwn = ''
+                $.each(rendered_aac_data, function(i, item) {
+                    acc_ass_dropdwn += '<option value ="' + item.account_assign_cat + '" >' + item.account_assign_cat + '</option>'
+                });
+                return;
+            }else {
+                acc_ass_dropdwn = ''
+                rendered_aac_data.forEach(item => {
+                    var found = acc_ass_cat.some(lang => lang.account_assign_cat === item.account_assign_cat);
+                    if (found) {
+                        used_acc_ass_cat.push(item.account_assign_cat)
+                    } else {
+                        acc_ass_dropdwn += '<option value ="' + item.account_assign_cat + '" >' + item.account_assign_cat + '</option>';
+                    }
+                })
+
+                company_dropdwn = ''
+                $.each(available_company_data, function(i, item) {
+                    company_dropdwn += '<option value="' + item + '">' + item + '</option>';
+                });
+            }
+        }
+    }
+
+    // function to filter used company values
+    function hide_company_values() {
+        available_company_data = [];
+        hidden_company_value = [];
+        for(i = 0; i < rendered_company_data.length; i++) {
+            var item = rendered_company_data[i];
+            var company = item.company_id
+            var company_value = main_table_data[company];
+
+            if (company_value === undefined) {
+                available_company_data.push(company);
+                continue;
+            }
+
+            if (rendered_aac_data.length === company_value.length) {
+                hidden_company_value.push(company);
+            } else {
+                available_company_data.push(company);
+            }
+        }
+    }
+
+    //onclick of add button display Wfschema_Modal popup and set GLOBAL_ACTION button value
+    function onclick_add_button(button) {
+        $('#id_popup_table').DataTable().destroy();
+        $("#id_popup_tbody").empty();
+        $('#save_id').show();
+        OpenLoaderPopup();
+        var data = {'table_name':'AccountingData'}
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'eProc_Configuration:get_dropdown_data' %}",
+            data: JSON.stringify(data),
+            success: function(response) {
+                rendered_aac_data = response.upload_data_acccat
+                rendered_company_data = response.upload_company_data
+                display_tb_data() // Read data from the main table
+                on_page_load_dropdown();
+<!--                acc_value_dropdown()-->
+                $("#error_msg_id").css("display", "none")
+                $("#header_select").prop( "hidden", false );
+                GLOBAL_ACTION = button.value
+                $('#id_popup_table').DataTable().destroy();
+                $("#id_popup_tbody").empty();
+                $('#aav_Modal').modal('show');
+                new_row_data();   // Add a new row in popup
+                table_sort_filter('id_popup_table');
+                $("#id_del_ind_checkbox").prop("hidden", true);
+                document.getElementById("id_del_add_button").style.display = "block";
+                $("#delete_data").prop("hidden", true);
+                $("#save_id").prop("hidden", false);
+                CloseLoaderPopup();
+            }
+        });
+    }
+
     // validate and save for add,copy,update and upload data
     function popup_save_data() {
         $('#success_msg_id').empty()
@@ -223,7 +315,6 @@
                     }
                 }
                 if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')&& (dateValid == 'Y')   ) {
-<!--                    var add_basic_data = '';-->
                     $('#id_save_confirm_popup').modal('hide');
                     data = {'data':aav_data,'table_name':'AccountingData','action':GLOBAL_ACTION}
                     OpenLoaderPopup();
@@ -252,45 +343,89 @@
         table_sort_filter('id_popup_table');
     }
 
+    // Onclick delete Button
+    function onclick_delete_button() {
+        $("#error_msg_id").css("display", "none");
+        $('#id_popup_table').DataTable().destroy();
+        $("#id_popup_tbody").empty();
+        GLOBAL_ACTION = "DELETE";
+        var edit_basic_data = "";
+        var guid = '';
+        main_table_checked = [];
+        get_row_data("#display_basic_table"); // Function call to get the selected row data
+        display_button(); // Call the display_button function to show/hide the buttons
+        var data = {'data': main_table_checked, 'table_name': 'AccountingData', 'action': GLOBAL_ACTION };
+        OpenLoaderPopup();
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'eProc_Configuration:create_update_delete_flags' %}",
+            data: JSON.stringify(data),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function(Response) {
+                var docTypeArray = Response.delete_flags; // Get the delete_flags array from the response
+                var res = get_all_checkboxes(); // Function to get all the checkboxes
+                var $chkbox_all = $('td input[type="checkbox"]', res);
+                var j = 0; // Index for docTypeArray
+                for (var i = 0; i < $chkbox_all.length; i++) {
+                    if ($chkbox_all[i].checked) {
+                        var row = $chkbox_all[i].parentNode.parentNode;
+                        if (j < docTypeArray.length && docTypeArray[j] === false) {
+                            check = '<input type="checkbox" disabled>';
+                            $('#delete_data').prop('disabled', true);
+                        } else {
+                            check = '<input type="checkbox" onclick="enableDeleteButton()">';
+                            $('#delete_data').prop('disabled', true);
+                        }
+                        j++; // Move to the next index in docTypeArray
+                        edit_basic_data +=
+                            `<tr>
+                                <td>${check}</td>
+                                <td><input class="form-control" type="text" id="company_dropdw" value=${row.cells[1].innerHTML} disabled></td>
+                                <td><input id="acc_dropdwn" type="text" class="form-control" value=${row.cells[2].innerHTML} disabled></td>
+                                <td><input class="form-control check_number" type="number" value=${row.cells[3].innerHTML} disabled> </td>
+                                <td><input class="form-control formatDate" type="text" value=${row.cells[4].innerHTML}  name="Valid From Date" disabled></td>
+                                <td><input class="form-control" type="text" value=${row.cells[5].innerHTML}  name="Valid To Date" disabled></td>
+                                <td hidden><input required></td>
+                                <td class="class_del_checkbox" hidden><input type="checkbox" required></td>
+                            </tr>`;
+                    }
+                }
+                $('#id_popup_tbody').append(edit_basic_data);
+                $("#header_select").prop( "hidden", false );
+                $("#id_del_ind_checkbox").prop("hidden", true);
+                $('#aav_Modal').modal('show');
+                table_sort_filter('id_popup_table');
+                CloseLoaderPopup();
+            },
+        });
+    }
+
     //delete the selected row in db................
-    var main_table_aav_checked = [];
+    var main_table_checked = [];
     function main_table_delete() {
         $('#success_msg_id').empty()
         GLOBAL_ACTION = 'DELETE'
-        main_table_aav_checked = [];
+        main_table_checked = [];
         $('#display_basic_table').DataTable().destroy();
-        get_selected_row_data(); // Function call to get the selected row data
-        if(disable_check) {
-            $('#delete_data').prop('disabled', true);
-            get_message_details("JMSG112"); // Get message details
-            var display4 = msg_type.messages_id_desc;
-            document.getElementById("id_error_msg_checkbox").innerHTML = display4+ "Checkbox";
-            $('#id_delete_confirm_popup').modal('hide');
-        }
-        else if (main_table_aav_checked.length == "0") {
-            get_message_details("JMSG005"); // Get message details
-            document.getElementById("id_error_msg_checkbox").innerHTML = display4+ "Checkbox";
-            $('#id_delete_confirm_popup').modal('hide');
-        }
-        else {
-            $('#id_delete_confirm_popup').modal('hide');
-            data = {'data':main_table_aav_checked,'table_name':'AccountingData','action':GLOBAL_ACTION}
-            OpenLoaderPopup();
-            $.ajax({
-                type: 'POST',
-                url: "{% url 'eProc_Master_Settings:create_update_master_data' %}",
-                data: JSON.stringify(data),
-                contentType: "application/json; charset=utf-8",
-                dataType: "json",
-                success: function(Response) {
-                    rendered_account_assignment_value = Response[0];
-                    display_basic_db_data();
-                    $('#aav_Modal').modal('hide');
-                    success_response(Response);
-                    CloseLoaderPopup();
-                }
-            });
-        }
+        get_row_data("#id_popup_table");
+        $('#id_delete_confirm_popup').modal('hide');
+        data = {'data':main_table_checked,'table_name':'AccountingData','action':GLOBAL_ACTION}
+        OpenLoaderPopup();
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'eProc_Master_Settings:create_update_master_data' %}",
+            data: JSON.stringify(data),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function(Response) {
+                rendered_account_assignment_value = Response[0];
+                display_basic_db_data();
+                $('#aav_Modal').modal('hide');
+                success_response(Response);
+                CloseLoaderPopup();
+            }
+        });
     }
 
     //onclick of data Upload copy data to modal pop-up
@@ -351,7 +486,7 @@
                                 var company = '';
                                 var company_list = '';
                                 var company_id_list = '';
-                                $.each(rendered_company_data, function(i, item) {
+                                $.each(rendered_company_data, function(j, item) {
                                     if( value.company_type_value == item.company_id) {
                                         company = '<option value="' + item.company_id + '">' + item.company_id + '</option>';
                                     } else {
@@ -363,14 +498,14 @@
                                 var aac_data_list = '';
                                 var aac_data_id_list = '';
                                 $.each(rendered_aac_data, function(K, item1) {
-                                    if( value.approval_type_value == item1.account_assign_cat) {
+                                    if( value.account_assign_cat == item1.account_assign_cat) {
                                             aac_data += '<option value="' + item1.account_assign_cat + '">' + item1.account_assign_cat + '</option>';
                                     }else {
                                         aac_data_list += '<option value="' + item1.account_assign_cat + '">' + item1.account_assign_cat + '</option>';
                                     }
                                     aac_data_id_list = aac_data + aac_data_list
                                 });
-                                edit_basic_data += '<tr><td><input type="checkbox" required></td><td ><select class="form-control">value ="' + value.company_id + '"'+company_id_list+'</select></td><td><select class="form-control">value ="' + value.account_assign_cat + '"' + aac_data_id_list + ' </select></td><td><input class="form-control" type="number" value="' + value.account_assign_value + '" maxlength="40" name="Account Assignment Value" required></td><td><input class="input" type="text" value="' + value.valid_from + '" name="Valid From Date" required></td><td><input class="input" type="text" value="' + value.valid_to + '" name="Valid To Date" required></td><td hidden><input value="" type="hidden"></td><td>' + del_ind + '</td><td hidden><input value="" type="hidden"></td></tr>';
+                                edit_basic_data += '<tr><td><input type="checkbox" required></td><td ><select class="form-control">value ="' + value.company_id + '"'+company_id_list+'</select></td><td><select class="form-control">value ="' + value.account_assign_cat + '"' + aac_data_id_list + ' </select></td><td><input class="form-control" type="number" value="' + value.account_assign_value + '" maxlength="40" name="Account Assignment Value" required></td><td><input class="input" type="text" value="' + value.valid_from + '" name="Valid From Date" required></td><td><input class="input" type="text" value="' + value.valid_to + '" name="Valid To Date" required></td><td hidden><input value="" type="hidden"></td><td>' + del_ind + '</td></tr>';
                             });
                             $('#id_popup_tbody').append(edit_basic_data);
                             var j =0;
@@ -451,7 +586,8 @@
             }
             aav_list.push(accval_dic)
             get_main_table_data(); //Read data from main table
-            var compare = accval_dic.account_assign_value + '-' + accval_dic.account_assign_cat + '-' + accval_dic.company_id
+            var compare = accval_dic.account_assign_value + '-' + accval_dic.account_assign_cat + '-' + accval_dic.company_id +
+            '-' + accval_dic.valid_from + '-' + accval_dic.valid_to
             var format = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
             var format_aav = /[A-Z`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
             var d1=new Date(accval_dic.valid_from); //yyyy-mm-dd
@@ -467,7 +603,7 @@
             }
             //*************** checking for max length for aav code (max length = 2) ***************
             if (accval_dic.account_assign_value < 0) {
-                 $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
+                $(row.find("TD").eq(1).find('input[type="text"]')).css("border", "1px solid #FF0000");
                 row_color_highlight_empty(row);
                 $("#id_error_msg_country_length").prop("hidden",false);
                 error_message = ui_messeges("JMSG002")// Get message details
@@ -492,7 +628,7 @@
                 $(row).css("border", "");
                 $("#id_delete_duplicate").hide()
             }
-            if(aav_code_check.includes((accval_dic.account_assign_value)&&(accval_dic.del_ind))){
+            if(aav_code_check.includes((compare)&&(accval_dic.del_ind))){
                  $(row).css("border", "#f8d7da");
                  row_color_highlight(row);
                  $("#id_check_error_messages").prop("hidden",false);
@@ -503,7 +639,7 @@
                  $("#id_check_data").prop("hidden", false);
                  count = count +1;
             }
-            else if(main_table_low_value.includes((accval_dic.account_assign_value)&&(accval_dic.del_ind))){
+            else if(main_table_low_value.includes((compare)&&(accval_dic.del_ind))){
                  $(row).css("border", "#f8d7da");
                  row_color_highlight(row);
                  $("#id_check_error_messages").prop("hidden",false);
@@ -532,7 +668,7 @@
             $("#save_id").prop("hidden", false);
             $("#id_check_data").prop("hidden", true);
             if (aav_list == 0) {
-                $("#save_id").prop("hidden", true);
+              $("#save_id").prop("hidden", true);
             }
             popup_data_dict = {'data_list': aav_list}
             OpenLoaderPopup();
@@ -598,38 +734,6 @@
         $("#id_check_success_messages").prop("hidden",false)
     }
 
-    //onclick of add button display Wfschema_Modal popup and set GLOBAL_ACTION button value
-    function onclick_add_button(button) {
-        $('#id_popup_table').DataTable().destroy();
-        $("#id_popup_tbody").empty();
-        $('#save_id').show();
-        OpenLoaderPopup();
-        var data = {'table_name':'AccountingData'}
-        $.ajax({
-            type: 'POST',
-            url: "{% url 'eProc_Configuration:get_dropdown_data' %}",
-            data: JSON.stringify(data),
-            success: function(response) {
-                rendered_aac_data = response.upload_data_acccat
-                rendered_company_data = response.upload_company_data
-                acc_value_dropdown()
-                $("#error_msg_id").css("display", "none")
-                $("#header_select").prop( "hidden", false );
-                GLOBAL_ACTION = button.value
-                $('#id_popup_table').DataTable().destroy();
-                $("#id_popup_tbody").empty();
-                $('#aav_Modal').modal('show');
-                new_row_data();   // Add a new row in popup
-                table_sort_filter('id_popup_table');
-                $("#id_del_ind_checkbox").prop("hidden", true);
-                document.getElementById("id_del_add_button").style.display = "block";
-                $("#delete_data").prop("hidden", true);
-                $("#save_id").prop("hidden", false);
-                CloseLoaderPopup();
-            }
-        });
-    }
-
     //*****************************************
     function onclick_copy_update_button() {
         $("#error_msg_id").css("display", "none")
@@ -664,29 +768,13 @@
                             guid = 'GUID';
                             unique_input = '<select class="form-control" id="company_dropdw">' + company_dropdwn + '</select>'
                             edit_basic_data += '<tr><td><input type="checkbox" required></td><td>' + unique_input + ' </td><td><select id="acc_dropdwn" class="form-control" id="acc_ass_val_dropdw">' + acc_ass_dropdwn + ' </select></td> <td><input class="form-control check_number" type="number" value="' + row.cells[3].innerHTML + '" name="Account Assignment Value" maxlength="40" required> </td> <td><input class="form-control formatDate" type="text" value="' + row.cells[4].innerHTML + '"  name="Valid From Date" required></td> <td><input class="form-control formatDate" type="text" value="' + row.cells[5].innerHTML + '"  name="Valid To Date" required></td> <td hidden><input value="' + guid + '"></td> <td class="class_del_checkbox" hidden><input type="checkbox" required></td>'+
-                            '<td class="class_del_checkbox1" hidden><input type="checkbox" required></td></tr>';
+                            '</tr>';
                             $("#header_select").prop("hidden",false);
-                        }
-                        else if (GLOBAL_ACTION == "DELETE"){
-                            $("#delete_data").prop("hidden", false);
-                            if ((row.cells[7].innerHTML=="False") || (row.cells[7].innerHTML=="false")){
-                                check = '<input type="checkbox" disabled>'
-                                $('#delete_data').prop('disabled', true);
-                            }
-                            else {
-                                check = '<input type="checkbox">'
-                                $('#delete_data').prop('disabled', false);
-                            }
-                            unique_input = '<select class="form-control" id="company_dropdw">' + company_dropdwn + '</select>'
-                            edit_basic_data += '<tr> <td>'+check+'</td> <td>'+unique_input+'</td><td><select id="acc_dropdwn" class="form-control" id="acc_ass_val_dropdw">' + acc_ass_dropdwn + ' </select></td> <td><input class="form-control check_number" type="number" value="' + row.cells[3].innerHTML + '" name="Account Assignment Value" maxlength="40" required> </td> <td><input class="form-control formatDate" type="text" value="' + row.cells[4].innerHTML + '"  name="Valid From Date" required></td> <td><input class="form-control" type="text" value="' + row.cells[5].innerHTML + '"  name="Valid To Date" required></td> <td hidden><input value="' + guid + '"></td> <td class="class_del_checkbox" hidden><input type="checkbox" required></td>'+
-                            '<td class="id_del_ind_checkbox1" hidden><input type="text" name = "del_ind_flag" value="' + row.cells[7].innerHTML + '"></td></tr>';
-                            $("#header_select").prop("hidden", false);
-                        }
-                        else {
+                        } else {
                             guid = row.cells[6].innerHTML;
                             unique_input = '<select class="form-control" id="company_dropdw" disabled>' + company_dropdwn + '</select>'
                             edit_basic_data += '<tr><td hidden><input type="checkbox"></td><td>' + unique_input + ' </td><td><select id="acc_dropdwn" class="form-control" id="acc_ass_val_dropdw" disabled>' + acc_ass_dropdwn + ' </select></td> <td><input class="form-control check_number" type="number" value="' + row.cells[3].innerHTML + '" name="Account Assignment Value" maxlength="40" disabled> </td> <td><input class="form-control formatDate" type="text" value="' + row.cells[4].innerHTML + '"  name="Valid From Date" required></td> <td><input class="form-control formatDate" type="text" value="' + row.cells[5].innerHTML + '"  name="Valid To Date" required></td> <td hidden><input value="' + guid + '"></td> <td class="class_del_checkbox" hidden><input type="checkbox" required></td>'+
-                            '<td class="class_del_checkbox1" hidden><input type="checkbox" required></td></tr>';
+                            '</tr>';
                             $("#header_select").prop("hidden",true);
                         }
                         var account_assign_cat = row.cells[2].innerHTML
@@ -714,22 +802,12 @@
             }
         });
     }
+
     function DatePicker() {
-     $(".formatDate").datepicker({
-            format: "dd-mm-yyyy",
-            autoclose:true
+         $(".formatDate").datepicker({
+                format: "dd-mm-yyyy",
+                autoclose:true
         });
-        }
-    //***************************
-    function display_button(){
-        if(GLOBAL_ACTION == "DELETE"){
-            $('#delete_data').show();
-            $('#save_id').hide();
-        }
-        else{
-            $('#delete_data').hide();
-            $('#save_id').show();
-        }
     }
 
     //Function to highlight duplicate records
@@ -757,7 +835,7 @@
     // on click add icon display the row in to add the new entries
     function add_popup_row() {
         $('#save_id').show();
-        acc_value_dropdown()
+        on_page_load_dropdown();
         $("#error_msg_id").css("display", "none")
         basic_add_new_html = '';
         var display_db_data = '';
@@ -767,7 +845,7 @@
         });
         if (GLOBAL_ACTION == "aav_upload") {
             basic_add_new_html = '<tr><td><input type="checkbox" required></td>'+
-            '<td><select class="form-control" id="company_dropdw">' + company_dropdwn + '</select></td>'+
+            '<td><select class="form-control" id="company_dropdw" onchange="GetUnusedAccAssCat(this)">' + company_dropdwn + '</select></td>'+
             '<td><select class="form-control" id="acc_ass_val_dropdw">' + acc_ass_dropdwn + ' </select></td>'+
             '<td><input class="form-control check_number" type="number" minlength="4" maxlength="40" name="Account Assignment Value" required></td>'+
             '<td><input class="form-control formatDate" type="text"  name="valid_from" required></td>'+

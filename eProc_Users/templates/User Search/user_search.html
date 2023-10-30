@@ -31,15 +31,18 @@
                     <div class="row">
                         <div class="col-md">
                             <label for="">Username</label>
-                            <input type="text" class="form-control check_for_search" id="username" name="username" value="" >
+                            <input type="text" class="form-control check_for_search mandatory_fields" id="username" name="username" value="" >
+                            <span id="err_username" class="error_message" hidden></span>
                         </div>
                         <div class="col-md">
                             <label for="">First Name</label>
-                            <input type="text" class="form-control check_for_search " id="first_name" name="first_name" >
+                            <input type="text" class="form-control check_for_search mandatory_fields" id="first_name" name="first_name" >
+                            <span id="err_firstname" class="error_message" hidden></span>
                         </div>
                         <div class="col-md">
                             <label for="">Last Name</label>
-                            <input type="text" class="form-control check_for_search" id="last_name" name='last_name' >
+                            <input type="text" class="form-control check_for_search mandatory_fields" id="last_name" name='last_name' >
+                            <span id="err_lastname" class="error_message" hidden></span>
                         </div>
                         <div class="col-auto">
                             <button id="id_search" class="button-search-users btn btn-primary" type="submit"
@@ -56,11 +59,13 @@
                         <div class="row">
                             <div class="col-md-3">
                                 <label for="">Email</label>
-                                <input type="text" class="form-control" id="email" name="email">
+                                <input type="text" class="form-control mandatory_fields" id="email" name="email">
+                                <span id="err_email" class="error_message" hidden></span>
                             </div>
                             <div class="col-md-3">
                                 <label for="">User Type</label>
                                 <select type="text" class="form-control" id="user_type" name="user_type">
+                                    <option value="All">All</option>
                                     {% for usertype in dropdown_usertype_values %}
                                         <option value="{{usertype.field_type_id}}">{{usertype.field_type_desc}}</option>
                                     {% endfor %}
@@ -68,7 +73,8 @@
                             </div>
                             <div class="col-md-2">
                                 <label for="">Employee Number</label>
-                                <input type="text" class="form-control check_for_search" id="employee_id" name="employee_id">
+                                <input type="text" class="form-control check_for_search mandatory_fields" id="employee_id" name="employee_id">
+                                <span id="err_empnum" class="error_message" hidden></span>
                             </div>
                             <div class="col-md">
                                 <div class="form-check">
@@ -106,15 +112,16 @@
                 </form>
             </div>
         </div>
-        {% if count == 0  %}
-        <div class="search_result_count_card card">
+        {% if count == 0 %}
+        <div class="search_result_count_card card" id="result_id">
             <div class="card-body">
                 <h6 class="card-title">No Results Found</h6>
             </div>
         </div>
         {% endif %}
+        {% if  employee_results %}
         <div style="margin-top:25px" id="error_msg_div" class="alert alert-success" hidden><span id="success_msg_id"></span></div>
-        {% if employee_results %}
+
         <div class="card mt-5">
             <div>
                  <button class="btn btn-primary  btn-sm mt-2 ml-2"  title="Delete" id="id_delete_emp" value="emp_delete" data-toggle="modal" data-target="#id_delete_confirm_popup" style="display:none;" >
@@ -428,6 +435,8 @@
 
 
     {{ employee_results|json_script:"employee_results" }}
+    {{ count|json_script:"count" }}
+    {{ employee_results_onload|json_script:"employee_results_onload" }}
     {{ dropdown_user|json_script:"dropdown_user" }}
     {{ dropdown_user_date_format|json_script:"dropdown_user_date_format" }}
     {{ dropdown_decimal_list|json_script:"dropdown_decimal_list" }}
@@ -446,6 +455,8 @@ var appname = uiConstants["CONST_APPNAME03"]
 var db_header_data = uiConstants["CONST_HEADER_DATA_EMP_DETAIL"]
 var data_delete = '';
 var rendered_emp_data = JSON.parse(document.getElementById('employee_results').textContent);
+var emp_data_onload = JSON.parse(document.getElementById('employee_results_onload').textContent);
+var count = JSON.parse(document.getElementById('count').textContent);
 var rendered_dropdown_user = JSON.parse(document.getElementById('dropdown_user').textContent);
 var rendered_dropdown_user_date_format = JSON.parse(document.getElementById('dropdown_user_date_format').textContent);
 var rendered_dropdown_decimal_list = JSON.parse(document.getElementById('dropdown_decimal_list').textContent);
@@ -454,12 +465,35 @@ var rendered_dropdown_messages = JSON.parse(document.getElementById('dropdown_me
 var rendered_dropdown_currency_id = JSON.parse(document.getElementById('dropdown_currency_id').textContent);
 var rendered_dropdown_language = JSON.parse(document.getElementById('dropdown_language').textContent);
 var messages_list = {{dropdown_messages|safe}};
+var form_method = '{{form_method|safe}}';
 var employee_data = new Array();
+var emp_data;
 
 $(document).ready(function() {
     $('#id_userpopup_table').DataTable(); // Replace 'id_userpopup_table' with your table's ID or selector
+    if(form_method == 'GET'){
+    document.getElementById("username").value = '';
+    document.getElementById("first_name").value = '';
+    document.getElementById("last_name").value = '';
+     document.getElementById("email").value = '';
+    document.getElementById("employee_id").value = '';
+    document.getElementById("user_type").value = 'All';
+    $('#user_locked_id').prop('checked', false);
+    $('#pwd_locked_id').prop('checked', false);
+    $('#is_active_id').prop('checked', false);
+    }
 });
-
+$('form').on('reset',function (e) {
+    e.preventDefault();
+    localStorage.clear();
+    $(".error_message").prop("hidden", true);
+    $("#result_id").prop("hidden", true);
+     $("input[type=text], input[type=checkbox]").val('');
+    document.getElementById("is_active_id").value = "on";
+    $('#search_form')[0].submit();
+    localStorage.setItem("user_type", "All");
+    document.getElementById("user_type").value = "All";
+});
      var currency_opt = ''
      var language_opt = ''
      var timezone_opt = ''
@@ -508,7 +542,50 @@ function reload()
     localStorage.setItem("pwd_locked", document.getElementById("pwd_locked_id").checked);
     localStorage.setItem("is_active", document.getElementById("is_active_id").checked);
     OpenLoaderPopup();
+
 }
+
+$('form').on('submit',function (e) {
+        OpenLoaderPopup();
+        var valid = true;
+        var temp = document.getElementsByClassName('mandatory_fields');
+        for (var i = 0; i<temp.length; i++) {
+            if(!(temp[i].value == '') || !(temp[i].value == null)){
+                data = temp[i].value;
+                var count = data.split('**').length - 1;
+                if((count >= 1) || (data == '*')){
+                    var display_id = temp[i].nextElementSibling.id;
+                    $('#'+display_id).prop('hidden', false);
+                    document.getElementById(temp[i].nextElementSibling.id).innerHTML = "Please enter valid value";
+                    valid = false;
+                }
+            }
+        }
+        if(!valid){
+            localStorage.setItem("error_flag", 1);
+            e.preventDefault();
+            $("#err_username").prop("hidden", false);
+                setTimeout(function() {
+                       CloseLoaderPopup();
+         }, 500);
+        }
+    });
+
+    $("body").on("keypress blur change", ".mandatory_fields", function (event) {
+         var get_value = event.currentTarget.value;
+            var count = get_value.split('**').length - 1;
+            if((count>=1)|| (get_value == '*'))
+            {
+            var display_id = event.currentTarget.nextElementSibling.id;
+            $('#'+display_id).prop('hidden', false);
+            document.getElementById(display_id).style.display = "block";
+            event.currentTarget.nextElementSibling.innerHTML = "Please enter valid value";
+            }
+            else{
+                $(".error_message").prop("hidden", true);
+                document.getElementById(event.currentTarget.nextElementSibling.id).style.display = "true";
+            }
+    });
 
 // Function to delete User
 function delete_user() {
@@ -574,10 +651,10 @@ function display_emp_data(emp_data){
         checkbox_input = '<input type="checkbox" class="emp_checkbox" onclick="valueChanged();" >'
         var lock_id, pwd_lock;
         if(emp.user_locked){
-            lock_id = '<input type="checkbox" id="'+emp.employee_id.concat("-LOCKED")+'" class="toggle-block" checked><span class="control"></span>';
+            lock_id = '<input type="checkbox" id="'+emp.employee_id.concat("-LOCKED")+'" class="toggle-block dummy_emp_block" checked><span class="control"></span>';
             }
         else {
-            lock_id = '<input type="checkbox" id="'+emp.employee_id.concat("-UNLOCKED")+'" class="toggle-block"> <span class="control"></span>';
+            lock_id = '<input type="checkbox" id="'+emp.employee_id.concat("-UNLOCKED")+'" class="toggle-block dummy_emp_block"> <span class="control"></span>';
         }
         if(emp.pwd_locked){
             pwd_lock = '<input type="checkbox" id="'+emp.employee_id.concat("-PWDLOCKED")+'" class="toggle-block" checked><span class="control"></span>';
@@ -586,7 +663,7 @@ function display_emp_data(emp_data){
             pwd_lock = '<input type="checkbox" id="'+emp.employee_id.concat("-PWDUNLOCKED")+'" class="toggle-block"><span class="control"></span>';
             }
         emp_detail_html += '<tr id="tr_'+emp.email+'"><td class="class_select_checkbox">'+checkbox_input+'</td> '+
-        '<td><a href="#" id="'+ emp.employee_id +'" class="deletepop" target="_blank">'+ emp.employee_id +'</a></td>'+
+        '<td><a href="#" id="'+emp.encrypted_email+'" class="deletepop dummy_emp_detail"  target="_blank">'+emp.employee_id+'</a></td>'+
          '<td>'+ emp.username +'</td>'+
          '<td>'+ emp.first_name +'</td>'+
          '<td>'+ emp.last_name +'</td>'+
@@ -601,6 +678,18 @@ function display_emp_data(emp_data){
     $("#user_tab_tbody").append(emp_detail_html);
     table_sort_filter('user_tab');
 }
+$(document).on('click', '.dummy_emp_detail', function () {
+        var url = "{% url 'eProc_Admin_Tool:user_details_page' 123 %}";
+        var id = $(this).attr('id');
+        var href_link = url.replace('123', id)
+        window.open(href_link,'_blank');
+    });
+    $(document).on('click', '.dummy_emp_block', function () {
+        var id = this.id
+        block_id = id
+        data.employee_id = id.split('-')[0];
+        $('#id_confirm_popup').modal('show');
+    });
 
 function main_table_delete(){
     main_table_emp_checked = [];

@@ -1,4 +1,4 @@
-SYS_ATTR_TYPE,SYS_ATTR_VALUE,del_ind
+sys_attr_type,sys_attr_value,del_ind
 ACCOUNT_ASSIGNMENT_CATEGORY,1,0
 ACCOUNT_ASSIGNMENT_CATEGORY,0,0
 PWD_POLICY,No Password Policy,1,0

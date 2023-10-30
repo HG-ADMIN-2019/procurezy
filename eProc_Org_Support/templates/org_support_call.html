@@ -4,9 +4,9 @@
             <div class="modal-content">
                 <div class="modal-header">
                     <h5 class="modal-title" id="update-support-title"> Call Support</h5>
-                    <button type="button" class="close remove_upload_data" data-dismiss="modal" aria-label="Close">
-                        <span aria-hidden="true">&times;</span>
-                    </button>
+<button type="button" class="btn btn-outline-secondary remove_upload_data" data-dismiss="modal"><i
+                            class="fas fa-times"></i> close</button>
+
                 </div>
                 <div class="modal-body scrollbox">
                     <div class="alert" id="org_support_update_success" role="alert" hidden>
@@ -40,6 +40,7 @@
     </div>
 </div>
 
+
 <script>
 //onclick of add button display myModal popup and set GLOBAL_ACTION button value
 function onclick_add_button(button) {
@@ -47,44 +48,47 @@ function onclick_add_button(button) {
     $('#myModal').modal('show');
     GLOBAL_ACTION = button.value;
     $("#id_popup_tbody").empty();
+
     $.ajax({
         type: 'POST',
         url: "{% url 'eProc_Org_Support:get_support_data' %}",
         data: {
-           // calender_id: GLOBAL_CALENDER_ID
+            // calender_id: GLOBAL_CALENDER_ID
         },
         success: function (response) {
             if (response['call_support_data_array'].length == 0) {
                 document.getElementById('save_cancel_btn').style.display = 'block';
                 document.getElementById('edit_id').style.display = 'none';
-                basic_add_new_html = '<tr><td id="call_checkbox" class="class_call_checkbox" hidden><input type="checkbox" onchange="call_delete_check(this);"  required></td>'+
-                 '<td><input class="input form-control check_phone_number"  type="text" id="support_number"  name="support_number" required></td>'+
-                 '<td class="class_del_checkbox" hidden><input type="checkbox" required></td>'+
-                 '<td hidden><input type="text" id="org_support_guid"></td></tr>';
+                basic_add_new_html = '<tr><td id="call_checkbox" class="class_call_checkbox" hidden><input type="checkbox" onchange="call_delete_check(this);" required></td>' +
+                    '<td><input class="input form-control check_phone_number" type="text" id="support_number" name="support_number" required></td>' +
+                    '<td class="class_del_checkbox" hidden><input type="checkbox" required></td>' +
+                    '<td hidden><input type="text" id="org_support_guid"></td></tr>';
                 $('#id_popup_tbody').append(basic_add_new_html);
                 $('#id_popup_table tbody').html(basic_add_new_html);
             } else {
-                document.getElementById('edit_id').style.display = 'block'
+                document.getElementById('edit_id').style.display = 'block';
                 document.getElementById('save_cancel_btn').style.display = 'none';
-                var i ;
+                var i;
                 content = '';
-                for(i=0;i<response['call_support_data_array'].length; i++)
-                {
-                    content += '<tr><td id="call_checkbox" class="class_call_checkbox" hidden><input type="checkbox" onchange="call_delete_check(this);"  required></td>';
-                    content += '<td><input class="input form-control hg_edit_display_mode check_phone_number" id="support_number" required  type="text"  +  name="support_number" + value="' + response['call_support_data_array'][i] + '" onkeypress="return /[a-z 0-9]/i.test(event.key)"  disabled /></td>';
+                for (i = 0; i < response['call_support_data_array'].length; i++) {
+                    content += '<tr><td id="call_checkbox" class="class_call_checkbox" hidden><input type="checkbox" onchange="call_delete_check(this);" required></td>';
+                    content += '<td><input class="input form-control hg_edit_display_mode check_phone_number" id="support_number" required type="text" name="support_number" value="' + response['call_support_data_array'][i] + '" onkeypress="return /[a-z 0-9]/i.test(event.key)"></td>';
                     content += '<td hidden><input type="checkbox" name="del_ind"></td>';
-                    content += '<td hidden><input class="input"  type="text"  name="org_support_guid"  value="' + response['call_support_guid_array'][i] + '"  /></td>';
+                    content += '<td hidden><input class="input" type="text" name="org_support_guid" value="' + response['call_support_guid_array'][i] + '" /></td>';
                     content += '</tr>';
                 }
                 $('#id_popup_table tbody').html(content);
-                // Show the modal after adding the content
-<!--                $('#myModal').modal('show');-->
+
+                // Disable the input fields
+                $('.hg_edit_display_mode').prop('disabled', true);
             }
         },
         error: function (error) {
-           // error_msg.innerHTML = error.responseText
+            // Handle the error
+            // error_msg.innerHTML = error.responseText
         }
     });
+
     $("#id_del_ind_checkbox").prop("hidden", true);
     $("#select_call").prop("hidden", true);
 }

@@ -56,7 +56,7 @@
                             </th>
                             <th>Company Number</th>
                             <th>User Name</th>
-                            <th>Approver Limit</th>
+                            <th>Approver Limit Code</th>
                             <th hidden>guid</th>
                         </tr>
                     </thead>
@@ -113,7 +113,7 @@
                                 <th id="header_select">Select</th>
                                 <th>Company Number</th>
                                 <th>User Name</th>
-                                <th>Approver Limit</th>
+                                <th>Approver Limit Code</th>
                                 <th hidden>guid</th>
                                 <th id="id_del_ind_checkbox" hidden>Del Indicator</th>
                             </tr>
@@ -196,7 +196,7 @@
             approval_limit.push(app_limit_dict);
             app_limit_array.push(item.app_code_id);
         });
-        company_dropdwn = "";
+        company_id_dropdown = "";
         var unique_comp = [];
         var unique_app = [];
         // Filter rendered_approval_limit_data based on app_code_id and company_id in rendered_app_code_id_data
@@ -207,7 +207,7 @@
                 });
         });
         $.each(filtered_approval_limit_data, function(i, item) {
-            company_dropdwn += '<option value="' + item.company_id + '">' + item.company_id + '</option>';
+            company_id_dropdown += '<option value="' + item.company_id + '">' + item.company_id + '</option>';
             company_dict = {};
             company_dict.app_code_id = item.app_code_id;
             company_dict.company_id = item.company_id;
@@ -221,9 +221,9 @@
                 arrDistinct.push(item);
             }
         });
-        company_dropdwn = '';
+        company_id_dropdown = '';
         $(arrDistinct).each(function(index, item) {
-            company_dropdwn += '<option value="' + item + '">' + item + '</option>'
+            company_id_dropdown += '<option value="' + item + '">' + item + '</option>'
         });
     }
 

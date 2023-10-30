@@ -1,8 +1,8 @@
 CURRENCY_ID,DESCRIPTION,del_ind
-DH,Daharms,0
+JPY,Japanese Yen,0
 EUR,Euro,0
-EX,Aztest,0
-GBP,BRITISH POUND,0
-INR,INDIAN RUPEE,0
-US,Us Dollar,0
-USD,US DOLLAR,0
+AUD,Australian Dollar,0
+GBP,British Pound,0
+INR,Indian Rupee,0
+CAD,Canadian Dollar,0
+USD,US Dollar,0

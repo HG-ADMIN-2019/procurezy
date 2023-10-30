@@ -7,10 +7,10 @@
 
 <!-- body -->
 <div class="container-fluid">
-
     <div class="home_wrapper">
         <!-- Popular items in your company -->
         {% if popular_product_array %}
+        {% if frequently_purchased_flag == "1" %}
 
         <section>
             <div class="home_section_heading">
@@ -59,6 +59,7 @@
                 </div>
             </div>
         </section>
+        {% endif %}
         {% endif %}
 
         <!-- Your favourite shopping cart -->

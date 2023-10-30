@@ -35,7 +35,7 @@
                             {% if message.tags == 'error'%}
                                 <div class="alert alert-danger">{{ message }}</div>
                             {% else %}
-                                <div class="alert alert-success">{{ message }}</div>
+                                <div class="alert alert-success msg-display-class">{{ message }}</div>
                             {% endif %}
                             {% endfor %}
                         </div>
@@ -44,11 +44,11 @@
                     <form method="POST" id="user_registration_form">
                         {% csrf_token %}
                         {{ reg_form.non_field_errors }}
-                        <div class="alert alert-success display-none" id="user_basic_update_success" role="alert"></div>
+                        <div class="alert alert-success msg-display-class display-none" id="user_basic_update_success" role="alert"></div>
 
                         <div class="d-flex justify-content-end">
                             <div id="save_user_info_btn">
-                                <button type="button" class="btn btn-primary" onclick="save_user_basic_info()"><i class="fas fa-save"></i> save</button>
+                                <button id="" type="button" class="btn btn-primary" onclick="save_user_basic_info();"><i class="fas fa-save"></i> save</button>
                             </div>
                             <div id="cancel_button" hidden style="padding-left: 5px;">
                                 <button type="button" class="btn btn-primary" onclick="cancel_user_basic_info()"><i class="fas fa-times"></i> cancel</button>
@@ -66,12 +66,12 @@
                                 <div class="row">
                                     <div class="form-group col-md">
                                         <label>User Name</label><span class="hg_required"></span><br>
-                                        <input type="text" class="form-control mandatory_fields check_special_char" id="username" value="{{user_info.username}}" disabled>
+                                        <input type="text" class="form-control mandatory_fields check_special_char_nospace" id="username" value="{{user_info.username}}" disabled>
                                         <span id="err_username" class="error_message" hidden></span>
                                     </div>
                                     <div class="form-group col-md">
                                         <label>Employee Number</label><span class="hg_required"></span><br>
-                                        <input type="text" class="form-control mandatory_fields check_special_char" id="employee_id" value="{{user_info.employee_id}}" disabled>
+                                        <input type="text" class="form-control mandatory_fields check_special_char_nospace" id="employee_id" value="{{user_info.employee_id}}" disabled>
                                         <span id="err_employee_id" class="error_message" hidden></span>
                                     </div>
                                     
@@ -89,13 +89,13 @@
                                 <div class="row">
                                     <div class="form-group col-md">
                                         <label>First Name</label><span class="hg_required"></span><br>
-                                        <input type="text" class="form-control hg_edit_display_mode mandatory_fields check_special_char" id="first_name" name="first_name" value="{{user_info.first_name}}" disabled>
+                                        <input type="text" class="form-control hg_edit_display_mode mandatory_fields check_special_char_nospace" id="first_name" name="first_name" value="{{user_info.first_name}}" disabled>
                                         <span id="err_first_name" class="error_message" hidden></span>
                                     </div>
                                     
                                     <div class="form-group col-md">
                                         <label>Last Name</label><br>
-                                        <input type="text" class="form-control hg_edit_display_mode check_special_char" id="last_name" value="{{user_info.last_name}}" disabled>
+                                        <input type="text" class="form-control hg_edit_display_mode check_special_character" id="last_name" value="{{user_info.last_name}}" disabled>
                                     </div>
                                 </div>
 
@@ -106,17 +106,17 @@
                                          <select name="" id="id_currency_id" class="form-control hg_edit_display_mode mandatory_fields" disabled>
                                              <option value="">Select</option>
                                                 {% for items in currency_id %}
-                                                    <option value="{{items.currency_id}}" {% if user_info.currency_id == items.currency_id %}selected{% endif %}>{{items.currency_id}} - {{items.description}}</option>
+                                                    <option value="{{items.currency_id}}" {% if user_info.currency_id == items.currency_id %}selected{% endif %}>{{items.currency_id}}-{{items.description}}</option>
                                                 {% endfor %}
                                         </select>
                                         <span id="err_currency_id" class="error_message" hidden></span>
                                     </div>
                                     <div class="form-group col-md">
                                         <label>Language</label><span class="hg_required"></span><br>
-                                        <select name="" id="id_language_id" class="form-control hg_edit_display_mode mandatory_fields"  disabled>
+                                        <select name="" id="id_language_id" class="form-control hg_edit_display_mode "  disabled>
                                             <option value="" selected>Select</option>
                                             {% for items in language_list %}
-                                                <option value="{{items.language_id}}">{{items.language_id}} - {{items.description}}</option>
+                                                <option value="{{items.language_id}}">{{items.language_id}}-{{items.description}}</option>
                                             {% endfor %}
                                         </select>
                                         <span id="err_language_id" class="error_message" hidden></span>
@@ -126,7 +126,7 @@
                                         <select name="time_zone" id="id_time_zone" class="form-control hg_edit_display_mode mandatory_fields" disabled>
                                             <option value="" selected>Select</option>
                                             {% for items in time_zones %}
-                                                <option value="{{items.time_zone}}">{{items.time_zone}} - {{items.description}}</option>
+                                                <option value="{{items.time_zone}}">{{items.time_zone}}-{{items.description}}</option>
                                             {% endfor %}
                                         </select>
                                         <span id="err_time_zone" class="error_message" hidden></span>
@@ -162,7 +162,7 @@
                                 <div class="row">
                                     <div class="form-group col-md-2">
                                         <label>Date Format</label><span class="hg_required"></span><br>
-                                        <select name="" id="date_format" class="form-control hg_edit_display_mode mandatory_fields" disabled>
+                                        <select name="date_format" id="date_format" class="form-control hg_edit_display_mode mandatory_fields" disabled>
                                           {% for items in date_format_list %}
                                                 <option value="{{items}}">{{items}}</option>
                                           {% endfor %}
@@ -172,7 +172,7 @@
                                     
                                     <div class="form-group col-md-2">
                                         <label>Decimal Notation</label><span class="hg_required"></span><br>
-                                        <select name="" id="decimal_notation" class="form-control hg_edit_display_mode mandatory_fields" disabled>
+                                        <select name="decimal_notation" id="decimal_notation" class="form-control hg_edit_display_mode mandatory_fields" disabled>
                                            {% for items in decimal_list %}
                                                 <option value="{{items}}">{{items}}</option>
                                             {% endfor %}
@@ -184,37 +184,36 @@
 <!--                                        <label>Login Attempts</label><br>-->
 <!--                                        <input type="text" class="form-control" id="login_attempts" value="{{user_info.login_attempts}}" disabled><br>-->
 <!--                                    </div>-->
-                                    
                                     <div class="form-group col-md hg-mt-2rem" >
                                         <label>Super User</label>&nbsp;
                                         {% if user_info.is_superuser %}
-                                        <input type="checkbox" id="super_user" name="" value="" class="hg_edit_display_mode" checked disabled>
+                                        <input type="checkbox" id="is_superuser" name="is_superuser" value="1" class="hg_edit_display_mode" checked disabled>
                                         {% else %}
-                                        <input type="checkbox" id="super_user" name="" value="" class="hg_edit_display_mode" value="" disabled>
+                                        <input type="checkbox" id="is_superuser" name="is_superuser" value="0" class="hg_edit_display_mode" disabled>
                                         {% endif %}
                                     </div>
 
-                                    <div class="form-group col-md hg-mt-2rem" >
+                                    <div id="status_id" class="form-group col-md hg-mt-2rem display-none">
                                         <label>User Status</label>&nbsp;
                                         {% if user_info.is_active %}
-                                        <input type="checkbox" id="user_status" name="" value="" class="hg_edit_display_mode" checked disabled>
+                                        <input type="checkbox" id="user_status" name="user_status" value="1" class="hg_edit_display_mode" checked disabled>
                                         {% else %}
-                                        <input type="checkbox" id="user_status" name="" value="" class="hg_edit_display_mode" disabled>
+                                        <input type="checkbox" id="user_status" name="user_status" value="0" class="hg_edit_display_mode" disabled>
                                         {% endif %}
                                     </div>
-                                    
-                                    <div class="form-group col-md hg-mt-2rem" >
+
+                                    <div id="locked_id" class="form-group col-md hg-mt-2rem display-none" >
                                         <label>User Lock Status</label>&nbsp;
                                         {% if user_info.user_locked %}
-                                        <input type="checkbox" id="user_locked" name="" value="" class="hg_edit_display_mode"
+                                        <input type="checkbox" id="user_locked" name="user_locked" value="" class="hg_edit_display_mode"
                                             checked disabled>
                                         {% else %}
-                                        <input type="checkbox" id="user_locked" name="" value="" class="hg_edit_display_mode"
+                                        <input type="checkbox" id="user_locked" name="user_locked" value="" class="hg_edit_display_mode"
                                             disabled>
                                         {% endif %}
                                     </div>
-                                    
-                                    <div class="form-group col-md hg-mt-2rem" >
+
+                                    <div id="pwd_id" class="form-group col-md hg-mt-2rem display-none">
                                         <label>User Password Status</label>&nbsp;
                                         {% if user_info.pwd_locked %}
                                         <input type="checkbox" id="pwd_locked" name="" value="" class="hg_edit_display_mode"
@@ -264,12 +263,14 @@
 
 <script>
 var is_valid = true;
+var user_info = '{{user_info| safe}}';
 var decimal_notation = "{{user_info.decimal_notation}}";
 var date_format = "{{user_info.date_format}}";
 var time_zone = '{{user_info.time_zone | safe}}';
 var curr_id = '{{user_info.currency_id | safe}}';
 var lang_id = '{{user_info.language_id | safe}}';
-<!--var response = {{msg_response|safe}};-->
+var msg_display_interval = {{msg_display_time_value|safe}};
+
     $(document).ready(function(){
         GLOBAL_ACTION = '{{user_action}}';
         $(".error_message").prop("hidden", true);
@@ -280,7 +281,7 @@ var lang_id = '{{user_info.language_id | safe}}';
             $('#employee_id').prop("disabled", false);
             $('#user_type').prop("disabled", false);
             $('#email').prop("disabled", false);
-<!--            $('#login_attempts').prop("disabled", false);            -->
+            $("#save_user_info_btn").prop("hidden", false);
         }
         else{
             $("#edit_user_info_btn").prop("hidden", false);
@@ -290,7 +291,11 @@ var lang_id = '{{user_info.language_id | safe}}';
             $("#id_time_zone").val(time_zone).attr('selected', 'selected');
             $("#decimal_notation").val(decimal_notation).attr('selected', 'selected');
             $("#date_format").val(date_format).attr('selected', 'selected');
+            document.getElementById("status_id").style.display = "block";
+            document.getElementById("pwd_id").style.display = "block";
+            document.getElementById("locked_id").style.display = "block";
             dropdown_values();
+            set_value();
         }
         $("#supplier_form_reset").click(function(){
             $('#configform')[0].reset();
@@ -335,19 +340,35 @@ var lang_id = '{{user_info.language_id | safe}}';
     }
 
     $("body").on("keypress keyup blur change", ".mandatory_fields", function (event) {
-        if(event.currentTarget.value == "") {
-            $('#event.currentTarget.nextElementSibling.id').prop('hidden', true);
-            document.getElementById(event.currentTarget.nextElementSibling.id).style.display = "block";
-             var display_id = event.currentTarget.nextElementSibling.id;
-             $('#'+display_id).prop('hidden', false);
-            event.currentTarget.nextElementSibling.innerHTML = "Please enter valid value";
-        }
-        else if(event.currentTarget.value.length >= 2 ){
-        document.getElementById(event.currentTarget.nextElementSibling.id).style.display = "none";
-        }
-        else{
-            $(".error_message").prop("hidden", false);
-            document.getElementById(event.currentTarget.nextElementSibling.id).style.display = "block";
+        var temp = document.getElementsByClassName('mandatory_fields');
+        for (var i = 0; i<temp.length; i++) {
+            if(temp[i].nodeName == "INPUT"){
+                if((event.currentTarget.value == "") || (event.currentTarget.value.indexOf("  ") >= 0)) {
+                    $('#event.currentTarget.nextElementSibling.id').prop('hidden', true);
+                    document.getElementById(event.currentTarget.nextElementSibling.id).style.display = "block";
+                     var display_id = event.currentTarget.nextElementSibling.id;
+                     $('#'+display_id).prop('hidden', false);
+                    event.currentTarget.nextElementSibling.innerHTML = "Please enter valid value";
+                }
+                else if(event.currentTarget.value.length < 3 ){
+                    $('#event.currentTarget.nextElementSibling.id').prop('hidden', true);
+                    document.getElementById(event.currentTarget.nextElementSibling.id).style.display = "block";
+                     var display_id = event.currentTarget.nextElementSibling.id;
+                     $('#'+display_id).prop('hidden', false);
+                    event.currentTarget.nextElementSibling.innerHTML = "Please enter min 3 chars";
+                }
+                else if(event.currentTarget.value.length >= 3 ){
+                    document.getElementById(event.currentTarget.nextElementSibling.id).style.display = "none";
+                }
+                else{
+                    $(".error_message").prop("hidden", false);
+                    document.getElementById(event.currentTarget.nextElementSibling.id).style.display = "block";
+                }
+            }
+<!--            if(temp[i].id == "id_language_id"){-->
+<!--                $(".error_message").prop("hidden", true);-->
+<!--                document.getElementById("err_language_id").style.display = "none";-->
+<!--            }-->
         }
     });
 
@@ -367,7 +388,7 @@ var lang_id = '{{user_info.language_id | safe}}';
          }
     });
     $('#phone_num').on('blur',function (event) {
-         if (event.currentTarget.value.length != 10 ) {
+         if ((event.currentTarget.value.length != 10 ) || (event.currentTarget.value.indexOf(" ") >= 0)) {
                  var msg = "JMSG002";
                  var msg_type ;
                  msg_type = message_config_details(msg);
@@ -382,34 +403,30 @@ var lang_id = '{{user_info.language_id | safe}}';
     });
 
     $('form').on('submit',function (e) {
-<!--        OpenLoaderPopup();-->
         var valid = save_user_form_validation();
         if(!valid){
             localStorage.setItem("error_flag", 1);
             set_value();
             get_values();
-             setTimeout(function() {
-                       CloseLoaderPopup();
-         }, 500);
             e.preventDefault();
         }
         else{
             save_user_basic_info();
-            setTimeout(function() {
-                       CloseLoaderPopup();
-         }, 20000);
          $(".hg_edit_display_mode").prop("disabled", false);
+
         }
     });
 
      // Funtion to save basic detail data
     function save_user_basic_info() {
+     setTimeout(function() {
+                       OpenLoaderPopup();
+         }, 500);
         var name1_val= $('#first_name').val();
         var phone_num_val = $('#phone_num').val();
         var email_val = $('#email').val();
         var err_flag, super_user_val = 0, user_locked_val = 0, pwd_locked_val = 0, is_active_val = 0 ;
         set_value();
-        OpenLoaderPopup();
         is_save_form_valid = save_user_form_validation()
         if (is_save_form_valid) {
             var user_data_dict = {}
@@ -426,10 +443,10 @@ var lang_id = '{{user_info.language_id | safe}}';
             user_data_dict.date_format= $('#date_format').val();
             user_data_dict.decimal_notation= $('#decimal_notation').val();
             user_data_dict.login_attempts= 0;
-            if($("#super_user").is(":checked")){
+            if($("#is_superuser").is(":checked")){
                 super_user_val = 1;
             }
-            user_data_dict.super_user= super_user_val;
+            user_data_dict.is_superuser= super_user_val;
             if($("#user_locked").is(":checked")){
                 user_locked_val = 1;
             }
@@ -443,7 +460,6 @@ var lang_id = '{{user_info.language_id | safe}}';
             }
             user_data_dict.is_active= is_active_val;
             user_data_dict.status = GLOBAL_ACTION ;
-
             var response = ajax_update_user_basic_data(user_data_dict)
             message = response.message
             msg_type = response.msg_type
@@ -452,11 +468,14 @@ var lang_id = '{{user_info.language_id | safe}}';
                 document.getElementById('user_basic_update_success').innerHTML = message;
                 $('#save_error_div').hide();
                 $('#user_basic_update_success').show();
+                message_display_time_specific();
                 $('html, body').animate({ scrollTop: 0 }, 'slow');
-                cancel_user_basic_info();
+                check();
                 if(GLOBAL_ACTION == 'CREATE'){
-                    $("#user_registration_form")[0].reset();
                     $(".hg_edit_display_mode").prop("disabled", false);
+                    document.getElementById("save_user_info_btn").style.display = "block";
+                    $("#user_registration_form")[0].reset();
+                    localStorage.clear();
                 }
                 setTimeout(function() {
                            CloseLoaderPopup();
@@ -476,7 +495,7 @@ var lang_id = '{{user_info.language_id | safe}}';
                 localStorage.setItem("error_flag", 1);
                    setTimeout(function() {
                    $('#save_error_div').hide();
-            }, msg_display_interval*2500);
+            }, msg_display_interval*2000);
                 return false;
             }
         }

@@ -2,7 +2,7 @@
 {% load static %}
 {% block title %} Users Report (Admin Tool) {% endblock %}
 {% block maincontent %}
-<link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="//code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
     {% include 'root/loader.html' %}
     <div class="container-fluid">
         <div class="mep-form_wrapper">
@@ -16,7 +16,6 @@
                     <form method="post" action="{% url 'eProc_Admin_Tool:user_report' %}">
                         {% csrf_token %}
                         {{ user_rep_form.non_field_errors }}
-                        <!-- The new set up UI changes-->
                         <div class="row" id="{{ user_rep_form.name }}" title="{{ user_rep_form.label }}">
                             <div class="col-md">
                                 <label>User Report Type</label>
@@ -35,14 +34,12 @@
                                 {{ user_rep_form.active }}
                             </div>
                             <div class="col-auto my-1">
-                                <button class="btn btn-primary button-search-users" id="hg_user_report_search" type="submit"
-                                    title="Please click to get the search details!"><i class="fas fa-search"></i> search
-                                </button>
+                                <button class="btn btn-primary button-search-users" id="hg_user_report_search" type="submit" title="Please click to get the search details!"><i class="fas fa-search"></i> search</button>
                             </div>
                         </div>
                         <br>
                         <div class="elements-space-between">
-                            <button class="btn btn-link" type="reset" value="Reset">clear filters</button>
+                            <button class="btn btn-link" type="reset" value="Reset" id="reset-filters">clear filters</button>
                             <div>
                                 <span class="badge help-text-badge help-text-star-search"></span>
                             </div>
@@ -51,87 +48,78 @@
                 </div>
             </div>
             <div id="table-container">
-            <!-- <br>
-            <div class="search_result_count_card card">
+                <div class="search_result_count_card card mt-3">
+                    {% if t_count > 0 %}
+                    <div class="card-body">
+                        <h6 class="card-title">Total number of results found :{{t_count}}</h6>
+                    </div>
+                    {% endif %}
+                    {% if t_count == 0 %}
+                    <div class="card-body">
+                        <h6 class="card-title">No Results Found</h6>
+                    </div>
+                    {% endif %}
+                </div>
                 {% if t_count > 0 %}
-                <div class="card-body">
-                    <h6 class="card-title">Total number of results found
-                        :{{t_count}}</h6>
-                </div>
-                {% endif %}
-                {% if t_count == 0 %}
-                <div class="card-body">
-                    <h6 class="card-title">No Results Found</h6>
-                </div>
-                {% endif %}
-            </div> -->
-            <!--    To Display Header Details only if there are any results-->
-            {% if t_count > 0 %}
-            {% if final_list %}
-            <div class="card mt-5">
-            <!--Company code, Company name, Username, Last name, First name,
-                Email address, Ship to address, user lock status -->
-                <table id="user_report_table" class="table table_sort_filter_export_excel">
-                    <thead class="thead-light">
-                        <tr>
-                            <th> username </th>
-                            <th> first name </th>
-                            <th> last name </th>
-                            <th> email </th>
-                            <th> company Number </th>
-                            <th> Company Name </th>
-                            <th> user lock status </th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        {% for acc in final_list %}
-                        <tr>
-                            <td scope="row"> {{acc.2}}</td>
-                            <td scope="row"> {{acc.4}} </td>
-                            <td scope="row">{{ acc.3 }}</td>
-                            <td scope="row"> {{acc.5}} </td>
-                            <td scope="row">{{ acc.0 }}</td>
-                            <td scope="row">{{ acc.1 }}</td>
-                            <td scope="row">
-                                {% if acc.6 %}
-                                    <input type="checkbox" id="id_locked"  checked disabled>
+                {% if final_list %}
+                <div class="card mt-3">
+                    <table id="user_report_table" class="table table_sort_filter_export_excel">
+                        <thead class="thead-light">
+                            <tr>
+                                <th> username </th>
+                                <th> first name </th>
+                                <th> last name </th>
+                                <th> email </th>
+                                <th> company Number </th>
+                                <th> Company Name </th>
+                                <th> user lock status </th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            {% for acc in final_list %}
+                            <tr>
+                                <td scope="row"> {{acc.2}}</td>
+                                <td scope="row"> {{acc.4}} </td>
+                                <td scope="row">{{ acc.3 }}</td>
+                                <td scope="row"> {{acc.5}} </td>
+                                <td scope="row">{{ acc.0 }}</td>
+                                <td scope="row">{{ acc.1 }}</td>
+                                <td scope="row">
+                                    {% if acc.6 %}
+                                    <input type="checkbox" id="id_locked" checked disabled>
                                     {% else %}
                                     <input type="checkbox" id="id_unlocked" disabled>
                                     {% endif %}
-                            </td>
-                        </tr>
-                        {% endfor %}
-                    </tbody>
-                </table>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                        </tbody>
+                    </table>
+                </div>
+                {% endif %}
+                {% endif %}
             </div>
-            {% endif %}
-            {% endif %}
         </div>
-    </div>
-        </div>
-<div class="hg_spacer2"> &nbsp; </div>
-<script src="{% static 'scripts/user_report.js' %}"></script>
+        <div class="hg_spacer2"> &nbsp; </div>
+    </div><script src="{% static 'scripts/user_report.js' %}"></script>
 <script>
-
     // Funtion to get username
     $(document).ready(function () {
         nav_bar_admin();
         $('#id_username').attr('type', 'search');
-        // Script to generate sort and filter feature for tables
         table_sort_filter_export_excel();
-        // Loader implementation on search button
-        $('#hg_user_report_search').click(function () {
-            // Store the form data in local storage
-            var formData = {
-                companyCode: $('#id_company_code').val(),
-                userRepType: $('#id_userrep_type').val(),
-                username: $('#id_username').val(),
-                userStatus: $('#id_user_status').val() // Assuming this is the correct ID for the dropdown
-            };
-            localStorage.setItem('formData', JSON.stringify(formData));
 
-            $('#hg_loader').modal('show');
-        });
+    // Function to set the default value of the company dropdown
+    function setDefaultCompanyValue() {
+        var companyCodeDropdown = $("label:contains('Company Number')").next("select");
+        companyCodeDropdown.val(companyCodeDropdown.find("option:first").val());
+    }
+
+    // Check if the page was refreshed or initially loaded
+    if (performance.navigation.type === 1) {
+        // Page was refreshed, set default company value
+        setDefaultCompanyValue();
+    }
 
     // Check if there is stored form data and populate the form fields
     var storedFormData = localStorage.getItem('formData');
@@ -140,13 +128,26 @@
         $('#id_company_code').val(formData.companyCode);
         $('#id_userrep_type').val(formData.userRepType);
         $('#id_username').val(formData.username);
-
-        // Set the selected option for userStatus based on the stored value
-        $('#id_user_status').val(formData.userStatus); // Assuming this is the correct ID for the dropdown
+        $('#id_user_status').val(formData.userStatus);
+    } else {
+        setDefaultCompanyValue();
     }
+
+    // Loader implementation on search button
+    $('#hg_user_report_search').click(function () {
+        var formData = {
+            companyCode: $('#id_company_code').val(),
+            userRepType: $('#id_userrep_type').val(),
+            username: $('#id_username').val(),
+            userStatus: $('#id_user_status').val()
+        };
+        localStorage.setItem('formData', JSON.stringify(formData));
+        $('#hg_loader').modal('show');
+    });
 });
 
-function hideTableAndPagination() {
+    // Function to hide the table and pagination controls
+    function hideTableAndPagination() {
         document.getElementById("table-container").style.display = "none";
     }
 
@@ -158,7 +159,23 @@ function hideTableAndPagination() {
     // Add event listeners to the buttons
     document.addEventListener("DOMContentLoaded", function () {
         document.getElementById("hg_user_report_search").addEventListener("click", showTableAndPagination);
-        document.querySelector("button[type='reset']").addEventListener("click", hideTableAndPagination);
+        document.querySelector("button[type='reset']").addEventListener("click", showTableAndPagination);
+    });
+
+    function resetFilters() {
+        $('#id_company_code').val('');
+        $('#id_username').val('');
+        $('#id_user_status').val('');
+        var companyCodeDropdown = $("label:contains('Company Number')").next("select");
+        companyCodeDropdown.val(companyCodeDropdown.find("option:first").val());
+        localStorage.removeItem('formData');
+        $('form').submit();
+    }
+
+    // Listen for the "Clear Filters" button click
+    $('#reset-filters').click(function (e) {
+        e.preventDefault();
+        resetFilters();
     });
 </script>
 {% if inc_footer %}

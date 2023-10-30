@@ -14,18 +14,24 @@ window.onload = function () {
     default_value = sessionStorage.getItem("USER_REP");
     company_code = sessionStorage.getItem("COMPANY_CODE");
     active = sessionStorage.getItem("ACTIVE");
+
     if (default_value == 'Users_in_company') {
         $('#id_userrep_type').val(default_value).attr('selected', 'selected');
-        $('#id_company_code').val(company_code).attr('selected', 'selected');
-        // $('#id_active').val(active)
+
+        // Get the company code dropdown element by its label
+        var companyCodeDropdown = $("label:contains('Company Number')").next("select");
+
+        // Select the first option in the dropdown
+        companyCodeDropdown.val(companyCodeDropdown.find("option:first").val());
     }
     else {
        $('#substitute_sub_type').show();
         $('#company_code').hide();
         $('#username').hide();
-        $('#acive').hide();
+        $('#active').hide();
     }
 }
+
 default_value = sessionStorage.getItem("USER_REP");
 substitute_type = sessionStorage.getItem("SUBSTITUTE_TYPE");
 if (default_value == 'Users_in_company' || default_value == "" || default_value == null) {

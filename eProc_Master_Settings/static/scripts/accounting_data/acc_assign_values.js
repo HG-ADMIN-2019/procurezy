@@ -1,8 +1,13 @@
 var aav_data = new Array();
 var validate_add_attributes = [];
 var main_table_low_value = [];
+var used_acc_ass_cat = [];
 var aav={};
 
+//hide the myModal popup: Implemented Dependency delete purpose
+function hideModal() {
+    $('#aav_Modal').modal('hide');
+}
 
 //onclick of upload button display id_data_upload popup and set GLOBAL_ACTION button value
 function onclick_upload_button() {
@@ -13,12 +18,12 @@ function onclick_upload_button() {
     document.getElementById('id_file_data_upload').value = "";
 }
 
-// on click Delete icon 
-function onclick_delete_button() {
-    GLOBAL_ACTION = "DELETE"
-    onclick_copy_update_button("DELETE");
-    document.getElementById("id_del_add_button").style.display = "none";
-}
+//// on click Delete icon
+//function onclick_delete_button() {
+//    GLOBAL_ACTION = "DELETE"
+//    onclick_copy_update_button("DELETE");
+//    document.getElementById("id_del_add_button").style.display = "none";
+//}
 
 // on click copy icon display the selected checkbox data
 function onclick_button_action(action) {
@@ -108,7 +113,7 @@ function delete_duplicate() {
         valid_to = row.find("TD").eq(5).find('input[type="text"]').val()
         account_assign_cat = row.find("TD").eq(2).find('Select').val()
         company_id = row.find("TD").eq(1).find('Select').val()
-         var compare = account_assign_value + '-' + account_assign_cat + '-' + company_id
+         var compare = account_assign_value + '-' + account_assign_cat + '-' + company_id+ '-' + valid_from+ '-' + valid_to
          if (aav_code_check.includes(compare)) {
             $(row).remove();
         }
@@ -120,6 +125,7 @@ function delete_duplicate() {
         main_table_low_value.push(compare);
     })
     table_sort_filter_popup_pagination('id_popup_table')
+    $("#save_id").prop("hidden", true);
     check_data()
 }
 
@@ -232,7 +238,10 @@ function get_main_table_data() {
         main_attribute.company_id = row.find("TD").eq(1).html();
         main_attribute.account_assign_cat = row.find("TD").eq(2).html();
         main_attribute.account_assign_value = row.find("TD").eq(3).html();
-        compare_maintable = main_attribute.company_id + '-' + main_attribute.account_assign_cat + '-' + main_attribute.account_assign_value;
+        main_attribute.valid_from = row.find("TD").eq(4).find('input[type="text"]').val()
+        main_attribute.valid_to = row.find("TD").eq(5).find('input[type="text"]').val()
+        compare_maintable = main_attribute.company_id + '-' + main_attribute.account_assign_cat + '-' + main_attribute.account_assign_value +
+        '-' + main_attribute.valid_from +'-' + main_attribute.valid_to +'-'+ main_attribute.del_ind;
         main_table_low_value.push(compare_maintable);
     });
     table_sort_filter('display_basic_table');
@@ -248,11 +257,15 @@ function get_main_table_data_upload() {
         main_attribute.company_id = row.find("TD").eq(1).html();
         main_attribute.account_assign_cat = row.find("TD").eq(2).html();
         main_attribute.account_assign_value = row.find("TD").eq(3).html();
+        main_attribute.valid_from = row.find("TD").eq(4).find('input[type="text"]').val()
+        main_attribute.valid_to = row.find("TD").eq(5).find('input[type="text"]').val()
         main_attribute.del_ind = row.find("TD").eq(6).find('input[type="checkbox"]').is(':checked');
-        compare_maintable = main_attribute.company_id + '-' + main_attribute.account_assign_cat + '-' + main_attribute.account_assign_value+ '-'+ main_attribute.del_ind;
+        compare_maintable = main_attribute.company_id + '-' + main_attribute.account_assign_cat + '-' + main_attribute.account_assign_value +
+        '-' + main_attribute.valid_from + '-' + main_attribute.valid_to + '-'+ main_attribute.del_ind;
         main_table_low_value.push(compare_maintable);
     });
     table_sort_filter('display_basic_table');
+    return main_table_low_value
 }
 
 // Function to get the selected row data
@@ -274,21 +287,87 @@ function get_selected_row_data() {
     });
 }
 
+// Function to get the selected row data
+function get_row_data(tableSelector) {
+    main_table_checked = [];
+    $(tableSelector).DataTable().$('input[type="checkbox"]').each(function () {
+        var checkbox = $(this);
+        var row = checkbox.closest("tr");
+        var aav_arr_obj = {};
+        aav_arr_obj.del_ind = checkbox.is(':checked');
+        if(aav_arr_obj.del_ind) {
+            aav_arr_obj.company_id = row.find("TD").eq(1).find('input[type="text"]').val() || row.find("TD").eq(1).html()
+            aav_arr_obj.account_assign_cat = row.find("TD").eq(2).find('input[type="text"]').val() || row.find("TD").eq(2).html();
+            aav_arr_obj.account_assign_value = row.find("TD").eq(3).find('input[type="number"]').val() || row.find("TD").eq(3).html();
+            aav_arr_obj.valid_from = row.find("TD").eq(4).find('input[type="text"]').val() || row.find("TD").eq(4).html();
+            aav_arr_obj.valid_to = row.find("TD").eq(5).find('input[type="text"]').val() || row.find("TD").eq(5).html();
+            aav_arr_obj.account_assign_guid = row.find("TD").eq(6).find('input').val() || row.find("TD").eq(6).html();
+            main_table_checked.push(aav_arr_obj);
+        }
+    });
+}
+
+// storing company_code associated data from main table
+function display_tb_data() {
+    main_table_data = {};
+    $('#display_basic_table').DataTable().destroy();
+    $("#display_basic_table TBODY TR").each(function() {
+        var row = $(this);
+        var main_attribute = {};
+        main_attribute.company_id = row.find("TD").eq(1).html();
+        main_attribute.account_assign_cat = row.find("TD").eq(2).html();
+        if (!main_table_data.hasOwnProperty(main_attribute.company_id)) {
+            main_table_data[main_attribute.company_id] = [];
+        }
+        main_table_data[main_attribute.company_id].push({
+            account_assign_cat: main_attribute.account_assign_cat
+        });
+    });
+    table_sort_filter('display_basic_table');
+}
+
  // Function for add a new row data
  function new_row_data() {
     basic_add_new_html = '<tr><td><input type="checkbox" required></td>'+
-    '<td><select class="form-control" id="company_dropdw">' + company_dropdwn + '</select></td>'+
+    '<td><select class="form-control" id="company_dropdw" onchange="GetUnusedAccAssCat(this)">' + company_dropdwn + '</select></td>'+
     '<td><select class="form-control" id="acc_ass_val_dropdw">' + acc_ass_dropdwn + ' </select></td>'+
     '<td><input class="form-control check_number" type="number" minlength="4" maxlength="40" name="Account Assignment Value" required></td>'+
     '<td><input class="form-control formatDate" type="text"  name="valid_from" required></td>'+
     '<td><input class="form-control formatDate" type="text"  name="Valid To Date" required></td>'+
     '<td hidden><input value=""></td>'+
     '<td class="class_del_checkbox" hidden><input type="checkbox" required></td>'+
-    '<td class="class_del_checkbox1" hidden><input type="checkbox" required></td></tr>';
+    '</tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
     DatePicker();
     table_sort_filter("id_popup_table");
  }
+
+// onchange function(filtering acc_ass_cat)
+ function GetUnusedAccAssCat(company_code){
+    var company_val = company_code.value;
+    var company = $(company_code).closest('tr').find('.form-control').eq(0);
+    var acc_ass_dropdwn = $(company_code).closest('tr').find('.form-control').eq(1);
+
+    var acc_ass_cat = main_table_data[company_val];
+    if(!acc_ass_cat){
+        acc_ass_dropdwn.empty();
+        $.each(rendered_aac_data, function(i, item) {
+            acc_ass_dropdwn.append('<option value ="' + item.account_assign_cat + '" >' + item.account_assign_cat + '</option>')
+        });
+    } else {
+        acc_ass_dropdwn.empty();
+        var options = [];
+        rendered_aac_data.forEach(item => {
+            var found = acc_ass_cat.some(lang => lang.account_assign_cat === item.account_assign_cat);
+            if (found) {
+                used_acc_ass_cat.push(item.account_assign_cat)
+            } else {
+                options.push('<option value="' + item.account_assign_cat + '">' + item.account_assign_cat + '</option>');
+            }
+        })
+        acc_ass_dropdwn.append(options.join(''));
+    }
+}
 
  // onclick of valid popup
 function valid_popup(){

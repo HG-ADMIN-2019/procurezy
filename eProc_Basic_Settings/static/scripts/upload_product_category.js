@@ -207,7 +207,7 @@ function new_row_data() {
     `<tr>
         <td><input type="checkbox" required></td>
         <td><input class="input form-control check_number" type="text" title="Minimum length is 2" minlength="10" maxlength="10"  name="prod_cat_id" required></td>
-        <td><input class="input form-control check_special_char" type="text" maxlength="20" name="prod_cat_desc" required></td>
+        <td><input class="input form-control check_only_character" type="text" maxlength="20" name="prod_cat_desc" required></td>
         <td class="class_del_checkbox" hidden><input type="checkbox" required></td>
     </tr>`;
     $('#id_popup_tbody').append(basic_add_new_html);

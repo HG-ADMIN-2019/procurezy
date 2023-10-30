@@ -90,59 +90,59 @@ class InitialSetupClient(BasicSettingsSave, ApplicationSettingsSave, MasterSetti
                 print(f"Error in {name}: {str(e)}")
 
         # Save OrgNodeTypes data
-        # safe_call(self.org_node_type_script, 'org_node_type_script')
-        # # Save OrgAttributes
-        # safe_call(self.org_attribute_script, 'org_attribute_script')
-        # # Save Roles
-        # safe_call(self.user_roles_script, 'user_roles_script')
-        # # Save auth obj
-        # safe_call(self.auth_obj_script, 'auth_obj_script')
-        # # Save auth
-        # safe_call(self.auth_script, 'auth_script')
-        # # Save auth
-        # safe_call(self.auth_grp_script, 'auth_grp_script')
-        # # Save field type
-        # safe_call(self.field_desc_script, 'field_desc_script')
-        # # Save field type
-        # safe_call(self.field_type_script, 'field_type_script')
-        # # Save message id
-        # safe_call(self.message_id_script, 'message_id_script')
-        # # Save message desc
-        # safe_call(self.message_id_desc_script, 'message_id_desc_script')
-        # # Save system settings
-        # safe_call(self.system_settings_script, 'system_settings_script')
+        safe_call(self.org_node_type_script, 'org_node_type_script')
+        # Save OrgAttributes
+        safe_call(self.org_attribute_script, 'org_attribute_script')
+        # Save Roles
+        safe_call(self.user_roles_script, 'user_roles_script')
+        # Save auth obj
+        safe_call(self.auth_obj_script, 'auth_obj_script')
+        # Save auth
+        safe_call(self.auth_script, 'auth_script')
+        # Save auth
+        safe_call(self.auth_grp_script, 'auth_grp_script')
+        # Save field type
+        safe_call(self.field_desc_script, 'field_desc_script')
+        # Save field type
+        safe_call(self.field_type_script, 'field_type_script')
+        # Save message id
+        safe_call(self.message_id_script, 'message_id_script')
+        # Save message desc
+        safe_call(self.message_id_desc_script, 'message_id_desc_script')
+        # Save system settings
+        safe_call(self.system_settings_script, 'system_settings_script')
         # Save node level attributes
         safe_call(self.node_level_attribute_script, 'node_level_attribute_script')
         # Save email (uncomment this line to save email data)
-        # safe_call(self.email_contents_script, 'email_contents_script')
+        safe_call(self.email_contents_script, 'email_contents_script')
         # Save UNSPC
-        # safe_call(self.Unspc_code_script, 'Unspc_code_script')
-        # # Save DOCUMENTS
-        # safe_call(self.document_type_script, 'document_type_script')
-        # # Save ACC ASS CAT CUST
-        # safe_call(self.acc_ass_cat_cust_type_script, 'acc_ass_cat_cust_type_script')
-        # # Save CALENDER
-        # safe_call(self.calendar_script, 'calendar_script')
-        # # Save HOLIDAY CALENDER
-        # safe_call(self.holiday_calendar_script, 'holiday_calendar_script')
-        # # Save PURCHASE SPLIT TYPE
-        # safe_call(self.purchase_order_split_type_script, 'purchase_order_split_type_script')
-        # # Save PURCHASE ORDER SPLIT TYPE
-        # safe_call(self.purchase_order_split_criteria_script, 'purchase_order_split_criteria_script')
-        # # Save PURCHASE CONTROL
-        # safe_call(self.purchase_control_script, 'purchase_control_script')
-        # # Save FAVOURITE CART
-        # safe_call(self.favourite_cart_script, 'favourite_cart_script')
-        # # Save SHOPPING CART
-        # safe_call(self.shopping_cart_script, 'shopping_cart_script')
-        # # Save PURCHASE ORDER
-        # safe_call(self.purchase_order_script, 'purchase_order_script')
-        # # Save FAVOURITE CART
-        # safe_call(self.favourite_transaction_script, 'favourite_transaction_script')
-        # # Save SHOPPING CART
-        # safe_call(self.shopping_transaction_script, 'shopping_transaction_script')
-        # # Save PURCHASE ORDER
-        # safe_call(self.purchase_transaction_script, 'purchase_transaction_script')
+        safe_call(self.Unspc_code_script, 'Unspc_code_script')
+        # Save DOCUMENTS
+        safe_call(self.document_type_script, 'document_type_script')
+        # Save ACC ASS CAT CUST
+        safe_call(self.acc_ass_cat_cust_type_script, 'acc_ass_cat_cust_type_script')
+        # Save CALENDER
+        safe_call(self.calendar_script, 'calendar_script')
+        # Save HOLIDAY CALENDER
+        safe_call(self.holiday_calendar_script, 'holiday_calendar_script')
+        # Save PURCHASE SPLIT TYPE
+        safe_call(self.purchase_order_split_type_script, 'purchase_order_split_type_script')
+        # Save PURCHASE ORDER SPLIT TYPE
+        safe_call(self.purchase_order_split_criteria_script, 'purchase_order_split_criteria_script')
+        # Save PURCHASE CONTROL
+        safe_call(self.purchase_control_script, 'purchase_control_script')
+        # Save FAVOURITE CART
+        safe_call(self.favourite_cart_script, 'favourite_cart_script')
+        # Save SHOPPING CART
+        safe_call(self.shopping_cart_script, 'shopping_cart_script')
+        # Save PURCHASE ORDER
+        safe_call(self.purchase_order_script, 'purchase_order_script')
+        # Save FAVOURITE CART
+        safe_call(self.favourite_transaction_script, 'favourite_transaction_script')
+        # Save SHOPPING CART
+        safe_call(self.shopping_transaction_script, 'shopping_transaction_script')
+        # Save PURCHASE ORDER
+        safe_call(self.purchase_transaction_script, 'purchase_transaction_script')
 
     def org_node_type_script(self, directory):
         file_path = os.path.join(directory, CONST_ORG_NODE_TYPES_CSV)  # create path
@@ -322,11 +322,11 @@ class InitialSetupClient(BasicSettingsSave, ApplicationSettingsSave, MasterSetti
             header = next(csvreader)  # skip header
             csv_to_db_data = []
             for csv_data in csvreader:
-                csv_to_db_data.append({'object_type': csv_data[0],
-                                       'subject': csv_data[1],
-                                       'header': csv_data[2],
-                                       'body': csv_data[3],
-                                       'footer': csv_data[4],
+                csv_to_db_data.append({'email_type': csv_data[0],
+                                       'email_subject': csv_data[1],
+                                       'email_header': csv_data[2],
+                                       'email_body': csv_data[3],
+                                       'email_footer': csv_data[4],
                                        'language_id': csv_data[5],
                                        'del_ind': csv_data[6]})
             self.save_email_settings(csv_to_db_data)

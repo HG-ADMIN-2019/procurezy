@@ -3,6 +3,11 @@ var validate_add_attributes = [];
 var main_table_low_value = [];
 var country={};
 
+// Hide delete popup
+function hideModal() {
+    $('#countriesModal').modal('hide');
+}
+
 //onclick of add button display countriesModal popup and set GLOBAL_ACTION button value
 function onclick_add_button(button) {
     $("#error_msg_id").css("display", "none")
@@ -67,16 +72,16 @@ function onclick_copy_update_button(data) {
         if ( $chkbox_all[i].checked) {
             var row =  $chkbox_all[i].parentNode.parentNode;
             if(GLOBAL_ACTION == "UPDATE"){
-                unique_input = '<input class="form-control check_special_char" type="text" value="' + row.cells[1].innerHTML + '" name=""  maxlength="2" style="text-transform:uppercase" disabled>'
+                unique_input = '<input class="form-control check_character_no_space" type="text" value="' + row.cells[1].innerHTML + '" name=""  maxlength="2" style="text-transform:uppercase" disabled>'
                 edit_basic_data += '<tr ><td hidden><input type="checkbox" required></td>'+
                     '<td>'+unique_input+'</td>'+
-                    '<td><input class="form-control check_special_char" value="' + row.cells[2].innerHTML + '" type="text"  name="country description"  maxlength="100"  required></td>'+
+                    '<td><input class="form-control check_only_character" value="' + row.cells[2].innerHTML + '" type="text"  name="country description"  maxlength="100"  required></td>'+
                     '<td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
-                $("#header_select").prop("hidden", true);
+                    $("#header_select").prop("hidden", true);
             }
             else{
-                unique_input = '<input class="form-control check_special_char" type="text" value="' + row.cells[1].innerHTML + '" name="country code"  maxlength="2" style="text-transform:uppercase" required>'
-                edit_basic_data += '<tr ><td><input type="checkbox" required></td><td>'+unique_input+'</td><td><input class="form-control check_special_char"  value="' + row.cells[2].innerHTML + '" type="text"  name="country description"  maxlength="100"  required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+                unique_input = '<input class="form-control check_character_no_space" type="text" value="' + row.cells[1].innerHTML + '" name="country code"  maxlength="2" style="text-transform:uppercase" required>'
+                edit_basic_data += '<tr ><td><input type="checkbox" required></td><td>'+unique_input+'</td><td><input class="form-control check_only_character"  value="' + row.cells[2].innerHTML + '" type="text"  name="country description"  maxlength="100"  required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
                 $("#header_select").prop("hidden", false);
             }      
         }
@@ -123,7 +128,7 @@ function add_popup_row() {
         $("#id_error_msg").html(" ");
     });
     if (GLOBAL_ACTION == "country_upload") {
-         basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><input class="form-control check_special_char"  type="text"   maxlength="2" minlength="2"  name="countrycode" style="text-transform:uppercase;" required></td><td><input class="form-control check_special_char" type="text" maxlength="100"  name="countryname" required></td><td class="class_del_checkbox"><input type="checkbox" required></td></tr>';
+         basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><input class="form-control check_character_no_space"  type="text"   maxlength="2" minlength="2"  name="countrycode" style="text-transform:uppercase;" required></td><td><input class="form-control check_only_character" type="text" maxlength="100"  name="countryname" required></td><td class="class_del_checkbox"><input type="checkbox" required></td></tr>';
          $('#id_popup_tbody').append(basic_add_new_html);
          table_sort_filter('id_popup_table');
          $(".class_del_checkbox").prop("hidden", false);
@@ -173,15 +178,23 @@ function delete_duplicate() {
         //*************** reading data from the pop-up ***************
         country_name = row.find("TD").eq(2).find('input[type="text"]').val().toUpperCase();
         country_code = row.find("TD").eq(1).find('input[type="text"]').val().toUpperCase();
-        if (country_code_check.includes(country_code)) {
-            $(row).remove();
-        }
-        country_code_check.push(country_code);
-        main_table_low_value = get_main_table_data_upload(); //Read data from main table
-        if (main_table_low_value.includes(country_code)) {
-            $(row).remove();
-        }
-        main_table_low_value.push(country_code);
+        checked_box = row.find("TD").eq(3).find('input[type="checkbox"]').is(':checked')
+            if (checked_box){
+                del_ind = '1'
+            }
+            else{
+                del_ind = '0'
+                if (country_code_check.includes(country_code)) {
+                    $(row).remove();
+                }
+                country_code_check.push(country_code);
+                main_table_low_value = get_main_table_data_upload(); //Read data from main table
+                if (main_table_low_value.includes(country_code)) {
+                        $(row).remove();
+                }
+                main_table_low_value.push(country_code);
+            }
+
     });
     table_sort_filter_popup_pagination('id_popup_table')
     check_data()
@@ -217,7 +230,7 @@ function read_popup_data() {
 
 // Function for add a new row data
 function new_row_data(){
-    basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><input class="form-control check_special_char"  type="text"   maxlength="2" minlength="2"  name="countrycode" style="text-transform:uppercase;" required></td><td><input class="form-control check_special_char" type="text" maxlength="100"  name="countryname" required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+    basic_add_new_html = '<tr><td><input type="checkbox" required></td><td><input class="form-control check_character_no_space"  type="text"   maxlength="2" minlength="2"  name="countrycode" style="text-transform:uppercase;" required></td><td><input class="form-control check_only_character" type="text" maxlength="100"  name="countryname" required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
     $('#id_popup_tbody').append(basic_add_new_html);
 }
 
@@ -244,13 +257,28 @@ function get_main_table_data_upload() {
         var main_attribute = {};
         main_attribute.country_code = row.find("TD").eq(1).html();
         main_attribute.del_ind = row.find("TD").eq(3).find('input[type="checkbox"]').is(':checked');
-        var compare = main_attribute.country_code + '-'+ main_attribute.del_ind
+        var compare = main_attribute.country_code
         main_table_low_value.push(compare);
     });
     table_sort_filter('display_basic_table');
     return main_table_low_value
 }
 
+// Function to get the selected row data
+function get_row_data(tableSelector) {
+    main_table_checked = [];
+    $(tableSelector).DataTable().$('input[type="checkbox"]').each(function () {
+        var checkbox = $(this);
+        var row = checkbox.closest("tr");
+        var country_arr_obj = {};
+        country_arr_obj.del_ind = checkbox.is(':checked');
+        if(country_arr_obj.del_ind) {
+            country_arr_obj.country_code = row.find("TD").eq(1).find('input[type="text"]').val() || row.find("TD").eq(1).html();
+            country_arr_obj.country_name = row.find("TD").eq(2).find('input[type="text"]').val() || row.find("TD").eq(2).html();
+            main_table_checked.push(country_arr_obj);
+        }
+    });
+}
 
 // Function to get the selected row data
 function get_selected_row_data(){

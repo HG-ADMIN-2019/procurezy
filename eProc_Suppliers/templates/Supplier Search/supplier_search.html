@@ -20,10 +20,10 @@
                     <i class="fas fa-cloud-upload-alt"></i> upload data
                 </button>
                 <button class="btn btn-primary" onclick="window.open(href = '{% url 'eProc_Admin_Tool:sup_details_page' None %}')">
-                    <i class="fas fa-user-plus"></i> 
+                    <i class="fas fa-user-plus"></i>
                     Create Supplier
                 </button>
-                
+
             </div>
         </div>
 
@@ -40,15 +40,18 @@
                     <div class="row">
                         <div class="col-md">
                             <label for="">First Name</label>
-                            <input type="text" class="form-control check_for_search" id="name1" name="name1" >
+                            <input type="text" class="form-control check_for_search mandatory_fields" id="name1" name="name1" >
+                            <span id="err_firstname" class="error_message" hidden></span>
                         </div>
                         <div class="col-md">
                             <label for="">Last Name</label>
-                            <input type="text" class="form-control check_for_search" id="name2" name="name2">
+                            <input type="text" class="form-control check_for_search mandatory_fields" id="name2" name="name2">
+                            <span id="err_lastname" class="error_message" hidden></span>
                         </div>
                         <div class="col-md">
                             <label for="">Supplier Number</label>
-                            <input type="text" class="form-control check_for_search" id="supplier_id" name='supplier_id'>
+                            <input type="text" class="form-control check_for_search mandatory_fields" id="supplier_id" name='supplier_id'>
+                            <span id="err_supnumber" class="error_message" hidden></span>
                         </div>
                         <div class="col-auto my-1">
                             <button class="button-search-users btn btn-primary" type="submit"
@@ -65,7 +68,8 @@
                         <div class="row">
                             <div class="col-md">
                               <label for="">Email</label>
-                                <input type="text" class="form-control" id="email" name="email">
+                                <input type="text" class="form-control mandatory_fields" id="email" name="email">
+                                <span id="err_email" class="error_message" hidden></span>
                             </div>
                             <div class="col-md">
                                 <label for="">Supplier Type</label>
@@ -87,7 +91,8 @@
                             </div>
                             <div class="col-md">
                                 <label for="">City</label>
-                                <input type="text" class="form-control check_for_search" id="city" name="city">
+                                <input type="text" class="form-control check_for_search mandatory_fields" id="city" name="city">
+                                <span id="err_city" class="error_message" hidden></span>
                             </div>
                             <div class="col-md">
                                 <label for="">Purchasing Organization</label>
@@ -126,7 +131,7 @@
             </div>
         </div>
         {% elif supplier_results.count == 0  %}
-        <div class="search_result_count_card card">
+        <div class="search_result_count_card card" id="result_id">
             <div class="card-body">
                 <h6 class="card-title">No Results Found</h6>
             </div>
@@ -135,8 +140,8 @@
 
         <div id="error_msg_div" class="alert alert-success" hidden><span id="success_msg_id"></span></div>
 
-        {% if supplier_results %}
-        
+
+
         <div class="card mt-5">
             <div>
                 <button class="btn btn-primary btn-sm mt-2 ml-2" title="Delete" id="id_delete_supplier" value="product_delete" data-toggle="modal" data-target="#id_delete_confirm_popup" style="display:none;">
@@ -205,7 +210,7 @@
                 </div>
             </div>
         </div>
-        {% endif %}
+
     </div>
 </div>
 
@@ -425,12 +430,15 @@
         {% endif %}
     </div>
 
+{{ supp_data_onload|json_script:"supp_data_onload" }}
 <script src="{% static 'scripts/supplier-search.js' %}"> </script>
 <script>
 var Tablename = uiConstants["CONST_TABLENAME_SUPPLIERMASTER"]
 var appname = uiConstants["CONST_APPNAME01"]
 var db_header_data = uiConstants["CONST_HEADER_DATA_SUPPLIERMASTER"]
 var GLOBAL_SUPPLIER_GUID = '';
+var supplier_data_onload = JSON.parse(document.getElementById('supp_data_onload').textContent);
+var form_method = '{{form_method|safe}}';
 
     function reload(){
         localStorage.setItem("fname", document.getElementById("name1").value);
@@ -444,6 +452,75 @@ var GLOBAL_SUPPLIER_GUID = '';
         localStorage.setItem("supp_purchase_block", document.getElementById("purchase_block").checked);
         OpenLoaderPopup();
     }
+
+    $('form').on('reset',function (e) {
+    localStorage.removeItem("fname");
+    localStorage.removeItem("supp_id");
+    localStorage.removeItem("supp_email");
+    localStorage.removeItem("supp_type");
+    localStorage.removeItem("city_code");
+    localStorage.removeItem("country_id");
+    localStorage.removeItem("supp_porg");
+    localStorage.removeItem("supp_purchase_block");
+    $(".error_message").prop("hidden", true);
+    $("#result_id").prop("hidden", true);
+        OpenLoaderPopup();
+        var data = {'table_name':'supplier'}
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'eProc_Admin_Tool:clear_filter' %}",
+            data: JSON.stringify(data),
+            success: function(response) {
+                console.log(response);
+                supplier_results = response.supplier_results;
+                display_supplier_data(response.supplier_results);
+                CloseLoaderPopup();
+            }
+        });
+});
+
+    $('form').on('submit',function (e) {
+        OpenLoaderPopup();
+        var valid = true;
+        var temp = document.getElementsByClassName('mandatory_fields');
+        for (var i = 0; i<temp.length; i++) {
+            if(!(temp[i].value == '') || !(temp[i].value == null)){
+                data = temp[i].value;
+                var count = data.split('**').length - 1;
+                if((count >= 1) || (data == '*')){
+                    var display_id = temp[i].nextElementSibling.id;
+                    $('#'+display_id).prop('hidden', false);
+                    document.getElementById(temp[i].nextElementSibling.id).innerHTML = "Please enter valid value";
+                    valid = false;
+                }
+            }
+        }
+        if(!valid){
+            localStorage.setItem("error_flag", 1);
+            e.preventDefault();
+<!--            $("#err_username").prop("hidden", false);-->
+                setTimeout(function() {
+                       CloseLoaderPopup();
+         }, 500);
+        }
+    });
+
+
+    $("body").on("keypress  blur change", ".mandatory_fields", function (event) {
+         var get_value = event.currentTarget.value;
+            var count = get_value.split('**').length - 1;
+            if((count>=1)|| (get_value == '*'))
+            {
+            var display_id = event.currentTarget.nextElementSibling.id;
+            $('#'+display_id).prop('hidden', false);
+            document.getElementById(display_id).style.display = "block";
+            event.currentTarget.nextElementSibling.innerHTML = "Please enter valid value";
+            }
+            else{
+                $(".error_message").prop("hidden", true);
+                document.getElementById(event.currentTarget.nextElementSibling.id).style.display = "true";
+            }
+    });
 
 //onclick of data Upload copy data to modal pop-up
 
@@ -816,6 +893,9 @@ function check_data() {
             $('#success_msg_id').text(Response.success_message);
             $("#error_msg_div").prop("hidden",false);
 <!--            message_display_time();-->
+            setTimeout(function() {
+                                $("#error_msg_div").prop("hidden",true);
+     }, msg_display_interval*1500);
             CloseLoaderPopup();
             }
         });

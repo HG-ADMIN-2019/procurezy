@@ -31,11 +31,11 @@
             <div id="err_msg_app_settings_t" class="alert alert-success" hidden><span id="success_msg_id"></span></div>
             <div class="table-container">
                 <div class="edit-button-section mb-4">
-                    <button class="btn btn-secondary btn-sm" title="Edit" id="id_edit_data" onclick="onclick_edit_button()">
-                        <i class="fas fa-edit"></i> Edit
+                    <button class="btn btn-secondary btn-sm" title="Edit" id="id_edit_data" style="display: block;" onclick="onclick_edit_button()">
+                        <i class="fas fa-edit"></i> edit
                     </button>
-                    <button class="btn btn-outline-danger btn-sm" title="Delete" id="id_delete_data" value="aad_delete" style="display:none;" data-toggle="modal" data-target="#id_delete_confirm_popup">
-                        <i class="fa fa-trash"></i> Delete
+                    <button class="btn btn-outline-danger btn-sm" id="id_delete_data" title= "DELETE" value="Delete" style="display:none;" onclick="onclick_delete_button()">
+                        <i class="fa fa-trash"></i> delete
                     </button>
                     <button class="btn btn-primary btn-sm" title="Copy" id="id_copy_data" style="display:none;" value="COPY" type="button" onclick="onclick_copy_button()">
                         <i class="fa fa-copy"></i> Copy
@@ -43,7 +43,7 @@
                     <button class="btn btn-primary btn-sm" title="Update" id="id_update_data" style="display:none;" value="UPDATE" type="button" onclick="onclick_update_button()">
                         <i class="far fa-edit"></i> Update
                     </button>
-                    <button class="btn btn-secondary btn-sm" title="Cancel" id="id_cancel_data" style="display:none;" type="button" onclick="display_basic_db_data()">
+                    <button  class="btn btn-secondary btn-sm" title="Cancel" id="id_cancel_data" style="display:none;" type="button"onclick="display_basic_db_data()">
                         <i class="fas fa-times"></i> cancel
                     </button>
                 </div>
@@ -118,7 +118,7 @@
                                 <th>Language</th>
                                 <th hidden>guid</th>
                                 <th id="id_del_ind_checkbox" hidden>Del Indicator</th>
-                                <th hidden>Confirm Value</th>
+<!--                                <th hidden>Confirm Value</th>-->
                             </tr>
                             </thead>
                             <tbody id="id_popup_tbody">
@@ -133,6 +133,9 @@
                     <button type="button" class="btn btn-outline-primary remove_upload_data" title="Cancel" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
                     <button id="id_delete_duplicate" class="btn btn-primary" title="Delete" style="display:none;" type="button" onclick="delete_duplicate()"><i class="fa fa-trash"></i> delete duplicates</button>
                     <button id="id_check_data" title="Check" style="display:none;" class="btn btn-primary" type="button" onclick="check_data()"><i class="fas fa-check"></i> check</button>
+                    <button class="btn btn-primary btn-sm" title="Delete" id="delete_data" value="DELETE" data-toggle="modal" data-target="#id_delete_confirm_popup" onclick="hideModal()">
+                        <i class="fa fa-trash"></i> Delete
+                    </button>
                     <button class="btn btn-primary" title="Save" id="save_id"><i class="fas fa-save"></i> save</button>
                </div>
             </div>
@@ -481,16 +484,73 @@ function new_row_data() {
         table_sort_filter('id_popup_table');
     }
 
+    // Onclick delete Button
+    function onclick_delete_button() {
+        $("#error_msg_id").css("display", "none");
+        $('#id_popup_table').DataTable().destroy();
+        $("#id_popup_tbody").empty();
+        GLOBAL_ACTION = "DELETE";
+        var edit_basic_data = "";
+        var guid = '';
+        main_table_checked = [];
+        get_row_data("#display_basic_table"); // Function call to get the selected row data
+        display_button(); // Call the display_button function to show/hide the buttons
+        var data = {'data': main_table_checked, 'table_name': 'AccountingDataDesc', 'action': GLOBAL_ACTION };
+        OpenLoaderPopup();
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'eProc_Configuration:create_update_delete_flags' %}",
+            data: JSON.stringify(data),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function(Response) {
+                var docTypeArray = Response.delete_flags; // Get the delete_flags array from the response
+                var res = get_all_checkboxes(); // Function to get all the checkboxes
+                var $chkbox_all = $('td input[type="checkbox"]', res);
+                var j = 0; // Index for docTypeArray
+                for (var i = 0; i < $chkbox_all.length; i++) {
+                    if ($chkbox_all[i].checked) {
+                        var row = $chkbox_all[i].parentNode.parentNode;
+                        if (j < docTypeArray.length && docTypeArray[j] === false) {
+                            check = '<input type="checkbox" disabled>';
+                            $('#delete_data').prop('disabled', true);
+                        } else {
+                            check = '<input type="checkbox" onclick="enableDeleteButton()">';
+                            $('#delete_data').prop('disabled', true);
+                        }
+                        j++; // Move to the next index in docTypeArray
+                        edit_basic_data +=
+                            `<tr>
+                                <td>${check}</td>
+                                <td><input class="form-control" type="text" id="company_dropdw" value=${row.cells[1].innerHTML} disabled></td>
+                                <td><input id="acc_dropdwn" type="text" class="form-control" value=${row.cells[2].innerHTML} disabled></td>
+                                <td><input class="form-control check_number" type="number" value=${row.cells[3].innerHTML} disabled> </td>
+                                <td><input type="text" class="form-control" value=${row.cells[4].innerHTML} disabled></td>
+                                <td><input type="text" class="form-control" value=${row.cells[5].innerHTML} disabled></td>
+                                <td hidden><input required></td>
+                                <td class="class_del_checkbox" hidden><input type="checkbox" required></td>
+                            </tr>`;
+                    }
+                }
+                CloseLoaderPopup();
+                $('#id_popup_tbody').append(edit_basic_data);
+                $("#id_del_ind_checkbox").prop("hidden", true);
+                $('#Acc_desc_Modal').modal('show');
+                table_sort_filter('id_popup_table');
+            },
+        });
+    }
+
     //delete the selected row in db................
-    var main_table_aad_checked = [];
+    var main_table_checked = [];
     function main_table_delete() {
         $('#success_msg_id').empty()
         GLOBAL_ACTION = 'DELETE'
-        main_table_aad_checked = [];
+        main_table_checked = [];
         $('#display_basic_table').DataTable().destroy();
-        get_selected_row_data(); // Function call to get the selected row data
+        get_row_data("#id_popup_table"); // Function call to get the selected row data
         $('#id_delete_confirm_popup').modal('hide');
-            data = {'data':main_table_aad_checked,'table_name':'AccountingDataDesc','action':GLOBAL_ACTION}
+            data = {'data':main_table_checked,'table_name':'AccountingDataDesc','action':GLOBAL_ACTION}
             OpenLoaderPopup();
             $.ajax({
             type: 'POST',
@@ -771,7 +831,6 @@ function new_row_data() {
                 rendered_company_data = response.upload_data_company
                 acc_value_desc_dropdown();
                 $("#error_msg_id").css("display", "none")
-<!--                $('#Acc_desc_Modal').modal('show');-->
                 $('#id_popup_table').DataTable().destroy();
                 $("#id_popup_tbody").empty();
                 //Reference the Table.
@@ -790,13 +849,13 @@ function new_row_data() {
                             guid = 'GUID';
                             unique_input = '<input class="form-control" type="number" value="' + row.cells[3].innerHTML + '" name="Account Assignment Value" maxlength="40" required>'
                             edit_basic_data += '<tr><td><input class="input" type="checkbox" required></td>'+
-                             '<td><select id="company_dropdw" class="form-control">'+ company_dropdwn +'</select></td>'+
+                             '<td><select id="company_dropdw" class="form-control" value="' + row.cells[1].innerHTML + '">'+ company_dropdwn +'</select></td>'+
                              '<td><select id="acc_ass_dropdw" class="form-control">'+ acc_ass_dropdwn +' </select></td>'+
                              '<td><select class="form-control" id="acc_ass_val_dropdw">'+acc_ass_val_dropdwn+' </select></td>'+
                              '<td><input class="form-control check_special_char" type="text" value="' + row.cells[4].innerHTML + '"  maxlength="255" ></td>'+
                              '<td><select id="language_dropdw" class="form-control">' + language_dropdwn + '</select></td>'+
                              '<td hidden><input value="' + guid + '"></td>'+
-                             '<td class="class_del_checkbox" hidden><input type="checkbox" required></td> <td hidden> </td></tr>'
+                             '<td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>'
                             $("#header_select").prop("hidden",false);
                         } else {
                             guid = row.cells[6].innerHTML;
@@ -808,7 +867,7 @@ function new_row_data() {
                             '<td><input class="form-control check_special_char" type="text" value="' + row.cells[4].innerHTML + '"  maxlength="255" ></td>'+
                             '<td><select id="language_dropdw" class="form-control" disabled>' + language_dropdwn + '</select></td>'+
                             '<td hidden><input value="' + guid + '"></td>'+
-                            '<td class="class_del_checkbox" hidden><input type="checkbox" required></td> <td hidden> </td></tr>'
+                            '<td class="class_del_checkbox" hidden><input type="checkbox" required></tr>'
                             $("#header_select").prop("hidden",true);
                         }
                         var account_assgn_val = row.cells[3].innerHTML
@@ -858,6 +917,7 @@ function new_row_data() {
                 })
                 $("#id_del_ind_checkbox").prop("hidden", true);
                 $('#Acc_desc_Modal').modal('show');
+                display_button();
                 table_sort_filter('id_popup_table');
                 CloseLoaderPopup();
             }

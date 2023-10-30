@@ -1,4 +1,4 @@
-
+var main_table_low_value = [];
 var encrypted_supplier
 
 // Global variable - supplier id
@@ -58,17 +58,30 @@ function edit_basic_supp_data(){
 
 // onclick of cancel button functionality
 function cancel_basic_details(){
-    $(".hg_edit_display_mode").prop( "disabled", true );
+    $(".hg_edit_display_mode").prop("disabled", true);
     document.getElementById('sbd_save_cancel_button').style.display = 'none'
     document.getElementById('cancel_button').style.display = 'none'
     document.getElementById('sbd_edit_button').style.display = 'block'
+    document.getElementById('display_mode').style.display = 'block';
+    document.getElementById('edit_mode').style.display = 'none';
+    var result = get_working_day_val();
+    $("#working_days_id").val(result);
+    $("#edit_mode").prop("disabled", true);
     $("#sbd_edit_button").prop("hidden", false);
     $('#image-preview').hide();
     $('#image-preview3').show();
     var output = document.getElementById('image-preview3');
-    output.src = img_url;
+    if(!(img_url == '')){
+        output.src = img_url;
+    }
 }
 
+function get_working_day_val(){
+    var wday_array = [];
+        wday_array = w_days.split(",");
+        var num = w_days.match(/\d/g);
+        return num;
+}
 // Function to edit supplier purchasing details data
 function edit_supp_org(){
     var supp_org_body_data = '';
@@ -473,4 +486,23 @@ function get_values_onerror(){
    $('#duns_number_id').val(localStorage.getItem("duns_number_id"));
    $('#output_medium_id').val(localStorage.getItem("output_medium_id"));
    return false;
+}
+// Function to get main table data
+function get_main_table_data() {
+    main_table_low_value = [];
+    $('#display_basic_org_table').DataTable().destroy();
+    $("#display_basic_org_table TBODY TR").each(function() {
+        var row = $(this);
+        var main_attribute = {};
+        main_attribute.porg_id = row.find("TD").eq(2).html();
+        main_table_low_value.push(main_attribute.porg_id);
+    });
+    table_sort_filter('display_basic_org_table');
+}
+function display_error_message(error_message){
+    $('#error_message').text(error_message);
+    document.getElementById("error_message").style.color = "Red";
+    $("#error_msg_id").css("display", "block")
+//    $('#id_save_confirm_popup').modal('hide');
+    $('#supplierOrgModal').modal('show');
 }

@@ -229,6 +229,26 @@ class ApplicationSettingsSave:
 
         return data, message
 
+    def generate_country_delete_flags(self, country_data):
+        delete_flags = []  # List to store delete_flag for each value
+
+        for country_detail in country_data['data']:
+            delete_flag = True
+
+            # Check if value is present in the transaction table
+            if django_query_instance.django_existence_check(CalenderConfig,
+                                                            {'country_code': country_detail['country_code'],
+                                                             'client': self.client,
+                                                             'del_ind': False}):
+                delete_flag = False
+
+            delete_flags.append(delete_flag)
+            data = {
+                'delete_flags': delete_flags
+            }
+
+        return data
+
     def generate_prod_cat_id_delete_flags(self, prod_cat_id_data):
         delete_flags = []  # List to store delete_flag for each value
 
@@ -458,6 +478,224 @@ class ApplicationSettingsSave:
 
         return data
 
+    def generate_prod_cat_Cust_delete_flags(self, prod_cat_Cust_data):
+        delete_flags = []  # List to store delete_flag for each value
+
+        for prod_cat_Cust_detail in prod_cat_Cust_data['data']:
+            delete_flag = True
+
+            # Check if value is present in the MessagesIdDesc table
+            if django_query_instance.django_existence_check(UnspscCategoriesCust,
+                                                            {'prod_cat_id': prod_cat_Cust_detail['prod_cat_id'],
+                                                             'client': self.client,
+                                                             'del_ind': False}):
+                delete_flag = False
+
+            delete_flags.append(delete_flag)  # Store delete_flag value for each iteration
+            data = {
+                'delete_flags': delete_flags  # Include the delete_flags list in the response data
+            }
+
+        return data
+
+    def generate_company_delete_flags(self, company_data):
+        delete_flags = []  # List to store delete_flag for each value
+
+        for company_detail in company_data['data']:
+            delete_flag = True
+
+            # Tables to check for existence
+            tables_to_check = [AccountingData, AccountingDataDesc, DetermineGLAccount, WorkflowSchema, SpendLimitValue,
+                               SpendLimitId, ApproverLimitValue, ApproverLimit, WorkflowACC, OrgAddressMap]
+
+            for table_name in tables_to_check:
+                if django_query_instance.django_existence_check(table_name,
+                                                                {'company_id': company_detail['company_id'],
+                                                                 'client': self.client,
+                                                                 'del_ind': False}):
+                    delete_flag = False
+                    break
+
+            delete_flags.append(delete_flag)  # Store delete_flag value for each iteration
+        data = {
+            'delete_flags': delete_flags  # Include the delete_flags list in the response data
+        }
+
+        return data
+
+    def generate_aav_delete_flags(self, aav_data):
+        delete_flags = []
+        field_name_mapping = {
+            AccountingDataDesc: 'account_assign_value',
+            WorkflowACC: 'acc_value',
+            DetermineGLAccount: 'gl_acc_num',
+        }
+
+        for aav_detail in aav_data['data']:
+            delete_flag = True
+            tables_to_check = [AccountingDataDesc, DetermineGLAccount, WorkflowACC]
+
+            # Check if value is present in the table
+            for table_name in tables_to_check:
+                field_name = field_name_mapping.get(table_name, 'account_assign_value')
+                if django_query_instance.django_existence_check(table_name,
+                                                                {'company_id': aav_detail['company_id'],
+                                                                 'account_assign_cat': aav_detail[
+                                                                     'account_assign_cat'],
+                                                                 field_name: aav_detail['account_assign_value'],
+                                                                 'client': self.client,
+                                                                 'del_ind': False}):
+                    delete_flag = False
+                    break
+
+            delete_flags.append(delete_flag)
+            data = {
+                'delete_flags': delete_flags
+            }
+
+        return data
+
+    def generate_aad_delete_flags(self, aad_data):
+        delete_flags = []
+        field_name_mapping = {
+            DetermineGLAccount: 'gl_acc_num',
+            WorkflowACC: 'acc_value',
+
+        }
+
+        for aad_detail in aad_data['data']:
+            delete_flag = True
+            tables_to_check = [DetermineGLAccount, WorkflowACC]
+
+            # Check if value is present in the table
+            for table_name in tables_to_check:
+                field_name = field_name_mapping.get(table_name, 'account_assign_value')
+                if django_query_instance.django_existence_check(table_name,
+                                                                {'company_id': aad_detail['company_id'],
+                                                                 'account_assign_cat': aad_detail[
+                                                                     'account_assign_cat'],
+                                                                 field_name: aad_detail['account_assign_value'],
+                                                                 'client': self.client,
+                                                                 'del_ind': False}):
+                    delete_flag = False
+                    break
+
+            delete_flags.append(delete_flag)
+            data = {
+                'delete_flags': delete_flags
+            }
+
+        return data
+
+    def generate_detgl_delete_flags(self, detgl_data):
+        delete_flags = []  # List to store delete_flag for each value
+
+        for detgl_detail in detgl_data['data']:
+            delete_flag = True
+
+            # Check if value is present in the MessagesIdDesc table
+            if django_query_instance.django_existence_check(WorkflowACC,
+                                                            {'company_id': detgl_detail['company_id'],
+                                                             'account_assign_cat': detgl_detail[
+                                                                 'account_assign_cat'],
+                                                             'acc_value': detgl_detail['gl_acc_num'],
+                                                             'client': self.client,
+                                                             'del_ind': False}):
+                delete_flag = False
+
+            delete_flags.append(delete_flag)  # Store delete_flag value for each iteration
+            data = {
+                'delete_flags': delete_flags  # Include the delete_flags list in the response data
+            }
+
+        return data
+
+    def generate_approval_type_delete_flags(self, approval_type_data):
+        delete_flags = []  # List to store delete_flag for each value
+
+        for approval_type_detail in approval_type_data['data']:
+            delete_flag = True
+
+            # Tables to check for existence
+            tables_to_check = [WorkflowSchema, ApproverLimitValue]
+
+            for table_name in tables_to_check:
+                if django_query_instance.django_existence_check(table_name,
+                                                                {'app_types': approval_type_detail[
+                                                                    'app_types'],
+                                                                 'client': self.client,
+                                                                 'del_ind': False}):
+                    delete_flag = False
+                    break
+
+            delete_flags.append(delete_flag)  # Store delete_flag value for each iteration
+        data = {
+            'delete_flags': delete_flags  # Include the delete_flags list in the response data
+        }
+
+        return data
+
+    def generate_wf_schema_delete_flags(self, wf_schema_data):
+        delete_flags = []  # List to store delete_flag for each value
+
+        for wf_schema_detail in wf_schema_data['data']:
+            delete_flag = True
+
+            # Check if value is present in the MessagesIdDesc table
+            if django_query_instance.django_existence_check(ApproverLimitValue,
+                                                            {'app_types': wf_schema_detail[
+                                                                'app_types'],
+                                                             'client': self.client,
+                                                             'del_ind': False}):
+                delete_flag = False
+
+            delete_flags.append(delete_flag)  # Store delete_flag value for each iteration
+            data = {
+                'delete_flags': delete_flags  # Include the delete_flags list in the response data
+            }
+
+        return data
+
+    def generate_OrgAddress_delete_flags(self, address_data):
+        delete_flags = []  # List to store delete_flag for each value
+        address_number = address_data['data']
+        delete_flag = True
+
+        if django_query_instance.django_existence_check(OrgAddressMap,
+                                                        {'address_number': address_number,
+                                                         'client': self.client,
+                                                         'del_ind': False}):
+            delete_flag = False
+
+        delete_flags.append(delete_flag)
+
+        data = {
+            'delete_flags': delete_flags
+        }
+
+        return data
+
+    def generate_payment_term_delete_flags(self, payment_term_data):
+        delete_flags = []  # List to store delete_flag for each value
+
+        for payment_term_detail in payment_term_data['data']:
+            delete_flag = True
+
+            # Check if value is present in the MessagesIdDesc table
+            if django_query_instance.django_existence_check(Payterms_desc,
+                                                            {'payment_term_key': payment_term_detail[
+                                                                'payment_term_key'],
+                                                             'client': self.client,
+                                                             'del_ind': False}):
+                delete_flag = False
+
+            delete_flags.append(delete_flag)  # Store delete_flag value for each iteration
+            data = {
+                'delete_flags': delete_flags  # Include the delete_flags list in the response data
+            }
+
+        return data
+
     def save_document_type_data(self, documenttype_data):
         documenttype_db_list = []
         used_flag_set = []
@@ -657,7 +895,7 @@ class ApplicationSettingsSave:
             if not django_query_instance.django_existence_check(CalenderHolidays,
                                                                 {'calender_holiday_guid': calendar_detail[
                                                                     'calender_holiday_guid'],
-                                                                 'client': self.client,}):
+                                                                 'client': self.client, }):
                 guid = guid_generator()
                 calendar_db_dictionary = {'calender_holiday_guid': guid,
                                           'calender_id': calendar_detail['calender_id'],
@@ -1053,35 +1291,20 @@ class ApplicationSettingsSave:
         bulk_create_entry_db(MessagesIdDesc, messageIdDesc_db_list)
 
     def save_system_settings(self, systemsettings_data):
-        """
-
-        """
         systemsettings_db_list = []
         for systemsettings_detail in systemsettings_data:
-            # if entry is not exists in db
-            if not django_query_instance.django_existence_check(SystemSettingsConfig,
-                                                                {'sys_attr_type': systemsettings_detail[
-                                                                    'sys_attr_type'],
-                                                                 'sys_attr_value': systemsettings_detail[
-                                                                     'sys_attr_value'],
-                                                                 'client': self.client
-                                                                 }):
-                guid = guid_generator()
-                systemsettings_db_dictionary = {'system_settings_config_guid': guid,
-                                                'sys_attr_type': systemsettings_detail['sys_attr_type'],
-                                                'sys_attr_value': systemsettings_detail['sys_attr_value'],
-                                                'del_ind': False,
-                                                'client': self.client,
-                                                'system_settings_config_created_at': self.current_date_time,
-                                                'system_settings_config_created_by': self.username,
-                                                'system_settings_config_changed_at': self.current_date_time,
-                                                'system_settings_config_changed_by': self.username
-                                                }
-                systemsettings_db_list.append(systemsettings_db_dictionary)
-            else:
+            # Initialize guid
+            guid = guid_generator()
+
+            # Check if the entry exists in the database
+            if django_query_instance.django_existence_check(SystemSettingsConfig,
+                                                            {'sys_attr_type': systemsettings_detail['sys_attr_type'],
+                                                             'sys_attr_value': systemsettings_detail['sys_attr_value'],
+                                                             'client': self.client
+                                                             }):
+                # Update the existing record
                 django_query_instance.django_update_query(SystemSettingsConfig,
-                                                          {'sys_attr_type': systemsettings_detail[
-                                                              'sys_attr_type'],
+                                                          {'sys_attr_type': systemsettings_detail['sys_attr_type'],
                                                            'sys_attr_value': systemsettings_detail['sys_attr_value'],
                                                            'client': self.client
                                                            },
@@ -1094,6 +1317,22 @@ class ApplicationSettingsSave:
                                                            'system_settings_config_created_by': self.username,
                                                            'system_settings_config_changed_at': self.current_date_time,
                                                            'system_settings_config_changed_by': self.username})
+            else:
+                # Create a new record
+                systemsettings_db_dictionary = {
+                    'system_settings_config_guid': guid,
+                    'sys_attr_type': systemsettings_detail['sys_attr_type'],
+                    'sys_attr_value': systemsettings_detail['sys_attr_value'],
+                    'del_ind': False,
+                    'client': self.client,
+                    'system_settings_config_created_at': self.current_date_time,
+                    'system_settings_config_created_by': self.username,
+                    'system_settings_config_changed_at': self.current_date_time,
+                    'system_settings_config_changed_by': self.username
+                }
+                systemsettings_db_list.append(systemsettings_db_dictionary)
+
+        # Bulk create new entries in the database
         bulk_create_entry_db(SystemSettingsConfig, systemsettings_db_list)
 
     def save_orgnode_types_data_into_db(self, orgnode_data):

@@ -3,11 +3,17 @@ var validate_add_attributes = [];
 var main_table_low_value = [];
 var payment_term={};
 
+//hide the myModal popup: Implemented Dependency delete purpose
+function hideModal() {
+    $('#payment_term_Modal').modal('hide');
+}
+
 //onclick of add button display payment_term_Modal popup and set GLOBAL_ACTION button value
 function onclick_add_button(button) {
     $("#error_msg_id").css("display", "none")
     $( "#header_select").prop( "hidden", false );
     GLOBAL_ACTION = button.value
+    display_button();
     $('#id_popup_table').DataTable().destroy();
     $("#id_popup_tbody").empty();
     $('#payment_term_Modal').modal('show');
@@ -119,6 +125,21 @@ function get_selected_row_data() {
         payment_term_arr_obj.payment_term_guid = row.find("TD").eq(3).html();
         payment_term_arr_obj.payment_term_key = row.find("TD").eq(1).html();
         main_table_payment_term_checked.push(payment_term_arr_obj);
+        }
+    });
+}
+
+// Function to get the selected row data
+function get_row_data(tableSelector) {
+    main_table_checked = [];
+    $(tableSelector).DataTable().$('input[type="checkbox"]').each(function () {
+        var checkbox = $(this);
+        var row = checkbox.closest("tr");
+        var payment_term_arr_obj = {};
+        payment_term_arr_obj.del_ind = checkbox.is(':checked');
+        if(payment_term_arr_obj.del_ind) {
+            payment_term_arr_obj.payment_term_key = row.find("TD").eq(1).find('input[type="number"]').val() || row.find("TD").eq(1).html();
+            main_table_checked.push(payment_term_arr_obj);
         }
     });
 }

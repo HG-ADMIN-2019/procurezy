@@ -36,7 +36,8 @@ from eProc_Configuration.models import *
 from eProc_Configuration.models.application_data import WorkflowSchema
 from eProc_Configuration.models.basic_data import Country
 from eProc_Configuration.models.development_data import FieldTypeDescription
-from eProc_Configuration.models.master_data import OrgPorg, OrgCompanies, WorkflowACC, ApproverLimit, ApproverLimitValue
+from eProc_Configuration.models.master_data import OrgPorg, OrgCompanies, WorkflowACC, ApproverLimit, \
+    ApproverLimitValue, AccountingData, AccountingDataDesc
 from eProc_Doc_Search_and_Display.Utilities.search_display_generic import get_hdr_data, get_hdr_data_app_monitoring
 from eProc_Emails.models import EmailUserMonitoring, EmailDocumentMonitoring, EmailSupplierMonitoring
 from eProc_Org_Model.Utilities import client
@@ -54,13 +55,13 @@ from eProc_Reports.Utilities.reports_generic import get_companylist, get_usrid_b
     get_langlist, get_companyDetails, get_account_assignvalues
 from eProc_Shopping_Cart.Utilities.shopping_cart_generic import get_supplier_details
 from eProc_Shopping_Cart.context_processors import update_user_info
-from eProc_Shopping_Cart.models import  ScItem, ScPotentialApproval, ScApproval
+from eProc_Shopping_Cart.models import ScItem, ScPotentialApproval, ScApproval
 from eProc_Shopping_Cart.models.shopping_cart import ScHeader
 from eProc_Suppliers.Utilities.supplier_generic import supplier_detail_search
 from eProc_Suppliers.Utilities.supplier_specific import get_supplier_data, update_country_encrypt
 from eProc_Suppliers.models import OrgSuppliers
 from eProc_Users.Utilities.user_generic import user_detail_search, get_usertype_values, \
-    get_emp_data, emp_search_data, set_search_data, get_supplier_type_values
+    get_emp_data, emp_search_data, set_search_data, get_supplier_type_values, get_output_medium_values
 from django.http import QueryDict
 import sys
 from datetime import datetime
@@ -137,6 +138,10 @@ def user_search(request):
     dropdown_time_zones = user_time_zones()
     dropdown_language = user_language_list()
     dropdown_messages = user_messages_list()
+    employee_results_onload = get_emp_data()
+    count = len(employee_results_onload)
+    form_method = 'POST'
+
     context = {
         'inc_nav': True,
         'inc_footer': True,
@@ -150,8 +155,9 @@ def user_search(request):
         'dropdown_currency_id': dropdown_currency_id,
         'dropdown_time_zones': dropdown_time_zones,
         'dropdown_language': dropdown_language,
-        'dropdown_messages': dropdown_messages
-
+        'dropdown_messages': dropdown_messages,
+        'employee_results_onload': employee_results_onload,
+        'count': count,
     }
 
     if request.method == 'GET':
@@ -160,6 +166,8 @@ def user_search(request):
         context['employee_results'] = employee_results
         count = len(employee_results)
         context['count'] = count
+        context['form_method'] = 'GET'
+        return render(request, 'User Search/user_search.html', context)
     if request.method == 'POST':
         search_fields = {}
         for data in request.POST:
@@ -180,10 +188,13 @@ def user_search(request):
         search_fields['email'] = request.POST.get('email')
         search_fields['user_type'] = request.POST.get('user_type')
         search_fields['employee_id'] = request.POST.get('employee_id')
-
-        employee_results = emp_search_data(search_fields)
+        if search_fields['username'] == '*':
+            employee_results = get_emp_data()
+        else:
+            employee_results = emp_search_data(search_fields)
         count = len(employee_results)
         context['count'] = count
+        context['form_method'] = 'POST'
         context['employee_results'] = employee_results
 
     return render(request, 'User Search/user_search.html', context)
@@ -198,6 +209,7 @@ def supplier_search(request):
     client = global_variables.GLOBAL_CLIENT
     country_dictionary_list = django_query_instance.django_filter_query(Country,
                                                                         None, None, ['country_code', 'country_name'])
+    supp_data_onload = get_supplier_data()
     context = {
         'inc_nav': True,
         'inc_footer': True,
@@ -208,12 +220,13 @@ def supplier_search(request):
             'del_ind': False}, 'porg_id'),
         'is_admin_active': True,
         'dropdown_suptype_values': get_supplier_type_values(),
+        'supp_data_onload': supp_data_onload,
     }
 
     if request.method == 'GET':
         supplier_id_encrypted = []
         supplier_results = get_supplier_data()
-
+        context['form_method'] = 'GET'
         context['supplier_results'] = supplier_results
 
     if request.method == 'POST':
@@ -266,6 +279,9 @@ def user_details(request, email):
     user_info = django_query_instance.django_get_query(UserData,
                                                        {'email': email, 'client': getClients(request),
                                                         'del_ind': False})
+    user_info1 = django_query_instance.django_filter_only_query(UserData,
+                                                                {'email': email, 'client': getClients(request),
+                                                                 'del_ind': False})
 
     context = {
         'inc_nav': True,
@@ -316,6 +332,7 @@ def sup_details(req, supplier_id):
     for img in supp_img_info:
         img_url.append(img.image_url)
 
+    messages_list = get_ui_messages(CONST_COFIG_UI_MESSAGE_LIST)
     context = {
         'inc_nav': True,
         'inc_footer': True,
@@ -339,7 +356,10 @@ def sup_details(req, supplier_id):
                                                                   ['country_code', 'country_name']),
         'language_list': django_query_instance.django_filter_query(Languages, {'del_ind': False}, None,
                                                                    ['language_id', 'description']),
-        'supp_img_info': supp_img_info
+        'supp_img_info': supp_img_info,
+        'dropdown_suptype_values': get_supplier_type_values(),
+        'dropdown_output_med_values': get_output_medium_values(),
+        'messages_list': messages_list,
     }
 
     return render(req, 'Display Edit Supplier/display_edit_supplier.html', context)
@@ -347,19 +367,17 @@ def sup_details(req, supplier_id):
 
 @login_required
 def user_report(request):
-    """
-        :param request:
-        :return:
-        """
     user_rep_form = UserReportForm()
     final_list = []
     client = getClients(request)
     page_range = 0
     company_list = get_companylist(request)
+    # company_list.reverse()
     default_comp_id = ''
 
     if request.method == 'GET':
-        default_comp_id = '1000'
+        default_comp_id = '2000'
+
         if 'final_list' in request.session:
             request.POST = request.session['final_list']
             request.method = 'POST'
@@ -367,7 +385,7 @@ def user_report(request):
                                                                       {'del_ind': False, 'is_active': True, },
                                                                       None, None)
         comp_details = django_query_instance.django_get_query(OrgCompanies, {'client': client, 'del_ind': False,
-                                                                             'company_guid': default_comp_id})
+                                                                             'company_id': default_comp_id})
 
         # ---------------------------------------------------------------------
         user_list_star = django_query_instance.django_filter_only_query(UserData, {'is_active': True})
@@ -450,8 +468,16 @@ def user_report(request):
                 user_list_star = django_query_instance.django_filter_only_query(UserData, {'is_active': active})
             ####################################################################################
             if inp_comp_code is not None:
-                # UserData
-                company_details = OrgCompanies.objects.filter(client=client, del_ind=False, company_guid=inp_comp_code)
+                # Check if inp_comp_code is '*'
+                if inp_comp_code == '*':
+                    # Retrieve data for all companies
+                    company_details = OrgCompanies.objects.filter(client=client, del_ind=False)
+                else:
+                    # Retrieve data for the selected company code
+                    company_details = OrgCompanies.objects.filter(client=client, del_ind=False,
+                                                                  company_id=inp_comp_code)
+
+                # Continue processing as before...
                 # Using the company code number and CCODE node type get the company details from Org Model table
                 for comp_det in company_details:
                     comp_obj_id_info = OrgModel.objects.filter(Q(object_id=comp_det.object_id_id, node_type='CCODE',
@@ -500,109 +526,80 @@ def user_report(request):
                                         final_array.append(user.email)
                                         final_array.append(user.user_locked)
                                         final_list.append(final_array)
-        else:
-            print(user_rep_form.errors)
+            else:
+                print(user_rep_form.errors)
 
-        # Company code, Company name, Username, Last name, First name, Email address, Ship to address, user lock status
-        user_rep_form = UserReportForm()
-        t_count = len(final_list)
+            # Company code, Company name, Username, Last name, First name, Email address, Ship to address, user lock status
+            user_rep_form = UserReportForm()
+            t_count = len(final_list)
 
-        context = {
-            'inc_nav': True,
-            'inc_footer': True,
-            'user_rep_form': user_rep_form,
-            'final_list': final_list,
-            'default_comp_id': default_comp_id,
-            'page_range': page_range,
-            't_count': t_count,
-            'company_list': company_list,
-            'is_slide_menu': True,
-            'is_admin_active': True
-        }
+            context = {
+                'inc_nav': True,
+                'inc_footer': True,
+                'user_rep_form': user_rep_form,
+                'final_list': final_list,
+                'default_comp_id': default_comp_id,
+                'page_range': page_range,
+                't_count': t_count,
+                'company_list': company_list,
+                'is_slide_menu': True,
+                'is_admin_active': True
+            }
 
-        return render(request, 'Reports/user_report.html', context)
+            return render(request, 'Reports/user_report.html', context)
 
 
 @login_required
 def approval_report(request):
-    """
-        :param request:
-        :return:
-        """
-
-    workflow_acc_list = {}
     client = getClients(request)
-    page_range = 0
     final_list = []
-
+    inp_acc_assgn_cat = []
     company_array = get_companyDetails(request)
     acc_value_array = get_account_assignvalues(request)
-    # for val in acc_value_array:
-    acct_values = get_account_assignlist(request)
-    # print(company_array[0])
 
-    if request.method == 'GET':
-        inp_comp_code = company_array[1]
-        inp_acc_assgn_cat = acct_values[0]
-        workflow_schema = list(WorkflowSchema.objects.filter(Q(client=client,
-                                                               company_id=inp_comp_code)).values_list('app_types',
-                                                                                                      flat=True))
-        if workflow_schema:
-            for schema_step_type in workflow_schema:
-                # MMD_WF_ACC check this table model and read the data from here
-                workflow_acc_list = WorkflowACC.objects.filter(Q(account_assign_cat=inp_acc_assgn_cat,
-                                                                 company_id=inp_comp_code, client=client))
+    # Fetch initial selections from the form
+    inp_acc_assgn_cat = request.POST.getlist('acc_assgn_cat', default=None)
+    inp_comp_code = request.POST.get('comp_code_app')
 
-    if not request.method == 'POST':
-        if 'final_list' in request.session:
-            request.POST = request.session['final_list']
-            # request.method = 'POST'
+    # If inp_comp_code and inp_acc_assgn_cat are not provided, set default values
+    if not inp_comp_code:
+        inp_comp_code = company_array.first().company_id
+    if not inp_acc_assgn_cat:
+        inp_acc_assgn_cat = [acc['account_assign_cat'] for acc in acc_value_array]
 
-    if request.method == 'POST':
-        request.session['final_list'] = request.POST
-        inp_acc_assgn_cat = request.POST.getlist('acc_assgn_cat', default=None)
-        inp_comp_code = request.POST.get('comp_code_app')
+    # Fetch data based on initial selections
+    workflow_schema = list(
+        WorkflowSchema.objects.filter(Q(client=client, company_id=inp_comp_code)).values_list('app_types', flat=True))
+    if workflow_schema:
+        for schema_step_type in workflow_schema:
+            workflow_acc_list = WorkflowACC.objects.filter(
+                Q(account_assign_cat__in=inp_acc_assgn_cat, company_id=inp_comp_code, client=client))
 
-        if inp_comp_code is not None and inp_acc_assgn_cat is not None:
-            workflow_schema = list(WorkflowSchema.objects.filter(Q(client=client,
-                                                                   company_id=inp_comp_code)).values_list('app_types',
-                                                                                                          flat=True))
-            if workflow_schema:
-                for schema_step_type in workflow_schema:
-                    # MMD_WF_ACC check this table model and read the data from here
-                    workflow_acc_list = WorkflowACC.objects.filter(Q(account_assign_cat__in=inp_acc_assgn_cat,
-                                                                     company_id=inp_comp_code, client=client))
+        if workflow_acc_list:
+            for w_acc_list in workflow_acc_list:
+                app_code_id = ApproverLimit.objects.filter(
+                    Q(company_id=inp_comp_code, approver_username=w_acc_list.app_username, del_ind=False,
+                      client=client)).values_list('app_code_id', flat=True)
 
-    if workflow_acc_list:
-        for w_acc_list in workflow_acc_list:
-
-            app_code_id = ApproverLimit.objects.filter(Q(company_id=inp_comp_code,
-                                                         approver_username=w_acc_list.app_username,
-                                                         del_ind=False,
-                                                         client=client)).values_list('app_code_id',
-                                                                                     flat=True)
-
-            if app_code_id:
-                app_val_list = ApproverLimitValue.objects.filter(Q(company_id=inp_comp_code,
-                                                                   app_code_id__in=app_code_id,
-                                                                   del_ind=False,
-                                                                   app_types=schema_step_type,
-                                                                   client=client))
-                final_array = []
-                for app_val in app_val_list:
-                    final_array.append(w_acc_list.company_id)
-                    final_array.append(w_acc_list.account_assign_cat_id)
-                    final_array.append(w_acc_list.acc_value)
-                    final_array.append(w_acc_list.app_username)
-                    final_array.append(w_acc_list.currency_id)
-                    final_array.append(w_acc_list.sup_company_id)
-                    final_array.append(w_acc_list.sup_acc_value)
-                    final_array.append(app_val.upper_limit_value)
-                    final_array.append(app_val.currency_id)
-                    final_array.append(app_val.app_code_id)
-                    final_array.append(w_acc_list.sup_account_assign_cat_id)
-                    final_array.append(app_val.app_code_id)
-                    final_list.append(final_array)
+                if app_code_id:
+                    app_val_list = ApproverLimitValue.objects.filter(
+                        Q(company_id=inp_comp_code, app_code_id__in=app_code_id, del_ind=False,
+                          app_types=schema_step_type, client=client))
+                    final_array = []
+                    for app_val in app_val_list:
+                        final_array.append(w_acc_list.company_id)
+                        final_array.append(w_acc_list.account_assign_cat_id)
+                        final_array.append(w_acc_list.acc_value)
+                        final_array.append(w_acc_list.app_username)
+                        final_array.append(w_acc_list.currency_id)
+                        final_array.append(w_acc_list.sup_company_id)
+                        final_array.append(w_acc_list.sup_acc_value)
+                        final_array.append(app_val.upper_limit_value)
+                        final_array.append(app_val.currency_id)
+                        final_array.append(app_val.app_code_id)
+                        final_array.append(w_acc_list.sup_account_assign_cat_id)
+                        final_array.append(app_val.app_code_id)
+                        final_list.append(final_array)
 
     t_count = len(final_list)
     # Context to display in Doc_report.html
@@ -612,10 +609,11 @@ def approval_report(request):
         'comp_list': company_array,
         'acct_val_list': acc_value_array,
         'final_list': final_list,
-        'page_range': page_range,
+        'page_range': 0,
         't_count': t_count,
-        'inp_acc_assgn_cat': inp_acc_assgn_cat,
-        'inp_comp_code': inp_comp_code,
+        'inp_acc_assgn_cat': [acc['account_assign_cat'] for acc in acc_value_array],
+        'inp_comp_code': json.dumps(
+            [{'company_id': company.company_id, 'name1': company.name1} for company in company_array]),
         'is_slide_menu': True,
         'is_admin_active': True
     }
@@ -746,103 +744,44 @@ def m_docsearch_meth(request):
     return render(request, 'Reports/Doc_report.html', context)
 
 
-
-
 @login_required
 def accnt_report(request):
-    """
-        :param request:
-        :return:
-        """
-
     client = getClients(request)
-    final_list = []
-    page_range = 0
+    lang_array = get_langlist(request)
     acc_value_array = get_account_assignvalues(request)
-    account_desc_data_list = ''
-    inp_comp_code = ''
-
     acc_cat_array = get_account_assignlist(request)
     company_array = get_companylist(request)
-    lang_array = get_langlist(request)
-    inp_acc_assgn_cat = acc_cat_array[0]
-    if company_array[0]['company_id'] != '*':
-        inp_comp_code = int(company_array[0]['company_id'])
-    inp_lang = 'EN'
-    account_list = ''
-    lang_desc = ''
-    lang_id = ''
-    context = {
-        'inc_nav': True,
-        'inc_footer': True,
-        'is_slide_menu': True,
-        'is_admin_active': True,
-        'comp_list': company_array,
-        'lang_list': lang_array,
-        'acct_val_list': acc_cat_array,
-        'page_range': page_range,
-        'inp_account_assgn_cat': acc_cat_array[0],
-        'acc_value_array': acc_value_array,
-        'inp_comp_code': inp_comp_code,
-        'inp_lang': inp_lang,
-    }
+    company_array.reverse()
+    inp_acc_assgn_cat = [item['account_assign_cat'] for item in acc_value_array]
+    inp_comp_code = company_array[0]['company_id'] if company_array else None
+    inp_lang = lang_array[0]['language_id'] if lang_array else 'EN'
 
     if request.method == 'GET':
-        # if 'final_list' in request.session:
-        #     request.POST = request.session['final_list']
-        if company_array[0]['company_id'] != '*':
-            inp_comp_code = int(company_array[0]['company_id'])
-        inp_acc_assgn_cat = acc_cat_array[0]
-        inp_lang = 'EN'
+        # Check if inp_comp_code is not '*'
+        if inp_comp_code and inp_comp_code != '*':
+            account_list = AccountingData.objects.filter(
+                client=client,
+                company_id=inp_comp_code,
+                account_assign_cat__in=inp_acc_assgn_cat,
+                del_ind=False
+            )
+        else:
+            account_list = AccountingData.objects.filter(
+                client=client,
+                account_assign_cat__in=inp_acc_assgn_cat,
+                del_ind=False
+            )
 
-        if inp_comp_code is not None and inp_acc_assgn_cat is not None:
-            account_list = AccountingData.objects.filter(client=client, company_id=inp_comp_code,
-                                                         account_assign_cat=inp_acc_assgn_cat, del_ind=False)
-        # print("account_list", account_list)
-        result_array = []
+        final_list = []
         for account_data in account_list:
-            # print("account_data", account_data)
-            account_desc_data_list = AccountingDataDesc.objects.filter(client=client,
-                                                                       company_id=account_data.company_id,
-                                                                       del_ind=False,
-                                                                       language_id=inp_lang,
-                                                                       account_assign_value=account_data.account_assign_value,
-                                                                       account_assign_cat=account_data.account_assign_cat)
-            for data_acct_desc in account_desc_data_list:
-                result_array.append(data_acct_desc.company_id)
-                result_array.append(data_acct_desc.account_assign_cat)
-                result_array.append(data_acct_desc.account_assign_value)
-                result_array.append(data_acct_desc.description)
-                lang_id = data_acct_desc.language_id
-                for lang in lang_array:
-                    if lang['language_id'] == str(lang_id):
-                        lang_desc = lang['description']
-                result_array.append(lang_desc)
-                result_array.append(account_data.valid_from)
-                result_array.append(account_data.valid_to)
-                final_list.append(result_array)
-        context['final_list'] = final_list
-        return render(request, 'Reports/accnt_report.html', context)
-
-    # If method is post get the form values and get header details accordingly
-    if request.method == 'POST' or request.is_ajax():
-        # request.method = 'POST'
-        # data = JsonParser().get_json_from_req(request)
-        inp_comp_code = request.POST.get('comp_code_app')
-        inp_account_assgn_cat = request.POST.getlist('acc_assgn_cat')
-        inp_lang = request.POST.get('language')
-
-        if inp_comp_code is not None and inp_account_assgn_cat is not None:
-            account_list = AccountingData.objects.filter(client=client, company_id=inp_comp_code,
-                                                         account_assign_cat__in=inp_account_assgn_cat, del_ind=False)
-
-        for account_data in account_list:
-            account_desc_data_list = AccountingDataDesc.objects.filter(client=client,
-                                                                       company_id=account_data.company_id,
-                                                                       del_ind=False,
-                                                                       language_id=inp_lang,
-                                                                       account_assign_value=account_data.account_assign_value,
-                                                                       account_assign_cat=account_data.account_assign_cat)
+            account_desc_data_list = AccountingDataDesc.objects.filter(
+                client=client,
+                company_id=account_data.company_id,
+                del_ind=False,
+                language_id=inp_lang,
+                account_assign_value=account_data.account_assign_value,
+                account_assign_cat=account_data.account_assign_cat
+            )
             result_array = []
             for data in account_desc_data_list:
                 result_array.append(account_data.company_id)
@@ -851,17 +790,86 @@ def accnt_report(request):
                 result_array.append(data.description)
                 lang_id = data.language_id
                 for lang in lang_array:
-                    print(lang['language_id'])
                     if lang['language_id'] == str(lang_id):
                         lang_desc = lang['description']
                 result_array.append(lang_desc)
                 result_array.append(account_data.valid_from)
                 result_array.append(account_data.valid_to)
-                final_list.append(result_array)
-        context['final_list'] = final_list
+            if result_array:
+                final_list.append(result_array)  # Only add non-empty records
+
         t_count = len(final_list)
 
-        # Context to display in Doc_report.html
+        context = {
+            'inc_nav': True,
+            'inc_footer': True,
+            'is_slide_menu': True,
+            'is_admin_active': True,
+            'comp_list': company_array,
+            'lang_list': lang_array,
+            'acct_val_list': acc_value_array,
+            'final_list': final_list,
+            'page_range': 0,
+            't_count': t_count,
+            'inp_account_assgn_cat': inp_acc_assgn_cat,
+            'acc_value_array': acc_value_array,
+            'inp_comp_code': inp_comp_code,
+            'inp_lang': inp_lang,
+        }
+
+        return render(request, 'Reports/accnt_report.html', context)
+
+    if request.method == 'POST' or request.is_ajax():
+        inp_comp_code = request.POST.get('comp_code_app')
+        inp_account_assgn_cat = request.POST.getlist('acc_assgn_cat')
+        inp_lang = request.POST.get('language')
+
+        account_list = []
+
+        if inp_comp_code is not None and inp_account_assgn_cat is not None:
+            if inp_comp_code == '*':
+                # Fetch data for all companies
+                account_list = AccountingData.objects.filter(
+                    client=client,
+                    account_assign_cat__in=inp_account_assgn_cat,
+                    del_ind=False
+                )
+            else:
+                account_list = AccountingData.objects.filter(
+                    client=client,
+                    company_id=inp_comp_code,
+                    account_assign_cat__in=inp_account_assgn_cat,
+                    del_ind=False
+                )
+
+        final_list = []
+        for account_data in account_list:
+            account_desc_data_list = AccountingDataDesc.objects.filter(
+                client=client,
+                company_id=account_data.company_id,
+                del_ind=False,
+                language_id=inp_lang,
+                account_assign_value=account_data.account_assign_value,
+                account_assign_cat=account_data.account_assign_cat
+            )
+            result_array = []
+            for data in account_desc_data_list:
+                result_array.append(account_data.company_id)
+                result_array.append(account_data.account_assign_cat)
+                result_array.append(account_data.account_assign_value)
+                result_array.append(data.description)
+                lang_id = data.language_id
+                for lang in lang_array:
+                    if lang['language_id'] == str(lang_id):
+                        lang_desc = lang['description']
+                result_array.append(lang_desc)
+                result_array.append(account_data.valid_from)
+                result_array.append(account_data.valid_to)
+            if result_array:
+                final_list.append(result_array)  # Only add non-empty records
+
+        t_count = len(final_list)
+
         context = {
             'inc_nav': True,
             'inc_footer': True,
@@ -869,18 +877,17 @@ def accnt_report(request):
             'comp_list': company_array,
             'lang_list': lang_array,
             'acct_val_list': acc_cat_array,
-            # 'acct_rep_form' : acct_rep_form,
             'final_list': final_list,
-            'page_range': page_range,
+            'page_range': 0,
             't_count': t_count,
             'is_admin_active': True,
-            'inp_account_assgn_cat': acc_cat_array[0],
+            'inp_account_assgn_cat': inp_acc_assgn_cat,
             'acc_value_array': acc_value_array,
             'inp_comp_code': inp_comp_code,
             'inp_lang': inp_lang,
         }
 
-    return render(request, 'Reports/accnt_report.html', context)
+        return render(request, 'Reports/accnt_report.html', context)
 
 
 def get_acct_report(request):
@@ -1088,6 +1095,10 @@ def delete_user(request):
     employee_results = django_query_instance.django_filter_query(UserData, {
         'client': global_variables.GLOBAL_CLIENT, 'del_ind': False
     }, None, None)
+
+    for emails in employee_results:
+        encrypted_email1 = encrypt(emails['email'])
+        emails['encrypted_email'] = encrypted_email1
 
     response = {'employee_results': employee_results, 'success_message': success_message}
     return JsonResponse(response, safe=False)
@@ -1613,3 +1624,15 @@ def check_resend(request):
     print(email_data)
     return JsonParser_obj.get_json_from_obj(context)
     # return render(request, 'ApplicationMonitoring/Email_user_monitoring.html', context)
+
+
+def clear_filter_data(req):
+    update_user_info(req)
+    table_data = JsonParser_obj.get_json_from_req(req)
+    if table_data['table_name'] == 'employee':
+        data = get_emp_data()
+        return JsonResponse(data, safe=False)
+    if table_data['table_name'] == 'supplier':
+        supplier_results = get_supplier_data()
+        response = {'supplier_results': supplier_results}
+        return JsonResponse(response, safe=False)
