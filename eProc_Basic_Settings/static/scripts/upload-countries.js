@@ -13,6 +13,7 @@ function onclick_add_button(button) {
     $("#error_msg_id").css("display", "none")
     $("#header_select").prop( "hidden", false );
     GLOBAL_ACTION = button.value
+    display_button();
     $('#id_popup_table').DataTable().destroy();
     $("#id_popup_tbody").empty();
     $('#countriesModal').modal('show');
@@ -26,6 +27,7 @@ function onclick_add_button(button) {
 //onclick of upload button display id_data_upload popup and set GLOBAL_ACTION button value
 function onclick_upload_button() {
     GLOBAL_ACTION = "country_upload"
+    display_button();
     $("#id_error_msg_upload").prop("hidden",true)
     $("#id_popup_tbody").empty();
     $('#id_data_upload').modal('show');
@@ -40,20 +42,13 @@ function update_check_message(messages) {
     $("#id_check_success_messages").prop("hidden",false)
 }
 
-// on click copy icon display the selected checkbox data
-function onclick_copy_button() {
-    GLOBAL_ACTION = "COPY"
-    onclick_copy_update_button("copy")
-    document.getElementById("id_del_add_button").style.display = "block";
-      $("#save_id").prop("hidden", false);
-}
-
 // on click update icon display the selected checkbox data to update
 function onclick_update_button() {
     GLOBAL_ACTION = "UPDATE"
+    display_button();
     onclick_copy_update_button("update")
     document.getElementById("id_del_add_button").style.display = "none";
-      $("#save_id").prop("hidden", false);
+    $("#save_id").prop("hidden", false);
 }
 
 //**********************************************************
