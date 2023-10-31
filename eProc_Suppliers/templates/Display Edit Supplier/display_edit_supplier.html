@@ -723,6 +723,7 @@ function save_basic_details() {
     formdata.append("working_days_id",working_days);
      if(is_valid){
         response = ajax_update_supplier_basic_details(formdata)
+        console.log(response);
         encrypted_supplier = response.encrypted_supplier
         message = response.message
         msg_type = response.msg_type
