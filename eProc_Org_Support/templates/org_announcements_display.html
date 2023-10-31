@@ -297,17 +297,6 @@
     var GLOBAL_ACTION = '';
 
     //******************************
-    $(document).ready(function() {
-        $('#id_userpopup_table').DataTable();
-        if(form_method == 'GET'){
-        document.getElementById("announcement_subject").value = '';
-        document.getElementById("announcement_description").value = '';
-        document.getElementById("status").value = '';
-         document.getElementById("priority").value = '';
-        }
-    });
-
-    //******************************
     $(document).ready(function () {
         nav_bar_admin();
         console.log(document.getElementById("input_announcement_subject").value);
@@ -334,15 +323,15 @@
             statusElement.value = "Active"; // Set default value
         }
 
-    //Set default value for Priority if not available in localStorage
-    const priorityElement = document.getElementById("select_priority");
-    const savedPriority = localStorage.getItem("priority");
-    if (savedPriority) {
-        priorityElement.value = savedPriority;
-    } else {
-        priorityElement.value = "High"; // Set default value
+        //Set default value for Priority if not available in localStorage
+        const priorityElement = document.getElementById("select_priority");
+        const savedPriority = localStorage.getItem("priority");
+        if (savedPriority) {
+            priorityElement.value = savedPriority;
+        } else {
+            priorityElement.value = "High"; // Set default value
+        }
     }
-}
 
 
     // Call the function to set input fields from localStorage when the page loads.
@@ -359,6 +348,16 @@
     function clearFilters() {
         $(".error_message").prop("hidden", true); // Hide any error messages
         // Clear form fields except for Title/Description
+        var form = document.getElementById("search_form");
+        // Reset the form to its initial state
+        form.reset();
+        // Set default values for the form elements
+        document.getElementById("input_announcement_subject").value = "";
+        document.getElementById("select_announcement_status").value = "Active";
+        document.getElementById("select_priority").value = "High";
+        localStorage.removeItem("announcement_subject");
+        localStorage.removeItem("announcement_status");
+        localStorage.removeItem("priority");
         $("input[type=text]").val('');
         // Set select options to their default values
         $("#select_announcement_status").val("Active");
