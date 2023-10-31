@@ -198,15 +198,17 @@ function delete_duplicate() {
           }
           else{
                 del_ind = '0'
-                if (porg_code_check.includes(porg_id)) {
-                    $(row).remove();
+                if (porg_id && description) {
+                    if (porg_code_check.includes(porg_id)) {
+                        $(row).remove();
+                    }
+                    porg_code_check.push(porg_id);
+                     main_table_low_value = get_main_table_data_upload(); //Read data from main table
+                    if (main_table_low_value.includes(porg_id)) {
+                        $(row).remove();
+                    }
+                    main_table_low_value.push(porg_id);
                 }
-                porg_code_check.push(porg_id);
-                 main_table_low_value = get_main_table_data_upload(); //Read data from main table
-                if (main_table_low_value.includes(porg_id)) {
-                    $(row).remove();
-                }
-                main_table_low_value.push(porg_id);
           }
     });
     table_sort_filter_popup_pagination('id_popup_table')

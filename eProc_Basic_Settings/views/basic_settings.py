@@ -962,7 +962,7 @@ def data_upload(request):
 def convert_UNSPSC_to_dictionary(arr):
     convertion_list = []
     for row in arr:
-        dictionary = {'del_ind': row[0], 'prod_cat_id': row[1]}
+        dictionary = {'prod_cat_id': row[0],'del_ind': row[1],}
         convertion_list.append(dictionary)
     return convertion_list
 

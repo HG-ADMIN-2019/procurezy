@@ -322,15 +322,17 @@ function delete_duplicate() {
          }
          else{
              del_ind = '0'
-             if (company_check.includes(company_id)) {
-                $(row).remove();
+             if (company_id && name1 && name2) {
+                 if (company_check.includes(company_id)) {
+                    $(row).remove();
+                 }
+                 company_check.push(company_id);
+                 main_table_low_value = get_main_table_data_upload(); //Read data from main table
+                 if (main_table_low_value.includes(company_id)) {
+                    $(row).remove();
+                 }
+                 main_table_low_value.push(company_id);
              }
-             company_check.push(company_id);
-             main_table_low_value = get_main_table_data_upload(); //Read data from main table
-             if (main_table_low_value.includes(company_id)) {
-                $(row).remove();
-             }
-             main_table_low_value.push(company_id);
          }
     });
     table_sort_filter_popup_pagination('id_popup_table')
