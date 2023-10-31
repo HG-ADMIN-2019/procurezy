@@ -25,12 +25,13 @@
         <hr>
         <div class="card card-shadow-1">
             <div class="card-body">
-                <form method="POST" id="announcementForm">
+                <form method="POST" id="search_form" name="search_form">
                     {% csrf_token %}
                     <div class="row">
                         <div class="col-md">
                             <label for="input_announcement_subject">Title/Description</label>
-                            <input type="text" class="form-control check_for_search" id="input_announcement_subject" name="announcement_subject">
+                            <input type="text" class="form-control check_for_search mandatory_fields" id="input_announcement_subject" name="announcement_subject">
+                            <span id="err_empnum" class="error_message" hidden></span>
                             <small class="form-text text-muted">Use * as a wild card search criteria (eg. Apple - App*, *ple, *ppl*)</small>
                         </div>
                         <div class="col-md">
@@ -155,6 +156,7 @@
                         <div class="card card-shadow-1">
                             <div class="card-body">
                                 <div class="alert alert-success display-none" id="org_announcement_update_success" role="alert"> </div>
+                                <div class="alert alert-danger display-none" id="save_error_msg"></div>
                                 <div class="row">
                                     <input value="{{announcement_details.unique_announcement_id}}" id="announcement_guid" hidden>
                                     <input type="text" id="announcement_id" value="{{announcement_details.announcement_id}}" hidden>
@@ -321,15 +323,15 @@
             statusElement.value = "Active"; // Set default value
         }
 
-    //Set default value for Priority if not available in localStorage
-    const priorityElement = document.getElementById("select_priority");
-    const savedPriority = localStorage.getItem("priority");
-    if (savedPriority) {
-        priorityElement.value = savedPriority;
-    } else {
-        priorityElement.value = "High"; // Set default value
+        //Set default value for Priority if not available in localStorage
+        const priorityElement = document.getElementById("select_priority");
+        const savedPriority = localStorage.getItem("priority");
+        if (savedPriority) {
+            priorityElement.value = savedPriority;
+        } else {
+            priorityElement.value = "High"; // Set default value
+        }
     }
-}
 
 
     // Call the function to set input fields from localStorage when the page loads.
@@ -344,18 +346,28 @@
 
     // Function to clear filters and clear localStorage data
     function clearFilters() {
-        document.getElementById("announcementForm").reset();
+        $(".error_message").prop("hidden", true); // Hide any error messages
+        // Clear form fields except for Title/Description
+        var form = document.getElementById("search_form");
+        // Reset the form to its initial state
+        form.reset();
+        // Set default values for the form elements
+        document.getElementById("input_announcement_subject").value = "";
+        document.getElementById("select_announcement_status").value = "Active";
+        document.getElementById("select_priority").value = "High";
         localStorage.removeItem("announcement_subject");
         localStorage.removeItem("announcement_status");
         localStorage.removeItem("priority");
-        closeloaderPopup();
+        $("input[type=text]").val('');
+        // Set select options to their default values
+        $("#select_announcement_status").val("Active");
+        $("#select_priority").val("High");
+        // Remove the status and priority from the form data
+        $('#search_form').find('select[name="status"]').remove();
+        $('#search_form').find('select[name="priority"]').remove();
+        // Submit the form
+        $('#search_form').submit();
     }
-
-
-<!--    $('#search_announcements_button').click(function () {-->
-<!--        OpenLoaderPopup();-->
-<!--    })-->
-
 
     //***********************************************
     function get_annsmt_detail_to_delete(element) {
@@ -418,6 +430,7 @@
         // Show the modal
         $("#saveConfirmationModal").modal("show");
         $("#org_announcement_update_success").css("display", "none");
+        $('#save_error_msg').addClass('display-none');
     }
 
     //*************************************
@@ -438,6 +451,7 @@
     function view_org_announcement_data(clickedElement) {
         $('#save_button').hide();
         $('#edit_button').hide();
+        $('#save_error_msg').addClass('display-none');
         // Get the row that contains the clicked element (Edit button)
         const row = $(clickedElement).closest('tr');
         var announcementDetails = {
@@ -524,15 +538,6 @@
         table_sort_filter('sup_tab');
     }
 
-
-// Function to display success message and hide it after 5 seconds (optional)
-<!--function message_display_time() {-->
-<!--    $("#error_msg_div").prop("hidden", false);-->
-<!--    setTimeout(function () {-->
-<!--        $("#error_msg_div").prop("hidden", true);-->
-<!--    }, 5000); // Hide after 5 seconds (adjust as needed)-->
-<!--}-->
-
     //**************************
     function main_table_delete() {
         main_table_annsmt_checked = [];
@@ -579,27 +584,27 @@
         }
     }
 
-        //onclick of select all checkbox
-        function checkAll(ele) {
-            if (ele.checked) {
-                $('.annsmt_checkbox').each(function() {
-                    var disable_check = this.disabled
-                    if(disable_check == false){
-                        this.checked = true;
-                        $("#id_delete_annsmt").show();
-                    }
-                });
-            }
-            else{
-                $('.annsmt_checkbox').each(function() {
-                    var disable_check = this.disabled
-                    if(disable_check == false){
-                        this.checked = false;
-                        $("#id_delete_annsmt").hide();
-                    }
-                });
-            }
+    //onclick of select all checkbox
+    function checkAll(ele) {
+        if (ele.checked) {
+            $('.annsmt_checkbox').each(function() {
+                var disable_check = this.disabled
+                if(disable_check == false){
+                    this.checked = true;
+                    $("#id_delete_annsmt").show();
+                }
+            });
         }
+        else{
+            $('.annsmt_checkbox').each(function() {
+                var disable_check = this.disabled
+                if(disable_check == false){
+                    this.checked = false;
+                    $("#id_delete_annsmt").hide();
+                }
+            });
+        }
+    }
 
     <!--Check All -->
     <!-- ----------------------------------------------------   -->
@@ -685,13 +690,23 @@
         var desc_val = $('#announcement_desc').val();
         var from_date_val = $('#from_date').val();
         var to_date_val = $('#to_date').val();
+
         // Check if From Date is greater than To Date
         if (from_date_val > to_date_val) {
             // Display an error message and prevent further processing
-            $('#org_announcement_update_success').removeClass('display-none').addClass('alert-danger');
-            $('#org_announcement_update_success').html("From Date cannot be greater than To Date.");
+            $('#save_error_msg').removeClass('display-none').addClass('alert-danger');
+            $('#save_error_msg').html("From Date cannot be greater than To Date.");
             return;
         }
+
+        // Validate that required fields are not empty
+    if (!hasValue(sub_val) || !hasValue(desc_val) || !hasValue(from_date_val) || !hasValue(to_date_val)) {
+            $('#save_error_msg').removeClass('display-none').addClass('alert-danger');
+            $('#save_error_msg').html("Please enter valid values for all required fields.");
+            return;
+        }
+
+
         // Validate the rest of the form
         is_save_form_valid = save_announcement_form_validation(sub_val, desc_val, from_date_val, to_date_val);
         if (action === "ADD" || action === "edit") {
@@ -702,6 +717,7 @@
                 return;
             }
         }
+
         // Continue with saving the announcement data using AJAX
         var form_data = {
             announcement_id: document.getElementById('announcement_id').value,
@@ -713,9 +729,11 @@
             announcement_to_date: document.getElementById('to_date').value,
             announcement_guid: document.getElementById('announcement_guid').value,
         };
+
         OpenLoaderPopup();
         $('#save_button').hide();
         $('#edit_button').hide();
+
         $.ajax({
             type: 'POST',
             url: "{% url 'eProc_Org_Support:org_announcement_save' %}",
@@ -723,20 +741,24 @@
             success: function(response) {
                 display_annsmt_data(response.announcement_result1);
                 document.getElementById('org_announcement_update_success').innerHTML = response.message;
-                $('#save_error_div').hide();
-                $('#org_announcement_update_success').show();
+                $('#save_error_msg').removeClass('alert-danger').addClass('alert-success');
+                $('#save_error_msg').html(response.message);
+                $('#save_error_msg').show();
                 $('html, body').animate({ scrollTop: 0 }, 'slow');
                 document.getElementById('announcement_guid').value = response.updated_guid;
                 setTimeout(function() {
                     $('#saveConfirmationModal').modal('hide');
-                }, 5000); // Delay the modal closing for 2 seconds (adjust as needed)
+                }, 5000); // Delay the modal closing for 5 seconds (adjust as needed)
                 CloseLoaderPopup();
                 location.reload();
             }
         });
     }
 
-
+    //******************************
+    function hasValue(value) {
+        return value.replace(/\s/g, '').length > 0;
+    }
 
     //Validation function
     const save_announcement_form_validation = (sub, desc, from_date, to_date) => {
@@ -768,7 +790,7 @@
 
     //***********************************
     function add_new_org_announcement(button) {
-            $('#save_button').show();
+        $('#save_button').show();
         $('#edit_button').hide();
         // Clear the modal content
         $("#announcement_id").val("");
@@ -779,7 +801,6 @@
         $("#from_date").val("");
         $("#to_date").val("");
         $("#announcement_guid").val("");
-
         // Reset any disabled fields
         $("#modal_announcement_subject").prop("disabled", false);
         $("#announcement_desc").prop("disabled", false);
@@ -787,25 +808,74 @@
         $("#priority_").prop("disabled", false);
         $("#from_date").prop("disabled", false);
         $("#to_date").prop("disabled", false);
-
         // Trigger form reset and hide error messages
         $("#address_clear").trigger('reset');
         $("#error_msg_id").css("display", "none");
-
         // Set the global action and enable specific fields
         GLOBAL_ACTION = button.value;
         $("#id_add_addresses_address_number").prop("disabled", false);
-
         // Hide the success message
         $("#org_announcement_update_success").css("display", "none");
-
         // Show the modal for adding a new announcement
         $('#saveConfirmationModal').modal('show');
+        $('#save_error_msg').addClass('display-none');
     }
 
+    // Add an event listener for the Title and Description input fields
+    $('#modal_announcement_subject, #announcement_desc').on('input', function() {
+        var inputValue = $(this).val();
 
+        // Replace consecutive spaces with a single space
+        inputValue = inputValue.replace(/\s+/g, ' ');
 
-      var previous_state;
+        // Update the input value
+        $(this).val(inputValue);
+    });
+
+    $('form').on('submit',function (e) {
+        OpenLoaderPopup();
+        var valid = true;
+        var temp = document.getElementsByClassName('mandatory_fields');
+        for (var i = 0; i<temp.length; i++) {
+            if(!(temp[i].value == '') || !(temp[i].value == null)){
+                data = temp[i].value;
+                var count = data.split('**').length - 1;
+                if((count >= 1) || (data == '*')){
+                    var display_id = temp[i].nextElementSibling.id;
+                    $('#'+display_id).prop('hidden', false);
+                    document.getElementById(temp[i].nextElementSibling.id).innerHTML = "Please enter valid value";
+                    valid = false;
+                }
+            }
+        }
+        if(!valid){
+            localStorage.setItem("error_flag", 1);
+            e.preventDefault();
+            $("#err_username").prop("hidden", false);
+                setTimeout(function() {
+                       CloseLoaderPopup();
+         }, 500);
+        }
+    });
+
+    $("body").on("keypress blur change", ".mandatory_fields", function (event) {
+         var get_value = event.currentTarget.value;
+            var count = get_value.split('**').length - 1;
+            if((count>=1)|| (get_value == '*'))
+            {
+            var display_id = event.currentTarget.nextElementSibling.id;
+            $('#'+display_id).prop('hidden', false);
+            document.getElementById(display_id).style.display = "block";
+            event.currentTarget.nextElementSibling.innerHTML = "Please enter valid value";
+            }
+            else{
+                $(".error_message").prop("hidden", true);
+                document.getElementById(event.currentTarget.nextElementSibling.id).style.display = "true";
+            }
+    });
+
+    //******************************
+    var previous_state;
     function lock_active_change(){
         OpenLoaderPopup();
         jQuery.ajax({

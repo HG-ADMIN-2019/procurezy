@@ -1,6 +1,6 @@
-//*********************
-function search_click(){
-          $("#err_msg").prop("hidden",false)
+//********************************************
+function search_click() {
+    $("#err_msg").prop("hidden", false);
 }
 
 // Function to store the selected values when the form is submitted
@@ -13,7 +13,7 @@ $('#hg_doc_report_search').click(function () {
 });
 
 // Function to retrieve and apply the stored values when the page loads
-$(document).ready(function() {
+$(document).ready(function () {
     var storedDocType = sessionStorage.getItem("DOC_TYPE");
     var storedCompany = sessionStorage.getItem("COMPANY");
 

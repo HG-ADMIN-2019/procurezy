@@ -122,7 +122,7 @@
 
                                     <div class="form-group col-md">
                                         <label> Language</label><span class="hg_required"></span><br>
-                                        <select name="" id="language_id" class="form-control hg_edit_display_mode mandatory_fields"  >
+                                        <select name="" id="language_id" class="form-control hg_edit_display_mode "  >
                                         <option value="" selected>Select</option>
                                         {% for items in language_list %}
                                             <option value="{{items.language_id}}" {% if supplier_info.language_id == items.language_id %}selected{% endif %} >{{items.language_id}} - {{items.description}}</option>
@@ -133,7 +133,7 @@
 
                                     <div class="form-group col-md">
                                         <label> Country</label><span class="hg_required"></span><br>
-                                        <select name="" id="country_code_id" class="form-control hg_edit_display_mode mandatory_fields" title="Select..">
+                                        <select name="" id="country_code_id" class="form-control hg_edit_display_mode " title="Select..">
                                         <option value="" selected>Select</option>
                                         {% for items in country_list %}
                                             <option value="{{items.country_code}}" {% if country_list.country_code == items.country_code %}selected{% endif %}>{{items.country_code}} - {{items.country_name}}</option>

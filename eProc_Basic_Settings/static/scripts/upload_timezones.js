@@ -162,38 +162,44 @@ function display_basic_db_data() {
 }
 
 
-//deletes he duplicate data
 function delete_duplicate() {
     $('#id_popup_table').DataTable().destroy();
-    var time_zone_check = new Array
-    var main_table_low_value = new Array
-    $("#id_popup_table TBODY TR").each(function() {
+    var time_zone_check = new Array();
+    var main_table_low_value = new Array();
+    $("#id_popup_table TBODY TR").each(function () {
         var row = $(this);
-        //*************** reading data from the pop-up ***************
+
+        // Read data from the pop-up
         time_zone = row.find("TD").eq(1).find('input[type="text"]').val().toUpperCase();
         description = row.find("TD").eq(2).find('input[type="text"]').val().toUpperCase();
         utc_difference = row.find("TD").eq(3).find('input[type="text"]').val().toUpperCase();
-        daylight_save_rule = row.find("TD").eq(4);
-        checked_box = row.find("TD").eq(5).find('input[type="checkbox"]').is(':checked')
-            if (checked_box){
-                del_ind = '1'
-            }
-            else{
-                del_ind = '0'
+        checked_box = row.find("TD").eq(5).find('input[type="checkbox"]').is(':checked');
+
+        if (checked_box) {
+            del_ind = '1';
+        } else {
+            del_ind = '0';
+
+            // Check if time_zone, description, and utc_difference are not empty
+            if (time_zone && description) {
+
                 if (time_zone_check.includes(time_zone)) {
                     $(row).remove();
                 }
                 time_zone_check.push(time_zone);
-                main_table_low_value = get_main_table_data_upload(); //Read data from main table
+
+                main_table_low_value = get_main_table_data_upload(); // Read data from the main table
                 if (main_table_low_value.includes(time_zone)) {
                     $(row).remove();
                 }
                 main_table_low_value.push(time_zone);
             }
+        }
     });
-    table_sort_filter_popup_pagination('id_popup_table')
+    table_sort_filter_popup_pagination('id_popup_table');
     check_data();
 }
+
 
 // Functtion to hide and display save related popups
 $('#save_id').click(function () {
