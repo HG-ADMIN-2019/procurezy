@@ -181,8 +181,7 @@ function delete_duplicate() {
             // Check if uom_id, uom_description, and iso_code_id are not empty
             if (
                 uom_id.trim() !== '' &&
-                uom_description.trim() !== '' &&
-                iso_code_id.trim() !== ''
+                uom_description.trim() !== ''
             ) {
                 if (uom_id_check.includes(uom_id)) {
                     $(row).remove();

@@ -185,21 +185,24 @@ function delete_duplicate() {
         description = row.find("TD").eq(2).find('input[type="text"]').val();
         object_id = row.find("TD").eq(3).find('select').val();
         checked_box = row.find("TD").eq(5).find('input[type="checkbox"]').is(':checked')
-          if (checked_box){
+         if (checked_box){
                 del_ind = '1'
-          }
-          else{
+         }
+         else{
                 del_ind = '0'
-                if (pgroup_code_check.includes(pgroup_id)) {
-                    $(row).remove();
-                }
-                pgroup_code_check.push(pgroup_id);
-                 main_table_low_value = get_main_table_data_upload(); //Read data from main table
-                if (main_table_low_value.includes(pgroup_id)) {
-                    $(row).remove();
-                }
-                main_table_low_value.push(pgroup_id);
-          }
+                 if (pgroup_id && description) {
+                        if (pgroup_code_check.includes(pgroup_id)) {
+                            $(row).remove();
+                        }
+                        pgroup_code_check.push(pgroup_id);
+                         main_table_low_value = get_main_table_data_upload(); //Read data from main table
+                        if (main_table_low_value.includes(pgroup_id)) {
+                            $(row).remove();
+                        }
+                        main_table_low_value.push(pgroup_id);
+                 }
+
+         }
     });
     table_sort_filter_popup_pagination('id_popup_table')
     check_data()

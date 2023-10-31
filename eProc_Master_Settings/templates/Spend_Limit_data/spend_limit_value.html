@@ -931,15 +931,17 @@
             }
             else{
                 del_ind = '0'
-                if (spendlimit_value_code_check.includes(compare_maintable)) {
-                    $(row).remove();
+                if (upper_limit_value && spend_code_id) {
+                    if (spendlimit_value_code_check.includes(compare_maintable)) {
+                        $(row).remove();
+                    }
+                    spendlimit_value_code_check.push(compare_maintable);
+                    main_table_low_value = get_main_table_data_upload(); //Read data from main table
+                    if (main_table_low_value.includes(compare_maintable)) {
+                        $(row).remove();
+                    }
+                    main_table_low_value.push(compare_maintable);
                 }
-                spendlimit_value_code_check.push(compare_maintable);
-                main_table_low_value = get_main_table_data_upload(); //Read data from main table
-                if (main_table_low_value.includes(compare_maintable)) {
-                    $(row).remove();
-                }
-                main_table_low_value.push(compare_maintable);
             }
         })
         table_sort_filter_popup_pagination('id_popup_table')
