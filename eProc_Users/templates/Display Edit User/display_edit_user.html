@@ -493,7 +493,7 @@ var msg_display_interval = {{msg_display_time_value|safe}};
                 $('#save_error_div').show();
                 $('#user_basic_update_success').hide();
                 localStorage.setItem("error_flag", 1);
-                   setTimeout(function() {
+                setTimeout(function() {
                    $('#save_error_div').hide();
             }, msg_display_interval*2000);
                 return false;
