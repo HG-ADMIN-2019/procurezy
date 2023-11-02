@@ -210,6 +210,7 @@ function save_basic_form_validation(){
 
         var err_text1 = '';
         var temp = document.getElementsByClassName('mandatory_fields');
+        var drp_down = document.getElementsByClassName('dropdown_fields');
         for (var i = 0; i<temp.length; i++) {
             if(temp[i].nodeName == "SELECT"){
                 if((temp[i].value == "") || (temp[i].value == null)){
@@ -257,24 +258,20 @@ function save_basic_form_validation(){
                 }
             }
             }
-//            var dropdown_reference = document.getElementsByClassName('dropdown_required');
-//            for (var j = 0; j<dropdown_reference.length; j++) {
-//                if(dropdown_reference[j].id == 'working_days'){
-//                    if((dropdown_reference[j].value == "") || (dropdown_reference[j].value == null)){
-//                        $('#err_working_days_disp').prop('hidden', false);
-//                        $('#err_working_days_disp').html("Please select Working Days");
-//                        is_valid = false;
-//                    }
-//                }
-//                if(dropdown_reference[j].id == 'working_days_id'){
-//                    if((dropdown_reference[j].value == "") || (dropdown_reference[j].value == null)){
-//                        $('#err_working_days').prop('hidden', false);
-//                        $('#err_working_days').html("Please select Working Days");
-//                        is_valid = false;
-//                    }
-//                }
-//            }
-
+            for (var i = 0; i<drp_down.length; i++) {
+                if(drp_down[i].nodeName == "SELECT"){
+                    if((drp_down[i].value == "") || (drp_down[i].value == null)){
+                        err_text1 = drp_down[i].parentNode.children[0].innerHTML;
+                        var display_id = drp_down[i].nextElementSibling.id;
+                        $('#'+display_id).prop('hidden', false);
+                        $('#drp_down[i].nextElementSibling.id').html("required");
+                        document.getElementById(drp_down[i].nextElementSibling.id).innerHTML = err_text1 + " required";
+                        is_valid = false;
+                    }
+                    else{ $('#drp_down[i].nextElementSibling.id').prop('hidden', true);
+                    }
+                }
+            }
         return is_valid
     }
 
@@ -318,8 +315,8 @@ function new_row_data(){
     '<td hidden><input type="text" name="supp_org_guid"></td>'+
     '<td><select class="form-control"  type="text"  name="porg_id" style="text-transform:uppercase;">'+porg_opt+'</select></td>'+
     '<td><select class="form-control" type="text"  name="currency_id">'+currency_opt1+'</select></td>'+
-    '<td><select class="form-control" type="text"  name="payment_term">'+payterm_opt+'</select></td>'+
-    '<td><select class="form-control" type="text"  name="incoterm">'+incoterm_opt+'</select></td>'+
+    '<td><select style="width:auto;" class="form-control" type="text"  name="payment_term">'+payterm_opt+'</select></td>'+
+    '<td><select style="width:auto;" class="form-control" type="text"  name="incoterm">'+incoterm_opt+'</select></td>'+
     '<td><input class="checkbox-size" type="checkbox"  name="gr_inv_vrf_checkbox" required></td>'+
     '<td><input class="checkbox-size" type="checkbox"  name="inv_conf_exp_checkbox" required></td>'+
     '<td><input class="checkbox-size" type="checkbox"  name="gr_conf_exp_checkbox" required></td>'+
@@ -489,7 +486,7 @@ function get_values_onerror(){
     $('#working_days_id').val(localStorage.getItem("working_days_id"));
    $('#duns_number_id').val(localStorage.getItem("duns_number_id"));
    $('#output_medium_id').val(localStorage.getItem("output_medium_id"));
-   return false;
+//   return false;
 }
 // Function to get main table data
 function get_main_table_data() {
