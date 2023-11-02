@@ -785,15 +785,17 @@
             }
             else{
                 del_ind = '0'
-                if (cusprodcat_code_check.includes(cusprodcat_prod_cat_id)) {
-                    $(row).remove();
+                if (cusprodcat_prod_cat_id) {
+                    if (cusprodcat_code_check.includes(cusprodcat_prod_cat_id)) {
+                        $(row).remove();
+                    }
+                    cusprodcat_code_check.push(cusprodcat_prod_cat_id);
+                      main_table_low_value = get_main_table_data_upload(); //Read data from main table
+                    if (main_table_low_value.includes(cusprodcat_prod_cat_id)) {
+                        $(row).remove();
+                    }
+                    main_table_low_value.push(cusprodcat_prod_cat_id);
                 }
-                cusprodcat_code_check.push(cusprodcat_prod_cat_id);
-                  main_table_low_value = get_main_table_data_upload(); //Read data from main table
-                if (main_table_low_value.includes(cusprodcat_prod_cat_id)) {
-                    $(row).remove();
-                }
-                main_table_low_value.push(cusprodcat_prod_cat_id);
             }
         });
         table_sort_filter_popup_pagination('id_popup_table')
