@@ -21,7 +21,7 @@
                     <i class="fas fa-info-circle"></i><span> Supplier Information</span>
                 </div>
             </li>
-            <li data-tab-target="#org_data_tab" class="sub-tab" id="org_info_tab">
+            <li data-tab-target="#org_data_tab" class="sub-tab" id="org_info_tab" hidden>
                 <div class="sub-tab-link">
                     <i class="fas fa-sitemap"></i><span> Organizational Information</span>
                 </div>
@@ -122,7 +122,7 @@
 
                                     <div class="form-group col-md">
                                         <label> Language</label><span class="hg_required"></span><br>
-                                        <select name="" id="language_id" class="form-control hg_edit_display_mode "  >
+                                        <select name="" id="language_id" class="form-control hg_edit_display_mode dropdown_fields"  >
                                         <option value="" selected>Select</option>
                                         {% for items in language_list %}
                                             <option value="{{items.language_id}}" {% if supplier_info.language_id == items.language_id %}selected{% endif %} >{{items.language_id}} - {{items.description}}</option>
@@ -133,7 +133,7 @@
 
                                     <div class="form-group col-md">
                                         <label> Country</label><span class="hg_required"></span><br>
-                                        <select name="" id="country_code_id" class="form-control hg_edit_display_mode " title="Select..">
+                                        <select name="" id="country_code_id" class="form-control hg_edit_display_mode dropdown_fields" title="Select..">
                                         <option value="" selected>Select</option>
                                         {% for items in country_list %}
                                             <option value="{{items.country_code}}" {% if country_list.country_code == items.country_code %}selected{% endif %}>{{items.country_code}} - {{items.country_name}}</option>
@@ -481,18 +481,18 @@ var country_id = '{{supplier_info.country_code | safe}}';
 var curr_id = '{{supplier_info.currency_id | safe}}';
 var lang_id = '{{supplier_info.language_id | safe}}';
 var img_url = '{{img_url.url | safe}}';
-var error_flag;
+var error_flag = 0; var err_state = "";
 var is_valid = true;
 var validate_add_attributes = [];
 var messages_list = {{messages_list|safe}};
+var msg_display_interval = {{msg_display_time_value|safe}};
 
-$(document).ready(function(){
+$(document).ready(function(e){
     $('#nav_menu_items').remove();
     $("body").css("padding-top", "4rem");
     NavigateTabs(); // Custom function to switch tabs
     GLOBAL_ACTION = '{{supplier_action}}';
     if(GLOBAL_ACTION == 'CREATE'){
-      $("#org_info_tab").hide();
       $("#business_doc_tab").hide();
       $("#sbd_save_cancel_button").prop("hidden", false);
       $("#sbd_edit_button").prop("hidden", true);
@@ -501,13 +501,16 @@ $(document).ready(function(){
      $("#working_days").prop("disabled", false);
      $("#working_days_id").prop("hidden", true);
      MultipleSelect();
-     var flag = localStorage.getItem("error_flag");
-     if(flag == 1){
-        get_values_onerror();
-        return false;
-        }
+       var flag = localStorage.getItem("error_flag");
+         if((flag == 1) && (err_state == "From_Error")){
+            get_values_onerror();
+         }
+         else {
+            localStorage.clear();
+         }
     }
     else{
+        $("#org_info_tab").prop("hidden", false);;
          document.getElementById('sbd_edit_button').style.display = 'block';
          $("#sbd_edit_button").prop("hidden", false);
         $("#sbd_save_cancel_button").prop("hidden", true);
@@ -529,7 +532,10 @@ $(document).ready(function(){
             }
             $("#working_days_id").val(num);
         }
+        values_reload();
+        MultipleSelect();
     }
+
     MultipleSelect();
 });
 
@@ -554,6 +560,17 @@ $(document).ready(function(){
     else{
         $(".error_message").prop("hidden", false);
         document.getElementById(event.currentTarget.nextElementSibling.id).style.display = "block";
+    }
+ });
+ $("body").on("keypress keyup change blur", ".dropdown_fields", function (event) {
+    if((event.currentTarget.value == "") || (event.currentTarget.value == null)) {
+        var display_id = event.currentTarget.nextElementSibling.id;
+        $('#'+display_id).prop('hidden', false);
+        event.currentTarget.nextElementSibling.innerHTML = "Please select value";
+    }
+    else{
+        $(".error_message").prop("hidden", false);
+        document.getElementById(event.currentTarget.nextElementSibling.id).style.display = "none";
     }
  });
 
@@ -604,7 +621,7 @@ $('#mobile_num_id').on('keyup change blur',function (event) {
 });
 
  $('form').on('submit',function (e) {
-    OpenLoaderPopup();
+<!--    OpenLoaderPopup();-->
     var valid = save_basic_form_validation();
     if(!valid){
         localStorage.setItem("error_flag", 1);
@@ -616,6 +633,7 @@ $('#mobile_num_id').on('keyup change blur',function (event) {
         e.preventDefault();
     }
     else{
+        values_reload();
         save_basic_details();
         setTimeout(function() {
                    CloseLoaderPopup();
@@ -686,6 +704,9 @@ const ajax_update_supplier_org_details_url = "{% url 'eProc_Suppliers:update_sup
 
 // Function to save edited supplier basic details data
 function save_basic_details() {
+    setTimeout(function() {
+                       OpenLoaderPopup();
+         }, 500);
     var supplier_data = {}
     var is_save_form_valid='';
     var error_message = '';
@@ -735,12 +756,16 @@ function save_basic_details() {
             $('#supplier_basic_update_success').show();
             $('#save_error_div').hide();
             message_display_time_specific();
+            if(GLOBAL_ACTION == 'CREATE'){
+                    $("#supplier_form_field")[0].reset();
+                    localStorage.clear();
+            }
 <!--            setTimeout(function() {-->
 <!--                    $('#supplier_basic_update_success').hide();-->
 <!--            }, msg_display_interval*1500);-->
             localStorage.setItem("error_flag", 0);
         }
-        else if(msg_type.type=='error'){
+        if(msg_type.type=='error'){
             document.getElementById('save_error_div').innerHTML = message;
             setTimeout(function() {
                    CloseLoaderPopup();
@@ -748,11 +773,10 @@ function save_basic_details() {
             $('#save_error_div').show();
             $('#supplier_basic_update_success').hide();
             localStorage.setItem("error_flag", 1);
-            values_reload();
-            get_values_onerror();
+            err_state = "From_Error";
             setTimeout(function() {
                    $('#save_error_div').hide();
-            }, msg_display_interval*3500);
+            }, msg_display_interval*2000);
             return false;
         }
      }
@@ -928,7 +952,7 @@ function onclick_copy_update_button(data) {
                                 '<td hidden><input type="text" name="supp_org_guid"></td>'+
                                 '<td>'+unique_input+'</td>'+
                                 '<td><select class="form-control" type="text"  name="currency_id">'+currency_opt1+'</select></td>'+
-                                '<td><select class="form-control" type="text"  name="payment_term">'+payterm_opt+'</select></td>'+
+                                '<td><select style="width:auto;" class="form-control" type="text"  name="payment_term">'+payterm_opt+'</select></td>'+
                                 '<td><select style="width:auto;" class="form-control" type="text"  name="incoterm">'+incoterm_opt+'</select></td>'+
                                 '<td><input class="checkbox-size" type="checkbox"  name="gr_inv_vrf_checkbox" required></td>'+
                                 '<td><input class="checkbox-size" type="checkbox"  name="inv_conf_exp_checkbox" required></td>'+
@@ -1022,7 +1046,6 @@ function supp_org_data_save(){
         validate_add_attributes.push(get_supp_purch_data.porg_id);
         save_supplier_purch_details.push(get_supp_purch_data)
     })
-
     var no_duplicate_entries = 'Y';
     var no_duplicate_value = 'Y';
     var error_message = '';
