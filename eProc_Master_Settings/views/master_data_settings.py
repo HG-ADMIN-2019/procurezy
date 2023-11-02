@@ -201,18 +201,18 @@ def extract_cusprodcat_data(request):
 
     writer = csv.writer(response)
 
-    writer.writerow(['del_ind', 'PROD_CAT_ID'])
+    writer.writerow(['PROD_CAT_ID','DEL_IND'])
 
     customerprod = django_query_instance.django_filter_query(UnspscCategoriesCust,
                                                              {'del_ind': False,
                                                               'client': global_variables.GLOBAL_CLIENT}, None,
-                                                             ['del_ind', 'prod_cat_id'])
+                                                             ['prod_cat_id','del_ind'])
 
     customerprod_data = query_update_del_ind(customerprod)
 
     for customerprodData in customerprod_data:
-        customerprodData_info = [customerprodData['del_ind'],
-                                 customerprodData['prod_cat_id']]
+        customerprodData_info = [customerprodData['prod_cat_id'],
+                                 customerprodData['del_ind']]
 
         writer.writerow(customerprodData_info)
 
@@ -225,7 +225,7 @@ def extract_cusprodcat_template(request):
 
     writer = csv.writer(response)
 
-    writer.writerow(['del_ind', 'PROD_CAT_ID'])
+    writer.writerow(['PROD_CAT_ID','DEL_IND',])
 
     return response
 
