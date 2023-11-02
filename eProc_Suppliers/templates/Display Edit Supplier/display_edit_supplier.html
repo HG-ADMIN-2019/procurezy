@@ -740,7 +740,7 @@ function save_basic_details() {
 <!--            }, msg_display_interval*1500);-->
             localStorage.setItem("error_flag", 0);
         }
-        if(msg_type.type=='error'){
+        else if(msg_type.type=='error'){
             document.getElementById('save_error_div').innerHTML = message;
             setTimeout(function() {
                    CloseLoaderPopup();
@@ -752,7 +752,7 @@ function save_basic_details() {
             get_values_onerror();
             setTimeout(function() {
                    $('#save_error_div').hide();
-            }, msg_display_interval*2500);
+            }, msg_display_interval*3500);
             return false;
         }
      }
@@ -929,7 +929,7 @@ function onclick_copy_update_button(data) {
                                 '<td>'+unique_input+'</td>'+
                                 '<td><select class="form-control" type="text"  name="currency_id">'+currency_opt1+'</select></td>'+
                                 '<td><select class="form-control" type="text"  name="payment_term">'+payterm_opt+'</select></td>'+
-                                '<td><select class="form-control" type="text"  name="incoterm">'+incoterm_opt+'</select></td>'+
+                                '<td><select style="width:auto;" class="form-control" type="text"  name="incoterm">'+incoterm_opt+'</select></td>'+
                                 '<td><input class="checkbox-size" type="checkbox"  name="gr_inv_vrf_checkbox" required></td>'+
                                 '<td><input class="checkbox-size" type="checkbox"  name="inv_conf_exp_checkbox" required></td>'+
                                 '<td><input class="checkbox-size" type="checkbox"  name="gr_conf_exp_checkbox" required></td>'+
@@ -1081,7 +1081,7 @@ function supp_org_data_save(){
             }
             if(format.test(item.porg_id)){
                 $('#supplierOrgModal').modal('show');
-                error_message = ui_messeges("JMSG113")// Get message details
+                error_message = ui_messeges("JMSG003") + "Purchasing Org"// Get message details
                 no_duplicate_value = 'N'
                 return [no_duplicate_value,error_message]
             }
@@ -1113,9 +1113,9 @@ function supp_org_data_save(){
         var supplier_check = new Array;
         $("#id_popup_table TBODY TR").each(function() {
             var row = $(this);
-            country_dic = {}
-            country_dic.country_code = row.find("TD").eq(1).find('input[type="text"]').val().toUpperCase();
-            var compare = country_dic.country_code
+            supp_org_dic = {}
+            supp_org_dic.porg_id = row.find("TD").eq(2).find("select option:selected").val();
+            var compare = supp_org_dic.porg_id
             supplier_check.push(compare);
             jQuery.grep(supplier_check, function(el) {
                 if (jQuery.inArray(el, common) != -1) {

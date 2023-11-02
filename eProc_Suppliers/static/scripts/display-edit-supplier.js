@@ -319,7 +319,7 @@ function new_row_data(){
     '<td><select class="form-control"  type="text"  name="porg_id" style="text-transform:uppercase;">'+porg_opt+'</select></td>'+
     '<td><select class="form-control" type="text"  name="currency_id">'+currency_opt1+'</select></td>'+
     '<td><select class="form-control" type="text"  name="payment_term">'+payterm_opt+'</select></td>'+
-    '<td><select class="form-control" type="text"  name="incoterm">'+incoterm_opt+'</select></td>'+
+    '<td><select style="width:auto;" class="form-control" type="text"  name="incoterm">'+incoterm_opt+'</select></td>'+
     '<td><input class="checkbox-size" type="checkbox"  name="gr_inv_vrf_checkbox" required></td>'+
     '<td><input class="checkbox-size" type="checkbox"  name="inv_conf_exp_checkbox" required></td>'+
     '<td><input class="checkbox-size" type="checkbox"  name="gr_conf_exp_checkbox" required></td>'+
