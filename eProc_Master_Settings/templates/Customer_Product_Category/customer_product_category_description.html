@@ -600,17 +600,19 @@
                 del_ind = '1'
             }
             else{
-                del_ind = '0'
-                if (cusprodcatdesc_code_check.includes(cusprodcatdesc_prod_cat_id)) {
-                    $(row).remove();
+                if (cusprodcatdesc_prod_cat_id && cusprodcatdesc_language_id) {
+                    del_ind = '0'
+                    if (cusprodcatdesc_code_check.includes(cusprodcatdesc_prod_cat_id)) {
+                        $(row).remove();
+                    }
+                    cusprodcatdesc_code_check.push(cusprodcatdesc_prod_cat_id);
+                    main_table_low_value = get_main_table_data_upload(); //Read data from main table
+                    if (main_table_low_value.includes(cusprodcatdesc_prod_cat_id)) {
+                        $(row).remove();
+                    }
+                    main_table_low_value.push(cusprodcatdesc_prod_cat_id);
                 }
-                cusprodcatdesc_code_check.push(cusprodcatdesc_prod_cat_id);
-                main_table_low_value = get_main_table_data_upload(); //Read data from main table
-                if (main_table_low_value.includes(cusprodcatdesc_prod_cat_id)) {
-                    $(row).remove();
-                }
-                main_table_low_value.push(cusprodcatdesc_prod_cat_id);
-             }
+            }
         })
         table_sort_filter_popup_pagination('id_popup_table')
         check_data()
