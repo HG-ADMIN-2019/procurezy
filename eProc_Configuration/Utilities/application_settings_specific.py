@@ -2120,6 +2120,23 @@ def purchase_control_data():
     return upload_purchase_control
 
 
+def sourcing_rule_dropdown():
+    upload_company_code = list(
+        OrgCompanies.objects.filter(client=global_variables.GLOBAL_CLIENT, del_ind=False).values('company_id'))
+
+    prod_catogories = list(
+        UnspscCategoriesCust.objects.filter(del_ind=False).values('prod_cat_id'))
+
+    rule_type = get_field_list_values('source_rule')
+
+    data = {
+        'upload_company_code': upload_company_code,
+        'prod_catogories': prod_catogories,
+        'rule_type': rule_type
+    }
+    return data
+
+
 def msgid_dropdown():
     dropdown_msg_type_values = get_field_list_values('messages_type')
     dropdown_msg_id_values = get_field_unused_list_values('messages_id')
