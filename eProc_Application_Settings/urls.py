@@ -71,4 +71,5 @@ urlpatterns = [
     path('save_purch_cockpit', views.save_purch_cockpit_data, name='save_purch_cockpit'),
     path('save_product_details_images', views.save_product_details_images, name='save_product_details_images'),
     path('display_purchase_control', views.display_purchase_control, name='display_purchase_control'),
+    path('display_sourcing_rule_generic', views.display_sourcing_rule_generic, name='display_sourcing_rule_generic'),
 ]

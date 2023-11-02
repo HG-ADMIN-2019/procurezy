@@ -179,6 +179,29 @@ def display_purchase_control(request):
                    'inc_nav': True, })
 
 
+def display_sourcing_rule_generic(request):
+    update_user_info(request)
+    client = global_variables.GLOBAL_CLIENT
+
+    upload_sr_generic_cat = get_configuration_data(SourcingRule, {'del_ind': False},
+                                                   ['prod_cat_id_from', 'prod_cat_id_to', 'company_id', 'call_off',
+                                                    'rule_type', 'sourcing_flag', 'sourcing_rule_guid', 'del_ind'])
+
+    upload_comapny_code = list(OrgCompanies.objects.filter(client=client, del_ind=False).values('company_id'))
+
+    prod_catogories = list(
+        UnspscCategoriesCust.objects.filter(del_ind=False).values('prod_cat_id'))
+
+    messages_list = get_ui_messages(CONST_COFIG_UI_MESSAGE_LIST)
+
+    return render(request, 'Application_Settings/sr_generic.html',
+                  {'upload_sr_generic_cat': upload_sr_generic_cat,
+                   'dropdown_company_code_id': upload_comapny_code,
+                   'prod_catogories': prod_catogories,
+                   'messages_list': messages_list,
+                   'inc_nav': True, })
+
+
 def display_calendar(request):
     update_user_info(request)
     client = global_variables.GLOBAL_CLIENT
