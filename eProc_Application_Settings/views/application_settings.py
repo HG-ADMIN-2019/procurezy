@@ -199,6 +199,13 @@ def display_sourcing_rule_generic(request):
             'field_type_desc'
         ))
 
+    dropdown_activate = list(
+        FieldTypeDescription.objects.filter(field_name='purchase_ctrl_flag', del_ind=False,
+                                            client=global_variables.GLOBAL_CLIENT).values(
+            'field_type_id',
+            'field_type_desc'
+        ))
+
     messages_list = get_ui_messages(CONST_COFIG_UI_MESSAGE_LIST)
 
     return render(request, 'Application_Settings/sr_generic.html',
@@ -206,6 +213,7 @@ def display_sourcing_rule_generic(request):
                    'dropdown_company_code_id': upload_comapny_code,
                    'prod_catogories': prod_catogories,
                    'rule_type': rule_type,
+                   'dropdown_activate': dropdown_activate,
                    'messages_list': messages_list,
                    'inc_nav': True, })
 
