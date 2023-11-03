@@ -46,7 +46,7 @@
                     <!--Supplier register form-->
                     <form method="POST" id="supplier_form_field" name="supplier_form_field" >
                         {% csrf_token %}
-                        <div class="alert alert-success display-none" id="supplier_basic_update_success" role="alert"></div>
+                        <div class="alert alert-success" id="supplier_basic_update_success" role="alert" hidden></div>
                         <!--    Basic Data      -->
 
                         <div class="d-flex justify-content-end">
@@ -704,9 +704,7 @@ const ajax_update_supplier_org_details_url = "{% url 'eProc_Suppliers:update_sup
 
 // Function to save edited supplier basic details data
 function save_basic_details() {
-    setTimeout(function() {
-                       OpenLoaderPopup();
-         }, 500);
+    setTimeout(open, 100);
     var supplier_data = {}
     var is_save_form_valid='';
     var error_message = '';
@@ -755,7 +753,7 @@ function save_basic_details() {
              }, 1000);
             $('#supplier_basic_update_success').show();
             $('#save_error_div').hide();
-            message_display_time_specific();
+            message_display_time();
             if(GLOBAL_ACTION == 'CREATE'){
                     $("#supplier_form_field")[0].reset();
                     localStorage.clear();
@@ -767,16 +765,11 @@ function save_basic_details() {
         }
         if(msg_type.type=='error'){
             document.getElementById('save_error_div').innerHTML = message;
-            setTimeout(function() {
-                   CloseLoaderPopup();
-             }, 500);
+            setTimeout(timer , 1500);
             $('#save_error_div').show();
             $('#supplier_basic_update_success').hide();
             localStorage.setItem("error_flag", 1);
             err_state = "From_Error";
-            setTimeout(function() {
-                   $('#save_error_div').hide();
-            }, msg_display_interval*2000);
             return false;
         }
      }
@@ -786,7 +779,12 @@ function save_basic_details() {
         $('#save_error_div').show();
     }
 }
-
+function timer(){
+    CloseLoaderPopup();
+}
+function open(){
+    OpenLoaderPopup();
+}
 function MultipleSelect() {
      $('#working_days_id').selectpicker();
      $('#working_days').selectpicker();
