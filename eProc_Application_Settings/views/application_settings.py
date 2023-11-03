@@ -192,12 +192,20 @@ def display_sourcing_rule_generic(request):
     prod_catogories = list(
         UnspscCategoriesCust.objects.filter(del_ind=False).values('prod_cat_id'))
 
+    rule_type = list(
+        FieldTypeDescription.objects.filter(field_name='source_rule', del_ind=False,
+                                            client=global_variables.GLOBAL_CLIENT).values(
+            'field_type_id',
+            'field_type_desc'
+        ))
+
     messages_list = get_ui_messages(CONST_COFIG_UI_MESSAGE_LIST)
 
     return render(request, 'Application_Settings/sr_generic.html',
                   {'upload_sr_generic_cat': upload_sr_generic_cat,
                    'dropdown_company_code_id': upload_comapny_code,
                    'prod_catogories': prod_catogories,
+                   'rule_type': rule_type,
                    'messages_list': messages_list,
                    'inc_nav': True, })
 
