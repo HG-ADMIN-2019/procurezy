@@ -759,13 +759,14 @@ function save_basic_details() {
             localStorage.setItem("error_flag", 0);
         }
         if(msg_type.type=='error'){
-            setTimeout(timer , 2500);
+           setTimeout(function() {
+            CloseLoaderPopup(); }, 1000);
             document.getElementById('save_error_div').innerHTML = message;
             $('#save_error_div').show();
-            $('#supplier_basic_update_success').hide();
-             setTimeout(function() {
-                   $('.alert-success').prop("hidden", true);
-            }, 15000);
+<!--            $('#supplier_basic_update_success').hide();-->
+<!--             setTimeout(function() {-->
+<!--                  $('#save_error_div').hide();-->
+<!--            }, 25000);-->
             localStorage.setItem("error_flag", 1);
             err_state = "From_Error";
             return false;
