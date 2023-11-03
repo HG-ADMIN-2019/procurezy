@@ -2129,10 +2129,13 @@ def sourcing_rule_dropdown():
 
     rule_type = get_field_list_values('source_rule')
 
+    dropdown_activate = get_field_list_values('purchase_ctrl_flag')
+
     data = {
         'upload_company_code': upload_company_code,
         'prod_catogories': prod_catogories,
-        'rule_type': rule_type
+        'rule_type': rule_type,
+        'dropdown_activate': dropdown_activate
     }
     return data
 
