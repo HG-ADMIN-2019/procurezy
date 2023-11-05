@@ -25,16 +25,18 @@
                                 <label>Company Number</label>
                                 {{ user_rep_form.company_code }}
                             </div>
-                            <div class="col-md">
-                                <label>Username</label>
-                                {{ user_rep_form.username }}
-                            </div>
+                        <div class="col-md">
+                            <label for="">Username</label>
+                            <input type="text" class="form-control check_for_search mandatory_fields" id="id_username" name="id_username" value="" >
+                            {{ user_rep_form.Username }}
+                            <span id="err_username" class="error_message" hidden></span>
+                        </div>
                             <div class="col-auto">
                                 <label>User Status</label>
-    <select name="user_status" id="id_user_status" class="form-control">
-        <option value="Active" selected>Active</option>
-        <option value="Inactive" >Inactive</option>
-    </select>
+                                <select name="user_status" id="id_user_status" class="form-control">
+                                    <option value="Active" selected>Active</option>
+                                    <option value="Inactive" >Inactive</option>
+                                </select>
                             </div>
                             <div class="col-auto my-1">
                                 <button class="btn btn-primary button-search-users" id="hg_user_report_search" type="submit" title="Please click to get the search details!"><i class="fas fa-search"></i> search</button>
@@ -180,21 +182,73 @@ $(document).ready(function () {
         document.querySelector("button[type='reset']").addEventListener("click", showTableAndPagination);
     });
 
-    function resetFilters() {
-        $('#id_company_code').val('');
-        $('#id_username').val('');
-        $('#id_user_status').val('');
-        var companyCodeDropdown = $("label:contains('Company Number')").next("select");
-        companyCodeDropdown.val(companyCodeDropdown.find("option:first").val());
-        localStorage.removeItem('formData');
-        $('form').submit();
-    }
+function resetFilters() {
+    $('#id_company_code').val('');
+    $('#id_username').val('');
+    $('#id_user_status').val('');
+
+    // Clear error messages
+    $(".error_message").prop("hidden", true);
+
+    // Clear the error message for the username field
+    $("#err_username").prop("hidden", true);
+
+    var companyCodeDropdown = $("label:contains('Company Number')").next("select");
+    companyCodeDropdown.val(companyCodeDropdown.find("option:first").val());
+
+    localStorage.removeItem('formData');
+    $('form').submit();
+}
+
 
     // Listen for the "Clear Filters" button click
     $('#reset-filters').click(function (e) {
         e.preventDefault();
         resetFilters();
     });
+
+    $('form').on('submit',function (e) {
+        OpenLoaderPopup();
+        var valid = true;
+        var temp = document.getElementsByClassName('mandatory_fields');
+        for (var i = 0; i<temp.length; i++) {
+            if(!(temp[i].value == '') || !(temp[i].value == null)){
+                data = temp[i].value;
+                var count = data.split('**').length - 1;
+                if((count >= 1) || (data == '*')){
+                    var display_id = temp[i].nextElementSibling.id;
+                    $('#'+display_id).prop('hidden', false);
+                    document.getElementById(temp[i].nextElementSibling.id).innerHTML = "Please enter valid value";
+                    valid = false;
+                }
+            }
+        }
+        if(!valid){
+            localStorage.setItem("error_flag", 1);
+            e.preventDefault();
+            $("#err_username").prop("hidden", false);
+                setTimeout(function() {
+                       CloseLoaderPopup();
+         }, 500);
+        }
+    });
+
+    $("body").on("keypress blur change", ".mandatory_fields", function (event) {
+         var get_value = event.currentTarget.value;
+            var count = get_value.split('**').length - 1;
+            if((count>=1)|| (get_value == '*'))
+            {
+            var display_id = event.currentTarget.nextElementSibling.id;
+            $('#'+display_id).prop('hidden', false);
+            document.getElementById(display_id).style.display = "block";
+            event.currentTarget.nextElementSibling.innerHTML = "Please enter valid value";
+            }
+            else{
+                $(".error_message").prop("hidden", true);
+                document.getElementById(event.currentTarget.nextElementSibling.id).style.display = "true";
+            }
+    });
+
 </script>
 {% if inc_footer %}
 {% include 'root/footer.html' %}
