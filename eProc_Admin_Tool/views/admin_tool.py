@@ -449,7 +449,7 @@ def user_report(request):
         if user_rep_form.is_valid():
             inp_comp_code = request.POST.get('company_code')
             inp_username = request.POST.get('username')
-            inp_active = request.POST.get('user_status')
+            inp_active = request.POST.get('active')
 
             if inp_active == 'Active':
                 active = True
@@ -513,9 +513,8 @@ def user_report(request):
                                 # Using the user_list from the Org Model read the user details
                                 for user_obj_id in user_list:
                                     user_details = UserData.objects.filter(
-                                        Q(object_id=user_obj_id.object_id, is_active=active, client=client,
-                                          del_ind=False)
-                                    )
+                                        Q(object_id=user_obj_id.object_id, is_active=True,
+                                          client=client, del_ind=False))
                                     final_array = []
                                     for user in user_details:
                                         print('User in Company:', user.first_name, user.username)
