@@ -70,7 +70,7 @@ def create_or_update_supp_org(supp_org_data, client_id):
         if not django_query_instance.django_existence_check(OrgSuppliers,
                                                             {'porg_id': org_data['porg_id'],
                                                              'supplier_id': org_data['supp_id'],
-                                                             'del_ind': False
+                                                             'client_id': client_id,
                                                              }):
             guid = guid_generator()
             org_sup_db_dictionary = {'guid': guid,

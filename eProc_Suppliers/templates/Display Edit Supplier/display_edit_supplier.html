@@ -46,7 +46,7 @@
                     <!--Supplier register form-->
                     <form method="POST" id="supplier_form_field" name="supplier_form_field" >
                         {% csrf_token %}
-                        <div class="alert alert-success display-none" id="supplier_basic_update_success" role="alert"></div>
+                        <div class="alert alert-success" id="supplier_basic_update_success" role="alert" hidden></div>
                         <!--    Basic Data      -->
 
                         <div class="d-flex justify-content-end">
@@ -627,17 +627,13 @@ $('#mobile_num_id').on('keyup change blur',function (event) {
         localStorage.setItem("error_flag", 1);
         values_reload();
         get_values_onerror();
-         setTimeout(function() {
-                   CloseLoaderPopup();
-     }, 500);
+         
         e.preventDefault();
     }
     else{
         values_reload();
         save_basic_details();
-        setTimeout(function() {
-                   CloseLoaderPopup();
-     }, 20000);
+
     }
  });
 
@@ -694,7 +690,8 @@ function get_dropdown(){
 }
 
 function ajax_update_supplier_basic_details(data) {
-    OpenLoaderPopup();
+<!--    OpenLoaderPopup();-->
+    setTimeout(open, 10);
     let urlLink = "{% url 'eProc_Suppliers:update_suppliers_basic_details' %}"
     var response = FormAjaxCallAPI(urlLink,data)
     return response
@@ -705,8 +702,8 @@ const ajax_update_supplier_org_details_url = "{% url 'eProc_Suppliers:update_sup
 // Function to save edited supplier basic details data
 function save_basic_details() {
     setTimeout(function() {
-                       OpenLoaderPopup();
-         }, 500);
+                     OpenLoaderPopup();
+            }, 50);
     var supplier_data = {}
     var is_save_form_valid='';
     var error_message = '';
@@ -744,39 +741,33 @@ function save_basic_details() {
     formdata.append("working_days_id",working_days);
      if(is_valid){
         response = ajax_update_supplier_basic_details(formdata)
-        console.log(response);
         encrypted_supplier = response.encrypted_supplier
         message = response.message
         msg_type = response.msg_type
         if(msg_type.type=='success'){
             document.getElementById('supplier_basic_update_success').innerHTML = message;
-             setTimeout(function() {
-                   CloseLoaderPopup();
-             }, 1000);
             $('#supplier_basic_update_success').show();
             $('#save_error_div').hide();
-            message_display_time_specific();
+            setTimeout(function() {
+                    $('.alert-success').prop("hidden", true);
+            }, 5000);
+<!--            message_display_time();-->
             if(GLOBAL_ACTION == 'CREATE'){
                     $("#supplier_form_field")[0].reset();
                     localStorage.clear();
             }
-<!--            setTimeout(function() {-->
-<!--                    $('#supplier_basic_update_success').hide();-->
-<!--            }, msg_display_interval*1500);-->
             localStorage.setItem("error_flag", 0);
         }
         if(msg_type.type=='error'){
+            setTimeout(timer , 2500);
             document.getElementById('save_error_div').innerHTML = message;
-            setTimeout(function() {
-                   CloseLoaderPopup();
-             }, 500);
             $('#save_error_div').show();
             $('#supplier_basic_update_success').hide();
+             setTimeout(function() {
+                   $('.alert-success').prop("hidden", true);
+            }, 15000);
             localStorage.setItem("error_flag", 1);
             err_state = "From_Error";
-            setTimeout(function() {
-                   $('#save_error_div').hide();
-            }, msg_display_interval*2000);
             return false;
         }
      }
@@ -786,7 +777,12 @@ function save_basic_details() {
         $('#save_error_div').show();
     }
 }
-
+function timer(){
+    CloseLoaderPopup();
+}
+function open(){
+    OpenLoaderPopup();
+}
 function MultipleSelect() {
      $('#working_days_id').selectpicker();
      $('#working_days').selectpicker();
