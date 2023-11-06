@@ -571,8 +571,11 @@ $('form').on('submit',function (e) {
         }
     });
 
-    $("body").on("keypress blur change", ".mandatory_fields", function (event) {
-         var get_value = event.currentTarget.value;
+    $("body").on("keypress keyup blur change", ".mandatory_fields", function (event) {
+         var temp = document.getElementsByClassName('mandatory_fields');
+        var get_value = event.currentTarget.value;
+        var count = get_value.split('**').length - 1;
+        for (var i = 0; i<temp.length; i++) {
             var count = get_value.split('**').length - 1;
             if((count>=1)|| (get_value == '*'))
             {
@@ -582,9 +585,13 @@ $('form').on('submit',function (e) {
             event.currentTarget.nextElementSibling.innerHTML = "Please enter valid value";
             }
             else{
-                $(".error_message").prop("hidden", true);
-                document.getElementById(event.currentTarget.nextElementSibling.id).style.display = "true";
+<!--                $(".error_message").prop("hidden", true);-->
+<!--                document.getElementById(event.currentTarget.nextElementSibling.id).style.display = "true";-->
+                  var display_id = event.currentTarget.nextElementSibling.id;
+                $('#'+display_id).prop('hidden', true);
+                document.getElementById(event.currentTarget.nextElementSibling.id).style.display = "none";
             }
+        }
     });
 
 // Function to delete User

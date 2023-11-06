@@ -225,13 +225,24 @@ function save_basic_form_validation(){
                 }
             }
             else if(temp[i].nodeName == "INPUT"){
+                var data = temp[i].value;
+                var count = data.split('**').length - 1;
                 if(temp[i].value == ''){
                     var err_text = temp[i].parentNode.children[0].innerHTML;
                     $(".error_message").prop("hidden", false);
                     temp[i].nextElementSibling.innerHTML = err_text + " required";
                    is_valid = false;
                 }
-                else if(temp[i].value.length < 3){
+                else if((count >= 1) || (data == '*')){
+                    var err_text = temp[i].parentNode.children[0].innerHTML;
+                    $(".error_message").prop("hidden", false);
+                    var display_id = temp[i].nextElementSibling.id;
+                    $('#'+display_id).prop('hidden', false);
+                    document.getElementById(display_id).style.display = "block";
+                    temp[i].nextElementSibling.innerHTML = "Please enter valid value";
+                   is_valid = false;
+                }
+                else if((temp[i].value.length < 3) || ((count >= 1) || (data == '*'))){
                     var err_text = temp[i].parentNode.children[0].innerHTML;
                     $(".error_message").prop("hidden", false);
                     var display_id = temp[i].nextElementSibling.id;
