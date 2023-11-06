@@ -1183,6 +1183,81 @@ class ApplicationSettingsSave:
 
         return upload_response, message
 
+    def save_source_rule_into_db(self, source_rule_data):
+        """
+
+        """
+        self.save_source_rule(source_rule_data)
+        message = get_message_detail_based_on_action(source_rule_data['action'])
+
+        upload_response = get_configuration_data(SourcingRule,
+                                                 {'del_ind': False,
+                                                  'client': self.client},
+                                                 ['sourcing_rule_guid', 'prod_cat_id_from', 'prod_cat_id_to',
+                                                  'company_id', 'call_off', 'rule_type', 'sourcing_flag'])
+
+        return upload_response, message
+
+    def save_source_rule(self, source_rule_data):
+        sr_db_list = []
+
+        for source_rule_detail in source_rule_data['data']:
+
+            # if entry is not exists in db
+            if not django_query_instance.django_existence_check(SourcingRule,
+                                                                {'prod_cat_id_from': source_rule_detail
+                                                                    ['prod_cat_id_from'],
+                                                                 'prod_cat_id_to': source_rule_detail['prod_cat_id_to'],
+                                                                 'company_id': source_rule_detail['company_id'],
+                                                                 'call_off': source_rule_detail['call_off'],
+                                                                 'rule_type': source_rule_detail['rule_type'],
+                                                                 'sourcing_flag': source_rule_detail['sourcing_flag'],
+                                                                 'client': self.client
+                                                                 }):
+
+                guid = guid_generator()
+                source_rule_db_dictionary = {'sourcing_rule_guid': guid,
+                                             'prod_cat_id_from': source_rule_detail['prod_cat_id_from'],
+                                             'prod_cat_id_to': source_rule_detail['prod_cat_id_to'],
+                                             'company_id': source_rule_detail['company_id'],
+                                             'call_off': source_rule_detail['call_off'],
+                                             'rule_type': source_rule_detail['rule_type'],
+                                             'sourcing_flag': source_rule_detail['sourcing_flag'],
+                                             'del_ind': False,
+                                             'client': self.client,
+                                             'sourcing_rule_created_at': self.current_date_time,
+                                             'sourcing_rule_created_by': self.username,
+                                             'sourcing_rule_changed_at': self.current_date_time,
+                                             'sourcing_rule_changed_by': self.username
+                                             }
+                sr_db_list.append(source_rule_db_dictionary)
+            else:
+                django_query_instance.django_update_query(SourcingRule,
+                                                          {
+                                                              'prod_cat_id_from': source_rule_detail[
+                                                                  'prod_cat_id_from'],
+                                                              'prod_cat_id_to': source_rule_detail['prod_cat_id_to'],
+                                                              'company_id': source_rule_detail['company_id'],
+                                                              'call_off': source_rule_detail['call_off'],
+                                                              'rule_type': source_rule_detail['rule_type'],
+                                                              'sourcing_flag': source_rule_detail['sourcing_flag'],
+                                                              'client': self.client
+                                                          },
+
+                                                          {
+                                                              'prod_cat_id_from': source_rule_detail[
+                                                                  'prod_cat_id_from'],
+                                                              'prod_cat_id_to': source_rule_detail['prod_cat_id_to'],
+                                                              'company_id': source_rule_detail['company_id'],
+                                                              'call_off': source_rule_detail['call_off'],
+                                                              'rule_type': source_rule_detail['rule_type'],
+                                                              'sourcing_flag': source_rule_detail['sourcing_flag'],
+                                                              'sourcing_rule_changed_at': self.current_date_time,
+                                                              'sourcing_rule_changed_by': self.username,
+                                                              'del_ind': source_rule_detail['del_ind'],
+                                                              'client': OrgClients.objects.get(client=self.client)})
+        bulk_create_entry_db(SourcingRule, sr_db_list)
+
     def save_messageId_data_into_db(self, messageId_data):
         """
 

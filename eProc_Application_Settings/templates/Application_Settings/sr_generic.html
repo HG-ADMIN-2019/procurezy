@@ -62,7 +62,7 @@
                         <th hidden>del_ind</th>
                     </tr>
                     </thead>
-                    <tbody id="id_pc_tbody">
+                    <tbody id="id_sr_tbody">
                     {% for srgeneric in upload_sr_generic_cat %}
                     <tr>
                         <td class="class_select_checkbox" hidden><input type="checkbox" class="checkbox_check" onclick="valueChanged()" required></td>
@@ -269,7 +269,7 @@
                     contentType: "application/json; charset=utf-8",
                     dataType: "json",
                     success: function (Response) {
-                        rendered_pc_data = Response[0];
+                        rendered_sr_generic_data = Response[0];
                         display_basic_db_data();
                         $('#sr_generic_Modal').modal('hide');
                         success_response(Response); // Function call to display response data
@@ -302,7 +302,7 @@
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             success: function (Response) {
-                rendered_pc_data = Response[0];
+                rendered_sr_generic_data = Response[0];
                 display_basic_db_data();
                 $('#purchase_ctrl_Modal').modal('hide');
                 success_response(Response); // Function call to display response data
