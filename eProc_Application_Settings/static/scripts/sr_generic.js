@@ -15,12 +15,29 @@ function onclick_update_button() {
 //onclick of cancel display the table in display mode............
 function display_basic_db_data() {
     $('#display_basic_table').DataTable().destroy();
-    $('#id_pc_tbody').empty();
+    $('#id_sr_tbody').empty();
     var edit_basic_data = '';
     $.each(rendered_sr_generic_data, function (i, item) {
-        edit_basic_data += '<tr><td class="class_select_checkbox"><input class="checkbox_check" onclick="valueChanged()" type="checkbox" required></td><td>' + item.prod_cat_id_from + '</td><td>' + item.prod_cat_id_to + '</td><td>' + item.company_id + '</td><td>' + item.call_off + '</td><td>' + item.rule_type + '</td><td>' + item.sourcing_flag + '</td><td hidden>' + item.sourcing_rule_guid + '</td><td hidden>' + item.del_ind + '</td></tr>';
+        var data = '';
+        if (item.sourcing_flag == true) {
+            data = 'Activate'
+        } else {
+            data = 'Deactivate'
+        }
+
+        var call_off_desc = '';
+        for (var j = 0; j < rendered_call_off.length; j++) {
+            if (rendered_call_off[j].value === item.call_off) {
+                call_off_desc = rendered_call_off[j].desc;
+                break;
+            }
+            else {
+                call_off_desc = item.call_off
+            }
+        }
+        edit_basic_data += '<tr><td class="class_select_checkbox"><input class="checkbox_check" onclick="valueChanged()" type="checkbox" required></td><td>' + item.prod_cat_id_from + '</td><td>' + item.prod_cat_id_to + '</td><td>' + item.company_id + '</td><td>' + call_off_desc + '</td><td>' + item.rule_type + '</td><td>' + data + '</td><td hidden>' + item.sourcing_rule_guid + '</td><td hidden>' + item.del_ind + '</td></tr>';
     });
-    $('#id_pc_tbody').append(edit_basic_data);
+    $('#id_sr_tbody').append(edit_basic_data);
     $("#hg_select_checkbox").prop("hidden", true);
     $(".class_select_checkbox").prop("hidden", true);
     $(" input:checkbox ").prop('checked', false);

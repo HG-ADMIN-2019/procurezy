@@ -1310,6 +1310,63 @@ def check_purchase_control_data(ui_data, status):
     return valid_data_list, message
 
 
+def check_source_rule_data(ui_data, status):
+    """
+
+    """
+    db_count = django_query_instance.django_filter_count_query(SourcingRule,
+                                                               {'del_ind': False
+                                                                })
+    message_type, message_desc = get_message_desc('MSG193')
+    db_count_message = message_desc + str(db_count)
+    file_count = len(ui_data)
+    duplicate_count = 0
+    message = {}
+    update_count = 0
+    insert_count = 0
+    delete_count = 0
+    invalid_count = 0
+    dependent_count = 0
+    valid_data_list = []
+    for sr_generic in ui_data:
+        if sr_generic['del_ind'] in ['1', True]:
+            if status == 'SAVE':
+                if django_query_instance.django_existence_check(SourcingRule,
+                                                                {'prod_cat_id_from': sr_generic['prod_cat_id_from'],
+                                                                 'prod_cat_id_to': sr_generic['prod_cat_id_to'],
+                                                                 'company_id': sr_generic['company_id'],
+                                                                 'call_off': sr_generic['call_off'],
+                                                                 'rule_type': sr_generic['rule_type'],
+                                                                 'sourcing_flag': sr_generic['sourcing_flag'],
+                                                                 'client': global_variables.GLOBAL_CLIENT
+                                                                 }):
+                    delete_count = delete_count + 1
+                    valid_data_list.append(sr_generic)
+        else:
+            if django_query_instance.django_existence_check(SourcingRule,
+                                                                {'prod_cat_id_from': sr_generic['prod_cat_id_from'],
+                                                                 'prod_cat_id_to': sr_generic['prod_cat_id_to'],
+                                                                 'company_id': sr_generic['company_id'],
+                                                                 'call_off': sr_generic['call_off'],
+                                                                 'rule_type': sr_generic['rule_type'],
+                                                                 'sourcing_flag': sr_generic['sourcing_flag'],
+                                                                 'client': global_variables.GLOBAL_CLIENT
+                                                                 }):
+                update_count = update_count + 1
+                valid_data_list.append(sr_generic)
+            else:
+                insert_count = insert_count + 1
+                valid_data_list.append(sr_generic)
+
+    # append message with count
+    message_count_dic = {'file_count': file_count, 'delete_count': delete_count, 'invalid_count': invalid_count,
+                         'duplicate_count': duplicate_count, 'update_count': update_count,
+                         'insert_count': insert_count,
+                         'dependent_count': dependent_count, 'db_count': db_count}
+    message = get_check_message(message_count_dic)
+    return valid_data_list, message
+
+
 def check_message_id_desc_data(ui_data, status):
     """
 

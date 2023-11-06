@@ -5,7 +5,7 @@
 {% block title %}  Supplier Details (Supplier Management) {% endblock %}
 
 {% block maincontent %}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.min.js"></script>
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.min.js"></script>-->
 
 <div class="container-fluid">
     <div class="mep-form_wrapper">
@@ -32,7 +32,7 @@
             <div id="basic_data_tab" data-tab-content class="active">
                 <div class="mt-3">
                     <div id="save_error_div" class="alert alert-danger display-none" role="alert" ></div>
-                    {{ supplier_form.non_field_errors }}
+
                     <!-- Display the success message upon successful registration-->
                     <div>
                         {% if messages %}
@@ -46,7 +46,7 @@
                     <!--Supplier register form-->
                     <form method="POST" id="supplier_form_field" name="supplier_form_field" >
                         {% csrf_token %}
-                        <div class="alert alert-success" id="supplier_basic_update_success" role="alert" hidden></div>
+                        <div class="alert alert-success display-none" id="supplier_basic_update_success" role="alert"></div>
                         <!--    Basic Data      -->
 
                         <div class="d-flex justify-content-end">
@@ -502,8 +502,9 @@ $(document).ready(function(e){
      $("#working_days_id").prop("hidden", true);
      MultipleSelect();
        var flag = localStorage.getItem("error_flag");
-         if((flag == 1) && (err_state == "From_Error")){
+         if((flag == "1")){
             get_values_onerror();
+            return false;
          }
          else {
             localStorage.clear();
@@ -597,7 +598,7 @@ $('#mobile_num_id').on('keyup change blur',function (event) {
         event.currentTarget.nextElementSibling.innerHTML = "Please enter valid value";
         is_valid = false;
     }
-    else if(event.currentTarget.value.length < 10 ) {
+    else if((event.currentTarget.value.length > 0) && (event.currentTarget.value.length < 10)) {
                  var msg = "JMSG002";
                  var msg_type ;
                  msg_type = message_config_details(msg);
@@ -606,12 +607,12 @@ $('#mobile_num_id').on('keyup change blur',function (event) {
                 var display_id = event.currentTarget.nextElementSibling.id;
                 $('#'+display_id).prop('hidden', false);
                 document.getElementById(display_id).style.display = "block";
-                event.currentTarget.nextElementSibling.innerHTML ="Min 10 numbers for Mobile Number";
+                event.currentTarget.nextElementSibling.innerHTML ="Enter 10 numbers for Mobile Number";
                is_valid = false;
          }
-         else if(event.currentTarget.value.length >= 10 ){
+         else if(event.currentTarget.value.length == 10 ){
         var display_id = event.currentTarget.nextElementSibling.id;
-        $('#'+display_id).prop('hidden', true);
+        $('#'+display_id).prop('hidden', false);
         document.getElementById(event.currentTarget.nextElementSibling.id).style.display = "none";
     }
     else{
@@ -627,7 +628,6 @@ $('#mobile_num_id').on('keyup change blur',function (event) {
         localStorage.setItem("error_flag", 1);
         values_reload();
         get_values_onerror();
-         
         e.preventDefault();
     }
     else{
@@ -746,11 +746,14 @@ function save_basic_details() {
         msg_type = response.msg_type
         if(msg_type.type=='success'){
             document.getElementById('supplier_basic_update_success').innerHTML = message;
+             setTimeout(function() {
+                     CloseLoaderPopup();
+            }, 1000);
             $('#supplier_basic_update_success').show();
             $('#save_error_div').hide();
             setTimeout(function() {
                     $('.alert-success').prop("hidden", true);
-            }, 5000);
+            }, 500000);
 <!--            message_display_time();-->
             if(GLOBAL_ACTION == 'CREATE'){
                     $("#supplier_form_field")[0].reset();
@@ -759,16 +762,16 @@ function save_basic_details() {
             localStorage.setItem("error_flag", 0);
         }
         if(msg_type.type=='error'){
-            setTimeout(timer , 2500);
+           setTimeout(function() {
+            CloseLoaderPopup(); }, 1000);
             document.getElementById('save_error_div').innerHTML = message;
             $('#save_error_div').show();
-            $('#supplier_basic_update_success').hide();
-             setTimeout(function() {
-                   $('.alert-success').prop("hidden", true);
-            }, 15000);
+<!--            $('#save_error_message').text(message);-->
+<!--            document.getElementById("save_error_message").style.color = "Red";-->
+<!--            $("#save_error_div").css("display", "block");-->
+<!--            $('#supplier_basic_update_success').hide();-->
             localStorage.setItem("error_flag", 1);
             err_state = "From_Error";
-            return false;
         }
      }
     else{

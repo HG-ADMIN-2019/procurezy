@@ -498,17 +498,18 @@ var form_method = '{{form_method|safe}}';
         if(!valid){
             localStorage.setItem("error_flag", 1);
             e.preventDefault();
-<!--            $("#err_username").prop("hidden", false);-->
-                setTimeout(function() {
+            setTimeout(function() {
                        CloseLoaderPopup();
          }, 500);
         }
     });
 
 
-    $("body").on("keypress  blur change", ".mandatory_fields", function (event) {
-         var get_value = event.currentTarget.value;
-            var count = get_value.split('**').length - 1;
+    $("body").on("keypress keyup blur change", ".mandatory_fields", function (event) {
+        var temp = document.getElementsByClassName('mandatory_fields');
+        var get_value = event.currentTarget.value;
+        var count = get_value.split('**').length - 1;
+        for (var i = 0; i<temp.length; i++) {
             if((count>=1)|| (get_value == '*'))
             {
             var display_id = event.currentTarget.nextElementSibling.id;
@@ -516,10 +517,13 @@ var form_method = '{{form_method|safe}}';
             document.getElementById(display_id).style.display = "block";
             event.currentTarget.nextElementSibling.innerHTML = "Please enter valid value";
             }
-            else{
-                $(".error_message").prop("hidden", true);
-                document.getElementById(event.currentTarget.nextElementSibling.id).style.display = "true";
+            else {
+<!--                $(".error_message").prop("hidden", true);-->
+                var display_id = event.currentTarget.nextElementSibling.id;
+                $('#'+display_id).prop('hidden', true);
+                document.getElementById(event.currentTarget.nextElementSibling.id).style.display = "none";
             }
+        }
     });
 
 //onclick of data Upload copy data to modal pop-up
