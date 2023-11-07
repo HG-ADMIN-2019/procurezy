@@ -132,28 +132,28 @@
     $('#clear_filters_btn').click(function () {
         localStorage.removeItem("selectedData");
         document.getElementById("id_comp_code_app").selectedIndex = 0;
-        $('#acc_assgn_cat').selectpicker('deselectAll');
+        // Select all options in the acc_assgn_cat dropdown
+        $('#acc_assgn_cat option').prop('selected', true);
         $('#acc_assgn_cat').selectpicker('refresh');
         $('form').submit();
     });
 
-    $(document).ready(function () {
-    // Clear the local storage when the page is loaded
-    localStorage.removeItem("selectedData");
+
+    // Retrieve and set the selected data from local storage on page load
     var selectedDataJSON = localStorage.getItem("selectedData");
     if (selectedDataJSON) {
         var selectedData = JSON.parse(selectedDataJSON);
-    if (selectedData.company) {
-        $('#id_comp_code_app').val(selectedData.company);
+        if (selectedData.company) {
+            $('#id_comp_code_app').val(selectedData.company);
         }
         if (selectedData.categories) {
             $('#acc_assgn_cat').selectpicker('val', selectedData.categories);
         }
     }
-});
+    localStorage.removeItem("selectedData");
 });
 
-     Datatables script to generate sort filter & export to excel feature for tables
+    // Datatables script to generate sort filter & export to excel feature for tables
     function table_sort_filter_export_excel() {
         $('.table_sort_filter_export_excel').DataTable({
             dom: '<"row"<"col"l><"datatableBtn col"fB>> rt <"row"<"col"i><"col"p>>',
