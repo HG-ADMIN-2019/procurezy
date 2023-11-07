@@ -13,7 +13,7 @@ from eProc_Configuration.models import OrgCompanies
 
 
 class DocumentSearchForm(forms.Form):
-    doc_types = (('SC', 'Shopping Cart'), ('PO', 'Purchase Order'), ('Confirmation', 'Confirmation'))
+    doc_types = (('SC', 'Shopping Cart'), ('PO', 'Purchase Order'))
 
     doc_type = forms.ChoiceField(label='Select Document Type', choices=doc_types,
                                  widget=forms.Select(
