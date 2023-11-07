@@ -3,11 +3,17 @@ var validate_add_attributes = [];
 var main_table_low_value = [];
 var currency={};
 
+// Hide delete popup
+function hideModal() {
+    $('#currencyModal').modal('hide');
+}
+
 //onclick of add button display currencyModal popup and set GLOBAL_ACTION button value
 function onclick_add_button(button) {
     $("#error_msg_id").css("display", "none")
     $( "#header_select").prop( "hidden", false );
     GLOBAL_ACTION = button.value
+     display_button();
     $('#id_popup_table').DataTable().destroy();
     $("#id_popup_tbody").empty();
     $('#currencyModal').modal('show');
@@ -27,6 +33,7 @@ function valid_popup(){
 //onclick of upload button display id_data_upload popup and set GLOBAL_ACTION button value
 function onclick_upload_button() {
     GLOBAL_ACTION = "currency_upload"
+     display_button();
     $("#id_error_msg_upload").prop("hidden",true)
     $("#id_popup_tbody").empty();
     $('#id_data_upload').modal('show');
@@ -36,6 +43,7 @@ function onclick_upload_button() {
 // on click copy icon display the selected checkbox data
 function onclick_copy_button() {
     GLOBAL_ACTION = "COPY"
+     display_button();
     onclick_copy_update_button("copy")
     document.getElementById("id_del_add_button").style.display = "block";
     $("#save_id").prop("hidden", false);
@@ -44,6 +52,7 @@ function onclick_copy_button() {
 // on click update icon display the selected checkbox data to update
 function onclick_update_button() {
     GLOBAL_ACTION = "UPDATE"
+     display_button();
     onclick_copy_update_button("update")
     document.getElementById("id_del_add_button").style.display = "none";
     $("#save_id").prop("hidden", false);
@@ -226,6 +235,12 @@ function read_popup_data() {
     return currency_data;
 }
 
+// Function for add a new row data
+function new_row_data(){
+    basic_add_new_html = '<tr ><td><input type="checkbox" required></td><td><input class="input form-control check_character_no_space" type="text"  title="Minimum length is 3" minlength="3"  maxlength="3"  name="currencycode" style="text-transform:uppercase;" required></td><td><input class="input form-control check_only_character" type="text" maxlength="100"  name="currencyname"  required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
+    $('#id_popup_tbody').append(basic_add_new_html);
+}
+
 // Function to get main table data
 function get_main_table_data(){
     main_table_low_value = [];
@@ -255,6 +270,22 @@ function get_main_table_data_upload() {
     return main_table_low_value
 }
 
+// Function to get the selected row
+function get_row_data(tableSelector) {
+    main_table_checked = [];
+    $(tableSelector).DataTable().$('input[type="checkbox"]').each(function () {
+        var checkbox = $(this);
+        var row = checkbox.closest("tr");
+        var currency_arr_obj = {};
+        currency_arr_obj.del_ind = checkbox.is(':checked');
+        if(currency_arr_obj.del_ind) {
+            currency_arr_obj.currency_id = row.find("TD").eq(1).find('input[type="text"]').val() || row.find("TD").eq(1).html();
+            currency_arr_obj.description = row.find("TD").eq(2).find('input[type="text"]').val() || row.find("TD").eq(2).html();
+            main_table_checked.push(currency_arr_obj);
+        }
+    });
+}
+
 // Function to get the selected row data
 function get_selected_row_data(){
     $("#display_basic_table TBODY TR").each(function() {
@@ -267,12 +298,6 @@ function get_selected_row_data(){
             main_table_currency_checked.push(currency_arr_obj);
         }
     });
-}
-
-// Function for add a new row data
-function new_row_data(){
-    basic_add_new_html = '<tr ><td><input type="checkbox" required></td><td><input class="input form-control check_character_no_space" type="text"  title="Minimum length is 3" minlength="3"  maxlength="3"  name="currencycode" style="text-transform:uppercase;" required></td><td><input class="input form-control check_only_character" type="text" maxlength="100"  name="currencyname"  required></td><td class="class_del_checkbox" hidden><input type="checkbox" required></td></tr>';
-    $('#id_popup_tbody').append(basic_add_new_html);
 }
 
 //Get message for check data function

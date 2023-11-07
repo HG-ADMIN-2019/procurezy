@@ -200,7 +200,7 @@ function delete_duplicate() {
     check_data()
 }
 
-// Functtion to hide and display save related popups
+// Function to hide and display save related popups
 $('#save_id').click(function () {
     $('#countriesModal').modal('hide');
     countries_data = read_popup_data();
