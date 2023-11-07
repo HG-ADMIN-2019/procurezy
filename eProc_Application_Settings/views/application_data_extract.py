@@ -7,7 +7,7 @@ from eProc_Basic.Utilities.functions.update_del_ind import query_update_del_ind
 from eProc_Basic.Utilities.global_defination import global_variables
 from eProc_Configuration.models import OrgNodeTypes, OrgAttributes, UserRoles, AuthorizationObject, Authorization, \
     AuthorizationGroup, MessagesId, MessagesIdDesc, OrgModelNodetypeConfig, NumberRanges, \
-    PoSplitType, PoSplitCriteria, TransactionTypes, PurchaseControl, AccountAssignmentCategory
+    PoSplitType, PoSplitCriteria, TransactionTypes, PurchaseControl, AccountAssignmentCategory, SourcingRule
 
 django_query_instance = DjangoQueries()
 
@@ -89,7 +89,7 @@ def extract_node_level_attributes_data(request):
 
     org_node_level_attributes_data = django_query_instance.django_filter_query(OrgModelNodetypeConfig,
                                                                                {'del_ind': False,
-                                                                                'client':global_variables.GLOBAL_CLIENT},
+                                                                                'client': global_variables.GLOBAL_CLIENT},
                                                                                None,
                                                                                ['node_type',
                                                                                 'node_values',
@@ -466,6 +466,35 @@ def extract_purchase_control_data(request):
     return response
 
 
+def extract_source_rule_data(request):
+    """
+
+    """
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename=' + CONST_SOURCE_RULE_CSV
+
+    writer = csv.writer(response)
+    writer.writerow(['prod_cat_id_from', 'prod_cat_id_to', 'company_id', 'call_off', 'rule_type', 'sourcing_flag',
+                     'del_ind'])
+
+    source_rule_data = django_query_instance.django_filter_query(SourcingRule,
+                                                                 {'del_ind': False,
+                                                                  'client': global_variables.GLOBAL_CLIENT,
+                                                                  }, None,
+                                                                 ['prod_cat_id_from', 'prod_cat_id_to',
+                                                                  'company_id', 'call_off', 'rule_type',
+                                                                  'sourcing_flag', 'del_ind'])
+    source_rule_data = query_update_del_ind(source_rule_data)
+
+    for source_rule_type in source_rule_data:
+        source_rule_info = [source_rule_type['prod_cat_id_from'], source_rule_type['prod_cat_id_to'],
+                            source_rule_type['company_id'], source_rule_type['call_off'], source_rule_type['rule_type'],
+                            source_rule_type['sourcing_flag'], source_rule_type['del_ind']]
+        writer.writerow(source_rule_info)
+
+    return response
+
+
 def extract_user_role_data(request):
     """
 
@@ -479,7 +508,7 @@ def extract_user_role_data(request):
     user_roles = django_query_instance.django_filter_query(UserRoles,
                                                            {'del_ind': False,
                                                             }, None,
-                                                           ['role', 'role_desc','del_ind'])
+                                                           ['role', 'role_desc', 'del_ind'])
     user_roles = query_update_del_ind(user_roles)
 
     for user_role in user_roles:
@@ -535,8 +564,8 @@ def extract_authorization_data(request):
     auth_objs = query_update_del_ind(auth_obj)
 
     for auth_obj in auth_objs:
-        auth_obj_info = [auth_obj['role'],auth_obj['auth_obj_grp'],
-                                           auth_obj['del_ind']]
+        auth_obj_info = [auth_obj['role'], auth_obj['auth_obj_grp'],
+                         auth_obj['del_ind']]
         writer.writerow(auth_obj_info)
 
     return response

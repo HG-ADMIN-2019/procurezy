@@ -13,6 +13,17 @@ $(document).ready( function() {
         $('#purchase_block').prop("checked", true)
    }
    else{ $('#purchase_block').prop("checked", false)}
+    if(form_method == 'GET'){
+        $('#name1').val("");
+        $('#name2').val("");
+        $('#supplier_id').val("");
+        $('#email').val("");
+        $('#supplier_type').val("");
+        $('#city').val("");
+        $('#country_code').val("");
+        $('#porg').val("");
+        $('#purchase_block').prop("checked", false);
+    }
   nav_bar_admin();
 });
 

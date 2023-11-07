@@ -69,13 +69,13 @@
                 <table id="accounting_report_table" class="table table_sort_filter_export_excel">
                     <thead class="thead-light">
                         <tr>
-                            <th> company number </th>
-                            <th> account assignment category </th>
-                            <th> account assignment value </th>
-                            <th> description </th>
-                            <th> language </th>
-                            <th> valid from </th>
-                            <th> valid to</th>
+                            <th> Company Number </th>
+                            <th> Account Assignment Category </th>
+                            <th> Account Assignment Value </th>
+                            <th> Description </th>
+                            <th> Language </th>
+                            <th> Valid From </th>
+                            <th> Valid To</th>
                         </tr>
                     </thead>
                     <tbody>
@@ -138,11 +138,16 @@
     });
 
     // Function to store the data into local storage when the form is submitted
-    $('#acct_form').submit(function () {
-        var comp_code = $('#id_comp_code_app').val();
-        var lang = $('#id_language').val();
-        localStorage.setItem("COMP_CODE", comp_code);
-        localStorage.setItem("LANG", lang);
+    $(document).ready(function () {
+        $('#acct_form').submit(function () {
+            var comp_code = $('#id_comp_code_app').val();
+            var lang = $('#id_language').val();
+            localStorage.setItem("COMP_CODE", comp_code);
+            localStorage.setItem("LANG", lang);
+        });
+        localStorage.removeItem("COMP_CODE");
+        localStorage.removeItem("LANG");
+        localStorage.removeItem("ACC_ASSGN_CAT");
     });
 
     // Loader implementation on search button
@@ -174,12 +179,24 @@
     // Loader implementation on search button
     $('#hg_accnt_report_search').click(function () {
         $('#hg_loader').modal('show');
-
         // Show the entire table container
         $('#table-container').show();
     });
 });
 
+    //*********************************************
+    function table_sort_filter_export_excel() {
+        $('.table_sort_filter_export_excel').DataTable({
+            dom: '<"row"<"col"l><"datatableBtn col"fB>> rt <"row"<"col"i><"col"p>>',
+            buttons: [
+                {
+                    extend: 'excel',
+                    title: 'Account Assignments Report', // Change the title here
+                    text: 'Export to Excel',
+                },
+            ],
+        });
+    }
 </script>
 <script src="{% static 'scripts/acctnt_report.js' %}"></script>
 {% if inc_footer %}

@@ -477,6 +477,20 @@
     window.clearFilters = clearFilters;
         toggleTableVisibility(true); // Show the table initially
     });
+
+    // Datatables script to generate sort filter & export to excel feature for tables
+    function table_sort_filter_export_excel() {
+    $('.table_sort_filter_export_excel').DataTable({
+        dom: '<"row"<"col"l><"datatableBtn col"fB>> rt <"row"<"col"i><"col"p>>',
+        buttons: [
+            {
+                extend: 'excel',
+                title: 'Documents Report', // Change the title here
+                text: 'Export to Excel',
+            },
+        ],
+    });
+}
 </script>
 <script src="{% static 'scripts/doc_report.js' %}"></script>
 {% if inc_footer %}

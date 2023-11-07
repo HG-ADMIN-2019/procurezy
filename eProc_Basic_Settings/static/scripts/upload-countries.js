@@ -13,6 +13,7 @@ function onclick_add_button(button) {
     $("#error_msg_id").css("display", "none")
     $("#header_select").prop( "hidden", false );
     GLOBAL_ACTION = button.value
+    display_button();
     $('#id_popup_table').DataTable().destroy();
     $("#id_popup_tbody").empty();
     $('#countriesModal').modal('show');
@@ -26,6 +27,7 @@ function onclick_add_button(button) {
 //onclick of upload button display id_data_upload popup and set GLOBAL_ACTION button value
 function onclick_upload_button() {
     GLOBAL_ACTION = "country_upload"
+    display_button();
     $("#id_error_msg_upload").prop("hidden",true)
     $("#id_popup_tbody").empty();
     $('#id_data_upload').modal('show');
@@ -43,17 +45,19 @@ function update_check_message(messages) {
 // on click copy icon display the selected checkbox data
 function onclick_copy_button() {
     GLOBAL_ACTION = "COPY"
+    display_button();
     onclick_copy_update_button("copy")
     document.getElementById("id_del_add_button").style.display = "block";
-      $("#save_id").prop("hidden", false);
+    $("#save_id").prop("hidden", false);
 }
 
 // on click update icon display the selected checkbox data to update
 function onclick_update_button() {
     GLOBAL_ACTION = "UPDATE"
+    display_button();
     onclick_copy_update_button("update")
     document.getElementById("id_del_add_button").style.display = "none";
-      $("#save_id").prop("hidden", false);
+    $("#save_id").prop("hidden", false);
 }
 
 //**********************************************************
@@ -171,33 +175,40 @@ function display_basic_db_data() {
 
 function delete_duplicate() {
     $('#id_popup_table').DataTable().destroy();
-    var country_code_check = new Array
-    var main_table_low_value = new Array
+    var country_code_check = new Array();
+    var main_table_low_value = new Array();
     $("#id_popup_table TBODY TR").each(function () {
         var row = $(this);
-        //*************** reading data from the pop-up ***************
-        country_name = row.find("TD").eq(2).find('input[type="text"]').val().toUpperCase();
-        country_code = row.find("TD").eq(1).find('input[type="text"]').val().toUpperCase();
-        checked_box = row.find("TD").eq(3).find('input[type="checkbox"]').is(':checked')
-            if (checked_box){
-                del_ind = '1'
-            }
-            else{
-                del_ind = '0'
+
+        // Read data from the pop-up
+        var country_name = row.find("TD").eq(2).find('input[type="text"]').val().toUpperCase();
+        var country_code = row.find("TD").eq(1).find('input[type="text"]').val().toUpperCase();
+        var checked_box = row.find("TD").eq(3).find('input[type="checkbox"]').is(':checked');
+
+        if (checked_box) {
+            // Keep rows with the checkbox checked
+            del_ind = '1';
+        } else {
+            del_ind = '0';
+            // Only proceed if country_code and country_name are not empty
+            if (country_code && country_name) {
                 if (country_code_check.includes(country_code)) {
+                    // Remove rows with duplicate country_code
                     $(row).remove();
                 }
                 country_code_check.push(country_code);
-                main_table_low_value = get_main_table_data_upload(); //Read data from main table
+
+                main_table_low_value = get_main_table_data_upload(); // Read data from the main table
                 if (main_table_low_value.includes(country_code)) {
-                        $(row).remove();
+                    // Remove rows with duplicate country_code in the main table
+                    $(row).remove();
                 }
                 main_table_low_value.push(country_code);
             }
-
+        }
     });
-    table_sort_filter_popup_pagination('id_popup_table')
-    check_data()
+    table_sort_filter_popup_pagination('id_popup_table');
+    check_data();
 }
 
 // Function to hide and display save related popups

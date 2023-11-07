@@ -132,7 +132,7 @@ function get_main_table_data() {
         $("#id_popup_table TBODY TR").each(function() {
         var row = $(this);
         wfacc = {};
-        wfacc.del_ind = row.find("TD").eq(0).find('input[type="checkbox"]').is(':checked');
+        checked_box = row.find("TD").eq(10).find('input[type="checkbox"]').is(':checked');
         wfacc.company_id = row.find("TD").eq(1).find('select[type="text"]').val();
         wfacc.account_assign_cat = row.find("TD").eq(2).find('select[type="text"]').val();
         wfacc.acc_value = row.find("TD").eq(3).find('select[type="text"]').val();
@@ -145,22 +145,35 @@ function get_main_table_data() {
         if (wfacc == undefined) {
             wfacc.app_username = row.find("TD").eq(4).find('select[type="text"]').val();
         }
-        if(wfacc.workflow_acc_guid == undefined) {
-            wfacc.workflow_acc_guid = ''
-        }
-        var wfacc_compare = wfacc.company_id +'-'+  wfacc.account_assign_cat +'-'+ wfacc.acc_value +'-'+ wfacc.app_username +'-'+ wfacc.sup_company_id +'-'+wfacc.sup_account_assign_cat +'-'+ wfacc.sup_acc_value +'-'+ wfacc.sup_currency_id
-        wfacc_code_check.push(wfacc_compare);
-        wfacc_data.push(wfacc);
-
-            main_table_low_value = get_main_table_data_upload(); //Read data from main table
-            if (main_table_low_value.includes(wfacc_compare)) {
-                $(row).remove();
+            if(wfacc.workflow_acc_guid == undefined) {
+                wfacc.workflow_acc_guid = ''
             }
-            main_table_low_value.push(wfacc_compare);
+            var wfacc_compare = wfacc.company_id +'-'+  wfacc.account_assign_cat +'-'+ wfacc.acc_value +'-'+ wfacc.app_username +'-'+ wfacc.sup_company_id +'-'+wfacc.sup_account_assign_cat +'-'+ wfacc.sup_acc_value +'-'+ wfacc.sup_currency_id
+                if (checked_box){
+                    del_ind = '1'
+                }
+                else{
+                        del_ind = '0'
+                        if (wfacc_code_check.includes(wfacc_compare)) {
+                            $(row).remove();
+                        }
+                        wfacc_code_check.push(wfacc_compare);
+                        wfacc_data.push(wfacc);
+                          main_table_low_value = get_main_table_data_upload(); //Read data from main table
+                        if (main_table_low_value.includes(wfacc_compare)) {
+                            $(row).remove();
+                        }
+                        main_table_low_value.push(wfacc_compare);
+                }
+            }
         })
         table_sort_filter_popup_pagination('id_popup_table')
         check_data()
     }
+
+
+
+
 // Function to get main table data
 function get_main_table_data_upload() {
     main_table_low_value = [];
@@ -177,7 +190,7 @@ function get_main_table_data_upload() {
         main_attribute.sup_acc_value = row.find("TD").eq(7).html();
         main_attribute.sup_currency_id = row.find("TD").eq(8).html();
         main_attribute.del_ind = row.find("TD").eq(9).find('input[type="checkbox"]').is(':checked');
-        var wfacc_compare_maintable = main_attribute.company_id+'-'+main_attribute.account_assign_cat+'-'+main_attribute.acc_value+'-'+main_attribute.app_username+'-'+main_attribute.sup_company_id+'-'+main_attribute.sup_account_assign_cat+'-'+main_attribute.sup_acc_value+'-'+main_attribute.sup_currency_id +'-'+ main_attribute.del_ind
+        var wfacc_compare_maintable = main_attribute.company_id+'-'+main_attribute.account_assign_cat+'-'+main_attribute.acc_value+'-'+main_attribute.app_username+'-'+main_attribute.sup_company_id+'-'+main_attribute.sup_account_assign_cat+'-'+main_attribute.sup_acc_value+'-'+main_attribute.sup_currency_id
         main_table_low_value.push(wfacc_compare_maintable);
     });
     table_sort_filter('display_basic_table');

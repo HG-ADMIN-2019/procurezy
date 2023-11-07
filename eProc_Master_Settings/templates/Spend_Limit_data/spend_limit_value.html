@@ -922,7 +922,7 @@
             //*************** reading data from the pop-up ***************
             spendlimit_value_dic.company_id = row.find("TD").eq(1).find('select option:selected').val()
             spendlimit_value_dic.spend_code_id = row.find("TD").eq(2).find('input[type="text"]').val().toUpperCase();
-            spendlimit_value_dic.upper_limit_value = row.find("TD").eq(3).find('input[type="text"]').val()
+            spendlimit_value_dic.upper_limit_value = row.find("TD").eq(3).find('input[type="number"]').val()
             spendlimit_value_dic.currency_id = row.find("TD").eq(4).find('select option:selected').val()
             checked_box = row.find("TD").eq(6).find('input[type="checkbox"]').is(':checked')
             var compare_maintable =spendlimit_value_dic.company_id +'-'+ spendlimit_value_dic.spend_code_id +'-'+ spendlimit_value_dic.currency_id
@@ -931,15 +931,17 @@
             }
             else{
                 del_ind = '0'
-                if (spendlimit_value_code_check.includes(compare_maintable)) {
-                    $(row).remove();
+                if (spendlimit_value_dic.upper_limit_value && spendlimit_value_dic.spend_code_id) {
+                    if (spendlimit_value_code_check.includes(compare_maintable)) {
+                        $(row).remove();
+                    }
+                    spendlimit_value_code_check.push(compare_maintable);
+                    main_table_low_value = get_main_table_data_upload(); //Read data from main table
+                    if (main_table_low_value.includes(compare_maintable)) {
+                        $(row).remove();
+                    }
+                    main_table_low_value.push(compare_maintable);
                 }
-                spendlimit_value_code_check.push(compare_maintable);
-                main_table_low_value = get_main_table_data_upload(); //Read data from main table
-                if (main_table_low_value.includes(compare_maintable)) {
-                    $(row).remove();
-                }
-                main_table_low_value.push(compare_maintable);
             }
         })
         table_sort_filter_popup_pagination('id_popup_table')

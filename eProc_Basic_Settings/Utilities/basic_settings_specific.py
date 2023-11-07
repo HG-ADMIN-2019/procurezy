@@ -89,7 +89,8 @@ class BasicSettingsSave:
                 django_query_instance.django_update_query(Languages,
                                                           {'language_id': language_detail['language_id']},
                                                           {'language_id': language_detail['language_id'],
-                                                           'description': convert_to_camel_case(language_detail['description']),
+                                                           'description': convert_to_camel_case(
+                                                               language_detail['description']),
                                                            'languages_changed_at': self.current_date_time,
                                                            'languages_changed_by': self.username,
                                                            'del_ind': language_detail['del_ind']})
@@ -119,11 +120,9 @@ class BasicSettingsSave:
             if not django_query_instance.django_existence_check(TimeZone,
                                                                 {'time_zone': timezone_detail['time_zone']}):
                 timezone_db_dictionary = {'time_zone': (timezone_detail['time_zone']).upper(),
-                                          'description': convert_to_camel_case(timezone_detail['description']),
-                                          'utc_difference': timezone_detail[
-                                              'utc_difference'],
-                                          'daylight_save_rule': timezone_detail[
-                                              'daylight_save_rule'],
+                                          'description': (timezone_detail['description']).upper(),
+                                          'utc_difference': (timezone_detail['utc_difference']).upper(),
+                                          'daylight_save_rule': (timezone_detail['daylight_save_rule']).upper(),
                                           'time_zone_created_at': self.current_date_time,
                                           'time_zone_created_by': self.username,
                                           'time_zone_changed_at': self.current_date_time,
@@ -135,12 +134,9 @@ class BasicSettingsSave:
                 django_query_instance.django_update_query(TimeZone,
                                                           {'time_zone': timezone_detail['time_zone']},
                                                           {'time_zone': timezone_detail['time_zone'],
-                                                           'description': convert_to_camel_case(
-                                                               timezone_detail['description']),
-                                                           'utc_difference': timezone_detail[
-                                                               'utc_difference'],
-                                                           'daylight_save_rule': timezone_detail[
-                                                               'daylight_save_rule'],
+                                                           'description':(timezone_detail['description']).upper(),
+                                                           'utc_difference': (timezone_detail['utc_difference']).upper(),
+                                                           'daylight_save_rule': (timezone_detail['daylight_save_rule']).upper(),
                                                            'time_zone_changed_at': self.current_date_time,
                                                            'time_zone_changed_by': self.username,
                                                            'del_ind': timezone_detail['del_ind']})
@@ -172,8 +168,7 @@ class BasicSettingsSave:
             if not django_query_instance.django_existence_check(UnitOfMeasures,
                                                                 {'uom_id': unitofmeasures_detail['uom_id']}):
                 unitofmeasures_db_dictionary = {'uom_id': (unitofmeasures_detail['uom_id']).upper(),
-                                                'uom_description': convert_to_camel_case(
-                                                    unitofmeasures_detail['uom_description']),
+                                                'uom_description': (unitofmeasures_detail['uom_description']).upper(),
                                                 'iso_code_id': (unitofmeasures_detail['iso_code_id']).upper(),
                                                 'unit_of_measures_created_at': self.current_date_time,
                                                 'unit_of_measures_created_by': self.username,
@@ -184,16 +179,14 @@ class BasicSettingsSave:
                 django_query_instance.django_update_query(UnitOfMeasures,
                                                           {'uom_id': unitofmeasures_detail['uom_id']},
                                                           {'uom_id': unitofmeasures_detail['uom_id'],
-                                                           'uom_description': convert_to_camel_case(
-                                                               unitofmeasures_detail['uom_description']),
+                                                           'uom_description': (
+                                                               unitofmeasures_detail['uom_description']).upper(),
                                                            'iso_code_id': (
                                                                unitofmeasures_detail['iso_code_id']).upper(),
                                                            'unit_of_measures_changed_at': self.current_date_time,
                                                            'unit_of_measures_changed_by': self.username,
                                                            'del_ind': unitofmeasures_detail['del_ind']})
         bulk_create_entry_db(UnitOfMeasures, unitofmeasures_db_list)
-
-
 
     def save_unitofmeasures_data_into_db(self, unitofmeasures_data):
         # save uom data
@@ -581,9 +574,3 @@ def save_basic_data_into_db(basic_data, Table):
         error_msg = get_message_desc(MSG112)[1]
         error_msg1 = get_message_desc(MSG113)[1]
         return Upload_response, error_msg, error_msg1
-
-
-
-
-
-

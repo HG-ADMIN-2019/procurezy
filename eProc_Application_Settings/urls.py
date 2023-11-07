@@ -32,6 +32,8 @@ urlpatterns = [
          name='extract_po_split_criteria_data'),
     path('extract_purchase_control_data/', views.extract_purchase_control_data,
          name='extract_purchase_control_data'),
+    path('extract_source_rule_data/', views.extract_source_rule_data,
+         name='extract_source_rule_data'),
     path('extract_authorization_object_data/', views.extract_authorization_object_data,
          name='extract_authorization_object_data'),
     path('extract_attributes_group_data/', views.extract_attributes_group_data, name='extract_attributes_group_data'),
@@ -71,4 +73,5 @@ urlpatterns = [
     path('save_purch_cockpit', views.save_purch_cockpit_data, name='save_purch_cockpit'),
     path('save_product_details_images', views.save_product_details_images, name='save_product_details_images'),
     path('display_purchase_control', views.display_purchase_control, name='display_purchase_control'),
+    path('display_sourcing_rule_generic', views.display_sourcing_rule_generic, name='display_sourcing_rule_generic'),
 ]

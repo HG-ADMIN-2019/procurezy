@@ -175,6 +175,7 @@ function get_main_table_data_upload() {
         var main_table_low_value = new Array
         $("#id_popup_table TBODY TR").each(function () {
         var row = $(this);
+        payment_term_desc = {};
         payment_term_desc.language_id = row.find("TD").eq(1).find('select[type="text"]').val();
         payment_term_desc.payment_term_key = row.find("TD").eq(2).find('select[type="text"]').val();
         payment_term_desc.description = row.find("TD").eq(3).find('input[type="text"]').val();
@@ -182,21 +183,21 @@ function get_main_table_data_upload() {
         payment_term_desc.payment_term_guid = row.find("TD").eq(6).find('input[type="text"]').val();
         checked_box = row.find("TD").eq(5).find('input[type="checkbox"]').is(':checked')
         var compare = payment_term_desc.language_id +'-'+ payment_term_desc.payment_term_key
-          if (checked_box){
+        if (checked_box){
                 del_ind = '1'
-          }
-          else{
-                del_ind = '0'
-                if (paymentermdesc_code_check.includes(compare)) {
-                    $(row).remove();
-                }
-                paymentermdesc_code_check.push(compare);
-                main_table_low_value = get_main_table_data_upload(); //Read data from main table
-                if (main_table_low_value.includes(compare)) {
-                    $(row).remove();
-                }
-                main_table_low_value.push(payment_term_key);
-          }
+        }
+        else{
+            del_ind = '0'
+            if (paymentermdesc_code_check.includes(compare)) {
+                $(row).remove();
+            }
+            paymentermdesc_code_check.push(compare);
+            main_table_low_value = get_main_table_data_upload(); //Read data from main table
+            if (main_table_low_value.includes(compare)) {
+                $(row).remove();
+            }
+            main_table_low_value.push(payment_term_desc);
+        }
         })
         table_sort_filter_popup_pagination('id_popup_table')
         check_data()

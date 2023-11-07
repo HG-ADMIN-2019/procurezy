@@ -5,7 +5,7 @@
 {% block title %}  Supplier Details (Supplier Management) {% endblock %}
 
 {% block maincontent %}
-<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.min.js"></script>
+<!--<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-multiselect/0.9.13/js/bootstrap-multiselect.min.js"></script>-->
 
 <div class="container-fluid">
     <div class="mep-form_wrapper">
@@ -21,23 +21,18 @@
                     <i class="fas fa-info-circle"></i><span> Supplier Information</span>
                 </div>
             </li>
-            <li data-tab-target="#org_data_tab" class="sub-tab" id="org_info_tab">
+            <li data-tab-target="#org_data_tab" class="sub-tab" id="org_info_tab" hidden>
                 <div class="sub-tab-link">
                     <i class="fas fa-sitemap"></i><span> Organizational Information</span>
                 </div>
             </li>
-<!--            <li data-tab-target="#buisness_doc_tab" class="sub-tab" id="business_doc_tab">-->
-<!--                <div class="sub-tab-link">-->
-<!--                    <i class="fas fa-file-alt"></i><span> Business Document</span>-->
-<!--                </div>-->
-<!--            </li>-->
         </ul>
 
         <div class="tab-content">
             <div id="basic_data_tab" data-tab-content class="active">
                 <div class="mt-3">
                     <div id="save_error_div" class="alert alert-danger display-none" role="alert" ></div>
-                    {{ supplier_form.non_field_errors }}
+
                     <!-- Display the success message upon successful registration-->
                     <div>
                         {% if messages %}
@@ -79,7 +74,7 @@
                                     <input value="{{supplier_info.supp_guid}}" id="supplier_guid" hidden>
                                     <div class="form-group col-md">
                                         <label> Supplier Number</label><span class="hg_required"></span><br>
-                                        <input type="text" class="form-control hg_edit_display_mode mandatory_fields check_special_char" name="supplier_id" id="supplier_id" value="{{supplier_info.supplier_id}}">
+                                        <input type="text" class="form-control hg_edit_display_mode mandatory_fields check_special_char_nospace" name="supplier_id" id="supplier_id" value="{{supplier_info.supplier_id}}">
                                         <span id="err_supp_id" class="error_message" hidden></span>
                                     </div>
                                     <div class="form-group col-md">
@@ -94,7 +89,7 @@
 
                                     <div class="form-group col-md">
                                         <label> Registration Number</label><span class="hg_required"></span><br>
-                                        <input type="text" class="form-control hg_edit_display_mode mandatory_fields check_special_char" id="supplier_regnum" value="{{supplier_info.registration_number}}">
+                                        <input type="text" class="form-control hg_edit_display_mode mandatory_fields check_special_char_nospace" id="supplier_regnum" value="{{supplier_info.registration_number}}">
                                         <span id="err_reg_num" class="error_message" hidden></span>
                                     </div>
                                 </div>
@@ -102,7 +97,7 @@
                                 <div class="row">
                                     <div class="form-group col-md">
                                         <label> First Name</label><span class="hg_required"></span><br>
-                                        <input type="text" class="form-control hg_edit_display_mode mandatory_fields check_special_char" id="name1" name="name1" value="{{supplier_info.name1}}" >
+                                        <input type="text" class="form-control hg_edit_display_mode mandatory_fields check_special_char_nospace" id="name1" name="name1" value="{{supplier_info.name1}}" >
                                         <span id="err_supp_name1" class="error_message" hidden></span>
                                     </div>
 
@@ -127,7 +122,7 @@
 
                                     <div class="form-group col-md">
                                         <label> Language</label><span class="hg_required"></span><br>
-                                        <select name="" id="language_id" class="form-control hg_edit_display_mode mandatory_fields"  >
+                                        <select name="" id="language_id" class="form-control hg_edit_display_mode dropdown_fields"  >
                                         <option value="" selected>Select</option>
                                         {% for items in language_list %}
                                             <option value="{{items.language_id}}" {% if supplier_info.language_id == items.language_id %}selected{% endif %} >{{items.language_id}} - {{items.description}}</option>
@@ -138,7 +133,7 @@
 
                                     <div class="form-group col-md">
                                         <label> Country</label><span class="hg_required"></span><br>
-                                        <select name="" id="country_code_id" class="form-control hg_edit_display_mode mandatory_fields" title="Select..">
+                                        <select name="" id="country_code_id" class="form-control hg_edit_display_mode dropdown_fields" title="Select..">
                                         <option value="" selected>Select</option>
                                         {% for items in country_list %}
                                             <option value="{{items.country_code}}" {% if country_list.country_code == items.country_code %}selected{% endif %}>{{items.country_code}} - {{items.country_name}}</option>
@@ -151,7 +146,7 @@
                                 <div class="row">
                                     <div class="form-group col-md">
                                         <label> City</label><span class="hg_required"></span><br>
-                                        <input type="text" class="form-control hg_edit_display_mode mandatory_fields check_special_char" id="city_id" name="city_id" value="{{supplier_info.city}}">
+                                        <input type="text" class="form-control hg_edit_display_mode mandatory_fields check_special_char_nospace" id="city_id" name="city_id" value="{{supplier_info.city}}">
                                         <span id="err_city" class="error_message" hidden></span>
                                     </div>
 
@@ -209,7 +204,7 @@
 
                                     <div class="form-group col-md">
                                         <label> Mobile</label><span class="hg_required"></span><br>
-                                        <input type="text" class="form-control hg_edit_display_mode mandatory_fields check_phone_number" id="mobile_num_id" value="{{supplier_info.mobile_num}}">
+                                        <input type="text" class="form-control hg_edit_display_mode  check_phone_number" id="mobile_num_id" value="{{supplier_info.mobile_num}}">
                                         <span id="err_mobile" class="error_message" hidden></span>
                                     </div>
 
@@ -244,7 +239,7 @@
                                         <label> Working Days</label><span class=""></span><br>
 <!--                                        <input type="text" class="form-control hg_edit_display_mode" id="working_days" value="{{supplier_info.delivery_days}}">-->
                                          <div  id="display_mode" >
-                                        <select type="text" class="multiple_select form-control dropdown_required"  id="working_days" name="working_days" multiple data-selected-text-format="count" disabled>
+                                        <select type="text" class="multiple_select form-control dropdown_required"  id="working_days" name="working_days" multiple data-selected-text-format="count" data-actions-box="true" disabled>
                                             <option value="1">Sunday</option> <option value="2">Monday</option> <option value="3">Tuesday</option> <option value="4">Wednesday</option> <option value="5">Thursday</option> <option value="6">Friday</option> <option value="7">Saturday</option>
                                         </select>
                                          <span id="err_working_days_disp" class="wday_err_msg" hidden></span>
@@ -486,32 +481,37 @@ var country_id = '{{supplier_info.country_code | safe}}';
 var curr_id = '{{supplier_info.currency_id | safe}}';
 var lang_id = '{{supplier_info.language_id | safe}}';
 var img_url = '{{img_url.url | safe}}';
-var error_flag;
+var error_flag = 0; var err_state = "";
 var is_valid = true;
 var validate_add_attributes = [];
 var messages_list = {{messages_list|safe}};
+var msg_display_interval = {{msg_display_time_value|safe}};
 
-$(document).ready(function(){
+$(document).ready(function(e){
     $('#nav_menu_items').remove();
     $("body").css("padding-top", "4rem");
     NavigateTabs(); // Custom function to switch tabs
     GLOBAL_ACTION = '{{supplier_action}}';
     if(GLOBAL_ACTION == 'CREATE'){
-      $("#org_info_tab").hide();
       $("#business_doc_tab").hide();
       $("#sbd_save_cancel_button").prop("hidden", false);
       $("#sbd_edit_button").prop("hidden", true);
       document.getElementById('sbd_edit_button').style.display = 'none';
      $("#working_days").prop("hidden", false);
+     $("#working_days").prop("disabled", false);
      $("#working_days_id").prop("hidden", true);
      MultipleSelect();
-     var flag = localStorage.getItem("error_flag");
-     if(flag == 1){
-        get_values_onerror();
-        return false;
-        }
+       var flag = localStorage.getItem("error_flag");
+         if((flag == "1")){
+            get_values_onerror();
+            return false;
+         }
+         else {
+            localStorage.clear();
+         }
     }
     else{
+        $("#org_info_tab").prop("hidden", false);;
          document.getElementById('sbd_edit_button').style.display = 'block';
          $("#sbd_edit_button").prop("hidden", false);
         $("#sbd_save_cancel_button").prop("hidden", true);
@@ -533,20 +533,45 @@ $(document).ready(function(){
             }
             $("#working_days_id").val(num);
         }
+        values_reload();
+        MultipleSelect();
     }
+
     MultipleSelect();
 });
 
  $("body").on("keypress keyup change blur", ".mandatory_fields", function (event) {
     if((event.currentTarget.value == "") || (event.currentTarget.value == null)) {
-        document.getElementById(event.currentTarget.nextElementSibling.id).style.display = "block";
+        var display_id = event.currentTarget.nextElementSibling.id;
+        $('#'+display_id).prop('hidden', false);
+        event.currentTarget.nextElementSibling.innerHTML = "Please enter valid value";
     }
-    else if(event.currentTarget.value.length >= 2 ){
+    else if(event.currentTarget.value.length < 3 ){
+        $('#event.currentTarget.nextElementSibling.id').prop('hidden', true);
+        document.getElementById(event.currentTarget.nextElementSibling.id).style.display = "block";
+         var display_id = event.currentTarget.nextElementSibling.id;
+         $('#'+display_id).prop('hidden', false);
+        event.currentTarget.nextElementSibling.innerHTML = "Please enter min 3 chars";
+    }
+    else if(event.currentTarget.value.length >= 3 ){
+        var display_id = event.currentTarget.nextElementSibling.id;
+        $('#'+display_id).prop('hidden', true);
         document.getElementById(event.currentTarget.nextElementSibling.id).style.display = "none";
     }
     else{
         $(".error_message").prop("hidden", false);
         document.getElementById(event.currentTarget.nextElementSibling.id).style.display = "block";
+    }
+ });
+ $("body").on("keypress keyup change blur", ".dropdown_fields", function (event) {
+    if((event.currentTarget.value == "") || (event.currentTarget.value == null)) {
+        var display_id = event.currentTarget.nextElementSibling.id;
+        $('#'+display_id).prop('hidden', false);
+        event.currentTarget.nextElementSibling.innerHTML = "Please select value";
+    }
+    else{
+        $(".error_message").prop("hidden", false);
+        document.getElementById(event.currentTarget.nextElementSibling.id).style.display = "none";
     }
  });
 
@@ -566,8 +591,14 @@ $('#email_id').on('blur',function (event) {
          }
 });
 
-$('#mobile_num_id').on('blur',function (event) {
-         if (event.currentTarget.value.length != 10 ) {
+$('#mobile_num_id').on('keyup change blur',function (event) {
+    if((event.currentTarget.value == "") || (event.currentTarget.value == null)) {
+        var display_id = event.currentTarget.nextElementSibling.id;
+        $('#'+display_id).prop('hidden', false);
+        event.currentTarget.nextElementSibling.innerHTML = "Please enter valid value";
+        is_valid = false;
+    }
+    else if((event.currentTarget.value.length > 0) && (event.currentTarget.value.length < 10)) {
                  var msg = "JMSG002";
                  var msg_type ;
                  msg_type = message_config_details(msg);
@@ -576,28 +607,33 @@ $('#mobile_num_id').on('blur',function (event) {
                 var display_id = event.currentTarget.nextElementSibling.id;
                 $('#'+display_id).prop('hidden', false);
                 document.getElementById(display_id).style.display = "block";
-                event.currentTarget.nextElementSibling.innerHTML ="Please check Mobile Number";
+                event.currentTarget.nextElementSibling.innerHTML ="Enter 10 numbers for Mobile Number";
                is_valid = false;
          }
+         else if(event.currentTarget.value.length == 10 ){
+        var display_id = event.currentTarget.nextElementSibling.id;
+        $('#'+display_id).prop('hidden', false);
+        document.getElementById(event.currentTarget.nextElementSibling.id).style.display = "none";
+    }
+    else{
+        $(".error_message").prop("hidden", false);
+        document.getElementById(event.currentTarget.nextElementSibling.id).style.display = "block";
+    }
 });
 
  $('form').on('submit',function (e) {
-    OpenLoaderPopup();
+<!--    OpenLoaderPopup();-->
     var valid = save_basic_form_validation();
     if(!valid){
         localStorage.setItem("error_flag", 1);
         values_reload();
         get_values_onerror();
-         setTimeout(function() {
-                   CloseLoaderPopup();
-     }, 500);
         e.preventDefault();
     }
     else{
+        values_reload();
         save_basic_details();
-        setTimeout(function() {
-                   CloseLoaderPopup();
-     }, 20000);
+
     }
  });
 
@@ -654,7 +690,8 @@ function get_dropdown(){
 }
 
 function ajax_update_supplier_basic_details(data) {
-    OpenLoaderPopup();
+<!--    OpenLoaderPopup();-->
+    setTimeout(open, 10);
     let urlLink = "{% url 'eProc_Suppliers:update_suppliers_basic_details' %}"
     var response = FormAjaxCallAPI(urlLink,data)
     return response
@@ -664,6 +701,9 @@ const ajax_update_supplier_org_details_url = "{% url 'eProc_Suppliers:update_sup
 
 // Function to save edited supplier basic details data
 function save_basic_details() {
+    setTimeout(function() {
+                     OpenLoaderPopup();
+            }, 50);
     var supplier_data = {}
     var is_save_form_valid='';
     var error_message = '';
@@ -707,29 +747,31 @@ function save_basic_details() {
         if(msg_type.type=='success'){
             document.getElementById('supplier_basic_update_success').innerHTML = message;
              setTimeout(function() {
-                   CloseLoaderPopup();
-             }, 1000);
+                     CloseLoaderPopup();
+            }, 1000);
             $('#supplier_basic_update_success').show();
             $('#save_error_div').hide();
             setTimeout(function() {
-                    $('#supplier_basic_update_success').hide();
-            }, msg_display_interval*1500);
+                    $('.alert-success').prop("hidden", true);
+            }, 500000);
+<!--            message_display_time();-->
+            if(GLOBAL_ACTION == 'CREATE'){
+                    $("#supplier_form_field")[0].reset();
+                    localStorage.clear();
+            }
             localStorage.setItem("error_flag", 0);
         }
         if(msg_type.type=='error'){
+           setTimeout(function() {
+            CloseLoaderPopup(); }, 1000);
             document.getElementById('save_error_div').innerHTML = message;
-            setTimeout(function() {
-                   CloseLoaderPopup();
-             }, 500);
             $('#save_error_div').show();
-            $('#supplier_basic_update_success').hide();
+<!--            $('#save_error_message').text(message);-->
+<!--            document.getElementById("save_error_message").style.color = "Red";-->
+<!--            $("#save_error_div").css("display", "block");-->
+<!--            $('#supplier_basic_update_success').hide();-->
             localStorage.setItem("error_flag", 1);
-            values_reload();
-            get_values_onerror();
-            setTimeout(function() {
-                   $('#save_error_div').hide();
-            }, msg_display_interval*2500);
-            return false;
+            err_state = "From_Error";
         }
      }
     else{
@@ -738,7 +780,12 @@ function save_basic_details() {
         $('#save_error_div').show();
     }
 }
-
+function timer(){
+    CloseLoaderPopup();
+}
+function open(){
+    OpenLoaderPopup();
+}
 function MultipleSelect() {
      $('#working_days_id').selectpicker();
      $('#working_days').selectpicker();
@@ -904,8 +951,8 @@ function onclick_copy_update_button(data) {
                                 '<td hidden><input type="text" name="supp_org_guid"></td>'+
                                 '<td>'+unique_input+'</td>'+
                                 '<td><select class="form-control" type="text"  name="currency_id">'+currency_opt1+'</select></td>'+
-                                '<td><select class="form-control" type="text"  name="payment_term">'+payterm_opt+'</select></td>'+
-                                '<td><select class="form-control" type="text"  name="incoterm">'+incoterm_opt+'</select></td>'+
+                                '<td><select style="width:auto;" class="form-control" type="text"  name="payment_term">'+payterm_opt+'</select></td>'+
+                                '<td><select style="width:auto;" class="form-control" type="text"  name="incoterm">'+incoterm_opt+'</select></td>'+
                                 '<td><input class="checkbox-size" type="checkbox"  name="gr_inv_vrf_checkbox" required></td>'+
                                 '<td><input class="checkbox-size" type="checkbox"  name="inv_conf_exp_checkbox" required></td>'+
                                 '<td><input class="checkbox-size" type="checkbox"  name="gr_conf_exp_checkbox" required></td>'+
@@ -998,7 +1045,6 @@ function supp_org_data_save(){
         validate_add_attributes.push(get_supp_purch_data.porg_id);
         save_supplier_purch_details.push(get_supp_purch_data)
     })
-
     var no_duplicate_entries = 'Y';
     var no_duplicate_value = 'Y';
     var error_message = '';
@@ -1057,7 +1103,7 @@ function supp_org_data_save(){
             }
             if(format.test(item.porg_id)){
                 $('#supplierOrgModal').modal('show');
-                error_message = ui_messeges("JMSG113")// Get message details
+                error_message = ui_messeges("JMSG003") + "Purchasing Org"// Get message details
                 no_duplicate_value = 'N'
                 return [no_duplicate_value,error_message]
             }
@@ -1089,9 +1135,9 @@ function supp_org_data_save(){
         var supplier_check = new Array;
         $("#id_popup_table TBODY TR").each(function() {
             var row = $(this);
-            country_dic = {}
-            country_dic.country_code = row.find("TD").eq(1).find('input[type="text"]').val().toUpperCase();
-            var compare = country_dic.country_code
+            supp_org_dic = {}
+            supp_org_dic.porg_id = row.find("TD").eq(2).find("select option:selected").val();
+            var compare = supp_org_dic.porg_id
             supplier_check.push(compare);
             jQuery.grep(supplier_check, function(el) {
                 if (jQuery.inArray(el, common) != -1) {
