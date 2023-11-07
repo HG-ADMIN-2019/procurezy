@@ -74,7 +74,7 @@
                                     <input value="{{supplier_info.supp_guid}}" id="supplier_guid" hidden>
                                     <div class="form-group col-md">
                                         <label> Supplier Number</label><span class="hg_required"></span><br>
-                                        <input type="text" class="form-control hg_edit_display_mode mandatory_fields check_special_char_nospace" name="supplier_id" id="supplier_id" value="{{supplier_info.supplier_id}}">
+                                        <input type="text" maxlength="10" class="form-control hg_edit_display_mode mandatory_fields check_special_char_nospace" name="supplier_id" id="supplier_id" value="{{supplier_info.supplier_id}}">
                                         <span id="err_supp_id" class="error_message" hidden></span>
                                     </div>
                                     <div class="form-group col-md">
@@ -89,7 +89,7 @@
 
                                     <div class="form-group col-md">
                                         <label> Registration Number</label><span class="hg_required"></span><br>
-                                        <input type="text" class="form-control hg_edit_display_mode mandatory_fields check_special_char_nospace" id="supplier_regnum" value="{{supplier_info.registration_number}}">
+                                        <input type="text" maxlength="30" class="form-control hg_edit_display_mode mandatory_fields check_special_char_nospace" id="supplier_regnum" value="{{supplier_info.registration_number}}">
                                         <span id="err_reg_num" class="error_message" hidden></span>
                                     </div>
                                 </div>
@@ -97,13 +97,13 @@
                                 <div class="row">
                                     <div class="form-group col-md">
                                         <label> First Name</label><span class="hg_required"></span><br>
-                                        <input type="text" class="form-control hg_edit_display_mode mandatory_fields check_special_char_nospace" id="name1" name="name1" value="{{supplier_info.name1}}" >
+                                        <input type="text" maxlength="40" class="form-control hg_edit_display_mode mandatory_fields check_special_char_nospace" id="name1" name="name1" value="{{supplier_info.name1}}" >
                                         <span id="err_supp_name1" class="error_message" hidden></span>
                                     </div>
 
                                     <div class="form-group col-md">
                                         <label> Last Name</label><span class="hg_required"></span><br>
-                                        <input type="text" class="form-control hg_edit_display_mode mandatory_fields check_special_char" id="name2" value="{{supplier_info.name2}}" >
+                                        <input type="text" maxlength="40" class="form-control hg_edit_display_mode mandatory_fields check_special_char" id="name2" value="{{supplier_info.name2}}" >
                                         <span id="err_supp_name2" class="error_message" hidden></span>
                                     </div>
                                 </div>
@@ -146,18 +146,18 @@
                                 <div class="row">
                                     <div class="form-group col-md">
                                         <label> City</label><span class="hg_required"></span><br>
-                                        <input type="text" class="form-control hg_edit_display_mode mandatory_fields check_special_char_nospace" id="city_id" name="city_id" value="{{supplier_info.city}}">
+                                        <input type="text" maxlength="40" class="form-control hg_edit_display_mode mandatory_fields check_special_char_nospace" id="city_id" name="city_id" value="{{supplier_info.city}}">
                                         <span id="err_city" class="error_message" hidden></span>
                                     </div>
 
                                     <div class="form-group col-md">
                                         <label> Street</label><br>
-                                        <input type="text" class="form-control hg_edit_display_mode" id="street_id" value="{{supplier_info.street}}">
+                                        <input type="text" maxlength="60" class="form-control hg_edit_display_mode" id="street_id" value="{{supplier_info.street}}">
                                     </div>
 
                                     <div class="form-group col-md">
                                         <label> Postal Code</label><span class="hg_required"></span><br>
-                                        <input type="text" class="form-control hg_edit_display_mode check_postal_code mandatory_fields" id="postal_code_id" value="{{supplier_info.postal_code}}">
+                                        <input type="text" maxlength="10" class="form-control hg_edit_display_mode check_postal_code mandatory_fields" id="postal_code_id" value="{{supplier_info.postal_code}}">
                                         <span id="err_postal_code" class="error_message" hidden></span>
                                     </div>
                                 </div>
@@ -199,18 +199,18 @@
 
                                     <div class="form-group col-md">
                                         <label> Phone</label><br>
-                                        <input type="text" class="form-control hg_edit_display_mode check_phone_number" id="landline_id" value="{{supplier_info.landline}}">
+                                        <input type="text" maxlength="30" class="form-control hg_edit_display_mode check_phone_number" id="landline_id" value="{{supplier_info.landline}}">
                                     </div>
 
                                     <div class="form-group col-md">
                                         <label> Mobile</label><span class="hg_required"></span><br>
-                                        <input type="text" class="form-control hg_edit_display_mode  check_phone_number" id="mobile_num_id" value="{{supplier_info.mobile_num}}">
+                                        <input type="text" maxlength="10" class="form-control hg_edit_display_mode  check_phone_number" id="mobile_num_id" value="{{supplier_info.mobile_num}}">
                                         <span id="err_mobile" class="error_message" hidden></span>
                                     </div>
 
                                     <div class="form-group col-md">
                                         <label> Fax</label><br>
-                                        <input type="text" class="form-control hg_edit_display_mode" id="fax_id" value="{{supplier_info.fax}}">
+                                        <input maxlength="20" type="text" class="form-control hg_edit_display_mode" id="fax_id" value="{{supplier_info.fax}}">
                                     </div>
                                 </div><br>
                                 <small class="form-text text-muted help-text-phone-numbers"></small>
@@ -224,13 +224,13 @@
                                 <div class="row">
                                     <div class="form-group col-md">
                                         <label> Search Term 1</label><span class="hg_required"></span><br>
-                                        <input type="text" class="form-control hg_edit_display_mode mandatory_fields check_special_char" id="search_term1_id" value="{{supplier_info.search_term1}}">
+                                        <input type="text" maxlength="20" class="form-control hg_edit_display_mode mandatory_fields check_special_char" id="search_term1_id" value="{{supplier_info.search_term1}}">
                                         <span id="err_search_term1" class="error_message" hidden></span>
                                     </div>
 
                                     <div class="form-group col-md">
                                         <label> Search Term 2</label><span class="hg_required"></span><br>
-                                        <input type="text" class="form-control hg_edit_display_mode mandatory_fields check_special_char" id="search_term2_id" value="{{supplier_info.search_term2}}">
+                                        <input type="text" maxlength="20" class="form-control hg_edit_display_mode mandatory_fields check_special_char" id="search_term2_id" value="{{supplier_info.search_term2}}">
                                         <span id="err_search_term2" class="error_message" hidden></span>
                                     </div>
                                 </div>
@@ -254,7 +254,7 @@
 
                                     <div class="form-group col-md">
                                         <label> Duns Number</label><br>
-                                        <input type="text" class="form-control hg_edit_display_mode" id="duns_number_id" value="{{supplier_info.duns_number}}">
+                                        <input type="text" maxlength="9" class="form-control hg_edit_display_mode" id="duns_number_id" value="{{supplier_info.duns_number}}">
                                     </div>
 
                                     <div class="form-group col-md">

@@ -542,7 +542,6 @@ function reload()
     localStorage.setItem("pwd_locked", document.getElementById("pwd_locked_id").checked);
     localStorage.setItem("is_active", document.getElementById("is_active_id").checked);
     OpenLoaderPopup();
-
 }
 
 $('form').on('submit',function (e) {
@@ -585,8 +584,6 @@ $('form').on('submit',function (e) {
             event.currentTarget.nextElementSibling.innerHTML = "Please enter valid value";
             }
             else{
-<!--                $(".error_message").prop("hidden", true);-->
-<!--                document.getElementById(event.currentTarget.nextElementSibling.id).style.display = "true";-->
                   var display_id = event.currentTarget.nextElementSibling.id;
                 $('#'+display_id).prop('hidden', true);
                 document.getElementById(event.currentTarget.nextElementSibling.id).style.display = "none";

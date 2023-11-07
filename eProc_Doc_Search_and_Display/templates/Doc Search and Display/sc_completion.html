@@ -20,7 +20,7 @@
                     <div class="row">
                         <div class="col-md">
                             <label>Shopping Cart Name: </label>
-                            <input type="text" class="form-control check_for_search" name="description">
+                            <input type="text" class="form-control check_for_search" id="description" name="description">
                         </div>
                         <div class="col-md">
                             <label>Shopping Cart Number:</label>
@@ -29,12 +29,12 @@
     
                         <div class="col-md">
                             <label>Created By:</label>
-                            <input type="text" class="form-control check_for_search" name="changed_by">
+                            <input type="text" class="form-control check_for_search" id="changed_by" name="changed_by">
                         </div>
     
                         <div class="col-md">
                             <label>Select Time Frame:</label>
-                            <select name="created_at" class="multiple_select form-control" multiple data-selected-text-format="count" data-actions-box="true">
+                            <select name="created_at" id="created_at" class="multiple_select form-control" multiple data-selected-text-format="count" data-actions-box="true">
                                 <option value="Today" selected>Today</option>
                                 <option value="7">Last 7 days</option>
                                 <option value="30">Last 30 days</option>
@@ -48,7 +48,7 @@
                     <div class="elements-space-between">
                         <div>
                             <button class="btn btn-outline-primary" type="reset" value="Reset"><i class="fas fa-sync-alt"></i> &nbsp;reset</button>
-                            <button class="btn btn-primary" type="submit" title="Please click to get the search details!" id="search_button_id"><i class="fas fa-search"></i> &nbsp;search </button>
+                            <button class="btn btn-primary" type="submit" title="Please click to get the search details!" onclick="set_values()" id="search_button_id"><i class="fas fa-search"></i> &nbsp;search </button>
                         </div>
                         <div>
                             <span class="badge help-text-badge help-text-star-search"></span>
