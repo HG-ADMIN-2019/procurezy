@@ -296,6 +296,8 @@
 
     //onclick of add button display myModal popup and set GLOBAL_ACTION button value
     function onclick_add_button(button) {
+        $("#id_delete_duplicate").hide()
+        $("#id_check_data").hide()
         $('#id_popup_table').DataTable().destroy();
         $("#id_popup_tbody").empty();
         OpenLoaderPopup();
@@ -592,25 +594,30 @@
         $("#id_popup_table TBODY TR").each(function () {
             var row = $(this);
             //*************** reading data from the pop-up ***************
-            cusprodcatdesc_description = row.find("TD").eq(3).find('input[type="text"]').val();
-            cusprodcatdesc_language_id = row.find("TD").eq(2).find('select[type="text"]').val();
-            cusprodcatdesc_prod_cat_id = row.find("TD").eq(1).find('select[type="text"]').val();
+            cusprodcatdesc_description = row.find("TD").eq(3).find('input').val();
+            cusprodcatdesc_language_id = row.find("TD").eq(2).find('select').val();
+            cusprodcatdesc_prod_cat_id = row.find("TD").eq(1).find('select').val();
             checked_box = row.find("TD").eq(5).find('input[type="checkbox"]').is(':checked')
-              if (checked_box){
+             for (i = 0; i < render_language_data.length; i++) {
+             if (cusprodcatdesc_language_id == render_language_data[i].language_id)
+                    desc = render_language_data[i].description;
+             }
+            var cusprodcatdesc_compare =  cusprodcatdesc_prod_cat_id +'-'+ desc
+            if (checked_box){
                 del_ind = '1'
             }
             else{
-                if (cusprodcatdesc_prod_cat_id && cusprodcatdesc_language_id) {
+                if (cusprodcatdesc_prod_cat_id) {
                     del_ind = '0'
-                    if (cusprodcatdesc_code_check.includes(cusprodcatdesc_prod_cat_id)) {
+                    if (cusprodcatdesc_code_check.includes(cusprodcatdesc_compare)) {
                         $(row).remove();
                     }
-                    cusprodcatdesc_code_check.push(cusprodcatdesc_prod_cat_id);
+                    cusprodcatdesc_code_check.push(cusprodcatdesc_compare);
                     main_table_low_value = get_main_table_data_upload(); //Read data from main table
-                    if (main_table_low_value.includes(cusprodcatdesc_prod_cat_id)) {
+                    if (main_table_low_value.includes(cusprodcatdesc_compare)) {
                         $(row).remove();
                     }
-                    main_table_low_value.push(cusprodcatdesc_prod_cat_id);
+                    main_table_low_value.push(cusprodcatdesc_compare);
                 }
             }
         })
@@ -710,6 +717,7 @@
 
     //onclick of data Upload copy data to modal pop-up
     function onclick_display_csv_data() {
+        $("#id_delete_duplicate").hide()
         $("#valid_upload").modal('hide');
         document.getElementById('delete_data').style.visibility='hidden';
         $("#id_check_success_messages").empty();
@@ -848,21 +856,26 @@ function check_data() {
         var prodcatdesc_list = new Array
         var prodcatdesc_code_check = new Array
         del_ind = ''
+        unspsc_desc_dic = {};
         $("#id_popup_table TBODY TR").each(function() {
         $('#id_popup_table').DataTable().destroy();
         var row = $(this);
-        unspsc_desc_dic = {}
         //*************** reading data from the pop-up ***************
-        unspsc_desc_dic.prod_cat_id = row.find("TD").eq(1).find('select[type="text"]').val()
+        unspsc_desc_dic.prod_cat_id = row.find("TD").eq(1).find('select').val()
         unspsc_desc_dic.language_id = row.find("TD").eq(2).find('select').val();
-        unspsc_desc_dic.description = row.find("TD").eq(3).find('input[type="text"]').val()
+        for (i = 0; i < render_language_data.length; i++) {
+                if (unspsc_desc_dic.language_id == render_language_data[i].language_id)
+                    desc = render_language_data[i].description;
+            }
+        unspsc_desc_dic.description = row.find("TD").eq(3).find('input').val()
         checked_box = row.find("TD").eq(5).find('input[type="checkbox"]').is(':checked')
         if (checked_box){
-            unspsc_desc_dic.del_ind = '1'
+           unspsc_desc_dic.del_ind = '1'
         }
         else{
             unspsc_desc_dic.del_ind = '0'
         }
+        var cusprodcatdesc_compare =  unspsc_desc_dic.prod_cat_id +'-'+ desc
         prodcatdesc_list.push(unspsc_desc_dic)
         get_main_table_data();
         var format = /[`!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?~]/;
@@ -889,7 +902,7 @@ function check_data() {
                 $("#id_check_special_character_messages").prop("hidden",false);
                 count = count +1;
             }
-            else if(prodcatdesc_code_check.includes((unspsc_desc_dic.prod_cat_id))){
+            else if(prodcatdesc_code_check.includes((cusprodcatdesc_compare))){
                  $(row).css("border", "#f8d7da");
                  row_color_highlight(row);
                  $("#id_check_error_messages").prop("hidden",false);
@@ -901,7 +914,7 @@ function check_data() {
                  count = count +1;
                  flag = flag + 1;
             }
-            else if(main_table_low_value.includes((unspsc_desc_dic.prod_cat_id))){
+            else if(main_table_low_value.includes((cusprodcatdesc_compare))){
                  $(row).css("border", "#f8d7da");
                  row_color_highlight(row);
                  $("#id_check_error_messages").prop("hidden",false);
@@ -919,8 +932,8 @@ function check_data() {
                 $(row).css("border", "");
                 $("#id_delete_duplicate").hide()
             }
-            prodcatdesc_code_check.push(unspsc_desc_dic.prod_cat_id)
-            main_table_low_value.push(unspsc_desc_dic)
+            prodcatdesc_code_check.push(cusprodcatdesc_compare)
+            main_table_low_value.push(cusprodcatdesc_compare)
             table_sort_filter_popup_pagination('id_popup_table');
        }
        if(flag == 0){
@@ -1216,14 +1229,15 @@ function check_data() {
         $("#id_popup_table TBODY TR").each(function() {
             var row = $(this);
             cusprodcatdesc_dic = {}
-            for (i = 0; i < render_language_data.length; i++) {
-                if (cusprodcatdesc.language_id == render_language_data[i].language_id)
-                    desc = render_language_data[i].description;
-            }
             cusprodcatdesc_dic.prod_cat_id = row.find("TD").eq(1).find('select').val();
             cusprodcatdesc_dic.language_id = row.find("TD").eq(2).find('select').val();
+            for (i = 0; i < render_language_data.length; i++) {
+                if (cusprodcatdesc_dic.language_id == render_language_data[i].language_id)
+                    desc = render_language_data[i].description;
+            }
             var compare = cusprodcatdesc_dic.prod_cat_id +'-'+ desc
             cusprodcatdesc_check.push(compare);
+            row_color_no_highlight(row);
             jQuery.grep(cusprodcatdesc_check, function(el) {
                 if (jQuery.inArray(el, common) != -1) {
                     row_color_highlight(row);

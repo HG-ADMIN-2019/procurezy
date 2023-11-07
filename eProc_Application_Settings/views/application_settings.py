@@ -187,6 +187,20 @@ def display_sourcing_rule_generic(request):
                                                    ['prod_cat_id_from', 'prod_cat_id_to', 'company_id', 'call_off',
                                                     'rule_type', 'sourcing_flag', 'sourcing_rule_guid', 'del_ind'])
 
+    call_off_data = [
+        {'value': '01', 'desc': '01-Catalog'},
+        {'value': '02', 'desc': '02-Free text'},
+        {'value': '03', 'desc': '03-PR'},
+        {'value': '04', 'desc': '04-Limit'}
+    ]
+
+    for item in upload_sr_generic_cat:
+        call_off_value = item['call_off']
+        for call_off_item in call_off_data:
+            if call_off_item['value'] == call_off_value:
+                item['call_off'] = call_off_item['desc']
+                break
+
     upload_comapny_code = list(OrgCompanies.objects.filter(client=client, del_ind=False).values('company_id'))
 
     prod_catogories = list(
@@ -199,6 +213,13 @@ def display_sourcing_rule_generic(request):
             'field_type_desc'
         ))
 
+    dropdown_activate = list(
+        FieldTypeDescription.objects.filter(field_name='sourcing_flag', del_ind=False,
+                                            client=global_variables.GLOBAL_CLIENT).values(
+            'field_type_id',
+            'field_type_desc'
+        ))
+
     messages_list = get_ui_messages(CONST_COFIG_UI_MESSAGE_LIST)
 
     return render(request, 'Application_Settings/sr_generic.html',
@@ -206,6 +227,7 @@ def display_sourcing_rule_generic(request):
                    'dropdown_company_code_id': upload_comapny_code,
                    'prod_catogories': prod_catogories,
                    'rule_type': rule_type,
+                   'dropdown_activate': dropdown_activate,
                    'messages_list': messages_list,
                    'inc_nav': True, })
 

@@ -37,7 +37,7 @@ class UserReportForm(forms.Form):
     )
 
     username = forms.CharField(label='Username', required=False, widget=forms.TextInput(attrs={
-        'class': 'form-control check_for_search'}))
+        'class': 'form-control check_for_search mandatory_fields'}))
 
     active = forms.ChoiceField(label='User Status', choices=user_status_data, required=False, disabled=False,
                                widget=forms.Select(attrs={'class': 'form-control'}))

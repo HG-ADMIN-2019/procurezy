@@ -1,7 +1,7 @@
-var purhcase_control_data = new Array();
+var sr_generic_data = new Array();
 var validate_add_attributes = [];
 var main_table_low_value = [];
-var purchase_contrl = {};
+var sr_generic = {};
 var hidden_prod_cat_IDs = [];
 
 // on click update icon display the selected checkbox data to update
@@ -15,12 +15,29 @@ function onclick_update_button() {
 //onclick of cancel display the table in display mode............
 function display_basic_db_data() {
     $('#display_basic_table').DataTable().destroy();
-    $('#id_pc_tbody').empty();
+    $('#id_sr_tbody').empty();
     var edit_basic_data = '';
     $.each(rendered_sr_generic_data, function (i, item) {
-        edit_basic_data += '<tr><td class="class_select_checkbox"><input class="checkbox_check" onclick="valueChanged()" type="checkbox" required></td><td>' + item.prod_cat_id_from + '</td><td>' + item.prod_cat_id_to + '</td><td>' + item.company_id + '</td><td>' + item.call_off + '</td><td>' + item.rule_type + '</td><td>' + item.sourcing_flag + '</td><td hidden>' + item.sourcing_rule_guid + '</td><td hidden>' + item.del_ind + '</td></tr>';
+        var data = '';
+        if (item.sourcing_flag == true) {
+            data = 'Activate'
+        } else {
+            data = 'Deactivate'
+        }
+
+        var call_off_desc = '';
+        for (var j = 0; j < rendered_call_off.length; j++) {
+            if (rendered_call_off[j].value === item.call_off) {
+                call_off_desc = rendered_call_off[j].desc;
+                break;
+            }
+            else {
+                call_off_desc = item.call_off
+            }
+        }
+        edit_basic_data += '<tr><td class="class_select_checkbox"><input class="checkbox_check" onclick="valueChanged()" type="checkbox" required></td><td>' + item.prod_cat_id_from + '</td><td>' + item.prod_cat_id_to + '</td><td>' + item.company_id + '</td><td>' + call_off_desc + '</td><td>' + item.rule_type + '</td><td>' + data + '</td><td hidden>' + item.sourcing_rule_guid + '</td><td hidden>' + item.del_ind + '</td></tr>';
     });
-    $('#id_pc_tbody').append(edit_basic_data);
+    $('#id_sr_tbody').append(edit_basic_data);
     $("#hg_select_checkbox").prop("hidden", true);
     $(".class_select_checkbox").prop("hidden", true);
     $(" input:checkbox ").prop('checked', false);
@@ -82,41 +99,41 @@ function delete_duplicate() {
 
 // Functtion to hide and display save related popups
 $('#save_id').click(function () {
-    $('#purchase_ctrl_Modal').modal('hide');
-    purhcase_control_data = read_popup_data();
+    $('#sr_generic_Modal').modal('hide');
+    sr_generic_data = read_popup_data();
     $('#id_save_confirm_popup').modal('show');
 });
 
 //Read popup table data
 function read_popup_data() {
     $('#id_popup_table').DataTable().destroy();
-    purhcase_control_data = new Array();
+    sr_generic_data = new Array();
     validate_add_attributes = [];
     $("#id_popup_table TBODY TR").each(function () {
         var row = $(this);
-        purchase_contrl = {};
-        purchase_contrl.del_ind = row.find("TD").eq(5).find('input[type="checkbox"]').is(':checked');
-        purchase_contrl.company_code_id = row.find("TD").eq(1).find('select[type="text"]').val();
-        purchase_contrl.call_off = row.find("TD").eq(2).find('select[type="text"]').val().split("-")[0];
-        purchase_contrl.prod_cat_id = row.find("TD").eq(3).find('select option:selected').val();
-        purchase_contrl.purchase_ctrl_flag = row.find("TD").eq(4).find('select[type="text"]').val();
-        purchase_contrl.purchase_control_guid = row.find("TD").eq(5).find('input[type="text"]').val();
+        sr_generic = {};
+        sr_generic.del_ind = row.find("TD").eq(8).find('input[type="checkbox"]').is(':checked');
+        sr_generic.prod_cat_id_from = row.find("TD").eq(1).find('select[type="text"]').val();
+        sr_generic.prod_cat_id_to = row.find("TD").eq(2).find('select[type="text"]').val();
+        sr_generic.company_id = row.find("TD").eq(3).find('select option:selected').val();
+        sr_generic.call_off = row.find("TD").eq(4).find('select[type="text"]').val();
+        sr_generic.rule_type = row.find("TD").eq(5).find('select[type="text"]').val();
+        sr_generic.sourcing_flag = row.find("TD").eq(6).find('select[type="text"]').val();
+        sr_generic.sourcing_rule_guid = row.find("TD").eq(7).find('input[type="text"]').val();
         var data = '';
-        if (purchase_contrl.purchase_ctrl_flag == 'Activate'){
+        if (sr_generic.sourcing_flag == 'Activate'){
             data = true
         } else{
             data = false
         }
-        purchase_contrl.purchase_ctrl_flag  = data;
-        if (purchase_contrl == undefined) {
-            purchase_contrl.company_code_id = row.find("TD").eq(1).find('select[type="text"]').val();
-        }
-        var compare = purchase_contrl.company_code_id + '-' + purchase_contrl.call_off + '-' + purchase_contrl.prod_cat_id
+        sr_generic.sourcing_flag  = data;
+        var compare = sr_generic.prod_cat_id_from + '-' + sr_generic.prod_cat_id_to + '-' + sr_generic.company_id+ '-' +
+                    sr_generic.call_off + '-' + sr_generic.rule_type + '-' + sr_generic.sourcing_flag
         validate_add_attributes.push(compare);
-        purhcase_control_data.push(purchase_contrl);
+        sr_generic_data.push(sr_generic);
     });
     table_sort_filter('id_popup_table');
-    return purhcase_control_data;
+    return sr_generic_data;
 }
 
 // Function to get main table data
@@ -126,19 +143,22 @@ function get_main_table_data() {
     $("#display_basic_table TBODY TR").each(function () {
         var row = $(this);
         var main_attribute = {};
-        main_attribute.company_code_id = row.find("TD").eq(1).html();
-        main_attribute.call_off = row.find("TD").eq(2).html();
-        main_attribute.prod_cat_id = row.find("TD").eq(3).html();
-        main_attribute.purchase_ctrl_flag = row.find("TD").eq(4).html();
+        main_attribute.prod_cat_id_from = row.find("TD").eq(1).html();
+        main_attribute.prod_cat_id_to = row.find("TD").eq(2).html();
+        main_attribute.company_id = row.find("TD").eq(3).html();
+        main_attribute.call_off = row.find("TD").eq(4).html();
+        main_attribute.rule_type = row.find("TD").eq(5).html();
+         main_attribute.sourcing_flag = row.find("TD").eq(6).html();
         var data = '';
-        if (main_attribute.purchase_ctrl_flag == 'Activate') {
+        if (main_attribute.sourcing_flag == 'Activate') {
             data = true
         } else {
             data = false
         }
-        main_attribute.purchase_ctrl_flag = data;
+        main_attribute.sourcing_flag = data;
         main_attribute.purchase_control_guid = row.find("TD").eq(5).html();
-        var compare_maintable = main_attribute.company_code_id + '-' + main_attribute.call_off + '-' + main_attribute.prod_cat_id
+        var compare_maintable = main_attribute.prod_cat_id_from + '-' + main_attribute.prod_cat_id_to + '-' +
+                                main_attribute.company_id + '-' + main_attribute.call_off + '-' + main_attribute.rule_type + '-' + main_attribute.sourcing_flag
         main_table_low_value.push(compare_maintable);
     });
     table_sort_filter_page('display_basic_table');
@@ -168,152 +188,20 @@ function get_selected_row_data() {
     });
 }
 
-// storing company_code associated data from main table
-function display_tb_data() {
-    main_table_data = {};
-    $('#display_basic_table').DataTable().destroy();
-    $("#display_basic_table TBODY TR").each(function() {
-        var row = $(this);
-        var main_attribute = {};
-        main_attribute.company_code_id = row.find("TD").eq(1).html();
-        main_attribute.call_off = row.find("TD").eq(2).html();
-        main_attribute.prod_cat_id = row.find("TD").eq(3).html();
-        if (!main_table_data.hasOwnProperty(main_attribute.company_code_id)) {
-            main_table_data[main_attribute.company_code_id] = [];
-        }
-        main_table_data[main_attribute.company_code_id].push({
-            call_off: main_attribute.call_off,
-            prod_cat_id: main_attribute.prod_cat_id,
-        });
-    });
-    table_sort_filter('display_basic_table');
-}
-
 // Function for add a new row data
 function new_row_data(){
     basic_add_new_html +=
     `<tr>
         <td><input type="checkbox" required></td>
-        <td><select class="input form-control" type="text" onchange="get_call_off(this)">${pc_company_dropdown}</select></td>
-        <td><select class="input form-control" type="text" onchange="get_prod_cat_id_values(this)">${call_off_dropdown}</select></td>
-        <td><select class="form-control">${prod_cat_dropdown}</select></td>
+        <td><select class="input form-control" type="text">${prod_cat_dropdown}</select></td>
+        <td><select class="input form-control" type="text">${prod_cat_dropdown}</select></td>
+        <td><select class="input form-control" type="text">${pc_company_dropdown}</select></td>
+        <td><select class="input form-control" type="text">${call_off_dropdown}</select></td>
+        <td><select class="input form-control" type="text">${rule_type_dropdown}</select></td>
         <td><select type="text" class="input form-control">${activate_dropdown}</select></td>
         <td hidden><input  type="text" class="form-control"  name="guid"></td>
         <td class="class_del_checkbox" hidden><input type="checkbox" required></td>
     </tr>`
     $('#id_popup_tbody').append(basic_add_new_html);
     table_sort_filter('id_popup_table');
-}
-
-// onchange respective values for company dropdown
-function get_call_off(selectElement) {
-    var selected_call_off = selectElement.value;
-    var call_off_dropdown = $(selectElement).closest('tr').find('.form-control').eq(1);
-    var prod_cat_dropdown = $(selectElement).closest('tr').find('.form-control').eq(2);
-
-    call_off_dropdown.empty(); // Clear existing options
-    prod_cat_dropdown.empty(); // Clear existing options
-
-    var call_off_values = main_table_data[selected_call_off];
-    if (!call_off_values) {
-        call_off_dropdown.empty();
-        $.each(rendered_call_off, function (i, item) {
-            call_off_dropdown.append('<option value="' + item.value + '">' + item.desc + '</option>')
-        });
-
-        prod_cat_dropdown.empty();
-        $.each(rendered_prod_category, function (i, item) {
-            prod_cat_dropdown.append('<option value="' + item.prod_cat_id + '">' + item.prod_cat_id + '</option>')
-        });
-        return;
-    }
-
-    // Stored respective dropdown values for particular company id
-    main_table_call_off = {};
-    call_off_values.forEach(item => {
-        var call_off = item.call_off ;
-        if (!main_table_call_off[call_off ]) {
-            main_table_call_off[call_off ] = new Set();
-        }
-        main_table_call_off[call_off ].add(item.prod_cat_id);
-    });
-
-    // Filtering CALL_OFF dropdown
-    hiddenCallOffValue = [];
-    for (const item of rendered_call_off) {
-        const callOffValue = item.desc;
-
-        if (rendered_prod_category.length === main_table_call_off[callOffValue]?.size) {
-            hiddenCallOffValue.push(callOffValue);
-        } else {
-            call_off_dropdown.append('<option value="' + callOffValue + '">' + callOffValue + '</option>');
-        }
-    }
-
-    // Filtering UNSPSC values
-    hidden_prod_cat_IDs = [];
-    var callOffValuesArray = call_off_dropdown.html().match(/value="([^"]+)"/g).map(function(match) {
-        return match.match(/"([^"]+)"/)[1];
-    });
-    for (var i = 0; i < callOffValuesArray.length; i++) {
-        var callOffValue = callOffValuesArray[i];
-        if (!main_table_call_off.hasOwnProperty(callOffValue)){
-            prod_cat_dropdown.empty();
-            $.each(rendered_prod_category, function (i, item) {
-                prod_cat_dropdown.append('<option value="' + item.prod_cat_id + '">' + item.prod_cat_id + '</option>')
-            });
-            break;
-        } else if (main_table_call_off.hasOwnProperty(callOffValue)) {
-            var assignedProdCatIDs = Array.from(main_table_call_off[callOffValue]);
-            rendered_prod_category.forEach(function(item) {
-                var prod_cat_id = item.prod_cat_id;
-                if (!assignedProdCatIDs.includes(prod_cat_id)) {
-                    prod_cat_dropdown.append('<option value="' + prod_cat_id + '">' + prod_cat_id + '</option>') ;
-                }
-            });
-            break;
-        }
-    }
-}
-
-// onchange respective values for call_off dropdown
-function get_prod_cat_id_values(selectElement) {
-    var selected_call_off = selectElement.value;
-    var company_id = $(selectElement).closest('tr').find('.form-control').eq(0).val();
-    var prod_cat_dropdown = $(selectElement).closest('tr').find('.form-control').eq(2);
-    prod_cat_dropdown.empty(); // Clear existing options
-
-    var call_off_values = main_table_data[company_id];
-    main_table_call_off = {};
-    if (!call_off_values) {
-        prod_cat_dropdown.empty();
-        $.each(rendered_prod_category, function (i, item) {
-            prod_cat_dropdown.append('<option value="' + item.prod_cat_id + '">' + item.prod_cat_id + '</option>')
-        });
-        return;
-    }
-
-    call_off_values.forEach(item => {
-        var call_off = item.call_off ;
-        if (!main_table_call_off[call_off ]) {
-            main_table_call_off[call_off ] = new Set();
-        }
-        main_table_call_off[call_off ].add(item.prod_cat_id);
-    });
-
-    if (!main_table_call_off.hasOwnProperty(selected_call_off)){
-        $.each(rendered_prod_category, function (i, item) {
-            prod_cat_dropdown.append('<option value="' + item.prod_cat_id + '">' + item.prod_cat_id + '</option>')
-        });
-        return;
-    } else if (main_table_call_off.hasOwnProperty(selected_call_off)) {
-        var assignedProdCatIDs = Array.from(main_table_call_off[selected_call_off]);
-        rendered_prod_category.forEach(function(item) {
-            var prod_cat_id = item.prod_cat_id;
-            if (!assignedProdCatIDs.includes(prod_cat_id)) {
-                prod_cat_dropdown.append('<option value="' + prod_cat_id + '">' + prod_cat_id + '</option>')
-            }
-        });
-        return;
-    }
 }
