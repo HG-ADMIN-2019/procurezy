@@ -145,10 +145,10 @@ function get_main_table_data() {
         if (wfacc == undefined) {
             wfacc.app_username = row.find("TD").eq(4).find('select[type="text"]').val();
         }
-            if(wfacc.workflow_acc_guid == undefined) {
-                wfacc.workflow_acc_guid = ''
-            }
-            var wfacc_compare = wfacc.company_id +'-'+  wfacc.account_assign_cat +'-'+ wfacc.acc_value +'-'+ wfacc.app_username +'-'+ wfacc.sup_company_id +'-'+wfacc.sup_account_assign_cat +'-'+ wfacc.sup_acc_value +'-'+ wfacc.sup_currency_id
+        if(wfacc.workflow_acc_guid == undefined) {
+            wfacc.workflow_acc_guid = ''
+        }
+        var wfacc_compare = wfacc.company_id +'-'+  wfacc.account_assign_cat +'-'+ wfacc.acc_value +'-'+ wfacc.app_username +'-'+ wfacc.sup_company_id +'-'+wfacc.sup_account_assign_cat +'-'+ wfacc.sup_acc_value +'-'+ wfacc.sup_currency_id
                 if (checked_box){
                     del_ind = '1'
                 }
@@ -165,7 +165,7 @@ function get_main_table_data() {
                         }
                         main_table_low_value.push(wfacc_compare);
                 }
-            }
+
         })
         table_sort_filter_popup_pagination('id_popup_table')
         check_data()
