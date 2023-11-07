@@ -1211,7 +1211,6 @@ class ApplicationSettingsSave:
                                                                  'company_id': source_rule_detail['company_id'],
                                                                  'call_off': source_rule_detail['call_off'],
                                                                  'rule_type': source_rule_detail['rule_type'],
-                                                                 'sourcing_flag': source_rule_detail['sourcing_flag'],
                                                                  'client': self.client
                                                                  }):
 
@@ -1240,7 +1239,6 @@ class ApplicationSettingsSave:
                                                               'company_id': source_rule_detail['company_id'],
                                                               'call_off': source_rule_detail['call_off'],
                                                               'rule_type': source_rule_detail['rule_type'],
-                                                              'sourcing_flag': source_rule_detail['sourcing_flag'],
                                                               'client': self.client
                                                           },
 

@@ -63,17 +63,23 @@
                     </tr>
                     </thead>
                     <tbody id="id_sr_tbody">
-                    {% for srgeneric in upload_sr_generic_cat %}
+                    {% for sr_generic in upload_sr_generic_cat %}
                     <tr>
                         <td class="class_select_checkbox" hidden><input type="checkbox" class="checkbox_check" onclick="valueChanged()" required></td>
-                        <td>{{ srgeneric.prod_cat_id_from}}</td>
-                        <td>{{srgeneric.prod_cat_id_to}}</td>
-                        <td>{{srgeneric.company_id}}</td>
-                        <td>{{srgeneric.call_off}}</td>
-                        <td>{{srgeneric.rule_type}}</td>
-                        <td>{{srgeneric.sourcing_flag}}</td>
-                        <td hidden>{{srgeneric.sourcing_rule_guid}}</td>
-                        <td hidden>{{srgeneric.del_ind}}</td>
+                        <td>{{ sr_generic.prod_cat_id_from}}</td>
+                        <td>{{sr_generic.prod_cat_id_to}}</td>
+                        <td>{{sr_generic.company_id}}</td>
+                        <td>{{sr_generic.call_off}}</td>
+                        <td>{{sr_generic.rule_type}}</td>
+                        <td>
+                            {% if sr_generic.sourcing_flag %}
+                                Activate
+                                {% else %}
+                                Deactivate
+                            {% endif %}
+                        </td>
+                        <td hidden>{{sr_generic.sourcing_rule_guid}}</td>
+                        <td hidden>{{sr_generic.del_ind}}</td>
                     </tr>
                     {% endfor %}
                     </tbody>
@@ -169,7 +175,6 @@
     var rendered_rule_type = JSON.parse(document.getElementById('rule_type').textContent);
     var rendered_activate = JSON.parse(document.getElementById('dropdown_activate').textContent);
     var messages_list = {{messages_list|safe}};
-    var main_table_pc_value = [];
     var source_rule_data = '';
     var edit_basic_data = '';
     var GLOBAL_ACTION = '';
@@ -219,6 +224,7 @@
                 rendered_pc_company_data = response.upload_company_code
                 rendered_prod_category = response.prod_catogories
                 rendered_rule_type = response.rule_type
+                rendered_activate = response.dropdown_activate
                 dropdown();
                 $("#error_msg_id").css("display", "none")
                 $("#header_select").prop("hidden", false);
@@ -285,15 +291,15 @@
     }
 
     //delete the selected row in db................
-    var main_table_purchase_contrl_checked = [];
+    var main_table_sr_checked = [];
     function main_table_delete() {
         $('#success_msg_id').empty()
         GLOBAL_ACTION = 'DELETE'
-        main_table_purchase_contrl_checked = [];
+        main_table_sr_checked = [];
         $('#display_basic_table').DataTable().destroy();
         get_selected_row_data(); // Function call to get the selected row data
         $('#id_delete_confirm_popup').modal('hide');
-        data = { 'data': main_table_purchase_contrl_checked, 'table_name': 'SourcingRule', 'action': GLOBAL_ACTION }
+        data = { 'data': main_table_sr_checked, 'table_name': 'SourcingRule', 'action': GLOBAL_ACTION }
         OpenLoaderPopup();
         $.ajax({
             type: 'POST',
@@ -304,7 +310,7 @@
             success: function (Response) {
                 rendered_sr_generic_data = Response[0];
                 display_basic_db_data();
-                $('#purchase_ctrl_Modal').modal('hide');
+                $('#sr_generic_Modal').modal('hide');
                 success_response(Response); // Function call to display response data
                 CloseLoaderPopup();;
             }
@@ -323,6 +329,7 @@
                 rendered_company_data = response.upload_company_code
                 rendered_prod_cat_data = response.prod_catogories
                 rendered_rule_type_data = response.rule_type
+                rendered_activate = response.dropdown_activate
                 $("#error_msg_id").css("display", "none")
                 $('#id_popup_table').DataTable().destroy();
                 $("#id_popup_tbody").empty();
@@ -345,12 +352,12 @@
                             edit_basic_data +=
                             `<tr>
                                 <td hidden><input type="checkbox" required></td>
-                                <td><input type="text" class="input form-control" value=${row.cells[1].innerHTML} disabled></td>
-                                <td><input type="text" class="input form-control" value=${row.cells[2].innerHTML} disabled></td>
-                                <td><input type="text" class="input form-control" value=${row.cells[3].innerHTML} disabled></td>
-                                <td><input type="text" class="input form-control" value=${row.cells[4].innerHTML} disabled></td>
-                                <td><input type="text" class="input form-control" value=${row.cells[5].innerHTML} disabled></td>
-                                <td><select class="form-control">${activate_dropdown}</select></td>
+                                <td><select class="form-control" type="text" disabled><option>${row.cells[1].innerHTML}</option></select></td>
+                                <td><select class="form-control" type="text" disabled><option>${row.cells[2].innerHTML}</option></select></td>
+                                <td><select class="form-control" type="text" disabled><option>${row.cells[3].innerHTML}</option></select></td>
+                                <td><select class="form-control" type="text" disabled><option>${row.cells[4].innerHTML}</option></select></td>
+                                <td><select class="form-control" type="text" disabled><option>${row.cells[5].innerHTML}</option></select></td>
+                                <td><select type="text" class="input form-control">${activate_dropdown}</select></td>
                                 <td hidden></td>
                                 <td class="class_del_checkbox" hidden><input type="checkbox" required></td>
                             </tr>`;
