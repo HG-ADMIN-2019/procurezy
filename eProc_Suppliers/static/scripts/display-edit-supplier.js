@@ -233,7 +233,7 @@ function save_basic_form_validation(){
                     temp[i].nextElementSibling.innerHTML = err_text + " required";
                    is_valid = false;
                 }
-                else if((count >= 1) || (data == '*')){
+                else if((count >= 1) || (data.includes('*'))){
                     var err_text = temp[i].parentNode.children[0].innerHTML;
                     $(".error_message").prop("hidden", false);
                     var display_id = temp[i].nextElementSibling.id;
@@ -470,11 +470,13 @@ function values_reload(){
     localStorage.setItem("email_id", document.getElementById("email_id").value);
      localStorage.setItem("search_term1_id", document.getElementById("search_term1_id").value);
     localStorage.setItem("search_term2_id", document.getElementById("search_term2_id").value);
-    localStorage.setItem("working_days_id", document.getElementById("working_days_id").value);
+    localStorage.setItem("working_days_id", $('#working_days_id').val());
+    localStorage.setItem("working_days", $('#working_days').val());
     localStorage.setItem("duns_number_id", document.getElementById("duns_number_id").value);
     localStorage.setItem("output_medium_id", document.getElementById("output_medium_id").value);
 }
 function get_values_onerror(){
+    var wdy = localStorage.getItem("working_days");
     $('#supplier_guid').val(localStorage.getItem("supplier_guid"));
 //   $('#supplier_image_id').val(localStorage.getItem("supplier_image_id"));
    $('#supplier_id').val(localStorage.getItem("supplier_id"));
@@ -495,8 +497,15 @@ function get_values_onerror(){
    $('#search_term1_id').val(localStorage.getItem("search_term1_id"));
    $('#search_term2_id').val(localStorage.getItem("search_term2_id"));
     $('#working_days_id').val(localStorage.getItem("working_days_id"));
+    $('#working_days').val(localStorage.getItem("working_days"));
    $('#duns_number_id').val(localStorage.getItem("duns_number_id"));
    $('#output_medium_id').val(localStorage.getItem("output_medium_id"));
+   wday_array = wdy.split(",");
+   var num = wdy.match(/\d/g);
+   if(!(num == null)){
+   $("select[id=working_days]").val(num);
+   $('#working_days').selectpicker('refresh');
+   }
 //   return false;
 }
 // Function to get main table data
