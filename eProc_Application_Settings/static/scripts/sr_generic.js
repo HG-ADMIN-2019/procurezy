@@ -123,7 +123,7 @@ function get_main_table_data() {
         main_attribute.prod_cat_id_from = row.find("TD").eq(1).html();
         main_attribute.prod_cat_id_to = row.find("TD").eq(2).html();
         main_attribute.company_id = row.find("TD").eq(3).html();
-        main_attribute.call_off = row.find("TD").eq(4).html();
+        main_attribute.call_off = row.find("TD").eq(4).html().split("-")[0];
         main_attribute.rule_type = row.find("TD").eq(5).html();
          main_attribute.sourcing_flag = row.find("TD").eq(6).html();
         var data = '';
