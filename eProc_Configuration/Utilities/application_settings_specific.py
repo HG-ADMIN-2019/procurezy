@@ -249,6 +249,54 @@ class ApplicationSettingsSave:
 
         return data
 
+    def generate_currency_delete_flags(self, currency_data):
+        delete_flags = []  # List to store delete_flag for each value
+
+        for currency_detail in currency_data['data']:
+            delete_flag = True
+
+            # Tables to check for existence
+            tables_to_check = [DetermineGLAccount, SpendLimitValue, ApproverLimitValue, WorkflowACC]
+
+            for table_name in tables_to_check:
+                if django_query_instance.django_existence_check(table_name,
+                                                                {'currency_id': currency_detail['currency_id'],
+                                                                 'client': self.client,
+                                                                 'del_ind': False}):
+                    delete_flag = False
+                    break
+
+            delete_flags.append(delete_flag)
+            data = {
+                'delete_flags': delete_flags
+            }
+
+        return data
+
+    def generate_language_delete_flags(self, language_data):
+        delete_flags = []  # List to store delete_flag for each value
+
+        for language_detail in language_data['data']:
+            delete_flag = True
+
+            # Tables to check for existence
+            tables_to_check = [UnspscCategoriesCustDesc, AccountingDataDesc, Payterms_desc, EmailContents]
+
+            for table_name in tables_to_check:
+                if django_query_instance.django_existence_check(table_name,
+                                                                {'language_id': language_detail['language_id'],
+                                                                 'client': self.client,
+                                                                 'del_ind': False}):
+                    delete_flag = False
+                    break
+
+            delete_flags.append(delete_flag)
+            data = {
+                'delete_flags': delete_flags
+            }
+
+        return data
+
     def generate_prod_cat_id_delete_flags(self, prod_cat_id_data):
         delete_flags = []  # List to store delete_flag for each value
 
@@ -1211,7 +1259,6 @@ class ApplicationSettingsSave:
                                                                  'company_id': source_rule_detail['company_id'],
                                                                  'call_off': source_rule_detail['call_off'],
                                                                  'rule_type': source_rule_detail['rule_type'],
-                                                                 'sourcing_flag': source_rule_detail['sourcing_flag'],
                                                                  'client': self.client
                                                                  }):
 
@@ -1240,7 +1287,6 @@ class ApplicationSettingsSave:
                                                               'company_id': source_rule_detail['company_id'],
                                                               'call_off': source_rule_detail['call_off'],
                                                               'rule_type': source_rule_detail['rule_type'],
-                                                              'sourcing_flag': source_rule_detail['sourcing_flag'],
                                                               'client': self.client
                                                           },
 

@@ -34,7 +34,7 @@
                     <button id="id_edit_data" class="btn btn-secondary btn-sm" onclick="onclick_edit_button()">
                         <i class="fas fa-edit" id="edit" title="Edit"></i> edit
                     </button>
-                    <button id="id_delete_data" style="display:none;" class="btn btn-outline-danger btn-sm" value="DELETE" title="Delete" data-toggle="modal" data-target="#id_delete_confirm_popup">
+                    <button id="id_delete_data" style="display:none;" class="btn btn-outline-danger btn-sm" value="DELETE" title="Delete" onclick="onclick_delete_button()">
                         <i class="fa fa-trash"></i> delete
                     </button>
                     <button id="id_copy_data" class="btn btn-primary btn-sm" style="display:none;" value="COPY" type="button" title="Copy"  onclick="onclick_copy_button()">
@@ -127,6 +127,9 @@
                     <button id="id_delete_duplicate" class="btn btn-primary" style="display:none;" type="button" onclick="delete_duplicate()"><i class="fa fa-trash"></i> delete duplicates</button>
                     <button id="id_check_data" style="display:none;" class="btn btn-primary" type="button" onclick="check_data()"><i class="fas fa-check"></i> check</button>
                     <button class="btn btn-primary" title="Save" id="save_id"><i class="fas fa-save"></i> save</button>
+                    <button class="btn btn-primary btn-sm" title="Delete" id="delete_data" value="DELETE" data-toggle="modal" data-target="#id_delete_confirm_popup" onclick="hideModal()">
+                        <i class="fa fa-trash"></i> Delete
+                    </button>
                 </div>
             </div>
         </div>
@@ -285,26 +288,79 @@
             }
         }
         table_sort_filter('id_popup_table');
-    }   
-        
-    //delete the selected row in db................
-    var main_table_language_checked = [];
-    function main_table_delete() {
-        $('#success_msg_id').empty()
-        GLOBAL_ACTION = 'DELETE'
-        main_table_language_checked = [];
-        $('#display_basic_table').DataTable().destroy();
-        get_selected_row_data(); // Function call to get the selected row data
-        $('#id_delete_confirm_popup').modal('hide');
-        data = {'data':main_table_language_checked,'table_name':'Languages','action':GLOBAL_ACTION}
+    }
+
+       // Onclick delete Button
+    function onclick_delete_button() {
+        $("#error_msg_id").css("display", "none");
+        $('#id_popup_table').DataTable().destroy();
+        $("#id_popup_tbody").empty();
+        GLOBAL_ACTION = "DELETE";
+        var edit_basic_data = "";
+        var guid = '';
+        main_table_checked = [];
+        get_row_data("#display_basic_table");
+        display_button();
+        var data = {'data': main_table_checked, 'table_name': 'Language', 'action': GLOBAL_ACTION };
         OpenLoaderPopup();
         $.ajax({
             type: 'POST',
-            url: "{% url 'eProc_Basic_Settings:create_update_basic_data' %}",
+            url: "{% url 'eProc_Configuration:create_update_delete_flags' %}",
             data: JSON.stringify(data),
             contentType: "application/json; charset=utf-8",
             dataType: "json",
             success: function(Response) {
+                var docTypeArray = Response.delete_flags; // Get the delete_flags array from the response
+                var res = get_all_checkboxes(); // Function to get all the checkboxes
+                var $chkbox_all = $('td input[type="checkbox"]', res);
+                var j = 0; // Index for docTypeArray
+                for (var i = 0; i < $chkbox_all.length; i++) {
+                    if ($chkbox_all[i].checked) {
+                        var row = $chkbox_all[i].parentNode.parentNode;
+                        if (j < docTypeArray.length && docTypeArray[j] === false) {
+                            check = '<input type="checkbox" disabled>';
+                            $('#delete_data').prop('disabled', true);
+                        } else {
+                            check = '<input type="checkbox" onclick="enableDeleteButton()">';
+                            $('#delete_data').prop('disabled', true);
+                        }
+                        j++; // Move to the next index in docTypeArray
+                        edit_basic_data +=
+                            `<tr>
+                                <td>${check}</td>
+                                <td><input class="form-control" type="text" value="${row.cells[1].innerHTML}" disabled></td>
+                                <td><input class="form-control" type="text" value="${row.cells[2].innerHTML}" disabled></td>
+                                <td class="class_del_checkbox" hidden><input type="checkbox" required></td>
+                            </tr>`;
+                    }
+                }
+                CloseLoaderPopup();
+                $('#id_popup_tbody').append(edit_basic_data);
+                $("#header_select").prop( "hidden", false );
+                $("#id_del_ind_checkbox").prop("hidden", true);
+                $('#languageModal').modal('show');
+                table_sort_filter('id_popup_table');
+            },
+        });
+    }
+
+    //delete the selected row in db................
+    function main_table_delete(){
+        $('#success_msg_id').empty()
+        GLOBAL_ACTION = 'DELETE'
+        main_table_checked = [];
+        $('#display_basic_table').DataTable().destroy();
+        get_row_data("#id_popup_table");
+        $('#id_delete_confirm_popup').modal('hide');
+        data = {'data':main_table_checked,'table_name':'Languages','action':GLOBAL_ACTION}
+        OpenLoaderPopup();
+        $.ajax({
+            type: 'POST',
+            url: "{% url 'eProc_Basic_Settings:create_update_basic_data' %}",
+            data:JSON.stringify(data),
+            contentType: "application/json; charset=utf-8",
+            dataType: "json",
+            success: function (Response) {
                 rendered_language_data = Response[0];
                 display_basic_db_data();
                 success_response(Response);  // Display Response data
@@ -312,7 +368,7 @@
             }
         });
     }
-        
+
     //check function restricting special char and diaplay the data count of csv file
     function check_data() {
         $("#id_delete_duplicate").hide()

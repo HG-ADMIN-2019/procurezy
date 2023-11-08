@@ -421,6 +421,12 @@ def create_update_delete_flags(request):
     if app_data['table_name'] == 'Country':
         display_data = application_settings_save_instance.generate_country_delete_flags(app_data)
         return JsonResponse(display_data, safe=False)
+    if app_data['table_name'] == 'Currency':
+        display_data = application_settings_save_instance.generate_currency_delete_flags(app_data)
+        return JsonResponse(display_data, safe=False)
+    if app_data['table_name'] == 'Language':
+        display_data = application_settings_save_instance.generate_language_delete_flags(app_data)
+        return JsonResponse(display_data, safe=False)
 
     if app_data['table_name'] == 'UnspscCategories':
         display_data = application_settings_save_instance.generate_prod_cat_id_delete_flags(app_data)

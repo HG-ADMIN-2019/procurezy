@@ -744,7 +744,8 @@ def remove_invalid_unspsc_custdesc(convertion_list):
         # Check for existence of OrgCompanies
         if django_query_instance.django_existence_check(UnspscCategories,
                                                         {'del_ind': False,
-                                                         'prod_cat_id': conversion['prod_cat_id']}):
+                                                         'prod_cat_id': conversion['prod_cat_id'],
+                                                         'prod_cat_desc':conversion['description']}):
 
             # Check for existence of App code id
             if django_query_instance.django_existence_check(Languages,
