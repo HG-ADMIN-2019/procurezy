@@ -1,13 +1,13 @@
 {% extends 'root/base.html' %}
 {% load static %}
-{% block title %} Sourcing Role Generic (Application Settings) {% endblock %}
+{% block title %} Sourcing Rule Generic (Application Settings) {% endblock %}
 {% block maincontent %}
 {% include 'root/loader.html' %}
 
 <div class="container-fluid">
     <div class="configuration-table_wrapper">
         <div class="elements-space-between">
-            <h3>Maintain Sourcing Role Generic</h3>
+            <h3>Maintain Sourcing Rule Generic</h3>
             <div>
                 <button class="btn btn-outline-primary" title="Extract"
                         onclick="location.href='{% url 'eProc_Application_Settings:extract_source_rule_data' %}'"
@@ -394,13 +394,13 @@
     }
 
     // validating the  popup table for duplicate entries
-    function compare_table_for_duplicate_entries(validate_add_attributes, source_rule_data) {
+    function compare_table_for_duplicate_entries(validate_add_attributes, source) {
         add_attr_duplicates = false;
         var error_message = ''
         var common = [];
         var add_attr_unique_list = [];
         var no_duplicate_value = 'Y'
-        $.each(source_rule_data, function (i, item) {
+        $.each(source, function (i, item) {
             if ((item.prod_cat_id_from == null) || (item.prod_cat_id_to == null) || (item.company_id == null) ||
                (item.call_off == null) || (item.rule_type == null) || (item.sourcing_flag == null)) {
                 error_message = ui_messeges("JMSG002")// Get message detailss
@@ -440,6 +440,13 @@
             sr_generic_dic.call_off = row.find("TD").eq(4).find('select option:selected').val();
             sr_generic_dic.rule_type = row.find("TD").eq(5).find('select option:selected').val();
             sr_generic_dic.sourcing_flag = row.find("TD").eq(6).find('select option:selected').val();
+            var data = '';
+            if (sr_generic_dic.sourcing_flag == 'Activate') {
+                data = true
+            } else {
+                data = false
+            }
+            sr_generic_dic.sourcing_flag = data;
             var compare = sr_generic_dic.prod_cat_id_from + '-' + sr_generic_dic.prod_cat_id_to + '-' + sr_generic_dic.company_id + '-' +
                           sr_generic_dic.call_off + '-' + sr_generic_dic.rule_type + '-' + sr_generic_dic.sourcing_flag
             sr_generic_check.push(compare);

@@ -614,6 +614,7 @@ $('#mobile_num_id').on('keyup change blur',function (event) {
         var display_id = event.currentTarget.nextElementSibling.id;
         $('#'+display_id).prop('hidden', false);
         document.getElementById(event.currentTarget.nextElementSibling.id).style.display = "none";
+        is_valid = true;
     }
     else{
         $(".error_message").prop("hidden", false);
@@ -777,6 +778,7 @@ function save_basic_details() {
     else{
         get_values_onerror();
         CloseLoaderPopup();
+        document.getElementById('save_error_div').innerHTML = "Please check values entered";
         $('#save_error_div').show();
     }
 }
