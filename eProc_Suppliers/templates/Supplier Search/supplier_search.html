@@ -165,7 +165,7 @@
                             <th>Action</th>
                         </tr>
                         </thead>
-                        <tbody id="supplier_detail_tbody" >
+                        <tbody id="supplier_detail_tbody" style="word-break: break-all;white-space: normal;">
                         {% for results in supplier_results %}
                         <tr id="table-{{results.supplier_id}}">
                             <td><input type="checkbox" class="supplier_checkbox" onclick="valueChanged();"></td>
@@ -1003,15 +1003,15 @@ function check_data() {
             else{
                 block_input = '<input type="checkbox" id="'+supplier_detail.supplier_id+'-unblock" class="toggle-block dummy_supplier_block"><span class="control"></span>'
             }
-            supplier_detail_html += '<tr id="'+supplier_detail.supplier_id+'">'+
+            supplier_detail_html += '<tr id="table-'+supplier_detail.supplier_id+'">'+
                     '<td><input type="checkbox" class="supplier_checkbox" onclick="valueChanged();"></td>'+
                     '<td><a href="#" class="dummy_supplier_detail"  id="'+supplier_detail.supplier_id_encrypted+'" target="_blank">'+supplier_detail.supplier_id+'</a></td>'+
                     '<td>'+ supplier_detail.name1 +'</td>'+
-                    '<td> '+ supplier_detail.name2 +'</td>'+
+                    '<td>'+ supplier_detail.name2 +'</td>'+
                     '<td>'+ supplier_detail.city +'</td>'+
                     '<td>'+ supplier_detail.email +'</td>'+
                     '<td>'+ is_active +'</td>'+
-                    '<td> '+ supplier_detail.country_code_id +'</td>'+
+                    '<td>'+ supplier_detail.country_code_id +'</td>'+
                     '<td>'+ supplier_detail.registration_number +'</td>'+
                     '<td><label class="switch"><label class="toggle-control">'+ block_input +'</label></label></td>'+
                     '<td class="item-action-icon-section"><span title="Delete supplier" onclick="get_supplier_detail_to_delete(this.id)" id="'+ supplier_detail.supp_guid +'-'+ supplier_detail.supplier_id +'" data-toggle="modal"  data-target="#confirm_delete_pop_up" onclick="get_supplier_detail_to_delete(this.id)">'+
