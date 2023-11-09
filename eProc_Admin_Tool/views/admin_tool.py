@@ -562,7 +562,7 @@ def approval_report(request):
 
     if request.method == 'GET':
         # Handle the page load (GET) request
-        inp_comp_code = company_array[0]  # Set the default company
+        inp_comp_code = company_array[0]  # Set to None by default
         inp_acc_assgn_cat = [acc['account_assign_cat'] for acc in acc_value_array]  # Select all account assignment categories
     elif request.method == 'POST':
         # Handle the form submission (POST) request
@@ -570,37 +570,49 @@ def approval_report(request):
         inp_comp_code = request.POST.get('comp_code_app')
 
     workflow_schema = list(
-        WorkflowSchema.objects.filter(Q(client=client, company_id=inp_comp_code)).values_list('app_types', flat=True))
+        WorkflowSchema.objects.filter(Q(client=client)).values_list('app_types', flat=True))
     if workflow_schema:
+        unique_entries = set()  # Create a set to store unique entries
         for schema_step_type in workflow_schema:
-            workflow_acc_list = WorkflowACC.objects.filter(
-                Q(account_assign_cat__in=inp_acc_assgn_cat, company_id=inp_comp_code, client=client))
+            if inp_comp_code == '*':
+                # Query all companies and all account assignment categories when inp_comp_code is "*"
+                workflow_acc_list = WorkflowACC.objects.filter(
+                    Q(account_assign_cat__in=inp_acc_assgn_cat, client=client))
+            else:
+                # Query for a specific company and specified account assignment categories when inp_comp_code is not "*"
+                workflow_acc_list = WorkflowACC.objects.filter(
+                    Q(account_assign_cat__in=inp_acc_assgn_cat, company_id=inp_comp_code, client=client))
 
             if workflow_acc_list:
                 for w_acc_list in workflow_acc_list:
                     app_code_id = ApproverLimit.objects.filter(
-                        Q(company_id=inp_comp_code, approver_username=w_acc_list.app_username, del_ind=False,
-                          client=client)).values_list('app_code_id', flat=True)
+                        Q(approver_username=w_acc_list.app_username, del_ind=False, client=client)).values_list('app_code_id', flat=True)
 
                     if app_code_id:
                         app_val_list = ApproverLimitValue.objects.filter(
-                            Q(company_id=inp_comp_code, app_code_id__in=app_code_id, del_ind=False,
-                              app_types=schema_step_type, client=client))
-                        final_array = []
+                            Q(app_code_id__in=app_code_id, del_ind=False, app_types=schema_step_type, client=client))
+
                         for app_val in app_val_list:
-                            final_array.append(w_acc_list.company_id)
-                            final_array.append(w_acc_list.account_assign_cat_id)
-                            final_array.append(w_acc_list.acc_value)
-                            final_array.append(w_acc_list.app_username)
-                            final_array.append(w_acc_list.currency_id)
-                            final_array.append(w_acc_list.sup_company_id)
-                            final_array.append(w_acc_list.sup_acc_value)
-                            final_array.append(app_val.upper_limit_value)
-                            final_array.append(app_val.currency_id)
-                            final_array.append(app_val.app_code_id)
-                            final_array.append(w_acc_list.sup_account_assign_cat_id)
-                            final_array.append(app_val.app_code_id)
-                            final_list.append(final_array)
+                            # Create a unique identifier for the entry
+                            entry_identifier = (
+                                w_acc_list.company_id,
+                                w_acc_list.account_assign_cat_id,
+                                w_acc_list.acc_value,
+                                w_acc_list.app_username,
+                                w_acc_list.currency_id,
+                                w_acc_list.sup_company_id,
+                                w_acc_list.sup_acc_value,
+                                app_val.upper_limit_value,
+                                app_val.currency_id,
+                                app_val.app_code_id,
+                                w_acc_list.sup_account_assign_cat_id,
+                                app_val.app_code_id,
+                            )
+
+                            if entry_identifier not in unique_entries:
+                                # Add the entry to final_list and mark it as visited in the set
+                                final_list.append(entry_identifier)
+                                unique_entries.add(entry_identifier)
 
     t_count = len(final_list)
     # Context to display in Doc_report.html
@@ -619,6 +631,8 @@ def approval_report(request):
     }
 
     return render(request, 'Reports/approval_report.html', context)
+
+
 
 
 
