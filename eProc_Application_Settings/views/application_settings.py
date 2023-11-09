@@ -232,6 +232,37 @@ def display_sourcing_rule_generic(request):
                    'inc_nav': True, })
 
 
+def display_sourcing_mapping_specific(request):
+    update_user_info(request)
+    client = global_variables.GLOBAL_CLIENT
+
+    upload_sr_specific = get_configuration_data(SourcingMapping, {'del_ind': False},
+                                                ['prod_cat_id', 'product_id', 'company_id', 'rule_type',
+                                                'sourcing_mapping_guid', 'del_ind'])
+
+    upload_company_code = list(OrgCompanies.objects.filter(client=client, del_ind=False).values('company_id'))
+
+    prod_catogories = list(
+        UnspscCategoriesCust.objects.filter(del_ind=False).values('prod_cat_id'))
+
+    rule_type = list(
+        FieldTypeDescription.objects.filter(field_name='source_rule', del_ind=False,
+                                            client=global_variables.GLOBAL_CLIENT).values(
+            'field_type_id',
+            'field_type_desc'
+        ))
+
+    messages_list = get_ui_messages(CONST_COFIG_UI_MESSAGE_LIST)
+
+    return render(request, 'Application_Settings/sr_specific.html',
+                  {'upload_sr_specific': upload_sr_specific,
+                   'prod_catogories': prod_catogories,
+                   'dropdown_company_code_id': upload_company_code,
+                   'rule_type': rule_type,
+                   'messages_list': messages_list,
+                   'inc_nav': True, })
+
+
 def display_calendar(request):
     update_user_info(request)
     client = global_variables.GLOBAL_CLIENT
