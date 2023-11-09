@@ -2,16 +2,25 @@
     nav_bar_purchaser();
 
     $(document).ready(function() {
+        if(form_method == ''){
+            document.getElementById("description").value = '';
+            document.getElementById("doc_number").value = '';
+            document.getElementById("changed_by").value = '';
+             document.getElementById("created_at").value = 'Today';
+        }
+        else{
+            $('#description').val(localStorage.getItem("description"));
+           $('#doc_number').val(localStorage.getItem("doc_number"));
+           $('#changed_by').val(localStorage.getItem("changed_by"));
+           $('#created_at').val(localStorage.getItem("created_at"));
+        }
         $('.table_sort_filter_pagination').DataTable( {
             "lengthChange": false,
             "searching":   false,
             "ordering": false,
             "info":     false
         });
-        $('#description').val(localStorage.getItem("description"));
-       $('#doc_number').val(localStorage.getItem("doc_number"));
-       $('#changed_by').val(localStorage.getItem("changed_by"));
-       $('#created_at').val(localStorage.getItem("created_at"));
+
     });
 
     $('.multiple_select').selectpicker();

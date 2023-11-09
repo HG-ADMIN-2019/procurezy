@@ -33,20 +33,23 @@ def sc_completion_doc_search(request):
         search_criteria = document_search_instance.define_search_criteria(search_fields, 'sc_completion')
         sc_header_details = get_header_based_on_calloff(search_criteria)
         # sc_header_details = get_header_based_on_calloff(search_fields)
+        print(sc_header_details)
 
         for header_guid in sc_header_details:
             created_at_date = header_guid['created_at']
             header_guid['created_at'] = created_at_date.strftime("%d %B %Y ")
             header_guid['first_name'] = requester_field_info(header_guid['created_by'], 'first_name')
-
             encrypted_header_guid.append(encrypt(header_guid['guid']))
         doc_type = 'SC'
         sc_completion_flag = True
+        count = len(sc_header_details)
         sc_header_details = zip(sc_header_details, encrypted_header_guid)
 
         context['sc_header_details'] = sc_header_details
         context['doc_type'] = doc_type
         context['sc_completion_flag'] = sc_completion_flag
+        context['count'] = count
+        return render(request, 'Doc Search and Display/sc_completion.html', context)
 
     if request.method == 'POST':
         search_fields = {}
@@ -79,5 +82,6 @@ def sc_completion_doc_search(request):
         context['doc_type'] = doc_type
         context['sc_completion_flag'] = sc_completion_flag
         context['count'] = count
+        context['form_method'] = 'POST'
 
-    return render(request, 'Doc Search and Display/sc_completion.html', context)
+        return render(request, 'Doc Search and Display/sc_completion.html', context)

@@ -313,8 +313,10 @@ def sup_details(req, supplier_id):
     if supplier_id != 'None':
         supplier_action = 'UPDATE'
         supplier_id = decrypt(supplier_id)
+        form_method = ''
     else:
         supplier_action = 'CREATE'
+        form_method = 'GET'
     update_user_info(req)
     supplier_info = django_query_instance.django_get_query(SupplierMaster, {'supplier_id': supplier_id,
                                                                             'client': global_variables.GLOBAL_CLIENT})
@@ -337,6 +339,7 @@ def sup_details(req, supplier_id):
         'inc_nav': True,
         'inc_footer': True,
         'supplier_action': supplier_action,
+        'form_method': form_method,
         'supplier_info': supplier_info,
         'img_url': img_url,
         'supplier_org_info': supplier_org_info,

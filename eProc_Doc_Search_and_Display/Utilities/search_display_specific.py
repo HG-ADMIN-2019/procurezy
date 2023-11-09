@@ -452,7 +452,7 @@ class DocumentSearch:
                 search_criteria['description__in'] = scname_list
 
         if timeframe is not None and timeframe != '':
-            if timeframe == "Today":
+            if timeframe == 'Today':
                 minimum_search_date = datetime.datetime.combine(datetime.date.today(), datetime.time.min)
                 maximum_search_date = datetime.datetime.combine(datetime.date.today(), datetime.time.max)
                 if document_type == CONST_DOC_TYPE_SC:
