@@ -63,9 +63,24 @@
                 </form>
             </div>
         </div>
+{% if announcement_result1 %}
+    <div class="search_result_count_card card">
+        <div class="card-body">
+            <h6 class="card-title">Total number of results found: {{ announcement_result1|length }}</h6>
+        </div>
+    </div>
+{% elif announcement_result1|length == 0 %}
+    <div class="search_result_count_card card">
+        <div class="card-body">
+            <h6 class="card-title">No Results Found</h6>
+        </div>
+    </div>
+{% endif %}
+
+
         <div style="margin-top:25px" id="error_msg_div" class="alert alert-success" hidden><span id="success_msg_id"></span></div>
         {% if announcement_result1 %}
-        <div class="card mt-5">
+        <div class="card mt-3">
             <div>
                 <button class="btn btn-primary  btn-sm mt-2 ml-2" title="Delete" id="id_delete_annsmt" value="annsmt_delete" data-toggle="modal" data-target="#id_delete_confirm_popup" style="display:none;">
                     <i class="fa fa-trash"></i> delete
@@ -162,12 +177,12 @@
                                     <input type="text" id="announcement_id" value="{{announcement_details.announcement_id}}" hidden>
                                     <div class="form-group col-md">
                                         <label> Title</label><span class="hg_required"></span><br>
-                                        <input type="text" class="form-control hg_edit_display_mode check_special_char" id="modal_announcement_subject" value="{{announcement_details.announcement_subject}}" required>
+                                        <input type="text" class="form-control hg_edit_display_mode check_special_char" id="modal_announcement_subject" value="{{announcement_details.announcement_subject}}" required maxlength="33">
                                         <small class="form-text text-muted">Valid characters are A-Z a-z 0-9</small>
                                     </div>
                                     <div class="form-group col-md">
                                         <label> Description</label><span class="hg_required"></span><br>
-                                        <input type="text" name="announcement_desc" id="announcement_desc" class="form-control hg_edit_display_mode check_special_char" value="{{announcement_details.announcement_description}}" required>
+                                        <input type="text" name="announcement_desc" id="announcement_desc" class="form-control hg_edit_display_mode check_special_char" value="{{announcement_details.announcement_description}}" required maxlength="33">
                                         <small class="form-text text-muted">Valid characters are A-Z a-z 0-9</small>
                                     </div>
                                 </div>
@@ -304,12 +319,20 @@
         table_sort_filter_basic("qwsqwsqws")
     });
 
-    // Function to store form data in localStorage
-    function saveDataToLocalStorage() {
+function saveDataToLocalStorage() {
+    // Check if the search button was clicked
+    if (event && event.type === 'submit') {
         localStorage.setItem("announcement_subject", document.getElementById("input_announcement_subject").value);
         localStorage.setItem("announcement_status", document.getElementById("select_announcement_status").value);
         localStorage.setItem("priority", document.getElementById("select_priority").value);
+    } else {
+        // Clear localStorage values if the search button was not clicked
+        localStorage.removeItem("announcement_subject");
+        localStorage.removeItem("announcement_status");
+        localStorage.removeItem("priority");
     }
+}
+
 
     //Function to set input fields from localStorage
     function setFieldsFromLocalStorage() {
