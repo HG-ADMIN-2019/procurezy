@@ -74,4 +74,6 @@ urlpatterns = [
     path('save_product_details_images', views.save_product_details_images, name='save_product_details_images'),
     path('display_purchase_control', views.display_purchase_control, name='display_purchase_control'),
     path('display_sourcing_rule_generic', views.display_sourcing_rule_generic, name='display_sourcing_rule_generic'),
+    path('display_sourcing_mapping_specific', views.display_sourcing_mapping_specific,
+         name='display_sourcing_mapping_specific'),
 ]

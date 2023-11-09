@@ -596,6 +596,6 @@ def get_dropdown_data(request):
     if master_data['table_name'] == 'PurchaseControl':
         data = purchase_control_dropdown()
         return JsonResponse(data, safe=False)
-    if master_data['table_name'] == 'SourcingRule':
+    if master_data['table_name'] == 'SourcingRule' or master_data['table_name'] == 'SourcingMapping':
         data = sourcing_rule_dropdown()
         return JsonResponse(data, safe=False)

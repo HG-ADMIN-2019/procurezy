@@ -492,6 +492,7 @@ $(document).ready(function(e){
     $("body").css("padding-top", "4rem");
     NavigateTabs(); // Custom function to switch tabs
     GLOBAL_ACTION = '{{supplier_action}}';
+    form_method = '{{form_method|safe}}';
     if(GLOBAL_ACTION == 'CREATE'){
       $("#business_doc_tab").hide();
       $("#sbd_save_cancel_button").prop("hidden", false);
@@ -503,7 +504,11 @@ $(document).ready(function(e){
      MultipleSelect();
        var flag = localStorage.getItem("error_flag");
          if((flag == "1")){
+            document.getElementById('save_error_div').innerHTML = localStorage.getItem("error_msg");
+            $('#save_error_div').show();
             get_values_onerror();
+            setTimeout(function() {
+            $('#save_error_div').hide(); }, 20000);
             return false;
          }
          else {
@@ -511,7 +516,7 @@ $(document).ready(function(e){
          }
     }
     else{
-        $("#org_info_tab").prop("hidden", false);;
+        $("#org_info_tab").prop("hidden", false);
          document.getElementById('sbd_edit_button').style.display = 'block';
          $("#sbd_edit_button").prop("hidden", false);
         $("#sbd_save_cancel_button").prop("hidden", true);
@@ -535,6 +540,10 @@ $(document).ready(function(e){
         }
         values_reload();
         MultipleSelect();
+    }
+    if(form_method == 'GET'){
+        $("#supplier_form_field")[0].reset();
+<!--        localStorage.clear();-->
     }
 
     MultipleSelect();
@@ -767,11 +776,8 @@ function save_basic_details() {
             CloseLoaderPopup(); }, 1000);
             document.getElementById('save_error_div').innerHTML = message;
             $('#save_error_div').show();
-<!--            $('#save_error_message').text(message);-->
-<!--            document.getElementById("save_error_message").style.color = "Red";-->
-<!--            $("#save_error_div").css("display", "block");-->
-<!--            $('#supplier_basic_update_success').hide();-->
             localStorage.setItem("error_flag", 1);
+            localStorage.setItem("error_msg", message);
             err_state = "From_Error";
         }
      }

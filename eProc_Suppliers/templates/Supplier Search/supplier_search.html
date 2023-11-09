@@ -6,7 +6,6 @@
 
 <div class="container-fluid">
     <div class="mep-form_wrapper">
-
         <div class="d-flex justify-content-between">
             <h3>Supplier Management</h3>
             <div>
@@ -23,12 +22,9 @@
                     <i class="fas fa-user-plus"></i>
                     Create Supplier
                 </button>
-
             </div>
         </div>
-
         <hr>
-
         <div class="card card-shadow-1">
             <div class="card-body">
                 <div class="elements-space-between">
@@ -117,12 +113,10 @@
                     <br>
                     <div class="elements-space-between">
                         <input type="reset" value="Clear filters" class="ip-form-clear-filters">
-
                     </div>
                 </form>
             </div>
         </div>
-
         {% if supplier_results.count > 0 %}
         <div class="search_result_count_card card">
             <div class="card-body">
@@ -137,11 +131,7 @@
             </div>
         </div>
         {% endif %}
-
         <div id="error_msg_div" class="alert alert-success" hidden><span id="success_msg_id"></span></div>
-
-
-
         <div class="card mt-5">
             <div>
                 <button class="btn btn-primary btn-sm mt-2 ml-2" title="Delete" id="id_delete_supplier" value="product_delete" data-toggle="modal" data-target="#id_delete_confirm_popup" style="display:none;">
@@ -165,7 +155,7 @@
                             <th>Action</th>
                         </tr>
                         </thead>
-                        <tbody id="supplier_detail_tbody" >
+                        <tbody id="supplier_detail_tbody" style="word-break: break-all;white-space: normal;">
                         {% for results in supplier_results %}
                         <tr id="table-{{results.supplier_id}}">
                             <td><input type="checkbox" class="supplier_checkbox" onclick="valueChanged();"></td>
@@ -193,7 +183,6 @@
                                         <input type="checkbox" id="{{results.supplier_id}}-unblock" class="toggle-block">
                                         <span class="control"></span>
                                         {% endif %}
-<!--                                        <div class="toggle-controller default-success"></div>-->
                                     </label>
                                 </label>
                             </td>
@@ -210,10 +199,8 @@
                 </div>
             </div>
         </div>
-
     </div>
 </div>
-
 <!--modal popup for user delete-->
 <div class="modal fade" id="confirm_delete_pop_up" tabindex="-1" role="dialog"
      aria-labelledby="exampleModalCenterTitle" aria-hidden="true">
@@ -236,7 +223,6 @@
     </div>
 </div>
 
-
 <!--change confirmation popup-->
     <div class="modal fade" id="id_block_confirm_popup" data-backdrop="static" data-keyboard="false">
         <div class="modal-dialog modal-dialog-centered">
@@ -251,8 +237,6 @@
                     <p>Are you sure you want to Change?.</p>
                 </div>
                 <div class="modal-footer">
-<!--                    <button type="button" class="btn btn-outline-primary" data-dismiss="modal" onclick="reload_previous_state()"><i class="fas fa-times"></i> cancel</button>-->
-<!--                    <button type="button" onclick="lock_active_change()" class="btn btn-primary"><i class="fas fa-check"></i> yes </button>-->
                     <button type="button" class="btn btn-outline-primary" data-dismiss="modal" onclick="toggle()"><i class="fas fa-times"></i> cancel</button>
                     <button type="button" onclick="block_unblock_supplier();" class="btn btn-primary"><i class="fas fa-check"></i> yes </button>
                 </div>
@@ -317,10 +301,8 @@
                     <div id="error_msg_id" class="alert alert-danger display-none" role="alert"><span id="error_message"></span></div>
                     <div id="id_warning_msg_id" class="alert alert-warning display-none" role="alert"></div>
                     <div id="id_info_msg_id" class="alert alert-primary display-none" role="alert"></div>
-
                     <table class="class_popup_table table table-bordered mt-2" id="id_userpopup_table" >
                         <thead>
-
                         <tr>
                             <th id="header_select">Select</th>
                             <th> Supplier Number  </th>
@@ -345,14 +327,11 @@
                             <th> Output Medium</th>
                             <th hidden> Del Indicator</th>
                         </tr>
-
                          </thead>
-
                         <tbody id="id_userpopup_tbody">
 
                         </tbody>
                     </table>
-
                 </div>
                 <!-- Modal footer -->
                 <div class="modal-footer">
@@ -405,15 +384,12 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-primary" data-dismiss="modal"><i class="fas fa-times"></i> cancel</button>
-                    <button type="button" class="btn btn-primary"  onclick="onclick_display_csv_data()" > Ok</button>
+                    <button type="button" class="btn btn-primary"  onclick="onclick_display_csv_data()"> Ok</button>
                 </div>
             </div>
         </div>
     </div>
     <!--   end of valid confirm popup-->
-
-
-
 <div>
         {% if messages %}
         {% for message in messages %}
@@ -428,7 +404,7 @@
         {% endif %}
         {% endfor %}
         {% endif %}
-    </div>
+</div>
 
 {{ supp_data_onload|json_script:"supp_data_onload" }}
 <script src="{% static 'scripts/supplier-search.js' %}"> </script>
@@ -527,7 +503,6 @@ var form_method = '{{form_method|safe}}';
     });
 
 //onclick of data Upload copy data to modal pop-up
-
 function onclick_display_csv_data() {
         $("#valid_upload").modal('hide');
         $("#id_delete_duplicate").hide()
@@ -611,8 +586,6 @@ function onclick_display_csv_data() {
                                  }
                                 language_id_list = language_opt + language_list
                             });
-
-
                             var country_opt = ''
                             var country_list = '';
                             var country_id_list = '';
@@ -636,8 +609,6 @@ function onclick_display_csv_data() {
                                  }
                                 decimal_opt_id_list = decimal_opt + decimal_opt_list
                             });
-
-
                              var dropdown_opt = ''
                              var dropdown_list_list = '';
                              var dropdown_list_id_list = '';
@@ -674,28 +645,9 @@ function onclick_display_csv_data() {
                         '<td>' + del_ind + '</td></tr></tr>';
                         });
                         $('#id_userpopup_tbody').append(edit_basic_data);
-<!--                         var i =0;-->
-<!--                            $("#id_userpopup_table TBODY TR").each(function() {-->
-<!--                                var row = $(this);-->
-<!--                                var date_format_id_list = dropdown_values[i][0]-->
-<!--                                var decimal_opt_id_list = dropdown_values[i][1]-->
-<!--                                var dropdown_list_id_list = dropdown_values[i][2]-->
-<!--                                var currency_id_list = dropdown_values[i][3]-->
-<!--                                var language_id_list = dropdown_values[i][4]-->
-<!--                                var time_zone_id_list = dropdown_values[i][5]-->
-
-<!--                                $(row.find("TD").eq(6).find("select option[value="+date_format_id_list+"]")).attr('selected','selected');-->
-<!--                                $(row.find("TD").eq(8).find("select option[value="+decimal_opt_id_list+"]")).attr('selected','selected');-->
-<!--                                $(row.find("TD").eq(9).find("select option[value="+dropdown_list_id_list+"]")).attr('selected','selected');-->
-<!--                                $(row.find("TD").eq(10).find("select option[value="+currency_id_list+"]")).attr('selected','selected');-->
-<!--                                $(row.find("TD").eq(11).find("select option[value="+language_id_list+"]")).attr('selected','selected');-->
-<!--                                $(row.find("TD").eq(12).find("select option[value="+time_zone_id_list+"]")).attr('selected','selected');-->
-<!--                                i++;-->
-<!--                            });-->
-                        $( "#id_del_ind_checkbox").prop( "hidden", false );
-                        $( "#header_select").prop( "hidden", false );
-
-                        $( ".class_del_checkbox").prop( "hidden", false );
+                        $("#id_del_ind_checkbox").prop( "hidden", false );
+                        $("#header_select").prop( "hidden", false );
+                        $(".class_del_checkbox").prop( "hidden", false );
                         $('#myModal').modal('show');
                         $('#id_data_upload').modal('hide');
                         document.getElementById("id_del_add_button").style.display = "block";
@@ -840,13 +792,11 @@ function check_data() {
         });
         $("#id_check_success_messages").prop("hidden",false)
     }
-
     // onclick of valid popup
     function valid_popup(){
       $('#id_data_upload').modal('hide');
       $("#valid_upload").modal('show');
     }
-
     //onclick of upload button display id_data_upload popup and set GLOBAL_ACTION button value
     function onclick_upload_button() {
         GLOBAL_ACTION = "supplier_upload"
@@ -904,7 +854,6 @@ function check_data() {
             }
         });
     }
-
     var data = {}
     var block_id = '';
     $('.toggle-block').change(function() {
@@ -983,7 +932,6 @@ function check_data() {
             $("#id_delete_supplier").hide();
         }
     }
-
     function display_supplier_data(supplier_data){
         var supplier_detail_html = '';
         var is_active = '';
@@ -1003,15 +951,15 @@ function check_data() {
             else{
                 block_input = '<input type="checkbox" id="'+supplier_detail.supplier_id+'-unblock" class="toggle-block dummy_supplier_block"><span class="control"></span>'
             }
-            supplier_detail_html += '<tr id="'+supplier_detail.supplier_id+'">'+
+            supplier_detail_html += '<tr id="table-'+supplier_detail.supplier_id+'">'+
                     '<td><input type="checkbox" class="supplier_checkbox" onclick="valueChanged();"></td>'+
                     '<td><a href="#" class="dummy_supplier_detail"  id="'+supplier_detail.supplier_id_encrypted+'" target="_blank">'+supplier_detail.supplier_id+'</a></td>'+
                     '<td>'+ supplier_detail.name1 +'</td>'+
-                    '<td> '+ supplier_detail.name2 +'</td>'+
+                    '<td>'+ supplier_detail.name2 +'</td>'+
                     '<td>'+ supplier_detail.city +'</td>'+
                     '<td>'+ supplier_detail.email +'</td>'+
                     '<td>'+ is_active +'</td>'+
-                    '<td> '+ supplier_detail.country_code_id +'</td>'+
+                    '<td>'+ supplier_detail.country_code_id +'</td>'+
                     '<td>'+ supplier_detail.registration_number +'</td>'+
                     '<td><label class="switch"><label class="toggle-control">'+ block_input +'</label></label></td>'+
                     '<td class="item-action-icon-section"><span title="Delete supplier" onclick="get_supplier_detail_to_delete(this.id)" id="'+ supplier_detail.supp_guid +'-'+ supplier_detail.supplier_id +'" data-toggle="modal"  data-target="#confirm_delete_pop_up" onclick="get_supplier_detail_to_delete(this.id)">'+
@@ -1021,7 +969,6 @@ function check_data() {
         $("#supplier_detail_tbody").append(supplier_detail_html);
         table_sort_filter('sup_tab');
     }
-
     $(document).on('click', '.dummy_supplier_detail', function () {
         var url = "{% url 'eProc_Admin_Tool:sup_details_page' 123 %}";
         var id = $(this).attr('id');
@@ -1034,7 +981,6 @@ function check_data() {
         data.supplier_id = id.split('-')[0];
         $('#id_block_confirm_popup').modal('show');
     });
-
 
     <!-- ----------------------------------------------------   -->
 var table = $('#sup_tab').DataTable();
@@ -1108,7 +1054,6 @@ $('#sup_tab tbody').on('click', 'input[class="supplier_checkbox"]', function(e){
           }
    }
 }
-
 
 </script>
 
