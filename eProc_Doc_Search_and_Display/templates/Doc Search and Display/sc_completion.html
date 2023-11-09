@@ -14,22 +14,25 @@
         <!--Search form goes here-->
         <div class="card card-shadow-1  mb-3">
             <div class="card-body">
-                <form method="POST" action="{% url 'eProc_Doc_Search_and_Display:sc_completion_doc_search' %}">
+                <form method="POST" id="sc_completion_frm" action="{% url 'eProc_Doc_Search_and_Display:sc_completion_doc_search' %}">
                     {% csrf_token %}
     
                     <div class="row">
                         <div class="col-md">
                             <label>Shopping Cart Name: </label>
-                            <input type="text" class="form-control check_for_search" id="description" name="description">
+                            <input type="text" class="form-control check_alphastar_no_space validate_fields" id="description" name="description">
+                             <span id="err_scname" class="error_message" hidden></span>
                         </div>
                         <div class="col-md">
                             <label>Shopping Cart Number:</label>
-                            <input type="text" class="form-control check_number_search" name="doc_number" id="doc_number">
+                            <input type="text" class="form-control check_number_search validate_fields" name="doc_number" id="doc_number">
+                             <span id="err_doc_num" class="error_message" hidden></span>
                         </div>
     
                         <div class="col-md">
                             <label>Created By:</label>
-                            <input type="text" class="form-control check_for_search" id="changed_by" name="changed_by">
+                            <input type="text" class="form-control check_for_search validate_fields" id="changed_by" name="changed_by">
+                             <span id="err_changed_by" class="error_message" hidden></span>
                         </div>
     
                         <div class="col-md">
@@ -47,7 +50,8 @@
 
                     <div class="elements-space-between">
                         <div>
-                            <button class="btn btn-outline-primary" type="reset" value="Reset"><i class="fas fa-sync-alt"></i> &nbsp;reset</button>
+                            <button class="btn btn-outline-primary" type="reset" value="Reset"><i class="fas fa-sync-alt"></i> &nbsp;Clear Filter</button>
+<!--                            <input type="reset" value="Clear filters" class="ip-form-clear-filters">-->
                             <button class="btn btn-primary" type="submit" title="Please click to get the search details!" onclick="set_values()" id="search_button_id"><i class="fas fa-search"></i> &nbsp;search </button>
                         </div>
                         <div>
@@ -85,7 +89,6 @@
             </thead>
             <tbody>
                 {% for hdr,encrypted_guid in sc_header_details %}
-                {{hdr.first_name}}
                 <tr>
                     <td class="pb-2">
                         <div class="card sc_completion_card_list">
@@ -112,5 +115,60 @@
 </div>
 
 <script src="{% static 'scripts/sc_completion_search.js' %}"></script>
+<script>
+    var form_method = '{{form_method|safe}}';
+    $("body").on("keypress keyup blur change", ".validate_fields", function (event) {
+         var temp = document.getElementsByClassName('validate_fields');
+        var get_value = event.currentTarget.value;
+        var count = get_value.split('**').length - 1;
+        for (var i = 0; i<temp.length; i++) {
+            var count = get_value.split('**').length - 1;
+            if((count>=1)|| (get_value == '*'))
+            {
+            var display_id = event.currentTarget.nextElementSibling.id;
+            $('#'+display_id).prop('hidden', false);
+            document.getElementById(display_id).style.display = "block";
+            event.currentTarget.nextElementSibling.innerHTML = "Please enter valid value";
+            }
+            else{
+                  var display_id = event.currentTarget.nextElementSibling.id;
+                $('#'+display_id).prop('hidden', true);
+                document.getElementById(event.currentTarget.nextElementSibling.id).style.display = "none";
+            }
+        }
+    });
+    $('form').on('submit',function (e) {
+        OpenLoaderPopup();
+        var valid = true;
+        var temp = document.getElementsByClassName('validate_fields');
+        for (var i = 0; i<temp.length; i++) {
+            if(!(temp[i].value == '') || !(temp[i].value == null)){
+                data = temp[i].value;
+                var count = data.split('**').length - 1;
+                if((count >= 1) || (data == '*')){
+                    var display_id = temp[i].nextElementSibling.id;
+                    $('#'+display_id).prop('hidden', false);
+                    document.getElementById(temp[i].nextElementSibling.id).innerHTML = "Please enter valid value";
+                    valid = false;
+                }
+            }
+        }
+        if(!valid){
+            localStorage.setItem("error_flag", 1);
+            e.preventDefault();
+            setTimeout(function() {
+                       CloseLoaderPopup();
+         }, 500);
+        }
+    });
+    $('form').on('reset',function (e) {
+        e.preventDefault();
+        localStorage.clear();
+        $(".error_message").prop("hidden", true);
+        $('#sc_completion_frm')[0].submit();
+        document.getElementById("created_at").value = 'Today';
+});
+
+</script>
 
 {% endblock %}
