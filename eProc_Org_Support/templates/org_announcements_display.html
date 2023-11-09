@@ -182,7 +182,7 @@
                                     </div>
                                     <div class="form-group col-md">
                                         <label> Description</label><span class="hg_required"></span><br>
-                                        <input type="text" name="announcement_desc" id="announcement_desc" class="form-control hg_edit_display_mode check_special_char" value="{{announcement_details.announcement_description}}" required maxlength="33">
+                                        <input type="text" name="announcement_desc" id="announcement_desc" class="form-control hg_edit_display_mode check_special_char" value="{{announcement_details.announcement_description}}" required maxlength="141">
                                         <small class="form-text text-muted">Valid characters are A-Z a-z 0-9</small>
                                     </div>
                                 </div>
@@ -294,11 +294,11 @@
                     <p>Are you sure you want to delete?.</p>
                 </div>
                 <div class="modal-footer">
+                                        <button type="button" class="btn btn-primary" data-dismiss="modal">
+                        <i class="fas fa-times"></i> Cancel
+                    </button>
                     <button type="button" onclick="main_table_delete()" class="btn btn-primary">
                         <i class="fas fa-check"></i> yes
-                    </button>
-                    <button type="button" class="btn btn-primary" data-dismiss="modal">
-                        <i class="fas fa-times"></i> Cancel
                     </button>
                 </div>
             </div>
