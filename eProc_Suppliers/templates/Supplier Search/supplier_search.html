@@ -31,7 +31,7 @@
                     <div></div>
                      <div> <span class="badge help-text-badge help-text-star-search"></span></div>
                 </div>
-                <form method="POST">
+                <form method="POST" id="supplier_search">
                     {% csrf_token %}
                     <div class="row">
                         <div class="col-md">
@@ -117,20 +117,15 @@
                 </form>
             </div>
         </div>
-        {% if supplier_results.count > 0 %}
-        <div class="search_result_count_card card">
-            <div class="card-body">
-                <h6 class="card-title">Total number of results found
-                    :{{supplier_results.count}}</h6>
-            </div>
-        </div>
-        {% elif supplier_results.count == 0  %}
+
+        {% if count == 0  %}
         <div class="search_result_count_card card" id="result_id">
             <div class="card-body">
                 <h6 class="card-title">No Results Found</h6>
             </div>
         </div>
         {% endif %}
+        {% if  supplier_results %}
         <div id="error_msg_div" class="alert alert-success" hidden><span id="success_msg_id"></span></div>
         <div class="card mt-5">
             <div>
@@ -199,6 +194,7 @@
                 </div>
             </div>
         </div>
+        {% endif %}
     </div>
 </div>
 <!--modal popup for user delete-->
@@ -430,29 +426,22 @@ var form_method = '{{form_method|safe}}';
     }
 
     $('form').on('reset',function (e) {
-    localStorage.removeItem("fname");
-    localStorage.removeItem("supp_id");
-    localStorage.removeItem("supp_email");
-    localStorage.removeItem("supp_type");
-    localStorage.removeItem("city_code");
-    localStorage.removeItem("country_id");
-    localStorage.removeItem("supp_porg");
-    localStorage.removeItem("supp_purchase_block");
+        e.preventDefault();
+        localStorage.clear();
+        $('#name1').val("");
+        $('#name2').val("");
+        $('#supplier_id').val("");
+        $('#email').val("");
+        $('#supplier_type').val("");
+        $('#city').val("");
+        $('#country_code').val("");
+        $('#porg').val("");
+        $('#purchase_block').prop("checked", false);
+     e.preventDefault();
+    localStorage.clear();
     $(".error_message").prop("hidden", true);
     $("#result_id").prop("hidden", true);
-        OpenLoaderPopup();
-        var data = {'table_name':'supplier'}
-        $.ajax({
-            type: 'POST',
-            url: "{% url 'eProc_Admin_Tool:clear_filter' %}",
-            data: JSON.stringify(data),
-            success: function(response) {
-                console.log(response);
-                supplier_results = response.supplier_results;
-                display_supplier_data(response.supplier_results);
-                CloseLoaderPopup();
-            }
-        });
+    $('#supplier_search')[0].submit();
 });
 
     $('form').on('submit',function (e) {
