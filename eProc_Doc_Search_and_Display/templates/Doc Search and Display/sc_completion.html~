@@ -167,7 +167,6 @@
         $(".error_message").prop("hidden", true);
         $('#sc_completion_frm')[0].submit();
         document.getElementById("created_at").value = 'Today';
-        $("select[id=created_at]").val('Today');
 });
 
 </script>

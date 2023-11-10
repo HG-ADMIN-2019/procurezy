@@ -226,6 +226,8 @@ def supplier_search(request):
     if request.method == 'GET':
         supplier_id_encrypted = []
         supplier_results = get_supplier_data()
+        count = len(supplier_results)
+        context['count'] = count
         context['form_method'] = 'GET'
         context['supplier_results'] = supplier_results
 
@@ -254,6 +256,8 @@ def supplier_search(request):
         search_fields['purchasing_org'] = request.POST.get('purchasing_org')
 
         supplier_results = supplier_detail_search(**search_fields)
+        count = len(supplier_results)
+        context['count'] = count
         context['supplier_results'] = update_country_encrypt(supplier_results)
 
     return render(request, 'Supplier Search/supplier_search.html', context)
