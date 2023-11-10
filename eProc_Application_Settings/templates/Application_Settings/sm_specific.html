@@ -14,7 +14,7 @@
                         type="button">
                     <i class="fas fa-download"></i> extract
                 </button>
-                <button type="button" id="id_add_data" value="ADD" class="btn btn-primary" title="Add Purchase Control" data-toggle="modal" data-target="#sr_specific_Modal" onclick="onclick_add_button(this)">
+                <button type="button" id="id_add_data" value="ADD" class="btn btn-primary" title="Add Purchase Control" data-toggle="modal" data-target="#sm_specific_Modal" onclick="onclick_add_button(this)">
                     <i class="fa fa-plus"></i> add sm specific
                 </button>
                 <button class="btn btn-outline-secondary" id="id_close" value="close" title="Close" onclick="window_close();">
@@ -53,9 +53,9 @@
                             </div>
                         </th>
                         <th>UNSPSC Code</th>
-                        <th>Product Code</th>
                         <th>Company Code</th>
                         <th>Rule Type</th>
+                        <th>Product Id</th>
                         <th hidden>Guid</th>
                         <th hidden>del_ind</th>
                     </tr>
@@ -65,9 +65,9 @@
                     <tr>
                         <td class="class_select_checkbox" hidden><input type="checkbox" class="checkbox_check" onclick="valueChanged()" required></td>
                         <td>{{ sr_specific.prod_cat_id}}</td>
-                        <td>{{sr_specific.product_id}}</td>
                         <td>{{sr_specific.company_id}}</td>
                         <td>{{sr_specific.rule_type}}</td>
+                        <td>{{sr_specific.product_id}}</td>
                         <td hidden>{{sr_specific.sourcing_mapping_guid}}</td>
                         <td hidden>{{sr_specific.del_ind}}</td>
                     </tr>
@@ -79,7 +79,7 @@
         </div>
     </div>
     <!-- The Modal -->
-    <div class="modal fade" id="sr_specific_Modal" style="overflow:auto;">
+    <div class="modal fade" id="sm_specific_Modal" style="overflow:auto;">
         <div class="modal-dialog modal-dialog-centered modal-xl">
             <div class="modal-content">
                 <!-- Modal Header -->s
@@ -117,9 +117,9 @@
                             <tr>
                                 <th id="header_select">Select</th>
                                 <th>UNSPSC Code</th>
-                                <th>Product Code</th>
                                 <th>Company Code</th>
                                 <th>Rule Type</th>
+                                <th>Product Id</th>
                                 <th hidden>Guid</th>
                                 <th id="id_del_ind_checkbox" hidden>Del Indicator</th>
                             </tr>
@@ -184,7 +184,7 @@
          });
     }
 
-    //onclick of add button display sr_specific_Modal popup and set GLOBAL_ACTION button value
+    //onclick of add button display sm_specific_Modal popup and set GLOBAL_ACTION button value
     function onclick_add_button(button) {
         OpenLoaderPopup();
         var data = {'table_name':'SourcingMapping'}
@@ -203,7 +203,7 @@
                 basic_add_new_html = '';
                 $('#id_popup_table').DataTable().destroy();
                 $("#id_popup_tbody").empty();
-                $('#sr_specific_Modal').modal('show');
+                $('#sm_specific_Modal').modal('show');
                 new_row_data();
                 $("#header_select").prop("hidden", false);
                 $("#id_del_ind_checkbox").prop("hidden", true);
@@ -226,13 +226,13 @@
         [no_duplicate_value, error_message] = compare_table_for_duplicate_entries(validate_add_attributes, sm_specific_data)
         if (error_message){
             display_error_message(error_message)
-            $('#sr_specific_Modal').modal('show');
+            $('#sm_specific_Modal').modal('show');
         }
         else {
             if ((GLOBAL_ACTION == "COPY") || (GLOBAL_ACTION == "ADD")) {
                 [no_duplicate_entries, error_message] = maintable_validation(validate_add_attributes, main_table_low_value)
                 if(no_duplicate_entries == 'N'){
-                    $('#sr_specific_Modal').modal('show');
+                    $('#sm_specific_Modal').modal('show');
                 }
             }
             if ((no_duplicate_value == 'Y') && (no_duplicate_entries == 'Y')) {
@@ -248,7 +248,7 @@
                     success: function (Response) {
                         rendered_sr_specific_data = Response[0];
                         display_basic_db_data();
-                        $('#sr_specific_Modal').modal('hide');
+                        $('#sm_specific_Modal').modal('hide');
                         success_response(Response); // Function call to display response data
                         CloseLoaderPopup();
                     }
@@ -262,15 +262,15 @@
     }
 
     //delete the selected row in db................
-    var main_table_sr_checked = [];
+    var main_table_sm_checked = [];
     function main_table_delete() {
         $('#success_msg_id').empty()
         GLOBAL_ACTION = 'DELETE'
-        main_table_sr_checked = [];
+        main_table_sm_checked = [];
         $('#display_basic_table').DataTable().destroy();
         get_selected_row_data(); // Function call to get the selected row data
         $('#id_delete_confirm_popup').modal('hide');
-        data = { 'data': main_table_sr_checked, 'table_name': 'SourcingMapping', 'action': GLOBAL_ACTION }
+        data = { 'data': main_table_sm_checked, 'table_name': 'SourcingMapping', 'action': GLOBAL_ACTION }
         OpenLoaderPopup();
         $.ajax({
             type: 'POST',
@@ -281,7 +281,7 @@
             success: function (Response) {
                 rendered_sr_specific_data = Response[0];
                 display_basic_db_data();
-                $('#sr_specific_Modal').modal('hide');
+                $('#sm_specific_Modal').modal('hide');
                 success_response(Response); // Function call to display response data
                 CloseLoaderPopup();;
             }
@@ -300,7 +300,6 @@
                 rendered_company_data = response.upload_company_code
                 rendered_prod_cat_data = response.prod_catogories
                 rendered_rule_type_data = response.rule_type
-                rendered_activate = response.dropdown_activate
                 $("#error_msg_id").css("display", "none")
                 $('#id_popup_table').DataTable().destroy();
                 $("#id_popup_tbody").empty();
@@ -317,8 +316,6 @@
                 for (var i = 0; i < $chkbox_all.length; i++) {
                     if ($chkbox_all[i].checked) {
                         var row = $chkbox_all[i].parentNode.parentNode;
-                        var Source_val = row.cells[6].innerHTML;
-                        dropdown_val.push([ Source_val ])
                         if(GLOBAL_ACTION == "UPDATE"){
                             edit_basic_data +=
                             `<tr>
@@ -326,9 +323,7 @@
                                 <td><select class="form-control" type="text" disabled><option>${row.cells[1].innerHTML}</option></select></td>
                                 <td><select class="form-control" type="text" disabled><option>${row.cells[2].innerHTML}</option></select></td>
                                 <td><select class="form-control" type="text" disabled><option>${row.cells[3].innerHTML}</option></select></td>
-                                <td><select class="form-control" type="text" disabled><option>${row.cells[4].innerHTML}</option></select></td>
-                                <td><select class="form-control" type="text" disabled><option>${row.cells[5].innerHTML}</option></select></td>
-                                <td><select type="text" class="input form-control">${activate_dropdown}</select></td>
+                                <td><input class="form-control" type="text" value=${row.cells[4].innerHTML}></td>
                                 <td hidden></td>
                                 <td class="class_del_checkbox" hidden><input type="checkbox" required></td>
                             </tr>`;
@@ -337,15 +332,8 @@
                     }
                 }
                 $('#id_popup_table').append(edit_basic_data);
-                var i = 0;
-                $("#id_popup_table TBODY TR").each(function () {
-                    var row = $(this);
-                    var Sourcing = dropdown_val[i][0]
-                    $(row.find("TD").eq(6).find("select option[value=" + Sourcing + "]")).attr('selected', 'selected');
-                    i++;
-                });
                 $("#id_del_ind_checkbox").prop("hidden", true);
-                $('#sr_specific_Modal').modal('show');
+                $('#sm_specific_Modal').modal('show');
                 table_sort_filter('id_popup_table');
                 CloseLoaderPopup();
             }
@@ -405,11 +393,11 @@
             var row = $(this);
             sr_generic_dic = {}
             sr_generic_dic.prod_cat_id = row.find("TD").eq(1).find('select option:selected').val();
-            sr_generic_dic.product_id = row.find("TD").eq(2).find('input[type="text"]').val();
-            sr_generic_dic.company_id = row.find("TD").eq(3).find('select option:selected').val();
-            sr_generic_dic.rule_type = row.find("TD").eq(4).find('select option:selected').val();
-            var compare = sr_generic_dic.prod_cat_id + '-' + sr_generic_dic.product_id + '-' +
-                          sr_generic_dic.company_id + '-' + sr_generic_dic.rule_type
+            sr_generic_dic.company_id = row.find("TD").eq(2).find('select option:selected').val();
+            sr_generic_dic.rule_type = row.find("TD").eq(3).find('select option:selected').val();
+            sr_generic_dic.product_id = row.find("TD").eq(4).find('input[type="text"]').val();
+            var compare = sr_generic_dic.prod_cat_id + '-' + sr_generic_dic.company_id + '-' +
+                          sr_generic_dic.rule_type+ '-' + sr_generic_dic.product_id
             sr_generic_check.push(compare);
             jQuery.grep(sr_generic_check, function(el) {
                 if (jQuery.inArray(el, common) != -1) {
@@ -423,5 +411,5 @@
         });
     }
 </script>
-<script src="{% static 'scripts/sr_specific.js' %}"></script>
+<script src="{% static 'scripts/sm_specific.js' %}"></script>
 {% endblock %}

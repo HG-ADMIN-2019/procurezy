@@ -237,7 +237,7 @@ def display_sourcing_mapping_specific(request):
     client = global_variables.GLOBAL_CLIENT
 
     upload_sr_specific = get_configuration_data(SourcingMapping, {'del_ind': False},
-                                                ['prod_cat_id', 'product_id', 'company_id', 'rule_type',
+                                                ['prod_cat_id', 'company_id', 'rule_type', 'product_id',
                                                 'sourcing_mapping_guid', 'del_ind'])
 
     upload_company_code = list(OrgCompanies.objects.filter(client=client, del_ind=False).values('company_id'))
@@ -254,7 +254,7 @@ def display_sourcing_mapping_specific(request):
 
     messages_list = get_ui_messages(CONST_COFIG_UI_MESSAGE_LIST)
 
-    return render(request, 'Application_Settings/sr_specific.html',
+    return render(request, 'Application_Settings/sm_specific.html',
                   {'upload_sr_specific': upload_sr_specific,
                    'prod_catogories': prod_catogories,
                    'dropdown_company_code_id': upload_company_code,
