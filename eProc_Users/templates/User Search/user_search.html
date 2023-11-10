@@ -148,10 +148,10 @@
                         <tr id="tr_{{results.email}}">
                             <td class="class_select_checkbox"><input type="checkbox" class="emp_checkbox" onclick="valueChanged();"></td>
                             <td><a href="{% url 'eProc_Admin_Tool:user_details_page' results.encrypted_email %}" id="{{results.employee_id}}" class="deletepop" target="_blank">{{results.employee_id}}</a></td>
-                            <td>{{results.username}}</td>
-                            <td>{{results.first_name}}</td>
-                            <td>{{results.last_name}}</td>
-                            <td>{{results.email}}</td>
+                            <td>{{results.username|upper}}</td>
+                            <td>{{results.first_name|title}}</td>
+                            <td>{{results.last_name|title}}</td>
+                            <td>{{results.email|lower}}</td>
                             <td>
                                 {% if results.is_active %}
                                 <label>Active</label>
@@ -481,6 +481,7 @@ $(document).ready(function() {
     $('#user_locked_id').prop('checked', false);
     $('#pwd_locked_id').prop('checked', false);
     $('#is_active_id').prop('checked', false);
+    localStorage.clear();
     }
 });
 $('form').on('reset',function (e) {
