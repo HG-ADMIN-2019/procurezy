@@ -66,7 +66,7 @@
                                 <div class="row">
                                     <div class="form-group col-md">
                                         <label>User Name</label><span class="hg_required"></span><br>
-                                        <input type="text" maxlength="16" class="form-control mandatory_fields check_special_char_nospace" id="username" value="{{user_info.username}}" disabled>
+                                        <input type="text" maxlength="16" class="form-control mandatory_fields check_special_char_nospace" id="username" value="{{user_info.username|upper}}" disabled>
                                         <span id="err_username" class="error_message" hidden></span>
                                     </div>
                                     <div class="form-group col-md">
@@ -89,13 +89,13 @@
                                 <div class="row">
                                     <div class="form-group col-md">
                                         <label>First Name</label><span class="hg_required"></span><br>
-                                        <input type="text" maxlength="30" class="form-control hg_edit_display_mode mandatory_fields check_special_char_nospace" id="first_name" name="first_name" value="{{user_info.first_name}}" disabled>
+                                        <input type="text" style="text-transform: capitalize;" maxlength="30" class="form-control hg_edit_display_mode mandatory_fields check_special_char_nospace" id="first_name" name="first_name" value="{{user_info.first_name}}" disabled>
                                         <span id="err_first_name" class="error_message" hidden></span>
                                     </div>
                                     
                                     <div class="form-group col-md">
                                         <label>Last Name</label><br>
-                                        <input type="text" maxlength="30" class="form-control hg_edit_display_mode check_special_character" id="last_name" value="{{user_info.last_name}}" disabled>
+                                        <input type="text" style="text-transform: capitalize;" maxlength="30" class="form-control hg_edit_display_mode check_special_character" id="last_name" value="{{user_info.last_name}}" disabled>
                                     </div>
                                 </div>
 
@@ -142,13 +142,13 @@
                                 <div class="row">
                                     <div class="form-group col-md">
                                         <label>E-mail</label><span class="hg_required"></span><br>
-                                        <input type="text" class="form-control mandatory_fields" id="email" name="email" value="{{user_info.email}}" disabled>
+                                        <input type="text" style="text-transform: lowercase;" class="form-control mandatory_fields" id="email" name="email" value="{{user_info.email}}" disabled>
                                          <span id="err_email" class="error_message" hidden></span>
                                     </div>
                                     
                                     <div class="form-group col-md">
                                         <label>Mobile</label><span class="hg_required"></span><br>
-                                        <input type="text" maxlength="10" class="form-control hg_edit_display_mode  check_phone_number" id="phone_num" name="phone_num" value="{{user_info.phone_num}}" disabled>
+                                        <input type="text"  maxlength="10" class="form-control hg_edit_display_mode  check_phone_number" id="phone_num" name="phone_num" value="{{user_info.phone_num}}" disabled>
                                         <span id="err_phone_num" class="error_message" hidden></span>
                                     </div>
                                 </div>

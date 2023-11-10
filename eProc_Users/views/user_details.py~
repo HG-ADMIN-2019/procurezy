@@ -16,7 +16,6 @@ from django.db import transaction
 from django.http import JsonResponse
 from django.shortcuts import render
 from eProc_Basic.Utilities.constants.constants import CONST_DECIMAL_NOTATION, CONST_DATE_FORMAT, CONST_USER_REG
-from eProc_Basic.Utilities.functions.camel_case import convert_to_camel_case
 from eProc_Basic.Utilities.functions.django_query_set import DjangoQueries
 from eProc_Basic.Utilities.functions.encryption_util import decrypt, encrypt
 from eProc_Basic.Utilities.functions.get_db_query import getClients
@@ -54,8 +53,8 @@ def save_user_data(request):
     error_msg = ''
     status = request.POST.get('status')
     user_details['username'] = request.POST.get('username')
-    user_details['first_name'] = convert_to_camel_case(request.POST.get('first_name'))
-    user_details['last_name'] = convert_to_camel_case(request.POST.get('last_name'))
+    user_details['first_name'] = request.POST.get('first_name')
+    user_details['last_name'] = request.POST.get('last_name')
     user_details['employee_id'] = request.POST.get('employee_id')
     user_details['user_type'] = request.POST.get('user_type')
     user_details['language_id'] = request.POST.get('language_id')
