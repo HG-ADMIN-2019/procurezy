@@ -24,6 +24,15 @@ class DocumentSearchForm(forms.Form):
                                           widget=forms.Select(attrs={'class': "form-control"}),
                                           )
 
+    def __init__(self, *args, **kwargs):
+        super(DocumentSearchForm, self).__init__(*args, **kwargs)
+
+        # Customize the choices for the company_code field
+        self.fields['company_code'].choices = [
+            (obj.company_id, f"{obj.company_id} - {obj.name1}")
+            for obj in OrgCompanies.objects.filter(del_ind=False)
+        ]
+
     from_date = forms.DateField(
         widget=forms.DateInput(attrs={'type': 'date', 'class': "form-control"}),
         label=mark_safe('From Date'),
@@ -45,6 +54,7 @@ class DocumentSearchForm(forms.Form):
                                  widget=forms.TextInput(attrs={'class': 'form-control'}))
     requester = forms.CharField(label='Requester', required=False,
                                 widget=forms.TextInput(attrs={'class': 'form-control'}))
+
 
     # hide the supplier field as we are not supporting PO currently supplier = forms.CharField(label='Supplier',
     # required=False, widget=forms.TextInput(attrs={'style':'height:26px; width:100%; border:solid 1px
