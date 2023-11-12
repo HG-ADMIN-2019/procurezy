@@ -15,23 +15,27 @@ from eProc_Configuration.models import OrgCompanies
 class DocumentSearchForm(forms.Form):
     doc_types = (('SC', 'Shopping Cart'), ('PO', 'Purchase Order'))
 
-    doc_type = forms.ChoiceField(label='Select Document Type', choices=doc_types,
-                                 widget=forms.Select(
-                                     attrs={'class': "form-control", "onchange": 'docchanged(this.value)'}))
+    doc_type = forms.ChoiceField(
+        label='Select Document Type',
+        choices=doc_types,
+        widget=forms.Select(attrs={'class': "form-control", "onchange": 'docchanged(this.value)'}),
+    )
 
-    company_code = forms.ModelChoiceField(label='Company Code', required=False, empty_label=None,
-                                          queryset=OrgCompanies.objects.filter(del_ind=False),
-                                          widget=forms.Select(attrs={'class': "form-control"}),
-                                          )
+    # Override label_from_instance to customize the display value for each item
+    company_code = forms.ModelChoiceField(
+        label='Company Code',
+        required=False,
+        empty_label=None,
+        queryset=OrgCompanies.objects.filter(del_ind=False),
+        widget=forms.Select(attrs={'class': "form-control"}),
+    )
 
     def __init__(self, *args, **kwargs):
-        super(DocumentSearchForm, self).__init__(*args, **kwargs)
+        super().__init__(*args, **kwargs)
+        self.fields['company_code'].label_from_instance = self.label_from_instance
 
-        # Customize the choices for the company_code field
-        self.fields['company_code'].choices = [
-            (obj.company_id, f"{obj.company_id} - {obj.name1}")
-            for obj in OrgCompanies.objects.filter(del_ind=False)
-        ]
+    def label_from_instance(self, obj):
+        return f'{obj.company_id} - {obj.name1}'
 
     from_date = forms.DateField(
         widget=forms.DateInput(attrs={'type': 'date', 'class': "form-control"}),
@@ -50,11 +54,16 @@ class DocumentSearchForm(forms.Form):
         label=mark_safe('Enter Document Number'),
         required=False
     )
-    created_by = forms.CharField(label='Created By', required=False,
-                                 widget=forms.TextInput(attrs={'class': 'form-control'}))
-    requester = forms.CharField(label='Requester', required=False,
-                                widget=forms.TextInput(attrs={'class': 'form-control'}))
-
+    created_by = forms.CharField(
+        label='Created By',
+        required=False,
+        widget=forms.TextInput(attrs={'class': 'form-control'})
+    )
+    requester = forms.CharField(
+        label='Requester',
+        required=False,
+        widget=forms.TextInput(attrs={'class': 'form-control'})
+    )
 
     # hide the supplier field as we are not supporting PO currently supplier = forms.CharField(label='Supplier',
     # required=False, widget=forms.TextInput(attrs={'style':'height:26px; width:100%; border:solid 1px

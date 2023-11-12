@@ -20,7 +20,7 @@
                             <label>Company Number</label><br>
                             <select name="comp_code_app" id="id_comp_code_app" class="form-control">
                                 {% for comp in comp_list %}
-                                <option value="{{ comp.company_id }}"> {{ comp.company_id }} </option>
+                                    <option value="{{ comp.company_id }}"> {{ comp.company_id }} - {{ comp.name1 }} </option>
                                 {% endfor %}
                             </select>
                         </div>
