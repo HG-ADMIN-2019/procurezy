@@ -29,6 +29,7 @@
                         <div class="col-md">
                             <label>Document Number</label>
                             {{ search_approval.document_number }}
+                            <span id="err_doc_num" class="error_message" hidden></span>
                         </div>
                         <div class="col-md">
                             <label>Select Time Frame</label>
@@ -37,6 +38,7 @@
                         <div class="col-md">
                             <label>Cart Name</label>
                             {{ search_approval.cart_name }}
+                            <span id="err_cartname" class="error_message" hidden></span>
                         </div>
                         <div class="col-md search_docs">
                             <label>Status</label>
@@ -102,6 +104,10 @@
                                 <span class="text-muted">Status</span>
                                 {% if header_app.6 == 'AWAITING_APPROVAL' %}
                                 <span class="badge badge-pill badge_status_await_approval">Awaiting Approval</span>
+                                {% elif header_app.6 == 'APPROVED' %}
+                                <span class="badge badge-pill badge_status_await_approval">Approved</span>
+                                {% elif header_app.6 == 'REJECTED' %}
+                                <span class="badge badge-pill badge_status_await_approval">REJECTED</span>
                                 {% endif %}
                             </div>                             
                             <br>
@@ -180,6 +186,26 @@
         let status = AjaxCallAPIBasic(urlLink, data);
         return status;
     }
+    $("body").on("keypress keyup blur change", ".mandatory_fields", function (event) {
+        var temp = document.getElementsByClassName('mandatory_fields');
+        var get_value = event.currentTarget.value;
+        var count = get_value.split('**').length - 1;
+        for (var i = 0; i<temp.length; i++) {
+            if((count>=1)|| (get_value == '*'))
+            {
+            var display_id = event.currentTarget.nextElementSibling.id;
+            $('#'+display_id).prop('hidden', false);
+            document.getElementById(display_id).style.display = "block";
+            event.currentTarget.nextElementSibling.innerHTML = "Please enter valid value";
+            }
+            else {
+                var display_id = event.currentTarget.nextElementSibling.id;
+                $('#'+display_id).prop('hidden', true);
+                document.getElementById(event.currentTarget.nextElementSibling.id).style.display = "none";
+            }
+        }
+    });
+
 
 </script>
 
