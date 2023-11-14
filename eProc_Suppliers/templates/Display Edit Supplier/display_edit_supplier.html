@@ -516,6 +516,13 @@ $(document).ready(function(e){
          }
     }
     else{
+        var flag = localStorage.getItem("error_flag");
+         if((flag == "1")){
+            document.getElementById('save_error_div').innerHTML = localStorage.getItem("success_msg");
+            $('#supplier_basic_update_success').show();
+            setTimeout(function() {
+            $('#supplier_basic_update_success').hide(); }, 200000);
+        }
         $("#org_info_tab").prop("hidden", false);
          document.getElementById('sbd_edit_button').style.display = 'block';
          $("#sbd_edit_button").prop("hidden", false);
@@ -761,10 +768,10 @@ function save_basic_details() {
             }, 1000);
             $('#supplier_basic_update_success').show();
             $('#save_error_div').hide();
-            setTimeout(function() {
-                    $('.alert-success').prop("hidden", true);
-            }, 500000);
-<!--            message_display_time();-->
+<!--            setTimeout(function() {-->
+<!--                    $('.alert-success').prop("hidden", true);-->
+<!--            }, 500000);-->
+             localStorage.setItem("success_msg", message);
             if(GLOBAL_ACTION == 'CREATE'){
                     $("#supplier_form_field")[0].reset();
                     localStorage.clear();
