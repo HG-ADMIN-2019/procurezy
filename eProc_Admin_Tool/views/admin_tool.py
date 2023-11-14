@@ -772,6 +772,7 @@ def accnt_report(request):
     acc_cat_array = get_account_assignlist(request)
     company_array = get_companylist(request)
     company_array.reverse()
+    company_array.reverse()
     inp_acc_assgn_cat = [item['account_assign_cat'] for item in acc_value_array]
     inp_comp_code = company_array[0]['company_id'] if company_array else None
     inp_lang = lang_array[0]['language_id'] if lang_array else 'EN'

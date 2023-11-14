@@ -136,6 +136,10 @@ def create_update_application_data(request):
         app_data['data'] = check_source_rule_data(app_data['data'], 'SAVE')[0]
         display_data = application_settings_save_instance.save_source_rule_into_db(app_data)
         return JsonResponse(display_data, safe=False)
+    if app_data['table_name'] == 'SourcingMapping':
+        app_data['data'] = check_source_mapping_data(app_data['data'], 'SAVE')[0]
+        display_data = application_settings_save_instance.save_source_mapping_into_db(app_data)
+        return JsonResponse(display_data, safe=False)
     if app_data['table_name'] == 'EmailContents':
         app_data['data'] = check_email_settings_data(app_data['data'], 'SAVE')[0]
         display_data = application_settings_save_instance.save_email_settings_into_db(app_data)

@@ -33,7 +33,7 @@ class UserReportForm(forms.Form):
         queryset=OrgCompanies.objects.filter(del_ind=False),
         empty_label=None,
         widget=forms.Select(attrs={'class': 'form-control'}),
-        to_field_name='company_id'  # Use the 'company_id' field as the value for the form field
+        to_field_name='company_id',  # Use the 'company_id' field as the value for the form field
     )
 
     username = forms.CharField(label='Username', required=False, widget=forms.TextInput(attrs={
@@ -55,3 +55,12 @@ class UserReportForm(forms.Form):
 
     def clean(self):
         cleaned_data = super(UserReportForm, self).clean()
+
+    def __init__(self, *args, **kwargs):
+        super(UserReportForm, self).__init__(*args, **kwargs)
+
+        # Customize the choices for the company_code field
+        self.fields['company_code'].choices = [
+            (obj.company_id, f"{obj.company_id} - {obj.name1}")
+            for obj in OrgCompanies.objects.filter(del_ind=False)
+        ]

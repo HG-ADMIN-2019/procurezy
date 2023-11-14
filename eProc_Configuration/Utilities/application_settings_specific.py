@@ -1254,7 +1254,7 @@ class ApplicationSettingsSave:
             # if entry is not exists in db
             if not django_query_instance.django_existence_check(SourcingRule,
                                                                 {'prod_cat_id_from': source_rule_detail
-                                                                    ['prod_cat_id_from'],
+                                                                ['prod_cat_id_from'],
                                                                  'prod_cat_id_to': source_rule_detail['prod_cat_id_to'],
                                                                  'company_id': source_rule_detail['company_id'],
                                                                  'call_off': source_rule_detail['call_off'],
@@ -1303,6 +1303,67 @@ class ApplicationSettingsSave:
                                                               'del_ind': source_rule_detail['del_ind'],
                                                               'client': OrgClients.objects.get(client=self.client)})
         bulk_create_entry_db(SourcingRule, sr_db_list)
+
+    def save_source_mapping_into_db(self, source_mapping_data):
+        """
+
+        """
+        self.save_source_mapping(source_mapping_data)
+        message = get_message_detail_based_on_action(source_mapping_data['action'])
+
+        upload_response = get_configuration_data(SourcingMapping,
+                                                 {'del_ind': False,
+                                                  'client': self.client},
+                                                 ['sourcing_mapping_guid', 'prod_cat_id', 'company_id', 'rule_type',
+                                                  'product_id'])
+
+        return upload_response, message
+
+    def save_source_mapping(self, source_mapping_data):
+        sm_db_list = []
+
+        for source_mapping_detail in source_mapping_data['data']:
+
+            # if entry is not exists in db
+            if not django_query_instance.django_existence_check(SourcingMapping,
+                                                                {'prod_cat_id': source_mapping_detail['prod_cat_id'],
+                                                                 'company_id': source_mapping_detail['company_id'],
+                                                                 'rule_type': source_mapping_detail['rule_type'],
+                                                                 'client': self.client
+                                                                 }):
+                guid = guid_generator()
+                source_mapping_db_dictionary = {'sourcing_mapping_guid': guid,
+                                                'prod_cat_id': source_mapping_detail['prod_cat_id'],
+                                                'company_id': source_mapping_detail['company_id'],
+                                                'rule_type': source_mapping_detail['rule_type'],
+                                                'product_id': source_mapping_detail['product_id'],
+                                                'del_ind': False,
+                                                'client': self.client,
+                                                'sourcing_mapping_created_at': self.current_date_time,
+                                                'sourcing_mapping_created_by': self.username,
+                                                'sourcing_mapping_changed_at': self.current_date_time,
+                                                'sourcing_mapping_changed_by': self.username
+                                                }
+                sm_db_list.append(source_mapping_db_dictionary)
+            else:
+                django_query_instance.django_update_query(SourcingMapping,
+                                                          {
+                                                              'prod_cat_id': source_mapping_detail['prod_cat_id'],
+                                                              'company_id': source_mapping_detail['company_id'],
+                                                              'rule_type': source_mapping_detail['rule_type'],
+                                                              'client': self.client
+                                                          },
+
+                                                          {
+                                                              'prod_cat_id': source_mapping_detail['prod_cat_id'],
+                                                              'company_id': source_mapping_detail['company_id'],
+                                                              'rule_type': source_mapping_detail['rule_type'],
+                                                              'product_id': source_mapping_detail['product_id'],
+                                                              'sourcing_mapping_changed_at': self.current_date_time,
+                                                              'sourcing_mapping_changed_by': self.username,
+                                                              'del_ind': source_mapping_detail['del_ind'],
+                                                              'client': OrgClients.objects.get(client=self.client)})
+        bulk_create_entry_db(SourcingMapping, sm_db_list)
 
     def save_messageId_data_into_db(self, messageId_data):
         """
