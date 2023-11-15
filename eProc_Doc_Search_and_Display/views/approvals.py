@@ -37,12 +37,12 @@ def get_sc_for_approval(request):
 
     sc_approval_header = django_query_instance.django_filter_value_list_query(ScPotentialApproval, {
         'app_id': global_variables.GLOBAL_LOGIN_USERNAME,
-        'proc_lvl_sts': CONST_ACTIVE,
+        # 'proc_lvl_sts': CONST_ACTIVE,
         'client': global_variables.GLOBAL_CLIENT
     }, 'sc_header_guid')
 
     sc_header_detail = document_search_instance.get_header_details({
-        'guid__in': sc_approval_header,'created_at__date': datetime.date.today()
+        'guid__in': sc_approval_header, 'created_at__date': datetime.date.today()
     })
 
     sc_header_app_detail = get_sc_header_app_wf(sc_header_detail, global_variables.GLOBAL_CLIENT)

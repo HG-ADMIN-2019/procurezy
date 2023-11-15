@@ -280,7 +280,7 @@ def get_sc_header_app_wf(result, client):
         sc_header_guid['first_name'] = requester_field_info(sc_header_guid['created_by'], 'first_name')
         sc_approval = django_query_instance.django_filter_only_query(ScPotentialApproval, {
             'app_id': global_variables.GLOBAL_LOGIN_USERNAME,
-            # 'proc_lvl_sts': CONST_ACTIVE,
+            'proc_lvl_sts': CONST_ACTIVE,
             'sc_header_guid': sc_header_guid['guid'],
             'client': client
         }).order_by('sc_header_guid')
