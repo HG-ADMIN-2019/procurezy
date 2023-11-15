@@ -365,10 +365,6 @@ var msg_display_interval = {{msg_display_time_value|safe}};
                     document.getElementById(event.currentTarget.nextElementSibling.id).style.display = "block";
                 }
             }
-<!--            if(temp[i].id == "id_language_id"){-->
-<!--                $(".error_message").prop("hidden", true);-->
-<!--                document.getElementById("err_language_id").style.display = "none";-->
-<!--            }-->
         }
     });
 
@@ -489,7 +485,6 @@ var msg_display_interval = {{msg_display_time_value|safe}};
                 document.getElementById('user_basic_update_success').innerHTML = message;
                 $('#save_error_div').hide();
                 $('#user_basic_update_success').show();
-                message_display_time_specific();
                 $('html, body').animate({ scrollTop: 0 }, 'slow');
                 check();
                 if(GLOBAL_ACTION == 'CREATE'){

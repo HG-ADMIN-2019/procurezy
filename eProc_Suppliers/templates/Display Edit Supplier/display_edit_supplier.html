@@ -514,15 +514,6 @@ $(document).ready(function(e){
          }
     }
     else{
-<!--        var flag = localStorage.getItem("error_flag");-->
-<!--        var msg = localStorage.getItem("success_msg");-->
-<!--         if(flag == "1"){-->
-<!--            if(msg1){-->
-<!--            document.getElementById('save_error_div').innerHTML = msg1;-->
-<!--            $('#supplier_basic_update_success').show();-->
-<!--            message_display_time();-->
-<!--            }-->
-<!--        }-->
         $("#org_info_tab").prop("hidden", false);
          document.getElementById('sbd_edit_button').style.display = 'block';
          $("#sbd_edit_button").prop("hidden", false);
@@ -766,7 +757,6 @@ function save_basic_details() {
             }, 500);
             $('#supplier_basic_update_success').show();
             $('#save_error_div').hide();
-            message_display_time();
              localStorage.setItem("success_msg", message);
             if(GLOBAL_ACTION == 'CREATE'){
                     $("#supplier_form_field")[0].reset();
