@@ -2,6 +2,23 @@
 $(document).ready( function() {
     table_sort_filter();
     $('.multiple_select').selectpicker();
+    if(form_method == ''){
+        $("#status").val('')
+    }
+    else
+    {
+        $('#status').val(localStorage.getItem("status"));
+           var time = localStorage.getItem("status");
+           if(!(time == null)){
+            time_array = time.split(",");
+            var num = time.match(/\d/g);
+            $("select[id=status]").val(time_array);
+            $('#status').selectpicker('refresh');
+            }
+            else{
+                $("select[id=status]").val('');
+            }
+    }
 });
 
 nav_bar_approvals();
@@ -54,4 +71,7 @@ function approver_note(data){
         
     }
     
+}
+function set_values(){
+    localStorage.setItem("status", $('#status').val());
 }

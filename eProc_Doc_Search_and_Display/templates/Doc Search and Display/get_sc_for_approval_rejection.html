@@ -17,7 +17,7 @@
             <div class="card-body">
 
                 <!--Search form goes here--> 
-                <form method="POST" action="">
+                <form method="POST" action="" id="approval_form">
                     {% csrf_token %}
 
                     <div class="row">
@@ -52,8 +52,8 @@
                     <br>
                     <div class="elements-space-between">
                         <div>
-                            <button class="btn btn-outline-primary" type="reset" value="Reset"><i class="fas fa-sync-alt"></i> &nbsp;reset</button>
-                            <button class="btn btn-primary" type="submit" title="Please click to get the search details!" id="search_button_id"><i class="fas fa-search"></i> &nbsp;search </button>    
+                            <button class="btn btn-outline-primary" type="reset" value="Reset"><i class="fas fa-sync-alt"></i> &nbsp;Clear Filter</button>
+                            <button class="btn btn-primary" type="submit" title="Please click to get the search details!" onclick="set_values()" id="search_button_id"><i class="fas fa-search"></i> &nbsp;search </button>
                         </div>
                         <div>
                             <span class="badge help-text-badge help-text-star-search"></span>
@@ -62,9 +62,10 @@
                 </form>
             </div>
         </div>
+        {{count}}
         <div class="d-flex justify-content-end mt-3 mb-3">
-            {% if sc_header_app_detail|length > 0 %}
-                <h6 class="text-muted">Total number of results found: {{ sc_header_app_detail|length }}</h6>
+            {% if count > 0 %}
+                <h6 class="text-muted">Total number of results found: {{ count }}</h6>
             {% else %}
                 <h6 class="text-muted">No results found.</h6>
             {% endif %}
@@ -180,6 +181,7 @@
 <script>
 
     const ajax_approval_button_url = "{% url 'eProc_Workflow:save_appr_status' %}"
+    var form_method = '{{form_method|safe}}';
 
     function ajax_get_approver_note(data) {
         urlLink = "{% url 'eProc_Doc_Search_and_Display:get_sc_for_approval' %}";
@@ -204,6 +206,38 @@
                 document.getElementById(event.currentTarget.nextElementSibling.id).style.display = "none";
             }
         }
+    });
+    $('form').on('submit',function (e) {
+        OpenLoaderPopup();
+        var valid = true;
+        var temp = document.getElementsByClassName('mandatory_fields');
+        for (var i = 0; i<temp.length; i++) {
+            if(!(temp[i].value == '') || !(temp[i].value == null)){
+                data = temp[i].value;
+                var count = data.split('**').length - 1;
+                if((count >= 1) || (data == '*')){
+                    var display_id = temp[i].nextElementSibling.id;
+                    $('#'+display_id).prop('hidden', false);
+                    document.getElementById(temp[i].nextElementSibling.id).innerHTML = "Please enter valid value";
+                    valid = false;
+                }
+            }
+        }
+        if(!valid){
+            localStorage.setItem("error_flag", 1);
+            e.preventDefault();
+            setTimeout(function() {
+                       CloseLoaderPopup();
+         }, 500);
+        }
+    });
+    $('form').on('reset',function (e) {
+        e.preventDefault();
+        localStorage.clear();
+        $(".error_message").prop("hidden", true);
+        document.getElementById("id_time_frame").value = "Today";
+        $("#status").val(['APPROVED','REJECTED','AWAITING_APPROVAL']);
+        $('#approval_form')[0].submit();
     });
 
 
