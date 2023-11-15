@@ -34,6 +34,8 @@ urlpatterns = [
          name='extract_purchase_control_data'),
     path('extract_source_rule_data/', views.extract_source_rule_data,
          name='extract_source_rule_data'),
+    path('extract_source_mapping_data/', views.extract_source_mapping_data,
+         name='extract_source_mapping_data'),
     path('extract_authorization_object_data/', views.extract_authorization_object_data,
          name='extract_authorization_object_data'),
     path('extract_attributes_group_data/', views.extract_attributes_group_data, name='extract_attributes_group_data'),

@@ -7,7 +7,8 @@ from eProc_Basic.Utilities.functions.update_del_ind import query_update_del_ind
 from eProc_Basic.Utilities.global_defination import global_variables
 from eProc_Configuration.models import OrgNodeTypes, OrgAttributes, UserRoles, AuthorizationObject, Authorization, \
     AuthorizationGroup, MessagesId, MessagesIdDesc, OrgModelNodetypeConfig, NumberRanges, \
-    PoSplitType, PoSplitCriteria, TransactionTypes, PurchaseControl, AccountAssignmentCategory, SourcingRule
+    PoSplitType, PoSplitCriteria, TransactionTypes, PurchaseControl, AccountAssignmentCategory, SourcingRule, \
+    SourcingMapping
 
 django_query_instance = DjangoQueries()
 
@@ -491,6 +492,32 @@ def extract_source_rule_data(request):
                             source_rule_type['company_id'], source_rule_type['call_off'], source_rule_type['rule_type'],
                             source_rule_type['sourcing_flag'], source_rule_type['del_ind']]
         writer.writerow(source_rule_info)
+
+    return response
+
+
+def extract_source_mapping_data(request):
+    """
+
+    """
+    response = HttpResponse(content_type='text/csv')
+    response['Content-Disposition'] = 'attachment; filename=' + CONST_SOURCE_MAPPING_CSV
+
+    writer = csv.writer(response)
+    writer.writerow(['prod_cat_id', 'company_id', 'rule_type', 'product_id', 'del_ind'])
+
+    source_mapping_data = django_query_instance.django_filter_query(SourcingMapping,
+                                                                    {'del_ind': False,
+                                                                     'client': global_variables.GLOBAL_CLIENT,
+                                                                     }, None,
+                                                                    ['prod_cat_id', 'company_id', 'rule_type',
+                                                                     'product_id', 'del_ind'])
+    source_mapping_data = query_update_del_ind(source_mapping_data)
+
+    for source_map_type in source_mapping_data:
+        source_map_info = [source_map_type['prod_cat_id'], source_map_type['company_id'],
+                           source_map_type['rule_type'], source_map_type['product_id'], source_map_type['del_ind']]
+        writer.writerow(source_map_info)
 
     return response
 
