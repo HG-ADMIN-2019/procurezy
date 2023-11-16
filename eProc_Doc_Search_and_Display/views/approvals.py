@@ -55,13 +55,13 @@ def get_sc_for_approval(request):
     if request.method == 'GET':
         search_criteria = {
             'guid__in': sc_approval_header,
-            'created_at__gte': datetime.datetime.today() - datetime.timedelta(days=int(7))
+            'created_at': datetime.datetime.today()
         }
         sc_header_detail = document_search_instance.get_header_details(search_criteria)
 
         sc_header_app_detail = get_sc_header_app_wf(sc_header_detail, global_variables.GLOBAL_CLIENT)
 
-        context['count'] = len(sc_header_app_detail[0])
+        context['count'] = len(sc_header_app_detail)
         for header_guid in sc_header_app_detail:
             header_guid.append(encrypt(header_guid[0]))
 
