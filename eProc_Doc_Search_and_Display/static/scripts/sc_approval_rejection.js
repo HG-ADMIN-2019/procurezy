@@ -4,7 +4,7 @@ $(document).ready( function() {
     $('.multiple_select').selectpicker();
     if(form_method == ''){
         $("#status").val('')
-        $("#id_time_frame").val('7');
+        $("#id_time_frame").val('Today');
     }
     else
     {
