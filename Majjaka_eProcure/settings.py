@@ -29,7 +29,7 @@ SECRET_KEY = '-p^#04gmm3jl$93p3jx9rm+t1nj4$xl9b_#%192&e_usmw*&nr'
 DEBUG = True
 
 
-ALLOWED_HOSTS = ['www.majjaka-eprocure.com', 'majjaka-eprocure.com'] # for deployment
+ALLOWED_HOSTS = ['www.procurezy.com', 'procurezy.com'] # for deployment
 # ALLOWED_HOSTS = ['*']
 
 # Application definition
