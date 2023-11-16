@@ -10,7 +10,7 @@
             <h3>Maintain Sourcing Mapping Specific</h3>
             <div>
                 <button class="btn btn-outline-primary" title="Extract"
-                        onclick="location.href='{% url 'eProc_Application_Settings:extract_source_rule_data' %}'"
+                        onclick="location.href='{% url 'eProc_Application_Settings:extract_source_mapping_data' %}'"
                         type="button">
                     <i class="fas fa-download"></i> extract
                 </button>
@@ -324,7 +324,7 @@
                                 <td><select class="form-control" type="text" disabled><option>${row.cells[2].innerHTML}</option></select></td>
                                 <td><select class="form-control" type="text" disabled><option>${row.cells[3].innerHTML}</option></select></td>
                                 <td><input class="form-control" type="text" value=${row.cells[4].innerHTML}></td>
-                                <td hidden></td>
+                                <td hidden><input type="text" value=${row.cells[5].innerHTML}></td>
                                 <td class="class_del_checkbox" hidden><input type="checkbox" required></td>
                             </tr>`;
                             $("#header_select").prop("hidden", true);

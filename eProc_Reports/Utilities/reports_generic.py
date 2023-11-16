@@ -1,18 +1,18 @@
 import re
 from eProc_Basic.Utilities.functions.django_query_set import DjangoQueries
 from eProc_Basic.Utilities.functions.get_db_query import getClients
-from eProc_Configuration.models import Languages, OrgCompanies
-from eProc_Registration.models import UserData
+from eProc_Configuration.models.basic_data import Languages
+from eProc_Configuration.models.master_data import OrgCompanies
 from eProc_Configuration.models.development_data import *
+from eProc_Registration.models.registration_model import UserData
 
 django_query_instance = DjangoQueries()
 
 
 def get_companylist(req):
     client = getClients(req)
-
-    return django_query_instance.django_filter_query(OrgCompanies, {'client': client, 'del_ind': False},
-                                                     ['company_id'], ['company_id'])
+    company_list = OrgCompanies.objects.filter(client=client, del_ind=False).values('company_id', 'name1')
+    return list(company_list)
 
 
 def get_companyDetails(req):

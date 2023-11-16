@@ -424,7 +424,6 @@ var form_method = '{{form_method|safe}}';
         localStorage.setItem("supp_purchase_block", document.getElementById("purchase_block").checked);
         OpenLoaderPopup();
     }
-
     $('form').on('reset',function (e) {
         e.preventDefault();
         localStorage.clear();
@@ -437,11 +436,9 @@ var form_method = '{{form_method|safe}}';
         $('#country_code').val("");
         $('#porg').val("");
         $('#purchase_block').prop("checked", false);
-     e.preventDefault();
-    localStorage.clear();
-    $(".error_message").prop("hidden", true);
-    $("#result_id").prop("hidden", true);
-    $('#supplier_search')[0].submit();
+        $(".error_message").prop("hidden", true);
+        $("#result_id").prop("hidden", true);
+        $('#supplier_search')[0].submit();
 });
 
     $('form').on('submit',function (e) {
@@ -468,7 +465,6 @@ var form_method = '{{form_method|safe}}';
          }, 500);
         }
     });
-
 
     $("body").on("keypress keyup blur change", ".mandatory_fields", function (event) {
         var temp = document.getElementsByClassName('mandatory_fields');

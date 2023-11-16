@@ -78,6 +78,9 @@ function read_popup_data() {
         sr_generic.rule_type = row.find("TD").eq(3).find('select[type="text"]').val();
         sr_generic.product_id = row.find("TD").eq(4).find('input[type="text"]').val();
         sr_generic.sourcing_mapping_guid = row.find("TD").eq(5).find('input[type="text"]').val();
+        if(sr_generic.sourcing_mapping_guid == undefined) {
+            sr_generic.sourcing_mapping_guid = ''
+        }
         var compare = sr_generic.prod_cat_id + '-' + sr_generic.company_id + '-' + sr_generic.rule_type + '-' +
                      sr_generic.product_id
         validate_add_attributes.push(compare);

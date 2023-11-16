@@ -48,7 +48,6 @@
                         {% csrf_token %}
                         <div class="alert alert-success display-none" id="supplier_basic_update_success" role="alert"></div>
                         <!--    Basic Data      -->
-
                         <div class="d-flex justify-content-end">
                             <div id="sbd_save_cancel_button" >
                                 <button type="submit"  id="save_basic" name="save_basic" class="btn btn-primary" ><i class="fas fa-save"></i> save</button>
@@ -60,7 +59,6 @@
                                 <button type="button" class="btn btn-primary" onclick="edit_basic_supp_data();"><i class="fas fa-edit"></i> edit</button>
                             </div>
                         </div>
-
                         <div class="card card-shadow-1 mt-3">
                             <div class="card-body">
                                 <div class="elements-space-between">
@@ -543,9 +541,7 @@ $(document).ready(function(e){
     }
     if(form_method == 'GET'){
         $("#supplier_form_field")[0].reset();
-<!--        localStorage.clear();-->
     }
-
     MultipleSelect();
 });
 
@@ -758,13 +754,10 @@ function save_basic_details() {
             document.getElementById('supplier_basic_update_success').innerHTML = message;
              setTimeout(function() {
                      CloseLoaderPopup();
-            }, 1000);
+            }, 500);
             $('#supplier_basic_update_success').show();
             $('#save_error_div').hide();
-            setTimeout(function() {
-                    $('.alert-success').prop("hidden", true);
-            }, 500000);
-<!--            message_display_time();-->
+             localStorage.setItem("success_msg", message);
             if(GLOBAL_ACTION == 'CREATE'){
                     $("#supplier_form_field")[0].reset();
                     localStorage.clear();

@@ -37,29 +37,35 @@ def get_sc_for_approval(request):
 
     sc_approval_header = django_query_instance.django_filter_value_list_query(ScPotentialApproval, {
         'app_id': global_variables.GLOBAL_LOGIN_USERNAME,
-        'proc_lvl_sts': CONST_ACTIVE,
+        # 'proc_lvl_sts': CONST_ACTIVE,
         'client': global_variables.GLOBAL_CLIENT
     }, 'sc_header_guid')
 
     sc_header_detail = document_search_instance.get_header_details({
-        'guid__in': sc_approval_header,'created_at__date': datetime.date.today()
+        'guid__in': sc_approval_header, 'created_at__date': datetime.date.today()
     })
 
     sc_header_app_detail = get_sc_header_app_wf(sc_header_detail, global_variables.GLOBAL_CLIENT)
 
     search_approval = SearchManagerApprovalsForm()
+    context = {
+        'form_method': ''
+    }
 
     if request.method == 'GET':
         search_criteria = {
             'guid__in': sc_approval_header,
-            'created_at__gte': datetime.datetime.today() - datetime.timedelta(days=int(7))
+            'created_at': datetime.datetime.today()
         }
         sc_header_detail = document_search_instance.get_header_details(search_criteria)
 
         sc_header_app_detail = get_sc_header_app_wf(sc_header_detail, global_variables.GLOBAL_CLIENT)
 
+        context['count'] = len(sc_header_app_detail)
         for header_guid in sc_header_app_detail:
             header_guid.append(encrypt(header_guid[0]))
+
+        form_method = ''
 
     if request.method == 'POST':
         search_criteria = {}
@@ -80,22 +86,24 @@ def get_sc_for_approval(request):
 
         sc_header_app_detail = get_sc_header_app_wf(sc_header_detail, global_variables.GLOBAL_CLIENT)
 
+        context['count'] = len(sc_header_app_detail)
         for header_guid in sc_header_app_detail:
             # encrypted_guid.append(encrypt(header_guid[0]))
             header_guid.append(encrypt(header_guid[0]))
         # zipped_content = zip(sc_header_app_detail, encrypted_guid)
         print('sc_header_app_detail ', sc_header_app_detail)
+        form_method = 'POST'
 
     context = {
         'inc_nav': True,
         'inc_footer': True,
-        'sc_header_app_detail': sc_header_app_detail,
         'is_slide_menu': True,
         'is_approvals_active': True,
         'sc_completion_flag': sc_completion_flag,
+        'sc_header_app_detail': sc_header_app_detail,
         'inp_doc_type': inp_doc_type,
         'search_approval': search_approval,
         'zipped_content': zipped_content,
-        # '':
+        'form_method': form_method
     }
     return render(request, 'Doc Search and Display/get_sc_for_approval_rejection.html', context)
